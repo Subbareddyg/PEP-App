@@ -1,0 +1,103 @@
+
+package com.belk.pep.vo;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * The Class ProductAttributesVO.
+ *
+ * @author AFUSOS3
+ */
+public class ProductAttributesVO implements Serializable {
+
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 1212658922234957613L;
+
+    /** The pet attribute value list. */
+    List<PetAttributeValueVO>  petAttributeValueList;
+
+    /**
+     * Instantiates a new product attributes vo.
+     */
+    public ProductAttributesVO() {
+
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final ProductAttributesVO other = (ProductAttributesVO) obj;
+        if (petAttributeValueList == null) {
+            if (other.petAttributeValueList != null) {
+                return false;
+            }
+        }
+        else if (!petAttributeValueList.equals(other.petAttributeValueList)) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Gets the pet attribute value list.
+     *
+     * @return the petAttributeValueList
+     */
+    public List<PetAttributeValueVO> getPetAttributeValueList() {
+        return petAttributeValueList;
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result =
+                prime
+                * result
+                + (petAttributeValueList == null ? 0 : petAttributeValueList
+                    .hashCode());
+        return result;
+    }
+
+    /**
+     * Sets the pet attribute value list.
+     *
+     * @param petAttributeValueList the petAttributeValueList to set
+     */
+    public void setPetAttributeValueList(
+        List<PetAttributeValueVO> petAttributeValueList) {
+
+        if(petAttributeValueList==null)
+        {
+            this.petAttributeValueList = new ArrayList<PetAttributeValueVO>();;
+
+        }
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return "ProductAttributesVO [petAttributeValueList="
+                + petAttributeValueList + "]";
+    }
+
+
+}

@@ -1,0 +1,231 @@
+
+package com.belk.pep.vo;
+
+import java.io.Serializable;
+import java.util.Date;
+
+
+
+/**
+ * The Class SkuVO.
+ */
+public class SkuVO  implements Serializable{
+
+    
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 4742910274704461468L;
+
+    /**
+     * Instantiates a new sku vo.
+     */
+    public SkuVO() {
+        
+    }
+
+    
+    /** The orin. */
+    private String orin;
+    
+    /** The grouping number. */
+    private String groupingNumber;
+    
+    /** The style number. */
+    private String styleNumber;
+    
+    /** The style name. */
+    private String styleName;
+    
+    /** The color. */
+    private String color;
+    
+    /** The content status. */
+    private String contentStatus;
+    
+    /** The completion date. */
+    private  Date completionDate;
+    
+    /** The vendor size. */
+    private String vendorSize;    
+    
+    /** The omni channel size description. */
+    private String omniChannelSizeDescription;
+
+    /**
+     * Gets the orin.
+     *
+     * @return the orin
+     */
+    public String getOrin() {
+        return orin;
+    }
+
+    /**
+     * Sets the orin.
+     *
+     * @param orin the orin to set
+     */
+    public void setOrin(String orin) {
+        this.orin = orin;
+    }
+
+    /**
+     * Gets the grouping number.
+     *
+     * @return the groupingNumber
+     */
+    public String getGroupingNumber() {
+        return groupingNumber;
+    }
+
+    /**
+     * Sets the grouping number.
+     *
+     * @param groupingNumber the groupingNumber to set
+     */
+    public void setGroupingNumber(String groupingNumber) {
+        this.groupingNumber = groupingNumber;
+    }
+
+    /**
+     * Gets the style number.
+     *
+     * @return the styleNumber
+     */
+    public String getStyleNumber() {
+        return styleNumber;
+    }
+
+    /**
+     * Sets the style number.
+     *
+     * @param styleNumber the styleNumber to set
+     */
+    public void setStyleNumber(String styleNumber) {
+        this.styleNumber = styleNumber;
+    }
+
+    /**
+     * Gets the style name.
+     *
+     * @return the styleName
+     */
+    public String getStyleName() {
+        return styleName;
+    }
+
+    /**
+     * Sets the style name.
+     *
+     * @param styleName the styleName to set
+     */
+    public void setStyleName(String styleName) {
+        this.styleName = styleName;
+    }
+
+    /**
+     * Gets the color.
+     *
+     * @return the color
+     */
+    public String getColor() {
+        return color;
+    }
+
+    /**
+     * Sets the color.
+     *
+     * @param color the color to set
+     */
+    public void setColor(String color) {
+        this.color = color;
+    }
+
+    /**
+     * Gets the content status.
+     *
+     * @return the contentStatus
+     */
+    public String getContentStatus() {
+        return contentStatus;
+    }
+
+    /**
+     * Sets the content status.
+     *
+     * @param contentStatus the contentStatus to set
+     */
+    public void setContentStatus(String contentStatus) {
+        this.contentStatus = contentStatus;
+    }
+
+    /**
+     * Gets the completion date.
+     *
+     * @return the completionDate
+     */
+    public Date getCompletionDate() {
+        return completionDate;
+    }
+
+    /**
+     * Sets the completion date.
+     *
+     * @param completionDate the completionDate to set
+     */
+    public void setCompletionDate(Date completionDate) {
+        this.completionDate = completionDate;
+    }
+
+    /**
+     * Gets the vendor size.
+     *
+     * @return the vendorSize
+     */
+    public String getVendorSize() {
+        return vendorSize;
+    }
+
+    /**
+     * Sets the vendor size.
+     *
+     * @param vendorSize the vendorSize to set
+     */
+    public void setVendorSize(String vendorSize) {
+        this.vendorSize = vendorSize;
+    }
+
+    /**
+     * Gets the omni channel size description.
+     *
+     * @return the omniChannelSizeDescription
+     */
+    public String getOmniChannelSizeDescription() {
+        return omniChannelSizeDescription;
+    }
+
+    /**
+     * Sets the omni channel size description.
+     *
+     * @param omniChannelSizeDescription the omniChannelSizeDescription to set
+     */
+    public void setOmniChannelSizeDescription(String omniChannelSizeDescription) {
+        this.omniChannelSizeDescription = omniChannelSizeDescription;
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return "SKU [orin=" + orin + ", groupingNumber=" + groupingNumber
+            + ", styleNumber=" + styleNumber + ", styleName=" + styleName
+            + ", color=" + color + ", contentStatus=" + contentStatus
+            + ", completionDate=" + completionDate + ", vendorSize="
+            + vendorSize + ", omniChannelSizeDescription="
+            + omniChannelSizeDescription + "]";
+    }
+    
+    
+    
+    
+}

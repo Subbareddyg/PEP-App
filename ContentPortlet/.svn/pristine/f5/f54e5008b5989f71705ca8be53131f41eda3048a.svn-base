@@ -1,0 +1,908 @@
+
+package com.belk.pep.controller;
+
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Logger;
+
+import javax.portlet.ActionRequest;
+import javax.portlet.ActionResponse;
+import javax.portlet.Event;
+import javax.portlet.EventRequest;
+import javax.portlet.EventResponse;
+import javax.portlet.RenderRequest;
+import javax.portlet.RenderResponse;
+import javax.portlet.ResourceRequest;
+import javax.portlet.ResourceResponse;
+
+import org.apache.commons.lang.StringUtils;
+import org.springframework.web.portlet.ModelAndView;
+import org.springframework.web.portlet.mvc.Controller;
+import org.springframework.web.portlet.mvc.EventAwareController;
+import org.springframework.web.portlet.mvc.ResourceAwareController;
+
+import com.belk.pep.attributes.AttributesBean;
+import com.belk.pep.attributes.ItemIdBean;
+import com.belk.pep.common.model.Common_BelkUser;
+import com.belk.pep.common.model.Common_Vpuser;
+import com.belk.pep.common.model.ContentPetDetails;
+import com.belk.pep.constants.ContentScreenConstants;
+import com.belk.pep.delegate.ContentDelegate;
+import com.belk.pep.exception.checked.PEPDelegateException;
+import com.belk.pep.form.ContentForm;
+import com.belk.pep.jsonconverter.DataObject;
+import com.belk.pep.jsonconverter.UpdateContentStatusDataObject;
+import com.belk.pep.model.PetsFound;
+import com.belk.pep.vo.ChildSkuVO;
+import com.belk.pep.vo.ContentHistoryVO;
+import com.belk.pep.vo.ContentManagementVO;
+import com.belk.pep.vo.CopyAttributesVO;
+import com.belk.pep.vo.GlobalAttributesVO;
+import com.belk.pep.vo.ItemPrimaryHierarchyVO;
+import com.belk.pep.vo.ProductDetailsVO;
+import com.belk.pep.vo.StyleAndItsChildDisplay;
+import com.belk.pep.vo.StyleColorVO;
+import com.belk.pep.vo.StyleInformationVO;
+import com.belk.pep.vo.StyleVO;
+import com.google.gson.Gson;
+
+
+
+/**
+ * The Class ContentController.
+ */
+
+public class ContentController implements Controller ,ResourceAwareController,EventAwareController{
+    
+    /** The Constant LOGGER. */
+    private final static Logger LOGGER = Logger.getLogger(ContentController.class.getName()); 
+    
+
+    /** The content delegate. */
+    private ContentDelegate contentDelegate;
+    
+    /** The content form. */
+    private ContentForm contentDisplayForm;
+    
+    /** The style attributes. */
+    private GlobalAttributesVO styleAttributes;
+    
+    /** The response message web service. */
+    private String responseMessageWebService = "";       
+    
+    /** The model and view. */
+    private ModelAndView modelAndView=null ; 
+    
+    /** The style data submission flag. */
+    private boolean  styleDataSubmissionFlag;    
+    
+    /** The disable save button flag. */
+    private boolean  disableSaveButtonFlag;
+    
+
+ 
+    
+
+    
+  
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.springframework.web.portlet.mvc.Controller#handleActionRequest(javax
+     * .portlet.ActionRequest, javax.portlet.ActionResponse)
+     */
+    public void handleActionRequest(ActionRequest request,
+            ActionResponse response)  {
+        
+           
+        
+             List<AttributesBean> attributesBeansList = new ArrayList<AttributesBean>();
+            //get the ORIN number from the request ,on click of the initiated link  on the worklist display screen  to do
+            LOGGER.info("ContentPortlet:handleActionRequest:Enter");
+            //Logic for getting the Style Attribute data on click of the Style Orin Number starts here
+            String actionLoadStyleAttributes = request.getParameter("action");  
+            LOGGER.info("actionLoadStyleAttributes---"+actionLoadStyleAttributes);
+            String  orinNumber = request.getParameter(ContentScreenConstants.ORIN_NUMBER);         
+              if(null == orinNumber){
+                    
+                    //error handling
+                    
+                }
+                else
+                {
+                   LOGGER.info("orin number clicked to load style attributes is ="+ orinNumber);
+                   LOGGER.info("ORIN number  from the action method"+orinNumber);                   
+                   setStyleAttributes(contentDelegate.getStyleAttributesADSE(orinNumber));                    
+                }
+                
+               
+                
+                //Logic for  Save Pet  Content Action Button starts here
+                String saveContentAction =  request.getParameter("actionParameter");                
+                if(saveContentAction != null && saveContentAction.equals("saveContent")){
+                    
+                    LOGGER.info("call to createContentWebService from Content Controller");                    
+                    //get input from user for updating the attributes on the  content screen
+                    String stylePetId = request.getParameter("stylePetId");
+                    String productName = request.getParameter("productName");
+                    String productDescription = request.getParameter("productDescription");
+                    
+                    String productNameXpath=ContentScreenConstants.PRODUCT_NAME_XPATH;
+                    String productDescriptionXpath=ContentScreenConstants.PRODUCT_DESCRIPTION_XPATH;
+                       
+                    String brand = request.getParameter("brand");
+                    //String omniChannelBrandXpath = request.getParameter("omniChannelBrandXpath");
+                    String omniChannelBrandXpath = ContentScreenConstants.OMNICHANNEL_BRAND_XPATH;
+                    String belkExclusive = request.getParameter("belkExclusive");
+                    //String belkExclusiveXpath = request.getParameter("belkExclusiveXpath");
+                    String belkExclusiveXpath =  ContentScreenConstants.BELK_EXCLUSIVE_XPATH;
+                    
+                    
+                   LOGGER.info("user inputs for content update -> stylePetId = "+stylePetId+" , brand = "+brand+", omniChannelBrandXpath = "+omniChannelBrandXpath+", belkExclusive = "+belkExclusive+", belkExclusiveXpath = "+belkExclusiveXpath);
+                   
+                   //form JSON request to web service
+                   ItemIdBean listOfAttributes = new ItemIdBean();
+                   
+                   AttributesBean attributesBeanProductName = new AttributesBean(productNameXpath,productName);
+                   AttributesBean attributesBeanProductDescription = new AttributesBean(productDescriptionXpath,productDescription);                             
+                   
+                   attributesBeansList.add(attributesBeanProductName);
+                   attributesBeansList.add(attributesBeanProductDescription);
+                   if(StringUtils.isNotBlank(brand))
+                   {
+                       AttributesBean attributesBeanBrand = new AttributesBean(omniChannelBrandXpath,brand); 
+                       attributesBeansList.add(attributesBeanBrand);
+                   }
+                   
+                   if(StringUtils.isNotBlank(belkExclusive))
+                   {
+                       AttributesBean attributesBeanBelkExclusive = new AttributesBean(belkExclusiveXpath,belkExclusive);
+                       attributesBeansList.add(attributesBeanBelkExclusive);
+                   }
+                  
+                   
+                   listOfAttributes.setItemId(stylePetId);
+                   listOfAttributes.setList(attributesBeansList);//this will complete JSON request data
+                   Gson gson = new Gson();
+                   //convert from JSON to String
+                   String createContentWebServiceReq = gson.toJson(listOfAttributes);
+                   
+                   //request to web service
+                   LOGGER.info("Request to createContentWebService = "+createContentWebServiceReq);
+                   //call web service and read response
+                   setResponseMessageWebService(contentDelegate.createContentWebService(createContentWebServiceReq));
+                   LOGGER.info("Response from createContentWebService = "+ getResponseMessageWebService());     
+                   
+                    
+                }
+              
+             
+               //Logic for  update content status for style data on click of the submit button for Style row  starts here
+                
+                String updateContentStatusStyleAction =  request.getParameter("updateContentStatusStyleActionParameter");                
+                if(updateContentStatusStyleAction != null && updateContentStatusStyleAction.equals("updateContentStatusForStyle"))
+                {
+                    String styleOrinNumber =  request.getParameter("styleOrinNumber");        
+                    String styleContentStatus =  request.getParameter("styleContentStatus"); 
+                    if(StringUtils.isNotBlank(styleOrinNumber) && StringUtils.isNotBlank(styleContentStatus))
+                    {
+                        UpdateContentStatusDataObject dataObject = new UpdateContentStatusDataObject(styleOrinNumber, styleContentStatus);
+                        Gson gson = new Gson();
+                        // convert java object to JSON format,
+                        // and returned as JSON formatted string
+                        String json = gson.toJson(dataObject);
+                        String webserviceResponseMessage=contentDelegate.updateContentStatusWebService(json);
+                        if(webserviceResponseMessage.contains("successfully"))
+                        {
+                            styleDataSubmissionFlag=true;
+                            disableSaveButtonFlag=true;
+                            //Set the message for changing the content status for ready for review and disable the Submit Style Data  Button
+                            response.setRenderParameter(ContentScreenConstants.READY_FOR_REVIEW_MESSAGE_KEY,ContentScreenConstants.READY_FOR_REVIEW_MESSAGE);
+                        }
+                       
+                        LOGGER.info("webserviceResponseMessag from update Style pet status = "+ getResponseMessageWebService());     
+                        response.setRenderParameter(ContentScreenConstants.UPDATE_STYLE_PET_CONTENT_STATUS_WEBSERVICE_REPONSE_KEY,webserviceResponseMessage);
+                      
+                    }
+                    
+                }
+                
+                
+             
+                
+                //Logic for  update content status for style color data on click of the submit button for Style Color  row  starts here
+                
+                
+                String updateContentStatusStyleColorAction =  request.getParameter("updateContentStatusStyleColorActionParameter");                
+                if(updateContentStatusStyleColorAction != null && updateContentStatusStyleColorAction.equals("updateContentStatusForStyleColor"))
+                {
+                    
+                    //Logic for checking that the Style Level Data has been submitted before the submitting the Style Color  Data
+                   
+                    if(styleDataSubmissionFlag)
+                    {
+                        String styleColorOrinNumber =  request.getParameter("styleColorOrinNumber");        
+                        String styleColorContentStatus =  request.getParameter("styleColorContentStatus"); 
+                        if(StringUtils.isNotBlank(styleColorOrinNumber) && StringUtils.isNotBlank(styleColorContentStatus))
+                        {
+                            UpdateContentStatusDataObject dataObject = new UpdateContentStatusDataObject(styleColorOrinNumber, styleColorContentStatus);
+                            Gson gson = new Gson();
+                            // convert java object to JSON format,
+                            // and returned as JSON formatted string
+                            String json = gson.toJson(dataObject);
+                            String webserviceResponseMessage=contentDelegate.updateContentStatusWebService(json);
+                            if(webserviceResponseMessage.contains("successfully"))
+                            {
+                                //Set the message for changing the content status for ready for review and disable the Submit Style Color Data  Button
+                                response.setRenderParameter(ContentScreenConstants.READY_FOR_REVIEW_STYLE_COLOR_MESSAGE_KEY,ContentScreenConstants.READY_FOR_REVIEW_STYLE_COLOR_MESSAGE);
+                                
+                            }
+                            LOGGER.info("webserviceResponseMessag from update Style Color  pet status = "+ getResponseMessageWebService());     
+                            response.setRenderParameter(ContentScreenConstants.UPDATE_STYLE_COLOR_PET_CONTENT_STATUS_WEBSERVICE_REPONSE_KEY,webserviceResponseMessage);
+                          
+                        }
+                        
+                    }
+                    else
+                    {
+                        response.setRenderParameter(ContentScreenConstants.SUBMIT_STYLE_LEVEL_DATA_FIRST,ContentScreenConstants.SUBMIT_STYLE_LEVEL_DATA_MESSAGE); 
+                        
+                    }
+                    
+                    
+                    
+                }
+                
+                
+        
+    }
+     /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.springframework.web.portlet.mvc.Controller#handleRenderRequest(javax
+     * .portlet.RenderRequest, javax.portlet.RenderResponse)
+     */
+    public ModelAndView handleRenderRequest(RenderRequest request,
+            RenderResponse response) throws Exception
+    {
+       
+        String selectedOrinNumber=null;
+        String contentPetStatus=null;
+        String roleNameFromIPC=null;
+        String orinNumber=null;
+        String orinNumberFromIPC=null;
+        
+        ContentPetDetails contentPetDetailsFromIPC= getContentPetDetailsFromIPC(request);            
+        LOGGER.info("contentPetDetailsFromIPC----"+contentPetDetailsFromIPC);
+        if(contentPetDetailsFromIPC!=null)
+        {
+            orinNumberFromIPC=contentPetDetailsFromIPC.getOrinNumber();
+            LOGGER.info("orinNumberFromIPC----"+orinNumberFromIPC);
+            String contentStatusFromIPC=contentPetDetailsFromIPC.getContentStatus();
+            LOGGER.info("contentStatusFromIPC----"+contentStatusFromIPC);
+            roleNameFromIPC= contentPetDetailsFromIPC.getUserData().getRoleName();
+            LOGGER.info("roleNameFromIPC----"+roleNameFromIPC);
+            Common_Vpuser externalVendorFromIPC= contentPetDetailsFromIPC.getVpUser();
+            LOGGER.info("externalVendorFromIPC----"+externalVendorFromIPC);
+            Common_BelkUser belkUserFromIPC=contentPetDetailsFromIPC.getBelkUser();
+            LOGGER.info("belkUserFromIPC----"+belkUserFromIPC);
+            
+            if(externalVendorFromIPC!=null)
+            {
+                String pepUserIdFromIPC= externalVendorFromIPC.getPepUserID();
+                String emailIdFromIPC= externalVendorFromIPC.getUserEmailAddress();
+                
+                LOGGER.info("pepUserIdFromIPC----"+pepUserIdFromIPC);
+                LOGGER.info("emailIdFromIPC----"+emailIdFromIPC);
+                
+            }
+            
+            if(belkUserFromIPC!=null)
+            {
+                String lanIdFromIPC= belkUserFromIPC.getLanId();           
+                
+                LOGGER.info("lanIdFromIPC----"+lanIdFromIPC);
+            
+                
+            }
+          
+        }
+      
+    
+       
+        
+       // String orinNumber = "'249041001'";
+        if(StringUtils.isNotBlank(orinNumberFromIPC)){
+            orinNumber="'"+orinNumberFromIPC+"'";
+        }
+        
+                 
+        contentDisplayForm =new ContentForm();       
+
+        //get the logged in user  role ,the logged in user role  can be  dca role ,vendor role  or read only role 
+        
+        if(StringUtils.isNotBlank(roleNameFromIPC))
+        {
+            //Set the role Name of the logged in User  from the IPC
+            contentDisplayForm.setRoleName(roleNameFromIPC);
+        }
+           
+        modelAndView= new ModelAndView(ContentScreenConstants.PAGE);  
+        // Get the Style Information
+        try {
+            StyleInformationVO  styleInformation= contentDelegate.getStyleInformation(orinNumber);
+            if(styleInformation!=null)
+            {
+                contentDisplayForm.setStyleInformationVO(styleInformation);
+                modelAndView.addObject(ContentScreenConstants.CONTENT_DISPLAY_FORM, contentDisplayForm);
+                
+            }
+        }
+        catch (PEPDelegateException e) {
+            LOGGER.severe("Exception occurred"+e.getMessage());
+            contentDisplayForm.setFetchStyleInfoErrorMessage(ContentScreenConstants.FETCH_STYLE_INFO_ERROR_MESSAGE);
+            modelAndView.addObject(ContentScreenConstants.CONTENT_DISPLAY_FORM, contentDisplayForm);
+        }
+        // Get the Product Information
+        ProductDetailsVO   productInformation= contentDelegate.getProductInformation(orinNumber);
+        if(productInformation!=null)
+        {
+            contentDisplayForm.setProductDetailsVO(productInformation);
+            modelAndView.addObject(ContentScreenConstants.CONTENT_DISPLAY_FORM, contentDisplayForm);
+            
+        }
+        
+        // Get the Pet List
+        List<PetsFound> petList=contentDelegate.getPetList(orinNumber);
+        if(petList!=null && petList.size()>0)
+        {
+            LOGGER.info("StylePetsFound---Data");
+            modelAndView.addObject("StylePetsFound","Data exists");
+            StyleAndItsChildDisplay styleAndItsChildDisplay= displayPetsAsParentChild(petList);
+            contentDisplayForm.setStyleAndItsChildDisplay(styleAndItsChildDisplay);
+            modelAndView.addObject(ContentScreenConstants.CONTENT_DISPLAY_FORM, contentDisplayForm);
+        }
+        else
+        {
+            LOGGER.info("noStylePetsFound---No Data exist");
+            System.out.println("Style Attributes is Null for Global Styles");
+            contentDisplayForm.setNoPetsFoundInADSEDatabase("true");
+            modelAndView.addObject("noStylePetsFound","No Data exists");
+            modelAndView.addObject(ContentScreenConstants.CONTENT_DISPLAY_FORM, contentDisplayForm);
+        }
+        
+        // Check if style attribute is not  null
+        if(getStyleAttributes() != null){
+            
+            System.out.println("check value from getter and setter method  for style attributes="+getStyleAttributes().toString());
+            contentDisplayForm.setGlobalAttributesDisplay(getStyleAttributes());
+            modelAndView.addObject(ContentScreenConstants.CONTENT_DISPLAY_FORM, contentDisplayForm);
+            
+        }
+        else
+        {
+            
+            System.out.println("Style Attributes is Null for Global Styles");
+        }
+        
+        // Check  the response from the webservice 
+        if(getResponseMessageWebService().contains("successfully")){
+            LOGGER.info("getResponseMessageWebService---successfully");
+            
+            modelAndView.addObject("responseSuccessMessageWebService", getResponseMessageWebService());
+        }
+        else if(getResponseMessageWebService().contains("updation failed"))
+        {
+            LOGGER.info("getResponseMessageWebService---updation failed");
+            modelAndView.addObject("responseSuccessMessageWebService", getResponseMessageWebService());
+        }
+        else if(getResponseMessageWebService().contains("HTTP Error"))
+        {
+            LOGGER.info("getResponseMessageWebService---HTTP Error");
+            modelAndView.addObject("responseFailMessageWebService", getResponseMessageWebService());
+        }
+        
+        //Get the content management data from the ADSE_PET_CATALOG table and prep the data for displaying on the Pet Content Management Section
+        ContentManagementVO  contentManagementVO= contentDelegate.getContentManagmentInfo(orinNumber);
+        if(contentManagementVO!=null)
+        {
+            contentDisplayForm.setContentManagementDisplay(contentManagementVO);
+            modelAndView.addObject(ContentScreenConstants.CONTENT_DISPLAY_FORM, contentDisplayForm);
+        }
+                
+        
+        //Get the SKU data from the ADSE  tables and prep the data for displaying on the Child SKU Section
+        List<ChildSkuVO>  skuList= contentDelegate.getChildSkuInfo(orinNumber);
+        if(skuList!=null && skuList.size()>0 )
+        {
+            contentDisplayForm.setChildSkuDisplayList(skuList);
+            modelAndView.addObject(ContentScreenConstants.CONTENT_DISPLAY_FORM, contentDisplayForm);
+        }
+        else
+        {
+            //set the message to display on the screen No Child SKU data exists
+            contentDisplayForm.setNoChildSkuDataPresent("No Child SKU data exists");
+            modelAndView.addObject(ContentScreenConstants.CONTENT_DISPLAY_FORM, contentDisplayForm);
+        }
+        
+        
+        //Get the Content History from the ADSE  tables and prepare  the data for displaying on the Content History Section
+        ContentHistoryVO  contentHistory= contentDelegate.getContentHistory(orinNumber);
+        if(contentHistory!=null)
+        {
+            contentDisplayForm.setContentHistoryDisplay(contentHistory);
+            modelAndView.addObject(ContentScreenConstants.CONTENT_DISPLAY_FORM, contentDisplayForm);
+        }
+        else
+        {
+          //set the message to display on the screen No Content History Data Exists
+            contentDisplayForm.setContentHistoryData("No Content History data exists");
+       
+        }
+        
+        //Get the Copy Attribute data from the ADSE  tables and prepare  the data for displaying on the Content Copy Attribute  Section
+        List<CopyAttributesVO>  copyAttributeList= contentDelegate.getCopyAttributes(orinNumber);
+        if(copyAttributeList!=null && copyAttributeList.size()>0 )
+        {
+            contentDisplayForm.setCopyAttributeDisplayList(copyAttributeList);
+            modelAndView.addObject(ContentScreenConstants.CONTENT_DISPLAY_FORM, contentDisplayForm);
+        }
+        else
+        {
+            //set the message to display on the screen no  copy attribute  data exists
+            contentDisplayForm.setCopyAttribueData("No Copy Attrbute Data exists");;
+            modelAndView.addObject(ContentScreenConstants.CONTENT_DISPLAY_FORM, contentDisplayForm);
+        }
+        //Get the IPH Categories to display on the  screen;
+        List<ItemPrimaryHierarchyVO>  iphCategoryList  =contentDelegate.getItemPrimaryHierarchyCategories();
+        if(iphCategoryList!=null && iphCategoryList.size()>0)
+        {
+            Map<String, String> categoryReferenceData =  splitIPHCategoryByCategoryId(iphCategoryList);           
+            contentDisplayForm.setCategoryReferenceData(categoryReferenceData);
+         
+            modelAndView.addObject(ContentScreenConstants.CONTENT_DISPLAY_FORM, contentDisplayForm);
+        }
+        
+       //Display the message for the Update Content Status webservice  on  click of the Style Data Submit Button
+        String  updateContentStatusForStyleMessage= request.getParameter(ContentScreenConstants.UPDATE_STYLE_PET_CONTENT_STATUS_WEBSERVICE_REPONSE_KEY);
+        LOGGER.info("updateContentStatusForStyleMessage = "+ updateContentStatusForStyleMessage);    
+        if(StringUtils.isNotBlank(updateContentStatusForStyleMessage))
+        {
+             LOGGER.info("updateContentStatusForStyleMessage = "+ updateContentStatusForStyleMessage); 
+             contentDisplayForm.setUpdateContentStatusMessage(updateContentStatusForStyleMessage);
+             LOGGER.info(" contentDisplayForm.setUpdateContentStatusMessage(= "+ contentDisplayForm.getUpdateContentStatusMessage()); 
+             modelAndView.addObject(ContentScreenConstants.CONTENT_DISPLAY_FORM, contentDisplayForm);
+            
+        }
+        
+       //Display the message for the Update Content Status webservice  on  click of the Style Color Data Submit Button
+        String  updateContentStatusForStyleColorMessage= request.getParameter(ContentScreenConstants.UPDATE_STYLE_COLOR_PET_CONTENT_STATUS_WEBSERVICE_REPONSE_KEY);
+        LOGGER.info("updateContentStatusForStyleColorMessage = "+ updateContentStatusForStyleMessage);    
+        if(StringUtils.isNotBlank(updateContentStatusForStyleColorMessage))
+        {
+             LOGGER.info("updateContentStatusForStyleColorMessage = "+ updateContentStatusForStyleColorMessage); 
+             contentDisplayForm.setUpdateContentStatusMessage(updateContentStatusForStyleColorMessage);
+             LOGGER.info(" contentDisplayForm.setUpdateContentStatusMessage(= "+ contentDisplayForm.getUpdateContentStatusMessage()); 
+             modelAndView.addObject(ContentScreenConstants.CONTENT_DISPLAY_FORM, contentDisplayForm);
+            
+        }
+          
+            
+        //Display message to the User for submitting  the Style Level Data followed by submitting the Style Color Data"
+        if(!styleDataSubmissionFlag)
+        {
+            String  styeLevelDataToBeSubmittedFirstMessage= request.getParameter(ContentScreenConstants.SUBMIT_STYLE_LEVEL_DATA_FIRST);
+           
+           if(StringUtils.isNotBlank(styeLevelDataToBeSubmittedFirstMessage))
+           {
+               contentDisplayForm.setStyleDataSubmissionDataMessage(styeLevelDataToBeSubmittedFirstMessage); 
+               modelAndView.addObject(ContentScreenConstants.CONTENT_DISPLAY_FORM, contentDisplayForm);
+           }            
+         
+          
+        }
+        
+        if(disableSaveButtonFlag)
+            {            
+              contentDisplayForm.setDisableSaveButton("true");
+              modelAndView.addObject(ContentScreenConstants.CONTENT_DISPLAY_FORM, contentDisplayForm);
+            }
+        else
+        {
+            contentDisplayForm.setDisableSaveButton("false");
+            modelAndView.addObject(ContentScreenConstants.CONTENT_DISPLAY_FORM, contentDisplayForm);
+        }
+     
+        String readyForReviewStatus= request.getParameter(ContentScreenConstants.READY_FOR_REVIEW_MESSAGE_KEY);
+        if(StringUtils.isNotBlank(readyForReviewStatus))
+        {
+            contentDisplayForm.setReadyForReviewMessage(readyForReviewStatus);
+            modelAndView.addObject(ContentScreenConstants.CONTENT_DISPLAY_FORM, contentDisplayForm);
+        }
+       
+        String readyForReviewStatusForStyleColor= request.getParameter(ContentScreenConstants.READY_FOR_REVIEW_STYLE_COLOR_MESSAGE_KEY);
+        if(StringUtils.isNotBlank(readyForReviewStatusForStyleColor))
+        {
+            contentDisplayForm.setReadyForReviewMessageStyleColor(readyForReviewStatusForStyleColor);
+            modelAndView.addObject(ContentScreenConstants.CONTENT_DISPLAY_FORM, contentDisplayForm);
+        }
+        
+        return modelAndView;  
+    }
+    
+     
+       
+    
+    /**
+     * Split iph category by category id.
+     *
+     * @param iphCategoryList the iph category list
+     */
+    private Map<String, String> splitIPHCategoryByCategoryId(List<ItemPrimaryHierarchyVO> iphCategoryList) {
+       
+            Map<String,String> categoryMap = new LinkedHashMap<String,String>();
+            for(ItemPrimaryHierarchyVO iphCategory:iphCategoryList)
+            {
+                 String fullCategoryName=  iphCategory.getCategoryName();
+                 
+                 int index=fullCategoryName.indexOf('-');//get the first occurence of -
+                 LOGGER.info("index.."+index);
+                 String categoryId=fullCategoryName.substring(0, index);
+                 LOGGER.info("categoryId...."+categoryId);
+                 String categoryName= fullCategoryName.substring(index+1);
+                 LOGGER.info("categoryName...."+categoryName);
+                 categoryMap.put(categoryId, categoryName);
+            }
+           
+            return categoryMap;
+        
+    }
+    /**
+     * Display pets as parent child.
+     *
+     * @param petList the pet list
+     * @return 
+     */
+    private StyleAndItsChildDisplay displayPetsAsParentChild(List<PetsFound> petList) {
+        String childsParentOrinNumber = null;
+        String  parentOrinNumber = null;
+        List<StyleColorVO> styleColorList = new ArrayList<StyleColorVO>();
+        List<StyleVO> styleList = new ArrayList<StyleVO>();
+        List<StyleVO> styleListForContentDisplay = new ArrayList<StyleVO>();
+        StyleAndItsChildDisplay styAndItsChildDisplay= new StyleAndItsChildDisplay();
+        for(PetsFound pet:petList)
+        {
+            String entryType=pet.getEntryType();               
+            if(entryType.equalsIgnoreCase("StyleColor"))
+            {
+                childsParentOrinNumber=pet.getParentStyleOrin();
+                String orinNumber=pet.getOrinNumber();
+                String color= pet.getColor();
+                String vendorSize=pet.getVendorSize();
+                String omniSizeDescription=pet.getOmniSizeDescription();              
+                String contentState=pet.getContentState();
+                String completionDate=pet.getCompletionDate();
+                StyleColorVO styleColor = new StyleColorVO();
+                styleColor.setEntryType(entryType);
+                styleColor.setParentStyleOrinNumber(childsParentOrinNumber);     
+                styleColor.setOrinNumber(orinNumber);
+                styleColor.setColor(color);
+                styleColor.setVendorSize(vendorSize);
+                styleColor.setOmniSizeDescription(omniSizeDescription);              
+                styleColor.setCompletionDate(completionDate);              
+                styleColor.setContentStatus(contentState);
+           
+                styleColorList.add(styleColor);//Add all the StyleColor to the  Style Color list 
+                LOGGER.info("styleColorList size.."+styleColorList.size());
+              
+            }
+            if(entryType.equalsIgnoreCase("Style"))
+            {                    
+             
+                        String orinNumber= pet.getOrinNumber();
+                        String vendorStyle= pet.getVendorStyle();
+                        parentOrinNumber=pet.getParentStyleOrin();                      
+                        String color= pet.getColor();
+                        String vendorSize=pet.getVendorSize();
+                        String omniSizeDescription=pet.getOmniSizeDescription();              
+                        String contentState=pet.getContentState();
+                        String completionDate=pet.getCompletionDate();
+                        StyleVO style =new StyleVO();
+                        style.setEntryType(entryType);
+                        style.setColor(color);
+                        style.setOrinNumber(orinNumber);
+                        style.setParentOrinNumber(orinNumber);//changed the Parent MDMID of the Style is null
+                        style.setVendorSize(vendorSize);
+                        style.setCompletionDate(completionDate);                      
+                        style.setContentStatus(contentState);                     
+                        style.setOmniSizeDescription(omniSizeDescription);
+                        styleList.add(style);//Add all the Style to the  Style  list  
+              
+                }        
+            
+           
+        }
+        LOGGER.info("styleList length="+styleList.size());
+        LOGGER.info("styleColorList length="+styleColorList.size()); 
+        //Check for the Parent Child association
+        for(StyleVO style :styleList)
+        {
+           parentOrinNumber = style.getParentOrinNumber();
+           LOGGER.info("parentOrinNumber.."+parentOrinNumber);  
+           List<StyleColorVO> subStyleColorList = new ArrayList<StyleColorVO>();
+           
+           for(StyleColorVO styleColor :styleColorList)
+           {
+              
+              childsParentOrinNumber =styleColor.getParentStyleOrinNumber();
+             // LOGGER.info("childsParentOrinNumber.."+childsParentOrinNumber);
+              if(parentOrinNumber.equalsIgnoreCase(childsParentOrinNumber))
+              {
+                
+                  subStyleColorList.add(styleColor);
+              }
+               
+           }
+           if(subStyleColorList.size()>0){
+               LOGGER.info("Size of the Color List .."+subStyleColorList.size());
+               style.setStyleColorList(subStyleColorList);//Add all the child Style Colors to the Parent Style             
+           }else{
+               LOGGER.info("This is from Else part just return the style list with out any child style color");
+               
+           }
+           styleListForContentDisplay.add(style);//Add  all the Styles with children Style Color to the declared style list for content  display  
+            
+        }
+        
+        
+        LOGGER.info("styleColorList.."+styleListForContentDisplay.size());
+        styAndItsChildDisplay.setStyleList(styleListForContentDisplay);//Add all the Styles to the content list display form
+        
+        LOGGER.info("styAndItsChildDisplay size.."+styAndItsChildDisplay.getStyleList().size());
+        return styAndItsChildDisplay;
+        
+    }
+    
+    
+ 
+    
+    
+    /**
+     * Gets the content delegate.
+     *
+     * @return the content delegate
+     */
+    public ContentDelegate getContentDelegate() {
+        return contentDelegate;
+    }
+    
+    /**
+     * Sets the content delegate.
+     *
+     * @param contentDelegate the new content delegate
+     */
+    public void setContentDelegate(ContentDelegate contentDelegate) {
+        this.contentDelegate = contentDelegate;
+    }
+    
+    /**
+     * Gets the style attributes.
+     *
+     * @return the styleAttributes
+     */
+    public GlobalAttributesVO getStyleAttributes() {
+        return styleAttributes;
+    }
+    
+    /**
+     * Sets the style attributes.
+     *
+     * @param styleAttributes the styleAttributes to set
+     */
+    public void setStyleAttributes(GlobalAttributesVO styleAttributes) {
+        this.styleAttributes = styleAttributes;
+    }
+    
+    /**
+     * Gets the response message web service.
+     *
+     * @return the responseMessageWebService
+     */
+    public String getResponseMessageWebService() {
+        return responseMessageWebService;
+    }
+    
+    /**
+     * Sets the response message web service.
+     *
+     * @param responseMessageWebService the responseMessageWebService to set
+     */
+    public void setResponseMessageWebService(String responseMessageWebService) {
+        this.responseMessageWebService = responseMessageWebService;
+    }
+    
+    /**
+     * Gets the model and view.
+     *
+     * @return the modelAndView
+     */
+    public ModelAndView getModelAndView() {
+        return modelAndView;
+    }
+    
+    /**
+     * Sets the model and view.
+     *
+     * @param modelAndView the modelAndView to set
+     */
+    public void setModelAndView(ModelAndView modelAndView) {
+        if(modelAndView==null)
+        {
+            modelAndView = new ModelAndView(ContentScreenConstants.PAGE);
+        }
+        this.modelAndView = modelAndView;
+    }
+    /* (non-Javadoc)
+     * @see org.springframework.web.portlet.mvc.ResourceAwareController#handleResourceRequest(javax.portlet.ResourceRequest, javax.portlet.ResourceResponse)
+     */
+    @SuppressWarnings("null")
+    @Override
+    public ModelAndView handleResourceRequest(ResourceRequest request,ResourceResponse response) throws Exception {
+
+        String webServiceMessage = null;
+        modelAndView = new ModelAndView(ContentScreenConstants.PAGE);
+        contentDisplayForm = new ContentForm();
+        String categoryKey = request.getParameter("categoryKey");
+        LOGGER.info("categoryKey-------" + categoryKey);
+        if (StringUtils.isNotBlank(categoryKey)) {
+            LOGGER.info("@ResourceMapping-categoryKey--- " + categoryKey);
+            LOGGER.info("categoryKey---- " + categoryKey);
+            String petId = request.getParameter("petIdForWebservice");
+            LOGGER.info("petId--------" + petId);
+            DataObject dataObject = new DataObject(petId, categoryKey);
+            Gson gson = new Gson();
+            // convert java object to JSON format,
+            // and returned as JSON formatted string
+            String json = gson.toJson(dataObject);
+            webServiceMessage = contentDelegate.callIPHMappingWebService(json);
+            PrintWriter writer = response.getWriter();
+            // to send the response to ajax call from jsp
+            writer.write(webServiceMessage);
+            modelAndView.addObject(ContentScreenConstants.CONTENT_DISPLAY_FORM,contentDisplayForm);
+
+        }
+
+        return modelAndView;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.springframework.web.portlet.mvc.EventAwareController#handleEventRequest(javax.portlet.EventRequest, javax.portlet.EventResponse)
+     */
+    @Override
+    public void handleEventRequest(EventRequest request, EventResponse response)
+        throws Exception {
+        LOGGER.info("-----------------Start of handle handleEventRequest-----------------");
+        Event event = request.getEvent();
+        LOGGER.info("event... " + event);       
+            if (event.getName() != null) {
+                if (event.getName().equals(
+                    ContentScreenConstants.CONTENT_PET_DETAILS)) {
+                                  
+                    ContentPetDetails contentPetDetails =(ContentPetDetails) event.getValue();
+                    LOGGER.info("event.getName() 1 " + event.getName());
+                    LOGGER.info("event.value() 1 " + event.getValue());
+                    LOGGER.info("Inside handle handleEventRequest...contentPetDetails...getContentStatus"+contentPetDetails.getContentStatus());
+                    LOGGER.info("Inside handle handleEventRequest...contentPetDetails...getContentStatus"+contentPetDetails.getContentStatus());
+                    LOGGER.info("Inside handle handleEventRequest...contentPetDetails...getOrinNumber"+contentPetDetails.getOrinNumber());
+                    LOGGER.info("Inside handle handleEventRequest...contentPetDetails...getVpUser"+contentPetDetails.getVpUser());
+                    LOGGER.info("Inside handle handleEventRequest...contentPetDetails...getUserData"+contentPetDetails.getUserData());
+                    LOGGER.info("Inside handle handleEventRequest...contentPetDetails...getBelkUser"+contentPetDetails.getBelkUser());                 
+                    request.getPortletSession().setAttribute(ContentScreenConstants.CONTENT_PET_DETAILS,contentPetDetails);
+                }
+
+            }
+    
+        LOGGER.info("-----------------End of handle handleEventRequest-----------------"); 
+    }
+    
+    
+    
+   
+     /**
+      * Gets the content pet details from inter portlet communication.
+      *
+      * @param request the request
+      * @return the content pet details from inter portlet communication
+      */
+     private ContentPetDetails getContentPetDetailsFromIPC(RenderRequest request) {  
+         LOGGER.info("-----------------Start of getContentPetDetailsFromIPC-----------------");         
+         LOGGER.info("request.getPortletSession().getAttribute(ContentScreenConstants.CONTENT_PET_DETAILS).."+request.getPortletSession().getAttribute(ContentScreenConstants.CONTENT_PET_DETAILS));
+         if(request.getPortletSession().getAttribute(ContentScreenConstants.CONTENT_PET_DETAILS)!=null)
+         {             
+             LOGGER.info("request.getPortletSession().getAttribute(ContentScreenConstants.CONTENT_PET_DETAILS).not null check."+request.getPortletSession().getAttribute(ContentScreenConstants.CONTENT_PET_DETAILS));        
+             ContentPetDetails contentPetDetails= (ContentPetDetails) request.getPortletSession().getAttribute(ContentScreenConstants.CONTENT_PET_DETAILS); 
+             LOGGER.info("-----------------End of getContentPetDetailsFromIPC-----------------");  
+             return contentPetDetails;
+         }
+        return null;
+        
+
+     }
+
+    /**
+     * Gets the content display form.
+     *
+     * @return the contentDisplayForm
+     */
+    public ContentForm getContentDisplayForm() {
+        return contentDisplayForm;
+    }
+    
+    /**
+     * Sets the content display form.
+     *
+     * @param contentDisplayForm the contentDisplayForm to set
+     */
+    public void setContentDisplayForm(ContentForm contentDisplayForm) {
+        this.contentDisplayForm = contentDisplayForm;
+    }
+    
+    /**
+     * Checks if is style data submission flag.
+     *
+     * @return the styleDataSubmissionFlag
+     */
+    public boolean isStyleDataSubmissionFlag() {
+        return styleDataSubmissionFlag;
+    }
+    
+    /**
+     * Sets the style data submission flag.
+     *
+     * @param styleDataSubmissionFlag the styleDataSubmissionFlag to set
+     */
+    public void setStyleDataSubmissionFlag(boolean styleDataSubmissionFlag) {
+        this.styleDataSubmissionFlag = styleDataSubmissionFlag;
+    }
+    
+    /**
+     * Checks if is disable save button flag.
+     *
+     * @return the disableSaveButtonFlag
+     */
+    public boolean isDisableSaveButtonFlag() {
+        return disableSaveButtonFlag;
+    }
+    
+    /**
+     * Sets the disable save button flag.
+     *
+     * @param disableSaveButtonFlag the disableSaveButtonFlag to set
+     */
+    public void setDisableSaveButtonFlag(boolean disableSaveButtonFlag) {
+        this.disableSaveButtonFlag = disableSaveButtonFlag;
+    }
+  
+ 
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return "ContentController [contentDelegate=" + contentDelegate
+            + ", contentDisplayForm=" + contentDisplayForm
+            + ", styleAttributes=" + styleAttributes
+            + ", responseMessageWebService=" + responseMessageWebService
+            + ", modelAndView=" + modelAndView + ", styleDataSubmissionFlag="
+            + styleDataSubmissionFlag + ", disableSaveButtonFlag="
+            + disableSaveButtonFlag + "]";
+    }
+
+
+}

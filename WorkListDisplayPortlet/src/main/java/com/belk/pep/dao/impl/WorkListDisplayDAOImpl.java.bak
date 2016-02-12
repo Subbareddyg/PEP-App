@@ -1,0 +1,970 @@
+
+package com.belk.pep.dao.impl;
+
+
+import java.sql.SQLException;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Logger;
+
+import org.apache.commons.lang.StringUtils;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+
+import com.belk.pep.constants.XqueryConstants;
+import com.belk.pep.dao.WorkListDisplayDAO;
+import com.belk.pep.domain.PepDepartment;
+import com.belk.pep.exception.checked.PEPFetchException;
+import com.belk.pep.exception.checked.PEPPersistencyException;
+import com.belk.pep.exception.checked.PEPServiceException;
+import com.belk.pep.form.WorkListDisplayForm;
+import com.belk.pep.model.AdvanceSearch;
+import com.belk.pep.model.PetsFound;
+import com.belk.pep.model.StyleColor;
+import com.belk.pep.model.WorkFlow;
+import com.belk.pep.model.WorkListDisplay;
+import com.belk.pep.util.ClassDetails;
+import com.belk.pep.util.DepartmentDetails;
+import com.belk.pep.util.HashmapWorkFlow;
+
+
+import org.hibernate.Query;
+/**
+ * This class responsible for handling all the DAO call to the VP Database.
+ * @author AFUBXJ1
+ *
+ */
+
+public class WorkListDisplayDAOImpl implements WorkListDisplayDAO{
+    /** The Constant LOGGER. */
+    private final static Logger LOGGER = Logger.getLogger(WorkListDisplayDAOImpl.class
+        .getName());
+
+    /** The session factory. */
+    private SessionFactory sessionFactory;
+    
+    public SessionFactory getSessionFactory() {
+        return sessionFactory;
+    }
+
+
+
+
+    /** The xquery constants. */
+    XqueryConstants xqueryConstants= new XqueryConstants();
+
+    /**
+     * Sets the session factory.
+     *
+     * @param sessionFactory
+     *            the new session factory
+     */
+    public void setSessionFactory(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
+    }
+    
+
+
+    /**
+     * This method will get the Department details from the PEP_DEPARTMENT table using the pepUserId
+     * @param pepUserId
+     * @return
+     * @throws PEPPersistencyException
+     */
+    @SuppressWarnings("rawtypes")
+    @Override
+    public ArrayList getSavedDepartmentDetailsByPepUserId(String pepUserId) throws PEPPersistencyException 
+    {
+        LOGGER.info("pepUserId in the DAO layer"+pepUserId);
+         ArrayList departmentDetails = new ArrayList();
+         Session session = null;
+         Transaction tx = null;
+         try{
+         session = sessionFactory.openSession();
+           tx = session.beginTransaction();
+           Query query = session.getNamedQuery("PepDepartment.findDept");
+            if(StringUtils.isNotBlank(pepUserId))//Null check to resolve the spinning issue
+            {
+                query.setString("pepUsrId", pepUserId);
+                List<PepDepartment> pepDepartmentList = query.list();
+               
+                if(null!=pepDepartmentList && pepDepartmentList.size()>0){
+                    LOGGER.info("pepUserId in the worklist display DAO layer 5 "+pepDepartmentList.size());
+                    for(int i=0;i<pepDepartmentList.size();i++){
+                        departmentDetails.add(pepDepartmentList.get(i));  
+                    }
+                }  
+            }
+            else
+            {
+                LOGGER.info("pepUserId in the worklist display DAO layer is blank..."+pepUserId);
+            }
+           
+         }catch(Exception e) {
+             e.printStackTrace();
+         }
+         finally{
+             session.flush();
+             tx.commit();
+             session.close(); 
+         }
+           
+        return departmentDetails;
+    }
+
+
+    /**
+     * This method will return the PET details from the ADSE on base of department 
+     * @param departmentNumbers
+     * @return
+     * @throws PEPServiceException
+     * @throws PEPPersistencyException
+     */
+    @Override
+    public List<WorkFlow> getPetDetailsByDepNos(ArrayList departmentNumbers,String email)
+        throws PEPPersistencyException {
+        
+        ArrayList pepDetails = null;
+        List<WorkFlow> workFlowList = null;
+        
+        try {
+                LOGGER.info("getPetDetailsByDepNos....Enter");
+                
+                System.out.println("\n--->> departmentNumbers " + departmentNumbers);
+                System.out.println("\n--->> email " + email);
+                StringBuffer depNumbers= new StringBuffer();
+                
+                if(departmentNumbers!=null) {
+                    for(int i=0;i<departmentNumbers.size();i++){
+                        if(i==0){
+                        depNumbers.append(((DepartmentDetails)departmentNumbers.get(i)).getId());
+                        }else{
+                            if(i<departmentNumbers.size()){
+                                //Fix for the defect 20
+                            depNumbers.append(","+((DepartmentDetails)departmentNumbers.get(i)).getId());
+                            }else{
+                                depNumbers.append(((DepartmentDetails)departmentNumbers.get(i)).getId());
+                            }
+                        }
+                    }
+                }
+                LOGGER.info("The Department numbers...."+depNumbers.toString());
+           
+               
+              
+                try {
+                    List<PetsFound> petList = getWorkListDisplayData(depNumbers.toString(),null,null,null);    
+                    
+                    WorkListDisplay workListDisplay = getFormatedPetDetails(petList);
+                    workFlowList = workListDisplay.getWorkListDisplay();
+                }
+                catch (SQLException e) {
+                    e.printStackTrace();
+                   throw new PEPPersistencyException("SQL Exception cought from getPetDetailsByDepNos");
+                   
+                }
+                catch (ParseException e) {
+                  
+                    e.printStackTrace();
+                    throw new PEPPersistencyException("Parse Exception cought from getPetDetailsByDepNos");
+                }
+                
+        } catch(Exception e)    {
+            e.printStackTrace();
+        }
+        return workFlowList;
+    }
+    
+    
+
+    /**
+     * Gets the formated pet details.
+     *
+     * @param petList the pet list
+     * @return the formated pet details
+     */
+    private WorkListDisplay getFormatedPetDetails(List<PetsFound> petList) {
+        LOGGER.info("This is from getFormatedPetDetails...");
+        String childsParentOrinNumber = null;
+        String  parentOrinNumber = null;
+        List<StyleColor> styleColorList = new ArrayList<StyleColor>();
+        List<WorkFlow> styleList = new ArrayList<WorkFlow>();
+        List<WorkFlow> styleListForWorkListDisplay = new ArrayList<WorkFlow>();
+        WorkListDisplay workListDisplay= new WorkListDisplay();
+        for(PetsFound pet:petList)
+        {
+            String entryType=pet.getEntryType();               
+            if("StyleColor".equalsIgnoreCase(entryType))
+            {
+                childsParentOrinNumber=pet.getParentStyleOrin();
+                String orinNumber=pet.getOrinNumber();
+                String vendorStyle= pet.getVendorStyle();
+                String vendorName=pet.getVendorName();
+                String productName=pet.getProductName();
+                String completionDate=pet.getCompletionDate();
+                String contentState=pet.getContentState();
+                String imageState=pet.getImageState();                   
+                String deptId=pet.getDeptId();
+                String ominInd=pet.getOmniChannelVendor();
+                
+                String petStatus = pet.getPetStatus();
+                
+                StyleColor styleColor = new StyleColor();
+                styleColor.setEntryType(entryType);
+                styleColor.setParentStyleOrinNumber(childsParentOrinNumber);
+                styleColor.setOrinNumber(orinNumber);
+                styleColor.setVendorStyle(vendorStyle);
+                styleColor.setVendorName(vendorName);
+                styleColor.setCompletionDate(completionDate);
+                styleColor.setProductName(productName);
+                
+                styleColor.setPetStatus(petStatus);
+                
+                
+                styleColor.setContentStatus(contentState);
+                styleColor.setDeptId(deptId);
+                styleColor.setImageStatus(imageState);
+                styleColor.setOmniChannelVendor(ominInd);
+                styleColorList.add(styleColor);//Add all the StyleColor to the  Style Color list 
+                LOGGER.info("styleColorList size.."+styleColorList.size());
+              
+            }
+            if(("Style".equalsIgnoreCase(entryType)) )
+            {                    
+             
+                        String orinNumber= pet.getOrinNumber();
+                        String vendorStyle= pet.getVendorStyle();
+                        parentOrinNumber=pet.getParentStyleOrin();
+                        String vendorName=pet.getVendorName();
+                        String productName=pet.getProductName();
+                        
+                        String petStatus = pet.getPetStatus();
+                        
+                        String completionDate=pet.getCompletionDate();
+                        String contentState=pet.getContentState();
+                        String imageState=pet.getImageState();                   
+                        String deptId=pet.getDeptId();
+                        String ominInd=pet.getOmniChannelVendor();
+                        WorkFlow style = new WorkFlow();
+                        style.setEntryType(entryType);
+                        style.setOrinNumber(orinNumber);
+                        style.setParentStyleOrinNumber(parentOrinNumber);
+                        style.setVendorName(vendorName);
+                        style.setCompletionDate(completionDate);
+                        style.setDeptId(deptId);
+                        style.setImageStatus(imageState);
+                        style.setContentStatus(contentState);
+                        style.setProductName(productName);
+                        
+                        style.setPetStatus(petStatus);
+                        
+                        style.setVendorStyle(vendorStyle);
+                       // style.setStyleColor(styleColorList);
+                        style.setOmniChannelVendor(ominInd);
+                        styleList.add(style);//Add all the Style to the  Style  list  
+              
+                }        
+            
+           
+        }
+        LOGGER.info("styleList length="+styleList.size());
+        LOGGER.info("styleColorList length="+styleColorList.size()); 
+        //Check for the Parent Child association
+        for(WorkFlow style :styleList)
+        {
+           parentOrinNumber = style.getParentStyleOrinNumber();
+           // LOGGER.info("parentOrinNumber.."+parentOrinNumber);  
+           List<StyleColor> subStyleColorList = new ArrayList<StyleColor>();
+           
+           for(StyleColor styleColor :styleColorList)
+           {
+              
+              childsParentOrinNumber =styleColor.getParentStyleOrinNumber();
+             // LOGGER.info("childsParentOrinNumber.."+childsParentOrinNumber);
+              if(parentOrinNumber!=null && parentOrinNumber.equalsIgnoreCase(childsParentOrinNumber))
+              {
+                  //Defect 14
+                  styleColor.setVendorStyle(style.getVendorStyle());
+                  subStyleColorList.add(styleColor);
+              }
+               
+           }
+           if(subStyleColorList.size()>0){
+              // LOGGER.info("Size of the Color List .."+subStyleColorList.size());
+               style.setStyleColor(subStyleColorList);//Add all the child Style Colors to the Parent Style
+           }else{
+               //LOGGER.info("This is from Else part");
+               //style.setStyleColor(new ArrayList<StyleColor>()); 
+           }
+           styleListForWorkListDisplay.add(style);//Add  all the Styles with children Style Color to the declared worklist display list 
+            
+        }
+        
+        
+        LOGGER.info("styleColorList.."+styleColorList.size());
+        workListDisplay.setWorkListDisplay(styleListForWorkListDisplay);//Add all the Styles to the work list display form
+        LOGGER.info("worklistdisplay size.."+workListDisplay.getWorkListDisplay().size());
+        return workListDisplay;
+    }
+
+    /** 
+     * This method will populate the WorkFlowList with Dummy Data
+     * @return
+     */
+
+    public ArrayList getWorkFlowList() {
+        HashmapWorkFlow hashMapWorkFlow= new HashmapWorkFlow();
+     //   LOGGER.info("Entering ContactDAOImpl.getContactList()");
+        ArrayList workFlowList = hashMapWorkFlow.getWorkFlows();
+     //   LOGGER.info("Exiting ContactDAOImpl.getContactList() " );
+        return workFlowList;
+    }
+
+
+ /**
+  * This method will update the Department table
+  */
+    @Override
+    public boolean updatePepDeptDetails(
+        List<PepDepartment> updatedPePDetailsToDb, String pepUserID)
+        throws PEPPersistencyException {
+        LOGGER.info("This is from updatePepDeptDetails.."+pepUserID);
+        boolean isUpdated =false;
+        Session session = null;
+        Transaction tx = null;
+        try{
+            session = sessionFactory.openSession();
+            tx = session.beginTransaction();
+            //Remove the records of user
+            Query query = session.getNamedQuery("PepDepartment.removeDept");
+            if(StringUtils.isNotBlank(pepUserID))//Null check for pepUserID
+            {
+                query.setString("pepUsrId", pepUserID);
+                query.executeUpdate();
+                // Save or update the updated tables
+                for(int i=0;i<updatedPePDetailsToDb.size();i++)
+                {
+                    LOGGER.info("This is from updatePepDeptDetails.Loop"+updatedPePDetailsToDb.get(i).getId().getDeptId());   
+                    session.saveOrUpdate(updatedPePDetailsToDb.get(i));
+                    isUpdated = true;
+                }
+               
+            }
+           
+            
+        }
+        finally{
+            session.flush();
+            tx.commit();
+            session.close();
+        }
+        LOGGER.info("This is from updatePepDeptDetails...Exit");
+        return isUpdated;
+    }
+
+
+    /**
+     * This method will return the department details on base of dependent no/desc from ADSE table
+     * @throws PEPPersistencyException 
+     * @throws PEPFetchException 
+     */
+    @Override
+    public ArrayList getDeptDetailsByDepNoFromADSE(String departmentsToBesearched) throws PEPPersistencyException
+        {
+        LOGGER.info("This is from getDeptDetailsByDepNoFromADSE...Start"+departmentsToBesearched);
+        //Call the method getLikeDepartmentDetails()
+      //  ArrayList <DepartmentDetails> searchedDepartmentDetails = getSearchedDeptmentDetails();
+        ArrayList<DepartmentDetails> searchedDepartmentDetails = null;
+        try {
+            searchedDepartmentDetails = getLikeSearchDepartmentDetails(departmentsToBesearched);
+            
+        }
+        catch (PEPFetchException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            throw new PEPPersistencyException("Exception while getting Dept Details from ADSE");
+        }
+        LOGGER.info("This is from getDeptDetailsByDepNoFromADSE...Exit");
+        return searchedDepartmentDetails;
+       
+    }
+
+
+
+/**
+ * This method will return the Department Details from ADSE table on base of Lan ID for internal User
+ */
+
+    @Override
+    public ArrayList getDepartmentDetailsForInernalFirstTimeLogin(String lanId)
+        throws PEPPersistencyException {
+        LOGGER.info("This is from getDepartmentDetailsForInernalFirstTimeLogin...Start");
+        ArrayList <DepartmentDetails> searchedDepartmentDetails = getAllDepartmentDetails();
+        LOGGER.info("This is from getDepartmentDetailsForInernalFirstTimeLogin...End");
+        return searchedDepartmentDetails;
+    }
+
+
+/**
+ * This method will return the Pet details on base of Vendor Email
+ */
+    @Override
+    public List<WorkFlow> getPetDetailsByVendor(String userEmailAddress, String vendorId)
+        throws PEPPersistencyException {
+        LOGGER.info("This is from getPetDetailsByVendor...Start");
+        LOGGER.info("User Email Address..."+userEmailAddress);
+         List<WorkFlow> workFlowList = null;
+         try {
+            
+             List<PetsFound> petList = getWorkListDisplayData(null,userEmailAddress,null,vendorId);
+             WorkListDisplay workListDisplay = getFormatedPetDetails(petList);
+             workFlowList = workListDisplay.getWorkListDisplay();
+         }
+         catch (SQLException e) {
+             e.printStackTrace();
+             throw new PEPPersistencyException("SQLException from getPetDetailsByVendor");
+         }
+         catch (ParseException e) {
+             e.printStackTrace();
+             throw new PEPPersistencyException("ParseException from getPetDetailsByVendor");
+         }
+         LOGGER.info("This is from getPetDetailsByVendor...End");
+         return workFlowList;
+       
+    }
+
+
+/**
+ * This method will return the Department details for the External user for the first time using Email address
+ */
+@Override
+public ArrayList getDepartmentDetailsForExternalFirstTimeLogin(
+    String userEmailAddress) throws PEPPersistencyException {
+    LOGGER.info("This is from getDepartmentDetailsForExternalFirstTimeLogin...Start");
+    ArrayList<DepartmentDetails> searchedDepartmentDetails = new ArrayList();
+    try {
+        searchedDepartmentDetails = getDepartmentDetailsForExternalUserFirstTimeLogin(userEmailAddress);
+    }
+    catch (PEPFetchException e) {
+        e.printStackTrace();
+        throw new PEPPersistencyException("Exception While getting the Department Details");
+    }
+    LOGGER.info("This is from getDepartmentDetailsForExternalFirstTimeLogin...End");
+    return searchedDepartmentDetails;
+}
+
+
+
+
+// To  test with portal Interface...............
+
+/**
+ * Gets the department details for external user first time login.
+ *
+ * @param vendorEmail the vendor email
+ * @return the department details for external user first time login
+ */
+public ArrayList<DepartmentDetails> getDepartmentDetailsForExternalUserFirstTimeLogin(String vendorEmail) throws PEPFetchException{
+    Session session = null;
+    Transaction tx = null;
+    ArrayList<DepartmentDetails> adseDepartmentList = new ArrayList<DepartmentDetails>();
+    try{
+    session = sessionFactory.openSession();
+    tx = session.beginTransaction();            
+   //Hibernate provides a createSQLQuery method to let you call your native SQL statement directly.   
+    Query query = session.createSQLQuery(xqueryConstants.getAllDepartmentDetails(vendorEmail));   
+    List<Object[]> rows = query.list();
+    for(Object[] row : rows){      
+        DepartmentDetails departmentDetails = new DepartmentDetails();
+        departmentDetails.setId(row[0].toString());
+        departmentDetails.setDesc(row[1].toString());   
+        adseDepartmentList.add(departmentDetails);          
+    }       
+    
+    }finally{
+     session.flush();  
+     tx.commit();
+     session.close();
+    }
+    return adseDepartmentList;    
+ }
+
+
+
+/**
+* Gets the like department details it  is applicable for search box on the pop up department screen applicable for the External User and Belk User as well.
+*
+* @param searchString the search string
+* @return the like department details
+*/
+public ArrayList<DepartmentDetails> getLikeSearchDepartmentDetails(String searchString) throws PEPFetchException
+{
+    LOGGER.info("This is from getLikeSearchDepartmentDetails...Start");
+    Session session = null;
+    Transaction tx = null;
+    ArrayList<DepartmentDetails> adseDepartmentList = new ArrayList<DepartmentDetails>();    
+    try{
+         session = sessionFactory.openSession();
+         tx = session.beginTransaction(); 
+   //Hibernate provides a createSQLQuery method to let you call your native SQL statement directly. 
+   
+    if(searchString.matches("[0-9]+")){//If contains only numbers then it is Department ID
+        Query query = session.createSQLQuery(xqueryConstants.getLikeDepartmentDetailsForNumber(searchString)); 
+        LOGGER.info("511..Query.." + query);
+        if(query!=null)
+        {
+            List<Object[]> rows = query.list();
+            if(rows!=null&&rows.size()>0)
+            {
+                for(Object[] row : rows){     
+                    LOGGER.info("This is from getLikeSearchDepartmentDetails..Number"+row[0].toString());
+                    DepartmentDetails departmentDetails = new DepartmentDetails();
+                    departmentDetails.setId(row[0].toString());
+                    departmentDetails.setDesc(row[1].toString());   
+                    adseDepartmentList.add(departmentDetails);          
+                } 
+            }
+        }
+        
+    }else{
+        LOGGER.info("This is from getLikeSearchDepartmentDetails search is a desc");
+      //Hibernate provides a createSQLQuery method to let you call your native SQL statement directly.   
+        Query query1 = session.createSQLQuery(xqueryConstants.getLikeDepartmentDetailsForString(searchString));  
+        if(query1!=null)
+        {
+            List<Object[]> rows1 = query1.list();
+            if(rows1!=null && rows1.size()>0)
+            {
+                for(Object[] row : rows1){      
+                    LOGGER.info("This is from getLikeSearchDepartmentDetails..String"+row[0].toString());
+                    DepartmentDetails departmentDetails = new DepartmentDetails();
+                    departmentDetails.setId(row[0].toString());
+                    departmentDetails.setDesc(row[1].toString());   
+                    adseDepartmentList.add(departmentDetails);          
+                }
+            }
+            
+        }
+        
+    }
+   
+  }catch(Exception e){
+ }
+finally
+{
+    session.flush(); 
+    tx.commit();
+    session.close();
+   
+}
+ 
+    LOGGER.info("This is from getLikeSearchDepartmentDetails...End");
+    return adseDepartmentList; 
+}
+
+
+/**
+ * Gets the all the merchandise department details for the Belk User,The Belk User is DCA .
+ * All Merchandise department details need to be displayed on the  the Department Pop Up Screen ,when the Belk User logs in for the first time 
+ * 
+ * @param orinNo the orin no
+ * @return the all department details
+ */
+public ArrayList<DepartmentDetails> getAllDepartmentDetails() 
+{
+    Session session = null;
+    Transaction tx =null;
+    ArrayList<DepartmentDetails> adseDepartmentList = new ArrayList<DepartmentDetails>();
+    try{
+    session = sessionFactory.openSession();
+    tx = session.beginTransaction();            
+   //Hibernate provides a createSQLQuery method to let you call your native SQL statement directly.   
+    Query query = session.createSQLQuery(xqueryConstants.getAllDepartmentDetails());   
+    
+    List<Object[]> rows = query.list();
+    for(Object[] row : rows){      
+        DepartmentDetails departmentDetails = new DepartmentDetails();
+        departmentDetails.setId(row[0].toString());
+        departmentDetails.setDesc(row[1].toString());   
+        adseDepartmentList.add(departmentDetails);          
+    }       
+     
+    }finally{
+     session.flush();  
+     tx.commit();
+     session.close();
+    }
+    return adseDepartmentList; 
+}
+
+
+
+
+
+/**
+ * Gets the work list display data.
+ *
+ * @return the work list display data
+ * @throws SQLException 
+ * @throws ParseException 
+ */
+public List<PetsFound> getWorkListDisplayData(String depts,String email,String pepId,String supplierId) throws SQLException, ParseException {
+    LOGGER.info("This is from getWorkListDisplayData..Start+Email:"+email );
+    LOGGER.info("depts:"+depts+",email:"+email+", pepId:"+pepId+", supplierId:"+supplierId);
+    List<PetsFound> petList = new ArrayList<PetsFound>();
+    PetsFound pet=null;
+    XqueryConstants xqueryConstants= new XqueryConstants();
+      Session session = null;
+      Transaction tx =  null;
+      try{
+        session = sessionFactory.openSession();
+        tx = session.beginTransaction();      
+       //Hibernate provides a createSQLQuery method to let you call your native SQL statement directly.   
+        Query query = session.createSQLQuery(xqueryConstants.getWorkListDisplayData(depts, email, pepId, supplierId));  
+        LOGGER.info("Query..default123-->" + query);
+        // execute delete SQL statement
+        List<Object[]> rows = query.list();
+        if (rows != null) {
+            LOGGER.info("recordsFetched..." + rows.size());
+            for(Object[] row : rows){   
+               // LOGGER.info("Query Executing");
+                String parentStyleORIN = row[0]!=null?row[0].toString():null;
+                
+                String orinNumber=row[1]!=null?row[1].toString():null;
+                String deptId= row[2]!=null?row[2].toString():null;
+                String supplierId_temp = row[3]!=null?row[3].toString():null;
+                
+                
+                
+                String productName=row[4]!=null?row[4].toString():null;
+                String entryType=row[5]!=null?row[5].toString():null;
+                
+                String primaryUPC=row[6]!=null?row[6].toString():null;
+                String colorDesc=row[7]!=null?row[7].toString():null;
+                
+                String vendorName=row[8]!=null?row[8].toString():null;
+                String vendorStyle=row[9]!=null?row[9].toString():null;
+                String petStatus=row[10]!=null?row[10].toString():null;
+                
+                String imageState=row[11]!=null?row[11].toString():null;
+                String contentState=row[12]!=null?row[12].toString():null;
+                String completionDate=row[13]!=null?row[13].toString():null;  
+                String omniChannelIndicator=row[14]!=null?row[14].toString():null;
+                
+               
+           /*     LOGGER.info("parentStyleORIN" + "\t" + parentStyleORIN);
+                LOGGER.info("orinNumber" + "\t" + orinNumber);
+                LOGGER.info("deptId" + "\t" + deptId);
+                LOGGER.info("productName" + "\t" + productName);
+                LOGGER.info("entryType" + "\t" + entryType);
+                LOGGER.info("vendorName" + "\t" + vendorName);
+                LOGGER.info("vendorStyle" + "\t" + vendorStyle);
+                LOGGER.info("imageState" + "\t" + imageState);
+                LOGGER.info("contentState" + "\t" + contentState);
+                LOGGER.info("completionDate" + "\t" + completionDate);
+                LOGGER.info("omni channel indicator" + "\t" + omniChannelIndicator);*/
+                pet  = mapAdseDbPetsToPortal(parentStyleORIN,orinNumber,deptId,productName,entryType,vendorName,vendorStyle,imageState,contentState,completionDate,pet,omniChannelIndicator, primaryUPC, colorDesc, petStatus);                                    
+                petList.add(pet);
+                
+                //String primaryUPC,String colorDesc,String petStatus
+            }
+      } 
+        
+     
+  }catch(Exception e){
+      e.printStackTrace();
+    
+ }
+  finally
+  {
+      LOGGER.info("recordsFetched. worklistdisplayDAOimpl finally block.." );
+      session.flush();
+      tx.commit();
+      session.close();
+     
+  }
+
+        LOGGER.info("This is from getWorkListDisplayData..End" );
+    return petList;
+
+    
+}
+
+
+
+
+/**
+ * Map adse db pets to portal.
+ *
+ * @param parentStyleORIN the parent style orin
+ * @param orinNumber the orin number
+ * @param deptId the dept id
+ * @param productName the product name
+ * @param entryType the entry type
+ * @param vendorName the vendor name
+ * @param vendorStyle the vendor style
+ * @param imageState the image state
+ * @param contentState the content state
+ * @param completionDate the completion date
+ * @param pet the pet
+ * @param omniChannelIndicator 
+ * @return the pets found
+ */
+private PetsFound mapAdseDbPetsToPortal(String parentStyleORIN,
+    String orinNumber, String deptId, String productName, String entryType,
+    String vendorName, String vendorStyle, String imageState,
+    String contentState, String completionDate, PetsFound pet, String omniChannelIndicator,String primaryUPC,String colorDesc,String petStatus) {
+    LOGGER.info("This is from mapAdseDbPetsToPortal..Enter" );
+    pet = new PetsFound();
+    pet.setParentStyleOrin(parentStyleORIN);
+    pet.setOrinNumber(orinNumber);
+    pet.setDeptId(deptId);
+    pet.setProductName(productName); 
+    pet.setEntryType(entryType);
+    pet.setVendorName(vendorName);
+    pet.setVendorStyle(vendorStyle);
+    pet.setImageState(imageState);
+    pet.setContentState(contentState);
+    pet.setCompletionDate(completionDate);
+    pet.setOmniChannelVendor(omniChannelIndicator);
+    pet.setPrimaryUPC(primaryUPC);
+    pet.setColorDesc(colorDesc);
+    pet.setPetStatus(petStatus);
+    LOGGER.info("This is from mapAdseDbPetsToPortal..Exit" );
+    return pet; 
+}
+
+/**
+ * This method will return the Class details from the ADSE on base of department
+ */
+
+@Override
+public List<ClassDetails> getClassDetailsByDepNos(String departmentNumbers)
+    throws PEPPersistencyException {
+    LOGGER.info("This is from getClassDetailsByDepNos...Start"+departmentNumbers);
+    //Call the method getLikeDepartmentDetails()
+  //  ArrayList <DepartmentDetails> searchedDepartmentDetails = getSearchedDeptmentDetails();
+    List<ClassDetails> searchedClassDetails = null;
+    try {
+        searchedClassDetails = getClassDetails(departmentNumbers);
+        
+    }
+    catch (PEPFetchException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+        throw new PEPPersistencyException("Exception while getting Class Details from ADSE");
+    }
+    LOGGER.info("This is from getDeptDetailsByDepNoFromADSE...Exit");
+    return searchedClassDetails;
+    
+}
+
+/**
+ * This method will return the class details based on input departments
+ * @param departmentNumbers
+ * @return
+ * @throws PEPFetchException
+ */
+
+
+private List<ClassDetails> getClassDetails(String departmentNumbers)throws PEPFetchException {
+    LOGGER.info("This is from getClassDetails...Enter");
+    Session session = null;
+    Transaction tx = null;
+    List<ClassDetails> classDetailsList = new ArrayList<ClassDetails>();
+    try{
+    session = sessionFactory.openSession();
+    tx = session.beginTransaction();            
+    LOGGER.info("This is from getClassDetails..."+departmentNumbers);
+   //Hibernate provides a createSQLQuery method to let you call your native SQL statement directly.   
+    Query query = session.createSQLQuery(xqueryConstants.getClassDetailsUsingDeptnumbers(departmentNumbers));   
+    List<Object[]> rows = query.list();
+    for(Object[] row : rows){      
+        ClassDetails classDetails = new ClassDetails();
+        classDetails.setId(row[0].toString());
+        classDetails.setDesc(row[1].toString());   
+        classDetailsList.add(classDetails);          
+    }       
+    
+    }finally{
+     session.flush();   
+     tx.commit();
+     session.close();
+    }
+    LOGGER.info("This is from getClassDetails...Exit");
+    return classDetailsList; 
+}
+
+/**
+ * This method will fetch the WorkList Details on base of the Advance search.
+ */
+
+@Override
+public List<WorkFlow> getPetDetailsByAdvSearch(AdvanceSearch advanceSearch)
+    throws PEPPersistencyException {
+    LOGGER.info("getPetDetailsByAdvSearch....Enter");
+    ArrayList pepDetails = null;
+    List<WorkFlow> workFlowList = null;
+   
+  
+    try {
+        List<PetsFound> petList = getAdvWorkListDisplayData(advanceSearch);
+        LOGGER.info("getPetDetailsByAdvSearch....Enter1111" +petList.size());
+        WorkListDisplay workListDisplay = getFormatedPetDetails(petList);
+        workFlowList = workListDisplay.getWorkListDisplay();
+        LOGGER.info("getPetDetailsByAdvSearch DAO........Enter2222" +workFlowList.size());
+    }
+    catch (SQLException e) {
+        e.printStackTrace(System.out);
+       throw new PEPPersistencyException("SQL Exception cought from getPetDetailsByDepNos");
+       
+    }
+    catch (ParseException e) {
+      
+        e.printStackTrace(System.out);
+        //System.out.println("");
+        throw new PEPPersistencyException("Parse Exception cought from getPetDetailsByDepNos");
+    }
+    return workFlowList;
+}
+
+/**
+ * This method will fetch the WorkList Details on base of the Advance search.
+ * @param advanceSearch
+ * @return
+ * @throws SQLException
+ * @throws ParseException
+ */
+
+private List<PetsFound> getAdvWorkListDisplayData(AdvanceSearch advanceSearch)throws SQLException, ParseException  {
+   
+        LOGGER.info("This is from getAdvWorkListDisplayData..Start" );
+        List<PetsFound> petList = new ArrayList<PetsFound>();
+        PetsFound pet=null;
+        XqueryConstants xqueryConstants= new XqueryConstants();
+        
+        
+            Session session = null;
+            Transaction tx =  null;
+            
+          try{
+            session = sessionFactory.openSession();
+            tx = session.beginTransaction();      
+           //Hibernate provides a createSQLQuery method to let you call your native SQL statement directly.   
+            Query query = session.createSQLQuery(xqueryConstants.getAdvWorkListDisplayData(advanceSearch));  
+            LOGGER.info("Query.." + query);
+            // execute delete SQL statement
+            List<Object[]> rows = query.list();
+            if (rows != null) {
+                LOGGER.info("recordsFetched..." + rows);
+                for(Object[] row : rows){   
+                   // LOGGER.info("Query Executing");
+                    String parentStyleORIN = row[0]!=null?row[0].toString():null;
+                    
+                    String orinNumber=row[1]!=null?row[1].toString():null;
+                    String deptId= row[2]!=null?row[2].toString():null;
+                    
+                    String supplierId=row[3]!=null?row[3].toString():null;
+                    String productName=row[4]!=null?row[4].toString():null;
+                    String entryType=row[5]!=null?row[5].toString():null;
+                    String primaryUPC = row[6]!=null?row[6].toString():null;
+                    String vendorName=row[7]!=null?row[7].toString():null;
+                    String vendorStyle=row[8]!=null?row[8].toString():null;
+                    String classId = row[9]!=null?row[9].toString():null;
+                    String petStatus=row[10]!=null?row[10].toString():null;
+                    String imageState=row[11]!=null?row[11].toString():null;
+                    String contentState=row[12]!=null?row[12].toString():null;
+                    String completionDate=row[13]!=null?row[13].toString():null;  
+                    String omniChannelIndicator=row[14]!=null?row[14].toString():null;
+                    String req_Type=row[15]!=null?row[15].toString():null;
+                    
+                    
+                    
+                    /*String productName=row[3]!=null?row[3].toString():null;
+                    String entryType=row[4]!=null?row[4].toString():null;
+                    String vendorName=row[5]!=null?row[5].toString():null;
+                    String vendorStyle=row[6]!=null?row[6].toString():null;
+                    String imageState=row[7]!=null?row[7].toString():null;
+                    String contentState=row[8]!=null?row[8].toString():null;
+                    
+                    String petStatus=row[9]!=null?row[9].toString():null; 
+                    
+                    String completionDate=row[10]!=null?row[10].toString():null;  
+                    String omniChannelIndicator=row[11]!=null?row[11].toString():null;  
+                    */
+                    LOGGER.info("parentStyleORIN" + "\t" + parentStyleORIN);
+                    LOGGER.info("orinNumber" + "\t" + orinNumber);
+                    LOGGER.info("deptId" + "\t" + deptId);
+                    LOGGER.info("productName" + "\t" + productName);
+                    LOGGER.info("entryType" + "\t" + entryType);
+                    LOGGER.info("vendorName" + "\t" + vendorName);
+                    LOGGER.info("vendorStyle" + "\t" + vendorStyle);
+                    LOGGER.info("imageState" + "\t" + imageState);
+                    LOGGER.info("contentState" + "\t" + contentState);
+                    LOGGER.info("petStatus" + "\t" + petStatus);
+                    LOGGER.info("completionDate" + "\t" + completionDate);
+                    LOGGER.info("omni channel indicator" + "\t" + omniChannelIndicator);
+                    pet  = mapAdseDbPetsToPortalAdvSearch(parentStyleORIN, orinNumber, deptId, supplierId, productName, entryType, primaryUPC, classId, vendorName, vendorStyle, imageState, contentState, petStatus, completionDate, pet, omniChannelIndicator, req_Type);                                    
+                    petList.add(pet);
+                }
+                
+          } 
+            LOGGER.info("End of try873...");
+            LOGGER.info("End of try874.." +rows.size()+"==========" +petList.size());
+      }catch(Exception e){
+          LOGGER.info("inside catch dao in search");
+          e.printStackTrace(System.out);        
+     }
+      finally
+      {
+          LOGGER.info("recordsFetched. getAdvWorkListDisplayData finally block.." );
+          session.flush();   
+          tx.commit();
+          session.close();
+         
+      }
+
+            LOGGER.info("This is from getAdvWorkListDisplayData..End" );
+            return petList;
+
+        
+   
+}
+
+private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
+    String orinNumber, String deptId, String supplierId,String productName, String entryType,String primaryUPC,String classId,
+    String vendorName, String vendorStyle, String imageState,
+    String contentState, String petStatus, String completionDate, PetsFound pet, String omniChannelIndicator,String req_Type) {
+    LOGGER.info("This is from mapAdseDbPetsToPortalAdvSearch..Enter" );
+    pet = new PetsFound();
+    pet.setParentStyleOrin(parentStyleORIN);
+    pet.setOrinNumber(orinNumber);
+    pet.setDeptId(deptId);
+    pet.setProductName(productName); 
+    pet.setEntryType(entryType);
+    pet.setVendorName(vendorName);
+    pet.setVendorStyle(vendorStyle);
+    pet.setImageState(imageState);
+    pet.setContentState(contentState);
+    
+    pet.setSupplierId(supplierId);
+    pet.setPrimaryUPC(primaryUPC);
+    //pet.setVendorName(vendorName)
+    pet.setReq_Type(req_Type);
+    pet.setClassId(classId);
+    
+    
+    pet.setPetStatus(petStatus);
+    
+    pet.setCompletionDate(completionDate);
+    pet.setOmniChannelVendor(omniChannelIndicator);
+    
+    LOGGER.info("This is from mapAdseDbPetsToPortalAdvSearch..Exit" );
+    return pet; 
+    
+    
+}
+
+}

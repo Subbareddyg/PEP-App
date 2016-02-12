@@ -1,0 +1,39 @@
+ 	 
+
+//saveContent content is called on click of the Save button to update the attributes 
+function saveContent()
+	{ 
+			
+	 	 	document.forms['contentDisplayForm'].actionParameter.value = "saveContent";	 		
+	    	document.forms['contentDisplayForm'].submit(); 
+		
+	} 
+
+
+//update content status  is called on click of the Submit  button at the Style Color Data Level 
+	function updateContentStatusForStyleColorData()
+	{ 
+		    
+		 	document.forms['contentDisplayForm'].updateContentStatusStyleColorActionParameter.value = "updateContentStatusForStyleColor";			
+		    document.forms['contentDisplayForm'].submit(); 
+	
+	} 
+	
+	 
+
+//log out to the Belk User Login page or External Vendor Login Page depending upon the username 
+function logout_home(){	
+		
+		var username = document.getElementById("username").value;
+		
+		
+		
+		if(username.indexOf('@') === -1) 
+		{
+		   window.location = "/wps/portal/home/InternalLogin";
+		} else {
+			
+			window.location = "/wps/portal/home/ExternalVendorLogin";
+		}
+		
+	}

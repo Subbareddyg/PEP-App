@@ -1,0 +1,254 @@
+
+package com.belk.pep.vo;
+
+import java.io.Serializable;
+
+
+
+/**
+ * The Class SkuVO.
+ */
+public class SkuVO  implements Serializable{
+
+
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 4742910274704461468L;
+
+    /** The style id. */
+    private String styleId;
+
+
+    /** The orin. */
+    private String orin;
+
+    /** The color code. */
+    private String colorCode;
+
+    /** The color. */
+    private String color;
+
+    /** The content status. */
+    private String contentStatus;
+
+    /** The completion date. */
+    private  String completionDate;
+
+    /** The vendor size. */
+    private String vendorSize;
+
+
+    /** The omni channel size description. */
+    private String omniChannelSizeDescription;
+
+    /** The entry type. */
+    private String entryType;
+
+    private String contentStatusCode;
+
+    /**
+     * Instantiates a new sku vo.
+     */
+    public SkuVO() {
+
+    }
+
+
+    /**
+     * Gets the color.
+     *
+     * @return the color
+     */
+    public String getColor() {
+        return color;
+    }
+
+
+    /**
+     * Gets the color code.
+     *
+     * @return the colorCode
+     */
+    public String getColorCode() {
+        return colorCode;
+    }
+
+
+    /**
+     * Gets the completion date.
+     *
+     * @return the completionDate
+     */
+    public String getCompletionDate() {
+        return completionDate;
+    }
+
+    /**
+     * Gets the content status.
+     *
+     * @return the contentStatus
+     */
+    public String getContentStatus() {
+        return contentStatus;
+    }
+
+
+
+    /**
+     * @return the contentStatusCode
+     */
+    public String getContentStatusCode() {
+        return contentStatusCode;
+    }
+
+    /**
+     * Gets the entry type.
+     *
+     * @return the entryType
+     */
+    public String getEntryType() {
+        return entryType;
+    }
+
+    /**
+     * Gets the omni channel size description.
+     *
+     * @return the omniChannelSizeDescription
+     */
+    public String getOmniChannelSizeDescription() {
+        return omniChannelSizeDescription;
+    }
+
+    /**
+     * Gets the orin.
+     *
+     * @return the orin
+     */
+    public String getOrin() {
+        return orin;
+    }
+
+
+
+    /**
+     * Gets the style id.
+     *
+     * @return the styleId
+     */
+    public String getStyleId() {
+        return styleId;
+    }
+
+    /**
+     * Gets the vendor size.
+     *
+     * @return the vendorSize
+     */
+    public String getVendorSize() {
+        return vendorSize;
+    }
+
+    /**
+     * Sets the color.
+     *
+     * @param color the color to set
+     */
+    public void setColor(String color) {
+        this.color = color;
+    }
+
+    /**
+     * Sets the color code.
+     *
+     * @param colorCode the colorCode to set
+     */
+    public void setColorCode(String colorCode) {
+        this.colorCode = colorCode;
+    }
+
+    /**
+     * Sets the completion date.
+     *
+     * @param completionDate the completionDate to set
+     */
+    public void setCompletionDate(String completionDate) {
+        this.completionDate = completionDate;
+    }
+
+    /**
+     * Sets the content status.
+     *
+     * @param contentStatus the contentStatus to set
+     */
+    public void setContentStatus(String contentStatus) {
+        this.contentStatus = contentStatus;
+    }
+
+    /**
+     * @param contentStatusCode the contentStatusCode to set
+     */
+    public void setContentStatusCode(String contentStatusCode) {
+        this.contentStatusCode = contentStatusCode;
+    }
+
+    /**
+     * Sets the entry type.
+     *
+     * @param entryType the entryType to set
+     */
+    public void setEntryType(String entryType) {
+        this.entryType = entryType;
+    }
+
+    /**
+     * Sets the omni channel size description.
+     *
+     * @param omniChannelSizeDescription the omniChannelSizeDescription to set
+     */
+    public void setOmniChannelSizeDescription(String omniChannelSizeDescription) {
+        this.omniChannelSizeDescription = omniChannelSizeDescription;
+    }
+
+    /**
+     * Sets the orin.
+     *
+     * @param orin the orin to set
+     */
+    public void setOrin(String orin) {
+        this.orin = orin;
+    }
+
+    /**
+     * Sets the style id.
+     *
+     * @param styleId the styleId to set
+     */
+    public void setStyleId(String styleId) {
+        this.styleId = styleId;
+    }
+
+    /**
+     * Sets the vendor size.
+     *
+     * @param vendorSize the vendorSize to set
+     */
+    public void setVendorSize(String vendorSize) {
+        this.vendorSize = vendorSize;
+    }
+
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return "SkuVO [styleId=" + styleId + ", orin=" + orin + ", colorCode="
+                + colorCode + ", color=" + color + ", contentStatus="
+                + contentStatus + ", completionDate=" + completionDate
+                + ", vendorSize=" + vendorSize + ", omniChannelSizeDescription="
+                + omniChannelSizeDescription + ", entryType=" + entryType + "]";
+    }
+
+
+
+
+}

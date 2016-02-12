@@ -1,0 +1,15 @@
+package com.belk.pep.model;
+
+/**
+ * The Class RadioButtonContainer.
+ */
+public class RadioButtonContainer {
+
+    /**
+     * Instantiates a new radio button container.
+     */
+    public RadioButtonContainer() {
+
+    }
+
+}

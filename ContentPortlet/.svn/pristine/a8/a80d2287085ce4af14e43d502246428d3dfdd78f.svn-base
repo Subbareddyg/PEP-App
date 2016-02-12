@@ -1,0 +1,572 @@
+
+package com.belk.pep.controller;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Logger;
+
+import javax.portlet.ActionRequest;
+import javax.portlet.ActionResponse;
+import javax.portlet.RenderRequest;
+import javax.portlet.RenderResponse;
+
+import org.apache.commons.lang.StringUtils;
+import org.json.JSONObject;
+import org.springframework.web.portlet.ModelAndView;
+import org.springframework.web.portlet.mvc.Controller;
+
+import com.belk.pep.attributes.AttributesBean;
+import com.belk.pep.attributes.ItemIdBean;
+import com.belk.pep.constants.ContentScreenConstants;
+import com.belk.pep.delegate.ContentDelegate;
+import com.belk.pep.form.ContentForm;
+import com.belk.pep.jsonconverter.DataObject;
+import com.belk.pep.model.PetsFound;
+import com.belk.pep.vo.ChildSkuVO;
+import com.belk.pep.vo.ContentHistoryVO;
+import com.belk.pep.vo.ContentManagementVO;
+import com.belk.pep.vo.CopyAttributesVO;
+import com.belk.pep.vo.GlobalAttributesVO;
+import com.belk.pep.vo.ItemPrimaryHierarchyVO;
+import com.belk.pep.vo.ProductDetailsVO;
+import com.belk.pep.vo.StyleAndItsChildDisplay;
+import com.belk.pep.vo.StyleColorVO;
+import com.belk.pep.vo.StyleInformationVO;
+import com.belk.pep.vo.StyleVO;
+import com.google.gson.Gson;
+
+
+
+/**
+ * The Class ContentController.
+ */
+public class ContentController implements Controller {
+	
+	/** The Constant LOGGER. */
+	private final static Logger LOGGER = Logger.getLogger(ContentController.class.getName()); 
+	
+
+	/** The content delegate. */
+	private ContentDelegate contentDelegate;
+	
+	/** The content form. */
+	ContentForm contentForm = null;
+	
+	/** The style attributes. */
+	private GlobalAttributesVO styleAttributes;
+	
+	/** The response message web service. */
+	private String responseMessageWebService = "";
+	
+	
+
+
+	
+
+  
+    /*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.springframework.web.portlet.mvc.Controller#handleActionRequest(javax
+	 * .portlet.ActionRequest, javax.portlet.ActionResponse)
+	 */
+	public void handleActionRequest(ActionRequest request,
+			ActionResponse response)  {
+	    
+	        
+	    
+    	    //get the ORIN number from the request ,on click of the initiated link  on the worklist display screen
+    	    LOGGER.info("ContentPortlet:handleActionRequest:Enter");
+    	    String actionLoadStyleAttributes = request.getParameter("action");
+    	    
+    	     
+    	    System.out.println("Called action = "+actionLoadStyleAttributes);
+    	    
+    	     String  orinNumber = request.getParameter(ContentScreenConstants.ORIN_NUMBER);
+    	        
+                
+                if(null == orinNumber){
+                    
+                    //error handling
+                    
+                }
+                else
+                {
+                    LOGGER.info("orin number clicked to load style attributes is ="+ orinNumber);
+                    LOGGER.info("ORIN number  from the action method"+orinNumber); 
+                    
+                   setStyleAttributes(contentDelegate.getStyleAttributesADSE(orinNumber));
+                    
+                }
+                
+                
+                //save content action
+                String saveContentAction =  request.getParameter("actionParameter");
+                
+                if(saveContentAction != null && saveContentAction.equals("saveContent")){
+                    
+                    LOGGER.info("call to createContentWebService from Content Controller");
+                    
+                    //get input from user for update content
+                    String stylePetId = request.getParameter("stylePetId");
+                    String brand = request.getParameter("brand");
+                    String omniChannelBrandXpath = request.getParameter("omniChannelBrandXpath");
+                    String belkExclusive = request.getParameter("belkExclusive");
+                    String belkExclusiveXpath = request.getParameter("belkExclusiveXpath");
+                    
+                    
+                   LOGGER.info("user inputs for content update -> stylePetId = "+stylePetId+" , brand = "+brand+", omniChannelBrandXpath = "+omniChannelBrandXpath+", belkExclusive = "+belkExclusive+", belkExclusiveXpath = "+belkExclusiveXpath);
+                   
+                   //form JSON request to web service
+                   ItemIdBean listOfAttributes = new ItemIdBean();
+                   AttributesBean attributesBeanBrand = new AttributesBean(omniChannelBrandXpath,brand);
+                   
+                   AttributesBean attributesBeanBelkExclusive = new AttributesBean(belkExclusiveXpath,belkExclusive);
+                   
+                   List<AttributesBean> attributesBeansList = new ArrayList<AttributesBean>();
+                   attributesBeansList.add(attributesBeanBrand);
+                   attributesBeansList.add(attributesBeanBelkExclusive);
+                   
+                   listOfAttributes.setItemId(stylePetId);
+                   listOfAttributes.setList(attributesBeansList);//this will complete JSON request data
+                   Gson gson = new Gson();
+                   //convert from JSON to String
+                   String createContentWebServiceReq = gson.toJson(listOfAttributes);
+                   
+                   //request to web service
+                   LOGGER.info("Request to createContentWebService = "+createContentWebServiceReq);
+                   //call web service and read response
+                   setResponseMessageWebService(contentDelegate.createContentWebService(createContentWebServiceReq));
+                   LOGGER.info("Reponse from createContentWebService = "+ getResponseMessageWebService());
+                  
+                   
+                    
+                }
+                
+                //Make a call to IPH Mapping restful webservice
+                String mapItemToIphAction =  request.getParameter("mapItemToIphActionParameter");
+                LOGGER.info("mapItemToIphAction= "+ mapItemToIphAction);
+
+                if(StringUtils.isNotBlank(mapItemToIphAction))
+                {
+                    LOGGER.info("mapItemToIphAction not blank---- "+mapItemToIphAction);
+                    if(mapItemToIphAction.equalsIgnoreCase("mapItemToIph"))
+                    {
+                        String  itemPrimaryHierarchyId =  request.getParameter("iphCategoryName");
+                        LOGGER.info("itemPrimaryHierarchyId---- "+itemPrimaryHierarchyId);
+                        String  petId =  request.getParameter("petId");
+                        LOGGER.info("petId--------"+petId);
+                        DataObject dataObject = new DataObject(petId,itemPrimaryHierarchyId);
+                        Gson gson = new Gson();
+
+                        // convert java object to JSON format,
+                        // and returned as JSON formatted string
+                        String json = gson.toJson(dataObject);
+                        String webServiceMessage= contentDelegate.callIPHMappingWebService(json);
+                        request.getPortletSession().setAttribute("displayMessage", webServiceMessage);
+                        LOGGER.info("after setting in portlet session.....");
+                      
+                        LOGGER.info("webServiceMessage--------"+webServiceMessage);
+                    } 
+                }
+    	        
+    	    
+    	  
+    	    
+    	    
+	        /*if(request.getParameter(ContentScreenConstants.ORIN_NUMBER)!=null)
+	        {     	               
+	            response.setRenderParameter(ContentScreenConstants.ORIN_NUMBER, request.getParameter(ContentScreenConstants.ORIN_NUMBER));
+	        }*/
+		
+	}
+	 /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.springframework.web.portlet.mvc.Controller#handleRenderRequest(javax
+     * .portlet.RenderRequest, javax.portlet.RenderResponse)
+     */
+    public ModelAndView handleRenderRequest(RenderRequest request,
+            RenderResponse response) throws Exception
+    {
+        
+        String orinNumber = "'249041001'";
+        contentForm = new ContentForm();
+       
+
+        //get the logged in user detail  from the session and the role of the user can be a vendor or dca-to do
+        
+        ModelAndView modelAndView = null;        
+        modelAndView= new ModelAndView(ContentScreenConstants.PAGE);  
+        // Get the Style Information
+        StyleInformationVO  styleInformation= contentDelegate.getStyleInformation(orinNumber);
+        if(styleInformation!=null)
+        {
+            contentForm.setStyleInformationVO(styleInformation);
+            modelAndView.addObject(ContentScreenConstants.CONTENT_DISPLAY_FORM, contentForm);
+            
+        }
+        // Get the Product Information
+        ProductDetailsVO   productInformation= contentDelegate.getProductInformation(orinNumber);
+        if(productInformation!=null)
+        {
+            contentForm.setProductDetailsVO(productInformation);
+            modelAndView.addObject(ContentScreenConstants.CONTENT_DISPLAY_FORM, contentForm);
+            
+        }
+        
+        // Get the Pet List
+        List<PetsFound> petList=contentDelegate.getPetList(orinNumber);
+        if(petList!=null && petList.size()>0)
+        {
+            LOGGER.info("StylePetsFound---Data");
+            modelAndView.addObject("StylePetsFound","Data exists");
+            StyleAndItsChildDisplay styleAndItsChildDisplay= displayPetsAsParentChild(petList);
+            contentForm.setStyleAndItsChildDisplay(styleAndItsChildDisplay);
+            modelAndView.addObject(ContentScreenConstants.CONTENT_DISPLAY_FORM, contentForm);
+        }
+        else
+        {
+            LOGGER.info("noStylePetsFound---No Data exist");
+            System.out.println("Style Attributes is Null for Global Styles");
+            contentForm.setNoPetsFoundInADSEDatabase("true");
+            modelAndView.addObject("noStylePetsFound","No Data exists");
+            modelAndView.addObject(ContentScreenConstants.CONTENT_DISPLAY_FORM, contentForm);
+        }
+        
+        // Check if style attribute is not  null
+        if(getStyleAttributes() != null){
+            
+            System.out.println("check value from getter and setter method  for style attributes="+getStyleAttributes().toString());
+            contentForm.setGlobalAttributesDisplay(getStyleAttributes());
+            modelAndView.addObject(ContentScreenConstants.CONTENT_DISPLAY_FORM, contentForm);
+            
+        }
+        else
+        {
+            
+            System.out.println("Style Attributes is Null for Global Styles");
+        }
+        
+        // Check  the response from the webservice 
+        if(getResponseMessageWebService().contains("successfully")){
+            LOGGER.info("getResponseMessageWebService---successfully");
+            
+            modelAndView.addObject("responseSuccessMessageWebService", getResponseMessageWebService());
+        }
+        else if(getResponseMessageWebService().contains("updation failed"))
+        {
+            LOGGER.info("getResponseMessageWebService---updation failed");
+            modelAndView.addObject("responseSuccessMessageWebService", getResponseMessageWebService());
+        }
+        else if(getResponseMessageWebService().contains("HTTP Error"))
+        {
+            LOGGER.info("getResponseMessageWebService---HTTP Error");
+            modelAndView.addObject("responseFailMessageWebService", getResponseMessageWebService());
+        }
+        
+        //Get the content management data from the ADSE_PET_CATALOG table and prep the data for displaying on the Pet Content Management Section
+        ContentManagementVO  contentManagementVO= contentDelegate.getContentManagmentInfo(orinNumber);
+        if(contentManagementVO!=null)
+        {
+            contentForm.setContentManagementDisplay(contentManagementVO);
+            modelAndView.addObject(ContentScreenConstants.CONTENT_DISPLAY_FORM, contentForm);
+        }
+                
+        
+        //Get the SKU data from the ADSE  tables and prep the data for displaying on the Child SKU Section
+        List<ChildSkuVO>  skuList= contentDelegate.getChildSkuInfo(orinNumber);
+        if(skuList!=null && skuList.size()>0 )
+        {
+            contentForm.setChildSkuDisplayList(skuList);
+            modelAndView.addObject(ContentScreenConstants.CONTENT_DISPLAY_FORM, contentForm);
+        }
+        else
+        {
+            //set the message to display on the screen No Child SKU data exists
+            contentForm.setNoChildSkuDataPresent("No Child SKU data exists");
+            modelAndView.addObject(ContentScreenConstants.CONTENT_DISPLAY_FORM, contentForm);
+        }
+        
+        
+        //Get the Content History from the ADSE  tables and prepare  the data for displaying on the Content History Section
+        ContentHistoryVO  contentHistory= contentDelegate.getContentHistory(orinNumber);
+        if(contentHistory!=null)
+        {
+            contentForm.setContentHistoryDisplay(contentHistory);
+            modelAndView.addObject(ContentScreenConstants.CONTENT_DISPLAY_FORM, contentForm);
+        }
+        else
+        {
+          //set the message to display on the screen No Content History Data Exists
+            contentForm.setContentHistoryData("No Content History data exists");
+       
+        }
+        
+        //Get the Copy Attribute data from the ADSE  tables and prepare  the data for displaying on the Content Copy Attribute  Section
+        List<CopyAttributesVO>  copyAttributeList= contentDelegate.getCopyAttributes(orinNumber);
+        if(copyAttributeList!=null && copyAttributeList.size()>0 )
+        {
+            contentForm.setCopyAttributeDisplayList(copyAttributeList);
+            modelAndView.addObject(ContentScreenConstants.CONTENT_DISPLAY_FORM, contentForm);
+        }
+        else
+        {
+            //set the message to display on the screen no  copy attribute  data exists
+            contentForm.setCopyAttribueData("No Copy Attrbute Data exists");;
+            modelAndView.addObject(ContentScreenConstants.CONTENT_DISPLAY_FORM, contentForm);
+        }
+        //Get the IPH Categories to display on the  screen;
+        List<ItemPrimaryHierarchyVO>  iphCategoryList  =contentDelegate.getItemPrimaryHierarchyCategories();
+        if(iphCategoryList!=null && iphCategoryList.size()>0)
+        {
+            Map<String, String> categoryReferenceData =  splitIPHCategoryByCategoryId(iphCategoryList);           
+            contentForm.setCategoryReferenceData(categoryReferenceData);
+         
+            modelAndView.addObject(ContentScreenConstants.CONTENT_DISPLAY_FORM, contentForm);
+        }
+        
+        //Display IPH mapping webservice response        
+       
+        if(request.getPortletSession().getAttribute("displayMessage")  != null)
+        {
+            String webServiceResponseMessage=  (String) request.getPortletSession().getAttribute("displayMessage");
+            LOGGER.info("webServiceResponseMessage..."+webServiceResponseMessage);
+            contentForm.setWebServiceResponseMessage(webServiceResponseMessage);
+            modelAndView.addObject(ContentScreenConstants.CONTENT_DISPLAY_FORM, contentForm);
+        }
+        else
+        { 
+            //No  webservice response message to be displayed on the content screen
+            contentForm.setWebServiceResponseMessage(" ");
+            modelAndView.addObject(ContentScreenConstants.CONTENT_DISPLAY_FORM, contentForm);
+        }
+       
+     
+        return modelAndView;  
+    }
+    
+     
+       
+    
+    /**
+     * Split iph category by category id.
+     *
+     * @param iphCategoryList the iph category list
+     */
+    private Map<String, String> splitIPHCategoryByCategoryId(List<ItemPrimaryHierarchyVO> iphCategoryList) {
+       
+            Map<String,String> categoryMap = new LinkedHashMap<String,String>();
+            for(ItemPrimaryHierarchyVO iphCategory:iphCategoryList)
+            {
+                 String fullCategoryName=  iphCategory.getCategoryName();
+                 
+                 int index=fullCategoryName.indexOf('-');//get the first occurence of -
+                 LOGGER.info("index.."+index);
+                 String categoryId=fullCategoryName.substring(0, index);
+                 LOGGER.info("categoryId...."+categoryId);
+                 String categoryName= fullCategoryName.substring(index+1);
+                 LOGGER.info("categoryName...."+categoryName);
+                 categoryMap.put(categoryId, categoryName);
+            }
+           
+            return categoryMap;
+        
+    }
+    /**
+     * Display pets as parent child.
+     *
+     * @param petList the pet list
+     * @return 
+     */
+    private StyleAndItsChildDisplay displayPetsAsParentChild(List<PetsFound> petList) {
+        String childsParentOrinNumber = null;
+        String  parentOrinNumber = null;
+        List<StyleColorVO> styleColorList = new ArrayList<StyleColorVO>();
+        List<StyleVO> styleList = new ArrayList<StyleVO>();
+        List<StyleVO> styleListForContentDisplay = new ArrayList<StyleVO>();
+        StyleAndItsChildDisplay styAndItsChildDisplay= new StyleAndItsChildDisplay();
+        for(PetsFound pet:petList)
+        {
+            String entryType=pet.getEntryType();               
+            if(entryType.equalsIgnoreCase("StyleColor"))
+            {
+                childsParentOrinNumber=pet.getParentStyleOrin();
+                String orinNumber=pet.getOrinNumber();
+                String color= pet.getColor();
+                String vendorSize=pet.getVendorSize();
+                String omniSizeDescription=pet.getOmniSizeDescription();              
+                String contentState=pet.getContentState();
+                String completionDate=pet.getCompletionDate();
+                StyleColorVO styleColor = new StyleColorVO();
+                styleColor.setEntryType(entryType);
+                styleColor.setParentStyleOrinNumber(childsParentOrinNumber);     
+                styleColor.setOrinNumber(orinNumber);
+                styleColor.setColor(color);
+                styleColor.setVendorSize(vendorSize);
+                styleColor.setOmniSizeDescription(omniSizeDescription);              
+                styleColor.setCompletionDate(completionDate);              
+                styleColor.setContentStatus(contentState);
+           
+                styleColorList.add(styleColor);//Add all the StyleColor to the  Style Color list 
+                LOGGER.info("styleColorList size.."+styleColorList.size());
+              
+            }
+            if(entryType.equalsIgnoreCase("Style"))
+            {                    
+             
+                        String orinNumber= pet.getOrinNumber();
+                        String vendorStyle= pet.getVendorStyle();
+                        parentOrinNumber=pet.getParentStyleOrin();                      
+                        String color= pet.getColor();
+                        String vendorSize=pet.getVendorSize();
+                        String omniSizeDescription=pet.getOmniSizeDescription();              
+                        String contentState=pet.getContentState();
+                        String completionDate=pet.getCompletionDate();
+                        StyleVO style =new StyleVO();
+                        style.setEntryType(entryType);
+                        style.setColor(color);
+                        style.setOrinNumber(orinNumber);
+                        style.setParentOrinNumber(parentOrinNumber);
+                        style.setVendorSize(vendorSize);
+                        style.setCompletionDate(completionDate);                      
+                        style.setContentStatus(contentState);                     
+                        style.setOmniSizeDescription(omniSizeDescription);
+                        styleList.add(style);//Add all the Style to the  Style  list  
+              
+                }        
+            
+           
+        }
+        LOGGER.info("styleList length="+styleList.size());
+        LOGGER.info("styleColorList length="+styleColorList.size()); 
+        //Check for the Parent Child association
+        for(StyleVO style :styleList)
+        {
+           parentOrinNumber = style.getParentOrinNumber();
+           LOGGER.info("parentOrinNumber.."+parentOrinNumber);  
+           List<StyleColorVO> subStyleColorList = new ArrayList<StyleColorVO>();
+           
+           for(StyleColorVO styleColor :styleColorList)
+           {
+              
+              childsParentOrinNumber =styleColor.getParentStyleOrinNumber();
+             // LOGGER.info("childsParentOrinNumber.."+childsParentOrinNumber);
+              if(parentOrinNumber.equalsIgnoreCase(childsParentOrinNumber))
+              {
+                
+                  subStyleColorList.add(styleColor);
+              }
+               
+           }
+           if(subStyleColorList.size()>0){
+               LOGGER.info("Size of the Color List .."+subStyleColorList.size());
+               style.setStyleColorList(subStyleColorList);//Add all the child Style Colors to the Parent Style             
+           }else{
+               LOGGER.info("This is from Else part just return the style list with out any child style color");
+               
+           }
+           styleListForContentDisplay.add(style);//Add  all the Styles with children Style Color to the declared style list for content  display  
+            
+        }
+        
+        
+        LOGGER.info("styleColorList.."+styleListForContentDisplay.size());
+        styAndItsChildDisplay.setStyleList(styleListForContentDisplay);//Add all the Styles to the content list display form
+        
+        LOGGER.info("styAndItsChildDisplay size.."+styAndItsChildDisplay.getStyleList().size());
+        return styAndItsChildDisplay;
+        
+    }
+    
+    
+    // Method to pass JSON Array
+    public JSONObject populateJson(String stylePetId, String brand,String omniChannelBrandXpath,
+        String belkExclusive,String belkExclusiveXpath ) {
+        JSONObject jsonObj = new JSONObject();
+        
+        
+
+        /*try
+        {
+            
+            jsonObj.put("itemId", stylePetId);
+            jsonList.add("attributeName");
+            jsonList.add("attributeName", omniChannelBrandXpath);
+            jsonObj.put("attributeValue", brand);
+            jsonObj.put("attributeName", belkExclusiveXpath);
+            jsonObj.put("attributeValue", belkExclusive);
+
+        } catch (JSONException e) {
+
+            e.printStackTrace();
+        }*/
+        return jsonObj;
+
+    }
+    
+    
+    
+    /**
+     * Gets the content delegate.
+     *
+     * @return the content delegate
+     */
+    public ContentDelegate getContentDelegate() {
+        return contentDelegate;
+    }
+    
+    /**
+     * Sets the content delegate.
+     *
+     * @param contentDelegate the new content delegate
+     */
+    public void setContentDelegate(ContentDelegate contentDelegate) {
+        this.contentDelegate = contentDelegate;
+    }
+    
+    /**
+     * Gets the style attributes.
+     *
+     * @return the styleAttributes
+     */
+    public GlobalAttributesVO getStyleAttributes() {
+        return styleAttributes;
+    }
+    
+    /**
+     * Sets the style attributes.
+     *
+     * @param styleAttributes the styleAttributes to set
+     */
+    public void setStyleAttributes(GlobalAttributesVO styleAttributes) {
+        this.styleAttributes = styleAttributes;
+    }
+    
+    /**
+     * Gets the response message web service.
+     *
+     * @return the responseMessageWebService
+     */
+    public String getResponseMessageWebService() {
+        return responseMessageWebService;
+    }
+    
+    /**
+     * Sets the response message web service.
+     *
+     * @param responseMessageWebService the responseMessageWebService to set
+     */
+    public void setResponseMessageWebService(String responseMessageWebService) {
+        this.responseMessageWebService = responseMessageWebService;
+    }
+  
+   
+
+
+}

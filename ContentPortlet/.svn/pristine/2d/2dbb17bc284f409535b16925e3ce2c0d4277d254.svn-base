@@ -1,0 +1,133 @@
+
+package com.belk.pep.vo;
+
+import java.io.Serializable;
+
+/**
+ * The Class LegacyAttributesVO.
+ *
+ * @author AFUSOS3
+ */
+public class LegacyAttributesVO  implements Serializable{
+
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 3419915584374744387L;
+
+    /** The blue martini attribute name. */
+    private String blueMartiniAttributeName;
+
+
+    /** The blue martini attribute value. */
+    private String blueMartiniAttributeValue;
+
+    /**
+     * Instantiates a new legacy attributes vo.
+     */
+    public LegacyAttributesVO() {
+
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final LegacyAttributesVO other = (LegacyAttributesVO) obj;
+        if (blueMartiniAttributeName == null) {
+            if (other.blueMartiniAttributeName != null) {
+                return false;
+            }
+        }
+        else if (!blueMartiniAttributeName
+                .equals(other.blueMartiniAttributeName)) {
+            return false;
+        }
+        if (blueMartiniAttributeValue == null) {
+            if (other.blueMartiniAttributeValue != null) {
+                return false;
+            }
+        }
+        else if (!blueMartiniAttributeValue
+                .equals(other.blueMartiniAttributeValue)) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Gets the blue martini attribute name.
+     *
+     * @return the blueMartiniAttributeName
+     */
+    public String getBlueMartiniAttributeName() {
+        return blueMartiniAttributeName;
+    }
+
+    /**
+     * Gets the blue martini attribute value.
+     *
+     * @return the blueMartiniAttributeValue
+     */
+    public String getBlueMartiniAttributeValue() {
+        return blueMartiniAttributeValue;
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result =
+                prime
+                * result
+                + (blueMartiniAttributeName == null ? 0
+                    : blueMartiniAttributeName.hashCode());
+        result =
+                prime
+                * result
+                + (blueMartiniAttributeValue == null ? 0
+                    : blueMartiniAttributeValue.hashCode());
+        return result;
+    }
+
+    /**
+     * Sets the blue martini attribute name.
+     *
+     * @param blueMartiniAttributeName the blueMartiniAttributeName to set
+     */
+    public void setBlueMartiniAttributeName(String blueMartiniAttributeName) {
+        this.blueMartiniAttributeName = blueMartiniAttributeName;
+    }
+
+    /**
+     * Sets the blue martini attribute value.
+     *
+     * @param blueMartiniAttributeValue the blueMartiniAttributeValue to set
+     */
+    public void setBlueMartiniAttributeValue(String blueMartiniAttributeValue) {
+        this.blueMartiniAttributeValue = blueMartiniAttributeValue;
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return "LegacyAttributesVO [blueMartiniAttributeName="
+                + blueMartiniAttributeName + ", blueMartiniAttributeValue="
+                + blueMartiniAttributeValue + "]";
+    }
+
+
+}

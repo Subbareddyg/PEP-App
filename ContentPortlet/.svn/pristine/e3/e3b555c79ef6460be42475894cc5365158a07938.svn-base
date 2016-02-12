@@ -1,0 +1,797 @@
+
+package com.belk.pep.constants;
+
+/**
+ * The Class XqueryConstants.
+ *
+ * @author AFUSOS3
+ */
+public class XqueryConstants {
+    
+    
+    /**
+     * Gets the style information.
+     *
+     * @param orinNumber the orin number
+     * @return the style information
+     */
+    public  String getStyleInformation(String orinNumber) {          
+           
+           final String GET_STYLE_INFORMATION_XQUERY=
+                  " with "
+                 +"  INPUT( ORIN) as ( "
+                 +"  Select " 
+               
+                 +orinNumber
+                 +"  ORIN FROM dual),"
+                      
+                      
+                 +"  TypeIndex(indx, typ) as ((Select 1 indx, 'Style' typ  from  dual) union (select 2 indx, 'StyleColor' typ from dual) union (select 3 indx, 'SKU' typ from dual)), "
+                   
+                +"   Items as (select nvl(aic.PARENT_MDMID, aic.MDMID) PARENT_MDMID, "
+                +"           aic.MDMID, aic.XML_DATA, aic.ENTRY_TYPE, descr DESCRIPTION, "
+                +"           i.supplier_id PRIMARY_SUPPLIER_ID, deptid dept_id, classid Class_Id,"
+                +"           Vendor_Image, Vendor_Sample "
+                +"   from VENDORPORTAL.ADSE_ITEM_CATALOG aic, XMLTABLE('for $i in $XML_DATA/pim_entry/entry "
+                +"             let $uda80 := (fn:count($i/Item_UDA_Spec/UDA/Id) gt 0 and $i/Item_UDA_Spec/UDA/Id eq \"80\"),"
+                +"                 $non_sellable_pack := (fn:count($i/Item_Complex_Pack_Spec/Sellable_Flag/text()) gt 0 and  "
+                +"                         ($i/Item_Complex_Pack_Spec/Sellable_Flag eq \"false\")),"
+                +"                 $removal := $i/Item_Ctg_Spec/System/Removal_Flag eq \"true\" "
+                +"         return  <out> "
+                +"                    <dept_id>{fn:tokenize($i/../item_header/category_paths/category[fn:starts-with(path, \"Merchandise_Hierarchy\")]/path, \"\\||///\")[5]}</dept_id> "
+                +"                   <class_id>{fn:tokenize($i/../item_header/category_paths/category[fn:starts-with(path, \"Merchandise_Hierarchy\")]/path,\"\\||///\")[6]}</class_id> "
+                +"                  <supplier_id>{$i/Item_Ctg_Spec/Supplier[Primary_Flag eq \"true\"]/Id}</supplier_id> "
+                +"                     <desc>{$i/Item_Ctg_Spec/Description/Long}</desc> "
+                +"                  <flag>{$uda80 and $non_sellable_pack and $removal}</flag> "
+                +"                 </out>' "
+                +"       passing aic.XML_DATA as \"XML_DATA\"  "
+                +"       columns "
+                +"       flag varchar(10) path '/out/flag',"
+                +"       supplier_id VARCHAR2(20) path '/out/supplier_id',"
+                +"       deptid VARCHAR2(20) path '/out/dept_id',"
+                +"       classid varchar2(20) path '/out/class_id',"
+                +"       descr VARCHAR2(64) path '/out/desc') i, Input inp, VENDORPORTAL.ADSE_PET_CATALOG pet,"
+                +"       XMLTABLE('for $i in $pet/pim_entry/entry "
+                +"           return "
+                +"             <out> "
+                +"                   <img>{if(count($i/Image_Sec_Spec/Images//*) gt 0) then \"Y\" else \"N\"}</img> "
+                +"                   <sample>{if(count($i/Image_Sec_Spec/Sample//*) gt 0) then \"Y\" else \"N\"}</sample> "
+                +"              </out>' passing pet.xml_data as \"pet\" "
+                +"           columns "
+                +"               Vendor_Image varchar2(1) path '/out/img',"
+                +"               Vendor_Sample varchar2(1) path '/out/sample') s"
+                +"   where flag = 'false' and pet.mdmid = aic.mdmid and  "
+                +"   pet.MOD_DTM = '01-JAN-00 12.00.00.000000000 PM' and "
+                +"   aic.MOD_DTM = '01-JAN-00 12.00.00.000000000 PM' and "
+                +"       aic.MDMID=inp.ORIN and "
+                +"       aic.Entry_type in ('SKU', 'Style', 'StyleColor')),"
+                                   
+                +" ItemSupplier as (select i.PARENT_MDMID, i.MDMID, i.DESCRIPTION, "
+                +"           i.PRIMARY_SUPPLIER_ID, i.dept_id, s.SITE_NAME, "
+                +"           i.ENTRY_TYPE, s.VenId, i.Class_Id, s.OmnichannelIndicator, "
+                +"           s.VenName, sup.XML_DATA, Vendor_Image, Vendor_Sample "
+                +"           from Items i, VENDORPORTAL.ADSE_SUPPLIER_CATALOG sup, "
+                +"       XMLTABLE('for $i in $XML_DATA/pim_entry/entry "
+                +"           return $i' "
+                +"               passing sup.xml_data as \"XML_DATA\" "
+                +"               COLUMNS "
+                +"                   Id  varchar2(20) path 'Supplier_Ctg_Spec/Id',"
+                +"                   VenName varchar2(20) path 'Supplier_Ctg_Spec/Name',"
+                + "                  VenId varchar2(20) path 'Supplier_Ctg_Spec/VEN_Id',"
+                +"                   SITE_NAME varchar2(50) path 'Supplier_Ctg_Spec/Name',"
+                +"                   OmnichannelIndicator varchar(2) path 'if (Supplier_Site_Spec/Omni_Channel eq \"true\") then \"Y\" else \"N\"' "
+                +"             ) s "
+                +"   where sup.MOD_DTM = '01-JAN-00 12.00.00.000000000 PM' and "
+                +"   i.PRIMARY_SUPPLIER_ID = sup.MDMID "
+                +"     ) "
+                     
+
+               +"  select i.MDMID ORIN, i.dept_id, VenName Vendor_Name, "
+               +"          i.PARENT_MDMID Style_Id,  i.Class_Id, i.VenId Vendor_Id,"
+               +"          i.DESCRIPTION, i.OmnichannelIndicator OMNIChennel_Vendor,"
+               +"          Vendor_Image, Vendor_Sample,"
+               +"            i.ENTRY_TYPE "
+               +"    from ItemSupplier i,  TypeIndex t "
+               +"    where i.ENTRY_TYPE = t.typ "
+               +"      order by i.Parent_MDMID, t.indx ";                 
+                           
+                         
+           return GET_STYLE_INFORMATION_XQUERY;             
+           
+       }
+    
+    /**
+     * Gets the product details.
+     *
+     * @param orinNumber the orin number
+     * @return the product details
+     */
+    public  String getProductDetails(String orinNumber) {          
+        
+        final String GET_PRODUCT_INFORMATION_XQUERY=
+               " with "
+               + " INPUT(ORIN) as ( "
+               +" Select " 
+              
+               +orinNumber
+               +" ORIN FROM dual),"
+                   
+                   
+               +" TypeIndex(indx, typ) as ((Select 1 indx, 'Style' typ  from  dual) union (select 2 indx, 'StyleColor' typ from dual) union (select 3 indx, 'SKU' typ from dual)) "
+                
+               +" select nvl(aic.PARENT_MDMID, aic.MDMID) Style_Id,"
+               +"         aic.MDMID ORIN_NUM, i2.ProductName Product_Name, i.descr DESCRIPTION, aic.Entry_Type "
+               +" from VENDORPORTAL.ADSE_ITEM_CATALOG aic, XMLTABLE('for $i in $XML_DATA/pim_entry/entry "
+               +"           let $uda80 := (fn:count($i/Item_UDA_Spec/UDA/Id) gt 0 and $i/Item_UDA_Spec/UDA/Id eq \"80\"),"
+               +"               $non_sellable_pack := (fn:count($i/Item_Complex_Pack_Spec/Sellable_Flag/text()) gt 0 and "
+               +"                       ($i/Item_Complex_Pack_Spec/Sellable_Flag eq \"false\")),"
+               +"               $removal := $i/Item_Ctg_Spec/System/Removal_Flag eq \"true\" "
+               +"       return  <out> "
+               +"               <dept_id>{fn:tokenize($i/../item_header/category_paths/category[fn:starts-with(path, \"Merchandise_Hierarchy\")]/path,\"\\||///\")[5]}</dept_id> "
+               +"               <supplier_id>{$i/Item_Ctg_Spec/Supplier[Primary_Flag eq \"true\"]/Id}</supplier_id> "
+               +"                    <desc>{$i/Item_Ctg_Spec/Description/Long}</desc> "
+               +"                <flag>{$uda80 and $non_sellable_pack and $removal}</flag> "
+               +"            </out>' "
+               +"     passing aic.XML_DATA as \"XML_DATA\" "
+               +"     columns "
+               +"     flag varchar(10) path '/out/flag',"
+               +"     supplier_id VARCHAR2(20) path '/out/supplier_id',"
+               +"     deptid VARCHAR2(20) path '/out/dept_id',"
+               +"     descr VARCHAR2(64) path '/out/desc') i, Input inp, ADSE_ITEM_CATALOG aic2,"
+               +"     XMLTABLE('for $i in $XML_DATA/pim_entry/entry "
+               +"       return  <out> "
+               +"                   <prod_name>{$i//Product_Name}</prod_name> "
+               +"              </out>' "
+               +"     passing aic2.XML_DATA as \"XML_DATA\" "
+               +    " columns "
+               +     " ProductName varchar2(40) path '/out/prod_name') i2 "
+               + " where flag = 'false' and  "
+               + " aic.MOD_DTM = '01-JAN-00 12.00.00.000000000 PM' "
+               +   "  and aic.MDMID=inp.ORIN  and "
+               +  "  aic.Entry_type in ('SKU', 'StyleColor', 'Style') and  "
+               + " aic2.MOD_DTM = '01-JAN-00 12.00.00.000000000 PM' and "
+               +    " aic2.Entry_type = 'Style' and nvl(aic.PARENT_MDMID, aic.MDMID)=aic2.mdmid ";
+                      
+        return GET_PRODUCT_INFORMATION_XQUERY;             
+        
+    }
+    
+    
+    /**
+     * Gets the style and its child details.
+     *
+     * @param orinNumber the orin number
+     * @return the style and its child details
+     */
+    public  String getStyleAndItsChildDetails(String orinNumber)
+    {
+        
+        
+        final String GET_STYLE_STYLECOLOR_SKU_INFORMATION_XQUERY=
+               " WITH "
+               +" INPUT( ORIN) AS "
+              + " ( "
+               +"   SELECT "
+                  
+               +    orinNumber + " ORIN "
+               +"   FROM "
+               +"     dual "
+               +" ) "
+               +" , "
+               +" TypeIndex(indx, typ) AS ( "
+               +"  ( "
+               +"   SELECT "
+               +"     1 indx,"
+               +"     'Style' typ "
+               +  " FROM "
+               +"     dual "
+               +" ) "
+             + " UNION "
+              +"  ( "
+              +"    SELECT "
+              +"      2 indx, "
+              +"      'StyleColor' typ "
+              +"    FROM "
+              +"      dual "
+              +"  ) "
+             +" UNION "
+              +"  ( "
+              +"    SELECT "
+              +"      3 indx,"
+              +"      'SKU' typ "
+              +"    FROM "
+              +"      dual "
+              +"  ) "
+              +"  ),"
+              +"  Items AS "
+              +"  ( "
+              +"    SELECT "
+              +"      NVL(aic.PARENT_MDMID, aic.MDMID) PARENT_MDMID,"
+              +"      aic.MDMID,"
+              +"      aic.ENTRY_TYPE,"
+              +"      i.supplier_id PRIMARY_SUPPLIER_ID,"
+              +"      deptid dept_id,"
+              +"      classid Class_id,"
+              +"      VENDOR_COLOR_CODE,"
+              +"      VENDOR_COLOR_DESC,"
+              +"      VENDOR_SIZE_CODE,"
+              +"      VENDOR_SIZE_DESC,"
+              +"      p.ContentState,"
+              +"      p.completion_date "
+              +"    FROM "
+              +"      VENDORPORTAL.ADSE_ITEM_CATALOG aic,"
+              +"      XMLTABLE( "
+              +"      'for $i in $XML_DATA/pim_entry/entry   "         
+             +" let $uda80 := (fn:count($i/Item_UDA_Spec/UDA/Id) gt 0 and $i/Item_UDA_Spec/UDA/Id eq \"80\"),   "             
+             +" $non_sellable := (fn:count($i/Item_Simple_Pack_Spec/Sellable_Flag/text()) gt 0 and "                        
+             +" ($i/Item_Simple_Pack_Spec/Sellable_Flag eq \"false\")),"              
+             +" $non_sellable_pack := (fn:count($i/Item_Complex_Pack_Spec/Sellable_Flag/text()) gt 0 and "                        
+             +" ($i/Item_Complex_Pack_Spec/Sellable_Flag eq \"false\")),    "            
+            +"  $removal := $i/Item_Ctg_Spec/System/Removal_Flag eq \"true\"  "    
+            +"  return  <out> "                    
+            +"  <dept_id>{fn:tokenize($i/../item_header/category_paths/category[fn:starts-with(path, \"Merchandise_Hierarchy\")]/path,\"\\||///\")[5]}</dept_id> "                    
+            +"  <class_id>{fn:tokenize($i/../item_header/category_paths/category[fn:starts-with(path, \"Merchandise_Hierarchy\")]/path,\"\\||///\")[6]}</class_id>  "                   
+            +"  <supplier_id>{$i/Item_Ctg_Spec/Supplier[Primary_Flag eq \"true\"]/Id}</supplier_id>   "                 
+            +"  <flag>{$uda80 and $non_sellable_pack and $removal}</flag> "                   
+            +"  <colorCode>{$i/Item_SKU_Spec/Differentiators[Type eq \"COLOR\"]/Code}</colorCode>  "                  
+            +"  <colorDesc>{$i/Item_SKU_Spec/Differentiators[Type eq \"COLOR\"]/Vendor_Description}</colorDesc> "                   
+            +"  <sizeCode>{$i/Item_SKU_Spec/Differentiators[Type eq \"SIZE\"]/Code}</sizeCode> "                   
+            +"  <sizeDesc>{$i/Item_SKU_Spec/Differentiators[Type eq \"SIZE\"]/Vendor_Description}</sizeDesc>  "            
+            +"  </out>' "
+            +"        passing aic.XML_DATA AS \"XML_DATA\" columns flag VARCHAR(10) path "
+            +"        '/out/flag', supplier_id                        VARCHAR2(20) path "
+            +"        '/out/supplier_id', deptid                      VARCHAR2(20) path "
+            +"        '/out/dept_id', classid                         VARCHAR2(20) path "
+            +"        '/out/class_id', descr                          VARCHAR2(64) path "
+            +"        '/out/desc', VENDOR_COLOR_CODE                  VARCHAR2(10) path "
+            +"        '/out/colorCode', VENDOR_COLOR_DESC             VARCHAR2(40) path "
+            +"        '/out/colorDesc', VENDOR_SIZE_CODE              VARCHAR2(10) path "
+            +"        '/out/sizeCode', VENDOR_SIZE_DESC               VARCHAR2(10) path "
+            +"        '/out/sizeDesc') i,"
+            +"        ADSE_PET_CATALOG pet,"
+            +"        XMLTABLE( "
+            +"       'for $pet in $pets/pim_entry/entry  "   
+            +"  let $completionDate := $pet//Completion_Date, "
+            +"  $contentState := $pet//ContentState  "  
+            +"  return <out>  "     
+            +"  <id>{$pet/Pet_Ctg_Spec/Id}</id>  "    
+            +"  <completion_date>{$completionDate}</completion_date> "    
+            +"  <contentState>{$contentState}</contentState>  "
+            +"  <contentContainer>{fn:data($contentState/@container)}</contentContainer> "   
+            +"  </out>' "
+            +"        passing pet.XML_DATA AS \"pets\" columns completion_date VARCHAR2(10) path "
+            +"        '/out/completion_date', contentState                   VARCHAR2(20) path "
+            +"        '/out/contentState', contentContainer                  VARCHAR2(40) PATH "
+            +"        '/out/contentContainer') p,"
+            +"        Input inp,"
+            +"        VENDORPORTAL.adse_reference_data cont "
+            +"      WHERE "
+            +"        flag             = 'false' "
+            +"      AND aic.mdmid      =pet.mdmid "
+            +"      AND cont.mdmid     =p.ContentState "
+            +"      AND cont.entry_type=p.contentContainer "
+            +"      AND "
+            +"      ( "
+            +"          cont.thevalue  IS NULL "
+            +"        OR cont.thevalue <> 'Completed' "
+            +"       ) "
+            +"      AND pet.MOD_DTM = '01-JAN-00 12.00.00.000000000 PM' "
+            +"      AND aic.MOD_DTM = '01-JAN-00 12.00.00.000000000 PM' "
+            +"      AND "
+            +"        ( "
+            +"          aic.MDMID        =inp.ORIN "
+            +"        OR aic.parent_mdmid=inp.ORIN "
+            +"        ) "
+            +"      AND aic.Entry_type IN ('SKU', 'Style', 'StyleColor') "
+            +"    ) "
+            +"    , "
+            +"    ItemSupplier AS "
+            +"    ( "
+            +"      SELECT "
+            +"        i.PARENT_MDMID, "
+            +"        i.MDMID,"
+            +"        i.PRIMARY_SUPPLIER_ID,"
+            +"        i.dept_id, "
+            +"        i.Class_Id,"
+            +"        i.VENDOR_COLOR_CODE,"
+            +"        i.VENDOR_COLOR_DESC,"
+            +"        i.VENDOR_SIZE_CODE,"
+            +"        i.VENDOR_SIZE_DESC,"
+            +"        i.ENTRY_TYPE,"
+            +"        s.VenId,"
+            +"        i.ContentState,"
+            +"        i.completion_date "
+            +"      FROM "
+            +"        Items i,"
+            +"        VENDORPORTAL.ADSE_SUPPLIER_CATALOG sup,"
+            +"        XMLTABLE('for $i in $XML_DATA/pim_entry/entry  "        
+            +"  return $i' "
+            +"        passing sup.xml_data AS \"XML_DATA\" COLUMNS Id VARCHAR2(20) path "
+            +"        'Supplier_Ctg_Spec/Id', VenId                 VARCHAR2(20) path "
+            +"        'Supplier_Ctg_Spec/VEN_Id' ) s "
+            +"      WHERE "
+            +"        sup.MOD_DTM             = '01-JAN-00 12.00.00.000000000 PM' "
+            +"      AND i.PRIMARY_SUPPLIER_ID = sup.MDMID "
+            +"    ) "
+            +"  SELECT "
+            +"    PARENT_MDMID Style_ID,"
+            +"    MDMID ORIN,"
+            +"    VENDOR_COLOR_CODE "
+            +"    || ' ' "
+            +"    || VENDOR_COLOR_DESC COLOR,"
+            +"    VENDOR_SIZE_CODE "
+            +"   || ' ' "
+            +"    || VENDOR_SIZE_DESC Vendor_Size,"
+            +"    OMNI_SIZE_DESC,"
+            +"    ContentState,"
+            +"    completion_date,"
+            +"    ENTRY_TYPE "
+            +"  FROM "
+            +"   ( "
+            +"      SELECT " 
+            +"        PARENT_MDMID ,"
+            +"        MDMID ,"
+            +"        PRIMARY_SUPPLIER_ID,"
+            +"        dept_id,"
+            +"        VENDOR_COLOR_CODE,"
+            +"        VENDOR_COLOR_DESC ,"
+            +"        VENDOR_SIZE_CODE,"
+            +"        VENDOR_SIZE_DESC ,"
+            +"        OMNI_SIZE_DESC,"
+            +"        ContentState,"
+            +"        completion_date,"
+            +"        ENTRY_TYPE "
+            +"      FROM "
+            +"        ( "
+            +"          SELECT "
+            +"            i.PARENT_MDMID,"
+            +"            i.MDMID,"
+            +"            i.PRIMARY_SUPPLIER_ID,"
+            +"            i.dept_id,"
+            +"            i.VENDOR_COLOR_CODE,"
+            +"            i.VENDOR_COLOR_DESC,"
+            +"            i.VENDOR_SIZE_CODE,"
+            +"            i.VENDOR_SIZE_DESC,"
+            +"            o.OMNI_SIZE_DESC,"
+            +"            i.ContentState,"
+            +"            i.completion_date,"
+            +"            i.ENTRY_TYPE "
+            +"          FROM "
+            +"            ItemSupplier i,"
+            +"            ADSE_VENDOR_OMNISIZE_DESC omni,"
+            +"            xmltable('for $i in $XML//omni_size_desc return $i' passing "
+            +"            omni.XML_DATA AS \"XML\" columns OMNI_SIZE_DESC VARCHAR(40) path '.' ) "
+            +"            o "
+            +"          WHERE "
+             +"           i.Entry_Type         = 'SKU' "
+             +"         AND i.VENDOR_SIZE_CODE =omni.NRF_SIZE_CODE "
+             +"         AND i.dept_id          =omni.DEPT_ID "
+             +"         AND i.Class_Id         =omni.CLASS_ID "
+             +"         AND i.VenId            =omni.VENDOR_ID "
+             +"       ) "
+             +"     UNION "
+             +"       ( "
+             +"        SELECT "
+             +"           i.PARENT_MDMID,"
+             +"           i.MDMID,"
+             +"           i.PRIMARY_SUPPLIER_ID,"
+             +"           i.dept_id,"
+             +"           i.VENDOR_COLOR_CODE,"
+             +"           i.VENDOR_COLOR_DESC,"
+             +"           i.VENDOR_SIZE_CODE,"
+             +"           i.VENDOR_SIZE_DESC,"
+             +"           NULL OMNI_SIZE_DESC,"
+             +"           i.ContentState,"
+             +"           i.completion_date,"
+             +"           i.ENTRY_TYPE"
+             +"         FROM "
+             +"           ItemSupplier i "
+             +"         WHERE "
+             +"           i.Entry_Type IN ('Style', 'StyleColor') "
+             +"       )"
+             +"   ) "
+             +"   ,"
+             +"   TypeIndex typInd "
+             +" WHERE "
+             +"   ENTRY_TYPE = typInd.typ "
+             +" ORDER BY "
+             +"   NVL(PARENT_MDMID, MDMID),"
+             +"   indx";
+                       
+         return GET_STYLE_STYLECOLOR_SKU_INFORMATION_XQUERY;     
+        
+    }
+    
+   
+
+    
+    /**
+     * Gets the style color attribute details.
+     *
+     * @param orinNumber the orin number
+     * @return the style color attribute details
+     */
+    public  String getStyleColorAttributeDetails(String orinNumber) {          
+        
+        final String GET_STYLE_COLOR_ATTRIBUTE_INFORMATION_XQUERY=             
+                
+               " with "
+               +" INPUT( ORIN) as ( "
+               +" Select " 
+               +orinNumber
+               +" ORIN FROM dual) "     
+
+             +" select mdmid ORIN," 
+            +"  Vendor_Color," 
+            +"  '/pim_entry/entry/Ecomm_StyleColor_Spec/NRF_Color_Description' Vendor_Color_XPath,"
+            +"  Omni_Channel_Color, "
+            +"  '/pim_entry/entry/Ecomm_StyleColor_Spec/Omni_Channel_Color_Description' Omni_Channel_Color_XPath,"
+            +"  (select thevalue from ADSE_REFERENCE_DATA where mdmid = Color_Family_Code and Container=Color_Family_Container) Color_Family,"
+            +"  '/pim_entry/entry/Ecomm_StyleColor_Spec/Omnichannel_Color_Family' Omnichannel_Color_Family_XPath,"
+            +"  (select thevalue from ADSE_REFERENCE_DATA where mdmid = Super_Color_1_Code and Container=Super_Color_1_Container) Super_Color_1,"
+            +"  '/pim_entry/entry/Ecomm_StyleColor_Spec/Secondary_Color_1' Secondary_Color_1_XPath,"
+            +"  (select thevalue from ADSE_REFERENCE_DATA where mdmid = Super_Color_2_Code and Container=Super_Color_2_Container) Super_Color_2,"
+            +"  '/pim_entry/entry/Ecomm_StyleColor_Spec/Secondary_Color_2' Secondary_Color_2_XPath,"
+            +"  (select thevalue from ADSE_REFERENCE_DATA where mdmid = Super_Color_3_Code and Container=Super_Color_3_Container) Super_Color_3,"
+            +"  '/pim_entry/entry/Ecomm_StyleColor_Spec/Secondary_Color_3' Secondary_Color_3_XPath,"
+            +"  (select thevalue from ADSE_REFERENCE_DATA where mdmid = Super_Color_4_Code and Container=Super_Color_4_Container) Super_Color_4,"
+            +"  '/pim_entry/entry/Ecomm_StyleColor_Spec/Secondary_Color_4' Secondary_Color_4_XPath "
+            +"  from ADSE_ITEM_CATALOG,"
+            +"  xmltable('for $i in $pet/pim_entry/entry/Ecomm_StyleColor_Spec return $i' "
+            +"  passing XML_DATA as \"pet\" " 
+            +"   columns " 
+            +"  Vendor_Color varchar2(40) path 'NRF_Color_Description',"
+            +"  Omni_Channel_Color varchar2(40) path 'Omni_Channel_Color_Description',"
+            +"  Color_Family_Code varchar2(40) path 'Omnichannel_Color_Family',"
+            +"  Color_Family_Container varchar2(40) path 'Omnichannel_Color_Family/@container',"
+            +"   Super_Color_1_Code varchar2(40) path 'Secondary_Color_1',"
+            +"  Super_Color_1_Container varchar2(40) path 'Secondary_Color_1/@container',"
+            +"  Super_Color_2_Code varchar2(40) path 'Secondary_Color_2',"
+            +"  Super_Color_2_Container varchar2(40) path 'Secondary_Color_2/@container',"
+            +"  Super_Color_3_Code varchar2(40) path 'Secondary_Color_3',"
+            +"  Super_Color_3_Container varchar2(40) path 'Secondary_Color_3/@container',"
+            +"  Super_Color_4_Code varchar2(40) path 'Secondary_Color_4',"
+            +"  Super_Color_4_Container varchar2(40) path 'Secondary_Color_4/@container' "
+            +"  ) i, Input inp "
+            +"  where Entry_Type = 'StyleColor' and parent_mdmid=inp.ORIN "
+            +"  and MOD_DTM = '01-JAN-00 12.00.00.000000000 PM' "      ;
+              
+                      
+        return GET_STYLE_COLOR_ATTRIBUTE_INFORMATION_XQUERY;             
+        
+    }
+     
+    
+    /**
+     * Gets the pet content managment details.
+     *
+     * @param orinNumber the orin number
+     * @return the pet content managment details
+     */
+    public  String getPetContentManagmentDetails(String orinNumber) {          
+        
+        final String GET_PET_CONTENT_MANAGEMENT_INFORMATION_XQUERY=             
+               
+               
+               " with "
+               +"   INPUT( ORIN) as ( "
+               +"   Select "+           
+                 orinNumber
+               +"   ORIN FROM dual),"
+                     
+                     
+              +"    TypeIndex(indx, typ) as ((Select 1 indx, 'Style' typ  from  dual) union (Select 2 indx, 'StyleColor' typ  from  dual) union (select 3 indx, 'SKU' typ from dual)) "
+                  
+              +"    select  "
+              +"            aic.MDMID ORIN, nvl(aic.PARENT_MDMID, aic.MDMID) Style, "
+              +"            Name Style_Name, Brand, priority, aic.ENTRY_TYPE "
+              +"    from VENDORPORTAL.ADSE_ITEM_CATALOG aic, XMLTABLE('for $i in $XML_DATA/pim_entry/entry "
+              +"              return <out> "
+              +"                          <brand>{$i/Item_UDA_Spec/Brand}</brand> "
+              +"                    </out>' "
+              +"        passing aic.XML_DATA as \"XML_DATA\" "
+              +"        columns "
+              +"        Brand varchar(10) path '/out/brand') i, VENDORPORTAL.ADSE_PET_CATALOG pet,"
+              +"  XMLTABLE('for $pet in $pets/pim_entry/entry    "  
+              +"  return <out>   "   
+              +"   <name>{$pet/Pet_Ctg_Spec/Name}</name> "
+              +"   <priority>{$pet/Pet_Ctg_Spec/PO_Number}</priority> "
+              +"   </out>' " 
+              +"    passing pet.xml_data AS \"pets\"  "
+              +"    Columns " 
+              +"    Name VARCHAR2(20) path '/out/name',"
+              +"    priority varchar2(10) path '/out/priority') p, Input inp "
+              +"    where  "
+              +"    aic.MOD_DTM = '01-JAN-00 12.00.00.000000000 PM' and aic.mdmid = pet.mdmid "
+              +"    and pet.MOD_DTM = '01-JAN-00 12.00.00.000000000 PM' "
+              +"        and aic.mdmid = inp.ORIN and aic.Entry_Type='Style' "; 
+                      
+        return GET_PET_CONTENT_MANAGEMENT_INFORMATION_XQUERY;             
+        
+    }
+    
+    /**
+     * Gets the style attribute details.
+     *
+     * @param orinNumber the orin number
+     * @return the style attribute details
+     */
+    public  String getStyleAttributeDetails(String orinNumber) {          
+         
+         final String GET_STYLE_ATTRIBUTE_INFORMATION_XQUERY=             
+                 
+                " With "
+
+               +"  Input(ORIN) as (Select "+  orinNumber +" ORIN from dual) "
+
+               +"  select item.mdmid," 
+               +"          nvl(  i.OmniChannelBrand,           p.OmniChannelBrand        ) OmniChannelBrand, "
+               +"          '/pim_entry/entry/Ecomm_' || item.Entry_Type || '_Spec/OmniChannelBrand' OmniChannelBrand_XPath,"
+               +"          nvl(  i.Product_Description,        p.Product_Description     ) Product_Description,"
+               +"          '/pim_entry/entry/Ecomm_' || item.Entry_Type || '_Spec/Product_Description' Product_Description_XPath,"
+               +"          nvl(  i.Launch_Date,                p.Launch_Date             ) Launch_Date,"
+               +"          '/pim_entry/entry/Ecomm_' || item.Entry_Type || '_Spec/Launch_Date' Launch_Date_XPath,"
+               +"          nvl(  i.Belk_Exclusive,             p.Belk_Exclusive          ) Belk_Exclusive, "
+               +"          '/pim_entry/entry/Ecomm_' || item.Entry_Type || '_Spec/Belk_Exclusive' Belk_Exclusive_XPath,"
+               +"          nvl(  i.Channel_Exclusive,          p.Channel_Exclusive       ) Channel_Exclusive, "
+               +"          '/pim_entry/entry/Ecomm_' || item.Entry_Type || '_Spec/Channel_Exclusive' Channel_Exclusive_XPath,"
+               +"          nvl(  i.SDF,                        p.SDF                     ) SDF, "
+               +"          '/pim_entry/entry/Ecomm_' || item.Entry_Type || '_Spec/Supplier_Direct_Fulfillment' SDF_XPath,"
+               +"          nvl(  i.Product_Dimensions_UOM,     p.Product_Dimensions_UOM  ) Product_Dimensions_UOM,"
+               +"          '/pim_entry/entry/Ecomm_' || item.Entry_Type || '_Spec/Product_Dimensions/Product_Dimensions_UOM' Product_Dimensions_UOM_XPath,"
+               +"          nvl(  i.Product_Length,             p.Product_Length          ) Product_Length,"
+               +"          '/pim_entry/entry/Ecomm_' || item.Entry_Type || '_Spec/Product_Dimensions/Length' Product_Length_XPath,"
+               +"          nvl(  i.Product_Height,             p.Product_Height          ) Product_Height, "
+               +"          '/pim_entry/entry/Ecomm_' || item.Entry_Type || '_Spec/Product_Dimensions/Height' Product_Height_XPath,"
+               +"          nvl(  i.Product_Width,              p.Product_Width           ) Product_Width,"
+               +"          '/pim_entry/entry/Ecomm_' || item.Entry_Type || '_Spec/Product_Dimensions/Width' Product_Width_XPath,"
+               +"          nvl(  i.BOPIS,                      p.BOPIS                   ) BOPIS,"
+               +"          '/pim_entry/entry/Ecomm_' || item.Entry_Type || '_Spec/BOPIS' BOPIS_XPath,"
+               +"          nvl(  i.Gift_Box,                   p.Gift_Box                ) Gift_Box, "
+               +"          '/pim_entry/entry/Ecomm_' || item.Entry_Type || '_Spec/Gift_Box' Gift_Box_XPath,"
+               +"         nvl(  i.ImportedOrDomestic,         p.ImportedOrDomestic      ) ImportedOrDomestic, "
+               +"          '/pim_entry/entry/Ecomm_' || item.Entry_Type || '_Spec/SourcedDomestically' ImportedOrDomestic_XPath,"
+               +"          nvl(  i.Product_Weight_UOM,         p.Product_Weight_UOM      ) Product_Weight_UOM,"
+               +"          '/pim_entry/entry/Ecomm_' || item.Entry_Type || '_Spec/Product_Weight/UOM' Product_Weight_UOM_XPath,"
+               +"          nvl(  i.Product_Weight,             p.Product_Weight          ) Product_Weight,"
+               +"          '/pim_entry/entry/Ecomm_' || item.Entry_Type || '_Spec/Product_Weight/Weight' Product_Weight_XPath "
+               +"    from ADSE_Item_CATALOG item,"
+               +"  XMLTable('for $i in $item/pim_entry/entry/* "
+               +"            let $item_type := $i/../../item_header/category_paths/category[2]/pk "
+               +"            where name($i) eq concat(\"Ecomm_\",$item_type,\"_Spec\") "
+               +"            return $i' "
+               +"            passing item.XML_DATA as \"item\" "
+               + " columns "
+               +"  OmniChannelBrand varchar2(50) path 'OmniChannelBrand',"
+               +"  Product_Description varchar2(60) path 'Product_Description',"
+               +"  Launch_Date varchar2(50) path 'Launch_Date',"
+               +"  Belk_Exclusive varchar2(10) path 'Belk_Exclusive',"
+               +"  Channel_Exclusive varchar2(10) path 'Channel_Exclusive',"
+               +"  SDF varchar2(50) path 'Supplier_Direct_Fulfillment',"
+               +"  Product_Dimensions_UOM varchar2(50) path 'Product_Dimensions/Product_Dimensions_UOM',"
+               +"  Product_Length varchar2(50) path 'Product_Dimensions/Length',"
+               +"  Product_Height varchar2(50) path 'Product_Dimensions/Height',"
+               +"  Product_Width varchar2(50) path 'Product_Dimensions/Width',"
+               +"  BOPIS varchar2(60) path 'BOPIS',"
+               +"  Gift_Box varchar2(10) path 'Gift_Box',"
+               +"  ImportedOrDomestic varchar2(10) path 'if(SourcedDomestically eq \"false\") then \"Imported\" else \"Domestic\"',"
+               +"  Product_Weight_UOM varchar2(40) path 'Product_Weight/UOM',"
+               +"  Product_Weight varchar2(40) path 'Product_Weight/Weight'"
+               +"  ) i, ADSE_PET_CATALOG pet,"
+               +"  XMLTable('for $i in $item/pim_entry/entry/* "
+               +"            let $item_type := $i/../../pet_entry_header/category_paths/category[1]/pk "
+               +"            where name($i) eq concat(\"Ecomm_\",$item_type,\"_Spec\") "
+               +"            return $i' "
+               +"            passing pet.XML_DATA as \"item\" "
+               +"  columns "
+               +"  OmniChannelBrand varchar2(50) path 'OmniChannelBrand',"
+               +"  Product_Description varchar2(60) path 'Product_Description',"
+               +"  Launch_Date varchar2(50) path 'Launch_Date',"
+               +"  Belk_Exclusive varchar2(10) path 'Belk_Exclusive',"
+               +"  Channel_Exclusive varchar2(10) path 'Channel_Exclusive',"
+               +"  SDF varchar2(50) path 'Supplier_Direct_Fulfillment',"
+               +"  Product_Dimensions_UOM varchar2(50) path 'Product_Dimensions/Product_Dimensions_UOM',"
+               +"  Product_Length varchar2(50) path 'Product_Dimensions/Length',"
+               +"  Product_Height varchar2(50) path 'Product_Dimensions/Height',"
+               +"  Product_Width varchar2(50) path 'Product_Dimensions/Width',"
+               +"  BOPIS varchar2(60) path 'BOPIS',"
+               +"  Gift_Box varchar2(10) path 'Gift_Box',"
+               +"  ImportedOrDomestic varchar2(10) path 'if(SourcedDomestically eq \"false\") then \"Imported\" else \"Domestic\"',"
+               +"  Product_Weight_UOM varchar2(40) path 'Product_Weight/UOM',"
+               +"  Product_Weight varchar2(40) path 'Product_Weight/Weight'"
+               +" ) p, Input inp "
+               +"  where item.MOD_DTM = '01-JAN-00 12.00.00.000000000 PM' "
+               +"  and pet.MOD_DTM = '01-JAN-00 12.00.00.000000000 PM' "
+               +"  and inp.ORIN = item.mdmid and pet.mdmid=item.mdmid";
+               
+                       
+         return GET_STYLE_ATTRIBUTE_INFORMATION_XQUERY;             
+         
+     }
+
+
+
+
+    /**
+     * Gets the child sku details.
+     *
+     * @param orinNumber the orin number
+     * @return the child sku details
+     */
+    public  String getChildSKUDetails(String orinNumber) {          
+        
+        final String GET_CHILD_SKU_INFORMATION_XQUERY=             
+               
+               
+               " with "
+              +  " INPUT( ORIN) as ( "
+              + " Select " 
+             
+               + orinNumber
+               +" ORIN FROM dual) ,"
+                   
+                   
+              + " TypeIndex(indx, typ) as ((Select 1 indx, 'Style' typ  from  dual) union (Select 2 indx, 'StyleColor' typ  from  dual) union (select 3 indx, 'SKU' typ from dual))"
+                
+              +"  select aic.MDMID ORIN, ven_name VENDOR_NAME, "
+              +"          Name Style_Name, nvl(aic.PARENT_MDMID, aic.MDMID) Style, "
+              +"          colorCode COLOR_CODE, colorDesc COLOR_NAME, sizeDesc SIZE_NAME, aic.ENTRY_TYPE "
+              +"   from VENDORPORTAL.ADSE_ITEM_CATALOG aic, XMLTABLE('for $i in $XML_DATA/pim_entry/entry "
+              +"            return <out> "
+              +"                      <supplier_id>{$i//Supplier[Primary_Flag eq \"true\"]/Id}</supplier_id> "
+              +"                        <brand>{$i/Item_UDA_Spec/Brand}</brand> "
+              +"                        <colorCode>{$i/Item_SKU_Spec/Differentiators[Type eq \"COLOR\"]/Code}</colorCode>"
+              +"                    <colorDesc>{$i/Item_SKU_Spec/Differentiators[Type eq \"COLOR\"]/Vendor_Description}</colorDesc> "
+              +"                    <sizeDesc>{$i/Item_SKU_Spec/Differentiators[Type eq \"SIZE\"]/Vendor_Description}</sizeDesc>"
+              +"                  </out>' " 
+              +"      passing aic.XML_DATA as \"XML_DATA\" "
+              +"      columns "
+              +"      supplier_id varchar(10) path '/out/supplier_id',"
+              +"      Brand varchar(10) path '/out/brand',"
+              +"      colorCode varchar2(10) path '/out/colorCode',"
+              +"      colorDesc varchar2(20) path '/out/colorDesc',"
+              +"      sizeDesc varchar2(20) path '/out/sizeDesc') i, VENDORPORTAL.ADSE_PET_CATALOG pet,"
+              +" XMLTABLE('for $pet in $pets/pim_entry/entry  "   
+              +" return <out>   "  
+              +"  <name>{$pet/Pet_Ctg_Spec/Name}</name> "
+              +"  <priority>{$pet/Pet_Ctg_Spec/PO_Number}</priority>"
+              +"  </out>' " 
+              +"  passing pet.xml_data AS \"pets\" " 
+              +"  Columns " 
+              +"  Name VARCHAR2(20) path '/out/name',"
+              +"  priority varchar2(10) path '/out/priority') p, VENDORPORTAL.ADSE_SUPPLIER_CATALOG supplier,"
+              +"  XMLTABLE('for $supplier in $supplierCatalog/pim_entry/entry/Supplier_Ctg_Spec  let $ven_name := $supplier/Name return  <out> <ven_name>{$ven_name}</ven_name> </out>' "
+              +"  PASSING supplier.XML_DATA AS \"supplierCatalog\" " 
+              +"  columns "
+              +"  ven_name VARCHAR2(80) path '/out/ven_name') s, Input inp "
+              +"  where " 
+              +"  aic.MOD_DTM = '01-JAN-00 12.00.00.000000000 PM' and aic.mdmid = pet.mdmid "
+              +"  and pet.MOD_DTM = '01-JAN-00 12.00.00.000000000 PM' "
+              +"  and supplier.MOD_DTM = '01-JAN-00 12.00.00.000000000 PM' "
+              +"  and i.supplier_id = supplier.mdmid "
+              +"      and (aic.mdmid = inp.ORIN or aic.parent_mdmid = inp.ORIN)  and "
+              +"      aic.Entry_type = 'SKU'";
+                      
+        return GET_CHILD_SKU_INFORMATION_XQUERY;             
+        
+    }
+    
+    
+    
+    /**
+     * Gets the content history.
+     *
+     * @param orinNumber the orin number
+     * @return the content history
+     */
+    public  String getContentHistory(String orinNumber) {          
+        
+        final String GET_CONTENT_HISTORY_INFORMATION_XQUERY=            
+
+
+                " with " + "   INPUT( ORIN) as ( " + "   Select  "
+                    + orinNumber
+                    + "   ORIN FROM dual),"
+
+                    + "  TypeIndex(indx, typ) as ((Select 1 indx, 'Style' typ  from  dual) union (Select 2 indx, 'StyleColor' typ  from  dual) union (select 3 indx, 'SKU' typ from dual)) "
+
+                    + "   select pet.MDMID ORIN, Content_Created_Date,"
+                    + "      Content_Created_By, Content_Last_Updated_By,"
+                    + "     (select thevalue from ADSE_REFERENCE_DATA where mdmid=ContentState and Container = ContentStateContainer) Content_Status,"
+                    + "     pet.ENTRY_TYPE "
+                    + "  from VENDORPORTAL.ADSE_PET_CATALOG pet,"
+                    + " XMLTABLE('for $pet in $pets/pim_entry/entry "
+                    + " return <out> "
+                    + "    <ContentState>{$pet/Pet_Ctg_Spec/ContentState}</ContentState> "
+                    + "   <ContentStateContainer>{$pet/Pet_Ctg_Spec/ContentState/@container}</ContentStateContainer> "
+                    + "   <ContentCreatedDate>{$pet/Pet_Ctg_Spec/Audit/Created_On}</ContentCreatedDate> "
+                    + "   <ContentCreatedBy>{$pet/Pet_Ctg_Spec/Audit/Created_By}</ContentCreatedBy> "
+                    + "   <ContentLastUpdatedBy>{$pet/Pet_Ctg_Spec/Audit/Last_Modified_By}</ContentLastUpdatedBy> "
+                    + "   </out>'  "
+                    + "   passing pet.xml_data AS \"pets\"  "
+                    + "   Columns  "
+                    + "   ContentState varchar2(10) path '/out/ContentState',"
+                    + "   ContentStateContainer varchar2(40) path '/out/ContentStateContainer',"
+                    + "   Content_Created_Date varchar2(40) path '/out/ContentCreatedDate',"
+                    + "   Content_Created_By varchar2(40) path '/out/ContentCreatedBy',"
+                    + "  Content_Last_Updated_By varchar2(40) path '/out/ContentLastUpdatedBy') p, Input inp "
+                    + "   where "
+                    + "   pet.MOD_DTM = '01-JAN-00 12.00.00.000000000 PM' "
+                    + "       and pet.mdmid = inp.ORIN ";
+                      
+        return GET_CONTENT_HISTORY_INFORMATION_XQUERY;             
+        
+    }
+
+    
+    /**
+     * Gets the copy attribute details.
+     *
+     * @param orinNumber the orin number
+     * @return the copy attribute details
+     */
+    public  String getCopyAttributeDetails(String orinNumber) {          
+        
+        final String GET_COPY_ATTRIBUTE_INFORMATION_XQUERY=           
+               
+                " with " + "  INPUT( ORIN) as (" + "  Select "
+                    + orinNumber
+                    + "  ORIN FROM dual),"
+
+                    + "  TypeIndex(indx, typ) as ((Select 1 indx, 'Style' typ  from  dual) union (select 2 indx, 'StyleColor' typ from dual) union (select 3 indx, 'SKU' typ from dual)),"
+
+                    + "  Items as (select "
+                    + "          aic.MDMID ORIN, (case when aic.PARENT_MDMID is null then aic.MDMID else aic.PARENT_MDMID end) Style_Id,"
+                    + "         (VENDOR_COLOR_CODE || ' ' || VENDOR_COLOR_DESC) Vendor_Color, "
+                    + "           VENDOR_SIZE, aic.ENTRY_TYPE "
+                    + "   from VENDORPORTAL.ADSE_ITEM_CATALOG aic, XMLTABLE('for $i in $XML_DATA/pim_entry/entry "
+                    + "            let $uda80 := (fn:count($i/Item_UDA_Spec/UDA/Id) gt 0 and $i/Item_UDA_Spec/UDA/Id eq \"80\"),"
+                    + "                $non_sellable_pack := (fn:count($i/Item_Complex_Pack_Spec/Sellable_Flag/text()) gt 0 and "
+                    + "                    ($i/Item_Complex_Pack_Spec/Sellable_Flag eq \"false\")),"
+                    + "                $removal := $i/Item_Ctg_Spec/System/Removal_Flag eq \"true\" "
+                    + "       return  <out> "
+                    + "                   <dept_id>{fn:tokenize($i/../item_header/category_paths/category[fn:starts-with(path, \"Merchandise_Hierarchy\")]/path,\"\\||///\" )[5]}</dept_id> "
+                    + "                  <class_id>{fn:tokenize($i/../item_header/category_paths/category[fn:starts-with(path, \"Merchandise_Hierarchy\")]/path,\"\\||///\")[6]}</class_id> "
+                    + "                   <supplier_id>{$i/Item_Ctg_Spec/Supplier[Primary_Flag eq \"true\"]/Id}</supplier_id> "
+                    + "                  <desc>{$i/Item_Ctg_Spec/Description/Long}</desc> "
+                    + "                  <flag>{$uda80 and $non_sellable_pack and $removal}</flag> "
+                    + "                   <colorCode>{$i/Item_SKU_Spec/Differentiators[Type eq \"COLOR\"]/Code}</colorCode> "
+                    + "                   <colorDesc>{$i/Item_SKU_Spec/Differentiators[Type eq \"COLOR\"]/Vendor_Description}</colorDesc> "
+                    + "               <size>{$i/Item_SKU_Spec/Differentiators[Type eq \"SIZE\"]/Vendor_Description}</size> "
+                    + "           </out>' "
+                    + "    passing aic.XML_DATA as \"XML_DATA\" "
+                    + "    columns "
+                    + "    flag varchar(10) path '/out/flag',"
+                    + "    VENDOR_COLOR_CODE   varchar2(10) path '/out/colorCode',"
+                    + "    VENDOR_COLOR_DESC   varchar2(40) path '/out/colorDesc',"
+                    + "    VENDOR_SIZE    varchar2(10) path '/out/size') i, Input inp "
+                    + " where flag = 'false' and "
+                    + "  aic.MOD_DTM = '01-JAN-00 12.00.00.000000000 PM' "
+                    + "     and (aic.Parent_MDMID=inp.ORIN or aic.MDMID=inp.ORIN) and "
+                    + "     aic.Entry_type = 'SKU') " + "    select * from items ";
+                      
+        return GET_COPY_ATTRIBUTE_INFORMATION_XQUERY;             
+        
+    }
+    
+    /**
+     * Gets the iph categories.
+     *
+     * @param orinNumber the orin number
+     * @return the iph categories
+     */
+    public  String getIphCategories( ) {          
+        
+        final String GET_IPH_CATEGORY_INFORMATION_XQUERY=           
+
+                "  select distinct(category) from VENDORPORTAL.ADSE_MERCHANDISE_HIERARCHY, "
+                    + " xmltable('/pim_category/entry/Merchandise_Hier_Spec/IPH_Category_Mappings'"
+                    + "passing XML_DATA " + "   columns  "
+                    + "   category varchar2(200) path '.') "
+                    + "   where category is not null " + "   order by category ";
+
+        return GET_IPH_CATEGORY_INFORMATION_XQUERY;             
+        
+       }
+
+}

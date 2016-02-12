@@ -1,0 +1,22 @@
+ 	 
+
+//saveContent content is called on click of the Save button to update the attributes 
+function saveContent()
+	{ 
+			
+	 	 	document.forms['contentDisplayForm'].actionParameter.value = "saveContent";	 		
+	    	document.forms['contentDisplayForm'].submit(); 
+		
+	} 
+
+
+	function updateContentStatusForStyleColorData()
+	{ 
+		    
+		 	document.forms['contentDisplayForm'].updateContentStatusStyleColorActionParameter.value = "updateContentStatusForStyleColor";			
+		    document.forms['contentDisplayForm'].submit(); 
+	
+	} 
+	
+
+

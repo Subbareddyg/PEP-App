@@ -1,0 +1,10 @@
+#Mon Sep 28 15:40:43 EDT 2015
+override=true
+USER_MANUAL_PREFERENCE=enabledManualValidatorListcom.ibm.jee.sdo.jdbc.ui.validators.JDBCMediatorConnectionFileValidator;org.eclipse.wst.wsi.ui.internal.WSIMessageValidator;
+disabled=06target
+suspend=true
+eclipse.preferences.version=1
+vf.version=3
+DELEGATES_PREFERENCE=delegateValidatorList
+USER_PREFERENCE=overrideGlobalPreferencestruedisableAllValidationtrueversion1.2.204.v201109220700
+USER_BUILD_PREFERENCE=enabledBuildValidatorListcom.ibm.jee.sdo.jdbc.ui.validators.JDBCMediatorConnectionFileValidator;org.eclipse.wst.wsi.ui.internal.WSIMessageValidator;

@@ -1,0 +1,78 @@
+#Label for StyleInfo section
+
+content.label.styleInfo=Style Info
+content.label.saveButton=Save
+content.label.closeButton=Close
+content.page.product.max.char=Max Char:
+content.page.product.minimum.char=Min Chars:40
+
+
+labelOrinGrouping=<b>Orin/Grouping:</b>
+labelDepartment=<b>Dept#:</b>
+labelVendorName=<b>Vendor Name:</b>
+labelStyleNumber=<b>Style# :</b
+labelClass=<b>Class:</b>
+labelVendorNumber=<b>Vendor#:</b>
+labelDescription=<b>Description :</b>
+labelOmnichannelVendor=<b>Omnichannel Vendor:</b> 
+labelVendorProvidedImage=<b>Vendor Provided Image:</b>
+labelVendorProvidedSample=<b>Vendor Provided Sample:</b>
+labelProductDetails=Product Details
+labelProductName=<b>Product Name *</b>
+labelProductDescription=<b>Product Description *</b>
+labelColor=Color
+labelVendorSize=Vendor Size
+labelOmniChannelSizeDesc=Omnichannel Size Desc
+labelContentStatus=Content Status
+labelCompletionDate=<b>Completion Date :</b>
+labelSubmit=Submit
+labelApprove=Approve
+labelContentCreationDate=Content Creation Date
+labelCreatedBy=Created By
+labelLastUpdatedBy=Last Updated By
+labelSize=Size
+
+
+lableStyle-Color-SKU=Style,Style/Color,SKU Content
+headerOrinGrouping=ORIN/Grouping#
+headerStyle=Style#
+headerColor=Color
+headerVendorSize=Vendor Size
+headerOmnichannelSizeDesc=Omnichannel Size Desc
+headerContentStatus=Content Status
+headerCompletionDate=Completion Date
+headerAction=Action
+
+sectionGlobalAttribute=Global Attributes
+sectionColorAttribute=Color Attributes
+sectionSKUAttribute=SKU Attributes
+sectionProductAttribute=Product Attribute
+sectionLegacyAttribute=Legacy Attribute
+sectionPetContentManagement=Pet Content Management
+sectionChildSKU=Child SKU
+sectionHistory=History
+sectionCopyAttribute=Copy Attributes
+
+
+labelBrand=Brand:
+labelLonDescription=Long Description:
+labelLaunchDate=Launch Date:
+labelBelkExclusive=Belk Exclusive:
+lableChannelExclusive=Channel Exclusive:
+labelSdf=SDF:
+labelProductDimensionsUom=Product Dimensions UOM:
+labelBopis=BOPIS:
+labelProductLength=Product Length:
+labelImportDomestic=Import/Domestic:
+labelProductWidth=Product Width:
+labelGiftBox=Gift Box:
+labelProductHeight=Product Height:
+labelGwpPwp=GWP/PWP:
+labelProductWeightUom=Product Weight UOM:
+labelPyg=PYG:
+labelProductWeight=Product Weight:
+
+
+
+
+

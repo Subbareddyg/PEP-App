@@ -1,0 +1,25 @@
+/**
+ * 
+ */
+package com.belk.pep.vo;
+
+import java.io.Serializable;
+
+/**
+ * The Class ProductAttributesVO.
+ *
+ * @author AFUSOS3
+ */
+public class ProductAttributesVO implements Serializable {
+
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 1212658922234957613L;
+
+    /**
+     * Instantiates a new product attributes vo.
+     */
+    public ProductAttributesVO() {
+       
+    }
+
+}

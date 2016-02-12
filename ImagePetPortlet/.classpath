@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" output="target/classes" path="src/main/java"/>
+	<classpathentry excluding="**" kind="src" output="target/classes" path="src/main/resources"/>
+	<classpathentry kind="src" output="target/test-classes" path="src/test/java"/>
+	<classpathentry kind="con" path="org.maven.ide.eclipse.MAVEN2_CLASSPATH_CONTAINER">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
+	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6">
+		<attributes>
+			<attribute name="owner.project.facets" value="java"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="U:/.m2/repository/org/apache/commons/commons-lang3/3.1/commons-lang3-3.1.jar"/>
+	<classpathentry kind="lib" path="U:/.m2/repository/org/springframework/spring-webmvc-portlet/3.1.1.RELEASE/spring-webmvc-portlet-3.1.1.RELEASE.jar"/>
+	<classpathentry kind="lib" path="U:/.m2/repository/org/springframework/spring-webmvc/3.1.1.RELEASE/spring-webmvc-3.1.1.RELEASE.jar"/>
+	<classpathentry kind="lib" path="U:/.m2/repository/org/springframework/spring-web/3.1.1.RELEASE/spring-web-3.1.1.RELEASE.jar"/>
+	<classpathentry kind="lib" path="U:/.m2/repository/org/springframework/spring-context/3.1.1.RELEASE/spring-context-3.1.1.RELEASE.jar"/>
+	<classpathentry kind="lib" path="U:/.m2/repository/org/springframework/spring-context-support/3.1.1.RELEASE/spring-context-support-3.1.1.RELEASE.jar"/>
+	<classpathentry kind="lib" path="U:/.m2/repository/org/hibernate/hibernate/3.2.5.ga/hibernate-3.2.5.ga.jar"/>
+	<classpathentry kind="lib" path="U:/.m2/repository/org/hibernate/hibernate-annotations/3.3.0.ga/hibernate-annotations-3.3.0.ga.jar"/>
+	<classpathentry kind="lib" path="U:/.m2/repository/commons-lang/commons-lang/2.3/commons-lang-2.3.jar"/>
+	<classpathentry kind="lib" path="U:/.m2/repository/org/json/json/20140107/json-20140107.jar"/>
+	<classpathentry kind="lib" path="U:/.m2/repository/com/google/code/gson/gson/2.2.2/gson-2.2.2.jar"/>
+	<classpathentry kind="lib" path="U:/.m2/repository/commons-logging/commons-logging/1.1.1/commons-logging-1.1.1.jar"/>
+	<classpathentry kind="lib" path="U:/.m2/repository/commons-net/commons-net/2.0/commons-net-2.0.jar"/>
+	<classpathentry kind="lib" path="U:/.m2/repository/commons-io/commons-io/2.2/commons-io-2.2.jar"/>
+	<classpathentry kind="lib" path="U:/.m2/repository/CommonForIpcLogin/CommonForIpcLogin/1.0/CommonForIpcLogin-1.0.jar"/>
+	<classpathentry kind="lib" path="U:/.m2/repository/javax/portlet/portlet-api/2.0/portlet-api-2.0.jar"/>
+	<classpathentry kind="lib" path="U:/.m2/repository/javax/persistence/persistence-api/1.0/persistence-api-1.0.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files (x86)/IBM/SDP/runtimes/base_v7_stub/runtimes/websphere_apis.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/C:/Program Files (x86)/IBM/SDPShared/plugins/com.ibm.jee5.api.doc_1.1.0.v20110712_2011.jar!/topics/api"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/afusyg6/.m2/repository/org/json/json/20140107/json-20140107.jar"/>
+	<classpathentry kind="lib" path="C:/Users/afusyg6/.m2/repository/org/springframework/spring-context/3.1.1.RELEASE/spring-context-3.1.1.RELEASE.jar"/>
+	<classpathentry kind="lib" path="C:/Users/afusyg6/.m2/repository/org/springframework/spring-web/3.1.1.RELEASE/spring-web-3.1.1.RELEASE.jar"/>
+	<classpathentry kind="lib" path="C:/Users/afusyg6/.m2/repository/org/springframework/spring-webmvc-portlet/3.1.1.RELEASE/spring-webmvc-portlet-3.1.1.RELEASE.jar"/>
+	<classpathentry kind="lib" path="C:/Users/afusyg6/.m2/repository/CommonForIpcLogin/CommonForIpcLogin/1.0/CommonForIpcLogin-1.0.jar"/>
+	<classpathentry kind="lib" path="C:/Users/afusyg6/.m2/repository/org/hibernate/hibernate-core/4.3.5.Final/hibernate-core-4.3.5.Final.jar"/>
+	<classpathentry kind="lib" path="C:/Users/afusyg6/.m2/repository/com/google/code/gson/gson/2.2.2/gson-2.2.2.jar"/>
+	<classpathentry kind="output" path="target/classes"/>
+</classpath>

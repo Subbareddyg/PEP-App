@@ -1,0 +1,8 @@
+ 	 
+function saveContent(){ 
+		alert("Called JS to save content");
+ 	 	document.forms['contentDisplayForm'].actionParameter.value = "saveContent";
+ 		alert("Called JS to save content...."+ 	document.forms['contentDisplayForm'].actionParameter.value);
+    	document.forms['contentDisplayForm'].submit(); 
+	
+ 	 } 

@@ -1,0 +1,708 @@
+
+package com.belk.pep.vo;
+
+import java.io.Serializable;
+
+/**
+ * The Class GlobalAttributeVO.
+ *
+ * @author AFUSOS3
+ */
+public class GlobalAttributesVO implements Serializable {
+
+
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 3580543507151924409L;
+
+    /**
+     * Instantiates a new global attribute vo.
+     */
+    public GlobalAttributesVO() {
+       
+    }
+    
+    /** The mdmid. */
+    private String mdmid;
+    
+    
+    /** The omni channel brand. */
+    private String omniChannelBrand;
+    
+    /** The omni channel brand xpath. */
+    private String omniChannelBrandXpath;
+    
+    /** The product description. */
+    private String productDescription;
+    
+    /** The product description xpath. */
+    private String productDescriptionXpath;
+    
+    /** The launch date. */
+    private String launchDate;
+    
+    /** The launch date xpath. */
+    private String launchDateXpath;
+    
+    /** The belk exclusive. */
+    private String belkExclusive;
+    
+    /** The belk exclusive xpath. */
+    private String belkExclusiveXpath;
+    
+    /** The channel exclusive. */
+    private String channelExclusive;
+    
+    /** The channel exclusive xpath. */
+    private String channelExclusiveXpath;
+    
+    /** The sdf. */
+    private String sdf;
+    
+    /** The sdf xpath. */
+    private String sdfXpath;
+    
+    /** The product dimension uom. */
+    private String productDimensionUom;
+    
+    /** The product dimension uom xpath. */
+    private String productDimensionUomXpath;
+    
+    /** The product length. */
+    private String productLength;
+    
+    /** The product length xpath. */
+    private String productLengthXpath;
+    
+    /** The product height. */
+    private String productHeight;
+    
+    /** The product height xpath. */
+    private String productHeightXpath;
+    
+    /** The product width. */
+    private String productWidth;
+    
+    /** The product width xpath. */
+    private String productWidthXpath;
+    
+    /** The bopis. */
+    private String bopis;
+    
+    /** The bopis xpath. */
+    private String bopisXpath;
+    
+    /** The gift box. */
+    private String   giftBox;
+    
+    /** The gift box xpath. */
+    private String   giftBoxXpath;
+    
+    /** The import domestic. */
+    private String   importDomestic;
+    
+    /** The import domestic xpath. */
+    private String   importDomesticXpath;
+    
+    /** The product weight uom. */
+    private String productWeightUom;
+    
+    /** The product weight uom xpath. */
+    private String productWeightUomXpath;
+    
+    /** The product weight. */
+    private String productWeight;
+    
+    /** The product weight xpath. */
+    private String productWeightXpath;
+
+    /**
+     * Gets the mdmid.
+     *
+     * @return the mdmid
+     */
+    public String getMdmid() {
+        return mdmid;
+    }
+
+    /**
+     * Sets the mdmid.
+     *
+     * @param mdmid the mdmid to set
+     */
+    public void setMdmid(String mdmid) {
+        this.mdmid = mdmid;
+    }
+
+    /**
+     * Gets the omni channel brand.
+     *
+     * @return the omniChannelBrand
+     */
+    public String getOmniChannelBrand() {
+        return omniChannelBrand;
+    }
+
+    /**
+     * Sets the omni channel brand.
+     *
+     * @param omniChannelBrand the omniChannelBrand to set
+     */
+    public void setOmniChannelBrand(String omniChannelBrand) {
+        this.omniChannelBrand = omniChannelBrand;
+    }
+
+    /**
+     * Gets the omni channel brand xpath.
+     *
+     * @return the omniChannelBrandXpath
+     */
+    public String getOmniChannelBrandXpath() {
+        return omniChannelBrandXpath;
+    }
+
+    /**
+     * Sets the omni channel brand xpath.
+     *
+     * @param omniChannelBrandXpath the omniChannelBrandXpath to set
+     */
+    public void setOmniChannelBrandXpath(String omniChannelBrandXpath) {
+        this.omniChannelBrandXpath = omniChannelBrandXpath;
+    }
+
+    /**
+     * Gets the product description.
+     *
+     * @return the productDescription
+     */
+    public String getProductDescription() {
+        return productDescription;
+    }
+
+    /**
+     * Sets the product description.
+     *
+     * @param productDescription the productDescription to set
+     */
+    public void setProductDescription(String productDescription) {
+        this.productDescription = productDescription;
+    }
+
+    /**
+     * Gets the product description xpath.
+     *
+     * @return the productDescriptionXpath
+     */
+    public String getProductDescriptionXpath() {
+        return productDescriptionXpath;
+    }
+
+    /**
+     * Sets the product description xpath.
+     *
+     * @param productDescriptionXpath the productDescriptionXpath to set
+     */
+    public void setProductDescriptionXpath(String productDescriptionXpath) {
+        this.productDescriptionXpath = productDescriptionXpath;
+    }
+
+    /**
+     * Gets the launch date.
+     *
+     * @return the launchDate
+     */
+    public String getLaunchDate() {
+        return launchDate;
+    }
+
+    /**
+     * Sets the launch date.
+     *
+     * @param launchDate the launchDate to set
+     */
+    public void setLaunchDate(String launchDate) {
+        this.launchDate = launchDate;
+    }
+
+    /**
+     * Gets the launch date xpath.
+     *
+     * @return the launchDateXpath
+     */
+    public String getLaunchDateXpath() {
+        return launchDateXpath;
+    }
+
+    /**
+     * Sets the launch date xpath.
+     *
+     * @param launchDateXpath the launchDateXpath to set
+     */
+    public void setLaunchDateXpath(String launchDateXpath) {
+        this.launchDateXpath = launchDateXpath;
+    }
+
+    /**
+     * Gets the belk exclusive.
+     *
+     * @return the belkExclusive
+     */
+    public String getBelkExclusive() {
+        return belkExclusive;
+    }
+
+    /**
+     * Sets the belk exclusive.
+     *
+     * @param belkExclusive the belkExclusive to set
+     */
+    public void setBelkExclusive(String belkExclusive) {
+        this.belkExclusive = belkExclusive;
+    }
+
+    /**
+     * Gets the belk exclusive xpath.
+     *
+     * @return the belkExclusiveXpath
+     */
+    public String getBelkExclusiveXpath() {
+        return belkExclusiveXpath;
+    }
+
+    /**
+     * Sets the belk exclusive xpath.
+     *
+     * @param belkExclusiveXpath the belkExclusiveXpath to set
+     */
+    public void setBelkExclusiveXpath(String belkExclusiveXpath) {
+        this.belkExclusiveXpath = belkExclusiveXpath;
+    }
+
+    /**
+     * Gets the channel exclusive.
+     *
+     * @return the channelExclusive
+     */
+    public String getChannelExclusive() {
+        return channelExclusive;
+    }
+
+    /**
+     * Sets the channel exclusive.
+     *
+     * @param channelExclusive the channelExclusive to set
+     */
+    public void setChannelExclusive(String channelExclusive) {
+        this.channelExclusive = channelExclusive;
+    }
+
+    /**
+     * Gets the channel exclusive xpath.
+     *
+     * @return the channelExclusiveXpath
+     */
+    public String getChannelExclusiveXpath() {
+        return channelExclusiveXpath;
+    }
+
+    /**
+     * Sets the channel exclusive xpath.
+     *
+     * @param channelExclusiveXpath the channelExclusiveXpath to set
+     */
+    public void setChannelExclusiveXpath(String channelExclusiveXpath) {
+        this.channelExclusiveXpath = channelExclusiveXpath;
+    }
+
+    /**
+     * Gets the sdf.
+     *
+     * @return the sdf
+     */
+    public String getSdf() {
+        return sdf;
+    }
+
+    /**
+     * Sets the sdf.
+     *
+     * @param sdf the sdf to set
+     */
+    public void setSdf(String sdf) {
+        this.sdf = sdf;
+    }
+
+    /**
+     * Gets the sdf xpath.
+     *
+     * @return the sdfXpath
+     */
+    public String getSdfXpath() {
+        return sdfXpath;
+    }
+
+    /**
+     * Sets the sdf xpath.
+     *
+     * @param sdfXpath the sdfXpath to set
+     */
+    public void setSdfXpath(String sdfXpath) {
+        this.sdfXpath = sdfXpath;
+    }
+
+    /**
+     * Gets the product dimension uom.
+     *
+     * @return the productDimensionUom
+     */
+    public String getProductDimensionUom() {
+        return productDimensionUom;
+    }
+
+    /**
+     * Sets the product dimension uom.
+     *
+     * @param productDimensionUom the productDimensionUom to set
+     */
+    public void setProductDimensionUom(String productDimensionUom) {
+        this.productDimensionUom = productDimensionUom;
+    }
+
+    /**
+     * Gets the product dimension uom xpath.
+     *
+     * @return the productDimensionUomXpath
+     */
+    public String getProductDimensionUomXpath() {
+        return productDimensionUomXpath;
+    }
+
+    /**
+     * Sets the product dimension uom xpath.
+     *
+     * @param productDimensionUomXpath the productDimensionUomXpath to set
+     */
+    public void setProductDimensionUomXpath(String productDimensionUomXpath) {
+        this.productDimensionUomXpath = productDimensionUomXpath;
+    }
+
+    /**
+     * Gets the product length.
+     *
+     * @return the productLength
+     */
+    public String getProductLength() {
+        return productLength;
+    }
+
+    /**
+     * Sets the product length.
+     *
+     * @param productLength the productLength to set
+     */
+    public void setProductLength(String productLength) {
+        this.productLength = productLength;
+    }
+
+    /**
+     * Gets the product length xpath.
+     *
+     * @return the productLengthXpath
+     */
+    public String getProductLengthXpath() {
+        return productLengthXpath;
+    }
+
+    /**
+     * Sets the product length xpath.
+     *
+     * @param productLengthXpath the productLengthXpath to set
+     */
+    public void setProductLengthXpath(String productLengthXpath) {
+        this.productLengthXpath = productLengthXpath;
+    }
+
+    /**
+     * Gets the product height.
+     *
+     * @return the productHeight
+     */
+    public String getProductHeight() {
+        return productHeight;
+    }
+
+    /**
+     * Sets the product height.
+     *
+     * @param productHeight the productHeight to set
+     */
+    public void setProductHeight(String productHeight) {
+        this.productHeight = productHeight;
+    }
+
+    /**
+     * Gets the product height xpath.
+     *
+     * @return the productHeightXpath
+     */
+    public String getProductHeightXpath() {
+        return productHeightXpath;
+    }
+
+    /**
+     * Sets the product height xpath.
+     *
+     * @param productHeightXpath the productHeightXpath to set
+     */
+    public void setProductHeightXpath(String productHeightXpath) {
+        this.productHeightXpath = productHeightXpath;
+    }
+
+    /**
+     * Gets the product width.
+     *
+     * @return the productWidth
+     */
+    public String getProductWidth() {
+        return productWidth;
+    }
+
+    /**
+     * Sets the product width.
+     *
+     * @param productWidth the productWidth to set
+     */
+    public void setProductWidth(String productWidth) {
+        this.productWidth = productWidth;
+    }
+
+    /**
+     * Gets the product width xpath.
+     *
+     * @return the productWidthXpath
+     */
+    public String getProductWidthXpath() {
+        return productWidthXpath;
+    }
+
+    /**
+     * Sets the product width xpath.
+     *
+     * @param productWidthXpath the productWidthXpath to set
+     */
+    public void setProductWidthXpath(String productWidthXpath) {
+        this.productWidthXpath = productWidthXpath;
+    }
+
+    /**
+     * Gets the bopis.
+     *
+     * @return the bopis
+     */
+    public String getBopis() {
+        return bopis;
+    }
+
+    /**
+     * Sets the bopis.
+     *
+     * @param bopis the bopis to set
+     */
+    public void setBopis(String bopis) {
+        this.bopis = bopis;
+    }
+
+    /**
+     * Gets the bopis xpath.
+     *
+     * @return the bopisXpath
+     */
+    public String getBopisXpath() {
+        return bopisXpath;
+    }
+
+    /**
+     * Sets the bopis xpath.
+     *
+     * @param bopisXpath the bopisXpath to set
+     */
+    public void setBopisXpath(String bopisXpath) {
+        this.bopisXpath = bopisXpath;
+    }
+
+    /**
+     * Gets the gift box.
+     *
+     * @return the giftBox
+     */
+    public String getGiftBox() {
+        return giftBox;
+    }
+
+    /**
+     * Sets the gift box.
+     *
+     * @param giftBox the giftBox to set
+     */
+    public void setGiftBox(String giftBox) {
+        this.giftBox = giftBox;
+    }
+
+    /**
+     * Gets the gift box xpath.
+     *
+     * @return the giftBoxXpath
+     */
+    public String getGiftBoxXpath() {
+        return giftBoxXpath;
+    }
+
+    /**
+     * Sets the gift box xpath.
+     *
+     * @param giftBoxXpath the giftBoxXpath to set
+     */
+    public void setGiftBoxXpath(String giftBoxXpath) {
+        this.giftBoxXpath = giftBoxXpath;
+    }
+
+    /**
+     * Gets the import domestic.
+     *
+     * @return the importDomestic
+     */
+    public String getImportDomestic() {
+        return importDomestic;
+    }
+
+    /**
+     * Sets the import domestic.
+     *
+     * @param importDomestic the importDomestic to set
+     */
+    public void setImportDomestic(String importDomestic) {
+        this.importDomestic = importDomestic;
+    }
+
+    /**
+     * Gets the import domestic xpath.
+     *
+     * @return the importDomesticXpath
+     */
+    public String getImportDomesticXpath() {
+        return importDomesticXpath;
+    }
+
+    /**
+     * Sets the import domestic xpath.
+     *
+     * @param importDomesticXpath the importDomesticXpath to set
+     */
+    public void setImportDomesticXpath(String importDomesticXpath) {
+        this.importDomesticXpath = importDomesticXpath;
+    }
+
+    /**
+     * Gets the product weight uom.
+     *
+     * @return the productWeightUom
+     */
+    public String getProductWeightUom() {
+        return productWeightUom;
+    }
+
+    /**
+     * Sets the product weight uom.
+     *
+     * @param productWeightUom the productWeightUom to set
+     */
+    public void setProductWeightUom(String productWeightUom) {
+        this.productWeightUom = productWeightUom;
+    }
+
+    /**
+     * Gets the product weight uom xpath.
+     *
+     * @return the productWeightUomXpath
+     */
+    public String getProductWeightUomXpath() {
+        return productWeightUomXpath;
+    }
+
+    /**
+     * Sets the product weight uom xpath.
+     *
+     * @param productWeightUomXpath the productWeightUomXpath to set
+     */
+    public void setProductWeightUomXpath(String productWeightUomXpath) {
+        this.productWeightUomXpath = productWeightUomXpath;
+    }
+
+    /**
+     * Gets the product weight.
+     *
+     * @return the productWeight
+     */
+    public String getProductWeight() {
+        return productWeight;
+    }
+
+    /**
+     * Sets the product weight.
+     *
+     * @param productWeight the productWeight to set
+     */
+    public void setProductWeight(String productWeight) {
+        this.productWeight = productWeight;
+    }
+
+    /**
+     * Gets the product weight xpath.
+     *
+     * @return the productWeightXpath
+     */
+    public String getProductWeightXpath() {
+        return productWeightXpath;
+    }
+
+    /**
+     * Sets the product weight xpath.
+     *
+     * @param productWeightXpath the productWeightXpath to set
+     */
+    public void setProductWeightXpath(String productWeightXpath) {
+        this.productWeightXpath = productWeightXpath;
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return "GlobalAttributesVO [mdmid=" + mdmid + ", omniChannelBrand="
+            + omniChannelBrand + ", omniChannelBrandXpath="
+            + omniChannelBrandXpath + ", productDescription="
+            + productDescription + ", productDescriptionXpath="
+            + productDescriptionXpath + ", launchDate=" + launchDate
+            + ", launchDateXpath=" + launchDateXpath + ", belkExclusive="
+            + belkExclusive + ", belkExclusiveXpath=" + belkExclusiveXpath
+            + ", channelExclusive=" + channelExclusive
+            + ", channelExclusiveXpath=" + channelExclusiveXpath + ", sdf="
+            + sdf + ", sdfXpath=" + sdfXpath + ", productDimensionUom="
+            + productDimensionUom + ", productDimensionUomXpath="
+            + productDimensionUomXpath + ", productLength=" + productLength
+            + ", productLengthXpath=" + productLengthXpath + ", productHeight="
+            + productHeight + ", productHeightXpath=" + productHeightXpath
+            + ", productWidth=" + productWidth + ", productWidthXpath="
+            + productWidthXpath + ", bopis=" + bopis + ", bopisXpath="
+            + bopisXpath + ", giftBox=" + giftBox + ", giftBoxXpath="
+            + giftBoxXpath + ", importDomestic=" + importDomestic
+            + ", importDomesticXpath=" + importDomesticXpath
+            + ", productWeightUom=" + productWeightUom
+            + ", productWeightUomXpath=" + productWeightUomXpath
+            + ", productWeight=" + productWeight + ", productWeightXpath="
+            + productWeightXpath + "]";
+    }
+    
+    
+
+}

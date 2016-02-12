@@ -1,0 +1,23 @@
+
+package com.belk.pep.vo;
+
+import java.io.Serializable;
+
+/**
+ * The Class LegacyAttributesVO.
+ *
+ * @author AFUSOS3
+ */
+public class LegacyAttributesVO  implements Serializable{
+
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 3419915584374744387L;
+
+    /**
+     * Instantiates a new legacy attributes vo.
+     */
+    public LegacyAttributesVO() {
+      
+    }
+
+}

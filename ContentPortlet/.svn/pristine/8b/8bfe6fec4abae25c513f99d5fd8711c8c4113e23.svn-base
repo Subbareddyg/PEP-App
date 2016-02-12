@@ -1,0 +1,56 @@
+/**
+ * 
+ */
+package com.belk.pep.vo;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * @author AFUSOS3
+ *
+ */
+public class StyleAndItsChildDisplay  implements Serializable{
+
+  
+   
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 1L;
+    
+    /** The style list. */
+    List<StyleVO>      styleList = new ArrayList<StyleVO>();
+
+    /**
+     * Gets the style list.
+     *
+     * @return the styleList
+     */
+    public List<StyleVO> getStyleList() {
+        if(styleList==null)
+        {
+            styleList =new ArrayList<StyleVO>();  
+        }
+        return styleList;
+    }
+
+    /**
+     * Sets the style list.
+     *
+     * @param styleList the styleList to set
+     */
+    public void setStyleList(List<StyleVO> styleList) {
+        this.styleList = styleList;
+    }
+
+    
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return "StyleAndItsChildDisplay [styleList=" + styleList + "]";
+    }
+
+    
+}

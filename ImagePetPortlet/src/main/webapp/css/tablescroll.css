@@ -1,0 +1,1 @@
+table,tr td{border:1px solid green}tbody{display:block;height:450px;overflow:auto}tbody tr,thead{display:table;width:100%;table-layout:fixed}thead{width:calc(100% - 1em)}table{width:890px}

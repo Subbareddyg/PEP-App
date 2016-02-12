@@ -1,0 +1,5 @@
+com\belk\pep\common\model\ImageDetails.class
+com\belk\pep\common\model\ContentPetDetails.class
+com\belk\pep\common\model\Common_BelkUser.class
+com\belk\pep\common\model\Common_Vpuser.class
+com\belk\pep\common\userdata\UserData.class

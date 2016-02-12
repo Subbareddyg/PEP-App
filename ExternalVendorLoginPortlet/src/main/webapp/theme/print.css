@@ -1,0 +1,13 @@
+.skin1Header img{
+	display:none;
+}
+.noprint{
+	display:none;
+}
+.print-only{
+	display:block !important;
+}
+div .print-only {
+	word-break: break-all !important;
+	width: 100% !important;
+}

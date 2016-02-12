@@ -1,0 +1,274 @@
+
+package com.belk.pep.vo;
+
+import java.io.Serializable;
+
+/**
+ * The Class SkuAttributesVO.
+ *
+ * @author AFUSOS3
+ */
+public class SkuAttributesVO  implements Serializable{
+
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = -8332027093206935184L;
+
+    /**
+     * Instantiates a new sku attributes vo.
+     */
+    public SkuAttributesVO() {
+        
+    }
+    
+    /** The sku orin number. */
+    private String skuOrinNumber;
+    
+    
+    /** The source domestic. */
+    private String sourceDomestic;
+    
+    /** The nrf size code. */
+    private String nrfSizeCode;    
+    
+    /** The vendor size description. */
+    private  String vendorSizeDescription;
+    
+    /** The omnichannel size description. */
+    private  String omnichannelSizeDescription;    
+    
+    /** The belk04 upc. */
+    private  String belk04Upc;    
+
+    /** The vendor upc. */
+    private  String vendorUpc;
+
+    /**
+     * Gets the source domestic.
+     *
+     * @return the sourceDomestic
+     */
+    public String getSourceDomestic() {
+        return sourceDomestic;
+    }
+
+    /**
+     * Sets the source domestic.
+     *
+     * @param sourceDomestic the sourceDomestic to set
+     */
+    public void setSourceDomestic(String sourceDomestic) {
+        this.sourceDomestic = sourceDomestic;
+    }
+
+    /**
+     * Gets the nrf size code.
+     *
+     * @return the nrfSizeCode
+     */
+    public String getNrfSizeCode() {
+        return nrfSizeCode;
+    }
+
+    /**
+     * Sets the nrf size code.
+     *
+     * @param nrfSizeCode the nrfSizeCode to set
+     */
+    public void setNrfSizeCode(String nrfSizeCode) {
+        this.nrfSizeCode = nrfSizeCode;
+    }
+
+    /**
+     * Gets the vendor size description.
+     *
+     * @return the vendorSizeDescription
+     */
+    public String getVendorSizeDescription() {
+        return vendorSizeDescription;
+    }
+
+    /**
+     * Sets the vendor size description.
+     *
+     * @param vendorSizeDescription the vendorSizeDescription to set
+     */
+    public void setVendorSizeDescription(String vendorSizeDescription) {
+        this.vendorSizeDescription = vendorSizeDescription;
+    }
+
+    /**
+     * Gets the omnichannel size description.
+     *
+     * @return the omnichannelSizeDescription
+     */
+    public String getOmnichannelSizeDescription() {
+        return omnichannelSizeDescription;
+    }
+
+    /**
+     * Sets the omnichannel size description.
+     *
+     * @param omnichannelSizeDescription the omnichannelSizeDescription to set
+     */
+    public void setOmnichannelSizeDescription(String omnichannelSizeDescription) {
+        this.omnichannelSizeDescription = omnichannelSizeDescription;
+    }
+
+    /**
+     * Gets the belk04 upc.
+     *
+     * @return the belk04Upc
+     */
+    public String getBelk04Upc() {
+        return belk04Upc;
+    }
+
+    /**
+     * Sets the belk04 upc.
+     *
+     * @param belk04Upc the belk04Upc to set
+     */
+    public void setBelk04Upc(String belk04Upc) {
+        this.belk04Upc = belk04Upc;
+    }
+
+    /**
+     * Gets the vendor upc.
+     *
+     * @return the vendorUpc
+     */
+    public String getVendorUpc() {
+        return vendorUpc;
+    }
+
+    /**
+     * Sets the vendor upc.
+     *
+     * @param vendorUpc the vendorUpc to set
+     */
+    public void setVendorUpc(String vendorUpc) {
+        this.vendorUpc = vendorUpc;
+    }
+
+    /**
+     * @return the skuOrinNumber
+     */
+    public String getSkuOrinNumber() {
+        return skuOrinNumber;
+    }
+
+    /**
+     * @param skuOrinNumber the skuOrinNumber to set
+     */
+    public void setSkuOrinNumber(String skuOrinNumber) {
+        this.skuOrinNumber = skuOrinNumber;
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return "SkuAttributesVO [skuOrinNumber=" + skuOrinNumber
+            + ", sourceDomestic=" + sourceDomestic + ", nrfSizeCode="
+            + nrfSizeCode + ", vendorSizeDescription=" + vendorSizeDescription
+            + ", omnichannelSizeDescription=" + omnichannelSizeDescription
+            + ", belk04Upc=" + belk04Upc + ", vendorUpc=" + vendorUpc + "]";
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result =
+            prime * result + ((belk04Upc == null) ? 0 : belk04Upc.hashCode());
+        result =
+            prime * result
+                + ((nrfSizeCode == null) ? 0 : nrfSizeCode.hashCode());
+        result =
+            prime
+                * result
+                + ((omnichannelSizeDescription == null) ? 0
+                    : omnichannelSizeDescription.hashCode());
+        result =
+            prime * result
+                + ((skuOrinNumber == null) ? 0 : skuOrinNumber.hashCode());
+        result =
+            prime * result
+                + ((sourceDomestic == null) ? 0 : sourceDomestic.hashCode());
+        result =
+            prime
+                * result
+                + ((vendorSizeDescription == null) ? 0 : vendorSizeDescription
+                    .hashCode());
+        result =
+            prime * result + ((vendorUpc == null) ? 0 : vendorUpc.hashCode());
+        return result;
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        SkuAttributesVO other = (SkuAttributesVO) obj;
+        if (belk04Upc == null) {
+            if (other.belk04Upc != null)
+                return false;
+        }
+        else if (!belk04Upc.equals(other.belk04Upc))
+            return false;
+        if (nrfSizeCode == null) {
+            if (other.nrfSizeCode != null)
+                return false;
+        }
+        else if (!nrfSizeCode.equals(other.nrfSizeCode))
+            return false;
+        if (omnichannelSizeDescription == null) {
+            if (other.omnichannelSizeDescription != null)
+                return false;
+        }
+        else if (!omnichannelSizeDescription
+            .equals(other.omnichannelSizeDescription))
+            return false;
+        if (skuOrinNumber == null) {
+            if (other.skuOrinNumber != null)
+                return false;
+        }
+        else if (!skuOrinNumber.equals(other.skuOrinNumber))
+            return false;
+        if (sourceDomestic == null) {
+            if (other.sourceDomestic != null)
+                return false;
+        }
+        else if (!sourceDomestic.equals(other.sourceDomestic))
+            return false;
+        if (vendorSizeDescription == null) {
+            if (other.vendorSizeDescription != null)
+                return false;
+        }
+        else if (!vendorSizeDescription.equals(other.vendorSizeDescription))
+            return false;
+        if (vendorUpc == null) {
+            if (other.vendorUpc != null)
+                return false;
+        }
+        else if (!vendorUpc.equals(other.vendorUpc))
+            return false;
+        return true;
+    }
+    
+    
+    
+    
+
+}

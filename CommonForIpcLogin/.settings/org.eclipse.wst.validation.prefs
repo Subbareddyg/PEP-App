@@ -1,0 +1,10 @@
+#Tue Jun 30 11:24:05 IST 2015
+override=false
+USER_MANUAL_PREFERENCE=enabledManualValidatorListorg.eclipse.jst.j2ee.internal.classpathdep.ClasspathDependencyValidator;org.eclipse.jst.j2ee.internal.web.validation.UIWarValidator;com.ibm.jee.sdo.jdbc.ui.validators.JDBCMediatorConnectionFileValidator;com.ibm.ws.ast.ext.web.internal.validation.WarValidator;com.ibm.etools.j2ee.migration.classpath.J2EEClasspathValidator;org.eclipse.wst.wsi.ui.internal.WSIMessageValidator;com.ibm.ast.ws.ext.validator.WsExtValidator;
+vals/org.eclipse.wst.xml.core.xml/global=FF03
+suspend=false
+eclipse.preferences.version=1
+vf.version=3
+DELEGATES_PREFERENCE=delegateValidatorList
+USER_PREFERENCE=overrideGlobalPreferencesfalse
+USER_BUILD_PREFERENCE=enabledBuildValidatorListorg.eclipse.jst.j2ee.internal.classpathdep.ClasspathDependencyValidator;org.eclipse.jst.j2ee.internal.web.validation.UIWarValidator;com.ibm.jee.sdo.jdbc.ui.validators.JDBCMediatorConnectionFileValidator;com.ibm.ws.ast.ext.web.internal.validation.WarValidator;com.ibm.etools.j2ee.migration.classpath.J2EEClasspathValidator;org.eclipse.wst.wsi.ui.internal.WSIMessageValidator;com.ibm.ast.ws.ext.validator.WsExtValidator;

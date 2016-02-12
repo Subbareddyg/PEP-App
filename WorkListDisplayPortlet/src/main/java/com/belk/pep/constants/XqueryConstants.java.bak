@@ -1,0 +1,2332 @@
+package com.belk.pep.constants;
+
+import java.util.logging.Logger;
+
+import org.apache.commons.lang.StringUtils;
+
+import com.belk.pep.model.AdvanceSearch;
+
+import java.util.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+
+
+/**
+ * The Class XqueryConstants.
+ *
+ * @author AFUSOS3
+ */
+public class XqueryConstants {
+
+    /** The Constant LOGGER. */
+    private final static Logger LOGGER = Logger.getLogger(XqueryConstants.class.getName());
+    /**
+     * Instantiates a new xquery constants.
+     */
+    public XqueryConstants() {
+
+    }
+
+    /** The Constant ORACLE_DRIVER. */
+    public static final String ORACLE_DRIVER = "driver";
+
+    /** The Constant DATABASEURL. */
+    public static final String DATABASE_URL = "databaseUrl";
+
+    /** The Constant DATABASE_USERNAME. */
+    public static final String DATABASE_USERNAME = "databaseUsername";
+
+    /** The Constant DATABASE_PASSWORD. */
+    public static final String DATABASE_PASSWORD = "databasePassword";
+    
+    
+    /**
+     * Gets the all the merchandise department details for the Belk User,The Belk User is DCA .
+     * All Merchandise department details need to be displayed on the  the Department Pop Up Screen ,when the Belk User logs in for the first time 
+     * 
+     * @param orinNo the orin no
+     * @return the all department details
+     */
+    public  String getAllDepartmentDetails() {          
+        
+        final String GET_ALL_DEPARTMENT_XQUERY=
+                "  select DeptId, Dept " 
+                        + " from ADSE_MERCHANDISE_HIERARCHY dept,"
+                        + " XMLTABLE('for $dept in $XML_DATA/pim_category/entry/Merchandise_Hier_Spec "
+                        + " where fn:count($dept/System/Removal_Flag) eq 0 or $dept/System/Removal_Flag eq \"false\" "
+                        +" return <out><dept_id>{$dept/Identifiers/RMS_Id}</dept_id> "
+                        +" <dept_name>{$dept/Name}</dept_name></out>'"
+                        +" passing dept.XML_DATA as \"XML_DATA\""
+                        +" columns"
+                        +"  Dept varchar2(64) path '/out/dept_name', "
+                        +" DeptId varchar2(64) path '/out/dept_id' "
+                        +") DEPT_NAME"
+                        +" where dept.ENTRY_TYPE = 4"
+                        + " and dept.MOD_DTM='01-JAN-00 12.00.00.000000000 PM'"
+                        +" order by cast(DeptId as Integer)";
+        
+        return GET_ALL_DEPARTMENT_XQUERY;             
+        
+    }
+    
+    
+ /**
+  * Gets the all department details  By External User Email Id.
+  * When the External User logs in for the first time get all the departments associated with the External User by Email Address to
+  * display on the Department Pop Up Screen  
+  * @param vendorEmail the vendor email
+  * @return the all department details
+  */
+ public  String getAllDepartmentDetails(String vendorEmail) {          
+        
+        final String GET_ALL_DEPARTMENT_XQUERY=
+               " with "
+                +" Input(emailId) as (Select '"
+                + vendorEmail
+                +"' from dual)"
+                +" select DeptId, Dept "  
+                + " from ADSE_MERCHANDISE_HIERARCHY dept, Input i,"
+                + " XMLTABLE('for $dept in $XML_DATA/pim_category/entry/Merchandise_Hier_Spec "
+                + " where fn:count($dept/System/Removal_Flag) eq 0 or $dept/System/Removal_Flag eq \"false\" "
+                +" return <out><dept_id>{$dept/Identifiers/RMS_Id}</dept_id>"
+                + " <dept_name>{$dept/Name}</dept_name></out>' "
+                +"passing dept.XML_DATA as \"XML_DATA\" "
+                + " columns"
+                +" Dept varchar2(64) path '/out/dept_name', "
+                + " DeptId varchar2(64) path '/out/dept_id' "
+                +" ) DEPT_NAME"
+                +"  where dept.ENTRY_TYPE = 4"
+                + " and dept.MOD_DTM='01-JAN-00 12.00.00.000000000 PM'"
+                + " order by cast(DeptId as Integer)";                     
+                        
+                      
+        return GET_ALL_DEPARTMENT_XQUERY;             
+        
+    }
+ 
+ 
+ 
+ /**
+  * Gets the like department details it  is applicable for search box on the pop up department screen applicable for the External User and Belk User as well.
+  *
+  * @param searchString the search string
+  * @return the like department details
+  */
+ public  String getLikeDepartmentDetailsForString(String  searchString) {          
+     
+     final String GET_ALL_DEPARTMENT_XQUERY=
+             " with   Input(\""
+             +searchString
+             +"\") as (Select '10' from dual)"
+             +" select DeptId, Dept"
+             +" from VENDORPORTAL.ADSE_MERCHANDISE_HIERARCHY dept, Input i,"
+             +" XMLTABLE('for $dept in $XML_DATA/pim_category/entry/Merchandise_Hier_Spec"
+             + " where fn:count($dept/System/Removal_Flag) eq 0 or $dept/System/Removal_Flag eq \"false\""
+             +"  return <out><dept_id>{$dept/Identifiers/RMS_Id}</dept_id>"
+             + " <dept_name>{$dept/Name}</dept_name></out>' "
+             +"  passing dept.XML_DATA as \"XML_DATA\""
+             +" columns"
+             +" Dept varchar2(64) path '/out/dept_name',"
+             +" DeptId varchar2(64) path '/out/dept_id'"
+             +" ) DEPT_NAME"
+             +" where dept.ENTRY_TYPE = 4 and ( '"
+             + searchString
+             +"' is not null and (DeptId like ('%' || '"
+             + searchString
+             +" '|| '%') "
+             +" or Dept like ('%' || '"
+             + searchString
+             +"' || '%')))"
+             +" order by cast(DeptId as Integer)";     
+                     
+          
+     
+     return GET_ALL_DEPARTMENT_XQUERY;             
+     
+ }
+ 
+ /**
+  * Gets the like department details it  is applicable for search box on the pop up department screen applicable for the External User and Belk User as well.
+  *
+  * @param searchString the search string
+  * @return the like department details
+  */
+ public  String getLikeDepartmentDetailsForNumber(String  searchString) {          
+     
+     final String GET_ALL_DEPARTMENT_XQUERY=
+             " with   Input(\""
+             +searchString
+             +"\") as (Select '10' from dual)"
+             +" select DeptId, Dept"
+             +" from VENDORPORTAL.ADSE_MERCHANDISE_HIERARCHY dept, Input i,"
+             +" XMLTABLE('for $dept in $XML_DATA/pim_category/entry/Merchandise_Hier_Spec"
+             + " where fn:count($dept/System/Removal_Flag) eq 0 or $dept/System/Removal_Flag eq \"false\""
+             +"  return <out><dept_id>{$dept/Identifiers/RMS_Id}</dept_id>"
+             + " <dept_name>{$dept/Name}</dept_name></out>' "
+             +"  passing dept.XML_DATA as \"XML_DATA\""
+             +" columns"
+             +" Dept varchar2(64) path '/out/dept_name',"
+             +" DeptId varchar2(64) path '/out/dept_id'"
+             +" ) DEPT_NAME"
+             +" where dept.ENTRY_TYPE = 4 and  MOD_DTM ='01-JAN-00 12.00.00.000000000 PM' and ( "
+             + searchString
+             +" is not null and (DeptId like ('%' || "
+             + searchString
+             +" || '%') "
+             +" or Dept like ('%' || "
+             + searchString
+             +" || '%')))"
+             +" order by cast(DeptId as Integer)";    
+                     
+          
+     
+     return GET_ALL_DEPARTMENT_XQUERY;             
+     
+ }
+
+
+/**
+ * Gets the work list display data.
+ *
+ * @param depts the depts
+ * @param email the email
+ * @param pepId the pep id
+ * @return the work list display data
+ */
+    public String getWorkListDisplayData(String depts, String email, String pepId, String supplierId) {
+        //String GET_ALL_ORIN_WITH_PETS_XQUERY=null;
+        
+        if(depts!=null){
+            depts = "'"+depts+"'";
+            }
+        if(email!=null){
+            email = "'"+email+"'";  
+        }
+        if(pepId!=null){
+            pepId = "'"+pepId+"'";  
+        }
+        if(supplierId!=null){
+            supplierId = "'"+supplierId+"'";  
+        }
+        
+                       
+
+        StringBuffer workListQuery = new StringBuffer();
+        workListQuery.append("WITH ");
+        workListQuery.append("  Input(Depts, EmailId, LANId, SuppIds) AS ");
+        workListQuery.append("  ( ");
+        workListQuery.append("    SELECT ");
+        workListQuery.append("         ");
+        workListQuery.append(depts);
+        workListQuery.append(" Depts, ");
+        workListQuery.append(email);
+        workListQuery.append(" EmailId, ");
+        workListQuery.append(pepId);
+        workListQuery.append(" LANId, ");
+        workListQuery.append(supplierId);
+        workListQuery.append("  SuppIds ");
+        workListQuery.append("      ");
+        workListQuery.append("      ");
+        workListQuery.append("    FROM ");
+        workListQuery.append("      dual ");
+        workListQuery.append("  ) ");
+        workListQuery.append("  , ");
+        workListQuery.append("        TypeIndex(indx, typ) AS (    ");
+        workListQuery
+            .append("          (    SELECT 1 indx, 'Style' typ From dual) UNION    ");
+        workListQuery
+            .append("          (    SELECT 2 indx, 'StyleColor' typ From dual) UNION   ");
+        workListQuery
+            .append("          (    SELECT 4 indx, 'Complex Pack' typ From dual)   ");
+        workListQuery.append("        ),   ");
+        workListQuery.append("       entryTypeStyleList AS   ");
+        workListQuery.append("        (   ");
+        workListQuery.append("          SELECT   ");
+        workListQuery.append("            PARENT_MDMID,   ");
+        workListQuery.append("            MDMID,   ");
+        workListQuery.append("            XML_DATA,   ");
+        workListQuery.append("            ENTRY_TYPE,   ");
+        workListQuery.append("            MOD_DTM,   ");
+        workListQuery.append("            PRIMARY_UPC   ");
+        workListQuery.append("          FROM   ");
+        workListQuery.append("            VENDORPORTAL.ADSE_Item_CATALOG   ");
+        workListQuery.append("          WHERE   ");
+        workListQuery.append("            ENTRY_TYPE = 'Style'   ");
+        workListQuery.append("        )   ");
+        workListQuery.append("       ,   ");
+        workListQuery.append("       entryTypeComplexList AS   ");
+        workListQuery.append("        (   ");
+        workListQuery.append("          SELECT   ");
+        workListQuery.append("            PARENT_MDMID,   ");
+        workListQuery.append("            MDMID,   ");
+        workListQuery.append("            XML_DATA,   ");
+        workListQuery.append("            ENTRY_TYPE,   ");
+        workListQuery.append("            MOD_DTM,   ");
+        workListQuery.append("            PRIMARY_UPC   ");
+        workListQuery.append("          FROM   ");
+        workListQuery.append("            VENDORPORTAL.ADSE_Item_CATALOG   ");
+        workListQuery.append("          WHERE   ");
+        workListQuery.append("            ENTRY_TYPE = 'Complex Pack'   ");
+        workListQuery.append("        )   ");
+        workListQuery.append("       ,   ");
+        workListQuery.append("        styleListA as(   ");
+        workListQuery.append("          SELECT   ");
+        workListQuery.append("            PARENT_MDMID,   ");
+        workListQuery.append("            MDMID,   ");
+        workListQuery.append("            XML_DATA,   ");
+        workListQuery.append("            ENTRY_TYPE,   ");
+        workListQuery.append("            MOD_DTM,   ");
+        workListQuery.append("            PRIMARY_UPC   ");
+        workListQuery.append("          FROM   ");
+        workListQuery.append("            (   ");
+        workListQuery.append("            (   ");
+        workListQuery.append("              SELECT   ");
+        workListQuery.append("                PARENT_MDMID,   ");
+        workListQuery.append("                MDMID,   ");
+        workListQuery.append("                XML_DATA,   ");
+        workListQuery.append("                ENTRY_TYPE,   ");
+        workListQuery.append("                MOD_DTM,   ");
+        workListQuery.append("                PRIMARY_UPC   ");
+        workListQuery.append("              FROM   ");
+        workListQuery.append("                entryTypeStyleList   ");
+        workListQuery.append("            )   ");
+        workListQuery.append("            ");
+        workListQuery.append("          UNION ALL   ");
+        workListQuery.append("            (   ");
+        workListQuery.append("              SELECT   ");
+        workListQuery.append("                PARENT_MDMID,   ");
+        workListQuery.append("                MDMID,   ");
+        workListQuery.append("                XML_DATA,   ");
+        workListQuery.append("                ENTRY_TYPE,   ");
+        workListQuery.append("                MOD_DTM,   ");
+        workListQuery.append("                PRIMARY_UPC   ");
+        workListQuery.append("              FROM   ");
+        workListQuery
+            .append("                VENDORPORTAL.ADSE_ITEM_CATALOG   ");
+        workListQuery.append("              WHERE   ");
+        workListQuery.append("                    PARENT_MDMID IN   ");
+        workListQuery.append("                    (   ");
+        workListQuery.append("                      SELECT   ");
+        workListQuery.append("                        MDMID   ");
+        workListQuery.append("                      FROM   ");
+        workListQuery.append("                        entryTypeStyleList   ");
+        workListQuery.append("                    )   ");
+        workListQuery
+            .append("                 AND ENTRY_TYPE IN ('StyleColor')   ");
+        workListQuery.append("            )   ");
+        workListQuery.append("           )   ");
+        workListQuery.append("            )   ");
+        workListQuery.append("            ,   ");
+        workListQuery.append("        styleList as(   ");
+        workListQuery.append("          SELECT   ");
+        workListQuery.append("            PARENT_MDMID,   ");
+        workListQuery.append("            MDMID,   ");
+        workListQuery.append("            XML_DATA,   ");
+        workListQuery.append("            ENTRY_TYPE,   ");
+        workListQuery.append("            MOD_DTM,   ");
+        workListQuery.append("            PRIMARY_UPC   ");
+        workListQuery.append("          FROM   ");
+        workListQuery.append("            (   ");
+        workListQuery.append("            (   ");
+        workListQuery.append("              SELECT   ");
+        workListQuery.append("                PARENT_MDMID,   ");
+        workListQuery.append("                MDMID,   ");
+        workListQuery.append("                XML_DATA,   ");
+        workListQuery.append("                ENTRY_TYPE,   ");
+        workListQuery.append("                MOD_DTM,   ");
+        workListQuery.append("                PRIMARY_UPC   ");
+        workListQuery.append("              FROM   ");
+        workListQuery.append("                styleListA   ");
+        workListQuery.append("            )   ");
+        workListQuery.append("          UNION ALL   ");
+        workListQuery.append("            (   ");
+        workListQuery.append("              SELECT   ");
+        workListQuery.append("                PARENT_MDMID,   ");
+        workListQuery.append("                MDMID,          ");
+        workListQuery.append("                XML_DATA,     ");
+        workListQuery.append("                ENTRY_TYPE,   ");
+        workListQuery.append("                MOD_DTM,   ");
+        workListQuery.append("                PRIMARY_UPC   ");
+        workListQuery.append("              FROM   ");
+        workListQuery.append("                entryTypeComplexList   ");
+        workListQuery.append("                   ");
+        workListQuery.append("            )   ");
+        workListQuery.append("           )   ");
+        workListQuery.append("          )   ");
+        workListQuery.append("       ,styleID_DescA AS(   ");
+        workListQuery.append("           ");
+        workListQuery.append("          SELECT   ");
+        workListQuery.append("            sl.PARENT_MDMID,   ");
+        workListQuery.append("            sl.MDMID,   ");
+        workListQuery.append("           sl.XML_DATA,   ");
+        workListQuery.append("           sl.ENTRY_TYPE,   ");
+        workListQuery.append("            sl.PRIMARY_UPC,   ");
+        workListQuery.append("            ia.COLO_DESC,   ");
+        workListQuery.append("            ia.COLO_CODE,   ");
+        workListQuery.append("            ia.COLO_CODE_SC,   ");
+        workListQuery.append("           ia.STYLE_ID_SC,     ");
+        workListQuery.append("            ia.Supplier_Id,   ");
+        workListQuery.append("          ia.DEPT_ID,   ");
+        workListQuery.append("        ia.PRODUCT_NAME,   ");
+        workListQuery.append("        ia.ven_style   ");
+        workListQuery.append("                 ");
+        workListQuery.append("        FROM   ");
+        workListQuery.append("           styleList sl,   ");
+        workListQuery.append("           XMLTABLE(   ");
+        workListQuery
+            .append("           'for $i in $XML_DATA/pim_entry/entry    ");
+        workListQuery.append("            let    ");
+        workListQuery
+            .append("            $colorcodeStyleColor := $i//Item_StyleColor_Spec/Color_Code/text(),   ");
+        workListQuery
+            .append("         $styleIdStyleColor := $i//Item_StyleColor_Spec/Style_Id/text(),   ");
+        workListQuery
+            .append("           $colorcode := $i//Item_Style_Spec/Differentiators[Type eq \"COLOR\"]/Codes/Code,   ");
+        workListQuery
+            .append("           $colordesc := $i//Item_Style_Spec/Differentiators[Type eq \"COLOR\"]/Codes/Vendor_Description,   ");
+        workListQuery
+            .append("        $removalFlag := $i//System/Removal_Flag eq \"true\",   ");
+        workListQuery
+            .append("            $PRODUCT_NAME := $i//Product_Name/text(),    ");
+        workListQuery
+            .append("            $ven_style := $i//Vendor_Style/text(),    ");
+        workListQuery
+            .append("            $marchant_id := fn:tokenize($i/../item_header/category_paths/category[fn:starts-with(path, \"Merchandise_Hierarchy\")]/path, \"\\||///\")       ");
+        workListQuery.append("            return     ");
+        workListQuery.append("            <out>   ");
+        workListQuery
+            .append("              <COLO_CODE_SC>{$colorcodeStyleColor}</COLO_CODE_SC>   ");
+        workListQuery
+            .append("              <STYLE_ID_SC>{$styleIdStyleColor}</STYLE_ID_SC>      ");
+        workListQuery
+            .append("             <COLO_CODE>{$colorcode}</COLO_CODE>   ");
+        workListQuery
+            .append("              <COLO_DESC>{$colordesc}</COLO_DESC>        ");
+        workListQuery
+            .append("            <supplier_id>{$i//Supplier[Primary_Flag eq \"true\"]/Id}</supplier_id>    ");
+        workListQuery
+            .append("            <DEPT_ID>{$marchant_id[5]}</DEPT_ID>    ");
+        workListQuery
+            .append("            <PRODUCT_NAME>{$PRODUCT_NAME}</PRODUCT_NAME>    ");
+        workListQuery
+            .append("            <ven_style>{$ven_style}</ven_style>    ");
+        workListQuery.append("            <flag>{$removalFlag}</flag>   ");
+        workListQuery.append("    </out>'   ");
+        workListQuery
+            .append("      passing sl.XML_DATA AS \"XML_DATA\" columns    ");
+        workListQuery
+            .append("    COLO_DESC VARCHAR(100) path '/out/COLO_DESC',   ");
+        workListQuery
+            .append("    COLO_CODE VARCHAR(100) path '/out/COLO_CODE',   ");
+        workListQuery
+            .append("    COLO_CODE_SC VARCHAR(10) path '/out/COLO_CODE_SC',   ");
+        workListQuery
+            .append("    STYLE_ID_SC VARCHAR(10) path '/out/STYLE_ID_SC',   ");
+        workListQuery
+            .append("    supplier_id  VARCHAR2(20) path '/out/supplier_id',   ");
+        workListQuery
+            .append("    DEPT_ID  VARCHAR2(60) path '/out/DEPT_ID',   ");
+        workListQuery
+            .append("    PRODUCT_NAME VARCHAR(100) path '/out/PRODUCT_NAME',   ");
+        workListQuery
+            .append("    ven_style VARCHAR2(100) path '/out/ven_style',   ");
+        workListQuery.append("    flag VARCHAR(10) path '/out/flag') ia,   ");
+        workListQuery.append("      Input inp   ");
+        workListQuery.append("       ");
+        workListQuery.append("       ");
+        workListQuery.append("    WHERE   ");
+        workListQuery.append("      (flag = 'false'   ");
+        workListQuery.append("    AND Depts is NULL   ");
+        workListQuery.append("    And DEPT_ID IN (   ");
+        workListQuery
+            .append("           SELECT DEPT_ID FROM VENDORPORTAL.PEP_DEPARTMENT PD, VENDORPORTAL.EXTERNAL_USER EU WHERE PD.PEP_USER_ID IN (LANId, EmailId)   ");
+        workListQuery.append("         AND SuppIds is not null   ");
+        workListQuery.append("           AND EU.SUPPLIER_ID   ");
+        workListQuery.append("         IN (   ");
+        workListQuery.append("          SELECT   ");
+        workListQuery
+            .append("              regexp_substr(SuppIds,'[^,]+',1,LEVEL)   ");
+        workListQuery.append("          FROM   ");
+        workListQuery.append("              dual   ");
+        workListQuery
+            .append("            CONNECT BY regexp_substr(SuppIds,'[^,]+',1,LEVEL) IS NOT NULL   ");
+        workListQuery.append("      )   ");
+        workListQuery
+            .append("         AND EU.SUPPLIER_EMAIL IN (LANId, EmailId) AND PD.PEP_USER_ID = EU.SUPPLIER_EMAIL   ");
+        workListQuery.append("          ))   ");
+        workListQuery.append("        AND    ");
+        workListQuery.append("      SuppIds is not null AND Supplier_Id    ");
+        workListQuery.append("      IN (   ");
+        workListQuery
+            .append("          SELECT SUPPLIER_ID FROM VENDORPORTAL.PEP_DEPARTMENT PD, VENDORPORTAL.EXTERNAL_USER EU WHERE PD.PEP_USER_ID IN (LANId, EmailId)   ");
+        workListQuery.append("         AND SuppIds is not null   ");
+        workListQuery.append("           AND EU.SUPPLIER_ID   ");
+        workListQuery.append("         IN (   ");
+        workListQuery.append("          SELECT   ");
+        workListQuery
+            .append("              regexp_substr(SuppIds,'[^,]+',1,LEVEL)   ");
+        workListQuery.append("          FROM   ");
+        workListQuery.append("              dual   ");
+        workListQuery
+            .append("            CONNECT BY regexp_substr(SuppIds,'[^,]+',1,LEVEL) IS NOT NULL   ");
+        workListQuery.append("      )   ");
+        workListQuery
+            .append("         AND EU.SUPPLIER_EMAIL IN (LANId, EmailId) AND PD.PEP_USER_ID = EU.SUPPLIER_EMAIL   ");
+        workListQuery.append("      )   ");
+        workListQuery.append("              ");
+        workListQuery.append("  OR   ");
+        workListQuery.append("    (flag = 'false'   ");
+        workListQuery.append("    AND Depts is Not NULL   ");
+        workListQuery.append("    AND ((EmailId IS NULL)   ");
+        workListQuery.append("    AND DEPT_ID IN (   ");
+        workListQuery.append("          SELECT   ");
+        workListQuery
+            .append("            regexp_substr(depts,'[^,]+',1,LEVEL)   ");
+        workListQuery.append("          FROM   ");
+        workListQuery.append("            dual   ");
+        workListQuery
+            .append("          CONNECT BY regexp_substr(depts,'[^,]+',1,LEVEL) IS NOT NULL   ");
+        workListQuery.append("               ");
+        workListQuery.append("      )   ");
+        workListQuery.append("    )   ");
+        workListQuery.append("       ");
+        workListQuery.append("    OR   ");
+        workListQuery.append("      ( (EmailId IS NOT NULL)   ");
+        workListQuery.append("       AND DEPT_ID IN (   ");
+        workListQuery
+            .append("      SELECT DEPT_ID FROM VENDORPORTAL.PEP_DEPARTMENT PD, VENDORPORTAL.EXTERNAL_USER EU WHERE PD.PEP_USER_ID IN (LANId, EmailId)   ");
+        workListQuery.append("      AND SuppIds is not null   ");
+        workListQuery.append("        AND EU.SUPPLIER_ID   ");
+        workListQuery.append("          IN (   ");
+        workListQuery.append("          SELECT   ");
+        workListQuery
+            .append("            regexp_substr(SuppIds,'[^,]+',1,LEVEL)   ");
+        workListQuery.append("          FROM   ");
+        workListQuery.append("            dual   ");
+        workListQuery
+            .append("            CONNECT BY regexp_substr(SuppIds,'[^,]+',1,LEVEL) IS NOT NULL   ");
+        workListQuery.append("               ");
+        workListQuery.append("      )   ");
+        workListQuery
+            .append("      AND EU.SUPPLIER_EMAIL IN (LANId, EmailId) AND PD.PEP_USER_ID = EU.SUPPLIER_EMAIL   ");
+        workListQuery.append("           ");
+        workListQuery.append("            )   ");
+        workListQuery
+            .append("            AND SuppIds is not null AND Supplier_Id    ");
+        workListQuery.append("          IN (   ");
+        workListQuery
+            .append("              SELECT SUPPLIER_ID FROM VENDORPORTAL.PEP_DEPARTMENT PD, VENDORPORTAL.EXTERNAL_USER EU WHERE PD.PEP_USER_ID IN (LANId, EmailId)   ");
+        workListQuery.append("             AND SuppIds is not null   ");
+        workListQuery.append("             AND EU.SUPPLIER_ID   ");
+        workListQuery.append("             IN (   ");
+        workListQuery.append("              SELECT   ");
+        workListQuery
+            .append("                  regexp_substr(SuppIds,'[^,]+',1,LEVEL)   ");
+        workListQuery.append("              FROM   ");
+        workListQuery.append("                  dual   ");
+        workListQuery
+            .append("              CONNECT BY regexp_substr(SuppIds,'[^,]+',1,LEVEL) IS NOT NULL   ");
+        workListQuery.append("          )   ");
+        workListQuery
+            .append("             AND EU.SUPPLIER_EMAIL IN (LANId, EmailId) AND PD.PEP_USER_ID = EU.SUPPLIER_EMAIL   ");
+        workListQuery.append("          )   ");
+        workListQuery.append("      )   ");
+        workListQuery.append("  )   ");
+        workListQuery.append("   )   ");
+        workListQuery.append("   , styleID_Desc AS(   ");
+        workListQuery.append("   SELECT    ");
+        workListQuery.append("      PARENT_MDMID,   ");
+        workListQuery.append("      MDMID,             ");
+        workListQuery.append("      ENTRY_TYPE,        ");
+        workListQuery.append("      COLO_DESC,         ");
+        workListQuery.append("      COLO_CODE,         ");
+        workListQuery.append("      COLO_CODE_SC,      ");
+        workListQuery.append("      STYLE_ID_SC,       ");
+        workListQuery.append("      Supplier_Id,       ");
+        workListQuery.append("      DEPT_ID,           ");
+        workListQuery.append("      PRODUCT_NAME,      ");
+        workListQuery.append("      ven_style,         ");
+        workListQuery.append("    PRIMARY_UPC          ");
+        workListQuery.append("        from             ");
+        workListQuery.append("    (SELECT DISTINCT        ");
+        workListQuery.append("      sia.PARENT_MDMID,     ");
+        workListQuery.append("      sia.MDMID,            ");
+        workListQuery.append("      sia.ENTRY_TYPE,       ");
+        workListQuery.append("      ias.COLO_DESC,        ");
+        workListQuery.append("      ias.COLO_CODE,        ");
+        workListQuery.append("      sia.COLO_CODE_SC,     ");
+        workListQuery.append("      sia.STYLE_ID_SC,      ");
+        workListQuery.append("      sia.Supplier_Id,      ");
+        workListQuery.append("      sia.DEPT_ID,          ");
+        workListQuery.append("      sia.PRODUCT_NAME,     ");
+        workListQuery.append("      sia.ven_style,        ");
+        workListQuery.append("    sia.PRIMARY_UPC         ");
+        workListQuery.append("    from styleID_DescA sia,   ");
+        workListQuery.append("    XMLTABLE(   ");
+        workListQuery
+            .append("      'for $j in $XML_DATA/pim_entry/entry/Item_Style_Spec/Differentiators[Type eq \"COLOR\"]/Codes   ");
+        workListQuery.append("         ");
+        workListQuery.append("    let    ");
+        workListQuery
+            .append("      $colorcode := $j//Code,                                         ");
+        workListQuery
+            .append("      $colordesc := $j//Vendor_Description                            ");
+        workListQuery
+            .append("                                                                      ");
+        workListQuery
+            .append("    return                                                            ");
+        workListQuery
+            .append("    <out>                                                             ");
+        workListQuery
+            .append("        <COLO_CODE>{$colorcode}</COLO_CODE>                           ");
+        workListQuery
+            .append("        <COLO_DESC>{$colordesc}</COLO_DESC>                           ");
+        workListQuery
+            .append("    </out>'                                                           ");
+        workListQuery
+            .append("      passing sia.XML_DATA AS \"XML_DATA\" columns                      ");
+        workListQuery
+            .append("    COLO_DESC VARCHAR(100) path '/out/COLO_DESC',                     ");
+        workListQuery
+            .append("    COLO_CODE VARCHAR(100) path '/out/COLO_CODE') ias                 ");
+        workListQuery
+            .append("    where                                                             ");
+        workListQuery
+            .append("    sia.Entry_Type='Style'                                            ");
+        workListQuery
+            .append("    )                                                                 ");
+        workListQuery
+            .append("    UNION ALL                                                         ");
+        workListQuery
+            .append("      (select PARENT_MDMID,                                           ");
+        workListQuery
+            .append("      MDMID,                                                          ");
+        workListQuery
+            .append("      ENTRY_TYPE,                                                     ");
+        workListQuery
+            .append("      COLO_DESC,                                                      ");
+        workListQuery
+            .append("      COLO_CODE,                                                      ");
+        workListQuery
+            .append("      COLO_CODE_SC,                                                   ");
+        workListQuery
+            .append("      STYLE_ID_SC,                                                    ");
+        workListQuery
+            .append("      Supplier_Id,                                                    ");
+        workListQuery
+            .append("      DEPT_ID,                                                        ");
+        workListQuery
+            .append("      PRODUCT_NAME,                                                   ");
+        workListQuery
+            .append("      ven_style,PRIMARY_UPC from styleID_DescA where entry_type in ('StyleColor'))   ");/*
+                                                                                                              * ,'Complex
+                                                                                                              * Pack
+                                                                                                              * '
+                                                                                                              */
+        workListQuery.append("   )       ");
+        workListQuery.append(" ,   ");
+        workListQuery.append(" MDMID_ColorList As   ");
+        workListQuery.append(" (   ");
+        workListQuery
+            .append("   select distinct  a.parent_mdmid, a.colo_code_sc, b.Colo_desc COL_Desc    ");
+        workListQuery.append("   from styleID_Desc a, styleID_Desc b    ");
+        workListQuery.append("       where    ");
+        workListQuery.append("       a.parent_mdmid = b.mdmid  and    ");
+        workListQuery
+            .append("        a.colo_code_sc = b.colo_code and a.parent_mdmid is not null   ");
+        workListQuery.append("  )   ");
+        workListQuery.append("        ,   ");
+        workListQuery.append("           ");
+        workListQuery.append("  orinList AS(              ");
+        workListQuery.append("  Select                    ");
+        workListQuery.append("    a.PARENT_MDMID,         ");
+        workListQuery.append("    a.MDMID ORIN_NUM,       ");
+        workListQuery.append("    a.ENTRY_TYPE,           ");
+        workListQuery.append("   Case                     ");
+        workListQuery
+            .append("      When a.entry_type in ('Style')                                 ");/*
+                                                                                              * ,'Complex
+                                                                                              * Pack
+                                                                                              * '
+                                                                                              */
+        workListQuery
+            .append("        THEN Null                                                                       ");
+        workListQuery
+            .append("      Else                                                                              ");
+        workListQuery
+            .append("      (select distinct COL_Desc from MDMID_ColorList x                                  ");
+        workListQuery
+            .append("       where                                                                            ");
+        workListQuery
+            .append("       (x.parent_mdmid = a.parent_mdmid and x.colo_code_sc = a.colo_code_sc))           ");
+        workListQuery
+            .append("     End COLO_DESC,                                                                     ");
+        workListQuery
+            .append("    a.Supplier_Id,                                                                      ");
+        workListQuery
+            .append("    a.DEPT_ID,                                                                          ");
+        workListQuery
+            .append("    a.PRODUCT_NAME,                                                                     ");
+        workListQuery
+            .append("    a.ven_style,                                                                        ");
+        workListQuery
+            .append("    a.PRIMARY_UPC                                                                       ");
+        workListQuery
+            .append("  From styleID_Desc a                                                                   ");
+        workListQuery
+            .append("                                                                                        ");
+        workListQuery
+            .append("  )                                                                                     ");
+        workListQuery
+            .append("                                                                                        ");
+        workListQuery
+            .append("  ,                                                                                     ");
+        workListQuery
+            .append("  supplierDetails AS                                                                    ");
+        workListQuery
+            .append("  (                                                                                     ");
+        workListQuery
+            .append("    SELECT                                                                                 ");
+        workListQuery
+            .append("      orin.PARENT_MDMID,                                                                   ");
+        workListQuery
+            .append("      orin.ORIN_NUM,                                                                       ");
+        workListQuery
+            .append("      orin.ENTRY_TYPE,                                                                     ");
+        workListQuery
+            .append("      orin.COLO_DESC as COLOR_DESC,                                                        ");
+        workListQuery
+            .append("      orin.DEPT_Id,                                                                        ");
+        workListQuery
+            .append("      orin.PRODUCT_NAME,                                                                   ");
+        workListQuery
+            .append("      orin.ven_style,                                                                      ");
+        workListQuery
+            .append("      orin.Supplier_Id,                                                                    ");
+        workListQuery
+            .append("    orin.PRIMARY_UPC,                                                                      ");
+        workListQuery
+            .append("      s.ven_name,                                                                          ");
+        workListQuery
+            .append("      s.omniChannelIndicator                                                               ");
+        workListQuery
+            .append("    FROM                                                                                   ");
+        workListQuery
+            .append("      orinList orin,                                                                       ");
+        workListQuery
+            .append("      VENDORPORTAL.ADSE_SUPPLIER_CATALOG supplier,                                         ");
+        workListQuery
+            .append("      XMLTABLE(                                                                            ");
+        workListQuery
+            .append("      'for $supplier in $supplierCatalog/pim_entry/entry/Supplier_Ctg_Spec  let $ven_name := $supplier/Name,  $isOmniChannel := $supplier/../Supplier_Site_Spec/Omni_Channel  return  <out> <ven_name>{$ven_name}</ven_name> <sup>{$supplier/Id}</sup>  <omni_channel>{if($isOmniChannel eq \"true\") then \"Y\" else \"N\"}</omni_channel>  </out>'   ");
+        workListQuery
+            .append("      PASSING XMLELEMENT(\"Id\", orin.Supplier_Id) AS \"Suppliers\",   ");
+        workListQuery
+            .append("      supplier.XML_DATA                          AS \"supplierCatalog\" columns   ");
+        workListQuery
+            .append("      ven_name                          VARCHAR2(80) path '/out/ven_name', omniChannelIndicator VARCHAR2   ");
+        workListQuery
+            .append("      (2) path '/out/omni_channel', sup VARCHAR2(100) path '/out/sup') s   ");
+        workListQuery.append("    WHERE   ");
+        workListQuery.append("      orin.Supplier_Id = supplier.mdmid   ");
+        workListQuery
+            .append("  )                                                ");
+        workListQuery
+            .append("                                                   ");
+        workListQuery
+            .append("  ,                                                ");
+        workListQuery
+            .append("  finalList as (                                   ");
+        workListQuery
+            .append("  SELECT                                           ");
+        workListQuery
+            .append("  supl.PARENT_MDMID Parent_Style_Orin,             ");
+        workListQuery
+            .append("  CASE                                             ");
+        workListQuery
+            .append("    WHEN LENGTH(ORIN_NUM) > 9                      ");
+        workListQuery
+            .append("    THEN SUBSTR(ORIN_NUM,1,9)                      ");
+        workListQuery
+            .append("      || ' '                                       ");
+        workListQuery
+            .append("      || SUBSTR(ORIN_NUM,10)                       ");
+        workListQuery
+            .append("      || ' '                                       ");
+        workListQuery
+            .append("      || COLOR_DESC                                ");
+        workListQuery
+            .append("    ELSE ORIN_NUM                                  ");
+        workListQuery
+            .append("  END ORIN_NUM,                                    ");
+        workListQuery
+            .append("  supl.DEPT_ID,                                    ");
+        workListQuery
+            .append("      supl.Supplier_Id,                            ");
+        workListQuery
+            .append("  supl.PRODUCT_NAME,                               ");
+        workListQuery
+            .append("  supl.ENTRY_TYPE,                                 ");
+        workListQuery
+            .append("  supl.COLOR_DESC,                                 ");
+        workListQuery
+            .append("  supl.VEN_NAME,                                   ");
+        workListQuery
+            .append("  supl.VEN_STYLE,                                  ");
+        workListQuery
+            .append("  supl.PRIMARY_UPC,                                ");
+        workListQuery
+            .append("  petStatus.thevalue PETSTATUS,                    ");
+        workListQuery
+            .append("  p.completion_date,                               ");
+        workListQuery
+            .append("  supl.omniChannelIndicator                        ");
+        workListQuery
+            .append("  ,p.contentState,p.contentContainer,p.imageState,p.imageContainer, p.state, p.stateContainer   ");
+        workListQuery.append(" FROM   ");
+        workListQuery.append("  supplierDetails supl,   ");
+        workListQuery.append("  VENDORPORTAL.ADSE_PET_CATALOG pet,   ");
+        workListQuery.append("  XMLTABLE(   ");
+        workListQuery
+            .append("  'for $pet in $pets/pim_entry/entry     let $completionDate := $pet//Completion_Date, $imageState := $pet//ImageState, $contentState := $pet//ContentState    return <out>     <id>{$pet/Pet_Ctg_Spec/Id}</id>    <completion_date>{$completionDate}</completion_date>    <imageState>{$imageState}</imageState> <imageContainer>{fn:data($imageState/@container)}</imageContainer>   <contentState>{$contentState}</contentState> <contentContainer>{fn:data($contentState/@container)}</contentContainer>    <state>{$pet//State}</state>    <req_type>{$pet//SourceSystem}</req_type>  <colorDesc>{$pet//Differentiators[Type eq \"COLOR\"]/Vendor_Description}</colorDesc>   ");
+        workListQuery
+            .append("  <stateContainer>{data($pet//State/@container)}</stateContainer>  </out>'                 ");
+        workListQuery
+            .append("  passing pet.xml_data AS \"pets\" Columns Id VARCHAR2(20) path '/out/id',                   ");
+        workListQuery
+            .append("  completion_date                           VARCHAR2(10) path                              ");
+        workListQuery
+            .append("  '/out/completion_date', imageState        VARCHAR2(20) path '/out/imageState'            ");
+        workListQuery
+            .append("  , imageContainer                          VARCHAR2(100) path                             ");
+        workListQuery
+            .append("  '/out/imageContainer', contentState       VARCHAR2(20) path                              ");
+        workListQuery
+            .append("  '/out/contentState', contentContainer     VARCHAR2(40) PATH                              ");
+        workListQuery
+            .append("  '/out/contentContainer', state            VARCHAR2(40) path '/out/state',                ");
+        workListQuery
+            .append("  req_type                                  VARCHAR2(20) path '/out/req_type',             ");
+        workListQuery
+            .append("  colorDesc                                 VARCHAR2(60) path '/out/colorDesc',            ");
+        workListQuery
+            .append("  stateContainer   VARCHAR2(50) path '/out/stateContainer'                                 ");
+        workListQuery
+            .append("  ) p,                                                                                     ");
+        workListQuery
+            .append("  TypeIndex typInd,                                                                        ");
+        workListQuery
+            .append("  VENDORPORTAL.adse_reference_data petStatus                                               ");
+        workListQuery
+            .append("WHERE                                                                                      ");
+        workListQuery
+            .append("  supl.ORIN_NUM     =pet.mdmid                                                             ");
+        workListQuery
+            .append("AND supl.ENTRY_TYPE = typInd.typ                                                           ");
+        workListQuery
+            .append("AND petStatus.mdmid = p.state                                                              ");
+        workListQuery
+            .append("AND petStatus.entry_type=p.stateContainer                                                  ");
+        workListQuery
+            .append("                                                                                           ");
+        workListQuery
+            .append("  )                                                                                        ");
+        workListQuery
+            .append("                                                                                           ");
+        workListQuery
+            .append(",finalListA as (                                                                           ");
+        workListQuery
+            .append("  SELECT                                                                                   ");
+        workListQuery
+            .append("  Parent_Style_Orin,                                                                       ");
+        workListQuery
+            .append("  ORIN_NUM,                                                                                ");
+        workListQuery
+            .append("  DEPT_ID,                                                                                 ");
+        workListQuery
+            .append("      Supplier_Id,                                                                         ");
+        workListQuery
+            .append("  PRODUCT_NAME,                                                                            ");
+        workListQuery
+            .append("  ENTRY_TYPE,                                                                              ");
+        workListQuery
+            .append("  COLOR_DESC,                                                                              ");
+        workListQuery
+            .append("  VEN_NAME,                                                                                ");
+        workListQuery
+            .append("  VEN_STYLE,                                                                                  ");
+        workListQuery
+            .append("  PRIMARY_UPC,                                                                                ");
+        workListQuery
+            .append("  PETSTATUS,                                                                                  ");
+        workListQuery
+            .append("  completion_date,                                                                            ");
+        workListQuery
+            .append("  omniChannelIndicator                                                                        ");
+        workListQuery
+            .append("  ,contentState,contentContainer,imageState,imageContainer                                    ");
+        workListQuery
+            .append("FROM                                                                                          ");
+        workListQuery
+            .append("(                                                                                             ");
+        workListQuery
+            .append("  SELECT                                                                                      ");
+        workListQuery
+            .append("  DISTINCT                                                                                    ");
+        workListQuery
+            .append("  CASE                                                                                        ");
+        workListQuery
+            .append("    WHEN LENGTH(ORIN_NUM) > 9                                                                 ");
+        workListQuery
+            .append("    THEN SUBSTR(ORIN_NUM,1,9)                                                                 ");
+        workListQuery
+            .append("    ELSE ORIN_NUM                                                                             ");
+        workListQuery
+            .append("  END Parent_Style_Orin,                                                                      ");
+        workListQuery
+            .append("  fl.ORIN_NUM,                                                                                ");
+        workListQuery
+            .append("  fl.DEPT_ID,                                                                                 ");
+        workListQuery
+            .append("  fl.Supplier_Id,                                                                             ");
+        workListQuery
+            .append("  fl.PRODUCT_NAME,                                                                            ");
+        workListQuery
+            .append("  fl.ENTRY_TYPE,                                                                              ");
+        workListQuery
+            .append("  fl.COLOR_DESC,                                                                              ");
+        workListQuery
+            .append("  fl.VEN_NAME,                                                                                ");
+        workListQuery
+            .append("  fl.VEN_STYLE,                                                                               ");
+        workListQuery
+            .append("  fl.PRIMARY_UPC,                                                                             ");
+        workListQuery
+            .append("  fl.PETSTATUS,                                                                               ");
+        workListQuery
+            .append("  fl.completion_date,                                                                         ");
+        workListQuery
+            .append("  fl.omniChannelIndicator                                                                     ");
+        workListQuery
+            .append("  ,fl.contentState,fl.contentContainer,fl.imageState,fl.imageContainer                        ");
+        workListQuery
+            .append("FROM                                                                                          ");
+        workListQuery
+            .append("finalList fl                                                                                  ");
+        workListQuery
+            .append("where fl.ENTRY_TYPE = 'Style' AND fl.PETSTATUS = 'Initiated' OR fl.ORIN_NUM in (select PARENT_STYLE_ORIN from finalList where petstatus='Initiated' and ENTRY_TYPE = 'StyleColor')   ");
+        workListQuery.append(" Union                                 ");
+        workListQuery.append(" SELECT                                ");
+        workListQuery.append("  DISTINCT                             ");
+        workListQuery.append("  CASE                                 ");
+        workListQuery.append("    WHEN LENGTH(ORIN_NUM) > 9          ");
+        workListQuery.append("    THEN SUBSTR(ORIN_NUM,1,9)          ");
+        workListQuery.append("    ELSE ORIN_NUM                      ");
+        workListQuery.append("  END Parent_Style_Orin,               ");
+        workListQuery.append("  fl.ORIN_NUM,                         ");
+        workListQuery.append("  fl.DEPT_ID,                          ");
+        workListQuery.append("      fl.Supplier_Id,                  ");
+        workListQuery.append("  fl.PRODUCT_NAME,                     ");
+        workListQuery.append("  fl.ENTRY_TYPE,                       ");
+        workListQuery.append("  fl.COLOR_DESC,                       ");
+        workListQuery.append("  fl.VEN_NAME,                         ");
+        workListQuery.append("  fl.VEN_STYLE,                        ");
+        workListQuery.append("  fl.PRIMARY_UPC,                      ");
+        workListQuery.append("  fl.PETSTATUS,                        ");
+        workListQuery.append("  fl.completion_date,                  ");
+        workListQuery.append("  fl.omniChannelIndicator              ");
+        workListQuery
+            .append("  ,fl.contentState,fl.contentContainer,fl.imageState,fl.imageContainer   ");
+        workListQuery
+            .append("FROM                                                                      ");
+        workListQuery
+            .append("finalList fl                                                              ");
+        workListQuery
+            .append("where fl.state = '01' and fl.ENTRY_TYPE not in ('Style')                  ");
+        workListQuery
+            .append(")                                                                         ");
+        workListQuery
+            .append(")                                                                         ");
+        workListQuery
+            .append("                                                                          ");
+        workListQuery
+            .append("SELECT                                                                    ");
+        workListQuery
+            .append("  fla.Parent_Style_Orin,                                                  ");
+        workListQuery
+            .append("  fla.ORIN_NUM,                                                           ");
+        workListQuery
+            .append("  fla.DEPT_ID,                                                            ");
+        workListQuery
+            .append("  fla.Supplier_Id,                                                        ");
+        workListQuery
+            .append("  fla.PRODUCT_NAME,                                                       ");
+        workListQuery
+            .append("  fla.ENTRY_TYPE,                                                         ");
+        workListQuery
+            .append("  fla.PRIMARY_UPC,                                                        ");
+        workListQuery
+            .append("  fla.COLOR_DESC,                                                         ");
+        workListQuery
+            .append("  fla.VEN_NAME,                                                           ");
+        workListQuery
+            .append("  fla.VEN_STYLE,                                                          ");
+        workListQuery
+            .append("  fla.PETSTATUS,                                                          ");
+        workListQuery
+            .append("  img.thevalue ImageState,                                                ");
+        workListQuery
+            .append("  cont.thevalue CONTENTSTATUS,                                            ");
+        workListQuery
+            .append("  fla.completion_date,                                                    ");
+        workListQuery
+            .append("  fla.omniChannelIndicator                                                ");
+        workListQuery
+            .append("FROM                                                                      ");
+        workListQuery
+            .append("finalListA fla                                                            ");
+        workListQuery
+            .append("left outer join                                                           ");
+        workListQuery
+            .append("VENDORPORTAL.adse_reference_data img                                      ");
+        workListQuery
+            .append("ON                                                                        ");
+        workListQuery
+            .append("img.mdmid       =imageState                                               ");
+        workListQuery
+            .append("AND img.entry_type  =imageContainer                                       ");
+        workListQuery
+            .append("left outer join VENDORPORTAL.adse_reference_data cont on                  ");
+        workListQuery
+            .append("cont.mdmid      =ContentState                                   ");
+        workListQuery
+            .append("AND cont.entry_type =contentContainer                           ");
+        workListQuery
+            .append("                                                                ");
+        workListQuery
+            .append("ORDER BY                                                        ");
+        workListQuery
+            .append("  fla.ORIN_NUM                                                  ");
+
+        // GET_ALL_ORIN_WITH_PETS_XQUERY=;
+
+        LOGGER.info("\n--------->> GET_ALL_ORIN_WITH_PETS_XQUERY "
+            + workListQuery.toString());
+
+        return workListQuery.toString();
+
+    }
+
+                    
+                    
+                    
+/**
+ * Gets the all the merchandise department details for the Belk User,The Belk User is DCA .
+ * All Merchandise department details need to be displayed on the  the Department Pop Up Screen ,when the Belk User logs in for the first time 
+ * 
+ * @param orinNo the orin no
+ * @return the all department details
+ */
+public  String getAllDepartmentDetailsLatest(String searchString, String emailId, String pepID) {   
+    
+    String input="with"
+        +"Input(SearchString, emailId, PEPId) as (Select null, null, /*'AFUSOS3'*/ null from dual)";
+    
+    final String GET_ALL_DEPARTMENT_XQUERY_LATEST=
+            "  select DeptId, Dept " 
+                    + " from VENDORPORTAL.ADSE_MERCHANDISE_HIERARCHY dept,"
+                    + " XMLTABLE('for $dept in $XML_DATA/pim_category/entry/Merchandise_Hier_Spec "
+                    + " where fn:count($dept/System/Removal_Flag) eq 0 or $dept/System/Removal_Flag eq \"false\" "
+                    +" return <out><dept_id>{$dept/Identifiers/RMS_Id}</dept_id> "
+                    +" <dept_name>{$dept/Name}</dept_name></out>'"
+                    +" passing dept.XML_DATA as \"XML_DATA\""
+                    +" columns"
+                    +"  Dept varchar2(64) path '/out/dept_name', "
+                    +" DeptId varchar2(64) path '/out/dept_id' "
+                    +") DEPT_NAME"
+                    +" where dept.ENTRY_TYPE = 4"
+                    +" order by cast(DeptId as Integer)";
+    
+    return GET_ALL_DEPARTMENT_XQUERY_LATEST;             
+    
+}               
+
+                    
+           
+             
+             
+/**
+ * Gets the all Class details  By DepartmentId/Ids.
+ * @param deptids
+ * @return
+ */
+public  String getClassDetailsUsingDeptnumbers(String deptids) {  
+    
+    StringBuilder  queryfragment = new StringBuilder();
+    queryfragment.append("WITH Input(Depts) AS ");
+    queryfragment.append("  (SELECT '");
+    queryfragment.append(deptids);
+    queryfragment.append("' Depts ");
+    queryfragment.append("  FROM dual) ");
+    queryfragment.append(" ");
+    queryfragment.append("select ClsId, Cls ");
+    queryfragment.append("    from VENDORPORTAL.ADSE_MERCHANDISE_HIERARCHY cls, ");
+    queryfragment.append("        XMLTABLE('for $cls in $XML_DATA/pim_category/entry ");
+    queryfragment.append("            where fn:count($cls/Merchandise_Hier_Spec/System/Removal_Flag) eq 0 or $cls/Merchandise_Hier_Spec/System/Removal_Flag eq \"false\" ");
+    queryfragment.append("            return <out> ");
+    queryfragment.append("                    <cls_id>{$cls/Merchandise_Hier_Spec/Identifiers/RMS_Id}</cls_id> ");
+    queryfragment.append("                    <cls_name>{$cls/Merchandise_Hier_Spec/Name}</cls_name> ");
+    queryfragment.append("                    <dept_id>{fn:tokenize($cls/../merchandise_category_header/full_path,\"\\||///\")[5]}</dept_id> ");
+    queryfragment.append("                </out>' ");
+    queryfragment.append("            passing cls.XML_DATA as \"XML_DATA\" ");
+    queryfragment.append("            columns ");
+    queryfragment.append("            Cls varchar2(64) path '/out/cls_name', ");
+    queryfragment.append("            ClsId varchar2(64) path '/out/cls_id', ");
+    queryfragment.append("            DeptId varchar2(10) path '/out/dept_id' ");
+    queryfragment.append("        ) CLS_NAME, Input inp ");
+    queryfragment.append("        where cls.ENTRY_TYPE = 5 and MOD_DTM = '01-JAN-00 12.00.00.000000000 PM' ");
+    queryfragment.append("        and (depts   IS  NULL ");
+    queryfragment.append("    or deptId      IN ");
+    queryfragment.append("      (SELECT regexp_substr(depts,'[^,]+',1,LEVEL) ");
+    queryfragment.append("      FROM dual ");
+    queryfragment.append("        CONNECT BY regexp_substr(depts,'[^,]+',1,LEVEL) IS NOT NULL ");
+    queryfragment.append("      )) ");
+    queryfragment.append("        order by cast(ClsId as Integer)");
+    LOGGER.info("getClassQuery"+queryfragment.toString());
+    return queryfragment.toString();
+       
+   }              
+            
+                       
+                        
+                   
+public String getAdvWorkListDisplayData(AdvanceSearch advSearch) {
+    StringBuilder  advQueryFragment = new StringBuilder();
+    String depts = null;
+    
+    //Fix for Defect #185
+    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+    SimpleDateFormat formatter1 = new SimpleDateFormat("MM-dd-yyyy");
+    Date date = new Date();
+    
+    if(StringUtils.isNotBlank(advSearch.getDeptNumbers())){
+        depts =  "'"+advSearch.getDeptNumbers()+"'";
+    }
+
+ String completionFrom = null;
+    //Fix for #185
+    if(StringUtils.isNotBlank(advSearch.getDateFrom())){
+        completionFrom = advSearch.getDateFrom();
+        completionFrom = completionFrom.trim();
+        try{
+                date = formatter1.parse(completionFrom);
+                completionFrom = formatter.format(date);
+                completionFrom = "'"+completionFrom+"'";
+                LOGGER.info("completionFrom----"+completionFrom);
+        }catch(Exception pe){
+            LOGGER.info("Format parse failed fromDate::");
+            pe.printStackTrace();
+        }
+    }
+    
+ String completionTo = null;
+    
+    //Fix for #185
+    if(StringUtils.isNotBlank(advSearch.getDateTo())){
+        completionTo =  advSearch.getDateTo();
+        completionTo = completionTo.trim();
+        try{
+                date = formatter1.parse(completionTo);
+                completionTo = formatter.format(date);
+                completionTo = "'"+completionTo+"'";
+                LOGGER.info("completionTo----"+completionTo);
+        }catch(ParseException pe){
+            LOGGER.info("Format parse failed toDate::");
+            pe.printStackTrace();
+        }
+    }
+    
+ String imageStatus = null;
+    
+    if(StringUtils.isNotBlank(advSearch.getImageStatus())){
+        imageStatus =  "'"+advSearch.getImageStatus()+"'";
+    }
+String contentStatus = null;
+    
+    if(StringUtils.isNotBlank(advSearch.getContentStatus())){
+        contentStatus =  "'"+advSearch.getContentStatus()+"'";
+    }
+String petStatus = null;
+    
+   /* if(StringUtils.isNotBlank(advSearch.getActive())){
+        if("yes".equalsIgnoreCase(advSearch.getActive())){
+            petStatus =  "'01'"; 
+        }else if("no".equalsIgnoreCase(advSearch.getActive())){
+            petStatus =  "'05'"; 
+        }
+    }*/
+    if(StringUtils.isNotBlank(advSearch.getActive())){
+        petStatus =  "'"+advSearch.getActive()+"'"; 
+    }
+String requestType = null;
+    
+    if(StringUtils.isNotBlank(advSearch.getRequestType())){
+        requestType =  "'"+advSearch.getRequestType()+"'";
+    }
+    
+    if (null != requestType) {
+        if (requestType.contains("Direct")) {
+            requestType = "'DIRECTFLAG'";
+        }
+        else if (requestType.contains("Manual")) {
+            requestType = "'PEP'";
+        }
+    }
+    System.out.println("requestType -->"+requestType);
+       
+String orin = null;
+    
+    if(StringUtils.isNotBlank(advSearch.getOrin())){
+        orin =  "'"+advSearch.getOrin()+"'";
+    }
+    
+String vendorStyle = null;
+    
+    if(StringUtils.isNotBlank(advSearch.getVendorStyle())){
+        vendorStyle =  "'"+advSearch.getVendorStyle()+"'";
+    }
+    
+String upc = null;
+    
+    if(StringUtils.isNotBlank(advSearch.getUpc())){
+        upc =  "'"+advSearch.getUpc()+"'";
+    }
+    
+String classes = null;
+    
+    if(StringUtils.isNotBlank(advSearch.getClassNumber())){
+        classes =  "'"+advSearch.getClassNumber()+"'";
+    }
+    
+String createdToday = null;
+    
+    if(StringUtils.isNotBlank(advSearch.getCreatedToday())){
+        createdToday =  "'"+advSearch.getCreatedToday()+"'";
+    }
+    LOGGER.info("createdToday::inConstants::" +createdToday);
+    
+String vendorNumber = null;
+    
+    if(StringUtils.isNotBlank(advSearch.getVendorNumber())){
+        vendorNumber =  "'"+advSearch.getVendorNumber()+"'";
+    }    
+
+    
+    advQueryFragment
+            .append("WITH Input(Depts, CompletionFrom, CompletionTo, ImageStatus, ContentStatus, PETStatus, RequestType, ORIN, VENDOR_STYLE, classes, createdToday, vendor, primaryUpc) AS ");
+        advQueryFragment.append("  (SELECT ");
+        advQueryFragment.append(depts);
+        advQueryFragment.append(" Depts, ");
+        advQueryFragment.append(completionFrom);
+        advQueryFragment.append("  CompletionFrom, ");
+        advQueryFragment.append(completionTo);
+        advQueryFragment.append("  CompletionTo, ");
+        advQueryFragment.append(imageStatus);
+        advQueryFragment.append("  ImageStatus, ");
+        advQueryFragment.append(contentStatus);
+        advQueryFragment.append("  ContentStatus, ");
+        advQueryFragment.append(petStatus);
+        advQueryFragment.append("  PETStatus, ");
+        advQueryFragment.append(requestType);
+        advQueryFragment.append("  RequestType, ");
+        advQueryFragment.append(orin);
+        advQueryFragment.append("  ORIN, ");
+        advQueryFragment.append(vendorStyle);
+        advQueryFragment.append("  VENDOR_STYLE, ");
+        advQueryFragment.append(classes);
+        advQueryFragment.append("  classes, ");
+        advQueryFragment.append(createdToday);
+        advQueryFragment.append("  createdToday, ");
+        advQueryFragment.append(vendorNumber);
+        advQueryFragment.append("  vendor, ");
+        advQueryFragment.append(upc);
+        advQueryFragment.append("  primaryUpc ");
+        advQueryFragment.append("    FROM ");
+        advQueryFragment.append("      dual ");
+        advQueryFragment.append("  ) ");
+        advQueryFragment.append("  , ");
+        advQueryFragment
+            .append("   TypeIndex(indx, typ) AS (                                                       ");
+        advQueryFragment
+            .append("   (    SELECT 1 indx, 'Style' typ From dual) UNION                                ");
+        advQueryFragment
+            .append("   (    SELECT 2 indx, 'StyleColor' typ From dual) UNION                           ");
+        advQueryFragment
+            .append("   (    SELECT 4 indx, 'Complex Pack' typ From dual)                               ");
+        advQueryFragment
+            .append("   ),                                                                              ");
+        advQueryFragment
+            .append("   entryTypeStyleList AS                                                           ");
+        advQueryFragment
+            .append("   (                                                                               ");
+        advQueryFragment
+            .append("     SELECT                                                                        ");
+        advQueryFragment
+            .append("       PARENT_MDMID,                                                               ");
+        advQueryFragment
+            .append("       MDMID,                                                                      ");
+        advQueryFragment
+            .append("       XML_DATA,                                                                   ");
+        advQueryFragment
+            .append("       ENTRY_TYPE,                                                                 ");
+        advQueryFragment
+            .append("       MOD_DTM,                                                                    ");
+        advQueryFragment
+            .append("     PRIMARY_UPC                                                                   ");
+        advQueryFragment
+            .append("     FROM                                                                          ");
+        advQueryFragment
+            .append("       VENDORPORTAL.ADSE_Item_CATALOG, Input inp1                                  ");
+        advQueryFragment
+            .append("     WHERE                                                                         ");
+        advQueryFragment
+            .append("       ENTRY_TYPE = 'Style'   AND (inp1.primaryUpc is NULL  OR PRIMARY_UPC = inp1.primaryUpc)    ");
+        advQueryFragment
+            .append("   )                                                                               ");
+        advQueryFragment
+            .append("  ,                                                                                ");
+        advQueryFragment
+            .append("  entryTypeComplexList AS                                                          ");
+        advQueryFragment
+            .append("   (                                                                               ");
+        advQueryFragment
+            .append("     SELECT                                                                        ");
+        advQueryFragment
+            .append("       PARENT_MDMID,                                                               ");
+        advQueryFragment
+            .append("       MDMID,                                                                      ");
+        advQueryFragment
+            .append("       XML_DATA,                                                                   ");
+        advQueryFragment
+            .append("       ENTRY_TYPE,                                                                 ");
+        advQueryFragment
+            .append("       MOD_DTM,                                                                    ");
+        advQueryFragment
+            .append("     PRIMARY_UPC                                                                   ");
+        advQueryFragment
+            .append("     FROM                                                                          ");
+        advQueryFragment
+            .append("       VENDORPORTAL.ADSE_Item_CATALOG                                              ");
+        advQueryFragment
+            .append("     WHERE                                                                         ");
+        advQueryFragment
+            .append("       ENTRY_TYPE = 'Complex Pack'                                                 ");
+        advQueryFragment
+            .append("   )                                                                               ");
+        advQueryFragment
+            .append("  ,                                                                                ");
+        advQueryFragment
+            .append("   itemGroupA as(                                                                  ");
+        advQueryFragment
+            .append("     SELECT                                                                        ");
+        advQueryFragment
+            .append("       PARENT_MDMID,                                                               ");
+        advQueryFragment
+            .append("       MDMID,                                                                      ");
+        advQueryFragment
+            .append("       XML_DATA,                                                                   ");
+        advQueryFragment
+            .append("       ENTRY_TYPE,                                                                 ");
+        advQueryFragment
+            .append("       MOD_DTM,                                                                    ");
+        advQueryFragment
+            .append("     PRIMARY_UPC                                                                   ");
+        advQueryFragment
+            .append("     FROM                                                                          ");
+        advQueryFragment
+            .append("       (                                                                           ");
+        advQueryFragment
+            .append("       (                                                                           ");
+        advQueryFragment
+            .append("         SELECT                                                                    ");
+        advQueryFragment
+            .append("           PARENT_MDMID,                                                           ");
+        advQueryFragment
+            .append("           MDMID,                                                                  ");
+        advQueryFragment
+            .append("           XML_DATA,                                                               ");
+        advQueryFragment
+            .append("           ENTRY_TYPE,                                                             ");
+        advQueryFragment
+            .append("           MOD_DTM,                                                                ");
+        advQueryFragment
+            .append("         PRIMARY_UPC                                                               ");
+        advQueryFragment
+            .append("         FROM                                                                      ");
+        advQueryFragment
+            .append("           entryTypeStyleList                                                      ");
+        advQueryFragment
+            .append("       )                                                                           ");
+        advQueryFragment
+            .append("     UNION ALL                                                                     ");
+        advQueryFragment
+            .append("       (                                                                           ");
+        advQueryFragment
+            .append("         SELECT                                                                    ");
+        advQueryFragment
+            .append("           PARENT_MDMID,                                                           ");
+        advQueryFragment
+            .append("           MDMID,                                                                  ");
+        advQueryFragment
+            .append("           XML_DATA,                                                               ");
+        advQueryFragment
+            .append("           ENTRY_TYPE,                                                             ");
+        advQueryFragment
+            .append("           MOD_DTM,                                                                ");
+        advQueryFragment
+            .append("         PRIMARY_UPC                                                               ");
+        advQueryFragment
+            .append("         FROM                                                                      ");
+        advQueryFragment
+            .append("           VENDORPORTAL.ADSE_ITEM_CATALOG                                          ");
+        advQueryFragment
+            .append("         WHERE                                                                     ");
+        advQueryFragment
+            .append("               PARENT_MDMID IN                                                     ");
+        advQueryFragment
+            .append("               (                                                                   ");
+        advQueryFragment
+            .append("                 SELECT                                                            ");
+        advQueryFragment
+            .append("                   MDMID                                                           ");
+        advQueryFragment
+            .append("                 FROM                                                              ");
+        advQueryFragment
+            .append("                   entryTypeStyleList                                              ");
+        advQueryFragment
+            .append("               )                                                                   ");
+        advQueryFragment
+            .append("            AND ENTRY_TYPE IN ('StyleColor')                                       ");
+        advQueryFragment
+            .append("       )                                                                           ");
+        advQueryFragment
+            .append("       )                                                                           ");
+        advQueryFragment
+            .append("       )                                                                           ");
+        advQueryFragment
+            .append("       ,                                                                           ");
+        advQueryFragment
+            .append("   itemGroup as(                                                                   ");
+        advQueryFragment
+            .append("     SELECT                                                                        ");
+        advQueryFragment
+            .append("       PARENT_MDMID,                                                               ");
+        advQueryFragment
+            .append("       MDMID,                                                                      ");
+        advQueryFragment
+            .append("       XML_DATA,                                                                   ");
+        advQueryFragment
+            .append("       ENTRY_TYPE,                                                                 ");
+        advQueryFragment
+            .append("       MOD_DTM,                                                                    ");
+        advQueryFragment
+            .append("     PRIMARY_UPC                                                                   ");
+        advQueryFragment
+            .append("     FROM                                                                          ");
+        advQueryFragment
+            .append("       (                                                                           ");
+        advQueryFragment
+            .append("       (                                                                           ");
+        advQueryFragment
+            .append("         SELECT                                                                    ");
+        advQueryFragment
+            .append("           PARENT_MDMID,                                                           ");
+        advQueryFragment
+            .append("           MDMID,                                                                  ");
+        advQueryFragment
+            .append("           XML_DATA,                                                               ");
+        advQueryFragment
+            .append("           ENTRY_TYPE,                                                             ");
+        advQueryFragment
+            .append("           MOD_DTM,                                                                ");
+        advQueryFragment
+            .append("         PRIMARY_UPC                                                               ");
+        advQueryFragment
+            .append("         FROM                                                                      ");
+        advQueryFragment
+            .append("           itemGroupA                                                              ");
+        advQueryFragment
+            .append("       )                                                                           ");
+        advQueryFragment
+            .append("     UNION ALL                                                                     ");
+        advQueryFragment
+            .append("       (                                                                           ");
+        advQueryFragment
+            .append("         SELECT                                                                    ");
+        advQueryFragment
+            .append("           PARENT_MDMID,                                                           ");
+        advQueryFragment
+            .append("           MDMID,                                                                  ");
+        advQueryFragment
+            .append("           XML_DATA,                                                               ");
+        advQueryFragment
+            .append("           ENTRY_TYPE,                                                             ");
+        advQueryFragment
+            .append("           MOD_DTM,                                                                ");
+        advQueryFragment
+            .append("         PRIMARY_UPC                                                               ");
+        advQueryFragment
+            .append("         FROM                                                                      ");
+        advQueryFragment
+            .append("           entryTypeComplexList                                                    ");
+        advQueryFragment
+            .append("       )                                                                           ");
+        advQueryFragment
+            .append("      )                                                                            ");
+        advQueryFragment
+            .append("     )                                                                             ");
+        advQueryFragment
+            .append("  ,styleID_DescA AS(                                                               ");
+        advQueryFragment
+            .append("     SELECT                                                                        ");
+        advQueryFragment
+            .append("       sl.PARENT_MDMID,                                                            ");
+        advQueryFragment
+            .append("       sl.MDMID,                                                                   ");
+        advQueryFragment
+            .append("       sl.XML_DATA,                                                                ");
+        advQueryFragment
+            .append("       sl.ENTRY_TYPE,                                                              ");
+        advQueryFragment
+            .append("     sl.PRIMARY_UPC,                                                               ");
+        advQueryFragment
+            .append("     ia.COLO_DESC,                                                                 ");
+        advQueryFragment
+            .append("     ia.COLO_CODE,                                                                 ");
+        advQueryFragment
+            .append("     ia.COLO_CODE_SC,                                                              ");
+        advQueryFragment
+            .append("       ia.STYLE_ID_SC,                                                             ");
+        advQueryFragment
+            .append("     ia.Supplier_Id,                                                               ");
+        advQueryFragment
+            .append("       ia.DEPT_ID,                                                                 ");
+        advQueryFragment
+            .append("     ia.PRODUCT_NAME,                                                              ");
+        advQueryFragment
+            .append("     ia.ven_style,                                                                 ");
+        advQueryFragment
+            .append("     ia.clsId,                                                                     ");
+        advQueryFragment
+            .append("     inp.PETStatus INPUTPETSTATUS,                                                 ");
+        advQueryFragment
+            .append("     inp.VENDOR_STYLE VSTYLE,                                                      ");
+        advQueryFragment
+            .append("       inp.classes,                                                                ");
+        advQueryFragment
+            .append("     inp.CompletionFrom,inp.CompletionTo,inp.ImageStatus,inp.ContentStatus inpContentStatus,inp.RequestType,inp.createdToday   ");
+        advQueryFragment.append("     FROM ");
+        advQueryFragment
+            .append("       itemGroup sl,                                                                                     ");
+        advQueryFragment
+            .append("       XMLTABLE(                                                                                         ");
+        advQueryFragment
+            .append("       'for $i in $XML_DATA/pim_entry/entry                                                              ");
+        advQueryFragment
+            .append("     let                                                                                                 ");
+        advQueryFragment
+            .append("     $colorcodeStyleColor := $i//Item_StyleColor_Spec/Color_Code/text(),                                 ");
+        advQueryFragment
+            .append("       $styleIdStyleColor := $i//Item_StyleColor_Spec/Style_Id/text(),                                   ");
+        advQueryFragment
+            .append("       $colorcode := $i//Item_Style_Spec/Differentiators[Type eq \"COLOR\"]/Codes/Code,                    ");
+        advQueryFragment
+            .append("       $colordesc := $i//Item_Style_Spec/Differentiators[Type eq \"COLOR\"]/Codes/Vendor_Description,      ");
+        advQueryFragment
+            .append("     $removalFlag := $i//System/Removal_Flag eq \"true\",                                                  ");
+        advQueryFragment
+            .append("     $PRODUCT_NAME := $i//Product_Name/text(),                                                           ");
+        advQueryFragment
+            .append("     $ven_style := $i//Vendor_Style/text(),                                                              ");
+        advQueryFragment
+            .append("     $marchant_id := fn:tokenize($i/../item_header/category_paths/category[fn:starts-with(path, \"Merchandise_Hierarchy\")]/path, \"\\||///\")    ");
+        advQueryFragment
+            .append("     return                                                                  ");
+        advQueryFragment
+            .append("     <out>                                                                   ");
+        advQueryFragment
+            .append("       <COLO_CODE_SC>{$colorcodeStyleColor}</COLO_CODE_SC>                   ");
+        advQueryFragment
+            .append("       <STYLE_ID_SC>{$styleIdStyleColor}</STYLE_ID_SC>                       ");
+        advQueryFragment
+            .append("         <COLO_CODE>{$colorcode}</COLO_CODE>                                 ");
+        advQueryFragment
+            .append("       <COLO_DESC>{$colordesc}</COLO_DESC>                                   ");
+        advQueryFragment
+            .append("     <supplier_id>{$i//Supplier[Primary_Flag eq \"true\"]/Id}</supplier_id>    ");
+        advQueryFragment
+            .append("     <DEPT_ID>{$marchant_id[5]}</DEPT_ID>                                    ");
+        advQueryFragment
+            .append("     <cls_id>{$marchant_id[6]}</cls_id>                                      ");
+        advQueryFragment
+            .append("     <PRODUCT_NAME>{$PRODUCT_NAME}</PRODUCT_NAME>                            ");
+        advQueryFragment
+            .append("     <ven_style>{$ven_style}</ven_style>                                     ");
+        advQueryFragment
+            .append("     <flag>{$removalFlag}</flag>                                             ");
+        advQueryFragment
+            .append("     </out>'                                                                 ");
+        advQueryFragment
+            .append("       passing sl.XML_DATA AS \"XML_DATA\" columns                             ");
+        advQueryFragment
+            .append("     COLO_DESC VARCHAR(100) path '/out/COLO_DESC',                           ");
+        advQueryFragment
+            .append("     COLO_CODE VARCHAR(100) path '/out/COLO_CODE',                           ");
+        advQueryFragment
+            .append("     COLO_CODE_SC VARCHAR(10) path '/out/COLO_CODE_SC',                      ");
+        advQueryFragment
+            .append("     STYLE_ID_SC VARCHAR(10) path '/out/STYLE_ID_SC',                        ");
+        advQueryFragment
+            .append("     supplier_id  VARCHAR2(20) path '/out/supplier_id',                      ");
+        advQueryFragment
+            .append("     DEPT_ID  VARCHAR2(60) path '/out/DEPT_ID',                              ");
+        advQueryFragment
+            .append("     clsId VARCHAR(10) path  '/out/cls_id',                                  ");
+        advQueryFragment
+            .append("     PRODUCT_NAME VARCHAR(100) path '/out/PRODUCT_NAME',                     ");
+        advQueryFragment
+            .append("     ven_style VARCHAR2(100) path '/out/ven_style',                          ");
+        advQueryFragment
+            .append("     flag VARCHAR(10) path '/out/flag') ia,                                  ");
+        advQueryFragment
+            .append("       Input inp                                                             ");
+        advQueryFragment
+            .append("     WHERE                                                                   ");
+        advQueryFragment
+            .append("       flag = 'false'                                                        ");
+        advQueryFragment
+            .append("     AND                                                                     ");
+        advQueryFragment
+            .append("       (                                                                     ");
+        advQueryFragment
+            .append("         depts   IS NULL                                                     ");
+        advQueryFragment
+            .append("       OR DEPT_ID IN                                                         ");
+        advQueryFragment
+            .append("         (                                                                   ");
+        advQueryFragment
+            .append("           SELECT                                                            ");
+        advQueryFragment
+            .append("             regexp_substr(depts,'[^,]+',1,LEVEL)                            ");
+        advQueryFragment
+            .append("           FROM                                                              ");
+        advQueryFragment
+            .append("             dual                                                            ");
+        advQueryFragment
+            .append("             CONNECT BY regexp_substr(depts,'[^,]+',1,LEVEL) IS NOT NULL     ");
+        advQueryFragment
+            .append("         )                                                                   ");
+        advQueryFragment
+            .append("       )                                                                     ");
+        advQueryFragment
+            .append("     AND                                                                     ");
+        advQueryFragment
+            .append("       (                                                                     ");
+        advQueryFragment
+            .append("         ORIN         IS NULL                                                ");
+        advQueryFragment
+            .append("       OR MDMID        = ORIN                                                ");
+        advQueryFragment
+            .append("       OR Parent_MDMID = ORIN                                                ");
+        advQueryFragment
+            .append("       )                                                                     ");
+        advQueryFragment
+            .append("   AND                                                                       ");
+        advQueryFragment
+            .append("     (                                                                       ");
+        advQueryFragment
+            .append("       vendor is NULL                                                        ");
+        advQueryFragment
+            .append("       OR Supplier_Id = vendor                                               ");
+        advQueryFragment
+            .append("     )                                                                       ");        
+        advQueryFragment
+            .append("    )                                                                        ");
+        advQueryFragment
+            .append(" ,finalList AS(                                                              ");
+        advQueryFragment
+            .append("     SELECT                                                                  ");
+        advQueryFragment
+            .append("     sda.PARENT_MDMID,                                                       ");
+        advQueryFragment
+            .append("       sda.MDMID,                                                            ");
+        advQueryFragment
+            .append("       sda.XML_DATA,                                                         ");
+        advQueryFragment
+            .append("       sda.ENTRY_TYPE,                                                       ");
+        advQueryFragment
+            .append("     sda.PRIMARY_UPC,                                                        ");
+        advQueryFragment
+            .append("     sda.COLO_DESC,                                                          ");
+        advQueryFragment
+            .append("     sda.COLO_CODE,                                                          ");
+        advQueryFragment
+            .append("     sda.COLO_CODE_SC,                                                       ");
+        advQueryFragment
+            .append("       sda.STYLE_ID_SC,                                                      ");
+        advQueryFragment
+            .append("     sda.Supplier_Id,                                                        ");
+        advQueryFragment
+            .append("       sda.DEPT_ID,                                                          ");
+        advQueryFragment
+            .append("     sda.PRODUCT_NAME,                                                       ");
+        advQueryFragment
+            .append("     sda.ven_style,                                                          ");
+        advQueryFragment
+            .append("     sda.clsId,                                                              ");
+        advQueryFragment
+            .append("     sda.INPUTPETSTATUS,                                                     ");
+        advQueryFragment
+            .append("     sda.VSTYLE,                                                             ");
+        advQueryFragment
+            .append("       sda.classes,                                                          ");
+        advQueryFragment
+            .append("     sda.CompletionFrom,sda.CompletionTo,sda.ImageStatus,sda.inpContentStatus,sda.RequestType,sda.createdToday,    ");
+        advQueryFragment.append("   p.completion_date,                   ");
+        advQueryFragment.append("   p.req_type,                          ");
+        advQueryFragment.append("   img.thevalue ImageState,             ");
+        advQueryFragment.append("   cont.thevalue CONTENTSTATUS,         ");
+        advQueryFragment.append("   petStatus.thevalue PETSTATUS,        ");
+        advQueryFragment.append("   petStatus.mdmid petMdmid             ");
+        advQueryFragment.append(" FROM                                   ");
+        advQueryFragment.append("   styleID_DescA sda,                   ");
+        advQueryFragment.append("   VENDORPORTAL.ADSE_PET_CATALOG pet,   ");
+        advQueryFragment.append("   XMLTABLE(                            ");
+        advQueryFragment
+            .append("   'for $pet in $pets/pim_entry/entry      let $completionDate := $pet//Completion_Date,  $imageState := $pet//ImageState,  $contentState := $pet//ContentState     return <out>        <id>{$pet/Pet_Ctg_Spec/Id}</id>       <completion_date>{$completionDate}</completion_date>     <imageState>{$imageState}</imageState>   <imageContainer>{fn:data($imageState/@container)}</imageContainer>    <contentState>{$contentState}</contentState>   <contentContainer>{fn:data($contentState/@container)}</contentContainer>     <state>{$pet//State}</state>     <stateContainer>{data($pet//State/@container)}</stateContainer>     <req_type>{$pet//SourceSystem}</req_type>      </out>' ");
+        advQueryFragment
+            .append("   passing pet.xml_data AS \"pets\" Columns Id VARCHAR2(20) path '/out/id',          ");
+        advQueryFragment
+            .append("   completion_date                           VARCHAR2(10) path                     ");
+        advQueryFragment
+            .append("   '/out/completion_date', imageState        VARCHAR2(20) path '/out/imageState'   ");
+        advQueryFragment
+            .append("   , imageContainer                          VARCHAR2(100) path                    ");
+        advQueryFragment
+            .append("   '/out/imageContainer', contentState       VARCHAR2(20) path                     ");
+        advQueryFragment
+            .append("   '/out/contentState', contentContainer     VARCHAR2(40) PATH                     ");
+        advQueryFragment
+            .append("   '/out/contentContainer', state            VARCHAR2(40) path '/out/state',       ");
+        advQueryFragment
+            .append("   stateContainer                            VARCHAR2(50) path                     ");
+        advQueryFragment
+            .append("   '/out/stateContainer', req_type           VARCHAR2(20) path '/out/req_type')    ");
+        advQueryFragment
+            .append("   p,                                                                              ");
+        advQueryFragment
+            .append("   TypeIndex typInd,                                                               ");
+        advQueryFragment
+            .append("   VENDORPORTAL.adse_reference_data img,                                           ");
+        advQueryFragment
+            .append("   VENDORPORTAL.adse_reference_data cont,                                          ");
+        advQueryFragment
+            .append("   VENDORPORTAL.adse_reference_data petStatus                                      ");
+        advQueryFragment
+            .append(" WHERE                                                                             ");
+        advQueryFragment
+            .append("   sda.MDMID     =pet.mdmid                                                        ");
+        advQueryFragment
+            .append(" AND sda.ENTRY_TYPE = typInd.typ                                                   ");
+        advQueryFragment
+            .append(" AND                                                                               ");
+        advQueryFragment
+            .append("   (                                                                               ");
+        advQueryFragment
+            .append("     CompletionFrom IS NULL                                                        ");
+        advQueryFragment
+            .append("   OR completion_date   >=CompletionFrom                                           ");
+        advQueryFragment
+            .append("   )                                                                               ");
+        advQueryFragment
+            .append(" AND                                                                               ");
+        advQueryFragment
+            .append("   (                                                                               ");
+        advQueryFragment
+            .append("     CompletionTo IS NULL                                                          ");
+        advQueryFragment
+            .append("   OR completion_date <=CompletionTo                                               ");
+        advQueryFragment
+            .append("   )                                                                               ");
+        advQueryFragment
+            .append(" AND                                                                               ");
+        advQueryFragment
+            .append("   (                                                                               ");
+        advQueryFragment
+            .append("     ImageStatus IS NULL                                                           ");
+        advQueryFragment
+            .append("   OR img.thevalue   IN                                                            ");
+        advQueryFragment
+            .append("     (                                                                             ");
+        advQueryFragment
+            .append("       SELECT                                                                      ");
+        advQueryFragment
+            .append("         regexp_substr(ImageStatus,'[^,]+',1,LEVEL)                                ");
+        advQueryFragment
+            .append("       FROM                                                                        ");
+        advQueryFragment
+            .append("         dual                                                                      ");
+        advQueryFragment
+            .append("         CONNECT BY regexp_substr(ImageStatus,'[^,]+',1,LEVEL) IS NOT NULL         ");
+        advQueryFragment
+            .append("     )                                                                             ");
+        advQueryFragment
+            .append("   )                                                                               ");
+        advQueryFragment
+            .append(" AND                                                                               ");
+        advQueryFragment
+            .append("   (                                                                               ");
+        advQueryFragment
+            .append("     inpContentStatus IS NULL                                                      ");
+        advQueryFragment
+            .append("   OR cont.thevalue    IN                                                          ");
+        advQueryFragment
+            .append("     (                                                                             ");
+        advQueryFragment
+            .append("       SELECT                                                                      ");
+        advQueryFragment
+            .append("         regexp_substr(inpContentStatus,'[^,]+',1,LEVEL)                           ");
+        advQueryFragment
+            .append("       FROM                                                                        ");
+        advQueryFragment
+            .append("         dual                                                                      ");
+        advQueryFragment
+            .append("         CONNECT BY regexp_substr(inpContentStatus,'[^,]+',1,LEVEL) IS NOT NULL    ");
+        advQueryFragment
+            .append("     )                                                                             ");
+        advQueryFragment
+            .append("   )                                                                               ");
+        advQueryFragment
+            .append(" AND                                                                               ");
+        advQueryFragment
+            .append("   (                                                                               ");
+        advQueryFragment
+            .append("     RequestType IS NULL                                                           ");
+        advQueryFragment
+            .append("   OR Req_Type       IN                                                            ");
+        advQueryFragment
+            .append("     (                                                                             ");
+        advQueryFragment
+            .append("       SELECT                                                                      ");
+        advQueryFragment
+            .append("         regexp_substr(RequestType,'[^,]+',1,LEVEL)                                ");
+        advQueryFragment
+            .append("       FROM                                                                        ");
+        advQueryFragment
+            .append("         dual                                                                      ");
+        advQueryFragment
+            .append("         CONNECT BY regexp_substr(RequestType,'[^,]+',1,LEVEL) IS NOT NULL         ");
+        advQueryFragment
+            .append("     )                                                                             ");
+        advQueryFragment
+            .append("   )                                                                               ");
+        advQueryFragment
+            .append(" AND                                                                               ");
+        advQueryFragment
+            .append("   (                                                                               ");
+        advQueryFragment
+            .append("     createdToday                           IS NULL                                ");
+        advQueryFragment
+            .append("   OR createdToday                          <>'yes'                                ");
+        advQueryFragment
+            .append("   OR to_date(SUBSTR(pet.CREATED_DTM, 1, 9), 'YYYY-MM-DD') = to_date(SUBSTR(CURRENT_TIMESTAMP, 1, 9), 'YYYY-MM-DD') ");
+        advQueryFragment
+            .append("   )                                            ");
+        advQueryFragment
+            .append(" AND img.mdmid           =p.imageState          ");
+        advQueryFragment
+            .append(" AND img.entry_type      =p.imageContainer      ");
+        advQueryFragment
+            .append(" AND cont.mdmid          =p.ContentState        ");
+        advQueryFragment
+            .append(" AND cont.entry_type     =p.contentContainer    ");
+        advQueryFragment
+            .append(" AND petStatus.mdmid     =p.state               ");
+        advQueryFragment
+            .append(" AND petStatus.entry_type=p.stateContainer      ");
+        advQueryFragment
+            .append(" )                                              ");
+        advQueryFragment
+            .append("    , styleID_Desc AS(                          ");
+        advQueryFragment
+            .append("     SELECT DISTINCT                            ");
+        advQueryFragment
+            .append("       sia.PARENT_MDMID,                        ");
+        advQueryFragment
+            .append("       sia.MDMID,                               ");
+        advQueryFragment
+            .append("       sia.ENTRY_TYPE,                          ");
+        advQueryFragment
+            .append("       ias.COLO_DESC,                           ");
+        advQueryFragment
+            .append("       ias.COLO_CODE,                           ");
+        advQueryFragment
+            .append("       sia.COLO_CODE_SC,                        ");
+        advQueryFragment
+            .append("       sia.STYLE_ID_SC,                         ");
+        advQueryFragment
+            .append("       sia.Supplier_Id,                         ");
+        advQueryFragment
+            .append("       sia.DEPT_ID,                             ");
+        advQueryFragment
+            .append("       sia.PRODUCT_NAME,                        ");
+        advQueryFragment
+            .append("       sia.ven_style,                           ");
+        advQueryFragment
+            .append("     sia.PRIMARY_UPC,                           ");
+        advQueryFragment
+            .append("     sia.clsId,                                 ");
+        advQueryFragment
+            .append("     sia.INPUTPETSTATUS,                        ");
+        advQueryFragment
+            .append("     sia.VSTYLE,                                ");
+        advQueryFragment
+            .append("       sia.classes,                             ");
+        advQueryFragment
+            .append("     sia.completion_date,                       ");
+        advQueryFragment
+            .append("     sia.req_type,                              ");
+        advQueryFragment
+            .append("     sia.ImageState,                            ");
+        advQueryFragment
+            .append("     sia.CONTENTSTATUS,                         ");
+        advQueryFragment
+            .append("     sia.PETSTATUS,                             ");
+        advQueryFragment
+            .append("     sia.petMdmid                               ");
+        advQueryFragment
+            .append("     from finalList sia,                        ");
+        advQueryFragment
+            .append("     XMLTABLE(                                  ");
+        advQueryFragment
+            .append("       'for $j in $XML_DATA/pim_entry/entry/Item_Style_Spec/Differentiators[Type eq \"COLOR\"]/Codes ");
+        advQueryFragment
+            .append("                                                                                           ");
+        advQueryFragment
+            .append("     let                                                                                   ");
+        advQueryFragment
+            .append("       $colorcode := $j//Code,                                                             ");
+        advQueryFragment
+            .append("       $colordesc := $j//Vendor_Description                                                ");
+        advQueryFragment
+            .append("                                                                                           ");
+        advQueryFragment
+            .append("     return                                                                                ");
+        advQueryFragment
+            .append("     <out>                                                                                 ");
+        advQueryFragment
+            .append("         <COLO_CODE>{$colorcode}</COLO_CODE>                                               ");
+        advQueryFragment
+            .append("         <COLO_DESC>{$colordesc}</COLO_DESC>                                               ");
+        advQueryFragment
+            .append("     </out>'                                                                               ");
+        advQueryFragment
+            .append("       passing sia.XML_DATA AS \"XML_DATA\" columns                                          ");
+        advQueryFragment
+            .append("     COLO_DESC VARCHAR(100) path '/out/COLO_DESC',                                         ");
+        advQueryFragment
+            .append("     COLO_CODE VARCHAR(100) path '/out/COLO_CODE') ias                                     ");
+        advQueryFragment
+            .append("     where                                                                                 ");
+        advQueryFragment
+            .append("     sia.Entry_Type='Style'                                                                ");
+        advQueryFragment
+            .append("     AND                                                                                   ");
+        advQueryFragment
+            .append("         (((sia.INPUTPETSTATUS = '05') AND sia.petMdmid in ('05' ))                        ");
+        advQueryFragment
+            .append("     OR                                                                                    ");
+        advQueryFragment
+            .append("       ((sia.INPUTPETSTATUS = '01')    AND sia.petMdmid in ('01' ))                        ");
+        advQueryFragment
+            .append("     OR                                                                                    ");
+        advQueryFragment
+            .append("       ((sia.INPUTPETSTATUS = '06')    AND sia.petMdmid in ('06' ))                        ");
+        advQueryFragment
+            .append("     OR                                                                                    ");
+        advQueryFragment
+            .append("       ((sia.INPUTPETSTATUS   IS NULL)     AND sia.petMdmid in ('01','05','06'))           ");
+        advQueryFragment
+            .append("     )                                                                                     ");
+        advQueryFragment
+            .append("    UNION ALL                                                                              ");
+        advQueryFragment
+            .append("       select finalAll.PARENT_MDMID,                                                       ");
+        advQueryFragment
+            .append("       finalAll.MDMID,                                                                     ");
+        advQueryFragment
+            .append("       finalAll.ENTRY_TYPE,                                                                ");
+        advQueryFragment
+            .append("       finalAll.COLO_DESC,                                                                 ");
+        advQueryFragment
+            .append("       finalAll.COLO_CODE,                                                                 ");
+        advQueryFragment
+            .append("       finalAll.COLO_CODE_SC,                                                              ");
+        advQueryFragment
+            .append("       finalAll.STYLE_ID_SC,                                                               ");
+        advQueryFragment
+            .append("       finalAll.Supplier_Id,                                                               ");
+        advQueryFragment
+            .append("       finalAll.DEPT_ID,                                                                   ");
+        advQueryFragment
+            .append("       finalAll.PRODUCT_NAME,                                                              ");
+        advQueryFragment
+            .append("       finalAll.ven_style,finalAll.PRIMARY_UPC,finalAll.clsId,finalAll.INPUTPETSTATUS,     ");
+        advQueryFragment
+            .append("       finalAll.VSTYLE,                                                                    ");
+        advQueryFragment
+            .append("       finalAll.classes,                                                                   ");
+        advQueryFragment
+            .append("     finalAll.completion_date,                                                             ");
+        advQueryFragment
+            .append("     finalAll.req_type,                                                                    ");
+        advQueryFragment
+            .append("     finalAll.ImageState,                                                                  ");
+        advQueryFragment
+            .append("     finalAll.CONTENTSTATUS,                                                               ");
+        advQueryFragment
+            .append("     finalAll.PETSTATUS,                                                                   ");
+        advQueryFragment
+            .append("     finalAll.petMdmid                                                                     ");
+        advQueryFragment
+            .append("     from finalList finalAll where finalAll.entry_type in ('StyleColor') "); /*
+                                                                                                   * ,'Complex
+                                                                                                   * Pack
+                                                                                                   * '
+                                                                                                   */
+        advQueryFragment
+            .append("      AND                                                                                  ");
+        advQueryFragment
+            .append("     finalAll.PARENT_MDMID IN                                                              ");
+        advQueryFragment
+            .append("     (SELECT                                                                               ");
+        advQueryFragment
+            .append("           flst.MDMID                                                                      ");
+        advQueryFragment
+            .append("       FROM finalList flst  WHERE                                                          ");
+        advQueryFragment
+            .append("           flst.ENTRY_TYPE='Style'                                                         ");
+        advQueryFragment
+            .append("       AND                                                                                 ");
+        advQueryFragment
+            .append("           (((flst.INPUTPETSTATUS = '05') AND flst.petMdmid in ('05' ))                    ");
+        advQueryFragment
+            .append("       OR                                                                                  ");
+        advQueryFragment
+            .append("           ((flst.INPUTPETSTATUS = '01')   AND flst.petMdmid in ('01' ))                   ");
+        advQueryFragment
+            .append("       OR                                                                                  ");
+        advQueryFragment
+            .append("           ((flst.INPUTPETSTATUS = '06')   AND flst.petMdmid in ('06' ))                   ");
+        advQueryFragment
+            .append("       OR                                                                                  ");
+        advQueryFragment
+            .append("           ((flst.INPUTPETSTATUS   IS NULL)    AND flst.petMdmid in ('01','05','06'))      ");
+        advQueryFragment
+            .append("       ))                                                                                  ");
+        advQueryFragment
+            .append("       AND                                                                                 ");
+        advQueryFragment
+            .append("           (((finalAll.INPUTPETSTATUS = '05') AND finalAll.petMdmid in ('05' ))            ");
+        advQueryFragment
+            .append("       OR                                                                                  ");
+        advQueryFragment
+            .append("         ((finalAll.INPUTPETSTATUS = '01') AND finalAll.petMdmid in ('01' ))               ");
+        advQueryFragment
+            .append("       OR                                                                                  ");
+        advQueryFragment
+            .append("           ((finalAll.INPUTPETSTATUS = '06')   AND finalAll.petMdmid in ('06' ))           ");
+        advQueryFragment
+            .append("       OR                                                                                  ");
+        advQueryFragment
+            .append("       ((finalAll.INPUTPETSTATUS   IS NULL)    AND finalAll.petMdmid in ('01','05','06'))  ");
+        advQueryFragment
+            .append("     )                                                                                     ");
+        advQueryFragment
+            .append("     )                                                                                     ");
+        advQueryFragment
+            .append(" ,                                                                                         ");
+        advQueryFragment
+            .append("  MDMID_ColorList As                                                                       ");
+        advQueryFragment
+            .append("  (                                                                                        ");
+        advQueryFragment
+            .append("    select  a.parent_mdmid, a.colo_code_sc, b.Colo_desc COL_Desc                           ");
+        advQueryFragment
+            .append("    from styleID_Desc a, styleID_Desc b                                                    ");
+        advQueryFragment
+            .append("        where                                                                              ");
+        advQueryFragment
+            .append("        a.parent_mdmid = b.mdmid  and                                                      ");
+        advQueryFragment
+            .append("         a.colo_code_sc = b.colo_code and a.entry_type = 'StyleColor'                      ");
+        advQueryFragment
+            .append("   )                                                                                       ");
+        advQueryFragment
+            .append("   ,orinList AS(                                                                           ");
+        advQueryFragment
+            .append("   Select                                                                                  ");
+        advQueryFragment
+            .append("         a.PARENT_MDMID,                                                                   ");
+        advQueryFragment
+            .append("         a.MDMID ORIN_NUM,                                                                 ");
+        advQueryFragment
+            .append("         a.ENTRY_TYPE,                                                                     ");
+        advQueryFragment
+            .append("       x.COL_Desc COLO_DESC,                                                               ");
+        advQueryFragment
+            .append("       a.Supplier_Id,                                                                      ");
+        advQueryFragment
+            .append("         a.DEPT_ID,                                                                        ");
+        advQueryFragment
+            .append("       a.PRODUCT_NAME,                                                                     ");
+        advQueryFragment
+            .append("       a.ven_style,                                                                        ");
+        advQueryFragment
+            .append("       a.PRIMARY_UPC,                                                                      ");
+        advQueryFragment
+            .append("       a.clsId,                                                                            ");
+        advQueryFragment
+            .append("       a.INPUTPETSTATUS,                                                                   ");
+        advQueryFragment
+            .append("       a.VSTYLE,                                                                           ");
+        advQueryFragment
+            .append("         a.classes,                                                                        ");
+        advQueryFragment
+            .append("       a.completion_date,                                                                  ");
+        advQueryFragment
+            .append("       a.req_type,                                                                         ");
+        advQueryFragment
+            .append("       a.ImageState,                                                                       ");
+        advQueryFragment
+            .append("       a.CONTENTSTATUS,                                                                    ");
+        advQueryFragment
+            .append("       a.PETSTATUS                                                                         ");
+        advQueryFragment
+            .append("   From styleID_Desc a, MDMID_ColorList x                                                  ");
+        advQueryFragment
+            .append("   where a.ENTRY_TYPE = 'StyleColor' AND a.parent_mdmid = x.parent_mdmid and a.colo_code_sc = x.colo_code_sc     ");
+        advQueryFragment
+            .append("   UNION ALL                                            ");
+        advQueryFragment
+            .append("     Select                                             ");
+        advQueryFragment
+            .append("       a.PARENT_MDMID,                                  ");
+        advQueryFragment
+            .append("       a.MDMID ORIN_NUM,                                ");
+        advQueryFragment
+            .append("       a.ENTRY_TYPE,                                    ");
+        advQueryFragment
+            .append("     NULL COLO_DESC,                                    ");
+        advQueryFragment
+            .append("       a.Supplier_Id,                                   ");
+        advQueryFragment
+            .append("       a.DEPT_ID,                                       ");
+        advQueryFragment
+            .append("       a.PRODUCT_NAME,                                  ");
+        advQueryFragment
+            .append("       a.ven_style,                                     ");
+        advQueryFragment
+            .append("       a.PRIMARY_UPC,                                   ");
+        advQueryFragment
+            .append("       a.clsId,                                         ");
+        advQueryFragment
+            .append("       a.INPUTPETSTATUS,                                ");
+        advQueryFragment
+            .append("       a.VSTYLE,                                        ");
+        advQueryFragment
+            .append("       a.classes,                                       ");
+        advQueryFragment
+            .append("       a.completion_date,                               ");
+        advQueryFragment
+            .append("       a.req_type,                                      ");
+        advQueryFragment
+            .append("       a.ImageState,                                    ");
+        advQueryFragment
+            .append("       a.CONTENTSTATUS,                                 ");
+        advQueryFragment
+            .append("       a.PETSTATUS                                      ");
+        advQueryFragment
+            .append("   From styleID_Desc a where a.ENTRY_TYPE = 'Style'     ");
+        advQueryFragment
+            .append("   )                                                    ");
+        advQueryFragment
+            .append("  ,supplierDetails AS                                   ");
+        advQueryFragment
+            .append("   (                                                    ");
+        advQueryFragment
+            .append("     SELECT                                             ");
+        advQueryFragment
+            .append("       orin.PARENT_MDMID,                               ");
+        advQueryFragment
+            .append("       orin.ORIN_NUM,                                   ");
+        advQueryFragment
+            .append("       orin.ENTRY_TYPE,                                 ");
+        advQueryFragment
+            .append("       orin.COLO_DESC,                                  ");
+        advQueryFragment
+            .append("       orin.DEPT_Id,                                    ");
+        advQueryFragment
+            .append("       orin.PRODUCT_NAME,                               ");
+        advQueryFragment
+            .append("       orin.ven_style,                                  ");
+        advQueryFragment
+            .append("       orin.Supplier_Id,                                ");
+        advQueryFragment
+            .append("       orin.PRIMARY_UPC,                                ");
+        advQueryFragment
+            .append("       orin.clsId,                                      ");
+        advQueryFragment
+            .append("       orin.INPUTPETSTATUS,                             ");
+        advQueryFragment
+            .append("       orin.VSTYLE,                                     ");
+        advQueryFragment
+            .append("       orin.classes,                                    ");
+        advQueryFragment
+            .append("       orin.completion_date,                            ");
+        advQueryFragment
+            .append("       orin.req_type,                                   ");
+        advQueryFragment
+            .append("       orin.ImageState,                                 ");
+        advQueryFragment
+            .append("       orin.CONTENTSTATUS,                              ");
+        advQueryFragment
+            .append("       orin.PETSTATUS,                                  ");
+        advQueryFragment
+            .append("       s.ven_name,                                      ");
+        advQueryFragment
+            .append("       s.omniChannelIndicator                           ");
+        advQueryFragment
+            .append("     FROM                                               ");
+        advQueryFragment
+            .append("       orinList orin,                                   ");
+        advQueryFragment
+            .append("       VENDORPORTAL.ADSE_SUPPLIER_CATALOG supplier,     ");
+        advQueryFragment
+            .append("       XMLTABLE(                                        ");
+        advQueryFragment
+            .append("       'for $supplier in $supplierCatalog/pim_entry/entry/Supplier_Ctg_Spec  let $ven_name := $supplier/Name,  $isOmniChannel := $supplier/../Supplier_Site_Spec/Omni_Channel  return  <out> <ven_name>{$ven_name}</ven_name> <sup>{$supplier/Id}</sup>  <omni_channel>{if($isOmniChannel eq \"true\") then \"Y\" else \"N\"}</omni_channel>  </out>' ");
+        advQueryFragment
+            .append("       PASSING XMLELEMENT(\"Id\", orin.Supplier_Id) AS \"Suppliers\", ");
+        advQueryFragment
+            .append("       supplier.XML_DATA                          AS \"supplierCatalog\" columns ");
+        advQueryFragment
+            .append("       ven_name                          VARCHAR2(80) path '/out/ven_name', omniChannelIndicator VARCHAR2 ");
+        advQueryFragment
+            .append("       (2) path '/out/omni_channel', sup VARCHAR2(100) path '/out/sup') s ");
+        advQueryFragment
+            .append("     WHERE                                    ");
+        advQueryFragment
+            .append("     orin.Supplier_Id = supplier.mdmid        ");
+        advQueryFragment
+            .append("   )                                          ");
+        advQueryFragment
+            .append("   SELECT  distinct                           ");
+        advQueryFragment
+            .append("     CASE                                     ");
+        advQueryFragment
+            .append("     WHEN LENGTH(ORIN_NUM) > 9                ");
+        advQueryFragment
+            .append("       THEN SUBSTR(ORIN_NUM,1,9)              ");
+        advQueryFragment
+            .append("       ELSE ORIN_NUM                          ");
+        advQueryFragment
+            .append("     END Parent_Style_Orin,                   ");
+        advQueryFragment
+            .append("     CASE                                     ");
+        advQueryFragment
+            .append("       WHEN LENGTH(ORIN_NUM) > 9              ");
+        advQueryFragment
+            .append("       THEN SUBSTR(ORIN_NUM,1,9)              ");
+        advQueryFragment
+            .append("         || ' '                               ");
+        advQueryFragment
+            .append("         || SUBSTR(ORIN_NUM,10)               ");
+        advQueryFragment
+            .append("         || ' '                               ");
+        advQueryFragment
+            .append("         || COLO_DESC                         ");
+        advQueryFragment
+            .append("       ELSE ORIN_NUM                          ");
+        advQueryFragment
+            .append("     END ORIN_NUM,                            ");
+        advQueryFragment
+            .append("     DEPT_ID,                                 ");
+        advQueryFragment
+            .append("     Supplier_Id,                             ");
+        advQueryFragment
+            .append("     PRODUCT_NAME,                            ");
+        advQueryFragment
+            .append("     ENTRY_TYPE,                              ");
+        advQueryFragment
+            .append("     PRIMARY_UPC,                             ");
+        advQueryFragment
+            .append("     VEN_NAME,                                ");
+        advQueryFragment
+            .append("     VEN_STYLE,                               ");
+        advQueryFragment
+            .append("     clsId,                                   ");
+        advQueryFragment
+            .append("     PETSTATUS,                               ");
+        advQueryFragment
+            .append("     ImageState,                              ");
+        advQueryFragment
+            .append("     CONTENTSTATUS,                           ");
+        advQueryFragment
+            .append("     completion_date,                         ");
+        advQueryFragment
+            .append("     omniChannelIndicator,                    ");
+        advQueryFragment
+            .append("     req_type                                 ");
+        advQueryFragment
+            .append("   FROM supplierDetails                       ");
+        advQueryFragment
+            .append("   WHERE                                      ");
+        advQueryFragment
+            .append("         (VSTYLE IS NULL) OR                  ");
+        advQueryFragment
+            .append("         VEN_STYLE    = VSTYLE                ");
+        advQueryFragment
+            .append("         AND                                  ");
+        advQueryFragment
+            .append("       (                                      ");
+        advQueryFragment
+            .append("         classes IS NULL                      ");
+        advQueryFragment
+            .append("        OR clsId  IN                          ");
+        advQueryFragment
+            .append("         (                                    ");
+        advQueryFragment
+            .append("           SELECT                             ");
+        advQueryFragment
+            .append("             regexp_substr(classes,'[^,]+',1,LEVEL) ");
+        advQueryFragment.append("           FROM ");
+        advQueryFragment.append("             dual ");
+        advQueryFragment
+            .append("             CONNECT BY regexp_substr(classes,'[^,]+',1,LEVEL) IS NOT NULL ");
+        advQueryFragment.append("         ) ");
+        advQueryFragment.append("       ) ");
+        advQueryFragment.append("   ORDER BY ORIN_NUM  ");
+
+
+
+    LOGGER.info("getAdvWorkListDisplayData Query"+advQueryFragment.toString());
+    
+    return advQueryFragment.toString();
+    
+    
+ }                   
+   
+  
+
+}

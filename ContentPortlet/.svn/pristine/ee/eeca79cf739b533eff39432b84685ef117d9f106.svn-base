@@ -1,0 +1,1497 @@
+
+package com.belk.pep.controller;
+
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Logger;
+
+import javax.portlet.ActionRequest;
+import javax.portlet.ActionResponse;
+import javax.portlet.Event;
+import javax.portlet.EventRequest;
+import javax.portlet.EventResponse;
+import javax.portlet.RenderRequest;
+import javax.portlet.RenderResponse;
+import javax.portlet.ResourceRequest;
+import javax.portlet.ResourceResponse;
+
+import org.apache.commons.lang.StringUtils;
+import org.springframework.web.portlet.ModelAndView;
+import org.springframework.web.portlet.mvc.Controller;
+import org.springframework.web.portlet.mvc.EventAwareController;
+import org.springframework.web.portlet.mvc.ResourceAwareController;
+
+import com.belk.pep.attributes.AttributesBean;
+import com.belk.pep.attributes.ItemIdBean;
+import com.belk.pep.common.model.Common_BelkUser;
+import com.belk.pep.common.model.Common_Vpuser;
+import com.belk.pep.common.model.ContentPetDetails;
+import com.belk.pep.constants.ContentScreenConstants;
+import com.belk.pep.delegate.ContentDelegate;
+import com.belk.pep.exception.checked.PEPDelegateException;
+import com.belk.pep.form.ContentForm;
+import com.belk.pep.jsonconverter.DataObject;
+import com.belk.pep.jsonconverter.UpdateContentStatusDataObject;
+import com.belk.pep.model.PetsFound;
+import com.belk.pep.vo.ChildSkuVO;
+import com.belk.pep.vo.ColorAttributesVO;
+import com.belk.pep.vo.ContentHistoryVO;
+import com.belk.pep.vo.ContentManagementVO;
+import com.belk.pep.vo.CopyAttributesVO;
+import com.belk.pep.vo.GlobalAttributesVO;
+import com.belk.pep.vo.ItemPrimaryHierarchyVO;
+import com.belk.pep.vo.ProductDetailsVO;
+import com.belk.pep.vo.StyleAndItsChildDisplay;
+import com.belk.pep.vo.StyleColorVO;
+import com.belk.pep.vo.StyleInformationVO;
+import com.belk.pep.vo.StyleVO;
+import com.google.gson.Gson;
+
+
+
+
+/**
+ * The Class ContentController.
+ */
+
+public class ContentController implements Controller ,ResourceAwareController,EventAwareController{
+    
+    /** The Constant LOGGER. */
+    private final static Logger LOGGER = Logger.getLogger(ContentController.class.getName());     
+
+    /** The content delegate. */
+    private ContentDelegate contentDelegate;
+    
+    /** The content form. */
+    private ContentForm contentDisplayForm;
+    
+    /** The style attributes. */
+    private GlobalAttributesVO styleAttributes;
+    
+    /** The style color attribute. */
+    private  ColorAttributesVO  styleColorAttribute;
+    
+    /** The response message web service. */
+    private String responseMessageWebService = "";       
+    
+    /** The model and view. */
+    private ModelAndView modelAndView=null ; 
+    
+    /** The style data submission flag. */
+    private boolean  styleDataSubmissionFlag;    
+    
+    /** The disable save button flag. */
+    private boolean  disableSaveButtonFlag;
+    
+  
+    /** The omnichannel color family map. */
+    private static Map<String, String> omnichannelColorFamilyMap = new HashMap<String, String>();
+    static {
+        omnichannelColorFamilyMap.put("ColorOne", "Color 1");
+        omnichannelColorFamilyMap.put("ColorTwo", "Color 2");       
+    }
+    
+    
+    /** The secondary color one map. */
+    private static Map<String, String> secondaryColorOneMap = new HashMap<String, String>();
+    static {
+        secondaryColorOneMap.put("ColorOne", "Color 1");
+        secondaryColorOneMap.put("ColorTwo", "Color 2");
+      
+    }
+    
+    
+    /** The secondary color two map. */
+    private static Map<String, String> secondaryColorTwoMap = new HashMap<String, String>();
+    static {
+        secondaryColorTwoMap.put("ColorOne", "Color 1");
+        secondaryColorTwoMap.put("ColorTwo", "Color 2");
+        
+    }
+    
+    /** The secondary color three map. */
+    private static Map<String, String> secondaryColorThreeMap = new HashMap<String, String>();
+    static {
+        secondaryColorThreeMap.put("ColorOne", "Color 1");
+        secondaryColorThreeMap.put("ColorTwo", "Color 2");
+      
+    }
+  
+    
+    /** The secondary color four map. */
+    private static Map<String, String> secondaryColorFourMap = new HashMap<String, String>();
+    static {
+        secondaryColorFourMap.put("ColorOne", "Color 1");
+        secondaryColorFourMap.put("ColorTwo", "Color 2");       
+    }
+  
+    
+
+    
+
+
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.springframework.web.portlet.mvc.Controller#handleActionRequest(javax
+     * .portlet.ActionRequest, javax.portlet.ActionResponse)
+     */
+    public void handleActionRequest(ActionRequest request,ActionResponse response)  {
+        
+              LOGGER.info("-----------------Start of handleActionRequest-----------------");       
+          
+           
+              //Logic for getting the Style Attribute data on click of the Style Orin Number starts here
+              getTheStyleAttributeData(request,response);           
+                
+              //Logic for getting the Style Color Attribute data on click of the Style Color Orin Number starts here  
+              getTheStyleColorAttributeData(request,response);              
+                
+             //Logic for  Save Pet  Content Action Button starts here
+              saveContentPetAttributes(request,response);                   
+             
+              //Logic for  update content status for style data on click of the submit button for Style row  starts here
+              updateContentPetStyleDataStatus(request,response);
+                
+             //Logic for  update content status for style color data on click of the submit button for Style Color  row  starts here
+              updateContentPetStyleColorDataStatus(request,response);            
+                
+              LOGGER.info("-----------------End of handleActionRequest-----------------");         
+        
+    }
+    
+    
+    
+    
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.springframework.web.portlet.mvc.Controller#handleRenderRequest(javax
+     * .portlet.RenderRequest, javax.portlet.RenderResponse)
+     */
+    public ModelAndView handleRenderRequest(RenderRequest request,
+            RenderResponse response) throws Exception
+    {
+        LOGGER.info("-----------------Start of handleRenderRequest-----------------");       
+        
+        String roleNameFromIPC=null;
+        String orinNumber=null;
+        String orinNumberFromIPC=null;
+        String pepUserID = null;
+        String lanIdFromIPC=null;
+        String pepUserIdFromIPC=null;
+        
+        ContentPetDetails contentPetDetailsFromIPC= getContentPetDetailsFromIPC(request);            
+        LOGGER.info("contentPetDetailsFromIPC----"+contentPetDetailsFromIPC);
+        if(contentPetDetailsFromIPC!=null)
+        {
+            orinNumberFromIPC=contentPetDetailsFromIPC.getOrinNumber();
+            LOGGER.info("orinNumberFromIPC----"+orinNumberFromIPC);
+            String contentStatusFromIPC=contentPetDetailsFromIPC.getContentStatus();
+            LOGGER.info("contentStatusFromIPC----"+contentStatusFromIPC);
+            roleNameFromIPC= contentPetDetailsFromIPC.getUserData().getRoleName();
+            LOGGER.info("roleNameFromIPC----"+roleNameFromIPC);
+            Common_Vpuser externalVendorFromIPC= contentPetDetailsFromIPC.getVpUser();
+            LOGGER.info("externalVendorFromIPC----"+externalVendorFromIPC);
+            Common_BelkUser belkUserFromIPC=contentPetDetailsFromIPC.getBelkUser();
+            
+            LOGGER.info("belkUserFromIPC----"+belkUserFromIPC);
+            
+            if(externalVendorFromIPC!=null)
+            {
+                pepUserIdFromIPC= externalVendorFromIPC.getPepUserID();
+                String emailIdFromIPC= externalVendorFromIPC.getUserEmailAddress();
+                
+                LOGGER.info("pepUserIdFromIPC----"+pepUserIdFromIPC);
+                LOGGER.info("emailIdFromIPC----"+emailIdFromIPC);
+                
+            }
+            
+            if(belkUserFromIPC!=null)
+            {
+                lanIdFromIPC= belkUserFromIPC.getLanId();           
+                
+                LOGGER.info("lanIdFromIPC----"+lanIdFromIPC);
+            
+                
+            }
+          
+            if(contentPetDetailsFromIPC.getUserData().isInternal()){
+                pepUserID = lanIdFromIPC;
+                if (pepUserID == null || pepUserID.equalsIgnoreCase("") ){
+                    pepUserID = contentPetDetailsFromIPC.getUserData().getBelkUser().getLanId();
+                }
+            }if(contentPetDetailsFromIPC.getUserData().isExternal()){
+                pepUserID = pepUserIdFromIPC;
+                if (pepUserID == null || pepUserID.equalsIgnoreCase("") ){
+                    pepUserID= contentPetDetailsFromIPC.getUserData().getVpUser().getPepUserID();
+                }
+            }
+            
+            LOGGER.info("SRI----"+pepUserID);
+        }     
+        
+       // String orinNumber = "'249041001'";
+        if(StringUtils.isNotBlank(orinNumberFromIPC)){
+            orinNumber="'"+orinNumberFromIPC+"'";
+        }        
+                 
+        contentDisplayForm =new ContentForm();       
+
+        //get the logged in user  role ,the logged in user role  can be  dca role ,vendor role  or read only role 
+        
+        if(StringUtils.isNotBlank(roleNameFromIPC))
+        {
+            //Set the role Name of the logged in User  from the IPC
+            contentDisplayForm.setRoleName(roleNameFromIPC);
+        }
+           
+        //Set PEP User Id
+        contentDisplayForm.setPepUserId(pepUserID);
+        
+        modelAndView= new ModelAndView(ContentScreenConstants.PAGE);  
+        //Logic for getting the Style Information and displaying the Style Information  starts here  
+        displayStyleInformation(orinNumber,contentDisplayForm,request,response);
+       
+        //Logic for getting the Product Information and displaying the Product Information  starts here  
+        displayProductInformation(orinNumber,contentDisplayForm,request,response);
+        
+        //Logic for getting the Pet List and Displaying the Pets starts here 
+        getPetList(orinNumber,contentDisplayForm,request,response);        
+        
+        //Logic for displaying  the Style Color Attribute data on click of the Style Color Orin Number starts here
+        
+        displayStyleAttributeData(contentDisplayForm,request,response); 
+        
+        //Logic for checking  the webservice response starts here 
+         checkWebserviceResponse();
+        
+         //Logic for getting the content management data and displaying the content management data  starts here  
+         displayContentManagement(orinNumber,contentDisplayForm,request,response);
+           
+         //Logic for getting the  SKU data and displaying the SKU data   starts here  
+        
+         displaySKUData(orinNumber,contentDisplayForm,request,response);
+       
+         //Logic for getting the  Content History data and displaying the Content History   starts here  
+         
+         displayContentHistoryData(orinNumber,contentDisplayForm,request,response);
+        
+        
+        //Logic for getting the  Copy Attribute data data and displaying the  Copy Attribute data  starts here 
+         displayCopyAttributeData(orinNumber,contentDisplayForm,request,response); 
+       
+        //Get the IPH Categories to display on the  screen;
+         displayIPHCategories(orinNumber,contentDisplayForm,request,response); 
+         
+       //Display the message for the Save Style Attributes webservice  on  click of the Save Button
+        displaySaveStyleAttributeWebserviceMessage(request,contentDisplayForm);
+          
+       //Display the message for the Update Content Status webservice  on  click of the Style Data Submit Button
+        displayUpdateStyleStatusWebserviceMessage(request,contentDisplayForm);
+        
+        
+       //Display the message for the Update Content Status webservice  on  click of the Style Color Data Submit Button
+        displayUpdateStyleColorStatusWebserviceMessage(request,contentDisplayForm);       
+          
+            
+        //Display message to the User for submitting  the Style Level Data followed by submitting the Style Color Data"
+        displayTheMessageToSubmitStyleLevelDataBeforeSubmittingStyleColorData(request,contentDisplayForm,styleDataSubmissionFlag);
+        
+        //DisableSaveButton
+        disableSaveButton(request,contentDisplayForm,disableSaveButtonFlag);
+       
+        //Set the Ready for Review Status for Style
+        setReadyForReviewStatusForStyle(request,contentDisplayForm);    
+        
+        
+        //Set the Ready for Review Status for Style Color
+        setReadyForReviewStatusForStyleColor(request,contentDisplayForm);         
+        
+        //Logic for displaying  the Style Color Attribute data on click of the Style Color Orin Number starts here
+        
+        displayStyleColorAttributeData(contentDisplayForm,request,response);       
+   
+        modelAndView.addObject(ContentScreenConstants.CONTENT_DISPLAY_FORM, contentDisplayForm);
+        
+        LOGGER.info("-----------------End of handleRenderRequest-----------------");  
+        return modelAndView;  
+    }
+    
+     
+    
+    
+    
+   
+
+ 
+    /**
+     * Display save style attribute webservice message.
+     *
+     * @param request the request
+     * @param contentDisplayForm the content display form
+     */
+    private void displaySaveStyleAttributeWebserviceMessage(RenderRequest request, ContentForm contentDisplayForm) {
+        String  saveStyleAttributeMessage= request.getParameter(ContentScreenConstants.SAVE_STYLE_ATTRIBUTES_KEY);
+        LOGGER.info("saveStyleAttributeMessage = "+ saveStyleAttributeMessage);    
+        if(StringUtils.isNotBlank(saveStyleAttributeMessage))
+        {
+             LOGGER.info("saveStyleAttributeMessage = "+ saveStyleAttributeMessage); 
+             contentDisplayForm.setSaveStyleAttributeMessage(saveStyleAttributeMessage);          
+             modelAndView.addObject(ContentScreenConstants.CONTENT_DISPLAY_FORM, contentDisplayForm);
+            
+        }
+        
+    }
+
+
+
+
+    /**
+     * Sets the ready for review status for style color.
+     *
+     * @param request the request
+     * @param contentDisplayForm the content display form
+     */
+    private void setReadyForReviewStatusForStyleColor(RenderRequest request,ContentForm contentDisplayForm) {
+        String readyForReviewStatusForStyleColor= request.getParameter(ContentScreenConstants.READY_FOR_REVIEW_STYLE_COLOR_MESSAGE_KEY);
+        if(StringUtils.isNotBlank(readyForReviewStatusForStyleColor))
+        {
+            contentDisplayForm.setReadyForReviewMessageStyleColor(readyForReviewStatusForStyleColor);
+            modelAndView.addObject(ContentScreenConstants.CONTENT_DISPLAY_FORM, contentDisplayForm);
+        }
+        
+    }
+
+
+
+
+    /**
+     * Sets the ready for review status for style.
+     *
+     * @param request the request
+     * @param contentDisplayForm the content display form
+     */
+    private void setReadyForReviewStatusForStyle(RenderRequest request,
+        ContentForm contentDisplayForm) {
+        String readyForReviewStatus= request.getParameter(ContentScreenConstants.READY_FOR_REVIEW_MESSAGE_KEY);
+            if(StringUtils.isNotBlank(readyForReviewStatus))
+            {
+                contentDisplayForm.setReadyForReviewMessage(readyForReviewStatus);
+                modelAndView.addObject(ContentScreenConstants.CONTENT_DISPLAY_FORM, contentDisplayForm);
+            }
+            
+    }
+
+
+
+
+    /**
+     * Disable save button.
+     *
+     * @param request the request
+     * @param contentDisplayForm the content display form
+     * @param disableSaveButtonFlag the disable save button flag
+     */
+    private void disableSaveButton(RenderRequest request,ContentForm contentDisplayForm, boolean disableSaveButtonFlag) {
+        String disableSaveButton=request.getParameter(ContentScreenConstants.DISABLE_SAVE_BUTTON_KEY);       
+        if(StringUtils.isNotBlank(disableSaveButton))
+        {            
+          contentDisplayForm.setDisableSaveButton(disableSaveButton);
+          modelAndView.addObject(ContentScreenConstants.CONTENT_DISPLAY_FORM, contentDisplayForm);
+        }
+        
+    }
+
+
+
+
+    /**
+     * Display the message to submit style level data before submitting style color data.
+     *
+     * @param request the request
+     * @param contentDisplayForm the content display form
+     * @param styleDataSubmissionFlag the style data submission flag
+     */
+    private void displayTheMessageToSubmitStyleLevelDataBeforeSubmittingStyleColorData(
+        RenderRequest request, ContentForm contentDisplayForm, boolean styleDataSubmissionFlag) {
+        if(!styleDataSubmissionFlag)
+        {
+            String  styeLevelDataToBeSubmittedFirstMessage= request.getParameter(ContentScreenConstants.SUBMIT_STYLE_LEVEL_DATA_FIRST);
+           
+           if(StringUtils.isNotBlank(styeLevelDataToBeSubmittedFirstMessage))
+           {
+               contentDisplayForm.setStyleDataSubmissionDataMessage(styeLevelDataToBeSubmittedFirstMessage); 
+               modelAndView.addObject(ContentScreenConstants.CONTENT_DISPLAY_FORM, contentDisplayForm);
+           }            
+         
+          
+        }
+        
+    }
+
+
+
+
+    /**
+     * Display update style color status webservice message.
+     *
+     * @param request the request
+     * @param contentDisplayForm the content display form
+     */
+    private void displayUpdateStyleColorStatusWebserviceMessage(RenderRequest request, ContentForm contentDisplayForm) {
+        String  updateContentStatusForStyleColorMessage= request.getParameter(ContentScreenConstants.UPDATE_STYLE_COLOR_PET_CONTENT_STATUS_WEBSERVICE_REPONSE_KEY);
+        LOGGER.info("updateContentStatusForStyleColorMessage = "+ updateContentStatusForStyleColorMessage);    
+        if(StringUtils.isNotBlank(updateContentStatusForStyleColorMessage))
+        {
+             LOGGER.info("updateContentStatusForStyleColorMessage = "+ updateContentStatusForStyleColorMessage); 
+             contentDisplayForm.setUpdateContentStatusMessage(updateContentStatusForStyleColorMessage);
+             LOGGER.info(" contentDisplayForm.setUpdateContentStatusMessage(= "+ contentDisplayForm.getUpdateContentStatusMessage()); 
+             modelAndView.addObject(ContentScreenConstants.CONTENT_DISPLAY_FORM, contentDisplayForm);
+            
+        }
+        
+    }
+
+
+
+
+    /**
+     * Display update style status webservice message.
+     *
+     * @param request the request
+     * @param contentDisplayForm the content display form
+     */
+    private void displayUpdateStyleStatusWebserviceMessage(RenderRequest request, ContentForm contentDisplayForm) {
+        String  updateContentStatusForStyleMessage= request.getParameter(ContentScreenConstants.UPDATE_STYLE_PET_CONTENT_STATUS_WEBSERVICE_REPONSE_KEY);
+        LOGGER.info("updateContentStatusForStyleMessage = "+ updateContentStatusForStyleMessage);    
+        if(StringUtils.isNotBlank(updateContentStatusForStyleMessage))
+        {
+             LOGGER.info("updateContentStatusForStyleMessage = "+ updateContentStatusForStyleMessage); 
+             contentDisplayForm.setUpdateContentStatusMessage(updateContentStatusForStyleMessage);
+             LOGGER.info(" contentDisplayForm.setUpdateContentStatusMessage(= "+ contentDisplayForm.getUpdateContentStatusMessage()); 
+             modelAndView.addObject(ContentScreenConstants.CONTENT_DISPLAY_FORM, contentDisplayForm);
+            
+        }
+        
+    }
+
+
+
+
+    /**
+     * Display iph categories.
+     *
+     * @param orinNumber the orin number
+     * @param contentDisplayForm the content display form
+     * @param request the request
+     * @param response the response
+     */
+    private void displayIPHCategories(String orinNumber,ContentForm contentDisplayForm, RenderRequest request,RenderResponse response) {
+        List<ItemPrimaryHierarchyVO>  iphCategoryList  =contentDelegate.getItemPrimaryHierarchyCategories();
+        if(iphCategoryList!=null && iphCategoryList.size()>0)
+        {
+            Map<String, String> categoryReferenceData =  splitIPHCategoryByCategoryId(iphCategoryList);           
+            contentDisplayForm.setCategoryReferenceData(categoryReferenceData);
+         
+            modelAndView.addObject(ContentScreenConstants.CONTENT_DISPLAY_FORM, contentDisplayForm);
+        }
+        
+        
+    }
+
+
+
+
+    /**
+     * Display copy attribute data.
+     *
+     * @param orinNumber the orin number
+     * @param contentDisplayForm the content display form
+     * @param request the request
+     * @param response the response
+     */
+    private void displayCopyAttributeData(String orinNumber,ContentForm contentDisplayForm, RenderRequest request, RenderResponse response) {
+        //Get the Copy Attribute data from the ADSE  tables and prepare  the data for displaying on the Content Copy Attribute  Section
+        List<CopyAttributesVO>  copyAttributeList= contentDelegate.getCopyAttributes(orinNumber);
+        if(copyAttributeList!=null && copyAttributeList.size()>0 )
+        {
+            contentDisplayForm.setCopyAttributeDisplayList(copyAttributeList);
+            modelAndView.addObject(ContentScreenConstants.CONTENT_DISPLAY_FORM, contentDisplayForm);
+        }
+        else
+        {
+            //set the message to display on the screen no  copy attribute  data exists
+            contentDisplayForm.setCopyAttribueData("No Copy Attrbute Data exists");;
+            modelAndView.addObject(ContentScreenConstants.CONTENT_DISPLAY_FORM, contentDisplayForm);
+        }
+        
+    }
+
+
+
+
+    /**
+     * Display content history data.
+     *
+     * @param orinNumber the orin number
+     * @param contentDisplayForm the content display form
+     * @param request the request
+     * @param response the response
+     */
+    private void displayContentHistoryData(String orinNumber,ContentForm contentDisplayForm, RenderRequest request,RenderResponse response) {
+      //Get the Content History from the ADSE  tables and prepare  the data for displaying on the Content History Section
+        ContentHistoryVO  contentHistory= contentDelegate.getContentHistory(orinNumber);
+        if(contentHistory!=null)
+        {
+            contentDisplayForm.setContentHistoryDisplay(contentHistory);
+            modelAndView.addObject(ContentScreenConstants.CONTENT_DISPLAY_FORM, contentDisplayForm);
+        }
+        else
+        {
+          //set the message to display on the screen No Content History Data Exists
+            contentDisplayForm.setContentHistoryData("No Content History data exists");
+       
+        }
+        
+    }
+
+
+
+
+    /**
+     * Display sku data.
+     *
+     * @param orinNumber the orin number
+     * @param contentDisplayForm the content display form
+     * @param request the request
+     * @param response the response
+     */
+    private void displaySKUData(String orinNumber,ContentForm contentDisplayForm, RenderRequest request,RenderResponse response) {
+        //Get the SKU data from the ADSE  tables and prep the data for displaying on the Child SKU Section
+        List<ChildSkuVO>  skuList= contentDelegate.getChildSkuInfo(orinNumber);
+        if(skuList!=null && skuList.size()>0 )
+        {
+            contentDisplayForm.setChildSkuDisplayList(skuList);
+            modelAndView.addObject(ContentScreenConstants.CONTENT_DISPLAY_FORM, contentDisplayForm);
+        }
+        else
+        {
+            //set the message to display on the screen No Child SKU data exists
+            contentDisplayForm.setNoChildSkuDataPresent("No Child SKU data exists");
+            modelAndView.addObject(ContentScreenConstants.CONTENT_DISPLAY_FORM, contentDisplayForm);
+        }
+        
+    }
+
+
+
+
+    /**
+     * Display content management.
+     *
+     * @param orinNumber the orin number
+     * @param contentDisplayForm2 the content display form2
+     * @param request the request
+     * @param response the response
+     */
+    private void displayContentManagement(String orinNumber,ContentForm contentDisplayForm, RenderRequest request, RenderResponse response) {
+        //Get the content management data from the ADSE_PET_CATALOG table and prep the data for displaying on the Pet Content Management Section
+        ContentManagementVO  contentManagementVO= contentDelegate.getContentManagmentInfo(orinNumber);
+        if(contentManagementVO!=null)
+        {
+            contentDisplayForm.setContentManagementDisplay(contentManagementVO);
+            modelAndView.addObject(ContentScreenConstants.CONTENT_DISPLAY_FORM, contentDisplayForm);
+        }
+            
+        
+    }
+
+
+
+
+    /**
+     * Check webservice response.
+     */
+    private void checkWebserviceResponse() {
+     // Check  the response from the webservice 
+        if(getResponseMessageWebService().contains("successfully")){
+            LOGGER.info("getResponseMessageWebService---successfully");
+            
+            modelAndView.addObject("responseSuccessMessageWebService", getResponseMessageWebService());
+        }
+        else if(getResponseMessageWebService().contains("updation failed"))
+        {
+            LOGGER.info("getResponseMessageWebService---updation failed");
+            modelAndView.addObject("responseSuccessMessageWebService", getResponseMessageWebService());
+        }
+        else if(getResponseMessageWebService().contains("HTTP Error"))
+        {
+            LOGGER.info("getResponseMessageWebService---HTTP Error");
+            modelAndView.addObject("responseFailMessageWebService", getResponseMessageWebService());
+        }
+        
+    }
+
+
+
+
+    /**
+     * Gets the pet list.
+     *
+     * @param orinNumber the orin number
+     * @param contentDisplayForm2 the content display form2
+     * @param request the request
+     * @param response the response
+     * @return the pet list
+     */
+    private void getPetList(String orinNumber, ContentForm contentDisplayForm,
+        RenderRequest request, RenderResponse response) {
+        List<PetsFound> petList=contentDelegate.getPetList(orinNumber);
+        if(petList!=null && petList.size()>0)
+        {
+            LOGGER.info("StylePetsFound---Data");
+            modelAndView.addObject("StylePetsFound","Data exists");
+            StyleAndItsChildDisplay styleAndItsChildDisplay= displayPetsAsParentChild(petList);
+            contentDisplayForm.setStyleAndItsChildDisplay(styleAndItsChildDisplay);
+            modelAndView.addObject(ContentScreenConstants.CONTENT_DISPLAY_FORM, contentDisplayForm);
+        }
+        else
+        {
+            LOGGER.info("noStylePetsFound---No Data exist");
+            System.out.println("Style Attributes is Null for Global Styles");
+            contentDisplayForm.setNoPetsFoundInADSEDatabase("true");
+            modelAndView.addObject("noStylePetsFound","No Data exists");
+            modelAndView.addObject(ContentScreenConstants.CONTENT_DISPLAY_FORM, contentDisplayForm);
+        }
+        
+    }
+
+
+
+
+    /**
+     * Display product information.
+     *
+     * @param orinNumber the orin number
+     * @param contentDisplayForm the content display form
+     * @param request the request
+     * @param response the response
+     */
+    private void displayProductInformation(String orinNumber,ContentForm contentDisplayForm, RenderRequest request,RenderResponse response) {
+        LOGGER.info("Start of displayProductInformation.... ");
+        
+        ProductDetailsVO   productInformation= contentDelegate.getProductInformation(orinNumber);
+        if(productInformation!=null)
+        {
+            LOGGER.info("----------------------getProductName from ADSE tables----------------------"+productInformation.getProductName());
+            LOGGER.info("----------------------getProductDescription from ADSE tables----------------------"+productInformation.getProductDescription());
+            contentDisplayForm.setProductDetailsVO(productInformation);
+            LOGGER.info("-------------contentDisplayForm---------getProductName from ADSE tables----------------------"+contentDisplayForm.getProductDetailsVO().getProductName());
+            LOGGER.info("-------------contentDisplayForm---------getProductDescription from ADSE tables----------------------"+contentDisplayForm.getProductDetailsVO().getProductDescription());
+            modelAndView.addObject(ContentScreenConstants.CONTENT_DISPLAY_FORM, contentDisplayForm);
+            
+        }
+        LOGGER.info("End of displayProductInformation.... ");
+    }
+
+
+
+
+    /**
+     * Display style information.
+     *
+     * @param orinNumber the orin number
+     * @param contentDisplayForm the content display form
+     * @param request the request
+     * @param response the response
+     */
+    private void displayStyleInformation(String orinNumber, ContentForm contentDisplayForm, RenderRequest request, RenderResponse response) {
+        try {
+            StyleInformationVO  styleInformation= contentDelegate.getStyleInformation(orinNumber);
+            if(styleInformation!=null)
+            {
+                contentDisplayForm.setStyleInformationVO(styleInformation);
+                LOGGER.info("-----getStyleId------"+ contentDisplayForm.getStyleInformationVO().getStyleId());
+               
+                modelAndView.addObject(ContentScreenConstants.CONTENT_DISPLAY_FORM, contentDisplayForm);
+                
+            }
+        }
+        catch (PEPDelegateException e) {
+            LOGGER.severe("Exception occurred"+e.getMessage());
+            contentDisplayForm.setFetchStyleInfoErrorMessage(ContentScreenConstants.FETCH_STYLE_INFO_ERROR_MESSAGE);
+            modelAndView.addObject(ContentScreenConstants.CONTENT_DISPLAY_FORM, contentDisplayForm);
+        
+         }
+    }
+
+
+
+    /**
+     * Update content pet style color data status.
+     *
+     * @param request the request
+     * @param response the response
+     */
+    private void updateContentPetStyleColorDataStatus(ActionRequest request,ActionResponse response) {
+        String updateContentStatusStyleColorAction =  request.getParameter("updateContentStatusStyleColorActionParameter");                
+        if(updateContentStatusStyleColorAction != null && updateContentStatusStyleColorAction.equals("updateContentStatusForStyleColor"))
+        {
+            
+            //Logic for checking that the Style Level Data has been submitted before the submitting the Style Color  Data
+           
+            if(styleDataSubmissionFlag)
+            {
+                String styleColorOrinNumber =  request.getParameter("styleColorOrinNumber");        
+                String styleColorContentStatus =  request.getParameter("styleColorContentStatus"); 
+                if(StringUtils.isNotBlank(styleColorOrinNumber) && StringUtils.isNotBlank(styleColorContentStatus))
+                {
+                    UpdateContentStatusDataObject dataObject = new UpdateContentStatusDataObject(styleColorOrinNumber, styleColorContentStatus);
+                    Gson gson = new Gson();
+                    // convert java object to JSON format,
+                    // and returned as JSON formatted string
+                    String json = gson.toJson(dataObject);
+                    String webserviceResponseMessage=contentDelegate.updateContentStatusWebService(json);
+                    if(webserviceResponseMessage.contains("successfully"))
+                    {
+                        //Set the message for changing the content status for ready for review and disable the Submit Style Color Data  Button
+                        response.setRenderParameter(ContentScreenConstants.READY_FOR_REVIEW_STYLE_COLOR_MESSAGE_KEY,ContentScreenConstants.READY_FOR_REVIEW_STYLE_COLOR_MESSAGE);
+                        
+                    }
+                    LOGGER.info("webserviceResponseMessag from update Style Color  pet status = "+ getResponseMessageWebService());     
+                    response.setRenderParameter(ContentScreenConstants.UPDATE_STYLE_COLOR_PET_CONTENT_STATUS_WEBSERVICE_REPONSE_KEY,webserviceResponseMessage);
+                  
+                }
+                
+            }
+            else
+            {
+                response.setRenderParameter(ContentScreenConstants.SUBMIT_STYLE_LEVEL_DATA_FIRST,ContentScreenConstants.SUBMIT_STYLE_LEVEL_DATA_MESSAGE); 
+                
+            }
+            
+            
+            
+        }
+        
+    }
+
+
+
+
+
+
+
+    /**
+     * Update content pet style data status.
+     *
+     * @param request the request
+     * @param response the response
+     */
+    private void updateContentPetStyleDataStatus(ActionRequest request,ActionResponse response) {
+        String updateContentStatusStyleAction =  request.getParameter("updateContentStatusStyleActionParameter");                
+        if(updateContentStatusStyleAction != null && updateContentStatusStyleAction.equals("updateContentStatusForStyle"))
+        {
+            String styleOrinNumber =  request.getParameter("styleOrinNumber");        
+            String styleContentStatus =  request.getParameter("styleContentStatus"); 
+            if(StringUtils.isNotBlank(styleOrinNumber) && StringUtils.isNotBlank(styleContentStatus))
+            {
+                UpdateContentStatusDataObject dataObject = new UpdateContentStatusDataObject(styleOrinNumber, styleContentStatus);
+                Gson gson = new Gson();
+                // convert java object to JSON format,
+                // and returned as JSON formatted string
+                String json = gson.toJson(dataObject);
+                String webserviceResponseMessage=contentDelegate.updateContentStatusWebService(json);
+                if(webserviceResponseMessage.contains("successfully"))
+                {
+                    styleDataSubmissionFlag=true;
+                    disableSaveButtonFlag=true;
+                    response.setRenderParameter(ContentScreenConstants.DISABLE_SAVE_BUTTON_KEY, Boolean.toString(disableSaveButtonFlag));
+                    //Set the message for changing the content status for ready for review and disable the Submit Style Data  Button
+                    response.setRenderParameter(ContentScreenConstants.READY_FOR_REVIEW_MESSAGE_KEY,ContentScreenConstants.READY_FOR_REVIEW_MESSAGE);
+                }
+               
+                LOGGER.info("webserviceResponseMessag from update Style pet status = "+ getResponseMessageWebService());     
+                response.setRenderParameter(ContentScreenConstants.UPDATE_STYLE_PET_CONTENT_STATUS_WEBSERVICE_REPONSE_KEY,webserviceResponseMessage);
+              
+            }
+            
+        }
+        
+        
+    }
+
+
+
+
+
+
+
+    /**
+     * Save content pet attributes.
+     *
+     * @param request the request
+     * @param response the response
+     */
+    private void saveContentPetAttributes(ActionRequest request,
+        ActionResponse response) {
+        LOGGER.info("-----------------Start of saveContentPetAttributes -----------------");
+        List<AttributesBean> attributesBeansList = new ArrayList<AttributesBean>();
+        String saveContentAction =  request.getParameter("actionParameter");                
+        if(saveContentAction != null && saveContentAction.equals("saveContent")){
+            
+            LOGGER.info("call to createContentWebService from Content Controller");                    
+            //get input from user for updating the attributes on the  content screen
+            String stylePetId = request.getParameter("stylePetId");
+            String productName = request.getParameter("productName");
+            String productDescription = request.getParameter("productDescription");
+            
+            String productNameXpath=ContentScreenConstants.PRODUCT_NAME_XPATH;
+            String productDescriptionXpath=ContentScreenConstants.PRODUCT_DESCRIPTION_XPATH;
+               
+            String brand = request.getParameter("brand");
+            //String omniChannelBrandXpath = request.getParameter("omniChannelBrandXpath");
+            String omniChannelBrandXpath = ContentScreenConstants.OMNICHANNEL_BRAND_XPATH;
+            String belkExclusive = request.getParameter("belkExclusive");
+            //String belkExclusiveXpath = request.getParameter("belkExclusiveXpath");
+            String belkExclusiveXpath =  ContentScreenConstants.BELK_EXCLUSIVE_XPATH;
+            LOGGER.info("user inputs for content update -> productName = "+productName);
+            LOGGER.info("user inputs for content update -> productDescription = "+productDescription);           
+            
+           LOGGER.info("user inputs for content update -> stylePetId = "+stylePetId+" , brand = "+brand+", omniChannelBrandXpath = "+omniChannelBrandXpath+", belkExclusive = "+belkExclusive+", belkExclusiveXpath = "+belkExclusiveXpath);
+           
+           //form JSON request to web service
+           ItemIdBean listOfAttributes = new ItemIdBean();
+           
+           AttributesBean attributesBeanProductName = new AttributesBean(productNameXpath,productName);
+           AttributesBean attributesBeanProductDescription = new AttributesBean(productDescriptionXpath,productDescription);                             
+           
+           attributesBeansList.add(attributesBeanProductName);
+           attributesBeansList.add(attributesBeanProductDescription);
+           if(StringUtils.isNotBlank(brand))
+           {
+               AttributesBean attributesBeanBrand = new AttributesBean(omniChannelBrandXpath,brand); 
+               attributesBeansList.add(attributesBeanBrand);
+           }
+           
+           if(StringUtils.isNotBlank(belkExclusive))
+           {
+               AttributesBean attributesBeanBelkExclusive = new AttributesBean(belkExclusiveXpath,belkExclusive);
+               attributesBeansList.add(attributesBeanBelkExclusive);
+           }
+          
+           
+           listOfAttributes.setItemId(stylePetId);
+           listOfAttributes.setList(attributesBeansList);//this will complete JSON request data
+           Gson gson = new Gson();
+           //convert from JSON to String
+           String createContentWebServiceReq = gson.toJson(listOfAttributes);
+           
+           //request to web service
+           LOGGER.info("Request to createContentWebService = "+createContentWebServiceReq);
+           //call web service and read response
+           String responseFromWebservice=contentDelegate.createContentWebService(createContentWebServiceReq);
+           if(StringUtils.isNotBlank(responseFromWebservice))
+           {
+               LOGGER.info("---------------Response from createContentWebService save Style Level Attributes---------------"+ responseFromWebservice); 
+               response.setRenderParameter(ContentScreenConstants.SAVE_STYLE_ATTRIBUTES_KEY, responseFromWebservice);
+           }
+             
+           
+            
+        }
+        LOGGER.info("-----------------End of saveContentPetAttributes-----------------");
+        
+    }
+
+
+
+
+    /**
+     * Gets the the style attribute data.
+     *
+     * @param request the request
+     * @param response the response
+     * @return the the style attribute data
+     */
+    private void getTheStyleAttributeData(ActionRequest request,ActionResponse response) {
+        String actionLoadStyleAttributes = request.getParameter("action");  
+        LOGGER.info("actionLoadStyleAttributes---"+actionLoadStyleAttributes);
+        String  styleOrinNumberOnClickOfTheHyperlink = request.getParameter(ContentScreenConstants.ORIN_NUMBER);         
+          if(StringUtils.isBlank(styleOrinNumberOnClickOfTheHyperlink)){
+                
+              //Do not display the  Style  Attribute Section
+              response.setRenderParameter(ContentScreenConstants.HIDE_STYLE_ATTRIBUTE_SECTION_KEY,ContentScreenConstants.HIDE_STYLE_ATTRIBUTE_SECTION_FLAG_YES);
+                
+            }
+            else
+            {
+                //Display the  Style  Attribute Section
+                
+                response.setRenderParameter(ContentScreenConstants.HIDE_STYLE_ATTRIBUTE_SECTION_KEY,ContentScreenConstants.HIDE_STYLE_ATTRIBUTE_SECTION_FLAG_NO);                
+                try {
+                     GlobalAttributesVO styleAttributes=contentDelegate.getStyleAttributesADSE(styleOrinNumberOnClickOfTheHyperlink);
+                    if(styleAttributes!=null)
+                    {
+                      setStyleAttributes(styleAttributes);
+                    }
+                    else
+                    {
+                        response.setRenderParameter(ContentScreenConstants.NO_STYLE_ATTRIBUTE_EXISTS_KEY,ContentScreenConstants.NO_STYLE_ATTRIBUTE_DATA_EXISTS_MESSAGE);                        
+                    }                    
+                  
+               }
+               catch (PEPDelegateException e) {                       
+                   e.printStackTrace();
+                   response.setRenderParameter(ContentScreenConstants.EXCEPTION_OCCURRED_GETTING_STYLE_ATTRIBUTE_DATA_KEY,ContentScreenConstants.EXCEPTION_OCCURRED_GETTING_STYLE_ATTRIBUTE_DATA_MESSAGE);
+                  
+               }
+                                 
+                                   
+            }
+        
+          
+         
+    }
+
+
+
+
+    
+       
+    
+
+
+
+    /**
+     * Display style attribute data.
+     *
+     * @param contentDisplayForm the content display form
+     * @param request the request
+     * @param response the response
+     */
+    private void displayStyleAttributeData(ContentForm contentDisplayForm,RenderRequest request, RenderResponse response) {
+        LOGGER.info("----------Start of displayStyleAttributeData----------"); 
+        String displayStyleAttributeSectionFlag= request.getParameter(ContentScreenConstants.HIDE_STYLE_ATTRIBUTE_SECTION_KEY);
+        if(StringUtils.isNotBlank(displayStyleAttributeSectionFlag))
+        {
+            LOGGER.info("----------displayStyleAttributeSectionFlag---------"+displayStyleAttributeSectionFlag);  
+            if(displayStyleAttributeSectionFlag.equals(ContentScreenConstants.HIDE_STYLE_ATTRIBUTE_SECTION_FLAG_YES))
+            {
+                contentDisplayForm.setDisplayStyleAttributeSection(ContentScreenConstants.HIDE_STYLE_ATTRIBUTE_SECTION_FLAG_YES);
+            }
+            else if(displayStyleAttributeSectionFlag.equals(ContentScreenConstants.HIDE_STYLE_ATTRIBUTE_SECTION_FLAG_NO))
+            {
+                
+                contentDisplayForm.setDisplayStyleAttributeSection(ContentScreenConstants.HIDE_STYLE_ATTRIBUTE_SECTION_FLAG_NO);
+                GlobalAttributesVO styleAttributes= getStyleAttributes();
+                LOGGER.info("----------styleAttributes---------"+styleAttributes);  
+                if(styleAttributes!=null)
+                {
+                    contentDisplayForm.setGlobalAttributesDisplay(getStyleAttributes());
+                    LOGGER.info("----------contentDisplayForm.getGlobalAttributesDisplay()---------"+contentDisplayForm.getGlobalAttributesDisplay());  
+                }
+                else
+                {
+                    String noStyleAttributeExistsMessage= request.getParameter(ContentScreenConstants.NO_STYLE_ATTRIBUTE_EXISTS_KEY);
+                    contentDisplayForm.setNoStyleAttributeExistsMessage(noStyleAttributeExistsMessage);
+                    
+                }
+                
+            }
+        }
+        LOGGER.info("----------End of displayStyleAttributeData----------");  
+        
+       
+        
+        
+    }
+
+
+
+
+    /**
+     * Split iph category by category id.
+     *
+     * @param iphCategoryList the iph category list
+     * @return the map
+     */
+    private Map<String, String> splitIPHCategoryByCategoryId(List<ItemPrimaryHierarchyVO> iphCategoryList) {
+       
+            Map<String,String> categoryMap = new LinkedHashMap<String,String>();
+            for(ItemPrimaryHierarchyVO iphCategory:iphCategoryList)
+            {
+                 String fullCategoryName=  iphCategory.getCategoryName();
+                 
+                 int index=fullCategoryName.indexOf('-');//get the first occurence of -
+                 //LOGGER.info("index.."+index);
+                 String categoryId=fullCategoryName.substring(0, index);
+                 //LOGGER.info("categoryId...."+categoryId);
+                 String categoryName= fullCategoryName.substring(index+1);
+                 //LOGGER.info("categoryName...."+categoryName);
+                 categoryMap.put(categoryId, categoryName);
+            }
+           
+            return categoryMap;
+        
+    }
+    
+    /**
+     * Display pets as parent child.
+     *
+     * @param petList the pet list
+     * @return the style and its child display
+     */
+    private StyleAndItsChildDisplay displayPetsAsParentChild(List<PetsFound> petList) {
+        String childsParentOrinNumber = null;
+        String  parentOrinNumber = null;
+        List<StyleColorVO> styleColorList = new ArrayList<StyleColorVO>();
+        List<StyleVO> styleList = new ArrayList<StyleVO>();
+        List<StyleVO> styleListForContentDisplay = new ArrayList<StyleVO>();
+        StyleAndItsChildDisplay styAndItsChildDisplay= new StyleAndItsChildDisplay();
+        for(PetsFound pet:petList)
+        {
+            String entryType=pet.getEntryType();               
+            if(entryType.equalsIgnoreCase("StyleColor"))
+            {
+                childsParentOrinNumber=pet.getParentStyleOrin();
+                String orinNumber=pet.getOrinNumber();
+                String color= pet.getColor();
+                String vendorSize=pet.getVendorSize();
+                String omniSizeDescription=pet.getOmniSizeDescription();              
+                String contentState=pet.getContentState();
+                String completionDate=pet.getCompletionDate();
+                StyleColorVO styleColor = new StyleColorVO();
+                styleColor.setEntryType(entryType);
+                styleColor.setParentStyleOrinNumber(childsParentOrinNumber);     
+                styleColor.setOrinNumber(orinNumber);
+                styleColor.setColor(color);
+                styleColor.setVendorSize(vendorSize);
+                styleColor.setOmniSizeDescription(omniSizeDescription);              
+                styleColor.setCompletionDate(completionDate);              
+                styleColor.setContentStatus(contentState);
+           
+                styleColorList.add(styleColor);//Add all the StyleColor to the  Style Color list 
+                LOGGER.info("styleColorList size.."+styleColorList.size());
+              
+            }
+            if(entryType.equalsIgnoreCase("Style"))
+            {                    
+             
+                        String orinNumber= pet.getOrinNumber();
+                        String vendorStyle= pet.getVendorStyle();
+                        parentOrinNumber=pet.getParentStyleOrin();                      
+                        String color= pet.getColor();
+                        String vendorSize=pet.getVendorSize();
+                        String omniSizeDescription=pet.getOmniSizeDescription();              
+                        String contentState=pet.getContentState();
+                        String completionDate=pet.getCompletionDate();
+                        StyleVO style =new StyleVO();
+                        style.setEntryType(entryType);
+                        style.setColor(color);
+                        style.setOrinNumber(orinNumber);
+                        style.setParentOrinNumber(orinNumber);//changed the Parent MDMID of the Style is null
+                        style.setVendorSize(vendorSize);
+                        style.setCompletionDate(completionDate);                      
+                        style.setContentStatus(contentState);                     
+                        style.setOmniSizeDescription(omniSizeDescription);
+                        styleList.add(style);//Add all the Style to the  Style  list  
+              
+                }        
+            
+           
+        }
+        LOGGER.info("styleList length="+styleList.size());
+        LOGGER.info("styleColorList length="+styleColorList.size()); 
+        //Check for the Parent Child association
+        for(StyleVO style :styleList)
+        {
+           parentOrinNumber = style.getParentOrinNumber();
+           LOGGER.info("parentOrinNumber.."+parentOrinNumber);  
+           List<StyleColorVO> subStyleColorList = new ArrayList<StyleColorVO>();
+           
+           for(StyleColorVO styleColor :styleColorList)
+           {
+              
+              childsParentOrinNumber =styleColor.getParentStyleOrinNumber();
+             // LOGGER.info("childsParentOrinNumber.."+childsParentOrinNumber);
+              if(parentOrinNumber.equalsIgnoreCase(childsParentOrinNumber))
+              {
+                
+                  subStyleColorList.add(styleColor);
+              }
+               
+           }
+           if(subStyleColorList.size()>0){
+               LOGGER.info("Size of the Color List .."+subStyleColorList.size());
+               style.setStyleColorList(subStyleColorList);//Add all the child Style Colors to the Parent Style             
+           }else{
+               LOGGER.info("This is from Else part just return the style list with out any child style color");
+               
+           }
+           styleListForContentDisplay.add(style);//Add  all the Styles with children Style Color to the declared style list for content  display  
+            
+        }
+        
+        
+        LOGGER.info("styleColorList.."+styleListForContentDisplay.size());
+        styAndItsChildDisplay.setStyleList(styleListForContentDisplay);//Add all the Styles to the content list display form
+        
+        LOGGER.info("styAndItsChildDisplay size.."+styAndItsChildDisplay.getStyleList().size());
+        return styAndItsChildDisplay;
+        
+    }
+    
+    
+ 
+    
+    
+    /**
+     * Gets the content delegate.
+     *
+     * @return the content delegate
+     */
+    public ContentDelegate getContentDelegate() {
+        return contentDelegate;
+    }
+    
+    /**
+     * Sets the content delegate.
+     *
+     * @param contentDelegate the new content delegate
+     */
+    public void setContentDelegate(ContentDelegate contentDelegate) {
+        this.contentDelegate = contentDelegate;
+    }
+    
+    /**
+     * Gets the style attributes.
+     *
+     * @return the styleAttributes
+     */
+    public GlobalAttributesVO getStyleAttributes() {
+        return styleAttributes;
+    }
+    
+    /**
+     * Sets the style attributes.
+     *
+     * @param styleAttributes the styleAttributes to set
+     */
+    public void setStyleAttributes(GlobalAttributesVO styleAttributes) {
+        this.styleAttributes = styleAttributes;
+    }
+    
+    /**
+     * Gets the response message web service.
+     *
+     * @return the responseMessageWebService
+     */
+    public String getResponseMessageWebService() {
+        return responseMessageWebService;
+    }
+    
+    /**
+     * Sets the response message web service.
+     *
+     * @param responseMessageWebService the responseMessageWebService to set
+     */
+    public void setResponseMessageWebService(String responseMessageWebService) {
+        this.responseMessageWebService = responseMessageWebService;
+    }
+    
+    /**
+     * Gets the model and view.
+     *
+     * @return the modelAndView
+     */
+    public ModelAndView getModelAndView() {
+        return modelAndView;
+    }
+    
+    /**
+     * Sets the model and view.
+     *
+     * @param modelAndView the modelAndView to set
+     */
+    public void setModelAndView(ModelAndView modelAndView) {
+        if(modelAndView==null)
+        {
+            modelAndView = new ModelAndView(ContentScreenConstants.PAGE);
+        }
+        this.modelAndView = modelAndView;
+    }
+    /* (non-Javadoc)
+     * @see org.springframework.web.portlet.mvc.ResourceAwareController#handleResourceRequest(javax.portlet.ResourceRequest, javax.portlet.ResourceResponse)
+     */
+    @SuppressWarnings("null")
+    @Override
+    public ModelAndView handleResourceRequest(ResourceRequest request,ResourceResponse response) throws Exception {
+
+        String webServiceMessage = null;
+        modelAndView = new ModelAndView(ContentScreenConstants.PAGE);
+        contentDisplayForm = new ContentForm();
+        String categoryKey = request.getParameter("categoryKey");
+        LOGGER.info("categoryKey-------" + categoryKey);
+        if (StringUtils.isNotBlank(categoryKey)) {
+            LOGGER.info("@ResourceMapping-categoryKey--- " + categoryKey);
+            LOGGER.info("categoryKey---- " + categoryKey);
+            String petId = request.getParameter("petIdForWebservice");
+            LOGGER.info("petId--------" + petId);
+            DataObject dataObject = new DataObject(petId, categoryKey);
+            Gson gson = new Gson();
+            // convert java object to JSON format,
+            // and returned as JSON formatted string
+            String json = gson.toJson(dataObject);
+            webServiceMessage = contentDelegate.callIPHMappingWebService(json);
+            PrintWriter writer = response.getWriter();
+            // to send the response to ajax call from jsp
+            writer.write(webServiceMessage);
+            modelAndView.addObject(ContentScreenConstants.CONTENT_DISPLAY_FORM,contentDisplayForm);
+
+        }
+
+        return modelAndView;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.springframework.web.portlet.mvc.EventAwareController#handleEventRequest(javax.portlet.EventRequest, javax.portlet.EventResponse)
+     */
+    @Override
+    public void handleEventRequest(EventRequest request, EventResponse response)
+        throws Exception {
+        LOGGER.info("-----------------Start of handle handleEventRequest-----------------");
+        Event event = request.getEvent();
+        LOGGER.info("event... " + event);       
+            if (event.getName() != null) {
+                if (event.getName().equals(
+                    ContentScreenConstants.CONTENT_PET_DETAILS)) {
+                                  
+                    ContentPetDetails contentPetDetails =(ContentPetDetails) event.getValue();
+                    LOGGER.info("event.getName() 1 " + event.getName());
+                    LOGGER.info("event.value() 1 " + event.getValue());
+                    LOGGER.info("Inside handle handleEventRequest...contentPetDetails...getContentStatus"+contentPetDetails.getContentStatus());
+                    LOGGER.info("Inside handle handleEventRequest...contentPetDetails...getContentStatus"+contentPetDetails.getContentStatus());
+                    LOGGER.info("Inside handle handleEventRequest...contentPetDetails...getOrinNumber"+contentPetDetails.getOrinNumber());
+                    LOGGER.info("Inside handle handleEventRequest...contentPetDetails...getVpUser"+contentPetDetails.getVpUser());
+                    LOGGER.info("Inside handle handleEventRequest...contentPetDetails...getUserData"+contentPetDetails.getUserData());
+                    LOGGER.info("Inside handle handleEventRequest...contentPetDetails...getBelkUser"+contentPetDetails.getBelkUser());                 
+                    request.getPortletSession().setAttribute(ContentScreenConstants.CONTENT_PET_DETAILS,contentPetDetails);
+                }
+
+            }
+    
+        LOGGER.info("-----------------End of handle handleEventRequest-----------------"); 
+    }
+    
+    
+    
+   
+     /**
+      * Gets the content pet details from inter portlet communication.
+      *
+      * @param request the request
+      * @return the content pet details from inter portlet communication
+      */
+     private ContentPetDetails getContentPetDetailsFromIPC(RenderRequest request) {  
+         LOGGER.info("-----------------Start of getContentPetDetailsFromIPC-----------------");         
+         LOGGER.info("request.getPortletSession().getAttribute(ContentScreenConstants.CONTENT_PET_DETAILS).."+request.getPortletSession().getAttribute(ContentScreenConstants.CONTENT_PET_DETAILS));
+         if(request.getPortletSession().getAttribute(ContentScreenConstants.CONTENT_PET_DETAILS)!=null)
+         {             
+             LOGGER.info("request.getPortletSession().getAttribute(ContentScreenConstants.CONTENT_PET_DETAILS).not null check."+request.getPortletSession().getAttribute(ContentScreenConstants.CONTENT_PET_DETAILS));        
+             ContentPetDetails contentPetDetails= (ContentPetDetails) request.getPortletSession().getAttribute(ContentScreenConstants.CONTENT_PET_DETAILS); 
+             LOGGER.info("-----------------End of getContentPetDetailsFromIPC-----------------");  
+             return contentPetDetails;
+         }
+        return null;
+        
+
+     }
+
+    
+    /**
+     * Gets the the style color attribute data.
+     *
+     * @param request the request
+     * @param response the response
+     * @return the the style color attribute data
+     */
+    private void getTheStyleColorAttributeData(ActionRequest request,ActionResponse response) {
+        String actionLoadStyleColorAttributes = request.getParameter("selectStyleColorOrinNumberaction");  
+        LOGGER.info("actionLoadStyleColorAttributes---"+actionLoadStyleColorAttributes);
+        String  styleColorOrinNumberOnClickOfTheHyperlink = request.getParameter(ContentScreenConstants.STYLE_COLOR_ORIN_NUMBER);         
+          if(StringUtils.isBlank(styleColorOrinNumberOnClickOfTheHyperlink)){
+                
+                //Do not display the  Style Color Attribute Section
+                response.setRenderParameter(ContentScreenConstants.HIDE_STYLE_COLOR_ATTRIBUTE_SECTION_KEY,ContentScreenConstants.HIDE_STYLE_COLOR_ATTRIBUTE_SECTION_FLAG_YES);
+                
+            }
+            else
+            {
+                //Display the  Style Color Attribute Section
+               LOGGER.info("styleColorOrinNumberclicked to load style color attributes is ="+ styleColorOrinNumberOnClickOfTheHyperlink);
+               LOGGER.info("styleColorOrinNumberclicked  from the action method"+styleColorOrinNumberOnClickOfTheHyperlink);  
+               response.setRenderParameter(ContentScreenConstants.HIDE_STYLE_COLOR_ATTRIBUTE_SECTION_KEY,ContentScreenConstants.HIDE_STYLE_COLOR_ATTRIBUTE_SECTION_FLAG_NO);
+               
+               try {
+                   ColorAttributesVO colorAttributes=contentDelegate.getStyleColorAttributes(styleColorOrinNumberOnClickOfTheHyperlink);
+                   if(colorAttributes!=null)
+                   {
+                     setStyleColorAttribute(colorAttributes);
+                   }
+                   else
+                   {
+                       response.setRenderParameter(ContentScreenConstants.NO_STYLE_COLOR_ATTRIBUTE_DATA_EXISTS_KEY,ContentScreenConstants.NO_STYLE_COLOR_ATTRIBUTE_DATA_EXISTS_MESSAGE);
+                       
+                   }
+                   
+                 
+              }
+              catch (PEPDelegateException e) {                       
+                  e.printStackTrace();
+                  response.setRenderParameter(ContentScreenConstants.EXCEPTION_OCCURRED_GETTING_STYLE_COLOR_ATTRIBUTE_DATA_KEY,ContentScreenConstants.EXCEPTION_OCCURRED_GETTING_STYLE_COLOR_ATTRIBUTE_DATA_MESSAGE);
+                 
+              }
+               
+              
+            }
+       
+   }
+    
+    
+    
+ 
+    /**
+     * Display style color attribute data.
+     *
+     * @param contentDisplayForm the content display form
+     * @param request the request
+     * @param response the response
+     */
+    private void displayStyleColorAttributeData(ContentForm contentDisplayForm,RenderRequest request,RenderResponse response) {
+      LOGGER.info("----------Start of displayStyleColorAttributeData----------");  
+      String displayStyleColorAttributeSectionFlag= request.getParameter(ContentScreenConstants.HIDE_STYLE_COLOR_ATTRIBUTE_SECTION_KEY);
+      if(StringUtils.isNotBlank(displayStyleColorAttributeSectionFlag))
+      {
+          LOGGER.info("----------displayStyleColorAttributeSectionFlag---------"+displayStyleColorAttributeSectionFlag);  
+          if(displayStyleColorAttributeSectionFlag.equals(ContentScreenConstants.HIDE_STYLE_COLOR_ATTRIBUTE_SECTION_FLAG_YES))
+          {
+              contentDisplayForm.setDisplayStyleColorAttributeSection(ContentScreenConstants.HIDE_STYLE_COLOR_ATTRIBUTE_SECTION_FLAG_YES);
+          }
+          else if(displayStyleColorAttributeSectionFlag.equals(ContentScreenConstants.HIDE_STYLE_COLOR_ATTRIBUTE_SECTION_FLAG_NO))
+          {
+              
+              contentDisplayForm.setDisplayStyleColorAttributeSection(ContentScreenConstants.HIDE_STYLE_COLOR_ATTRIBUTE_SECTION_FLAG_NO);
+              ColorAttributesVO styleColorAttributes= getStyleColorAttribute();
+              LOGGER.info("----------styleColorAttributes---------"+styleColorAttributes);  
+              if(styleColorAttributes!=null)
+              {
+                  contentDisplayForm.setStyleColorAttributes(styleColorAttributes);
+                  contentDisplayForm.setOmnichannelColorFamilyMap(omnichannelColorFamilyMap);
+                  contentDisplayForm.setSecondaryColorOneMap(secondaryColorOneMap);
+                  contentDisplayForm.setSecondaryColorTwoMap(secondaryColorTwoMap);
+                  contentDisplayForm.setSecondaryColorThreeMap(secondaryColorThreeMap);
+                  contentDisplayForm.setSecondaryColorFourMap(secondaryColorFourMap);
+                  
+                  LOGGER.info("----------contentDisplayForm.getStyleColorAttributes()---------"+contentDisplayForm.getStyleColorAttributes());  
+              }
+              else
+              {
+                  String noStyleColorAttributeExistsMessage= request.getParameter(ContentScreenConstants.NO_STYLE_COLOR_ATTRIBUTE_DATA_EXISTS_KEY);
+                  contentDisplayForm.setNoStyleColorAttributeExistsMessage(noStyleColorAttributeExistsMessage);
+                  
+              }
+              
+          }
+      }
+      LOGGER.info("----------End of displayStyleColorAttributeData----------");  
+        
+    }
+
+
+
+    /**
+     * Gets the content display form.
+     *
+     * @return the contentDisplayForm
+     */
+    public ContentForm getContentDisplayForm() {
+        return contentDisplayForm;
+    }
+    
+    /**
+     * Sets the content display form.
+     *
+     * @param contentDisplayForm the contentDisplayForm to set
+     */
+    public void setContentDisplayForm(ContentForm contentDisplayForm) {
+        this.contentDisplayForm = contentDisplayForm;
+    }
+    
+    /**
+     * Checks if is style data submission flag.
+     *
+     * @return the styleDataSubmissionFlag
+     */
+    public boolean isStyleDataSubmissionFlag() {
+        return styleDataSubmissionFlag;
+    }
+    
+    /**
+     * Sets the style data submission flag.
+     *
+     * @param styleDataSubmissionFlag the styleDataSubmissionFlag to set
+     */
+    public void setStyleDataSubmissionFlag(boolean styleDataSubmissionFlag) {
+        this.styleDataSubmissionFlag = styleDataSubmissionFlag;
+    }
+    
+    /**
+     * Checks if is disable save button flag.
+     *
+     * @return the disableSaveButtonFlag
+     */
+    public boolean isDisableSaveButtonFlag() {
+        return disableSaveButtonFlag;
+    }
+    
+    /**
+     * Sets the disable save button flag.
+     *
+     * @param disableSaveButtonFlag the disableSaveButtonFlag to set
+     */
+    public void setDisableSaveButtonFlag(boolean disableSaveButtonFlag) {
+        this.disableSaveButtonFlag = disableSaveButtonFlag;
+    }
+  
+ 
+    /**
+     * Gets the style color attribute.
+     *
+     * @return the styleColorAttribute
+     */
+    public ColorAttributesVO getStyleColorAttribute() {
+        return styleColorAttribute;
+    }
+    
+    /**
+     * Sets the style color attribute.
+     *
+     * @param styleColorAttribute the styleColorAttribute to set
+     */
+    public void setStyleColorAttribute(ColorAttributesVO styleColorAttribute) {
+        this.styleColorAttribute = styleColorAttribute;
+    }
+    
+    
+
+
+}
