@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin id="BelkVendorTheme" name="BelkVendorTheme Modules" provider-name="IBM" version="1.0.0">
+    
+    <extension id="wp_dynamicContentSpots_BelkVendorTheme" point="com.ibm.portal.resourceaggregator.module">
+        <module id="wp_dynamicContentSpots_BelkVendorTheme">
+            
+
+<title lang="en" value="Dynamic Content Spots for the BelkVendor Theme"/>
+<description lang="en" value="Defines all dynamic content spots for the Belk Vendor Theme. This allows to easily overlay any dynamic content spot through other modules."/>
+            <contribution type="dyn-cs">
+            	<sub-contribution type="markup" ref-id="BelkVendorTheme_banner">
+					<uri value="res:{war:context-root}/themes/html/dynamicSpots/banner.jsp"/>
+                </sub-contribution>
+                <sub-contribution type="markup" ref-id="BelkVendorTheme_footer">
+                    <uri value="res:{war:context-root}/themes/html/dynamicSpots/footer.jsp"/>
+                </sub-contribution>
+                <sub-contribution type="markup" ref-id="BelkVendorTheme_crumbTrail">
+                    <uri value="res:{war:context-root}/themes/html/dynamicSpots/crumbTrail.jsp?rootClass=wpthemeCrumbTrail&amp;startLevel=2"/>
+                </sub-contribution>
+                <sub-contribution type="markup" ref-id="BelkVendorTheme_topNav">
+                    <uri value="mvc:smartphone/tablet@res:{war:context-root}/themes/html/dynamicSpots/navigation.jsp?rootClass=wpthemeHeaderNav&amp;rootLabel=Portal&amp;startLevel=0&amp;primeRoot=true"/>
+                </sub-contribution>
+                <sub-contribution type="markup" ref-id="BelkVendorTheme_primaryNav">
+                    <uri value="mvc:res:{war:context-root}/themes/html/dynamicSpots/navigation.jsp?rootClass=wpthemePrimaryNav%2520wpthemeLeft&amp;rootLabel=Portal%2520Application&amp;startLevel=1,smartphone@,tablet@"/>
+                </sub-contribution>
+                <sub-contribution type="markup" ref-id="BelkVendorTheme_secondaryNav">
+                    <uri value="mvc:res:{war:context-root}/themes/html/dynamicSpots/navigation.jsp?rootClass=wpthemeSecondaryNav&amp;startLevel=2&amp;rootLabel=Application&amp;levelsDisplayed=2,smartphone@,tablet@"/>
+                </sub-contribution>
+                <sub-contribution type="markup" ref-id="85theme_sideNav">
+                    <uri value="mvc:res:{war:context-root}/themes/html/dynamicSpots/sideNavigation.jsp?startLevel=2,smartphone@,tablet@"/>
+                </sub-contribution>
+                <sub-contribution type="markup" ref-id="BelkVendorTheme_mobileNav">
+                    <uri value="mvc:smartphone/tablet@res:{war:context-root}/themes/html/dynamicSpots/mobileNavigation.jsp"/>
+                </sub-contribution>
+                <sub-contribution type="markup" ref-id="BelkVendorTheme_commonActions">
+                    <uri value="res:{war:context-root}/themes/html/dynamicSpots/commonActions.jsp"/>
+                </sub-contribution>
+                <sub-contribution type="markup" ref-id="BelkVendorTheme_layout">
+                    <uri value="lm:template"/>
+                </sub-contribution>
+                <sub-contribution type="markup" ref-id="85theme_toolbar">
+                    <uri value="mvc:dyn-cs:id:85toolbar,smartphone@,tablet@"/>
+                </sub-contribution>
+                <sub-contribution type="markup" ref-id="BelkVendorTheme_head">
+                    <uri value="res:{war:context-root}/themes/html/dynamicSpots/head.jsp"/>
+                </sub-contribution>
+                <sub-contribution type="markup" ref-id="BelkVendorTheme_status">
+                    <uri value="mc:wp_status_bar@res:{war:context-root}/themes/html/dynamicSpots/status.jsp"/>
+                </sub-contribution>
+                
+            </contribution>
+        </module>
+    </extension>
+
+</plugin>

@@ -1,0 +1,254 @@
+html,body{
+        
+margin:0;
+padding:0;
+
+ }
+
+
+#headertable
+{
+height:100px;
+width:100%;
+background-color:#F0F0F0;
+padding:0;
+margin:0;
+border:0;
+}
+td,tr,th,tbody,table
+{
+padding:0;
+margin:0;
+border:0;
+}
+
+#headertable tr td:nth-child(1)
+{
+
+width:10%;
+
+
+}
+
+
+
+#headertable tr td:nth-child(2)
+{
+
+width:60%;
+
+
+}
+
+#headertable tr td:nth-child(3)
+{
+
+width:10%;
+}
+
+#innerheadertable
+{
+
+width:100%;
+background-color:#F0F0F0;
+padding:0;
+margin:0;
+
+ border-bottom: 3px solid lightgray;
+ 
+}
+
+
+    
+
+
+#innerheadertable tr td:nth-child(1)
+{
+
+width:10%;
+
+
+}
+
+
+#innerheadertable tr td:first-child img
+{
+
+width:150px;
+height:70px;
+float:left;
+}
+
+#innerheadertable tr td:nth-child(2)
+{
+
+width:50%;
+text-align:left;
+padding-top:45px;
+padding-bottom:35px;
+
+}
+
+#innerheadertable tr td:nth-child(3)
+{
+padding-top:60px;
+width:45%;
+float:right;
+}
+
+
+
+
+
+
+#footertable
+{
+width:100%;
+padding:0;
+margin:0;
+border-top: 3px solid lightgray;
+}
+
+
+#footertable tr td:nth-child(1)
+{
+
+width:20%;
+
+
+}
+
+
+
+#footertable tr td:nth-child(2)
+{
+
+width:51%;
+
+
+}
+
+#footertable tr td:nth-child(3)
+{
+
+width:24%;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+#footerinnertable
+{
+width:100%;
+background-color:#F0F0F0;
+height:50px;
+
+}
+
+#footerinnertable tr td
+{
+text-align:center;
+}
+
+#footerinnertable tr td:first-child label
+{
+
+font-family:Arial;
+color:gray;
+}
+
+#footerinnertable tr td:first-child img
+{
+
+margin-bottom:6px;
+}
+
+.wpthemeFooter{
+background-color:#F0F0F0;
+border-top:none;
+}
+
+.headerrightlinks{
+background: #e0f3fa; /* Old browsers */
+	background: -moz-linear-gradient(top,  #e0f3fa 0%, #d8f0fc 45%, #b8e2f6 51%, #b6dffd 60%, #b6dffd 60%, #e0f3fa 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#e0f3fa), color-stop(45%,#d8f0fc), color-stop(51%,#b8e2f6), color-stop(60%,#b6dffd), color-stop(60%,#b6dffd), color-stop(100%,#e0f3fa)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top,  #e0f3fa 0%,#d8f0fc 45%,#b8e2f6 51%,#b6dffd 60%,#b6dffd 60%,#e0f3fa 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top,  #e0f3fa 0%,#d8f0fc 45%,#b8e2f6 51%,#b6dffd 60%,#b6dffd 60%,#e0f3fa 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top,  #e0f3fa 0%,#d8f0fc 45%,#b8e2f6 51%,#b6dffd 60%,#b6dffd 60%,#e0f3fa 100%); /* IE10+ */
+	background: linear-gradient(to bottom,  #e0f3fa 0%,#d8f0fc 45%,#b8e2f6 51%,#b6dffd 60%,#b6dffd 60%,#e0f3fa 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#e0f3fa', endColorstr='#e0f3fa',GradientType=0 ); /* IE6-9 */
+
+
+width:140px;
+border:1px solid #8DB2E3;
+height:22px;
+margin:0;
+padding:0;
+
+}
+
+.headerrightlinks ul
+{
+clear:left;
+  float:left;
+  padding:0;
+list-style:none;
+position:relative;
+margin-top:3px;
+
+
+}
+
+.headerrightlinks li
+{
+float:left;
+}
+.headerrightlinks li:nth-child(2n-1)
+{
+width:65px;
+background:none;
+display:block;
+text-align:center;
+color:#00649d;
+}
+.headerrightlinks li:nth-child(2n)
+{
+color:gray;	
+}
+
+.wpthemeMainContent{
+background:#F0F0F0;
+}
+
+.label1 {
+    float: left;
+    width: 30px;
+    text-align: right;
+    margin-right: 10px;
+}
+
+.wpthemeStandard.wpthemeControl{
+  border:none;
+  box-shadow:none;
+}
+
+.passwordresetlabel{
+	float:left;
+	width:150px;
+	font-weight:bold;
+	text-align:right;
+	margin-right:10px;
+}
+.messagedisplay{
+	padding-right: 5px;
+	padding-bottom: 5px;
+}

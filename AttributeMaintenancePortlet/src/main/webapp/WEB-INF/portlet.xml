@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<portlet-app xmlns="http://java.sun.com/xml/ns/portlet/portlet-app_2_0.xsd"
+	version="2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/portlet/portlet-app_2_0.xsd 
+http://java.sun.com/xml/ns/portlet/portlet-app_2_0.xsd">
+	<portlet>
+		<portlet-name>Attribute Maintenance</portlet-name>
+		<display-name>Attribute Maintenance</display-name>
+		<portlet-class>org.springframework.web.portlet.DispatcherPortlet
+		</portlet-class>
+		<init-param>
+			<name>contextConfigLocation</name>
+			<value>/WEB-INF/applicationContext.xml,/WEB-INF/AttributeMaintenance-portlet.xml
+			</value>
+		</init-param>
+		<expiration-cache>0</expiration-cache>
+		<supports>
+			<mime-type>text/html</mime-type>
+			<portlet-mode>view</portlet-mode>
+		</supports>
+		<portlet-info>
+			<title>Attribute Maintenance</title>
+			<short-title>Attribute Maintenance</short-title>
+			<keywords>Attribute Maintenance</keywords>
+		</portlet-info>		
+
+	</portlet>
+
+	
+
+	<container-runtime-option>
+		<name>javax.portlet.actionScopedRequestAttributes</name>
+		<value>true</value>
+		<value>numberOfCachedScopes</value>
+		<value>10</value>
+	</container-runtime-option>
+</portlet-app>

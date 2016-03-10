@@ -1,0 +1,281 @@
+{
+	"moduleIDs": [
+		"wp_theme_portal_85",
+		"wp_dynamicContentSpots_BelkVendorTheme",
+		"wp_toolbar_host_view",
+		"wp_portlet_css",
+		"wp_one_ui",
+		"wp_one_ui_dijit",
+		"wp_legacy_layouts",
+		"wp_client_ext",
+		"wp_status_bar",
+		"wp_theme_menus",
+		"wp_theme_skin_region",
+		"wp_theme_high_contrast",
+		"wp_layout_windowstates",
+		"wp_analytics_tags_dialog"
+	],
+	"metadata":{
+		"com.ibm.portal.Hidden":"true"
+	},
+	"titles": [
+		{
+			"value":"الصفحة التي تم اخفائها لمربع حوار التحليلات",
+			"lang":"ar"
+		},
+		{
+			"value":"Pàgina oculta del diàleg d'anàlisis",
+			"lang":"ca"
+		},
+		{
+			"value":"Skrytá stránka dialogového okna analýzy",
+			"lang":"cs"
+		},
+		{
+			"value":"Analysedialogboks - skjult side",
+			"lang":"da"
+		},
+		{
+			"value":"Analysedialog – Ausgeblendete Seite",
+			"lang":"de"
+		},
+		{
+			"value":"Κρυφή σελίδα πλαισίου διαλόγου ανάλυσης",
+			"lang":"el"
+		},
+		{
+			"value":"Analytics Dialog Hidden Page",
+			"lang":"en"
+		},
+		{
+			"value":"Página oculta de diálogo de análisis",
+			"lang":"es"
+		},
+		{
+			"value":"Analytiikka-valintaikkunan piilotettu sivu",
+			"lang":"fi"
+		},
+		{
+			"value":"Page masquée de dialogue d'analyse",
+			"lang":"fr"
+		},
+		{
+			"value":"דף מוסתר של דו-שיח אנליטיקה",
+			"lang":"he"
+		},
+		{
+			"value":"Skrivena stranica dijaloga analitike",
+			"lang":"hr"
+		},
+		{
+			"value":"Elemzés párbeszédablak rejett oldal",
+			"lang":"hu"
+		},
+		{
+			"value":"Pagina nascosta Finestra di dialogo Analisi",
+			"lang":"it"
+		},
+		{
+			"value":"分析ダイアログ非表示ページ",
+			"lang":"ja"
+		},
+		{
+			"value":"Талдаулар Тілқатысуын Жасыру Беті",
+			"lang":"kk"
+		},
+		{
+			"value":"분석 대화 상자 숨겨진 페이지",
+			"lang":"ko"
+		},
+		{
+			"value":"Verborgen pagina van analysedialoogvenster",
+			"lang":"nl"
+		},
+		{
+			"value":"Skjult side for analysedialog",
+			"lang":"no"
+		},
+		{
+			"value":"Ukryta strona okna dialogowego analizy",
+			"lang":"pl"
+		},
+		{
+			"value":"Página oculta da caixa de diálogo de análise",
+			"lang":"pt"
+		},
+		{
+			"value":"Página Diálogo de Analítica Oculta",
+			"lang":"pt_BR"
+		},
+		{
+			"value":"Pagină ascunsă Dialog de analiză",
+			"lang":"ro"
+		},
+		{
+			"value":"Скрытая страница окна аналитики",
+			"lang":"ru"
+		},
+		{
+			"value":"Skrytá stránka Dialógové okno analýzy",
+			"lang":"sk"
+		},
+		{
+			"value":"Skrita stran pogovornega okna analitike",
+			"lang":"sl"
+		},
+		{
+			"value":"Dold sida för analyser",
+			"lang":"sv"
+		},
+		{
+			"value":"ไดอะล็อกการวิเคราะห์เพจที่ซ่อน",
+			"lang":"th"
+		},
+		{
+			"value":"Analitik İletişim Kutusu Gizlenmiş Sayfası",
+			"lang":"tr"
+		},
+		{
+			"value":"Прихована сторінка вікна аналітики",
+			"lang":"uk"
+		},
+		{
+			"value":"分析对话框隐藏页面",
+			"lang":"zh"
+		},
+		{
+			"value":"分析對話隱藏的頁面",
+			"lang":"zh_TW"
+		}
+	],
+	"descriptions": [
+		{
+			"value":"يحتوي ملف المواصفات هذا على مجموعة وحدات البرامج المطلوبة لتشغيل portlet لمربع حوار التحليلات.",
+			"lang":"ar"
+		},
+		{
+			"value":"Aquest perfil té el conjunt de mòduls necessari per executar el portlet del diàleg d'anàlisis.",
+			"lang":"ca"
+		},
+		{
+			"value":"Tento profil má sadu modulů nezbytných ke spuštění portletu dialogového okna analýzy.",
+			"lang":"cs"
+		},
+		{
+			"value":"Denne profil indeholder de moduler, der bruges til at udføre miniportalen med analysedialogboks",
+			"lang":"da"
+		},
+		{
+			"value":"Dieses Profil enthält eine Reihe von Modulen, die für die Ausführung des Portlets 'Analysedialog' benötigt werden.",
+			"lang":"de"
+		},
+		{
+			"value":"Αυτό το προφίλ περιέχει τις λειτουργικές μονάδες που απαιτούνται για την εκτέλεση της μικροεφαρμογής πύλης πλαισίου διαλόγου ανάλυσης.",
+			"lang":"el"
+		},
+		{
+			"value":"This profile has the set of modules required to run the analytics dialog portlet.",
+			"lang":"en"
+		},
+		{
+			"value":"Este perfil tiene el conjunto de módulos que son necesarios para ejecutar el portlet de diálogo de análisis.",
+			"lang":"es"
+		},
+		{
+			"value":"Tässä profiilissa on joukko moduuleja, joita tarvitaan Analytiikka-valintaikkuna-portaalisovelman ajossa.",
+			"lang":"fi"
+		},
+		{
+			"value":"Ce profil contient l'ensemble des modules requis pour exécuter le portlet de dialogue d'analyse.",
+			"lang":"fr"
+		},
+		{
+			"value":"פרופיל זה כולל את מערך המודולים הנחוץ להרצת פורטלט דו-שיח האנליטיקה.",
+			"lang":"he"
+		},
+		{
+			"value":"Ovaj profil sadrži skup modula potrebnih za izvođenje portleta dijaloga analitike.",
+			"lang":"hr"
+		},
+		{
+			"value":"A profil az Elemzés párbeszédablak portlet futtatásához szükséges modulkészletet tartalmazza.",
+			"lang":"hu"
+		},
+		{
+			"value":"Questo profilo contiene l'insieme di moduli necessari per eseguire il portlet finestra di dialogo analisi.",
+			"lang":"it"
+		},
+		{
+			"value":"このプロファイルには、分析ダイアログ・ポートレットを実行するために必要なモジュールのセットが含まれています。",
+			"lang":"ja"
+		},
+		{
+			"value":"Бұл профайл талдаулар тілқатысу портлетін орындау үшін талап етілетін модульдердің жинағын иеленеді.",
+			"lang":"kk"
+		},
+		{
+			"value":"이 프로파일에는 분석 대화 상자 포틀릿을 실행하는 데 필요한 모듈 세트가 있습니다.",
+			"lang":"ko"
+		},
+		{
+			"value":"Dit profiel heeft de set van modules die vereist zijn om de portlet voor het analysedialoogvenster uit te voeren.",
+			"lang":"nl"
+		},
+		{
+			"value":"Denne profilen inneholder settet med moduler som er nødvendige for å kjøre analysedialogportletten.",
+			"lang":"no"
+		},
+		{
+			"value":"Ten profil zawiera zestaw modułów wymaganych do uruchomienia portletu okna dialogowego analizy.",
+			"lang":"pl"
+		},
+		{
+			"value":"Este perfil tem o conjunto de módulos requeridos para executar a portlet da caixa de diálogo de análise.",
+			"lang":"pt"
+		},
+		{
+			"value":"Este perfil tem o conjunto de módulos requerido para executar o portlet do diálogo de analítica.",
+			"lang":"pt_BR"
+		},
+		{
+			"value":"Acest profil are setul de module necesare pentru a rula portletul Dialog de analiză.",
+			"lang":"ro"
+		},
+		{
+			"value":"Этот профайл содержит набор модулей, необходимых для запуска портлета окна аналитики.",
+			"lang":"ru"
+		},
+		{
+			"value":"Tento profil má množinu modulov, ktoré sú potrebné na spustenie portletu dialógového okna analýzy.",
+			"lang":"sk"
+		},
+		{
+			"value":"Ta profil vsebuje nabor modulov, ki je potreben za izvajanje portalskega programčka analitike.",
+			"lang":"sl"
+		},
+		{
+			"value":"Profil med moduler för analysportleten.",
+			"lang":"sv"
+		},
+		{
+			"value":"โปรไฟล์นี้มีชุดของโมดูลที่จำเป็นสำหรับการรันพอร์ตเล็ตไดอะล็อกการวิเคราะห์",
+			"lang":"th"
+		},
+		{
+			"value":"Bu profil, analitik iletişim kutusu portal uygulamacığını çalıştırmak için gereken modüller kümesini içerir.",
+			"lang":"tr"
+		},
+		{
+			"value":"Цей профайл містить набір модулів для роботи вікна аналітики.",
+			"lang":"uk"
+		},
+		{
+			"value":"此概要文件具有运行分析对话框 portlet 所需的模块集。",
+			"lang":"zh"
+		},
+		{
+			"value":"此設定檔具有執行分析對話 Portlet 所需要的模組集。",
+			"lang":"zh_TW"
+		}
+	]
+}
