@@ -3,6 +3,7 @@ package com.belk.pep.vo;
 
 import java.io.Serializable;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class IPHMappingVO.
  *
@@ -19,6 +20,9 @@ public class IPHMappingVO  implements Serializable{
 
     /** The pet id. */
     private String petId;
+    
+    /** The SK uindicator. */
+    private String SKUindicator;
 
     /**
      * Instantiates a new IPH mapping vo.
@@ -61,6 +65,24 @@ public class IPHMappingVO  implements Serializable{
      */
     public void setPetId(String petId) {
         this.petId = petId;
+    }
+ 
+    /**
+     * Gets the SK uindicator.
+     *
+     * @return the SK uindicator
+     */
+    public String getSKUindicator() {
+        return SKUindicator;
+    }
+
+    /**
+     * Sets the SK uindicator.
+     *
+     * @param sKUindicator the new SK uindicator
+     */
+    public void setSKUindicator(String sKUindicator) {
+        SKUindicator = sKUindicator;
     }
 
     /* (non-Javadoc)

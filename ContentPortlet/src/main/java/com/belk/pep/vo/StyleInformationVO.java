@@ -4,9 +4,11 @@ package com.belk.pep.vo;
 import java.io.Serializable;
 import java.util.Date;
 
+// TODO: Auto-generated Javadoc
 /**
- * @author AFUSOS3
+ * The Class StyleInformationVO.
  *
+ * @author AFUSOS3
  */
 public class StyleInformationVO  implements Serializable{
 
@@ -69,6 +71,35 @@ public class StyleInformationVO  implements Serializable{
     
     /** The completion date of style. */
     private String  completionDateOfStyle;
+    
+    /** The dept description. */
+    private String deptDescription;
+    
+    /** The class description. */
+    private String classDescription;
+    
+    /** The supplier site id. */
+    private String supplierSiteId;
+
+    
+    
+    /**
+     * Gets the supplier site id.
+     *
+     * @return the supplier site id
+     */
+    public String getSupplierSiteId() {
+        return supplierSiteId;
+    }
+
+    /**
+     * Sets the supplier site id.
+     *
+     * @param supplierSiteId the new supplier site id
+     */
+    public void setSupplierSiteId(String supplierSiteId) {
+        this.supplierSiteId = supplierSiteId;
+    }
 
     /**
      * Gets the orin.
@@ -304,15 +335,27 @@ public class StyleInformationVO  implements Serializable{
         this.classId = classId;
     }
 
+    /**
+     * Gets the vendor id.
+     *
+     * @return the vendor id
+     */
     public String getVendorId() {
         return vendorId;
     }
 
+    /**
+     * Sets the vendor id.
+     *
+     * @param vendorId the new vendor id
+     */
     public void setVendorId(String vendorId) {
         this.vendorId = vendorId;
     }
 
     /**
+     * Gets the vendor sample indicator.
+     *
      * @return the vendorSampleIndicator
      */
     public String getVendorSampleIndicator() {
@@ -320,16 +363,28 @@ public class StyleInformationVO  implements Serializable{
     }
 
     /**
+     * Sets the vendor sample indicator.
+     *
      * @param vendorSampleIndicator the vendorSampleIndicator to set
      */
     public void setVendorSampleIndicator(String vendorSampleIndicator) {
         this.vendorSampleIndicator = vendorSampleIndicator;
     }
 
+    /**
+     * Gets the entry type.
+     *
+     * @return the entry type
+     */
     public String getEntryType() {
         return entryType;
     }
 
+    /**
+     * Sets the entry type.
+     *
+     * @param entryType the new entry type
+     */
     public void setEntryType(String entryType) {
         this.entryType = entryType;
     }
@@ -350,6 +405,44 @@ public class StyleInformationVO  implements Serializable{
      */
     public void setCompletionDateOfStyle(String completionDateOfStyle) {
         this.completionDateOfStyle = completionDateOfStyle;
+    }
+    
+    
+
+    /**
+     * Gets the dept description.
+     *
+     * @return the dept description
+     */
+    public String getDeptDescription() {
+        return deptDescription;
+    }
+
+    /**
+     * Sets the dept description.
+     *
+     * @param deptDescription the new dept description
+     */
+    public void setDeptDescription(String deptDescription) {
+        this.deptDescription = deptDescription;
+    }
+
+    /**
+     * Gets the class description.
+     *
+     * @return the class description
+     */
+    public String getClassDescription() {
+        return classDescription;
+    }
+
+    /**
+     * Sets the class description.
+     *
+     * @param classDescription the new class description
+     */
+    public void setClassDescription(String classDescription) {
+        this.classDescription = classDescription;
     }
 
     /* (non-Javadoc)

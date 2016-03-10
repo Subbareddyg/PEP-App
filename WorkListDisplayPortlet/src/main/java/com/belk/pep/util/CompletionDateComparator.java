@@ -7,7 +7,8 @@ import java.util.Date;
 import com.belk.pep.model.PetsFound;
 import com.belk.pep.model.StyleColor;
 
-import java.util.logging.Logger;
+//import java.util.logging.Logger;
+import org.apache.log4j.Logger;
 
 
 public class CompletionDateComparator implements Comparator<StyleColor> {

@@ -55,6 +55,19 @@
 <div id="content">
 <div id="main">
 
+<form>
+	<input type="hidden" id="clearLockOnBackPage" name="clearLockOnBackPage" value="0">
+</form>
+<script>
+
+var lockClearOnBack=document.getElementById('clearLockOnBackPage');
+if(lockClearOnBack.value=='1'){
+	window.location.reload();
+}
+lockClearOnBack.value='1';
+
+</script>
+
 <form:form commandName="workflowForm" method="post" action="${formAction}" name="workListDisplayForm" id="workListDisplayForm" onload="onloaddept()" >
 
 	<input type="hidden" id="username" name="username" value="<c:out value='${workflowForm.pepUserID}'/>" />
@@ -932,8 +945,9 @@
 
 <script type="text/javascript"> 
 
+
 var timeOutvarWLD = null;
-timeOutvarWLD = setTimeout(redirectSessionTimedOut, 600000);
+timeOutvarWLD = setTimeout(redirectSessionTimedOut, 1800000);
 
 function createmannualpet(){
 document.getElementById("createManualPet").value = 'gotoCreateManualPet';
@@ -1065,7 +1079,7 @@ $(this).css('cursor', 'pointer');
 	
 function timeOutWLDPage()
 {
-	timeOutvarWLD = setTimeout(redirectSessionTimedOut, 600000);
+	timeOutvarWLD = setTimeout(redirectSessionTimedOut, 1800000);
 }
 
 document.onclick = clickListenerWLD;

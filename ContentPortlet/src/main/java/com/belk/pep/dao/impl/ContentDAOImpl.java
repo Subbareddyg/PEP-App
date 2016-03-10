@@ -3,7 +3,10 @@ package com.belk.pep.dao.impl;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
+import java.util.Collections;
+import java.util.Properties;
+//import java.util.logging.Logger;
+import org.apache.log4j.Logger;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -15,6 +18,7 @@ import com.belk.pep.constants.XqueryConstants;
 import com.belk.pep.dao.ContentDAO;
 import com.belk.pep.exception.checked.PEPFetchException;
 import com.belk.pep.model.PetsFound;
+import com.belk.pep.util.PropertiesFileLoader;
 import com.belk.pep.vo.BlueMartiniAttributesVO;
 import com.belk.pep.vo.CarBrandVO;
 import com.belk.pep.vo.ChildSkuVO;
@@ -54,7 +58,7 @@ public class ContentDAOImpl implements ContentDAO{
         String valueStr = "";
 
         if(objectValue == null ){
-            System.out.println("row object is null, setting to default value");
+           // System.out.println("row object is null, setting to default value");
 
             valueStr = " ";
 
@@ -86,9 +90,18 @@ public class ContentDAOImpl implements ContentDAO{
             // native SQL statement directly.
             final Query query =session.createSQLQuery(xqueryConstants.getCarsBrandQuery(orinNumber,supplierId));
             if(query!=null)
-            {
+            {   
+                query.setParameter("orinNo", orinNumber);
+                query.setParameter("supplier", supplierId);
+                query.setFetchSize(20);
                 rows = query.list();
             }
+            
+            /**
+             * MODIIFIED BY AFUAXK4
+             * DATE: 02/05/2016
+             */
+            /*
             if(rows!=null)
             {listCarBrandVO = new ArrayList<CarBrandVO>();
             for (final Object[] row : rows) {
@@ -101,15 +114,60 @@ public class ContentDAOImpl implements ContentDAO{
                         for(int i=0; i<(carBrands.length); i++){
                             String carsDes[] = carBrands[i].split("-");
                             carBrandVO = new CarBrandVO();
-                            carBrandVO.setCarBrandCode(carsDes[0]);
-                            carBrandVO.setCarBrandDesc(carsDes[1]);
-                            carBrandVO.setSelectedBrand(selectedBrand);
+                            carBrandVO.setCarBrandCode(checkNull(carsDes[0]));
+                            carBrandVO.setCarBrandDesc(checkNull(carsDes[1]));
+                            carBrandVO.setSelectedBrand(checkNull(selectedBrand));
                             listCarBrandVO.add(carBrandVO);
                         }
                     }
                 }
             }
+            }*/
+            if(rows!=null)
+            {
+                listCarBrandVO = new ArrayList<CarBrandVO>();
+                List<CarBrandVO> listCarBrandVOFinal = new ArrayList<CarBrandVO>();
+                String selectedBrand = "";
+                int i=0; 
+                for (final Object[] row : rows) 
+                {  
+                    String omniBrandCode = checkNull(row[0]);
+                    String omniBrandDesc = checkNull(row[1]);
+                    String selectedBrandStyle = checkNull(row[2]);
+                    String selectedBrandComplexPack = checkNull(row[3]);
+                    String entryType = checkNull(row[7]);
+                    
+                    carBrandVO = new CarBrandVO();
+                    carBrandVO.setCarBrandCode(omniBrandCode);
+                    carBrandVO.setCarBrandDesc(omniBrandDesc);
+                    
+                   // if(omniBrandDesc.equals(selectedBrandStyle)
+                     //    || omniBrandDesc.equals(selectedBrandComplexPack))
+                  //  {
+                    if(i==0){
+                        if(entryType.equals("Style"))
+                        {
+                            selectedBrand = selectedBrandStyle;                            
+                        }
+                        else if(entryType.equals("ComplexPack"))
+                        {
+                            selectedBrand = selectedBrandComplexPack;                                         
+                        }
+                    }                                          
+                    listCarBrandVO.add(carBrandVO);
+                    i++;
+                }
+                for(CarBrandVO carBrand: listCarBrandVO)
+                {
+                    carBrand.setSelectedBrand(selectedBrand);
+                    listCarBrandVOFinal.add(carBrand);
+                }
+                listCarBrandVO = listCarBrandVOFinal;
             }
+            /**
+             * MODIFICATION END AFUAXK4
+             * DATE: 02/05/2016
+             */
         }catch(final Exception e) {
             throw new PEPFetchException(e);
         }
@@ -143,6 +201,7 @@ public class ContentDAOImpl implements ContentDAO{
             final Query query =session.createSQLQuery(xqueryConstants.getOminiChannleColorFamily());
             if(query!=null)
             {
+                query.setFetchSize(100);
                 rows = query.list();
             }
 
@@ -196,6 +255,8 @@ public class ContentDAOImpl implements ContentDAO{
             final Query query =session.createSQLQuery(xqueryConstants.getContentHistory(orinNumber));
             if(query!=null)
             {
+                query.setParameter("orinNo", orinNumber);
+                query.setFetchSize(100);
                 rows = query.list();
             }
 
@@ -245,6 +306,8 @@ public class ContentDAOImpl implements ContentDAO{
             final Query query =session.createSQLQuery(xqueryConstants.getPetContentManagmentDetails(orinNumber));
             if(query!=null)
             {
+                query.setParameter("orinNo", orinNumber);
+                query.setFetchSize(100);
                 rows = query.list();
             }
 
@@ -295,6 +358,7 @@ public class ContentDAOImpl implements ContentDAO{
             final Query query =session.createSQLQuery(xqueryConstants.getCopyAttributeDetails(orinNumber));
             if(query!=null)
             {
+                query.setParameter("orinNo", orinNumber);
                 rows = query.list();
             }
 
@@ -349,6 +413,8 @@ public class ContentDAOImpl implements ContentDAO{
             final Query query =session.createSQLQuery(xqueryConstants.getFamilyCategoryFromIPH(merchCategoryId));
             if(query!=null)
             {
+                query.setParameter("categoryId", merchCategoryId);
+                query.setFetchSize(10);
                 rows = query.list();
             }
 
@@ -419,6 +485,8 @@ public class ContentDAOImpl implements ContentDAO{
             final Query query =session.createSQLQuery(xqueryConstants.getGlobalAttributesQuery(orinNumber));
             if(query!=null)
             {
+                query.setParameter("orinNo", orinNumber);
+                query.setFetchSize(20);
                 rows = query.list();
             }
 
@@ -505,25 +573,132 @@ public class ContentDAOImpl implements ContentDAO{
             final Query query =session.createSQLQuery(xqueryConstants.getIphCategoriesFromAdseMerchandiseHierarchy(orinNumber));
             if(query!=null)
             {
+                query.setParameter("orinNo", orinNumber);
+                query.setFetchSize(100);
                 rows = query.list();
             }
 
             if((rows!=null) && (rows.size()>0))
             {
                 iphCategoryList = new ArrayList<ItemPrimaryHierarchyVO>();
-
+                String finalPath = "";
+                
                 for (final Object[] row : rows) {
                     itemPrimaryHierarchy =new ItemPrimaryHierarchyVO();
-                    itemPrimaryHierarchy.setMerchandiseCategoryId(checkNull(row[4]));
-                    itemPrimaryHierarchy.setMerchandiseCategoryName(checkNull(row[5]));
+                    /**
+                     * Modified by AFUAXK4
+                     * DATE: 02/05/2016
+                     */
+                    if(checkNull(row[4]).trim().equals(""))
+                    {
+                        if(checkNull(row[5]).trim().equals(""))
+                        {
+                            if(checkNull(row[6]).trim().equals(""))
+                            {
+                                if(checkNull(row[7]).trim().equals(""))
+                                {
+                                    if(checkNull(row[8]).trim().equals(""))
+                                    {
+                                        if(checkNull(row[9]).trim().equals(""))
+                                        {
+                                            if(checkNull(row[10]).trim().equals(""))
+                                            {
+                                                itemPrimaryHierarchy.setMerchandiseCategoryId(checkNull(row[10]));
+                                                itemPrimaryHierarchy.setMerchandiseCategoryName(checkNull(row[10]));
+                                            }
+                                            else
+                                            {
+                                                String[] values = checkNull(row[10]).split("-");
+                                                itemPrimaryHierarchy.setMerchandiseCategoryId(values[0]);
+                                                itemPrimaryHierarchy.setMerchandiseCategoryName(values[1]);
+                                                finalPath =  values[1];
+                                                itemPrimaryHierarchy.setCategoryFullPath(finalPath);
+                                            }
+                                        }
+                                        else
+                                        {
+                                            String[] values = checkNull(row[9]).split("-");
+                                            itemPrimaryHierarchy.setMerchandiseCategoryId(values[0]);
+                                            itemPrimaryHierarchy.setMerchandiseCategoryName(values[1]);
+                                            String[] path10 = checkNull(row[10]).split("-");
+                                            finalPath =  path10[1] +"/"+ values[1];
+                                            itemPrimaryHierarchy.setCategoryFullPath(finalPath);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        String[] values = checkNull(row[8]).split("-");
+                                        itemPrimaryHierarchy.setMerchandiseCategoryId(values[0]);
+                                        itemPrimaryHierarchy.setMerchandiseCategoryName(values[1]);
+                                        String[] path10 = checkNull(row[10]).split("-");
+                                        String[] path9 = checkNull(row[9]).split("-");
+                                        finalPath =  path10[1] +"/"+ path9[1] + "/" +values[1];
+                                        itemPrimaryHierarchy.setCategoryFullPath(finalPath);
+                                    }
+                                }
+                                else
+                                {
+                                    String[] values = checkNull(row[7]).split("-");
+                                    itemPrimaryHierarchy.setMerchandiseCategoryId(values[0]);
+                                    itemPrimaryHierarchy.setMerchandiseCategoryName(values[1]);
+                                    String[] path10 = checkNull(row[10]).split("-");
+                                    String[] path9 = checkNull(row[9]).split("-");
+                                    String[] path8 = checkNull(row[8]).split("-");
+                                    finalPath =  path10[1] +"/"+ path9[1] + "/" + path8[1] + "/" + values[1];
+                                    itemPrimaryHierarchy.setCategoryFullPath(finalPath);
+                                }
+                            }
+                            else
+                            {
+                                String[] values = checkNull(row[6]).split("-");
+                                itemPrimaryHierarchy.setMerchandiseCategoryId(values[0]);
+                                itemPrimaryHierarchy.setMerchandiseCategoryName(values[1]);
+                                String[] path10 = checkNull(row[10]).split("-");
+                                String[] path9 = checkNull(row[9]).split("-");
+                                String[] path8 = checkNull(row[8]).split("-");
+                                String[] path7 = checkNull(row[7]).split("-");
+                                finalPath =  path10[1] +"/"+ path9[1] + "/" + path8[1] + "/" +  path7[1] + "/" +values[1];
+                                itemPrimaryHierarchy.setCategoryFullPath(finalPath);
+                            }
+                        }
+                        else
+                        {
+                            String[] values = checkNull(row[5]).split("-");
+                            itemPrimaryHierarchy.setMerchandiseCategoryId(values[0]);
+                            itemPrimaryHierarchy.setMerchandiseCategoryName(values[1]);
+                            String[] path10 = checkNull(row[10]).split("-");
+                            String[] path9 = checkNull(row[9]).split("-");
+                            String[] path8 = checkNull(row[8]).split("-");
+                            String[] path7 = checkNull(row[7]).split("-");
+                            String[] path6 = checkNull(row[6]).split("-");
+                            finalPath =  path10[1] +"/"+ path9[1] + "/" + path8[1] + "/" +  path7[1] + "/" +  path6[1] + "/" +values[1];
+                            itemPrimaryHierarchy.setCategoryFullPath(finalPath);
+                        }
+                    }
+                    else
+                    {
+                        String[] values = checkNull(row[4]).split("-");
+                        itemPrimaryHierarchy.setMerchandiseCategoryId(values[0]);
+                        itemPrimaryHierarchy.setMerchandiseCategoryName(values[1]);
+                        String[] path10 = checkNull(row[10]).split("-");
+                        String[] path9 = checkNull(row[9]).split("-");
+                        String[] path8 = checkNull(row[8]).split("-");
+                        String[] path7 = checkNull(row[7]).split("-");
+                        String[] path6 = checkNull(row[6]).split("-");
+                        String[] path5 = checkNull(row[5]).split("-");
+                        finalPath =  path10[1] +"/"+ path9[1] + "/" + path8[1] + "/" +  path7[1] + "/" +  path6[1] + "/" +  path5[1] + "/" +values[1];
+                        itemPrimaryHierarchy.setCategoryFullPath(finalPath);
+                    }
+                    
+                    /**
+                     * MODIFICATION END BY AFUAXK4
+                     * DATE: 02/05/2016
+                     */
                     //Add each itemPrimaryHierarchy object to the list
                     iphCategoryList.add(itemPrimaryHierarchy);
-
+                    Collections.sort(iphCategoryList);
                 }
-
             }
-
-
         }
         catch(final Exception e )
         {
@@ -561,17 +736,35 @@ public class ContentDAOImpl implements ContentDAO{
             final Query query =session.createSQLQuery(xqueryConstants.getIphCategoriesFromAdsePetCatalog(orinNumber));
             if(query!=null)
             {
+                query.setParameter("orinNo", orinNumber);
+                query.setFetchSize(100);
                 rows = query.list();
             }
-
             if((rows!=null) && (rows.size()>0))
             {
                 iphCategoryList = new ArrayList<ItemPrimaryHierarchyVO>();
 
                 for (final Object[] row : rows) {
                     itemPrimaryHierarchy =new ItemPrimaryHierarchyVO();
-                    itemPrimaryHierarchy.setPetCategoryId(checkNull(row[1]));
-                    itemPrimaryHierarchy.setPetCategoryName(checkNull(row[2]));
+                    String categoryName = checkNull(row[1]);
+                    String finalCategory = "";
+                    String finalCategoryId = "";
+                    if(categoryName != null){
+                        String[] catArr = categoryName.split("///");
+                        for(int i=1; i<catArr.length; i++){
+                            String value = catArr[i].split("-")[1];
+                            if(finalCategory == ""){
+                                finalCategory = finalCategory +  value;
+                            }else{
+                                finalCategory = finalCategory + "/" +  value;
+                            }
+                            if(i == (catArr.length-1)){
+                                finalCategoryId = catArr[i].split("-")[0];
+                            }
+                        }
+                    }
+                    itemPrimaryHierarchy.setPetCategoryId(finalCategoryId);
+                    itemPrimaryHierarchy.setPetCategoryName(finalCategory);
                     //Add each itemPrimaryHierarchy object to the list
                     iphCategoryList.add(itemPrimaryHierarchy);
 
@@ -615,9 +808,16 @@ public class ContentDAOImpl implements ContentDAO{
             final Query query =session.createSQLQuery(xqueryConstants.getOmniChannelBrandQuery(orinNumber,supplierId));
             if(query!=null)
             {
+                query.setParameter("orinNo", orinNumber);
+                query.setParameter("supplier", supplierId);
+                query.setFetchSize(20);
                 rows = query.list();
             }
-
+            /**
+             * MODIFIED BY AFUAXK4
+             * DATE: 02/05/2016
+             */
+            /*
             if(rows!=null)
             {listOmniChannelBrandVO = new ArrayList<OmniChannelBrandVO>();
             for (final Object[] row : rows) {
@@ -630,15 +830,59 @@ public class ContentDAOImpl implements ContentDAO{
                         for(int i=0; i<(omniBrands.length); i++){
                             String omniDes[] = omniBrands[i].split("-");
                             omniChannelBrandVO = new OmniChannelBrandVO();
-                            omniChannelBrandVO.setOmniChannelBrandCode(omniDes[0]);
-                            omniChannelBrandVO.setOmniChannelBrandDesc(omniDes[1]);
-                            omniChannelBrandVO.setSelectedBrand(selectedBrand);
+                            omniChannelBrandVO.setOmniChannelBrandCode(checkNull(omniDes[0]));
+                            omniChannelBrandVO.setOmniChannelBrandDesc(checkNull(omniDes[1]));
+                            omniChannelBrandVO.setSelectedBrand(checkNull(selectedBrand));
                             listOmniChannelBrandVO.add(omniChannelBrandVO);
                         }
                     }
                 }
             }
+            }*/
+            if(rows!=null)
+            {
+                listOmniChannelBrandVO = new ArrayList<OmniChannelBrandVO>();
+                List<OmniChannelBrandVO> listOmniChannelBrandVOFinal = new ArrayList<OmniChannelBrandVO>();
+                String selectedBrand = "";
+                int i=0;
+                for (final Object[] row : rows) 
+                {
+                    String omniBrandCode = checkNull(row[0]);
+                    String omniBrandDesc = checkNull(row[1]);
+                    String selectedBrandStyle = checkNull(row[2]);
+                    String selectedBrandComplexPack = checkNull(row[3]);
+                    String entryType = checkNull(row[7]);
+                    
+                    omniChannelBrandVO = new OmniChannelBrandVO();
+                    omniChannelBrandVO.setOmniChannelBrandCode(omniBrandCode);
+                    omniChannelBrandVO.setOmniChannelBrandDesc(omniBrandDesc);
+                    
+                 //   if(omniBrandCode.equals(selectedBrandStyle) 
+                 //           || omniBrandCode.equals(selectedBrandComplexPack))
+                    if(i==0){
+                        if(entryType.equals("Style"))
+                        {
+                            selectedBrand = selectedBrandStyle;                            
+                        }
+                        else if(entryType.equals("ComplexPack"))
+                        {
+                            selectedBrand = selectedBrandComplexPack;                                           
+                        }
+                    }                       
+                    listOmniChannelBrandVO.add(omniChannelBrandVO);    
+                    i++;
+                }                
+                for(OmniChannelBrandVO omniVO:listOmniChannelBrandVO)
+                {
+                    omniVO.setSelectedBrand(selectedBrand);
+                    listOmniChannelBrandVOFinal.add(omniVO);
+                }
+                listOmniChannelBrandVO = listOmniChannelBrandVOFinal;
             }
+            /**
+             * MODIFICATION END AFUAXK4
+             * DATE: 02/05/2016
+             */
         }catch(final Exception e) {
             throw new PEPFetchException(e);
         }
@@ -677,11 +921,11 @@ public class ContentDAOImpl implements ContentDAO{
             final Query query =session.createSQLQuery(SqueryConstants.getProductAttributes(categoryId,orinNumber));
             if(query!=null)
             {
-                LOGGER.info("query executed successfully.........for categoryId."+categoryId);
-
-                LOGGER.info("query.list();.........."+query.list());
+               // LOGGER.info("query executed successfully.........for categoryId."+categoryId);
+                query.setParameter("orinNo", orinNumber);
+                query.setParameter("categoryId", categoryId);
+                query.setFetchSize(100);
                 rows = query.list();
-                LOGGER.info("rows..........."+rows);
 
             }
 
@@ -713,126 +957,6 @@ public class ContentDAOImpl implements ContentDAO{
                     final String categoryId1=petAttributesObject.getCategoryId();
                     final String attributeFieldType=petAttributesObject.getAttributeFieldType();
                   //  LOGGER.info("petAttributesObject....prints......"+petAttributesObject.toString());
-
-                    /* final String convertedAttributeId= "'"+attributeId+"'";
-                    final String convertedCategoryId1="'"+categoryId1+"'";
-                    final String convertedAttributeFieldType="'"+attributeFieldType+"'";
-                    final Map<String,List<?>> mapOfDisplayFields = new LinkedHashMap<String,List<?>>();
-                    int  dropDownCount=0;
-                    int radioButtonCount=0;
-                    int checkBoxCount=0;
-                    int textFieldCount=0;
-                    switch (attributeFieldType) {
-                    case "Drop Down":
-                        List<Object[]> rows1=null;
-                        final List<DropDownContainer>  dropdownList =new ArrayList<DropDownContainer>();
-                        final Query query1 =session.createSQLQuery(SqueryConstants.getPetAttributesByFieldType(convertedAttributeId, convertedCategoryId1, convertedAttributeFieldType));
-                        if(query1!=null)
-                        {
-                            LOGGER.info("dropdownList. query..."+query1);
-                            rows1= query1.list();
-                            dropDownCount++;
-                            final String dropDownKey="dropDown"+dropDownCount;
-                            for (final Object[] rowDropDown : rows1) {
-
-                                final DropDownContainer dropDownContainer = new DropDownContainer();
-                                dropDownContainer.setAttributeId(checkNull(rowDropDown[0]));
-                                dropDownContainer.setName(checkNull(rowDropDown[2]));
-                                dropDownContainer.setValue(checkNull(rowDropDown[3]));
-                                dropdownList.add(dropDownContainer);
-                                LOGGER.info("dropdownList...."+dropdownList.size());
-
-
-                            }
-
-                            mapOfDisplayFields.put(dropDownKey, dropdownList);
-                            LOGGER.info("Size of the map: "+ mapOfDisplayFields.size());
-                        }
-
-                        break;
-                    case "Radio Button":
-                        final Query query2 =session.createSQLQuery(SqueryConstants.getPetAttributesByFieldType(convertedAttributeId, convertedCategoryId1, convertedAttributeFieldType));
-                        final List<RadioButtonContainer>  radioButtonList =new ArrayList<RadioButtonContainer>();
-
-                        if(query2!=null)
-                        {
-                            LOGGER.info("radioButtonList..."+query2);
-                            rows1= query2.list();
-                            radioButtonCount++;
-                            final String radioButtonKey=" radioButton"+radioButtonCount;
-                            for (final Object[] rowDropDown : rows1) {
-
-                                final RadioButtonContainer radioButtonContainer = new RadioButtonContainer();
-                                radioButtonContainer.setAttributeId(checkNull(rowDropDown[0]));
-                                radioButtonContainer.setName(checkNull(rowDropDown[2]));
-                                radioButtonContainer.setValue(checkNull(rowDropDown[3]));
-                                radioButtonList.add(radioButtonContainer);
-                                LOGGER.info("radioButtonList...."+radioButtonList.size());
-
-
-                            }
-                            mapOfDisplayFields.put(radioButtonKey, radioButtonList);
-
-                        }
-
-                        break;
-                    case "Check Boxes":
-                        final Query query3 =session.createSQLQuery(SqueryConstants.getPetAttributesByFieldType(convertedAttributeId, convertedCategoryId1, convertedAttributeFieldType));
-                        final List<CheckBoxContainer>  checkBoxList =new ArrayList<CheckBoxContainer>();
-                        LOGGER.info("query3..."+query3);
-                        checkBoxCount++;
-                        final String checkBoxKey="checkBox"+checkBoxCount;
-                        if(query3!=null)
-                        {
-                            rows1= query3.list();
-                            for (final Object[] rowDropDown : rows1) {
-
-                                final CheckBoxContainer checkBoxButtonContainer = new CheckBoxContainer();
-                                checkBoxButtonContainer.setAttributeId(checkNull(rowDropDown[0]));
-                                checkBoxButtonContainer.setName(checkNull(rowDropDown[2]));
-                                checkBoxButtonContainer.setValue(checkNull(rowDropDown[3]));
-                                checkBoxList.add(checkBoxButtonContainer);
-                                LOGGER.info("checkBoxList...."+checkBoxList.size());
-
-
-                            }
-                            mapOfDisplayFields.put(checkBoxKey, checkBoxList);
-
-                        }
-
-                        break;
-
-                    case "Text Field":
-
-                        final Query query4 =session.createSQLQuery(SqueryConstants.getPetAttributesByFieldType(convertedAttributeId, convertedCategoryId1, convertedAttributeFieldType));
-                        final List<TextFieldContainer>  textFieldList =new ArrayList<TextFieldContainer>();
-                        LOGGER.info("query4..."+query4);
-                        if(query4!=null)
-                        {
-                            rows1= query4.list();
-                            textFieldCount++;
-                            final String textFieldKey="textField"+textFieldCount;
-                            for (final Object[] rowDropDown : rows1) {
-
-                                final TextFieldContainer textFieldContainer = new TextFieldContainer();
-                                textFieldContainer.setAttributeId(checkNull(rowDropDown[0]));
-                                textFieldContainer.setName(checkNull(rowDropDown[2]));
-                                textFieldContainer.setValue(checkNull(rowDropDown[3]));
-                                textFieldList.add(textFieldContainer);
-                                LOGGER.info("textFieldList...."+textFieldList.size());
-
-
-                            }
-                            mapOfDisplayFields.put(textFieldKey, textFieldList);
-
-                        }
-
-                        break;
-
-                    default:
-
-                        break;
-                    }*/
 
                     //petAttributesObject.setMapOfDisplayFields(mapOfDisplayFields);
                     petAttributeList.add(petAttributesObject);
@@ -880,7 +1004,6 @@ public class ContentDAOImpl implements ContentDAO{
         List<Object[]> rows=null;
         new XqueryConstants();
         List<BlueMartiniAttributesVO> blueMartiniAttributesList=null;
-        final String categoryIdDummy ="4664";
         try {
             session = sessionFactory.openSession();
             transaction= session.beginTransaction();
@@ -889,10 +1012,10 @@ public class ContentDAOImpl implements ContentDAO{
             if(query!=null)
             {
                 LOGGER.info("query executed successfully.........for categoryId."+categoryId);
-
-                LOGGER.info("query.list();.........."+query.list());
+                query.setParameter("orinNo", orinNumber);
+                query.setParameter("categoryId", categoryId);
+                query.setFetchSize(100);
                 rows = query.list();
-                LOGGER.info("rows..........."+rows);
 
             }
 
@@ -965,6 +1088,8 @@ public class ContentDAOImpl implements ContentDAO{
             final Query query =session.createSQLQuery(xqueryConstants.getProductDetails(orinNumber));
             if(query!=null)
             {
+                query.setParameter("orinNo", orinNumber);
+                query.setFetchSize(10);
                 rows = query.list();
             }
 
@@ -1018,6 +1143,8 @@ public class ContentDAOImpl implements ContentDAO{
             final Query query =session.createSQLQuery(xqueryConstants.getSkuAttributes(skuOrinNumber));
             if(query!=null)
             {
+                query.setParameter("orinNo", skuOrinNumber);
+                query.setFetchSize(10);
                 rows = query.list();
             }
 
@@ -1078,6 +1205,8 @@ public class ContentDAOImpl implements ContentDAO{
             final Query query =session.createSQLQuery(xqueryConstants.getChildSKUDetails(orinNumber));
             if(query!=null)
             {
+                query.setParameter("orinNo", orinNumber);
+                query.setFetchSize(100);
                 rows = query.list();
             }
 
@@ -1137,29 +1266,75 @@ public class ContentDAOImpl implements ContentDAO{
             transaction= session.beginTransaction();
             //Hibernate provides a createSQLQuery method to let you call your native SQL statement directly.
             final Query query = session.createSQLQuery(xqueryConstants.getStyleAndStyleColorAndSKU(roleName, orinNumber));
-            LOGGER.info("getStyleAndItsChildFromADSE  Query......" + query);
-            // execute delete SQL statement
+            if(query != null){
+                query.setFetchSize(100);
             final List<Object[]> rows = query.list();
-            if (rows != null) {
-                LOGGER.info("recordsFetched..." + rows);
-                LOGGER.info(" getStyleAndItsChildFromADSE  Query Executing.....");
-                for(final Object[] row : rows){
-
-                    pet = new PetsFound();
-                    pet.setParentStyleOrin(checkNull(row[0]));
-                    pet.setOrinNumber(checkNull(row[1]));
-                    pet.setColorCode(checkNull(row[2]));
-                    pet.setColor(checkNull(row[3]));
-                    pet.setVendorSize(checkNull(row[4]));
-                    pet.setOmniSizeDescription(checkNull(row[5]));
-                    pet.setContentState(checkNull(row[6]));
-                    pet.setPetState(checkNull(row[7]));
-                    pet.setCompletionDate(checkNull(row[8]));
-                    pet.setEntryType(checkNull(row[9]));
-
-                    petList.add(pet);
+                if (rows != null) {
+                   // LOGGER.info("recordsFetched..." + rows);
+                  //  LOGGER.info(" getStyleAndItsChildFromADSE  Query Executing.....");
+                    /*
+                    for(final Object[] row : rows){
+    
+                        pet = new PetsFound();
+                        pet.setParentStyleOrin(checkNull(row[0]));
+                        pet.setOrinNumber(checkNull(row[1]));
+                        pet.setColorCode(checkNull(row[2]));
+                        pet.setColor(checkNull(row[3]));
+                        pet.setVendorSize(checkNull(row[4]));
+                        pet.setOmniSizeDescription(checkNull(row[5]));
+                        pet.setContentState(checkNull(row[6]));
+                        pet.setPetState(checkNull(row[7]));
+                        pet.setCompletionDate(checkNull(row[8]));
+                        pet.setEntryType(checkNull(row[9]));
+                        */
+                    /**
+                     * MODIFIED BY AFUAXK4
+                     * DATE: 02/05/2016
+                     */
+                    String entryType = "";
+                    String timeStamp = "";
+                    final Properties prop =   PropertiesFileLoader.getPropertyLoader("contentDisplay.properties");
+                    for(final Object[] row : rows){
+                        timeStamp = "";
+                        pet = new PetsFound();
+                        pet.setParentStyleOrin(checkNull(row[0]));
+                        pet.setOrinNumber(checkNull(row[1]));
+                        pet.setColorCode(checkNull(row[2]));
+                        pet.setColor(checkNull(row[3]));
+                        pet.setVendorSize(checkNull(row[4]));
+                        pet.setOmniSizeDescription(checkNull(row[5]));
+                        pet.setContentState(prop.getProperty("Content"+checkNull(row[6])));
+                        pet.setPetState(prop.getProperty(checkNull(row[7])));
+                        entryType = checkNull(row[10]);
+                        if(entryType.equals("Style") || entryType.equals("Complex Pack"))
+                        {
+                            timeStamp = checkNull(row[9]);
+                            if(timeStamp.length() > 10)
+                            {
+                                timeStamp = timeStamp.substring(0, 10);
+                            }
+                            pet.setCompletionDate(timeStamp);
+                        }
+                        else
+                        {
+                            timeStamp = checkNull(row[8]);
+                            if(timeStamp.length() > 10)
+                            {
+                                timeStamp = timeStamp.substring(0, 10);
+                            }
+                            pet.setCompletionDate(timeStamp);
+                        }
+                        //pet.setCompletionDate(checkNull(row[8]));
+                        pet.setEntryType(entryType);
+                        /**
+                         * MODIFICATION END BY AFUAXK4
+                         * DATE: 02/05/2016
+                         */
+    
+                        petList.add(pet);
+                    }
+                    LOGGER.info("petList size..."+petList.size());
                 }
-                LOGGER.info("petList size..."+petList.size());
             }
 
 
@@ -1171,7 +1346,7 @@ public class ContentDAOImpl implements ContentDAO{
         }
         finally
         {
-            LOGGER.info("recordsFetched. getStyleAndItsChildFromADSE finally block.." );
+          //  LOGGER.info("recordsFetched. getStyleAndItsChildFromADSE finally block.." );
             session.flush();
             transaction.commit();
             session.close();
@@ -1205,6 +1380,8 @@ public class ContentDAOImpl implements ContentDAO{
             final Query query =session.createSQLQuery(xqueryConstants.getGlobalAttributesQuery(orinNumber));
             if(query!=null)
             {
+                query.setParameter("orinNo", orinNumber);
+                query.setFetchSize(10);
                 rows = query.list();
             }
 
@@ -1243,7 +1420,7 @@ public class ContentDAOImpl implements ContentDAO{
 
 
     /* (non-Javadoc)
-     * @see com.belk.pep.dao.ContentDAO#getStyleInfoFromADSE(java.lang.String)
+     * @see com.belk.pep.dao.ContentDAO#getStyleColorAttributesFromADSE(java.lang.String)
      */
     @Override
     public ColorAttributesVO getStyleColorAttributesFromADSE(String styleColorOrinNumber) throws PEPFetchException {
@@ -1261,6 +1438,8 @@ public class ContentDAOImpl implements ContentDAO{
             final Query query =session.createSQLQuery(xqueryConstants.getStyleColorAttributes(styleColorOrinNumber));
             if(query!=null)
             {
+                query.setParameter("orinNo", styleColorOrinNumber);
+                query.setFetchSize(10);
                 rows = query.list();
             }
 
@@ -1281,8 +1460,6 @@ public class ContentDAOImpl implements ContentDAO{
 
                 }
             }
-
-
         }
         catch(final Exception exception)
         {
@@ -1316,6 +1493,8 @@ public class ContentDAOImpl implements ContentDAO{
             final Query query =session.createSQLQuery(xqueryConstants.getStyleInformation(orinNumber));
             if(query!=null)
             {
+            //    query.setParameter("orinNo", orinNumber);
+                query.setFetchSize(10);
                 rows = query.list();
             }
 
@@ -1336,7 +1515,9 @@ public class ContentDAOImpl implements ContentDAO{
                     style.setVendorSampleIndicator(checkNull(row[9]));
                     style.setEntryType(checkNull(row[10]));
                     style.setCompletionDateOfStyle(checkNull(row[11]));
-
+                    style.setDeptDescription(checkNull(row[12]));
+                    style.setClassDescription(checkNull(row[13]));
+                    style.setSupplierSiteId(checkNull(row[14]));
                 }
             }
 

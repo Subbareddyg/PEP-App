@@ -11,7 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.Random;
-import java.util.logging.Logger;
+//import java.util.logging.Logger;
+import org.apache.log4j.Logger;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
@@ -381,7 +382,7 @@ public class ImageRequestController {
            String resMsg = resCodeWithMsg[0];
            String resCode = resCodeWithMsg[1];
            if("100".equalsIgnoreCase(resCode)){
-        	   LOGGER.info("Service success response***");
+        	   LOGGER.info("***Service success response For Remove***");
         	   
         	try {
 				fileRemove = fileDelete(fileToBeDeleted);
@@ -441,31 +442,39 @@ public class ImageRequestController {
  			  		jsonStyle1 = populateJsonForImageManagement(orinId, updatedBy, "04");
  			  		jsonArray1.put(jsonStyle1);
  			  		responseMsg1 = callApproveActionService(jsonArray1);
- 					LOGGER.info("remove responseMsg " + responseMsg1);
+ 					LOGGER.info("-----remove responseMsg in rejected-----" + responseMsg1);
  			  	}
  			  	else if(review_status){
- 			  		LOGGER.info("Call Service review in remove");
+ 			  		LOGGER.info("Call Service readyforreview in remove");
  			  		jsonStyle1 = populateJsonForImageManagement(orinId, updatedBy, "08");
  			  		jsonArray1.put(jsonStyle1);
  			  		responseMsg1 = callApproveActionService(jsonArray1);
- 					LOGGER.info("remove responseMsg " + responseMsg1);
+ 					LOGGER.info("-----remove responseMsg in ReadyforReview-----" + responseMsg1);
 		  		}
 				else if(initiated_status){
 					LOGGER.info("Call Service initiated in remove");
 					jsonStyle1 = populateJsonForImageManagement(orinId, updatedBy, "01");
 					jsonArray1.put(jsonStyle1);
 					responseMsg1 = callApproveActionService(jsonArray1);
- 					LOGGER.info("remove responseMsg " + responseMsg1);
+ 					LOGGER.info("-----remove responseMsg in Initiated-----" + responseMsg1);
 				}
 				else if(completed_status){
 					LOGGER.info("Call Service completed in remove");
 					jsonStyle1 = populateJsonForImageManagement(orinId, updatedBy, "02");
 					jsonArray1.put(jsonStyle1);
 					responseMsg1 = callApproveActionService(jsonArray1);
- 					LOGGER.info("remove responseMsg " + responseMsg1);
+ 					LOGGER.info("-----remove responseMsg in completed-----" + responseMsg1);
 				}
 				else{
 					LOGGER.info(" remove Do Nothing");
+				}
+ 			  	if("Image status update is successful".equalsIgnoreCase(responseMsg1)){
+					LOGGER.info(" ---Service Response is Success on Remove--- ");
+					String responseCodeOnRemove = "100";
+					jsObj.put("responseCodeOnRemove", responseCodeOnRemove);						
+					response.getWriter().write(jsObj.toString());
+					response.getWriter().flush();
+					response.getWriter().close();
 				}
 			}
 			catch(Exception ex){
@@ -885,6 +894,9 @@ public class ImageRequestController {
 		JSONArray shotTypeJsonArray = new JSONArray();
 		
 		JSONObject jsonObjShotType = new JSONObject();
+		JSONObject jObj = new JSONObject();
+		
+		
 		LOGGER.info("orinNumbersss::" + orinNumber +"\t"+"::imageIdss::" + imageId +"\t"+ 
 				"::imageStatusss::" + imageStatus+"\t"+ "::statusParam::" +statusParam+"\t"+ "::shotTypeOnSubmit::" +shotTypeOnSubmit);
 		
@@ -941,8 +953,8 @@ public class ImageRequestController {
  			  	jsonObj.put("resCodeRet", resCodeRet);
  			  	jsonObj.put("statusParamRet", statusParam);
  			  	jsonObj.put("imageIdRet", request.getParameter("imageId"));
+ 			  	//response.getWriter().write(jsonObj.toString());	
  			  	
- 			  	response.getWriter().write(jsonObj.toString());
  			  	LOGGER.info("write success 123 json::" + jsonObj.getString("imageIdRet"));
  			  	/*
  			  	 * Updating Image management Image Status 
@@ -971,38 +983,50 @@ public class ImageRequestController {
  			  		
  			  	}
  			  	LOGGER.info("Rejected_status = " + rejected_status + " Review Status = "+ review_status + " Intiated Status = " + initiated_status + " Completed Status " + completed_status);
- 			  	if(rejected_status){
- 			  		LOGGER.info("Call Service rejected");
- 			  		jsonStyle1 = populateJsonForImageManagement(orinNumber, updatedBy, "07");
- 			  		jsonArray1.put(jsonStyle1);
- 			  		responseMsg1 = callApproveActionService(jsonArray1);
- 					LOGGER.info("addActionRequest responseMsg " + responseMsg1);
+ 			  	
+ 			  	if("100".equalsIgnoreCase(resCodeRet)){
+ 			  		LOGGER.info("----------SubmitOrReject==='100' before calling imageStatus----------");
+ 			  		if(rejected_status){
+ 			  			LOGGER.info("Call Service rejected");
+ 			  			jsonStyle1 = populateJsonForImageManagement(orinNumber, updatedBy, "07");
+ 			  			jsonArray1.put(jsonStyle1);
+ 			  			responseMsg1 = callApproveActionService(jsonArray1);
+ 			  			LOGGER.info("--imageStatus response update in submit for reject---" + responseMsg1);
+ 			  		}
+ 			  		else if(review_status){
+ 			  			LOGGER.info("Call Service review");
+ 			  			jsonStyle1 = populateJsonForImageManagement(orinNumber, updatedBy, "08");
+ 			  			jsonArray1.put(jsonStyle1);
+ 			  			responseMsg1 = callApproveActionService(jsonArray1);
+ 			  			LOGGER.info("--imageStatus response update in submit for readyforReview---" + responseMsg1);
+ 			  		}
+ 			  		else if(initiated_status){
+ 			  			LOGGER.info("Call Service initiated");
+ 			  			jsonStyle1 = populateJsonForImageManagement(orinNumber, updatedBy, "01");
+ 			  			jsonArray1.put(jsonStyle1);
+ 			  			responseMsg1 = callApproveActionService(jsonArray1);
+ 			  			LOGGER.info("--imageStatus response update in submit for initiated---" + responseMsg1);
+ 			  		}
+ 			  		else if(completed_status){
+ 			  			LOGGER.info("Call Service completed");
+ 			  			jsonStyle1 = populateJsonForImageManagement(orinNumber, updatedBy, "02");
+ 			  			jsonArray1.put(jsonStyle1);
+ 			  			responseMsg1 = callApproveActionService(jsonArray1);
+ 			  			LOGGER.info("--imageStatus response update in submit for completed---" + responseMsg1);
+ 			  		}
+ 			  		else{
+ 			  			LOGGER.info("Do Nothing");
+ 			  		}
  			  	}
- 			  	else if(review_status){
- 			  		LOGGER.info("Call Service review");
- 			  		jsonStyle1 = populateJsonForImageManagement(orinNumber, updatedBy, "08");
- 			  		jsonArray1.put(jsonStyle1);
- 			  		responseMsg1 = callApproveActionService(jsonArray1);
- 					LOGGER.info("addActionRequest responseMsg " + responseMsg1);
-		  		}
-				else if(initiated_status){
-					LOGGER.info("Call Service initiated");
-					jsonStyle1 = populateJsonForImageManagement(orinNumber, updatedBy, "01");
-					jsonArray1.put(jsonStyle1);
-					responseMsg1 = callApproveActionService(jsonArray1);
- 					LOGGER.info("addActionRequest responseMsg " + responseMsg1);
-				}
-				else if(completed_status){
-					LOGGER.info("Call Service completed");
-					jsonStyle1 = populateJsonForImageManagement(orinNumber, updatedBy, "02");
-					jsonArray1.put(jsonStyle1);
-					responseMsg1 = callApproveActionService(jsonArray1);
- 					LOGGER.info("addActionRequest responseMsg " + responseMsg1);
-				}
-				else{
-					LOGGER.info("Do Nothing");
-				}
- 			  	   
+ 			  	if("Image status update is successful".equalsIgnoreCase(responseMsg1)){
+						LOGGER.info(" ---Service Response is Success on SubmitOrReject--- ");
+						String responseCodeOnSubmit = "100";
+						jsonObj.remove(resCodeRet);						
+						jsonObj.put("responseCodeOnSubmit", responseCodeOnSubmit);	
+					}
+ 			  	response.getWriter().write(jsonObj.toString());					
+				response.getWriter().flush();
+				response.getWriter().close();
 	       } catch (Exception e) {
 	           LOGGER.info("Caught Exception getSubmitorRejectStatus controller******************");
 	           e.printStackTrace();
@@ -1131,7 +1155,10 @@ public class ImageRequestController {
 	   	 */
 		@ResourceMapping("imageApproveAction")
 		public void imageApproveAction(ResourceRequest request,ResourceResponse response) {
-			LOGGER.info("entering addActionRequest()method");
+			LOGGER.info("entering imageApproveAction method");
+			
+			JSONObject jObj = new JSONObject();
+			String responseCode = "";
 			
 			ImageDetails imageDetailsFromIPC = getUserDetailsfromLogin(request);
 	        String updatedBy = "";
@@ -1141,25 +1168,29 @@ public class ImageRequestController {
 	            updatedBy = imageDetailsFromIPC.getUserData().getVpUser().getUserEmailAddress();
 		    }
 	        LOGGER.info("Status Value updatedBy:" + updatedBy);
-		
 			String responseMsg ="";
 			String orinId = request.getParameter("approveOrRejectOrinNum");		
-			
-		
 			LOGGER.info(" orinId::"+ orinId );
 
 			JSONArray jsonArray = new JSONArray();		
 			try {
-
 				JSONObject jsonStyle = populateJsonOnApproveAction(
 						orinId.trim(),  updatedBy);
 				jsonArray.put(jsonStyle);
 				LOGGER.info(" final object -->"+jsonArray);
 				responseMsg = callApproveActionService(jsonArray);
-				LOGGER.info("addActionRequest responseMsg " + responseMsg);
-				response.getWriter().write(responseMsg);
+				LOGGER.info("---Service Response on Approve---" + responseMsg);
+				//Logic for Success Response
+				if("Image status update is successful".equalsIgnoreCase(responseMsg)){
+					LOGGER.info(" ---Service Response is Success on Approve--- ");
+					responseCode = "100";
+					jObj.put("responseCode", responseCode);
+					response.getWriter().write(jObj.toString());
+					response.getWriter().flush();
+					response.getWriter().close();
+				}
 			} catch (Exception e) {
-				LOGGER.info("inside catch for addActionRequest() method ");
+				LOGGER.info("inside catch for imageApproveAction() method ");
 				e.printStackTrace();
 			}
 			
@@ -1276,7 +1307,7 @@ public class ImageRequestController {
 			        if(null != filePath && filePath.trim().length() > 0){
 			        	if(filePath.toLowerCase().endsWith(".jpeg")){
 			        		mimeType = "image/jpeg";
-			        	}else if(filePath.toLowerCase().endsWith(".tiff")){
+			        	}else if(filePath.toLowerCase().endsWith(".tiff") || filePath.toLowerCase().endsWith(".tif")){
 			        		mimeType = "image/tiff";
 			        	}else if(filePath.toLowerCase().endsWith(".psd")){
 			        		mimeType = "application/octet-stream";

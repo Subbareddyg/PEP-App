@@ -11,7 +11,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-import java.util.logging.Logger;
+//import java.util.logging.Logger;
+import org.apache.log4j.Logger;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -86,13 +87,13 @@ public class WorkListDisplayServiceImpl implements WorkListDisplayService {
         }
         catch (PEPPersistencyException e) {
             
-            LOGGER.severe("Exception occurred at the Service DAO Layer");
+            LOGGER.info("Exception occurred at the Service DAO Layer");
             throw e;
         }
         
         catch (Exception e) {
               
-                LOGGER.severe("Exception occurred at the Service Implementation Layer");
+                LOGGER.info("Exception occurred at the Service Implementation Layer");
                 throw new PEPServiceException(e.getMessage());
             }
         
@@ -117,15 +118,15 @@ public class WorkListDisplayServiceImpl implements WorkListDisplayService {
         }
         catch (PEPPersistencyException e) {
             
-            LOGGER.severe("Exception occurred at the Service DAO Layer");
+            LOGGER.info("Exception occurred at the Service DAO Layer");
             throw e;
         }
         
         catch (Exception e) {
-            LOGGER.severe("Before printing stack trace");
+            LOGGER.info("Before printing stack trace");
                 e.printStackTrace();
-                LOGGER.severe("After printing stack trace");
-                LOGGER.severe("Exception occurred at the Service Implementation Layer");
+                LOGGER.info("After printing stack trace");
+                LOGGER.info("Exception occurred at the Service Implementation Layer");
                 throw new PEPServiceException(e.getMessage());
             }
         
@@ -144,15 +145,15 @@ public class WorkListDisplayServiceImpl implements WorkListDisplayService {
     }
     catch (PEPPersistencyException e) {
         
-        LOGGER.severe("Exception occurred at the Service DAO Layer getPetDetailsByDepNosForParent");
+        LOGGER.info("Exception occurred at the Service DAO Layer getPetDetailsByDepNosForParent");
         throw e;
     }
     
     catch (Exception e) {
-        LOGGER.severe("Before printing stack trace");
+        LOGGER.info("Before printing stack trace");
             e.printStackTrace();
-            LOGGER.severe("After printing stack trace");
-            LOGGER.severe("Exception occurred at the Service Implementation Layer getPetDetailsByDepNosForParent");
+            LOGGER.info("After printing stack trace");
+            LOGGER.info("Exception occurred at the Service Implementation Layer getPetDetailsByDepNosForParent");
             throw new PEPServiceException(e.getMessage());
         }
     
@@ -172,7 +173,7 @@ public class WorkListDisplayServiceImpl implements WorkListDisplayService {
           }
           catch (PEPPersistencyException e) {
               
-              LOGGER.severe("Exception occurred at the Service DAO Layer getPetDetailsByDepNosForParent");
+              LOGGER.info("Exception occurred at the Service DAO Layer getPetDetailsByDepNosForParent");
               throw e;
           }
               
@@ -198,13 +199,13 @@ public class WorkListDisplayServiceImpl implements WorkListDisplayService {
             isDeptUpdated = workListDisplayDAO.updatePepDeptDetails(updatedPePDetailsToDb,pepUserID);
         }
         catch (PEPPersistencyException e) {
-            LOGGER.severe("Exception occurred at the Service DAO Layer");
+            LOGGER.info("Exception occurred at the Service DAO Layer");
             throw e;
         }
         
         catch (Exception e) {
               
-                LOGGER.severe("Exception occurred at the Service Implementation Layer");
+                LOGGER.info("Exception occurred at the Service Implementation Layer");
                 throw new PEPServiceException(e.getMessage());
             }
         
@@ -228,13 +229,13 @@ public class WorkListDisplayServiceImpl implements WorkListDisplayService {
         }
         catch (PEPPersistencyException e) {
             
-            LOGGER.severe("Exception occurred at the Service DAO Layer");
+            LOGGER.info("Exception occurred at the Service DAO Layer");
             throw e;
         }
         
         catch (Exception e) {
               
-                LOGGER.severe("Exception occurred at the Service Implementation Layer");
+                LOGGER.info("Exception occurred at the Service Implementation Layer");
                 throw new PEPServiceException(e.getMessage());
             }
         
@@ -254,13 +255,13 @@ public class WorkListDisplayServiceImpl implements WorkListDisplayService {
         }
         catch (PEPPersistencyException e) {
             
-            LOGGER.severe("Exception occurred at the Service DAO Layer");
+            LOGGER.info("Exception occurred at the Service DAO Layer");
             throw e;
         }
         
         catch (Exception e) {
               
-                LOGGER.severe("Exception occurred at the Service Implementation Layer");
+                LOGGER.info("Exception occurred at the Service Implementation Layer");
                 throw new PEPServiceException(e.getMessage());
             }
         
@@ -281,13 +282,13 @@ public List<WorkFlow> getPetDetailsByVendor(String userEmailAddress, List<String
     }
     catch (PEPPersistencyException e) {
         
-        LOGGER.severe("Exception occurred at the Service DAO Layer");
+        LOGGER.info("Exception occurred at the Service DAO Layer");
         throw e;
     }
     
     catch (Exception e) {
           
-            LOGGER.severe("Exception occurred at the Service Implementation Layer");
+            LOGGER.info("Exception occurred at the Service Implementation Layer");
             throw new PEPServiceException(e.getMessage());
         }
     
@@ -307,13 +308,13 @@ public List<WorkFlow> getPetDetailsByVendor(String userEmailAddress, List<String
         }
         catch (PEPPersistencyException e) {
             
-            LOGGER.severe("Exception occurred at the Service DAO Layer");
+            LOGGER.info("Exception occurred at the Service DAO Layer");
             throw e;
         }
         
         catch (Exception e) {
               
-                LOGGER.severe("Exception occurred at the Service Implementation Layer");
+                LOGGER.info("Exception occurred at the Service Implementation Layer");
                 throw new PEPServiceException(e.getMessage());
             }
         
@@ -333,13 +334,13 @@ public List<ClassDetails> getClassDetailsByDepNos(String departmentNumbers)
     }
     catch (PEPPersistencyException e) {
         
-        LOGGER.severe("Exception occurred at the Service DAO Layer getClassDetailsByDepNos");
+        LOGGER.info("Exception occurred at the Service DAO Layer getClassDetailsByDepNos");
         throw e;
     }
     
     catch (Exception e) {
           
-            LOGGER.severe("Exception occurred at the Service Implementation Layer getClassDetailsByDepNos");
+            LOGGER.info("Exception occurred at the Service Implementation Layer getClassDetailsByDepNos");
             throw new PEPServiceException(e.getMessage());
         }
     
@@ -360,13 +361,13 @@ public List<WorkFlow> getPetDetailsByAdvSearch(AdvanceSearch advanceSearch,List<
     }
     catch (PEPPersistencyException e) {
         
-        LOGGER.severe("Exception occurred at the Service DAO Layer getPetDetailsByAdvSearch");
+        LOGGER.info("Exception occurred at the Service DAO Layer getPetDetailsByAdvSearch");
         throw e;
     }
     
     catch (Exception e) {
           
-            LOGGER.severe("Exception occurred at the Service Implementation Layer getPetDetailsByAdvSearch");
+            LOGGER.info("Exception occurred at the Service Implementation Layer getPetDetailsByAdvSearch");
             throw new PEPServiceException(e.getMessage());
         }
     
@@ -383,13 +384,13 @@ public List<WorkFlow> getPetDetailsByAdvSearchForParent(AdvanceSearch advanceSea
     }
     catch (PEPPersistencyException e) {
         
-        LOGGER.severe("Exception occurred at the Service DAO Layer getPetDetailsByAdvSearchForParent");
+        LOGGER.info("Exception occurred at the Service DAO Layer getPetDetailsByAdvSearchForParent");
         throw e;
     }
     
     catch (Exception e) {
           
-            LOGGER.severe("Exception occurred at the Service Implementation Layer getPetDetailsByAdvSearchForParent");
+            LOGGER.info("Exception occurred at the Service Implementation Layer getPetDetailsByAdvSearchForParent");
             throw new PEPServiceException(e.getMessage());
         }
     
@@ -406,13 +407,13 @@ throws PEPPersistencyException {
     }
     catch (PEPPersistencyException e) {
         
-        LOGGER.severe("Exception occurred at the Service DAO Layer getPetDetailsByAdvSearchForChild");
+        LOGGER.info("Exception occurred at the Service DAO Layer getPetDetailsByAdvSearchForChild");
         throw e;
     }
     
     catch (Exception e) {
           
-            LOGGER.severe("Exception occurred at the Service Implementation Layer getPetDetailsByAdvSearchForChild");
+            LOGGER.info("Exception occurred at the Service Implementation Layer getPetDetailsByAdvSearchForChild");
             throw new PEPPersistencyException(e.getMessage());
         }
     
@@ -529,7 +530,7 @@ public String callInActivateAndActivatePetService(JSONArray jsonArray)
         httpConnection.disconnect();
     }
     catch (MalformedURLException e) {
-        LOGGER.severe("inside malformedException");
+        LOGGER.info("inside malformedException");
         throw new PEPFetchException();
     }
     catch (ClassCastException e) {
@@ -537,15 +538,15 @@ public String callInActivateAndActivatePetService(JSONArray jsonArray)
         throw new PEPFetchException();
     }
     catch (IOException e) {
-        LOGGER.severe("inside IOException");
+        LOGGER.info("inside IOException");
         e.printStackTrace();
     }
     catch (JSONException e) {
-        LOGGER.severe("inside JSOnException");
+        LOGGER.info("inside JSOnException");
         e.printStackTrace();
     }
     catch (Exception e) {
-        LOGGER.severe("inside Exception" + e);
+        LOGGER.info("inside Exception" + e);
         e.printStackTrace();
     }
     LOGGER.info("Exiting WorkListDisplayServiceImpl:::callInActivateAndActivatePetService::" +responseMsg);
@@ -664,7 +665,7 @@ try {
     httpConnection.disconnect();
 }
 catch (MalformedURLException e) {
-    LOGGER.severe("inside malformedException callReInitiatePetService");
+    LOGGER.info("inside malformedException callReInitiatePetService");
     throw new PEPFetchException();
 }
 catch (ClassCastException e) {
@@ -672,15 +673,15 @@ catch (ClassCastException e) {
     throw new PEPFetchException();
 }
 catch (IOException e) {
-    LOGGER.severe("inside IOException callReInitiatePetService");
+    LOGGER.info("inside IOException callReInitiatePetService");
     e.printStackTrace();
 }
 catch (JSONException e) {
-    LOGGER.severe("inside JSOnException callReInitiatePetService");
+    LOGGER.info("inside JSOnException callReInitiatePetService");
     e.printStackTrace();
 }
 catch (Exception e) {
-    LOGGER.severe("inside Exception callReInitiatePetService::" + e);
+    LOGGER.info("inside Exception callReInitiatePetService::" + e);
     e.printStackTrace();
 }
 LOGGER.info("Exiting callReInitiatePetService*****" +responseMsg);
@@ -783,7 +784,7 @@ public String callSaveCompletionDateService(JSONArray jsonArray) throws Exceptio
 
         httpConnection.disconnect();
     } catch (MalformedURLException e) {
-        LOGGER.severe("inside malformedException callSaveCompletionDateService");
+        LOGGER.info("inside malformedException callSaveCompletionDateService");
         throw new PEPFetchException();
        // e.printStackTrace();
 
@@ -792,25 +793,25 @@ public String callSaveCompletionDateService(JSONArray jsonArray) throws Exceptio
         e.printStackTrace();
         throw new PEPFetchException();
     } catch (IOException e) {
-        LOGGER.severe("inside IOException");
+        LOGGER.info("inside IOException");
 
         e.printStackTrace();
         throw new Exception();
 
     } catch (JSONException e) {
-        LOGGER.severe("inside JSOnException callSaveCompletionDateService");
+        LOGGER.info("inside JSOnException callSaveCompletionDateService");
         
 
         e.printStackTrace();
         throw new PEPFetchException();
     } catch (Exception e) {
-        LOGGER.severe("inside Exception callSaveCompletionDateService" + e);
+        LOGGER.info("inside Exception callSaveCompletionDateService" + e);
 
         e.printStackTrace();
         throw new Exception();
 
     }
-    LOGGER.severe("responseMsg  end " + responseMsg);
+    LOGGER.info("responseMsg  end " + responseMsg);
     return responseMsg;
 }
 
@@ -822,7 +823,7 @@ public ArrayList isPETLocked(String pepUserId,String orin,String searchPetLocked
     }
     catch (PEPPersistencyException e) {
         
-        LOGGER.severe("Exception occurred at the Service DAO Layer");
+        LOGGER.info("Exception occurred at the Service DAO Layer");
         throw e;
     }
     return petLockedDtls;
@@ -835,7 +836,7 @@ public boolean lockPET(  String orin, String pepUserID, String pepfunction)throw
     }
     catch (PEPPersistencyException e) {
         
-        LOGGER.severe("Exception occurred at the Service DAO Layer");
+        LOGGER.info("Exception occurred at the Service DAO Layer");
         throw e;
     }
     return false;

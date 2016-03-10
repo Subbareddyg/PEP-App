@@ -3,12 +3,13 @@ package com.belk.pep.vo;
 
 import java.io.Serializable;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class ItemPrimaryHierarchyVO.
  *
  * @author AFUSOS3
  */
-public class ItemPrimaryHierarchyVO implements Serializable {
+public class ItemPrimaryHierarchyVO implements Comparable<ItemPrimaryHierarchyVO> {
 
 
 
@@ -34,6 +35,9 @@ public class ItemPrimaryHierarchyVO implements Serializable {
 
     /** The merch category name. */
     private String  merchandiseCategoryName;
+    
+    /** The category full path. */
+    private String categoryFullPath;
 
 
     /**
@@ -154,6 +158,35 @@ public class ItemPrimaryHierarchyVO implements Serializable {
     }
 
 
+    /**
+     * Gets the category full path.
+     *
+     * @return the category full path
+     */
+    public String getCategoryFullPath() {
+        return categoryFullPath;
+    }
+
+
+    /**
+     * Sets the category full path.
+     *
+     * @param categoryFullPath the new category full path
+     */
+    public void setCategoryFullPath(String categoryFullPath) {
+        this.categoryFullPath = categoryFullPath;
+    }
+
+    @Override
+    public int compareTo(ItemPrimaryHierarchyVO obj) {
+        int value = 0;
+        if(null != obj && obj.getCategoryFullPath() != null && this.getCategoryFullPath() != null)
+        {
+           // value = obj.getDisplayName().compareTo(this.getDisplayName());
+            value = this.getCategoryFullPath().compareTo(obj.getCategoryFullPath());
+        }
+        return value;
+    }
 
     /* (non-Javadoc)
      * @see java.lang.Object#toString()

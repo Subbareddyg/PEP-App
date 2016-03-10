@@ -11,9 +11,11 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Date;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.logging.Logger;
+//import java.util.logging.Logger;
+import org.apache.log4j.Logger;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
@@ -29,6 +31,7 @@ import javax.portlet.ResourceRequest;
 import javax.portlet.ResourceResponse;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -183,16 +186,15 @@ public class ContentController implements ResourceAwareController,EventAwareCont
        //     dynamicCategoryId =(String) request.getAttribute("dynamicCategoryId");
 
             //Start of Logic for  IPH Mapping
-
-           // String iphMappingFlag= iphMappingResponse(orinNumber,dynamicCategoryId);
+            LOGGER.info("dynamicCategoryId latest--------------- "+dynamicCategoryId );
+            String iphMappingFlag= iphMappingResponse(orinNumber,dynamicCategoryId, "false");
+            LOGGER.info("Latest ....--------------- "+iphMappingFlag );
 
           //  LOGGER.info("iphMappingFlag --------------- "+iphMappingFlag);
-
-
-        //    if(iphMappingFlag.equalsIgnoreCase("true"))
-         //   {
+            
+            if(iphMappingFlag.trim().equalsIgnoreCase("true")){
                 //Logic for  getting the grand parent category id,parent category id,child category id from  ADSE_ITEM_PRIMARY_HIERARCHY Table
-                LOGGER.info("dynamicCategoryId --------------- "+dynamicCategoryId );
+                
                 List<ItemPrimaryHierarchyVO> familyCategoryList= getFamilyTreeCategory(dynamicCategoryId);
 
                 LOGGER.info("familyCategoryList --------------- "+familyCategoryList.size() );
@@ -211,17 +213,23 @@ public class ContentController implements ResourceAwareController,EventAwareCont
                         }
                         i++;
                     }
-                    LOGGER.info("finalCatIds OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO------ "+finalCatIds );
                 }
-
 
                 //Pass the multiple category Ids obtained from ADSE_ITEM_PRIMARY_HIERARCHY Table   to display all the grand parent attributes,parent attributes and child attributes
                 LOGGER.info("dynamicCategoryId OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO "+finalCatIds );
 
-                LOGGER.info("dynamicCategoryId OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO "+dynamicCategoryId );
+              //  LOGGER.info("dynamicCategoryId OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO "+dynamicCategoryId );
                 displayCategorySpecificAttributeData(finalCatIds,contentDisplayForm2,request,response,orinNumber);
 
                 displayBlueMartiniSpecificAttributeData(finalCatIds,contentDisplayForm2, request, response,orinNumber);
+                request.setAttribute("selectedCategory", dynamicCategoryId);
+                
+                callAsyncIphMappingResponse(orinNumber,dynamicCategoryId, "true");
+                
+             } else {
+                 request.setAttribute("selectedCategory", "select");
+                 contentDisplayForm2.setIphMappingMessage("IPH selection was not saved successfully. Please try again, if the problem still persists, please contact Belk helpdesk.");
+             }
 
         LOGGER.info("end displayAttributesOnChange method");
 
@@ -262,14 +270,14 @@ public class ContentController implements ResourceAwareController,EventAwareCont
                         }
                         i++;
                     }
-                    LOGGER.info("finalCatIds OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO------ "+finalCatIds );
+                   // LOGGER.info("finalCatIds OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO------ "+finalCatIds );
                 }
 
 
                 //Pass the multiple category Ids obtained from ADSE_ITEM_PRIMARY_HIERARCHY Table   to display all the grand parent attributes,parent attributes and child attributes
                 LOGGER.info("petCategoryId finalCatIdsOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO "+finalCatIds );
 
-                LOGGER.info("petCategoryId OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO "+mappedCategoryId );
+            //    LOGGER.info("petCategoryId OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO "+mappedCategoryId );
                 displayCategorySpecificAttributeData(finalCatIds,contentDisplayForm2,request,response,orinNumber);
 
                 displayBlueMartiniSpecificAttributeData(finalCatIds,contentDisplayForm2, request, response,orinNumber);
@@ -324,7 +332,7 @@ public class ContentController implements ResourceAwareController,EventAwareCont
             Map<String,String>  categoryReferenceData=contentDisplayForm2.getCategoryReferenceData();
 
             for (Map.Entry<String, String> entry : categoryReferenceData.entrySet()) {
-                LOGGER.info("Key : " + entry.getKey() + " Value : " + entry.getValue());
+               LOGGER.info("Key : " + entry.getKey() + " Value : " + entry.getValue());
                 categoryId=entry.getKey();
             }
 
@@ -381,7 +389,13 @@ public class ContentController implements ResourceAwareController,EventAwareCont
                     blueMartiniSpecificAttributeObject.setAttributeFieldType(ContentScreenConstants.ATTR_FIELD_TEXT_FIELD);
                   //Code for Alphabetical order sorting -END
                     //set the attribute value in text field from pet catalog,secondarySpecValue is the saved value from the pet catalog
-                    blueMartiniSpecificAttributeObject.setAttributeFieldValue(secondarySpecValue);
+                    LOGGER.info("BM Text Field Saved Value --------- " +secondarySpecValue);
+                    if(secondarySpecValue != null){
+                        blueMartiniSpecificAttributeObject.setAttributeFieldValue(secondarySpecValue.trim());
+                    }else{
+                        blueMartiniSpecificAttributeObject.setAttributeFieldValue(secondarySpecValue);
+                    }
+                   
                     blueMartiniSpecificAttributesObjectTextFieldList.add(blueMartiniSpecificAttributeObject);
                     break;
                 default:
@@ -398,7 +412,7 @@ public class ContentController implements ResourceAwareController,EventAwareCont
                     String htmlDisplayName=petBlueMartiniAttributeDropDownObject.getDisplayName();
                     String secondarySpecificationValue=petBlueMartiniAttributeDropDownObject.getZbmSecondarySpecValue();
                     String htmlFieldValue=petBlueMartiniAttributeDropDownObject.getAttributeFieldValue();
-                    LOGGER.info("Saved Value --------- " +secondarySpecificationValue);
+                    LOGGER.info("BM Drop Down Saved Value --------- " +secondarySpecificationValue);
                     //Convert the field values separated by pipe to the hash map of values for displaying in the drop down from the Pet Attribute Table
                     Map<String ,String > dropdownValueMap=  new TreeMap<String, String>(String.CASE_INSENSITIVE_ORDER);
 
@@ -413,10 +427,10 @@ public class ContentController implements ResourceAwareController,EventAwareCont
                         //Iterate over the  dropDownValueList to put the key value  in the Hash Map
                       //Code for Alphabetical order sorting added by -START
                         for (String dropDownValue:dropDownValueList) {
-                            LOGGER.info("dropDownValueList :"+dropDownValue);
+                           // LOGGER.info("dropDownValueList :"+dropDownValue);
                             dropDownValue=StringUtils.reverse(dropDownValue).trim();
                             dropDownValue = StringUtils.reverse(dropDownValue).trim();
-                            LOGGER.info("dropDownValueList :"+dropDownValue);
+                          //  LOGGER.info("dropDownValueList :"+dropDownValue);
                             sortedList.add(dropDownValue);
                         }
                         Collections.sort(sortedList);
@@ -438,15 +452,18 @@ public class ContentController implements ResourceAwareController,EventAwareCont
                         savedDropDownValueList = Arrays.asList(secondarySpecificationValue.split(","));
                         //Iterate over the  savedDropDownValueList to put the key value  in the Hash Map
                         for(String savedDropDownValue:savedDropDownValueList)
-                        {
+                        { 
+                        if(savedDropDownValue.indexOf('"') > 0){
+                            savedDropDownValue = savedDropDownValue.replace("\"", "&quot;");
+                        }
                             savedDropDownValueMap.put(savedDropDownValue.trim(), savedDropDownValue.trim());
                         }
-                        LOGGER.info("dropdownValueMap---size-------" +savedDropDownValueMap.size());
+                       // LOGGER.info("dropdownValueMap---size-------" +savedDropDownValueMap.size());
                         petBlueMartiniAttributeDropDownObject.setSavedDropDownValuesMap(savedDropDownValueMap);
                     }
                     //Me writing the logic
-                    LOGGER.info("dropdownValueMap---size-------" +dropdownValueMap.size());
-                    LOGGER.info("petAttributeDropDownObject.getDropDownValuesMap()----------" +petBlueMartiniAttributeDropDownObject.getDropDownValuesMap());
+                  //  LOGGER.info("dropdownValueMap---size-------" +dropdownValueMap.size());
+                   // LOGGER.info("petAttributeDropDownObject.getDropDownValuesMap()----------" +petBlueMartiniAttributeDropDownObject.getDropDownValuesMap());
                     dropDownList.add(petBlueMartiniAttributeDropDownObject);
 
                 }
@@ -476,7 +493,7 @@ public class ContentController implements ResourceAwareController,EventAwareCont
                     String htmlDisplayName=petAttributeDropDownObject.getDisplayName();
                     String secondarySpecificationValue=petAttributeDropDownObject.getZbmSecondarySpecValue();
                     String htmlFieldValue=petAttributeDropDownObject.getAttributeFieldValue();
-                    LOGGER.info("bm htmlFieldValue --------- " +htmlFieldValue);
+                    LOGGER.info("BM Radio Saved Value --------- " +secondarySpecificationValue);
                     //Convert the field values separated by pipe to the hash map of values for displaying in the form of radio button  from the Pet Attribute Table
                     Map<String ,String > radioButtonValueMap=  new ConcurrentHashMap<String, String>();
 
@@ -498,7 +515,6 @@ public class ContentController implements ResourceAwareController,EventAwareCont
                     //Convert the saved field values separated by pipe to the hash map of values for displaying in the radio button value  from the Pet Catalog Table
                     Map<String ,String > savedRadioButtonValueMap=  new ConcurrentHashMap<String, String>();
 
-                    System.out.println("bm secondarySpecificationValue    "+secondarySpecificationValue );
                     if(StringUtils.isNotBlank(secondarySpecificationValue)){
                         savedRadioButtonValueMap.put(secondarySpecificationValue.trim(), secondarySpecificationValue.trim());
                         petAttributeDropDownObject.setSavedRadioButtonValuesMap(savedRadioButtonValueMap);
@@ -507,8 +523,8 @@ public class ContentController implements ResourceAwareController,EventAwareCont
                     //Me writing the logic
                     if(radioButtonValueMap!=null)
                     {
-                        LOGGER.info("bm radioButtonValueMap---size-------" +radioButtonValueMap.size());
-                        LOGGER.info("petAttributeDropDownObject.radioButtonValueMap()----------" +petAttributeDropDownObject.getRadioButtonValuesMap());
+                       // LOGGER.info("bm radioButtonValueMap---size-------" +radioButtonValueMap.size());
+                       // LOGGER.info("petAttributeDropDownObject.radioButtonValueMap()----------" +petAttributeDropDownObject.getRadioButtonValuesMap());
                     }
                     radioButtonList.add(petAttributeDropDownObject);
                 }
@@ -593,7 +609,7 @@ public class ContentController implements ResourceAwareController,EventAwareCont
                 LOGGER.info("Style Orin Number : " + orinNumber);
                 categorySpecificAttributesObjectList = contentDelegate.getPetAttributeDetails(dynamicCategoryId,orinNumber);
                 //categorySpecificAttributesObjectList = contentDelegate.getPetAttributeDetails(dummyCategoryId,dummyOrinNumber);
-                LOGGER.info("categorySpecificAttributesObjectList. size...."+categorySpecificAttributesObjectList.size());
+              //  LOGGER.info("categorySpecificAttributesObjectList. size...."+categorySpecificAttributesObjectList.size());
             }
             catch (final PEPDelegateException e) {
 
@@ -611,11 +627,11 @@ public class ContentController implements ResourceAwareController,EventAwareCont
                     final String  attributeName =categorySpecificAttributeObject.getAttributeName();
               //      LOGGER.info("attributeName..."+attributeName);
                     final String  attributeFieldValue=categorySpecificAttributeObject.getAttributeFieldValue();
-                    LOGGER.info("attributeFieldValue..."+attributeFieldValue);
+                    //LOGGER.info("attributeFieldValue..."+attributeFieldValue);
                     String attributeType=categorySpecificAttributeObject.getAttributeType();
              //      LOGGER.info("attributeType..."+attributeType);
                     final String  secondarySpecValue=categorySpecificAttributeObject.getSecondarySpecValue();
-                    LOGGER.info("secondarySpecValue..."+secondarySpecValue);
+                  //  LOGGER.info("Saved Value ..."+secondarySpecValue);
 
 
                     /*  final Map<String, List<?>> mapOfDisplayFields =categorySpecificAttributeObject.getMapOfDisplayFields();
@@ -651,8 +667,12 @@ public class ContentController implements ResourceAwareController,EventAwareCont
                           //Code for Alphabetical order sorting -START
                             categorySpecificAttributeObject.setAttributeFieldType(ContentScreenConstants.ATTR_FIELD_TEXT_FIELD);
                           //Code for Alphabetical order sorting -END
-                            categorySpecificAttributeObject.setAttributeFieldValue(secondarySpecValue);
-                            //LOGGER.info("Text Field Value from Pet Catalog------"+categorySpecificAttributeObject.getAttributeFieldValue());
+                            if(secondarySpecValue != null){
+                                categorySpecificAttributeObject.setAttributeFieldValue(secondarySpecValue.trim());
+                            }else{
+                                categorySpecificAttributeObject.setAttributeFieldValue(secondarySpecValue);
+                            }
+                            LOGGER.info("Saved Text Field Value ------"+categorySpecificAttributeObject.getSecondarySpecValue());
                             categorySpecificAttributesObjectTextFieldList.add(categorySpecificAttributeObject);
 
 
@@ -674,10 +694,10 @@ public class ContentController implements ResourceAwareController,EventAwareCont
                         String htmlDisplayName=petAttributeDropDownObject.getDisplayName();
                         String secondarySpecificationValue=petAttributeDropDownObject.getSecondarySpecValue();
                         String htmlFieldValue=petAttributeDropDownObject.getAttributeFieldValue();
-                        LOGGER.info("htmlFieldValue --------- " +htmlFieldValue);
+                        LOGGER.info("Saved Drop Down Value --------- " +secondarySpecificationValue);
                         //Convert the field values separated by pipe to the hash map of values for displaying in the drop down from the Pet Attribute Table
                         Map<String ,String > dropdownValueMap=  new TreeMap<String, String>(String.CASE_INSENSITIVE_ORDER);
-                        LOGGER.info("New Code Deployed --------- ");
+                     //   LOGGER.info("New Code Deployed --------- ");
                       //Code for Alphabetical order sorting -START
                         List<String> sortedList = new ArrayList<String>();
                       //Code for Alphabetical order sorting -END
@@ -689,10 +709,10 @@ public class ContentController implements ResourceAwareController,EventAwareCont
                             //Iterate over the  dropDownValueList to put the key value  in the Hash Map
                           //Code for Alphabetical order sorting -START
                             for (String dropDownValue:dropDownValueList) {
-                                LOGGER.info("dropDownValueList :"+dropDownValue);
+                             //   LOGGER.info("dropDownValueList :"+dropDownValue);
                                 dropDownValue=StringUtils.reverse(dropDownValue).trim();
                                 dropDownValue = StringUtils.reverse(dropDownValue).trim();
-                                LOGGER.info("dropDownValueList :"+dropDownValue);
+                             //   LOGGER.info("dropDownValueList :"+dropDownValue);
                                 sortedList.add(dropDownValue);
                             }
                             Collections.sort(sortedList);
@@ -717,14 +737,17 @@ public class ContentController implements ResourceAwareController,EventAwareCont
                             //Iterate over the  savedDropDownValueList to put the key value  in the Hash Map
                             for(String savedDropDownValue:savedDropDownValueList)
                             {
+                                if(savedDropDownValue.indexOf('"') > 0){
+                                    savedDropDownValue = savedDropDownValue.replace("\"", "&quot;");
+                                }
                                 savedDropDownValueMap.put(savedDropDownValue.trim(), savedDropDownValue.trim());
                             }
                             petAttributeDropDownObject.setSavedDropDownValuesMap(savedDropDownValueMap);
                         }
 
                         //Me writing the logic
-                        LOGGER.info("dropdownValueMap---size-------" +dropdownValueMap.size());
-                        LOGGER.info("petAttributeDropDownObject.getDropDownValuesMap()----------" +petAttributeDropDownObject.getDropDownValuesMap());
+                      //  LOGGER.info("dropdownValueMap---size-------" +dropdownValueMap.size());
+                      //  LOGGER.info("petAttributeDropDownObject.getDropDownValuesMap()----------" +petAttributeDropDownObject.getDropDownValuesMap());
                         dropDownList.add(petAttributeDropDownObject);
 
                     }
@@ -754,7 +777,7 @@ public class ContentController implements ResourceAwareController,EventAwareCont
                         String htmlDisplayName=petAttributeDropDownObject.getDisplayName();
                         String secondarySpecificationValue=petAttributeDropDownObject.getSecondarySpecValue();
                         String htmlFieldValue=petAttributeDropDownObject.getAttributeFieldValue();
-                        LOGGER.info("htmlFieldValue --------- " +htmlFieldValue);
+                        LOGGER.info("Saved Radio Value --------- " +secondarySpecificationValue);
                         //Convert the field values separated by pipe to the hash map of values for displaying in the form of radio button  from the Pet Attribute Table
                         Map<String ,String > radioButtonValueMap=  new ConcurrentHashMap<String, String>();
 
@@ -776,7 +799,7 @@ public class ContentController implements ResourceAwareController,EventAwareCont
                         //Convert the saved field values separated by pipe to the hash map of values for displaying in the radio button value  from the Pet Catalog Table
                         Map<String ,String > savedRadioButtonValueMap=  new ConcurrentHashMap<String, String>();
 
-                        System.out.println("secondarySpecificationValue    "+secondarySpecificationValue );
+                      //  System.out.println("secondarySpecificationValue    "+secondarySpecificationValue );
                         if(StringUtils.isNotBlank(secondarySpecificationValue)){
                             savedRadioButtonValueMap.put(secondarySpecificationValue.trim(), secondarySpecificationValue.trim());
                             petAttributeDropDownObject.setSavedRadioButtonValuesMap(savedRadioButtonValueMap);
@@ -785,8 +808,8 @@ public class ContentController implements ResourceAwareController,EventAwareCont
                         //Me writing the logic
                         if(radioButtonValueMap!=null)
                         {
-                            LOGGER.info("radioButtonValueMap---size-------" +radioButtonValueMap.size());
-                            LOGGER.info("petAttributeDropDownObject.radioButtonValueMap()----------" +petAttributeDropDownObject.getRadioButtonValuesMap());
+                           // LOGGER.info("radioButtonValueMap---size-------" +radioButtonValueMap.size());
+                           // LOGGER.info("petAttributeDropDownObject.radioButtonValueMap()----------" +petAttributeDropDownObject.getRadioButtonValuesMap());
                         }
                         radioButtonList.add(petAttributeDropDownObject);
                     }
@@ -835,7 +858,6 @@ public class ContentController implements ResourceAwareController,EventAwareCont
         try {
             styleColorList = contentDelegate.getColorFamilyDataSet();
 
-            LOGGER.info("--------Omni Family Colors------styleColorList.size()-------------"+styleColorList.size());
         }
         catch (PEPDelegateException e) {
             // TODO Auto-generated catch block
@@ -865,35 +887,30 @@ public class ContentController implements ResourceAwareController,EventAwareCont
             if(request.getAttribute("omniColorFamily")!=null ){
                 // String omniColorFamily = request.getAttribute("omniColorFamily");
                 request.setAttribute("selectedOmniColorFamily", request.getAttribute("omniColorFamily"));
-                //  LOGGER.info("-----------------Start of handleRenderRequest--omniColorFamily---------------"+omniColorFamily);
 
             }
 
             if(request.getAttribute("secondaryColor1")!=null ){
                 // String secondaryColor1 = request.getAttribute("secondaryColor1");
                 request.setAttribute("selectedSecondaryColor1", request.getAttribute("secondaryColor1"));
-                // LOGGER.info("-----------------Start of handleRenderRequest--secondaryColor1---------------"+secondaryColor1);
 
             }
 
             if(request.getAttribute("secondaryColor2")!=null ){
                 //String secondaryColor2 = request.getParameter("secondaryColor2");
                 request.setAttribute("selectedSecondaryColor2", request.getAttribute("secondaryColor2"));
-                // LOGGER.info("-----------------Start of handleRenderRequest--secondaryColor2---------------"+secondaryColor2);
 
             }
 
             if(request.getAttribute("secondaryColor3")!=null ){
                 // String secondaryColor3 = request.getParameter("secondaryColor3");
                 request.setAttribute("selectedSecondaryColor3", request.getAttribute("secondaryColor3"));
-                //LOGGER.info("-----------------Start of handleRenderRequest--secondaryColor3---------------"+secondaryColor3);
 
             }
 
             if(request.getAttribute("secondaryColor4")!=null ){
                 // String secondaryColor4 = request.getParameter("secondaryColor4");
                 request.setAttribute("selectedSecondaryColor4", request.getAttribute("secondaryColor4"));
-                // LOGGER.info("-----------------Start of handleRenderRequest--secondaryColor4---------------"+secondaryColor4);
 
             }
 
@@ -901,19 +918,14 @@ public class ContentController implements ResourceAwareController,EventAwareCont
             if(request.getAttribute("omniChannelColorDescription")!=null ){
                 //String omniChannelColorDescription = request.getParameter("omniChannelColorDescription");
                 request.setAttribute("selectedOmniChannelColorDescription", request.getAttribute("omniChannelColorDescription"));
-                // LOGGER.info("-----------------Start of handleRenderRequest--omniChannelColorDescription---------------"+omniChannelColorDescription);
 
             }
 
             if(request.getAttribute("vendorColor")!=null ){
                 //String vendorColor = request.getParameter("vendorColor");
                 request.setAttribute("selectedVendorColor", request.getAttribute("vendorColor"));
-                //LOGGER.info("-----------------Start of handleRenderRequest--vendorColor---------------"+vendorColor);
 
             }
-
-
-
 
             modelAndView.addObject(ContentScreenConstants.CONTENT_DISPLAY_FORM, contentDisplayForm2);
 
@@ -1102,11 +1114,11 @@ public class ContentController implements ResourceAwareController,EventAwareCont
         for(final PetsFound pet:petList)
         {
             final String entryType=pet.getEntryType();
-            LOGGER.info("entryType---"+entryType);
+           // LOGGER.info("entryType---"+entryType);
             //Logic for collecting all the Pets of Entity Type  as Complex Pack
             if(entryType.equalsIgnoreCase("Complex Pack"))
             {
-                LOGGER.info("Portal StyleAndItsChildDisplay--petList----Complex Pack entry type is "+entryType);
+              //  LOGGER.info("Portal StyleAndItsChildDisplay--petList----Complex Pack entry type is "+entryType);
 
                 final String orinNumber= pet.getOrinNumber();
                 pet.getVendorStyle();
@@ -1124,8 +1136,8 @@ public class ContentController implements ResourceAwareController,EventAwareCont
                 style.setVendorSize(vendorSize);
                 //Set the earliest completion date  from Style Colors to Style for display on the portal
                 style.setCompletionDate(earliestCompletionDate);
-                LOGGER.info("Portal earliestCompletionDate for Style----"+earliestCompletionDate);
-                LOGGER.info("Portal earliestCompletionDate for Style--12--"+style.getCompletionDate());
+               // LOGGER.info("Portal earliestCompletionDate for Style----"+earliestCompletionDate);
+               // LOGGER.info("Portal earliestCompletionDate for Style--12--"+style.getCompletionDate());
                 style.setContentStatus(contentState);
                 String contentStatusCode= setContentStatusCode(contentState);
                 style.setContentStatusCode(contentStatusCode);
@@ -1139,7 +1151,7 @@ public class ContentController implements ResourceAwareController,EventAwareCont
 
             if(entryType.equalsIgnoreCase("PackColor"))
             {
-                LOGGER.info("Portal StyleAndItsChildDisplay--petList----entry type is PackColor");
+               // LOGGER.info("Portal StyleAndItsChildDisplay--petList----entry type is PackColor");
                 childsParentOrinNumber=pet.getParentStyleOrin();
                 final String orinNumber=pet.getOrinNumber();
                 final String color= pet.getColor();
@@ -1160,14 +1172,14 @@ public class ContentController implements ResourceAwareController,EventAwareCont
                 styleColor.setContentStatusCode(contentStatusCode);
                 styleColorList.add(styleColor);//Add all the StyleColor to the  Style Color list
                 styleAndItsChildDisplay.setPackColorEntry("PackColor");
-                LOGGER.info("styleColorList size.."+styleColorList.size());
+              //  LOGGER.info("styleColorList size.."+styleColorList.size());
 
             }
 
 
             if(entryType.equalsIgnoreCase("SKU"))
             {
-                LOGGER.info("Portal StyleAndItsChildDisplay--petList----entry type is SKU");
+              //  LOGGER.info("Portal StyleAndItsChildDisplay--petList----entry type is SKU");
                 childsParentOrinNumber=pet.getParentStyleOrin();
                 final String orinNumber=pet.getOrinNumber();
                 final String color= pet.getColor();
@@ -1194,7 +1206,7 @@ public class ContentController implements ResourceAwareController,EventAwareCont
 
             if(entryType.equalsIgnoreCase("StyleColor"))
             {
-                LOGGER.info("Portal StyleAndItsChildDisplay--petList----entry type is StyleColor");
+               // LOGGER.info("Portal StyleAndItsChildDisplay--petList----entry type is StyleColor");
                 childsParentOrinNumber=pet.getParentStyleOrin();
                 final String orinNumber=pet.getOrinNumber();
                 final String color= pet.getColor();
@@ -1214,7 +1226,7 @@ public class ContentController implements ResourceAwareController,EventAwareCont
                 String contentStatusCode= setContentStatusCode(contentState);
                 styleColor.setContentStatusCode(contentStatusCode);
                 styleColorList.add(styleColor);//Add all the StyleColor to the  Style Color list
-                LOGGER.info("styleColorList size.."+styleColorList.size());
+              //  LOGGER.info("styleColorList size.."+styleColorList.size());
                 styleAndItsChildDisplay.setStyleColorEntry("StyleColor");
 
 
@@ -1244,7 +1256,7 @@ public class ContentController implements ResourceAwareController,EventAwareCont
             }*/
             if(entryType.equalsIgnoreCase("Style"))
             {
-                LOGGER.info("Portal StyleAndItsChildDisplay--petList----entry type is Style");
+              //  LOGGER.info("Portal StyleAndItsChildDisplay--petList----entry type is Style");
                 final String orinNumber= pet.getOrinNumber();
                 pet.getVendorStyle();
                 parentOrinNumber=pet.getParentStyleOrin();
@@ -1261,8 +1273,8 @@ public class ContentController implements ResourceAwareController,EventAwareCont
                 style.setVendorSize(vendorSize);
                 //Set the earliest completion date  from Style Colors to Style for display on the portal
                 style.setCompletionDate(earliestCompletionDate);
-                LOGGER.info("Portal earliestCompletionDate for Style----"+earliestCompletionDate);
-                LOGGER.info("Portal earliestCompletionDate for Style--12--"+style.getCompletionDate());
+              //  LOGGER.info("Portal earliestCompletionDate for Style----"+earliestCompletionDate);
+              //  LOGGER.info("Portal earliestCompletionDate for Style--12--"+style.getCompletionDate());
                 style.setContentStatus(contentState);
                 String contentStatusCode= setContentStatusCode(contentState);
                 style.setContentStatusCode(contentStatusCode);
@@ -1295,7 +1307,7 @@ public class ContentController implements ResourceAwareController,EventAwareCont
                 styleColorOrinNumber1 = styleColor.getOrinNumber();
                 earliestCompletionDate=styleColor.getCompletionDate();
                 final String colorCodeFromStyleColorOrinNumber=ExtractColorCode.getLastThreeDigitNRFColorCode(styleColorOrinNumber1);
-                System.out.println("styleColorOrinNumber1.."+styleColorOrinNumber1);
+               // System.out.println("styleColorOrinNumber1.."+styleColorOrinNumber1);
                 //Check if the Style Parent  Orin Number is same as  the  Style Color Child Orin Number
                 if(parentOrinNumber.equalsIgnoreCase(childsParentOrinNumber))
                 {
@@ -1312,7 +1324,7 @@ public class ContentController implements ResourceAwareController,EventAwareCont
                         earliestCompletionDate= styleColorCompletionDateList.get(0);
 
 
-                        LOGGER.info("earliestCompletionDate among Style Colors---parent child loop"+earliestCompletionDate);
+                    //    LOGGER.info("earliestCompletionDate among Style Colors---parent child loop"+earliestCompletionDate);
                         earliestCompletionDate= styleColorCompletionDateList.get(0);
                     }
 
@@ -1337,8 +1349,8 @@ public class ContentController implements ResourceAwareController,EventAwareCont
                     contentDisplayForm.getStyleInformationVO().setCompletionDateOfStyle(earliestCompletionDate);
                     //Add all the list of child Style Colors  to its respective parent Style
 
-                    LOGGER.info("earliestCompletionDate for Style after Parent Child relationship---for style----------------"+earliestCompletionDate);
-                    LOGGER.info("earliestCompletionDate for Style after Parent Child relationship-------------------"+style.getCompletionDate());
+                   // LOGGER.info("earliestCompletionDate for Style after Parent Child relationship---for style----------------"+earliestCompletionDate);
+                  //  LOGGER.info("earliestCompletionDate for Style after Parent Child relationship-------------------"+style.getCompletionDate());
                     style.setStyleColorList(subStyleColorList);
                     System.out.println("get the SKUList size..."+styleColor.getSkuList().size());
 
@@ -1529,7 +1541,7 @@ public class ContentController implements ResourceAwareController,EventAwareCont
 
         }
         catch (final PEPDelegateException e) {
-            LOGGER.severe("Exception occurred"+e.getMessage());
+            LOGGER.info("Exception occurred"+e.getMessage());
             contentDisplayForm.setFetchStyleInfoErrorMessage(ContentScreenConstants.FETCH_STYLE_INFO_ERROR_MESSAGE);
             modelAndView.addObject(ContentScreenConstants.CONTENT_DISPLAY_FORM, contentDisplayForm);
 
@@ -1601,9 +1613,7 @@ public class ContentController implements ResourceAwareController,EventAwareCont
             contentDisplayForm.setUpdateContentStatusMessage(updateContentStatusForStyleMessage);
             LOGGER.info(" contentDisplayForm.setUpdateContentStatusMessage(= "+ contentDisplayForm.getUpdateContentStatusMessage());
             modelAndView.addObject(ContentScreenConstants.CONTENT_DISPLAY_FORM, contentDisplayForm);
-
         }
-
     }
 
 
@@ -1620,30 +1630,17 @@ public class ContentController implements ResourceAwareController,EventAwareCont
 
     }
 
-
-
-
-
-
-
     /**
      * Form html dynamic display.
      */
     private void formHtmlDynamicDisplay() {
-
-
     }
-
-
 
     @Override
     public Object getAttribute(String arg0) {
         // TODO Auto-generated method stub
         return null;
     }
-
-
-
 
     @Override
     public Object getAttribute(String arg0, int arg1) {
@@ -1657,16 +1654,11 @@ public class ContentController implements ResourceAwareController,EventAwareCont
         return null;
     }
 
-
-
-
-
     @Override
     public Map<String, Object> getAttributeMap(int arg0) {
         // TODO Auto-generated method stub
         return null;
     }
-
 
 
     @Override
@@ -1700,7 +1692,6 @@ public class ContentController implements ResourceAwareController,EventAwareCont
 
         LOGGER.info("Start of getCarsBrandList ......");
         return lstCarBrandVO;
-
     }
 
 
@@ -1712,15 +1703,6 @@ public class ContentController implements ResourceAwareController,EventAwareCont
     public String getCategoryIdFromDropDown() {
         return categoryIdFromDropDown;
     }
-
-
-
-
-
-
-
-
-
 
     /**
      * Gets the changed iph category data.
@@ -1740,7 +1722,6 @@ public class ContentController implements ResourceAwareController,EventAwareCont
         ActionResponse response) throws IOException{
         LOGGER.info("----------------getChangedIPHCategoryData- on change of  drop down---------------");
 
-
         String  savedCategoryId= request.getParameter("savedCategoryId");
 
         LOGGER.info("-----------------savedCategoryId--------------"+savedCategoryId);
@@ -1750,118 +1731,87 @@ public class ContentController implements ResourceAwareController,EventAwareCont
 
         if(request.getParameter("dynamicCategoryId")!=null ){
             String dynamicCategoryId = request.getParameter("dynamicCategoryId");
-            LOGGER.info("-----------------dynamicCategoryId selected from the iph drop down---------------"+dynamicCategoryId);
             request.setAttribute("dynamicCategoryId", request.getParameter("dynamicCategoryId"));
-
         }
+        
         if(request.getParameter("omnichannelbrand")!=null ){
             String omnichannelbrand = request.getParameter("omnichannelbrand");
             request.setAttribute("omnichannelbrand", request.getParameter("omnichannelbrand"));
-            LOGGER.info("-----------------Start of handleRenderRequest--omnichannelbrand---------------"+omnichannelbrand);
-
         }
 
         if(request.getParameter("carbrand")!=null ){
             String carbrand = request.getParameter("carbrand");
             request.setAttribute("carbrand", request.getParameter("carbrand"));
-            LOGGER.info("-----------------Start of handleRenderRequest--carbrand---------------"+carbrand);
-
         }
 
         if(request.getParameter("productName")!=null ){
             String productName = request.getParameter("productName");
             request.setAttribute("productName", request.getParameter("productName"));
-            LOGGER.info("-----------------Start of handleRenderRequest--productName---------------"+productName);
-
         }
 
         if(request.getParameter("productDescription")!=null ){
             String productDescription = request.getParameter("productDescription");
             request.setAttribute("productDescription", request.getParameter("productDescription"));
-            LOGGER.info("-----------------Start of handleRenderRequest--productDescription---------------"+productDescription);
-
         }
-
 
         if(request.getParameter("omniColorFamily")!=null ){
             String omniColorFamily = request.getParameter("omniColorFamily");
             request.setAttribute("omniColorFamily", request.getParameter("omniColorFamily"));
-            LOGGER.info("-----------------Start of handleRenderRequest--omniColorFamily---------------"+omniColorFamily);
-
         }
 
         if(request.getParameter("secondaryColor1")!=null ){
             String secondaryColor1 = request.getParameter("secondaryColor1");
             request.setAttribute("secondaryColor1", request.getParameter("secondaryColor1"));
-            LOGGER.info("-----------------Start of handleRenderRequest--secondaryColor1---------------"+secondaryColor1);
-
         }
 
         if(request.getParameter("secondaryColor2")!=null ){
             String secondaryColor2 = request.getParameter("secondaryColor2");
             request.setAttribute("secondaryColor2", request.getParameter("secondaryColor2"));
-            LOGGER.info("-----------------Start of handleRenderRequest--secondaryColor2---------------"+secondaryColor2);
-
         }
 
         if(request.getParameter("secondaryColor3")!=null ){
             String secondaryColor3 = request.getParameter("secondaryColor3");
             request.setAttribute("secondaryColor3", request.getParameter("secondaryColor3"));
-            LOGGER.info("-----------------Start of handleRenderRequest--secondaryColor3---------------"+secondaryColor3);
-
         }
 
         if(request.getParameter("secondaryColor4")!=null ){
             String secondaryColor4 = request.getParameter("secondaryColor4");
             request.setAttribute("secondaryColor4", request.getParameter("secondaryColor4"));
-            LOGGER.info("-----------------Start of handleRenderRequest--secondaryColor4---------------"+secondaryColor4);
-
         }
 
         if(request.getParameter("omniChannelColorDescription")!=null ){
             String omniChannelColorDescription = request.getParameter("omniChannelColorDescription");
             request.setAttribute("omniChannelColorDescription", request.getParameter("omniChannelColorDescription"));
-            LOGGER.info("-----------------Start of handleRenderRequest--omniChannelColorDescription---------------"+omniChannelColorDescription);
-
         }
 
         if(request.getParameter("vendorColor")!=null ){
             String vendorColor = request.getParameter("vendorColor");
             request.setAttribute("vendorColor", request.getParameter("vendorColor"));
-            LOGGER.info("-----------------Start of handleRenderRequest--vendorColor---------------"+vendorColor);
-
         }
         String channelkExcValue = request.getParameter("channelExclId");
         if (channelkExcValue != null) {
-            LOGGER.info("-----------------Start of handleRenderRequest--belkExcValue---------------"+channelkExcValue);
             request.setAttribute("selectedChannelExclusive", channelkExcValue);
         }
         String belkExcValue = request.getParameter("belkExclId");
         if (belkExcValue != null) {
-            LOGGER.info("-----------------Start of handleRenderRequest--belkExcValue---------------"+belkExcValue);
             request.setAttribute("selectedBelkExclusive", belkExcValue);
         }
         String selectedGWP = request.getParameter("globalGWPId");
         if (selectedGWP != null) {
-            LOGGER.info("-----------------Start of handleRenderRequest--selectedGWP---------------"+selectedGWP);
             request.setAttribute("selectedGWP", selectedGWP);
         }
         String selectedPWP = request.getParameter("globalPWPId");
         if (selectedPWP != null) {
-            LOGGER.info("-----------------Start of handleRenderRequest--selectedPWP---------------"+selectedPWP);
             request.setAttribute("selectedPWP", selectedPWP);
         }
         String selectedPYG = request.getParameter("globalPYGId");
         if (selectedPYG != null) {
-            LOGGER.info("-----------------Start of handleRenderRequest--selectedPYG---------------"+selectedPYG);
             request.setAttribute("selectedPYG", selectedPYG);
         }
         String selectedBopis = request.getParameter("bopislId");
         if (selectedBopis != null) {
-            LOGGER.info("-----------------Start of handleRenderRequest--selectedBopis---------------"+selectedBopis);
             request.setAttribute("selectedBopis", selectedBopis);
         }
-        
         
     }
 
@@ -1967,13 +1917,14 @@ public class ContentController implements ResourceAwareController,EventAwareCont
             for(final ItemPrimaryHierarchyVO iphCategoryMerchandiseObject:iphCategoryFromAdseMerchHierarchyList)
             {
 
-                final String categoryIdFromMerchandise=  iphCategoryMerchandiseObject.getMerchandiseCategoryId();
-                final String categoryNameFromMerchandise= iphCategoryMerchandiseObject.getMerchandiseCategoryName();
+                final String categoryIdFromMerchandise =  iphCategoryMerchandiseObject.getMerchandiseCategoryId();
+                final String categoryNameFromMerchandise = iphCategoryMerchandiseObject.getMerchandiseCategoryName();
+                final String categoryFullPath = iphCategoryMerchandiseObject.getCategoryFullPath();
 
                 LOGGER.info("--------------categoryIdFromMerchandise----------------"+categoryIdFromMerchandise);
-                LOGGER.info("------------categoryNameFromMerchandise---------------"+categoryNameFromMerchandise);
+                LOGGER.info("------------categoryNameFromMerchandise---------------"+categoryFullPath);
 
-                categoryMap.put(categoryIdFromMerchandise, categoryNameFromMerchandise);
+                categoryMap.put(categoryIdFromMerchandise, categoryFullPath);
 
             }
         }
@@ -2385,7 +2336,7 @@ public class ContentController implements ResourceAwareController,EventAwareCont
     public ModelAndView handleRenderRequest(RenderRequest request,
         RenderResponse response) throws Exception
     {
-        LOGGER.info("-----------------Start of handleRenderRequest-----------------");
+        LOGGER.info(" ------------------------------------------------------- Start of  handleRenderRequest -----------------------------------"+new Date());
 
         String roleNameFromIPC=null;
         String orinNumber=null;
@@ -2505,40 +2456,37 @@ public class ContentController implements ResourceAwareController,EventAwareCont
         contentDisplayForm.setGlobalAttributesDisplay(styleAttributes);
 
         // Load Cars Brand List
-        List<CarBrandVO> lstCarBrands = getCarsBrandList(orinNumberFromIPC, contentDisplayForm.getStyleInformationVO().getVendorId());
+        List<CarBrandVO> lstCarBrands = getCarsBrandList(orinNumberFromIPC, contentDisplayForm.getStyleInformationVO().getSupplierSiteId());
         contentDisplayForm.setLstCarBrandVO(lstCarBrands);
        
-        List<OmniChannelBrandVO> lstOmniBrands = getOmniChannelBrandList(orinNumberFromIPC,
-            contentDisplayForm.getStyleInformationVO().getVendorId());
-
+        List<OmniChannelBrandVO> lstOmniBrands = getOmniChannelBrandList(orinNumberFromIPC, contentDisplayForm.getStyleInformationVO().getSupplierSiteId());
         contentDisplayForm.setLstOmniChannelBrandVO(lstOmniBrands); // TODO Need to pass supplier id
         
         //Get the IPH Categories to display on the  screen;
         String mappedCategoryId = displayIPHCategories(orinNumber,contentDisplayForm,request,response);
         
         if(mappedCategoryId != null && request.getAttribute("dynamicCategoryId") == null){
-            LOGGER.info("Inside mapped IPH Category.................................  ");
+            LOGGER.info("Inside mapped IPH Category..............................  ");
             displayAttributesOnLoad(request,response,contentDisplayForm,orinNumber, mappedCategoryId);
             if((lstCarBrands != null) && (lstCarBrands.size() > 0)){
                 String selectedBrand = lstCarBrands.get(0).getSelectedBrand();
-                 if(selectedBrand != null && !selectedBrand.trim().equalsIgnoreCase("")){
+                if(selectedBrand != null && !selectedBrand.trim().equalsIgnoreCase("")){
                         request.setAttribute("selectedCarbrand", selectedBrand) ;
-                }else{
-                    request.setAttribute("selectedCarbrand", "-1") ;
-                }
-            }else{
+                } 
+            } else {
                 request.setAttribute("selectedCarbrand", "-1") ;
             }
+            
             if((lstOmniBrands != null) && (lstOmniBrands.size() > 0)){
                 String selectedOmni = lstOmniBrands.get(0).getSelectedBrand();
                 if(selectedOmni != null && !selectedOmni.trim().equalsIgnoreCase("")){
-                    request.setAttribute("selectedOmnichannelbrand", (lstOmniBrands.get(0).getSelectedBrand().split("-"))[0]);
-                }else{
-                    request.setAttribute("selectedOmnichannelbrand", "-1");
-                }
-            }else{
+                    //request.setAttribute("selectedOmnichannelbrand", (lstOmniBrands.get(0).getSelectedBrand().split("-"))[0]);
+                    request.setAttribute("selectedOmnichannelbrand", (lstOmniBrands.get(0).getSelectedBrand()));
+                } 
+            } else { 
                 request.setAttribute("selectedOmnichannelbrand", "-1");
             }
+            
             if(styleAttributes != null){
                 if(styleAttributes.getBelkExclusive() != null && !styleAttributes.getBelkExclusive().trim().equalsIgnoreCase("")){
                     request.setAttribute("selectedBelkExclusive", styleAttributes.getBelkExclusive());
@@ -2585,49 +2533,49 @@ public class ContentController implements ResourceAwareController,EventAwareCont
             
             dynamicCategoryId =(String) request.getAttribute("dynamicCategoryId");
             displayAttributesOnChange(request,response,contentDisplayForm,orinNumber,dynamicCategoryId);
-            request.setAttribute("selectedCategory", dynamicCategoryId);
+           
             
             //Logic for highlighting the selected omnichannelbrand  in its drop down  on change of IPH Drop Down
             if(request.getAttribute("omnichannelbrand")!=null){
-                LOGGER.info("omnichannelbrand .... "+request.getAttribute("omnichannelbrand"));
+                //LOGGER.info("omnichannelbrand .... "+request.getAttribute("omnichannelbrand"));
                     request.setAttribute("selectedOmnichannelbrand", request.getAttribute("omnichannelbrand"));
             }
 
             //Logic for highlighting the selected carbrand  in its drop down  on change of IPH Drop Down
             if(request.getAttribute("carbrand")!=null){
-                    LOGGER.info("carbrand .... "+request.getAttribute("carbrand"));
+                    //LOGGER.info("carbrand .... "+request.getAttribute("carbrand"));
                     request.setAttribute("selectedCarbrand", request.getAttribute("carbrand"));
             }
             
             String channelExcValue = (String)request.getAttribute("selectedChannelExclusive");
             if(channelExcValue != null){
-                LOGGER.info("channelExcValue .... "+channelExcValue);
+                //LOGGER.info("channelExcValue .... "+channelExcValue);
                 request.setAttribute("selectedChannelExclusive", channelExcValue);
             }
             
             String belkExcValue = (String)request.getAttribute("selectedBelkExclusive");
             if(belkExcValue != null){
-                LOGGER.info("belkExcValue .... "+belkExcValue);
+               // LOGGER.info("belkExcValue .... "+belkExcValue);
                 request.setAttribute("selectedBelkExclusive", belkExcValue);
             }
             
             String selectedGWP = (String)request.getAttribute("selectedGWP");
-            LOGGER.info("selectedGWP.... "+selectedGWP);
+           // LOGGER.info("selectedGWP.... "+selectedGWP);
             if (selectedGWP != null) {
                 request.setAttribute("selectedGWP", selectedGWP);
             }
             String selectedPWP = (String)request.getAttribute("selectedPWP");
-            LOGGER.info("selectedPWP.... "+selectedPWP);
+            //LOGGER.info("selectedPWP.... "+selectedPWP);
             if (selectedPWP != null) {
                 request.setAttribute("selectedPWP", selectedPWP);
             }
             String selectedPYG = (String)request.getAttribute("selectedPYG");
-            LOGGER.info("selectedPYG.... "+selectedPYG);
+           // LOGGER.info("selectedPYG.... "+selectedPYG);
             if (selectedPYG != null) {
                 request.setAttribute("selectedPYG", selectedPYG);
             }
             String selectedBopis = (String)request.getAttribute("selectedBopis");
-            LOGGER.info("selectedBopis.... "+selectedBopis);
+            //LOGGER.info("selectedBopis.... "+selectedBopis);
             if (selectedBopis != null) {
                 request.setAttribute("selectedBopis", selectedBopis);
             }
@@ -2641,7 +2589,7 @@ public class ContentController implements ResourceAwareController,EventAwareCont
             modelAndView = new ModelAndView(null);
         }
 
-        LOGGER.info("-----------------End of handleRenderRequest-----------------");
+        LOGGER.info(" --------------------------------------------------------- End of handleRenderRequest ---------------------------------------------------"+new Date());
         return modelAndView;
 
     }
@@ -2666,10 +2614,10 @@ public class ContentController implements ResourceAwareController,EventAwareCont
         final String categoryKey = request.getParameter("categoryKey");
         LOGGER.info("Warning-------------------------------------------------" + categoryKey);
         if (StringUtils.isNotBlank(categoryKey)) {
-            LOGGER.info("@ResourceMapping-categoryKey--- " + categoryKey);
-            LOGGER.info("categoryKey---- " + categoryKey);
+           // LOGGER.info("@ResourceMapping-categoryKey--- " + categoryKey);
+           // LOGGER.info("categoryKey---- " + categoryKey);
             final String petId = request.getParameter("petIdForWebservice");
-            LOGGER.info("petId--------" + petId);
+           // LOGGER.info("petId--------" + petId);
             final DataObject dataObject = new DataObject(petId, categoryKey);
             final Gson gson = new Gson();
             // convert java object to JSON format,
@@ -2712,7 +2660,7 @@ public class ContentController implements ResourceAwareController,EventAwareCont
      * @return the string
      */
     private String iphMappingResponse(String orinNumber,
-        String dynamicCategoryId) {
+        String dynamicCategoryId, String skuIndicator) {
 
         LOGGER.info("orinNumber----"+orinNumber);
 
@@ -2729,6 +2677,9 @@ public class ContentController implements ResourceAwareController,EventAwareCont
         {
             iphMapping.setPetId(orinNumber);
         }
+        
+        iphMapping.setSKUindicator(skuIndicator);
+        
         final Gson gson = new Gson();
         //convert from JSON to String
         final String iphMappingRequest = gson.toJson(iphMapping);
@@ -2751,6 +2702,42 @@ public class ContentController implements ResourceAwareController,EventAwareCont
     }
 
 
+    /**
+     * Iph mapping response.
+     *
+     * @param orinNumber the orin number
+     * @param dynamicCategoryId the dynamic category id
+     * @return the string
+     */
+    private void callAsyncIphMappingResponse(String orinNumber,
+        String dynamicCategoryId, String skuIndicator) {
+
+        LOGGER.info("callAsyncIphMappingResponse----");
+
+        String iphMappingFlag="";
+
+        IPHMappingVO iphMapping = new IPHMappingVO();
+        if(StringUtils.isNotBlank(dynamicCategoryId))
+        {
+            iphMapping.setCategoryId(dynamicCategoryId);
+        }
+
+        if(StringUtils.isNotBlank(orinNumber))
+        {
+            iphMapping.setPetId(orinNumber);
+        }
+        
+        iphMapping.setSKUindicator(skuIndicator);
+        
+        final Gson gson = new Gson();
+        //convert from JSON to String
+        final String iphMappingRequest = gson.toJson(iphMapping);
+        LOGGER.info("callAsyncIphMappingResponse----"+iphMappingRequest);
+        contentDelegate.callasyncIPHMappingWebService(iphMappingRequest);
+        LOGGER.info("IPH Mapping callAsyncIphMappingResponse----");
+
+    }
+    
     /**
      * Checks if is disable save button flag.
      *
@@ -2797,14 +2784,7 @@ public class ContentController implements ResourceAwareController,EventAwareCont
     @ResourceMapping("saveContentPetAttributes")
     private void saveContentPetAttributes(ResourceRequest request,ResourceResponse response) {
         LOGGER.info("start of saveContentPetAttributes...");
-            boolean updateSaveStatus = false;
-            boolean updateIPHDDStatus = false;
-            boolean updateIPHTFStatus = false;
-            boolean updateIPHRBStatus = false;
-            boolean updateStyleStatus = false;
-            boolean updateBMDDStatus = false; 
-            boolean updateBMTFStatus = false; 
-            boolean updateBMRBStatus = false; 
+            boolean finalStatus = false;
             String formSessionKey = (String)request.getPortletSession().getAttribute("formSessionKey");
             ContentForm contentDisplayForm = (ContentForm)request.getPortletSession().getAttribute(formSessionKey);
           
@@ -2819,31 +2799,10 @@ public class ContentController implements ResourceAwareController,EventAwareCont
             JSONArray jsonArrayPetDtls = new JSONArray();
             jsonObj = new JSONObject();
             
-            if(iphCategoryDropDownId != null){
                 try {
-                String iphMappingFlag= iphMappingResponse(orinNumber,iphCategoryDropDownId);
-
-                LOGGER.info("iphMappingFlag --------------- "+iphMappingFlag);
-                     if(iphMappingFlag.equalsIgnoreCase("true")){
-                        
-                       //  updateSaveStatus = saveStyleColorAttributes(request,response);
-                         updateIPHDDStatus = saveIPHCategorySpecificAttributes(request,response);
-                         updateIPHTFStatus = saveIPHCategoryTextFieldSpecificAttributes(request,response);
-                         updateIPHRBStatus = saveIPHCategoryRadioButtonSpecificAttributes(request,response);
-                         updateStyleStatus = saveStyleAttributes(request,response);
-                         updateBMDDStatus = saveIPHBlueMartiniDropDownSpecificAttributes(request,response);
-                         updateBMTFStatus = saveIPHBlueMartiniTextFieldSpecificAttributes(request,response);
-                         updateBMRBStatus = saveBMCategoryRadioButtonSpecificAttributes(request,response);
+                          finalStatus = saveContentStyleLevelAttributes(request,response);
                          
-                        LOGGER.info("1"+updateSaveStatus+"2"+updateIPHDDStatus+"3"+updateIPHTFStatus+"4"+updateIPHRBStatus);
-                        LOGGER.info("5"+updateStyleStatus+"6"+updateBMDDStatus+"7"+updateBMTFStatus+"8"+updateBMRBStatus);
-                         
-                    }  else    {
-                        jsonObj.put("UpdateStatus","Failed" );
-                    }
-                    //updateSaveStatus && 
-                     if(updateIPHDDStatus && updateIPHTFStatus && updateIPHRBStatus && updateStyleStatus && updateBMDDStatus &&
-                             updateBMTFStatus && updateBMRBStatus){
+                     if(finalStatus){
                          jsonObj.put("UpdateStatus","Success" );
                      }else{
                          jsonObj.put("UpdateStatus","Failed" ); 
@@ -2858,9 +2817,352 @@ public class ContentController implements ResourceAwareController,EventAwareCont
                     // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
-            }
     }
 
+    /**
+     * Save content style level attributes.
+     *
+     * @param request the request
+     * @param response the response
+     * @return true, if successful
+     */
+    private boolean saveContentStyleLevelAttributes(ResourceRequest request,
+        ResourceResponse response){
+        boolean updateStatus = false;
+        AttributesBean attributesBeanProductName = null;
+        
+        List<AttributesBean> beanList = null;
+        final ItemIdBean finalPIMAndBMAttributesBean = new ItemIdBean();
+        final String stylePetId = request.getParameter("stylePetOrinNumber");
+        beanList = new ArrayList<AttributesBean>();// Final Bean List
+        
+        String dropValue = request.getParameter("dropdownhidden_id1");
+        if((dropValue != null) && StringUtils.isNotEmpty(dropValue) ){
+            String dropDwonAttName[] = dropValue.split("~");
+            if(dropDwonAttName != null){
+                for(int i=0; i<dropDwonAttName.length; i++){
+                    String innerValue = dropDwonAttName[i];
+                    if(innerValue != null){
+                        String values[] = innerValue.split("#");
+                        // row[3]!=null?row[3].toString():null
+                        if((values!=null) && (values.length>0)) {
+                            String attributeName=values[0]!=null?values[0]:null;
+                            String attributeXPath=values[1]!=null?values[1]:null;
+                            String userSelected=values[2]!=null?values[2]:null;
+                            if(userSelected != null && !userSelected.equalsIgnoreCase("-1")){
+                                userSelected = StringEscapeUtils.escapeHtml4(userSelected);
+                                attributesBeanProductName = new AttributesBean(attributeXPath,userSelected);
+                                beanList.add(attributesBeanProductName);
+                            }
+                        }
+                    }
+                }
+
+            }
+        }//End Main PIM MultiSelect 
+        
+        String  productAttributeRadionValues = request.getParameter("pimradioValues");
+        if((productAttributeRadionValues != null) && StringUtils.isNotEmpty(productAttributeRadionValues) ){
+            String  radionAttributeName[] = productAttributeRadionValues.split("~");
+            if(radionAttributeName != null){
+                for(int i=0; i<radionAttributeName.length; i++){
+                    String innerValue = radionAttributeName[i];
+                    if(innerValue != null){
+                        String values[] = innerValue.split("#");
+                        if((values!=null) && (values.length>0))
+                        {
+                            String attributeName=values[0]!=null?values[0]:null;
+                            String attributeXPath=values[1]!=null?values[1]:null;
+                            String enteredValues="";
+                            if(values.length==3)//The user has entered the values in the text fields
+                            {
+                                String userSelected=values[2]!=null?values[2]:null;
+                                if (StringUtils.isNotBlank(userSelected)) {
+                                    enteredValues = userSelected;
+                                }
+                                else {
+                                    enteredValues = "";
+                                }
+                            }else{//The user did not enter  the values in the text fields,update the pim database text field to blank
+                                enteredValues = "";
+                            }
+                            attributesBeanProductName = new AttributesBean(attributeXPath,enteredValues);
+                            beanList.add(attributesBeanProductName);
+                        }
+                    }
+                }
+            }
+        } // End of PIM Radio buttons
+        
+        String  productAttributeTextFieldValues = request.getParameter("textFieldsValues");
+        if((productAttributeTextFieldValues != null) && StringUtils.isNotEmpty(productAttributeTextFieldValues) ){
+            String  textFieldAttributeName[] = productAttributeTextFieldValues.split("~");
+            if(textFieldAttributeName != null){
+                for(int i=0; i<textFieldAttributeName.length; i++){
+                    String innerValue = textFieldAttributeName[i];
+                    if(innerValue != null){
+                        String values[] = innerValue.split("#");
+                        if((values!=null) && (values.length>0)) {
+                            String attributeName=values[0]!=null?values[0]:null;
+                            String attributeXPath=values[1]!=null?values[1]:null;
+                            String enteredValues="";
+                            if(values.length==3)//The user has entered the values in the text fields
+                            {
+                                String userSelected=values[2]!=null?values[2]:null;
+                                if (StringUtils.isNotBlank(userSelected)) {
+                                    enteredValues = userSelected;
+                                } else {
+                                    enteredValues = "";
+                                }
+                            }else{//The user did not enter  the values in the text fields,update the pim database text field to blank
+                                enteredValues = "";
+                            }
+                            attributesBeanProductName = new AttributesBean(attributeXPath,enteredValues);
+                            beanList.add(attributesBeanProductName);
+                        }
+                    }
+                }
+            }
+        } // End of PIM Text Fields
+        
+        String bmDropValue = request.getParameter("blueMartiniDropdownhidden_id1");
+        if((bmDropValue != null) && StringUtils.isNotEmpty(bmDropValue) ){
+            String dropDwonAttName[] = bmDropValue.split("~");
+            if(dropDwonAttName != null){
+                for(int i=0; i<dropDwonAttName.length; i++){
+                    String innerValue = dropDwonAttName[i];
+                    if(innerValue != null){
+                        String values[] = innerValue.split("#");
+                        // row[3]!=null?row[3].toString():null
+                        if((values!=null) && (values.length>0))
+                        {
+                            String attributeName=values[0]!=null?values[0]:null;
+                            String attributeXPath=values[1]!=null?values[1]:null;
+                            String userSelected=values[2]!=null?values[2]:null;
+                            if(userSelected != null && !userSelected.equalsIgnoreCase("-1")){
+                                userSelected = StringEscapeUtils.escapeHtml4(userSelected);
+                                attributesBeanProductName = new AttributesBean(attributeXPath,userSelected);
+                                beanList.add(attributesBeanProductName);
+                            }
+                        }
+                    }
+                }
+            }
+        } // End of BM MultiSelect attributes
+        
+        String  bmProductAttributeRadionValues = request.getParameter("bmradioValues");
+        if((bmProductAttributeRadionValues != null) && StringUtils.isNotEmpty(bmProductAttributeRadionValues) ){
+            String  radionAttributeName[] = bmProductAttributeRadionValues.split("~");
+            if(radionAttributeName != null){
+                for(int i=0; i<radionAttributeName.length; i++){
+                    String innerValue = radionAttributeName[i];
+                    if(innerValue != null){
+                        String values[] = innerValue.split("#");
+                        if((values!=null) && (values.length>0))
+                        {
+                            String attributeName=values[0]!=null?values[0]:null;
+                            String attributeXPath=values[1]!=null?values[1]:null;
+                            String enteredValues="";
+                            if(values.length==3)//The user has entered the values in the text fields
+                            {
+                                String userSelected=values[2]!=null?values[2]:null;
+                                if (StringUtils.isNotBlank(userSelected)) {
+                                    enteredValues = userSelected;
+                                }
+                                else {
+                                    enteredValues = "";
+                                }
+                            }else{//The user did not enter  the values in the text fields,update the pim database text field to blank
+                                enteredValues = "";
+                            }
+                            attributesBeanProductName = new AttributesBean(attributeXPath,enteredValues);
+                            beanList.add(attributesBeanProductName);
+
+                        }
+                    }
+                }
+
+            }
+        } // End of BM Radio attributes
+        
+        String  bmAttributeTextFieldValues = request.getParameter("bmTextFieldsValues");
+        if((bmAttributeTextFieldValues != null) && StringUtils.isNotEmpty(bmAttributeTextFieldValues) ){
+            String  textFieldAttributeName[] = bmAttributeTextFieldValues.split("~");
+            if(textFieldAttributeName != null){
+                for(int i=0; i<textFieldAttributeName.length; i++){
+                    String innerValue = textFieldAttributeName[i];
+                    if(innerValue != null){
+                        String values[] = innerValue.split("#");
+                        if((values!=null) && (values.length>0))  {
+                            String attributeName=values[0]!=null?values[0]:null;
+                            String attributeXPath=values[1]!=null?values[1]:null;
+                            String enteredValues="";
+                            if(values.length==3)//The user has entered the values in the text fields
+                            {
+                                String userSelected=values[2]!=null?values[2]:null;
+                                if (StringUtils.isNotBlank(userSelected)) {
+                                    enteredValues = userSelected;
+                                }
+                                else {
+                                    enteredValues = "";
+                                }
+                            }else{//The user did not enter  the values in the text fields,update the pim database text field to blank
+                                enteredValues = "";
+                            }
+                            attributesBeanProductName = new AttributesBean(attributeXPath,enteredValues);
+                            beanList.add(attributesBeanProductName);
+                        }
+                    }
+                }
+            }
+        } // End of BM Text Field attributes
+        
+        // Style/Global Attributes....
+        String styleReq=request.getParameter("styleReq");
+        String  complexPackReq=request.getParameter("complexPackReq");
+       // final String stylePetId = request.getParameter("stylePetOrinNumber");
+        
+        final String productName = request.getParameter("productName");
+        final String productDescription = request.getParameter("productDescription");
+        final String omniBrandCode = request.getParameter("selectedOmniBrand");
+        final String carsBrandCode = request.getParameter("selectedCarsBrand");
+        final String belkExclusive = request.getParameter("belkExclusive");
+        final String gWPValue = request.getParameter("GWPValue");
+        final String pWPValue = request.getParameter("PWPValue");
+        final String pYGValue = request.getParameter("PYGValue");
+        final String channelExclusive = request.getParameter("channelExclusive");
+        final String bopisValue = request.getParameter("bopisSelectedValue");
+        
+        if(StringUtils.isNotBlank(styleReq) && styleReq.equalsIgnoreCase("Style"))        {
+           
+            final String productNameXpath=ContentScreenConstants.PRODUCT_NAME_XPATH;
+            final String productDescriptionXpath=ContentScreenConstants.PRODUCT_DESCRIPTION_XPATH;
+            final String omniChannelBrandXpath = ContentScreenConstants.OMNICHANNEL_BRAND_XPATH;
+            final String carsBrandXpath = ContentScreenConstants.CARS_BRAND_XPATH;
+            final String belkExclusiveXpath =  ContentScreenConstants.BELK_EXCLUSIVE_XPATH;
+            final String gWPValueXpath =  ContentScreenConstants.GWP_XPATH;
+            final String pWPValueXpath =  ContentScreenConstants.PWP_XPATH;
+            final String pYGValueXpath =  ContentScreenConstants.PYG_XPATH;
+            final String channelExclusiveXpath =  ContentScreenConstants.CHANNEL_EXCLUSIVE_XPATH;
+            final String bopisXpath =  ContentScreenConstants.BOPIS_XPATH;
+            
+            final AttributesBean attributesBeanProductNameStyle = new AttributesBean(productNameXpath,productName);
+            final AttributesBean attributesBeanProductDescriptionStyle = new AttributesBean(productDescriptionXpath,productDescription);
+            beanList.add(attributesBeanProductNameStyle);
+            beanList.add(attributesBeanProductDescriptionStyle);
+           
+            if(StringUtils.isNotBlank(belkExclusive))  {
+                final AttributesBean attributesBeanBelkExclusive = new AttributesBean(belkExclusiveXpath,belkExclusive);
+                beanList.add(attributesBeanBelkExclusive);
+            }
+            if(StringUtils.isNotBlank(channelExclusive) && !channelExclusive.equalsIgnoreCase("-1"))  {
+                final AttributesBean attributesBeanChannelExclusive = new AttributesBean(channelExclusiveXpath,channelExclusive);
+                beanList.add(attributesBeanChannelExclusive);
+            }
+            if(StringUtils.isNotBlank(bopisValue) && !bopisValue.equalsIgnoreCase("-1"))  {
+                final AttributesBean attributesBopisExclusive = new AttributesBean(bopisXpath,bopisValue);
+                beanList.add(attributesBopisExclusive);
+            }
+            if(StringUtils.isNotBlank(gWPValue))  {
+                final AttributesBean attributesBeangWP = new AttributesBean(gWPValueXpath,gWPValue);
+                beanList.add(attributesBeangWP);
+            }
+            if(StringUtils.isNotBlank(pWPValue))  {
+                final AttributesBean attributesBeanpWPValue = new AttributesBean(pWPValueXpath,pWPValue);
+                beanList.add(attributesBeanpWPValue);
+            }
+            if(StringUtils.isNotBlank(pYGValue))  {
+                final AttributesBean attributesBeanpYGValue = new AttributesBean(pYGValueXpath,pYGValue);
+                beanList.add(attributesBeanpYGValue);
+            }
+            if((omniBrandCode !=null) && StringUtils.isNotBlank(omniBrandCode) && !omniBrandCode.equalsIgnoreCase("-1"))  {
+                final AttributesBean attributesOmniBrand = new AttributesBean(omniChannelBrandXpath,(omniBrandCode));
+                beanList.add(attributesOmniBrand);
+            }
+            if((carsBrandCode != null) && StringUtils.isNotBlank(carsBrandCode) && !carsBrandCode.equalsIgnoreCase("-1")) {
+                final AttributesBean attributeCarsBrandCode = new AttributesBean(carsBrandXpath,(carsBrandCode));
+                beanList.add(attributeCarsBrandCode);
+            }
+           
+        }  else if(StringUtils.isNotBlank(complexPackReq) && complexPackReq.equalsIgnoreCase("Complex Pack"))  {
+            final String productNameXpath=ContentScreenConstants.PRODUCT_NAME_COMPLEX_PACK_XPATH;
+            final String productDescriptionXpath=ContentScreenConstants.PRODUCT_DESCRIPTION_COMPLEX_PACK_XPATH;
+            final String omniChannelBrandXpath = ContentScreenConstants.OMNICHANNEL_BRAND_COMPLEX_PACK_XPATH;
+            final String carsBrandXpath = ContentScreenConstants.CARS_BRAND_COMPLEX_PACK_XPATH;
+            final String belkExclusiveXpath =  ContentScreenConstants.BELK_EXCLUSIVE_PACK_XPATH;
+            final String gWPValueXpath =  ContentScreenConstants.GWP_PACK_XPATH;
+            final String pWPValueXpath =  ContentScreenConstants.PWP_PACK_XPATH;
+            final String pYGValueXpath =  ContentScreenConstants.PYG_PACK_XPATH;
+            final String channelExclusiveXpath =  ContentScreenConstants.CHANNEL_EXCLUSIVE_PACK_XPATH;
+            final String bopisXpath =  ContentScreenConstants.BOPIS_PACK_XPATH;
+
+            //form JSON request to web service
+
+            final AttributesBean attributesBeanProductNamePack = new AttributesBean(productNameXpath,productName);
+            final AttributesBean attributesBeanProductDescriptionPack = new AttributesBean(productDescriptionXpath,productDescription);
+
+            beanList.add(attributesBeanProductNamePack);
+            beanList.add(attributesBeanProductDescriptionPack);
+
+            if(StringUtils.isNotBlank(belkExclusive))  {
+                final AttributesBean attributesBeanBelkExclusive = new AttributesBean(belkExclusiveXpath,belkExclusive);
+                beanList.add(attributesBeanBelkExclusive);
+            }
+            if(StringUtils.isNotBlank(channelExclusive) && !channelExclusive.equalsIgnoreCase("-1"))  {
+                final AttributesBean attributesBeanChannelExclusive = new AttributesBean(channelExclusiveXpath,channelExclusive);
+                beanList.add(attributesBeanChannelExclusive);
+            }
+            if(StringUtils.isNotBlank(bopisValue) && !bopisValue.equalsIgnoreCase("-1"))  {
+                final AttributesBean attributesBopisExclusive = new AttributesBean(bopisXpath,bopisValue);
+                beanList.add(attributesBopisExclusive);
+            }
+            if(StringUtils.isNotBlank(gWPValue))  {
+                final AttributesBean attributesBeangWP = new AttributesBean(gWPValueXpath,gWPValue);
+                beanList.add(attributesBeangWP);
+            }
+            if(StringUtils.isNotBlank(pWPValue))  {
+                final AttributesBean attributesBeanpWPValue = new AttributesBean(pWPValueXpath,pWPValue);
+                beanList.add(attributesBeanpWPValue);
+            }
+            if(StringUtils.isNotBlank(pYGValue))  {
+                final AttributesBean attributesBeanpYGValue = new AttributesBean(pYGValueXpath,pYGValue);
+                beanList.add(attributesBeanpYGValue);
+            }
+            //Added by Sriharsha
+            if((omniBrandCode !=null) && StringUtils.isNotBlank(omniBrandCode) && !omniBrandCode.equalsIgnoreCase("-1"))  {
+                final AttributesBean attributesOmniBrand = new AttributesBean(omniChannelBrandXpath,(omniBrandCode));
+                beanList.add(attributesOmniBrand);
+            }
+            if((carsBrandCode != null) && StringUtils.isNotBlank(carsBrandCode) && !carsBrandCode.equalsIgnoreCase("-1"))  {
+                final AttributesBean attributeCarsBrandCode = new AttributesBean(carsBrandXpath,(carsBrandCode));
+                beanList.add(attributeCarsBrandCode);
+            }
+        }
+        
+        // Final adding... 
+        finalPIMAndBMAttributesBean.setItemId(stylePetId);
+        finalPIMAndBMAttributesBean.setList(beanList);
+        
+        // Call Web service...
+        final Gson gson = new Gson();
+        //convert from JSON to String
+        final String createContentWebServiceReq = gson.toJson(finalPIMAndBMAttributesBean);
+
+        //request to web service
+        LOGGER.info("Final Save Request object ------------------------------------------> "+createContentWebServiceReq);
+        //call web service and read response
+        LOGGER.info("Before Calling PIM ::  "+new Date());
+        final String webserviceResponseMessage=contentDelegate.createContentWebService(createContentWebServiceReq);
+        LOGGER.info("After Calling PIM ::  "+new Date());
+        if(webserviceResponseMessage != null && webserviceResponseMessage.trim().equalsIgnoreCase("SUCCESS"))   {
+            updateStatus = true;
+        } else {
+            updateStatus = false;
+        }
+        LOGGER.info("Final Save Status --------------------"+updateStatus);
+        return updateStatus;
+    }
+    
     
     @ResourceMapping("saveContentColorAttributes")
     private void saveContentPetColortAttributes(ResourceRequest request,ResourceResponse response) {
@@ -2880,14 +3182,10 @@ public class ContentController implements ResourceAwareController,EventAwareCont
             JSONObject jsonObj = null;
             JSONArray jsonArrayPetDtls = new JSONArray();
             jsonObj = new JSONObject();
-            
-         
                try {
-                         updateSaveStatus = saveStyleColorAttributes(request,response);
-                    
+                        updateSaveStatus = saveStyleColorAttributes(request,response);
                         LOGGER.info("1"+updateSaveStatus);
                         
-                    
                      if(updateSaveStatus ){
                          jsonObj.put("UpdateStatus","Success" );
                      }else{
@@ -2905,838 +3203,7 @@ public class ContentController implements ResourceAwareController,EventAwareCont
                 }
     }
     
-    /**
-     * Save iph blue martini drop down specific attributes.
-     *
-     * @param request the request
-     * @param response the response
-     */
-    private boolean saveIPHBlueMartiniDropDownSpecificAttributes(
-        ResourceRequest request, ResourceResponse response) {
-        LOGGER.info("Start of save saveIPHBlueMartiniDropDownSpecificAttributes- ----------- ");
-        boolean updateStatus = false;
-        List<AttributesBean> beanList = null;
-        final String stylePetId = request.getParameter("stylePetOrinNumber");
-        String dropValue = request.getParameter("blueMartiniDropdownhidden_id1");
-        final ItemIdBean listOfBMDropDownAttributes = new ItemIdBean();
-        if((dropValue != null) && StringUtils.isNotEmpty(dropValue) ){
-            AttributesBean attributesBeanProductName = null;
-            beanList = new ArrayList<AttributesBean>();
-            String dropDwonAttName[] = dropValue.split("~");
-
-            if(dropDwonAttName != null){
-                for(int i=0; i<dropDwonAttName.length; i++){
-
-                    String innerValue = dropDwonAttName[i];
-                    if(innerValue != null){
-                        String values[] = innerValue.split("#");
-                        // row[3]!=null?row[3].toString():null
-                        if((values!=null) && (values.length>0))
-                        {
-                            String attributeName=values[0]!=null?values[0]:null;
-                            String attributeXPath=values[1]!=null?values[1]:null;
-                            String userSelected=values[2]!=null?values[2]:null;
-                            attributesBeanProductName = new AttributesBean(attributeXPath,userSelected);
-                            beanList.add(attributesBeanProductName);
-
-                        }
-
-                    }
-                }
-
-            }
-        }else{
-            updateStatus = true;
-        }
-
-        listOfBMDropDownAttributes.setItemId(stylePetId);
-        listOfBMDropDownAttributes.setList(beanList);
-
-        if((listOfBMDropDownAttributes.getList()!=null) && (listOfBMDropDownAttributes.getList().size()>0))
-        {
-
-            final Gson gson = new Gson();
-            //convert from JSON to String
-            final String createContentWebServiceReq = gson.toJson(listOfBMDropDownAttributes);
-
-            //request to web service
-            LOGGER.info("BM Drop Down  Attributes Request Object --------------------------------------------------------------> "+createContentWebServiceReq);
-            
-            //call web service and read response
-            final String webserviceResponseMessage=contentDelegate.createContentWebService(createContentWebServiceReq);
-            if(webserviceResponseMessage !=null && webserviceResponseMessage.trim().equalsIgnoreCase("SUCCESS"))
-            {
-                updateStatus = true;
-            }
-            else
-            {
-                updateStatus = false;
-            }
-        }else{
-            updateStatus = true;
-        }
-        LOGGER.info("BM Drop Down  Attributes Response Object --------------------------------------------------------------> "+updateStatus);
-        LOGGER.info("End of save saveIPHBlueMartiniDropDownSpecificAttributes- ----------- ");
-        return updateStatus;
-    }
-
-    /**
-     * Save iph blue martini text field specific attributes.
-     *
-     * @param request the request
-     * @param response the response
-     */
-    private boolean saveIPHBlueMartiniTextFieldSpecificAttributes(
-        ResourceRequest request, ResourceResponse response) {
-        LOGGER.info("Start of  saveIPHBlueMartiniTextFieldSpecificAttributes------------ ");
-        boolean updateStatus = false;
-        List<AttributesBean> beanList = null;
-        final String stylePetId = request.getParameter("stylePetOrinNumber");
-        String  bmAttributeTextFieldValues = request.getParameter("bmTextFieldsValues");
-        final ItemIdBean listOfTextFieldAttributes = new ItemIdBean();
-        if((bmAttributeTextFieldValues != null) && StringUtils.isNotEmpty(bmAttributeTextFieldValues) ){
-            AttributesBean attributesBeanProductName = null;
-            beanList = new ArrayList<AttributesBean>();
-            String  textFieldAttributeName[] = bmAttributeTextFieldValues.split("~");
-            if(textFieldAttributeName != null){
-                for(int i=0; i<textFieldAttributeName.length; i++){
-
-                    String innerValue = textFieldAttributeName[i];
-                    if(innerValue != null){
-                        String values[] = innerValue.split("#");
-                        if((values!=null) && (values.length>0))
-                        {
-                            String attributeName=values[0]!=null?values[0]:null;
-                            String attributeXPath=values[1]!=null?values[1]:null;
-
-                            String enteredValues="";
-                            if(values.length==3)//The user has entered the values in the text fields
-                            {
-                                String userSelected=values[2]!=null?values[2]:null;
-
-                                if(StringUtils.isNotBlank(userSelected))
-                                {
-
-                                    enteredValues=userSelected;
-                                }
-                                else
-                                {
-                                    enteredValues="";
-                                }
-                            }else{//The user did not enter  the values in the text fields,update the pim database text field to blank
-
-                                enteredValues = "";
-                            }
-                            attributesBeanProductName = new AttributesBean(attributeXPath,enteredValues);
-                            beanList.add(attributesBeanProductName);
-
-                        }
-
-                    }
-                }
-
-            }
-        }else{
-            updateStatus = true;
-        }
-
-        listOfTextFieldAttributes.setItemId(stylePetId);
-        listOfTextFieldAttributes.setList(beanList);
-
-        if((listOfTextFieldAttributes.getList()!=null) && (listOfTextFieldAttributes.getList().size()>0))
-        {
-
-            final Gson gson = new Gson();
-            //convert from JSON to String
-            final String createContentWebServiceReq = gson.toJson(listOfTextFieldAttributes);
-
-            //request to web service
-            LOGGER.info("BM Text Field  Attributes Request Object --------------------------------------------------------------> "+createContentWebServiceReq);
-            
-            //call web service and read response
-            final String webserviceResponseMessage=contentDelegate.createContentWebService(createContentWebServiceReq);
-            if(webserviceResponseMessage != null && webserviceResponseMessage.trim().equalsIgnoreCase("SUCCESS"))
-            {
-                updateStatus = true;
-            }
-            else
-            {
-                updateStatus = false;
-            }
-        }else{
-            updateStatus = true;
-        }
-        LOGGER.info("BM Text Field  Attributes Response Object --------------------------------------------------------------> "+updateStatus);
-        LOGGER.info("End of  saveIPHBlueMartiniTextFieldSpecificAttributes------------ ");
-        return updateStatus;
-    }
-
-    /**
-     * Save iph category text field specific attributes.
-     *
-     * @param request the request
-     * @param response the response
-     */
-    private boolean saveBMCategoryRadioButtonSpecificAttributes(
-        ResourceRequest request, ResourceResponse response) {
-        LOGGER.info("Start of save saveBMCategoryRadioButtonSpecificAttributes- ----------- ");
-        boolean updateStatus = false;
-        List<AttributesBean> beanList = null;
-        final String stylePetId = request.getParameter("stylePetOrinNumber");
-        String  productAttributeRadionValues = request.getParameter("bmradioValues");
-        final ItemIdBean listOfRadionAttributes = new ItemIdBean();
-        if((productAttributeRadionValues != null) && StringUtils.isNotEmpty(productAttributeRadionValues) ){
-            AttributesBean attributesBeanProductName = null;
-            beanList = new ArrayList<AttributesBean>();
-            String  radionAttributeName[] = productAttributeRadionValues.split("~");
-            if(radionAttributeName != null){
-                for(int i=0; i<radionAttributeName.length; i++){
-
-                    String innerValue = radionAttributeName[i];
-                    if(innerValue != null){
-                        String values[] = innerValue.split("#");
-                        if((values!=null) && (values.length>0))
-                        {
-                            String attributeName=values[0]!=null?values[0]:null;
-                            String attributeXPath=values[1]!=null?values[1]:null;
-                            String enteredValues="";
-                            if(values.length==3)//The user has entered the values in the text fields
-                            {
-                                String userSelected=values[2]!=null?values[2]:null;
-                                if(StringUtils.isNotBlank(userSelected))
-                                {
-
-                                    enteredValues=userSelected;
-                                }
-                                else
-                                {
-                                    enteredValues="";
-                                }
-                            }else{//The user did not enter  the values in the text fields,update the pim database text field to blank
-
-                                enteredValues = "";
-                            }
-
-                            attributesBeanProductName = new AttributesBean(attributeXPath,enteredValues);
-                            beanList.add(attributesBeanProductName);
-
-                        }
-
-                    }
-                }
-
-            }
-        }else{
-            updateStatus = true;
-        }
-
-        listOfRadionAttributes.setItemId(stylePetId);
-        listOfRadionAttributes.setList(beanList);
-
-        if((listOfRadionAttributes.getList()!=null) && (listOfRadionAttributes.getList().size()>0))
-        {
-            final Gson gson = new Gson();
-            //convert from JSON to String
-            final String createContentWebServiceReq = gson.toJson(listOfRadionAttributes);
-
-            //request to web service
-            LOGGER.info("BM Radio Button Attributes Request Object --------------------------------------------------------------> "+createContentWebServiceReq);
-            
-            //call web service and read response
-            final String webserviceResponseMessage = contentDelegate.createContentWebService(createContentWebServiceReq);
-            if(webserviceResponseMessage !=null && webserviceResponseMessage.trim().equalsIgnoreCase("SUCCESS"))
-            {
-                updateStatus = true;
-            }
-            else
-            {
-                updateStatus = false;
-            }
-        }else{
-            updateStatus = true;
-        }
-        LOGGER.info("BM Radio Button Attributes Response Object --------------------------------------------------------------> "+updateStatus);
-        LOGGER.info("End  of saving saveBMCategoryRadioButtonSpecificAttributes..............................");
-        return updateStatus;
-    }
-    /**
-     * Save iph blue martini text field specific attributes.
-     *
-     * @param request the request
-     * @param response the response
-     */
-    private void saveIPHBlueMartiniRadionSpecificAttributes(
-        ResourceRequest request, ResourceResponse response) {
-        LOGGER.info("start of  saveIPHBlueMartiniRadionSpecificAttributes------------ ");
-        List<AttributesBean> beanList = null;
-        final String stylePetId = request.getParameter("stylePetOrinNumber");
-        String  bmAttributeRadioValues = request.getParameter("bmradioValues");
-        final ItemIdBean listOfRadioAttributes = new ItemIdBean();
-        if((bmAttributeRadioValues != null) && StringUtils.isNotEmpty(bmAttributeRadioValues) ){
-            AttributesBean attributesBeanProductName = null;
-            beanList = new ArrayList<AttributesBean>();
-            String  textRadioAttributeName[] = bmAttributeRadioValues.split("~");
-            if(textRadioAttributeName != null){
-                for(int i=0; i<textRadioAttributeName.length; i++){
-
-                    String innerValue = textRadioAttributeName[i];
-                    if(innerValue != null){
-                        String values[] = innerValue.split("#");
-                        if((values!=null) && (values.length>0))
-                        {
-                            String attributeName=values[0]!=null?values[0]:null;
-                            String attributeXPath=values[1]!=null?values[1]:null;
-
-                            String enteredValues="";
-                            if(values.length==3)//The user has entered the values in the text fields
-                            {
-                                String userSelected=values[2]!=null?values[2]:null;
-
-                                if(StringUtils.isNotBlank(userSelected))
-                                {
-
-                                    enteredValues=userSelected;
-                                }
-                                else
-                                {
-                                    enteredValues="";
-                                }
-                            }else{//The user did not enter  the values in the text fields,update the pim database text field to blank
-
-                                enteredValues = "";
-                            }
-                            attributesBeanProductName = new AttributesBean(attributeXPath,enteredValues);
-                            beanList.add(attributesBeanProductName);
-
-                        }
-
-                    }
-                }
-
-            }
-        }
-
-        listOfRadioAttributes.setItemId(stylePetId);
-        listOfRadioAttributes.setList(beanList);
-
-        if((listOfRadioAttributes.getList()!=null) && (listOfRadioAttributes.getList().size()>0))
-        {
-
-            final Gson gson = new Gson();
-            //convert from JSON to String
-            final String createContentWebServiceReq = gson.toJson(listOfRadioAttributes);
-
-            //request to web service
-            LOGGER.info("BM Text Field  Attributes Request Object --------------------------------------------------------------> "+createContentWebServiceReq);
-            
-            //call web service and read response
-            final String webserviceResponseMessage=contentDelegate.createContentWebService(createContentWebServiceReq);
-            final WebserviceResponse webserviceResponse = new WebserviceResponse();
-            webserviceResponse.setMessage(webserviceResponseMessage);
-            final JsonObject jsonObject = new JsonObject();
-            final JsonElement webserviceResponseObject = gson.toJsonTree(webserviceResponse);
-            jsonObject.add("responseObject",webserviceResponseObject);
-            LOGGER.info("BM Text Field  Attributes Response Object --------------------------------------------------------------> "+webserviceResponseObject);
-            try {
-                response.getWriter().write(jsonObject.toString());
-            }
-            catch (final IOException e) {
-
-                e.printStackTrace();
-            }
-        }
-
-        LOGGER.info("End of  saveIPHBlueMartiniTextFieldSpecificAttributes------------ ");
-    }
-    /**
-     * Save iph category specific attributes.
-     *
-     * @param request the request
-     * @param response the response
-     */
-    private boolean saveIPHCategorySpecificAttributes(ResourceRequest request,
-        ResourceResponse response) {
-        LOGGER.info("Start  of saving saveIPHCategorySpecificAttributes..............................");
-        boolean updateStatus = false;
-        List<AttributesBean> beanList = null;
-        final String stylePetId = request.getParameter("stylePetOrinNumber");
-        String dropValue = request.getParameter("dropdownhidden_id1");
-        final ItemIdBean listOfDropAttributes = new ItemIdBean();
-        if((dropValue != null) && StringUtils.isNotEmpty(dropValue) ){
-            AttributesBean attributesBeanProductName = null;
-            beanList = new ArrayList<AttributesBean>();
-            String dropDwonAttName[] = dropValue.split("~");
-
-            if(dropDwonAttName != null){
-                for(int i=0; i<dropDwonAttName.length; i++){
-
-                    String innerValue = dropDwonAttName[i];
-                    if(innerValue != null){
-                        String values[] = innerValue.split("#");
-                        // row[3]!=null?row[3].toString():null
-                        if((values!=null) && (values.length>0))
-                        {
-
-
-                            String attributeName=values[0]!=null?values[0]:null;
-                            String attributeXPath=values[1]!=null?values[1]:null;
-
-                            String userSelected=values[2]!=null?values[2]:null;
-                            attributesBeanProductName = new AttributesBean(attributeXPath,userSelected);
-                            beanList.add(attributesBeanProductName);
-                        }
-
-                    }
-                }
-
-            }
-        }else{
-                updateStatus = true;
-            }
-
-        listOfDropAttributes.setItemId(stylePetId);
-        listOfDropAttributes.setList(beanList);
-
-        if((listOfDropAttributes.getList()!=null) && (listOfDropAttributes.getList().size()>0))
-        {
-            final Gson gson = new Gson();
-            //convert from JSON to String
-            final String createContentWebServiceReq = gson.toJson(listOfDropAttributes);
-
-            //request to web service
-            LOGGER.info("IPH Product Drop Down Attributes Request Object --------------------------------------------------------------> "+createContentWebServiceReq);
-            
-            //call web service and read response
-            final String webserviceResponseMessage=contentDelegate.createContentWebService(createContentWebServiceReq);
-            if (webserviceResponseMessage != null  && webserviceResponseMessage.trim().equalsIgnoreCase("SUCCESS")) {
-                updateStatus = true;
-            }
-            else {
-                updateStatus = false;
-            }
-        }else{
-            updateStatus = true;
-        }
-        LOGGER.info("IPH Product Drop Down Attributes Respone Object --------------------------------------------------------------> "+updateStatus);
-        LOGGER.info("End  of saving saveIPHCategorySpecificAttributes..............................");
-        return updateStatus;
-    }
-
-    
-    
-
-    /**
-     * Save iph category text field specific attributes.
-     *
-     * @param request the request
-     * @param response the response
-     */
-    private boolean saveIPHCategoryTextFieldSpecificAttributes(
-        ResourceRequest request, ResourceResponse response) {
-        boolean updateStatus = false;
-        LOGGER.info("Start  of saving saveIPHCategoryTextFieldSpecificAttributes..............................");
-        List<AttributesBean> beanList = null;
-        final String stylePetId = request.getParameter("stylePetOrinNumber");
-        String  productAttributeTextFieldValues = request.getParameter("textFieldsValues");
-        final ItemIdBean listOfTextFieldAttributes = new ItemIdBean();
-        if((productAttributeTextFieldValues != null) && StringUtils.isNotEmpty(productAttributeTextFieldValues) ){
-            AttributesBean attributesBeanProductName = null;
-            beanList = new ArrayList<AttributesBean>();
-            String  textFieldAttributeName[] = productAttributeTextFieldValues.split("~");
-            if(textFieldAttributeName != null){
-                for(int i=0; i<textFieldAttributeName.length; i++){
-
-                    String innerValue = textFieldAttributeName[i];
-                    if(innerValue != null){
-                        String values[] = innerValue.split("#");
-                        if((values!=null) && (values.length>0))
-                        {
-                            String attributeName=values[0]!=null?values[0]:null;
-                            String attributeXPath=values[1]!=null?values[1]:null;
-                            String enteredValues="";
-                            if(values.length==3)//The user has entered the values in the text fields
-                            {
-                                String userSelected=values[2]!=null?values[2]:null;
-                                if(StringUtils.isNotBlank(userSelected))
-                                {
-
-                                    enteredValues=userSelected;
-                                }
-                                else
-                                {
-                                    enteredValues="";
-                                }
-                            }else{//The user did not enter  the values in the text fields,update the pim database text field to blank
-
-                                enteredValues = "";
-                            }
-
-                            attributesBeanProductName = new AttributesBean(attributeXPath,enteredValues);
-                            beanList.add(attributesBeanProductName);
-
-                        }
-
-                    }
-                }
-
-            }
-        }else{
-            updateStatus = true;
-        }
-
-        listOfTextFieldAttributes.setItemId(stylePetId);
-        listOfTextFieldAttributes.setList(beanList);
-
-        if((listOfTextFieldAttributes.getList()!=null) && (listOfTextFieldAttributes.getList().size()>0))
-        {
-            final Gson gson = new Gson();
-            //convert from JSON to String
-            final String createContentWebServiceReq = gson.toJson(listOfTextFieldAttributes);
-
-            //request to web service
-            LOGGER.info("IPH Product Text Field Attributes Request Object --------------------------------------------------------------> "+createContentWebServiceReq);
-            //call web service and read response
-            final String webserviceResponseMessage=contentDelegate.createContentWebService(createContentWebServiceReq);
-            if(webserviceResponseMessage !=null && webserviceResponseMessage.trim().equalsIgnoreCase("SUCCESS"))
-            {
-                updateStatus = true;
-            }
-            else
-            {
-                updateStatus = false;
-            }
-           
-            LOGGER.info("IPH Product Text Field Attributes Response Object --------------------------------------------------------------> ");
-
-        }else{
-            updateStatus = true;
-        }
-        LOGGER.info("End  of saving saveIPHCategoryTextFieldSpecificAttributes.............................."+updateStatus);
-        return updateStatus;
-    }
-
-    
-    /**
-     * Save iph category text field specific attributes.
-     *
-     * @param request the request
-     * @param response the response
-     */
-    private boolean saveIPHCategoryRadioButtonSpecificAttributes(
-        ResourceRequest request, ResourceResponse response) {
-        LOGGER.info("Start  of saving saveIPHCategoryRadioButtonSpecificAttributes..............................");
-        boolean updateStatus = false;
-        List<AttributesBean> beanList = null;
-        final String stylePetId = request.getParameter("stylePetOrinNumber");
-        String  productAttributeRadionValues = request.getParameter("pimradioValues");
-        final ItemIdBean listOfRadionAttributes = new ItemIdBean();
-        if((productAttributeRadionValues != null) && StringUtils.isNotEmpty(productAttributeRadionValues) ){
-            AttributesBean attributesBeanProductName = null;
-            beanList = new ArrayList<AttributesBean>();
-            String  radionAttributeName[] = productAttributeRadionValues.split("~");
-            if(radionAttributeName != null){
-                for(int i=0; i<radionAttributeName.length; i++){
-
-                    String innerValue = radionAttributeName[i];
-                    if(innerValue != null){
-                        String values[] = innerValue.split("#");
-                        if((values!=null) && (values.length>0))
-                        {
-                            String attributeName=values[0]!=null?values[0]:null;
-                            String attributeXPath=values[1]!=null?values[1]:null;
-                            String enteredValues="";
-                            if(values.length==3)//The user has entered the values in the text fields
-                            {
-                                String userSelected=values[2]!=null?values[2]:null;
-                                if(StringUtils.isNotBlank(userSelected))
-                                {
-
-                                    enteredValues=userSelected;
-                                }
-                                else
-                                {
-                                    enteredValues="";
-                                }
-                            }else{//The user did not enter  the values in the text fields,update the pim database text field to blank
-
-                                enteredValues = "";
-                            }
-
-                            attributesBeanProductName = new AttributesBean(attributeXPath,enteredValues);
-                            beanList.add(attributesBeanProductName);
-
-                        }
-
-                    }
-                }
-
-            }
-        }else{
-            updateStatus = true;
-        }
-
-        listOfRadionAttributes.setItemId(stylePetId);
-        listOfRadionAttributes.setList(beanList);
-
-        if((listOfRadionAttributes.getList()!=null) && (listOfRadionAttributes.getList().size()>0))
-        {
-            final Gson gson = new Gson();
-            //convert from JSON to String
-            final String createContentWebServiceReq = gson.toJson(listOfRadionAttributes);
-
-            //request to web service
-            LOGGER.info("IPH Product Radio Button Attributes Request Object --------------------------------------------------------------> "+createContentWebServiceReq);
-            
-            //call web service and read response
-            final String webserviceResponseMessage=contentDelegate.createContentWebService(createContentWebServiceReq);
-            if(StringUtils.isNotBlank(webserviceResponseMessage) && webserviceResponseMessage.trim().equalsIgnoreCase("SUCCESS"))
-            {
-                updateStatus = true;
-            }
-            else
-            {
-                updateStatus = false;
-            }
-        }else{
-            updateStatus = true;
-        }
-
-        LOGGER.info("IPH Product Radio Button Attributes Response Object --------------------------------------------------------------> "+updateStatus);
-        LOGGER.info("End  of saving saveIPHCategoryRadioButtonSpecificAttributes..............................");
-        return updateStatus;
-    }
-    /**
-     * Save style attributes.
-     *
-     * @param request the request
-     * @param response the response
-     */
-    private boolean saveStyleAttributes(ResourceRequest request,
-        ResourceResponse response) {
-        LOGGER.info("Start  of saving saveStyleAttributes..............................");
-        boolean updateStatus = false;
-
-        String styleReq=request.getParameter("styleReq");
-        LOGGER.info("styleReq-----"+styleReq);
-        String  complexPackReq=request.getParameter("complexPackReq");
-        LOGGER.info("complexPackReq-----"+complexPackReq);
-
-        if(StringUtils.isNotBlank(styleReq) && styleReq.equalsIgnoreCase("Style"))
-        {
-            LOGGER.info("styleReq--if loop---"+styleReq);
-
-            final String stylePetId = request.getParameter("stylePetOrinNumber");
-            final List<AttributesBean> attributesBeansList = new ArrayList<AttributesBean>();
-
-            final String productName = request.getParameter("productName");
-            final String productDescription = request.getParameter("productDescription");
-
-            final String productNameXpath=ContentScreenConstants.PRODUCT_NAME_XPATH;
-            final String productDescriptionXpath=ContentScreenConstants.PRODUCT_DESCRIPTION_XPATH;
-
-            // Added by Sriharsha
-            final String omniBrandCode = request.getParameter("selectedOmniBrand");
-            final String carsBrandCode = request.getParameter("selectedCarsBrand");
-            final String omniChannelBrandXpath = ContentScreenConstants.OMNICHANNEL_BRAND_XPATH;
-            final String carsBrandXpath = ContentScreenConstants.CARS_BRAND_XPATH;
-            final String belkExclusiveXpath =  ContentScreenConstants.BELK_EXCLUSIVE_XPATH;
-            final String belkExclusive = request.getParameter("belkExclusive");
-            final String gWPValue = request.getParameter("GWPValue");
-            final String gWPValueXpath =  ContentScreenConstants.GWP_XPATH;
-            final String pWPValue = request.getParameter("PWPValue");
-            final String pWPValueXpath =  ContentScreenConstants.PWP_XPATH;
-            final String pYGValue = request.getParameter("PYGValue");
-            final String pYGValueXpath =  ContentScreenConstants.PYG_XPATH;
-            final String channelExclusive = request.getParameter("channelExclusive");
-            final String channelExclusiveXpath =  ContentScreenConstants.CHANNEL_EXCLUSIVE_XPATH;
-            final String bopisValue = request.getParameter("bopisSelectedValue");
-            final String bopisXpath =  ContentScreenConstants.BOPIS_XPATH;
-            
-            // End by Sriharsha
-
-            //form JSON request to web service
-            final ItemIdBean listOfAttributes = new ItemIdBean();
-
-            final AttributesBean attributesBeanProductName = new AttributesBean(productNameXpath,productName);
-            final AttributesBean attributesBeanProductDescription = new AttributesBean(productDescriptionXpath,productDescription);
-
-            attributesBeansList.add(attributesBeanProductName);
-            attributesBeansList.add(attributesBeanProductDescription);
-           
-            if(StringUtils.isNotBlank(belkExclusive))  {
-                final AttributesBean attributesBeanBelkExclusive = new AttributesBean(belkExclusiveXpath,belkExclusive);
-                attributesBeansList.add(attributesBeanBelkExclusive);
-            }
-            if(StringUtils.isNotBlank(channelExclusive) && !channelExclusive.equalsIgnoreCase("-1"))  {
-                final AttributesBean attributesBeanChannelExclusive = new AttributesBean(channelExclusiveXpath,channelExclusive);
-                attributesBeansList.add(attributesBeanChannelExclusive);
-            }
-            if(StringUtils.isNotBlank(bopisValue) && !bopisValue.equalsIgnoreCase("-1"))  {
-                final AttributesBean attributesBopisExclusive = new AttributesBean(bopisXpath,bopisValue);
-                attributesBeansList.add(attributesBopisExclusive);
-            }
-            if(StringUtils.isNotBlank(gWPValue))  {
-                final AttributesBean attributesBeangWP = new AttributesBean(gWPValueXpath,gWPValue);
-                attributesBeansList.add(attributesBeangWP);
-            }
-            if(StringUtils.isNotBlank(pWPValue))  {
-                final AttributesBean attributesBeanpWPValue = new AttributesBean(pWPValueXpath,pWPValue);
-                attributesBeansList.add(attributesBeanpWPValue);
-            }
-            if(StringUtils.isNotBlank(pYGValue))  {
-                final AttributesBean attributesBeanpYGValue = new AttributesBean(pYGValueXpath,pYGValue);
-                attributesBeansList.add(attributesBeanpYGValue);
-            }
-            //Added by Sriharsha
-            if((omniBrandCode !=null) && StringUtils.isNotBlank(omniBrandCode) && !omniBrandCode.equalsIgnoreCase("-1"))  {
-                final AttributesBean attributesOmniBrand = new AttributesBean(omniChannelBrandXpath,(omniBrandCode));
-                attributesBeansList.add(attributesOmniBrand);
-            }
-            if((carsBrandCode != null) && StringUtils.isNotBlank(carsBrandCode) && !carsBrandCode.equalsIgnoreCase("-1")) {
-                final AttributesBean attributeCarsBrandCode = new AttributesBean(carsBrandXpath,(carsBrandCode));
-                attributesBeansList.add(attributeCarsBrandCode);
-            }
-            //End Added by Sriharsha
-
-            listOfAttributes.setList(attributesBeansList);//this will complete JSON request data
-            if((listOfAttributes.getList()!=null) && (listOfAttributes.getList().size()>0))
-            {
-                listOfAttributes.setItemId(stylePetId);
-                final Gson gson = new Gson();
-                //convert from JSON to String
-                final String createContentWebServiceReq = gson.toJson(listOfAttributes);
-
-                //request to web service
-                LOGGER.info("Globla Style Attributes Request Object --------------------------------------------------------------> "+createContentWebServiceReq);
-                
-                //call web service and read response
-                final String webserviceResponseMessage=contentDelegate.createContentWebService(createContentWebServiceReq);
-                if(StringUtils.isNotBlank(webserviceResponseMessage) && webserviceResponseMessage.equalsIgnoreCase("SUCCESS"))
-                {
-                    updateStatus = true;
-                }
-                else
-                {
-                    updateStatus = false;
-                }
-            }else{
-                updateStatus = true;
-            }
-            LOGGER.info("Globla Style Attributes Response Object --------------------------------------------------------------> "+updateStatus);
-        }
-
-        else if(StringUtils.isNotBlank(complexPackReq) && complexPackReq.equalsIgnoreCase("Complex Pack"))
-        {
-            LOGGER.info("complexPackEntry--if loop---"+complexPackReq);
-
-            final String stylePetId = request.getParameter("stylePetOrinNumber");
-            final List<AttributesBean> attributesBeansList = new ArrayList<AttributesBean>();
-
-            final String productName = request.getParameter("productName");
-            final String productDescription = request.getParameter("productDescription");
-
-            final String productNameXpath=ContentScreenConstants.PRODUCT_NAME_COMPLEX_PACK_XPATH;
-            final String productDescriptionXpath=ContentScreenConstants.PRODUCT_DESCRIPTION_COMPLEX_PACK_XPATH;
-
-            // Added by Sriharsha
-            final String omniBrandCode = request.getParameter("selectedOmniBrand");
-            final String carsBrandCode = request.getParameter("selectedCarsBrand");
-            final String omniChannelBrandXpath = ContentScreenConstants.OMNICHANNEL_BRAND_COMPLEX_PACK_XPATH;
-            final String carsBrandXpath = ContentScreenConstants.CARS_BRAND_COMPLEX_PACK_XPATH;
-            // End by Sriharsha
-
-            final String belkExclusive = request.getParameter("belkExclusive");
-            final String belkExclusiveXpath =  ContentScreenConstants.BELK_EXCLUSIVE_PACK_XPATH;
-            final String gWPValue = request.getParameter("GWPValue");
-            final String gWPValueXpath =  ContentScreenConstants.GWP_PACK_XPATH;
-            final String pWPValue = request.getParameter("PWPValue");
-            final String pWPValueXpath =  ContentScreenConstants.PWP_PACK_XPATH;
-            final String pYGValue = request.getParameter("PYGValue");
-            final String pYGValueXpath =  ContentScreenConstants.PYG_PACK_XPATH;
-            final String channelExclusive = request.getParameter("channelExclusive");
-            final String channelExclusiveXpath =  ContentScreenConstants.CHANNEL_EXCLUSIVE_PACK_XPATH;
-            final String bopisValue = request.getParameter("bopisSelectedValue");
-            final String bopisXpath =  ContentScreenConstants.BOPIS_PACK_XPATH;
-
-            //form JSON request to web service
-            final ItemIdBean listOfAttributes = new ItemIdBean();
-
-            final AttributesBean attributesBeanProductName = new AttributesBean(productNameXpath,productName);
-            final AttributesBean attributesBeanProductDescription = new AttributesBean(productDescriptionXpath,productDescription);
-
-            attributesBeansList.add(attributesBeanProductName);
-            attributesBeansList.add(attributesBeanProductDescription);
-
-            if(StringUtils.isNotBlank(belkExclusive))  {
-                final AttributesBean attributesBeanBelkExclusive = new AttributesBean(belkExclusiveXpath,belkExclusive);
-                attributesBeansList.add(attributesBeanBelkExclusive);
-            }
-            if(StringUtils.isNotBlank(channelExclusive) && !channelExclusive.equalsIgnoreCase("-1"))  {
-                final AttributesBean attributesBeanChannelExclusive = new AttributesBean(channelExclusiveXpath,channelExclusive);
-                attributesBeansList.add(attributesBeanChannelExclusive);
-            }
-            if(StringUtils.isNotBlank(bopisValue) && !bopisValue.equalsIgnoreCase("-1"))  {
-                final AttributesBean attributesBopisExclusive = new AttributesBean(bopisXpath,bopisValue);
-                attributesBeansList.add(attributesBopisExclusive);
-            }
-            if(StringUtils.isNotBlank(gWPValue))  {
-                final AttributesBean attributesBeangWP = new AttributesBean(gWPValueXpath,gWPValue);
-                attributesBeansList.add(attributesBeangWP);
-            }
-            if(StringUtils.isNotBlank(pWPValue))  {
-                final AttributesBean attributesBeanpWPValue = new AttributesBean(pWPValueXpath,pWPValue);
-                attributesBeansList.add(attributesBeanpWPValue);
-            }
-            if(StringUtils.isNotBlank(pYGValue))  {
-                final AttributesBean attributesBeanpYGValue = new AttributesBean(pYGValueXpath,pYGValue);
-                attributesBeansList.add(attributesBeanpYGValue);
-            }
-            //Added by Sriharsha
-            if((omniBrandCode !=null) && StringUtils.isNotBlank(omniBrandCode) && !omniBrandCode.equalsIgnoreCase("-1"))
-            {
-                final AttributesBean attributesOmniBrand = new AttributesBean(omniChannelBrandXpath,(omniBrandCode));
-                attributesBeansList.add(attributesOmniBrand);
-            }
-            if((carsBrandCode != null) && StringUtils.isNotBlank(carsBrandCode) && !carsBrandCode.equalsIgnoreCase("-1"))
-            {
-                final AttributesBean attributeCarsBrandCode = new AttributesBean(carsBrandXpath,(carsBrandCode));
-                attributesBeansList.add(attributeCarsBrandCode);
-            }
-            //End Added by Sriharsha
-
-            listOfAttributes.setList(attributesBeansList);//this will complete JSON request data
-            if((listOfAttributes.getList()!=null) && (listOfAttributes.getList().size()>0))
-            {
-                listOfAttributes.setItemId(stylePetId);
-                final Gson gson = new Gson();
-                //convert from JSON to String
-                final String createContentWebServiceReq = gson.toJson(listOfAttributes);
-
-                //request to web service
-                LOGGER.info("Globla Pack Attributes Request Object --------------------------------------------------------------> "+createContentWebServiceReq);
-                
-                //call web service and read response
-                final String webserviceResponseMessage=contentDelegate.createContentWebService(createContentWebServiceReq);
-                if(webserviceResponseMessage != null && webserviceResponseMessage.equalsIgnoreCase("SUCCESS"))
-                {
-                    updateStatus = true;
-                }
-                else
-                {
-                    updateStatus = false;
-                }
-            }else{
-                updateStatus = true;
-            }
-            LOGGER.info("Globla Pack Attributes Response Object --------------------------------------------------------------> "+updateStatus);
-        }
-        LOGGER.info("End  of saving saveStyleAttributes..............................");
-        return updateStatus;
-    }
-
-
-
-
+  
     /**
      * Save style color attributes.
      *
@@ -4419,5 +3886,4 @@ public class ContentController implements ResourceAwareController,EventAwareCont
     }
 
 }
-
 

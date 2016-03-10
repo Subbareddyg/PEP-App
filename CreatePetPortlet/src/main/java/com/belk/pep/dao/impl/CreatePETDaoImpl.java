@@ -4,7 +4,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Properties;
-import java.util.logging.Logger;
+//import java.util.logging.Logger;
+import org.apache.log4j.Logger;
 
 import javax.naming.NamingException;
 
@@ -38,7 +39,7 @@ public class CreatePETDaoImpl implements CreatePETDao {
 	public ArrayList<WorkFlow> fetchPETDetails(String orinNo)
 	throws NamingException, SQLException, PEPFetchException,OrinNotFoundException {
 
-		LOGGER.info("CreatePETDaoImpl:: fetchUserDetails");
+		LOGGER.info("CreatePETDaoImpl:: fetchUserDetails Updated ** ");
 
 		Query query = null;
 		Session session = null;
@@ -48,7 +49,8 @@ public class CreatePETDaoImpl implements CreatePETDao {
 		try {		
 			session = sessionFactory.openSession();
 			tx = session.beginTransaction();
-			query = session.createSQLQuery(queryCons.getPetDetails(orinNo));			
+			query = session.createSQLQuery(queryCons.getPetDetails(orinNo));
+			//query.setParameter("orinNo", orinNo); 		    query.setFetchSize(100);
 			ArrayList<Style> styleList = new ArrayList<Style>();
 			ArrayList<Sku> skuListArr = new ArrayList<Sku>();
 			ArrayList<Style> styleListFinal = new ArrayList<Style>();
@@ -311,19 +313,19 @@ public class CreatePETDaoImpl implements CreatePETDao {
 
 		XqueryConstants queryCons = new XqueryConstants();
 
-		LOGGER.info("CreatePETDaoImpl::::validateOrin::orinNo" + orinNo);
+		LOGGER.info("CreatePETDaoImpl::::validateOrin::orinNo updted now" + orinNo);
 
 		try {		
 			session = sessionFactory.openSession();
-			tx = session.beginTransaction();
-		
-			query = session.createSQLQuery(queryCons.validateOrin(orinNo));
+			tx = session.beginTransaction();		
+			query = session.createSQLQuery(queryCons.validateOrin());
+			query.setParameter("orinNo", orinNo); 
+		    query.setFetchSize(10);
 			LOGGER.info("CreatepetDaoImpl:: validateOrin updated  " + query);
 			@SuppressWarnings("unchecked")
 			ArrayList<String> list = (ArrayList<String>) query.list();			
 			
-			for (String validOrin : list) {
-			
+			for (String validOrin : list) {			
 				LOGGER.info("CreatepetDaoImpl:: validateOrin validOrin inslide loop " + validOrin);
 				validateOrinMsg = validOrin;
 			}

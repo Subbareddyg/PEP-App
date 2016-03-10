@@ -11,7 +11,8 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.web.portlet.ModelAndView;
 import org.springframework.web.portlet.mvc.Controller;
 
-import java.util.logging.Logger;
+//import java.util.logging.Logger;
+import org.apache.log4j.Logger;
 
 import com.belk.pep.exception.checked.PEPServiceException;
 import com.belk.pep.model.UserObject;

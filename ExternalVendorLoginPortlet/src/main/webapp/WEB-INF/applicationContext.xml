@@ -72,7 +72,7 @@
 		<property name="host" value="belksmtp" />
 		<property name="port" value="25" />
 		<property name="username" value="AFUSYG6" />
-		<property name="password" value="Samarth-16" />
+		<property name="password" value="Test-16" />
 		<property name="javaMailProperties">
 			<props>
 				<prop key="mail.transport.protocol">smtp</prop>

@@ -5,7 +5,8 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.TreeMap;
-import java.util.logging.Logger;
+//import java.util.logging.Logger;
+import org.apache.log4j.Logger;
 
 import com.belk.pep.dao.impl.WorkListDisplayDAOImpl;
 import com.belk.pep.model.StyleColor;

@@ -19,7 +19,7 @@
 	<link rel="stylesheet" href="<%=response.encodeURL(request.getContextPath()+"/css/dialogSearch.css")%>"> 
 	<link rel="stylesheet" href="<%=response.encodeURL(request.getContextPath()+"/css/worklistDisplay.css")%>"> 
 
-	<link rel="stylesheet" href="http://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css"></link>
-  	<script src="http://code.jquery.com/jquery-1.11.4.js"></script>
- 	<script src="http://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+	<link rel="stylesheet" href="<%=response.encodeURL(request.getContextPath()+"/css/jquery-ui.css")%>">   	
+
+	<script type="text/javascript" src="<%=response.encodeURL(request.getContextPath()+"/js/jquery-ui.js")%>"></script> 
 

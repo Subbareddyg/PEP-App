@@ -3,7 +3,8 @@ package com.belk.pep.service.impl;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Properties;
-import java.util.logging.Logger;
+//import java.util.logging.Logger;
+import org.apache.log4j.Logger;
 
 
 import com.belk.pep.dao.ExternalUserLoginDAO;
@@ -44,13 +45,13 @@ public class ExternalUserServiceImpl implements ExternalUserService {
         }
         catch (PEPPersistencyException e) {
             
-            LOGGER.severe("Exception occurred at the Service DAO Layer");
+            LOGGER.info("Exception occurred at the Service DAO Layer");
             throw e;
         }
         
         catch (Exception e) {
               
-                LOGGER.severe("Exception occurred at the Service Implementation Layer");
+                LOGGER.info("Exception occurred at the Service Implementation Layer");
                 throw new PEPServiceException(e.getMessage());
             }
         
@@ -76,13 +77,13 @@ public class ExternalUserServiceImpl implements ExternalUserService {
         }
         catch (PEPPersistencyException e) {
             
-            LOGGER.severe("Exception occurred at the Service DAO Layer");
+            LOGGER.info("Exception occurred at the Service DAO Layer");
             throw e;
         }
         
         catch (Exception e) {
               
-                LOGGER.severe("Exception occurred at the Service Implementation Layer");
+                LOGGER.info("Exception occurred at the Service Implementation Layer");
                 throw new PEPServiceException(e.getMessage());
             }
         
@@ -126,13 +127,13 @@ public class ExternalUserServiceImpl implements ExternalUserService {
         }
         catch (PEPPersistencyException e) {
             
-            LOGGER.severe("Exception occurred at the Service DAO Layer");
+            LOGGER.info("Exception occurred at the Service DAO Layer");
             throw e;
         }
         
         catch (Exception e) {
               
-                LOGGER.severe("Exception occurred at the Service Implementation Layer");
+                LOGGER.info("Exception occurred at the Service Implementation Layer");
                 throw new PEPServiceException(e.getMessage());
             }
         

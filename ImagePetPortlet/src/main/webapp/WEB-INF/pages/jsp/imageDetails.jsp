@@ -1,4 +1,4 @@
-<%@ include file="/WEB-INF/pages/jsp/include.jsp"%>
+<%@ include file="/WEB-INF/pages/jsp/include.jsp"%>  
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <link rel="stylesheet" href="<%=response.encodeURL(request.getContextPath()+"/css/worklistDisplay.css")%>">
 <link rel="stylesheet" href="<%=response.encodeURL(request.getContextPath()+"/css/portletBorder.css")%>">
@@ -13,10 +13,6 @@
 <script type="text/javascript" src="<%=request.getContextPath()%>/js/belk.pep.imageDialog.js"></script>
 <script src="<%=request.getContextPath()%>/js/jquery-ui.js"></script>
 <script src="<%=request.getContextPath()%>/js/imageManagment.js"></script>
-<script src="<%=request.getContextPath()%>/js/belk.cars.editcar.js"></script>
-<!-- <script src="jquery.min.js"></script>-->
-<script src="http://yandex.st/highlightjs/7.3/highlight.min.js"></script>
-
 
 <script>
 	hljs.initHighlightingOnLoad();
@@ -83,16 +79,16 @@ $(document).ready(function() {
 //TimeOut
 var timeOutvar = null;
 var timeOutConfirm ='N';
-document.onclick = clickListener;
+/* document.onclick = clickListener;
 function clickListener(e){
 	clearTimeout(timeOutvar);
 	timeOutPage();
-}
+} */
 
 function timeOutPage(){
 	if(timeOutConfirm=='N')
 	{	
-	timeOutvar = setTimeout(redirectSessionTimedOut, 600000);
+		timeOutvar = setTimeout(redirectSessionTimedOut, 600000);
 	}
 }
 
@@ -143,7 +139,7 @@ function getSaveImageShotTypeAjax(url){
 					}					
 					if(shotTypeSelected == '---Select---' && duplicateShotType!='Y'){
 						duplicateShotType = 'N';	
-					}
+					}					
 					count2++;
 					});		
 		count1++;
@@ -161,14 +157,22 @@ function getSaveImageShotTypeAjax(url){
 		var passImgid = $(this).find("#imageId").text();		
 		var passShotType = $(this).find("#shotType :selected").val();
 		var hiddenShotType = $(this).find("#hiddenShotType").val();			
-			if(passShotType!=hiddenShotType){			
+			if(passShotType!=hiddenShotType){
+			
 				if(ifCount>=1){
 					arrayElementText =arrayElementText + ";";
 				}
-			arrayElementText =arrayElementText + selectedOrin + '_' + passImgid + '_' + passShotType;
+			arrayElementText =arrayElementText + selectedOrin + '_' + passImgid + '_' + passShotType;			
 		    ifCount = ifCount+1;
-		}
-	});//Close Each	
+		}		
+		
+	});//Close Each
+	//Fix for 871
+	if(arrayElementText.length == 0){
+		return;
+	}//End
+	$("#overlay_imageLoading").show();
+	
 	$.ajax({
 					type: 'POST',
 					url : url,
@@ -195,7 +199,10 @@ function getSaveImageShotTypeAjax(url){
 					error:function (xhr, ajaxOptions, thrownError){
 						var error1 = $.parseJSON(xhr.responseText);
 						console.log("Severe Service Error::" + thrownError + "Status Code::" + xhr.status +"error::"+ error1);
-				}
+				},
+				complete: function(){
+					$("#overlay_imageLoading").hide();
+				} 
 			});
 	
 	}
@@ -213,6 +220,16 @@ function getSaveImageShotTypeAjax(url){
 }
 
 //UI VALIDATIONS
+
+var selectedFileSize = 0;
+var constMaxFileSizeMB = 30;  //this value is same as the applicationContext value
+
+function checkfilesize(obj){
+	//console.log(obj.files[0].size);
+	selectedFileSize = obj.files[0].size || 0;
+	selectedFileSize = (selectedFileSize/1024)/1024;
+	//alert(selectedFileSize);
+}
 
 function validateFields(formId){
 	inputChanged  = false ;	
@@ -265,19 +282,23 @@ function validateFields(formId){
 		if(imageLocation ==0){		
 			var fileType = document.getElementById('fileData').value;
 			var fileExtension = fileType.lastIndexOf('.');
-			var ext = fileType.substring(fileExtension+1);
+			var ext = fileType.substring(fileExtension+1).toLowerCase();
 			if(fileType.length > 0){
-				if(ext == 'jpeg' || ext == 'jpg' || ext =='psd'|| ext =='tiff'|| ext =='eps'){
+				if(selectedFileSize > constMaxFileSizeMB){
+					document.getElementById('errorDIV').style.display ="";
+					errorMessage = errorMessage+"<span style='color:red'>Please select a file lesser than " + constMaxFileSizeMB + " MB in size &nbsp;</span>";
+					document.getElementById('errorDIV').innerHTML = errorMessage;
+				}else if(ext == 'jpeg' || ext == 'jpg' || ext =='psd'|| ext =='tiff'|| ext =='eps' || ext =='tif'){
 					document.getElementById('errorDIV').innerHTML = "";
 					$("#overlay_Upload").hide();
 					$("#dialog_UploadImage").hide();
 					$("#overlay_imageLoading").show();					
-					setTimeout(function(){document.getElementById(formId).submit();},3000);
-			}else{
-				document.getElementById('errorDIV').style.display ="";
-				errorMessage = errorMessage+"<span style='color:red'>Please enter a valid file format &nbsp;</span>";
-				document.getElementById('errorDIV').innerHTML = errorMessage;
-			}
+					setTimeout(function(){document.getElementById(formId).submit();},500);
+				}else{
+					document.getElementById('errorDIV').style.display ="";
+					errorMessage = errorMessage+"<span style='color:red'>Please enter a valid file format &nbsp;</span>";
+					document.getElementById('errorDIV').innerHTML = errorMessage;
+				}
 		}else{//End file Blank check		
 			document.getElementById('errorDIV').style.display ="";
 			errorMessage = errorMessage+"<span style='color:red'>Please browse image file &nbsp;</span>";
@@ -301,8 +322,11 @@ function submitApproveAction(url){
 				type: 'POST',
 				url: url,
 				data: { approveOrRejectOrinNum:selectedColorOrinNum },
-				success: function(xhr,response,textStatus){					
-					var completionStatusId = selectedColorOrinNum+'_statusId';					
+				success: function(data){					
+					var json = $.parseJSON(data);
+					var responseCode = json.responseCode;					
+					if(responseCode == '100'){					
+					var completionStatusId = selectedColorOrinNum+'_statusId'; 					
 					document.getElementById(completionStatusId).innerHTML = 'Completed';
 					document.getElementById('hiddenImageStatus').value = "Completed";
 					if(document.getElementById('hiddenImageStatus').value == "Completed" || document.getElementById('hiddenImageStatus').value == "Approved"){
@@ -310,14 +334,15 @@ function submitApproveAction(url){
 						document.getElementById('btnImageUploadAction').disabled = true ;					
 						document.getElementById('saveImage').disabled = true ;
 					}
+				  }
 					
 					setUploadVPILink($("#ajaxaction").val(),document.getElementById("selectedColorOrinNum").value,$("#removeImageUrl").val());
 					trClick();
 					scrollToView('vImage','vImage');
 				},
 				cache: false,                
-				error: function(){
-					
+				error: function(jqXHR,textStatus, errorThrown){
+					//alert(jqXHR.status + ": " + textStatus + "- " + errorThrown);
 				},
 				complete: function(){
 					$("#overlay_imageLoading").hide();
@@ -422,13 +447,12 @@ document.getElementById('removeFlagOff').value = inputChanged;
 	}
 
 
-
+var confirmationMessage = '';  // a space
 var myEvent = window.attachEvent || window.addEventListener;
 var chkevent = window.attachEvent ? 'onbeforeunload' : 'beforeunload'; /// make IE7, IE8 compitable
 
-           myEvent(chkevent, function(e) { // For >=IE7, Chrome, Firefox
-           if(inputChanged){
-           var confirmationMessage = '';  // a space
+           myEvent(chkevent, function(e) { // For >=IE7, Chrome, Firefox          
+          if(inputChanged && confirmationMessage !== false){ 
            (e || window.event).returnValue = confirmationMessage;
 
 	var releseLockedPetURL = $("#releseLockedPet").val();
@@ -458,6 +482,8 @@ function releseLockedPet(loggedInUser,releseLockedPetURL){
 	return true;
 
 }
+
+
 </script>
 
  <%	
@@ -954,7 +980,7 @@ function releseLockedPet(loggedInUser,releseLockedPetURL){
 				<div id="selectImage">			
 			<li>
 				<label style="margin-left:65px;height: 16px;">Select Image *:</label> 
-				<input name="fileData" id="fileData"type="file" accept="Image/jpeg,image/jpg,image/psd,image/tiff,image/eps" />
+				<input name="fileData" id="fileData"type="file" onchange="checkfilesize(this);" accept="Image/jpeg,image/jpg,image/psd,image/tiff,image/eps" />
 			</li>
 			</div>
 			</br>
@@ -1230,4 +1256,36 @@ function expandCollapse(tableId,selectedColorOrin1){
 }
 
 $(document).keydown(function(e) { if (e.keyCode == 8) e.preventDefault(); });
+
+var timeOutvarImage = null;
+timeOutvarImage = setTimeout(redirectSessionTimedOutImage, 1800000);
+function timeOutImagePage()
+{
+                timeOutvarImage = setTimeout(redirectSessionTimedOutImage, 1800000);
+}
+
+document.onclick = clickListenerImage;
+function clickListenerImage(e){
+	clearTimeout(timeOutvar);
+	clearTimeout(timeOutvarImage);
+	timeOutFlag = 'no';
+	timeOutPage();
+	timeOutImagePage();
+}
+
+function redirectSessionTimedOutImage(){
+
+confirmationMessage = false;
+var loggedInUser= $("#loggedInUser").val();
+var releseLockedPetURL = $("#releseLockedPet").val();
+releseLockedPet(loggedInUser,releseLockedPetURL);
+if(loggedInUser.indexOf('@') === -1) 
+{
+                window.location = "/wps/portal/home/InternalLogin";
+} else {
+                window.location = "/wps/portal/home/ExternalVendorLogin";
+                }
+}
+
+
 </script>

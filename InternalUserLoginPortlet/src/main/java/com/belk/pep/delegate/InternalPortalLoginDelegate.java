@@ -1,6 +1,7 @@
 package com.belk.pep.delegate;
 
-import java.util.logging.Logger;
+//import java.util.logging.Logger;
+import org.apache.log4j.Logger;
 import com.belk.pep.model.UserObject;
 import com.belk.pep.service.InternalPortalLoginService;
 

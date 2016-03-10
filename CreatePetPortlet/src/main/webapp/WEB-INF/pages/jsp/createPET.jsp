@@ -10,7 +10,7 @@
 <script type="text/javascript" 	src="<%=request.getContextPath()%>/js/jquery.treegrid.js"></script>
 <script type="text/javascript" 	src="<%=request.getContextPath()%>/js/jquery.min.js"></script>
 <script type="text/javascript" 	src="<%=request.getContextPath()%>/js/treegridlocal.js"></script>
-<script src="http://yandex.st/highlightjs/7.3/highlight.min.js"></script>
+
 <script>
 	hljs.initHighlightingOnLoad();
 </script>
@@ -26,7 +26,7 @@
 	});
 function callWorkList(){
  $("#overlay_pageLoading").show();
-window.location = '<%=request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort()+"/wps/portal/home/worklistDisplay" %>';
+window.location = "/wps/portal/home/worklistDisplay";	
 	}
 	
 function logout_home(){	
@@ -38,7 +38,7 @@ function logout_home(){
 var timeOutvarCreatePET = null;	
 function timeOutCreatePETPage()
 {
-	timeOutvarCreatePET = setTimeout(redirectSessionTimedOut, 600000);
+	timeOutvarCreatePET = setTimeout(redirectSessionTimedOut, 900000);
 }
 
 document.onclick = clickListenerCreatePET;

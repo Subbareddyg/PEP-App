@@ -63,6 +63,8 @@ public class StyleColor {
     String omniChannelVendor;
     
    private String supplierID;
+   
+   private String returnCarsFlag;
     
     public String getSupplierID() {
 		return supplierID;
@@ -527,6 +529,22 @@ public class StyleColor {
     public void setOmniChannelVendor(String omniChannelVendor) {
         this.omniChannelVendor = omniChannelVendor;
     }
+
+
+	/**
+	 * @return the returnCarsFlag
+	 */
+	public String getReturnCarsFlag() {
+		return returnCarsFlag;
+	}
+
+
+	/**
+	 * @param returnCarsFlag the returnCarsFlag to set
+	 */
+	public void setReturnCarsFlag(String returnCarsFlag) {
+		this.returnCarsFlag = returnCarsFlag;
+	}
 
    
     

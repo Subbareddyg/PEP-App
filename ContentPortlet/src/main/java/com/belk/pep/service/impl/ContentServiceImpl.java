@@ -2,8 +2,10 @@ package com.belk.pep.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+//import java.util.logging.Level;
+//import java.util.logging.Logger;
+import org.apache.log4j.Logger;
+import org.apache.log4j.Level;
 
 import com.belk.pep.dao.ContentDAO;
 import com.belk.pep.exception.checked.PEPFetchException;
@@ -54,7 +56,7 @@ public class ContentServiceImpl implements ContentService {
             LOGGER.info("****end of  getCardsBrandList  method****");
         }
         catch (final PEPFetchException fetchException) {
-            LOGGER.log(Level.SEVERE, fetchException.getMessage());
+            LOGGER.log(Level.INFO, fetchException.getMessage());
             throw new PEPServiceException(fetchException.getMessage());
         }
         return lstCarBrandVO;
@@ -79,7 +81,7 @@ public class ContentServiceImpl implements ContentService {
             LOGGER.info("****end of  getColorFamilyDataSet  method****");
         }
         catch (final PEPFetchException fetchException) {
-            LOGGER.log(Level.SEVERE, fetchException.getMessage());
+            LOGGER.log(Level.INFO, fetchException.getMessage());
             throw new PEPServiceException(fetchException.getMessage());
         }
 
@@ -107,7 +109,7 @@ public class ContentServiceImpl implements ContentService {
             contentHistoryList = contentDAO.getContentHistoryFromADSE(orinNumber);
         }
         catch (final PEPFetchException fetchException) {
-            LOGGER.log(Level.SEVERE, fetchException.getMessage());
+            LOGGER.log(Level.INFO, fetchException.getMessage());
 
         }
         return contentHistoryList;
@@ -129,7 +131,7 @@ public class ContentServiceImpl implements ContentService {
             contentManagement = contentDAO.getContentManagmentInfoFromADSE(orinNumber);
         }
         catch (final PEPFetchException fetchException) {
-            LOGGER.log(Level.SEVERE, fetchException.getMessage());
+            LOGGER.log(Level.INFO, fetchException.getMessage());
 
         }
 
@@ -152,7 +154,7 @@ public class ContentServiceImpl implements ContentService {
             copyAttributesList=contentDAO.getCopyAttributesFromADSE(orinNumber);
         }
         catch (final PEPFetchException fetchException) {
-            LOGGER.log(Level.SEVERE, fetchException.getMessage());
+            LOGGER.log(Level.INFO, fetchException.getMessage());
         }
 
         return copyAttributesList;
@@ -176,7 +178,7 @@ public class ContentServiceImpl implements ContentService {
             LOGGER.info("****end of  getFamilyCategoriesFromIPH  method****");
         }
         catch (final PEPFetchException fetchException) {
-            LOGGER.log(Level.SEVERE, fetchException.getMessage());
+            LOGGER.log(Level.INFO, fetchException.getMessage());
             throw new PEPServiceException(fetchException.getMessage());
         }
 
@@ -197,7 +199,7 @@ public class ContentServiceImpl implements ContentService {
             iphCategoryList=contentDAO.getIPHCategories();
         }
         catch (final PEPFetchException fetchException) {
-            LOGGER.log(Level.SEVERE, fetchException.getMessage());
+            LOGGER.log(Level.INFO, fetchException.getMessage());
         }
 
         return iphCategoryList;
@@ -217,7 +219,7 @@ public class ContentServiceImpl implements ContentService {
             iphCategoryList=contentDAO.getIPHCategoriesFromAdseMerchandiseHierarchy(orinNumber);
         }
         catch (final PEPFetchException fetchException) {
-            LOGGER.log(Level.SEVERE, fetchException.getMessage());
+            LOGGER.log(Level.INFO, fetchException.getMessage());
             throw new PEPServiceException(fetchException);
         }
 
@@ -238,7 +240,7 @@ public class ContentServiceImpl implements ContentService {
             iphCategoryList=contentDAO.getIPHCategoriesFromADSEPetCatalog(orinNumber);
         }
         catch (final PEPFetchException fetchException) {
-            LOGGER.log(Level.SEVERE, fetchException.getMessage());
+            LOGGER.log(Level.INFO, fetchException.getMessage());
             throw new PEPServiceException(fetchException);
         }
 
@@ -267,7 +269,7 @@ public class ContentServiceImpl implements ContentService {
             LOGGER.info("****end of  getOmniChannelBrandList  method****");
         }
         catch (final PEPFetchException fetchException) {
-            LOGGER.log(Level.SEVERE, fetchException.getMessage());
+            LOGGER.log(Level.INFO, fetchException.getMessage());
             throw new PEPServiceException(fetchException.getMessage());
         }
         return lstOmniChannelBrandVO;
@@ -302,7 +304,7 @@ public class ContentServiceImpl implements ContentService {
             return petAttributes;
         }
         catch (final PEPFetchException fetchException) {
-            LOGGER.log(Level.SEVERE, fetchException.getMessage());
+            LOGGER.log(Level.INFO, fetchException.getMessage());
 
         }
 
@@ -335,7 +337,7 @@ public class ContentServiceImpl implements ContentService {
             return blueMartiniAttributes;
         }
         catch (final PEPFetchException fetchException) {
-            LOGGER.log(Level.SEVERE, fetchException.getMessage());
+            LOGGER.log(Level.INFO, fetchException.getMessage());
             throw new PEPServiceException(fetchException);
         }
 
@@ -356,7 +358,7 @@ public class ContentServiceImpl implements ContentService {
             productDetails = contentDAO.getProductInfoFromADSE(orinNumber);
         }
         catch (final PEPFetchException fetchException) {
-            LOGGER.log(Level.SEVERE, fetchException.getMessage());
+            LOGGER.log(Level.INFO, fetchException.getMessage());
 
         }
 
@@ -402,7 +404,7 @@ public class ContentServiceImpl implements ContentService {
             skuList = contentDAO.getSkusFromADSE(orinNumber);
         }
         catch (final PEPFetchException fetchException) {
-            LOGGER.log(Level.SEVERE, fetchException.getMessage());
+            LOGGER.log(Level.INFO, fetchException.getMessage());
 
         }
 
@@ -436,7 +438,7 @@ public class ContentServiceImpl implements ContentService {
             petList = contentDAO.getStyleAndItsChildFromADSE(roleName,orinNumber);
         }
         catch (final PEPFetchException fetchException) {
-            LOGGER.log(Level.SEVERE, fetchException.getMessage());
+            LOGGER.log(Level.INFO, fetchException.getMessage());
 
             throw  new PEPServiceException(fetchException);
 
@@ -456,7 +458,7 @@ public class ContentServiceImpl implements ContentService {
             styleAttributes = contentDAO.getStyleAttributesFromADSE(orinNumber);
         }
         catch (final PEPFetchException fetchException) {
-            LOGGER.log(Level.SEVERE, fetchException.getMessage());
+            LOGGER.log(Level.INFO, fetchException.getMessage());
             throw new PEPServiceException(fetchException);
 
         }
@@ -480,7 +482,7 @@ public class ContentServiceImpl implements ContentService {
             LOGGER.info("****End of  getStyleColorAttributesFromADSE  method****");
         }
         catch (final PEPFetchException fetchException) {
-            LOGGER.log(Level.SEVERE, fetchException.getMessage());
+            LOGGER.log(Level.INFO, fetchException.getMessage());
             throw new PEPServiceException(fetchException);
         }
 
@@ -504,7 +506,7 @@ public class ContentServiceImpl implements ContentService {
             LOGGER.info("****end of  getStyleInfoFromADSE  method****");
         }
         catch (final PEPFetchException fetchException) {
-            LOGGER.log(Level.SEVERE, fetchException.getMessage());
+            LOGGER.log(Level.INFO, fetchException.getMessage());
             throw new PEPServiceException(fetchException.getMessage());
         }
 
@@ -529,7 +531,7 @@ public class ContentServiceImpl implements ContentService {
         } 
         catch (PEPPersistencyException e) {
             
-            LOGGER.severe("Exception occurred at the Service DAO Layer");
+            LOGGER.info("Exception occurred at the Service DAO Layer");
             throw e;
         }
             

@@ -28,16 +28,15 @@
 		<property name="username" value="VENDORPORTAL"></property>
 		<property name="password" value="vendorportal"></property>
 		 -->
-		 <property name="driverClassName" value="oracle.jdbc.driver.OracleDriver"></property>
-		<property name="url"
-			value="jdbc:oracle:thin:@//000PIMPMDBIT02.belkinc.com:1521/VPORTIT"></property>
+		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver"></property>
+		<property name="url" 	value="jdbc:oracle:thin:@//000PIMPRDBPD01.belkinc.com:1521/VPORTPD"></property>
 		<property name="username" value="VENDORPORTAL"></property>
-		<property name="password" value="vportit"></property>
-		<property name="maxActive" value="100"/>	   
+		<property name="password" value="vportpd"></property>
+		<property name="maxActive" value="100"/>		   
         <property name="maxWait" value="1000"/>
         <property name="maxIdle" value="15"/>
         <property name="removeAbandoned" value="true"/> 
-        <property name="removeAbandonedTimeout" value="120"/>   		
+        <property name="removeAbandonedTimeout" value="120"/>  	
 		
 		<!-- DB configuration for SIT   Database-->
 		<!-- <property name="driverClassName" value="oracle.jdbc.driver.OracleDriver"></property>

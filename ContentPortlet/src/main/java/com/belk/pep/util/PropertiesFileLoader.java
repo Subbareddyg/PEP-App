@@ -8,7 +8,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
-import java.util.logging.Logger;
+//import java.util.logging.Logger;
+import org.apache.log4j.Logger;
 
 public class PropertiesFileLoader {
     
@@ -53,11 +54,11 @@ public class PropertiesFileLoader {
             }
             catch (FileNotFoundException e)
             {
-                LOGGER.severe("Inside FileNotFoundException");
+                LOGGER.info("Inside FileNotFoundException");
             }
             catch (IOException e)
             {
-                LOGGER.severe("Inside IOException");
+                LOGGER.info("Inside IOException");
             }     
           
           if(inputStream != null) {

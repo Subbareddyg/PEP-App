@@ -12,7 +12,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.logging.Logger;
+//import java.util.logging.Logger;
+import org.apache.log4j.Logger;
 
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
@@ -512,7 +513,9 @@ public ArrayList<DepartmentDetails> getDepartmentDetailsForExternalUserFirstTime
     session = sessionFactory.openSession();
     tx = session.beginTransaction();            
    //Hibernate provides a createSQLQuery method to let you call your native SQL statement directly.   
-    Query query = session.createSQLQuery(xqueryConstants.getAllDepartmentDetails(vendorEmail));   
+    Query query = session.createSQLQuery(xqueryConstants.getAllDepartmentDetails(vendorEmail));
+    query.setParameter("vendorEmail", vendorEmail); 
+    query.setFetchSize(100);
     List<Object[]> rows = query.list();
     for(Object[] row : rows){      
         DepartmentDetails departmentDetails = new DepartmentDetails();
@@ -664,7 +667,16 @@ public List<PetsFound> getWorkListDisplayData(String depts,String email,String p
         session = sessionFactory.openSession();
         tx = session.beginTransaction();      
        //Hibernate provides a createSQLQuery method to let you call your native SQL statement directly.   
-        Query query = session.createSQLQuery(xqueryConstants.getWorkListDisplayData(depts, email, pepId, supplierId));
+       // Query query = session.createSQLQuery(xqueryConstants.getWorkListDisplayData(depts, email, pepId, supplierId));
+
+        /****Newly added for DE795,796 ******/
+        Query query = session.createSQLQuery(xqueryConstants.getWorkListDisplayData());
+        query.setParameter("depts", depts); 
+        query.setParameter("email", email);
+        query.setParameter("pepId", pepId);
+        query.setParameter("supplierId", supplierId);   
+        query.setFetchSize(100);
+         /****END ******/
         
         LOGGER.info("Query..default123-->" + query);
         // execute delete SQL statement
@@ -742,8 +754,15 @@ public List<PetsFound> getWorkListDisplayDataComplexPack(String depts,String ema
         session = sessionFactory.openSession();
         tx = session.beginTransaction();      
        //Hibernate provides a createSQLQuery method to let you call your native SQL statement directly.   
-        query = session.createSQLQuery(xqueryConstants.getWorkListDisplayDataComplexPack(depts, email, pepId, supplierId));
-        
+        //query = session.createSQLQuery(xqueryConstants.getWorkListDisplayDataComplexPack(depts, email, pepId, supplierId));
+        /****Newly added for DE795,796 ******/
+        query = session.createSQLQuery(xqueryConstants.getWorkListDisplayDataComplexPack());
+        query.setParameter("depts", depts); 
+        query.setParameter("email", email);
+        query.setParameter("pepId", pepId);
+        query.setParameter("supplierId", supplierId);    
+        query.setFetchSize(100);
+         /****END ******/
         LOGGER.info("Query..getWorkListDisplayDataComplexPack-->" + query);
         // execute delete SQL statement
         List<Object[]> rows = query.list();
@@ -897,7 +916,12 @@ private List<ClassDetails> getClassDetails(String departmentNumbers)throws PEPFe
     tx = session.beginTransaction();            
     LOGGER.info("This is from getClassDetails..."+departmentNumbers);
    //Hibernate provides a createSQLQuery method to let you call your native SQL statement directly.   
-    Query query = session.createSQLQuery(xqueryConstants.getClassDetailsUsingDeptnumbers(departmentNumbers));   
+    //Query query = session.createSQLQuery(xqueryConstants.getClassDetailsUsingDeptnumbers(departmentNumbers));
+    /****Newly added for DE795,796 ******/
+    Query query = session.createSQLQuery(xqueryConstants.getClassDetailsUsingDeptnumbers(departmentNumbers));
+    query.setParameter("deptids", departmentNumbers);
+    query.setFetchSize(100);
+    /****END ******/
     List<Object[]> rows = query.list();
     for(Object[] row : rows){      
         ClassDetails classDetails = new ClassDetails();
@@ -1540,7 +1564,17 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
                session = sessionFactory.openSession();
                tx = session.beginTransaction();      
               //Hibernate provides a createSQLQuery method to let you call your native SQL statement directly.   
+               //Query query = session.createSQLQuery(xqueryConstants.getWorkListDisplayDataParent(depts, email, pepId, supplierId, vendorLogin));
+               /**Newly added for DE795, 796 START**/
+               //Query query = session.createSQLQuery(xqueryConstants.getWorkListDisplayDataParent(vendorLogin));
                Query query = session.createSQLQuery(xqueryConstants.getWorkListDisplayDataParent(depts, email, pepId, supplierId, vendorLogin));
+
+              // query.setParameter("depts", depts); 
+              // query.setParameter("email", email);
+               //query.setParameter("pepId", pepId);
+              // query.setParameter("supplierId", supplierId);
+               query.setFetchSize(100);
+               /******* END**/
                
                LOGGER.info("Query..getWorkListDisplayDataForParent-->" + query);
                // execute delete SQL statement
@@ -1574,7 +1608,7 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
                        String petContentState=row[17]!=null?row[17].toString():null;
                        String earliestCompletionDate=row[18]!=null?row[18].toString():null;
                        String productNameComplex=row[19]!=null?row[19].toString():null;
-                       	//	"orin.PRODUCT_NAME_COMPLEX " +
+                        //  "orin.PRODUCT_NAME_COMPLEX " +
                        String productName = (productNameStyle != null) ? productNameStyle : productNameComplex;
                        
                        pet  = mapAdseDbPetsToPortal(parentStyleORIN,orinNumber,deptId,productName,
@@ -1621,8 +1655,14 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
                session = sessionFactory.openSession();
                tx = session.beginTransaction();      
               //Hibernate provides a createSQLQuery method to let you call your native SQL statement directly.   
-               Query query = session.createSQLQuery(xqueryConstants.getWorkListDisplayDataChild(parentOrin, vendorLogin));
+               //Query query = session.createSQLQuery(xqueryConstants.getWorkListDisplayDataChild(parentOrin, vendorLogin));
+               /****Newly added for DE795,796 ******/
+               Query query = session.createSQLQuery(xqueryConstants.getWorkListDisplayDataChild(vendorLogin));
+               query.setParameter("parentOrin", parentOrin);
+               query.setFetchSize(100);
+               /****END ******/
                
+             
                LOGGER.info("Query..getWorkListDisplayDataForChild-->" + query);
                // execute delete SQL statement
                List<Object[]> rows = query.list();

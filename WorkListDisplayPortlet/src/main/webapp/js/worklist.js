@@ -805,29 +805,47 @@ function searchImageSave()
 				  $("#dialog_Image").css("display","none");
  
 }
+function dispayOnlySavedSearchAttrs(savedValue, jqObjClass){
+	//console.log(savedValue);
+	savedValue = savedValue.length ? savedValue.split(',') : savedValue;	
+	//iterating through attrs and deselecting if it is not yet saved
+	try{
+		jqObjClass.each(function(index){
+			var curAttrValue = $(this).val() || '';
+			if(savedValue.length && savedValue.indexOf(curAttrValue) >=0)
+				$(this).prop('checked', true);
+			else
+				$(this).prop('checked', false);
+		});
+	}catch(ex){
+		//console.log(ex.message);
+	}
+}
+
 function searchImageClose()
 {
    $("#overlay_Image").css("display","none");
 	$("#dialog_Image").css("display","none");
-	searchReset();
- 
+	//searchReset();
+	var selctdAttrs = $('#advImageStatus').val() || '';	
+	//calling method to clear any unsaved attrs
+	dispayOnlySavedSearchAttrs(selctdAttrs, $('.advImgcheckboxclass'));
 }
 
 function searchcontentStatusopen()
 {
   $("#overlay_Content").css("display","block");
-  $("#dialog_Content").css("display","block");
- 
+  $("#dialog_Content").css("display","block"); 
 }
 
 function searchContentClear()
 {
-	 $('.advContcheckboxclass').each(function() { 
-//loop through each checkbox
+	$('.advContcheckboxclass').each(function() { 
+    //loop through each checkbox
  	this.checked = false; //deselect all checkboxes with class "checkbox1"                       
-       });  
- 
+  }); 
 }
+
 function searchContentSaveAndClose()
 {
 	var selectedContent = [];
@@ -844,14 +862,17 @@ function searchContentClose()
 {
   $("#overlay_Content").css("display","none");
 	$("#dialog_Content").css("display","none");
-	searchReset();
+	//searchReset();	
+	var selctdAttrs = $('#advContentStatus').val() || '';	
+	//calling method to clear any unsaved attrs
+	dispayOnlySavedSearchAttrs(selctdAttrs, $('.advContcheckboxclass'));
  
 }
 
 function searchRequestTypeopen()
 {
   $("#overlay_ReqType").css("display","block");
- $("#dialog_ReqType").css("display","block");
+  $("#dialog_ReqType").css("display","block");
  
 }
 
@@ -879,7 +900,10 @@ function searchRequestTypeClose()
 {
    $("#overlay_ReqType").css("display","none");
 	$("#dialog_ReqType").css("display","none");
-	searchReset();
+	//searchReset();	
+	var selctdAttrs = $('#advRequestType').val() || '';	
+	//calling method to clear any unsaved attrs
+	dispayOnlySavedSearchAttrs(selctdAttrs, $('.advReqcheckboxclass'));
 	
 }
 
@@ -933,7 +957,7 @@ function searchClassNumberSaveAndClose()
 function searchClassNumberClose()
 {
    $("#overlay_ClassNo").css("display","none");
-	$("#dialog_ClassNo").css("display","none");	
+   $("#dialog_ClassNo").css("display","none");	
 }
 
 
@@ -1016,15 +1040,12 @@ function advSearch() {
 	//searchReset();
 	$("#overlay_Image_advSearch").css("display","block");
 	$("#dialog_ASearch").css("display","block");
-	defaultAdvSearchSettings();
-	
+	defaultAdvSearchSettings();	
 	var deptNos = $("#deptNo").val();
 	var advSelectedDepartments="";
 	if( $("#adDeptNo").val().trim().length>0 ){
 		advSelectedDepartments = $("#adDeptNo").val().trim();
-	}
-	
-	
+	}	
 	var completionDateFrom="";
 					if($("#datepicker1").val().trim().length>0){
 						completionDateFrom =$("#datepicker1").val().trim();
@@ -1038,7 +1059,7 @@ function advSearch() {
 						imageStatus =$("#advImageStatus").val().trim();
 					}
 					var contentStatus="";
-					if($("#advImageStatus").val().trim().length>0){
+					if($("#advContentStatus").val().trim().length>0){
 						contentStatus =$("#advContentStatus").val().trim();
 					}
 					var petStatus = '';

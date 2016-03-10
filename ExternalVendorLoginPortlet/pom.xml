@@ -244,6 +244,16 @@
 				<groupId>org.bouncycastle</groupId>
 				<artifactId>bcprov-jdk15</artifactId>
 				<version>1.45</version>
-			</dependency>
+			</dependency>			
+		<dependency>
+		<groupId>log4j</groupId>
+		<artifactId>log4j</artifactId>
+		<version>1.2.14</version>
+		</dependency>
+		<dependency>
+		    <groupId>com.ibm.websphere</groupId>
+    		<artifactId>websphere_apis</artifactId>
+    		<version>1.0</version>
+		</dependency>
        </dependencies>
 </project>

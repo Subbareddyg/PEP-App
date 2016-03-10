@@ -20,7 +20,7 @@ public class SqueryConstants {
     public static  String getBlueMartiniAttributes(String categoryNumber,String orinNmber ) {
 
         String GET_BLUE_MARTINI_ATTRIBUTES_XQUERY = " WITH Input(CategoryID, StyleID) AS "
-                +"   ( SELECT '"+categoryNumber+"' CategoryID, '"+orinNmber+"' StyleID FROM dual "
+                +"   ( SELECT :categoryId CategoryID, :orinNo StyleID FROM dual "
                 +"   ) , " 
                 +"   attribfieldvalue AS " 
                 +"   (SELECT A.ATTRIBUTE_ID, " 
@@ -146,7 +146,7 @@ public class SqueryConstants {
 
 
 
-        System.out.println("GET_BLUE_MARTINI_ATTRIBUTES_XQUERY----"+GET_BLUE_MARTINI_ATTRIBUTES_XQUERY);
+       // System.out.println("GET_BLUE_MARTINI_ATTRIBUTES_XQUERY----"+GET_BLUE_MARTINI_ATTRIBUTES_XQUERY);
         return GET_BLUE_MARTINI_ATTRIBUTES_XQUERY;
 
     }
@@ -307,7 +307,7 @@ public class SqueryConstants {
 
 
         String GET_PET_ATTRIBUTES_QUERY = " WITH Input(CategoryID, StyleID) AS "
-                +"   ( SELECT '"+categoryumber+"' CategoryID, '"+orinNmber+"' StyleID FROM dual "
+                +"   ( SELECT :categoryId CategoryID, :orinNo StyleID FROM dual "
                 +"   ) , "
                 +"   attribfieldvalue AS "
                 +"   (SELECT A.ATTRIBUTE_ID, "
@@ -369,7 +369,7 @@ public class SqueryConstants {
                 + "AND  afv.ATTRIBUTE_TYPE='PIM' order by attribute_name asc ";
 
 
-        System.out.println("GET_PET_ATTRIBUTES_QUERY----"+GET_PET_ATTRIBUTES_QUERY);
+    //    System.out.println("GET_PET_ATTRIBUTES_QUERY----"+GET_PET_ATTRIBUTES_QUERY);
 
 
 

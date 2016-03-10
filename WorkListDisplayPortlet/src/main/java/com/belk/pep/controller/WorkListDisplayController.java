@@ -12,7 +12,8 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
-import java.util.logging.Logger;
+//import java.util.logging.Logger;
+import org.apache.log4j.Logger;
 import com.belk.pep.model.StyleColor;
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
@@ -1606,7 +1607,7 @@ private void assignRole(WorkListDisplayForm workListDisplayForm2,
             String contentStatus = request.getParameter("contentStatus");
             String petStatus =  request.getParameter("petStatus");
             String requestType =  request.getParameter("requestType");
-            
+           
             AdvanceSearch adSearch = resourceForm.getAdvanceSearch();
             if(null!=adSearch){
                 if(null!=adSearch.getDeptNumbers() && !adSearch.getDeptNumbers().equals("")){
@@ -1615,6 +1616,7 @@ private void assignRole(WorkListDisplayForm workListDisplayForm2,
                 }
             }
             LOGGER.info("departDetails:::" + departDetails);
+            
             
             resourceForm.getAdvanceSearch().setDateFrom(dateFrom);
             resourceForm.getAdvanceSearch().setDateTo(dateTo);
@@ -1784,7 +1786,12 @@ private void assignRole(WorkListDisplayForm workListDisplayForm2,
                             resourceForm.setFullWorkFlowlist(workFlowList);
                             resourceForm.setTotalNumberOfPets(String.valueOf(workFlowList.size()));
                         }
-                       
+                        //Fix for 835 Start
+                        if(null != resourceForm.getFullWorkFlowlist()){
+                            LOGGER.info("1789 : resourceForm:"+resourceForm.getFullWorkFlowlist().size());
+                            fullWorkList = resourceForm.getFullWorkFlowlist();
+                        }
+                       //Fix for 835 End
                         //For 496 End                        
                         handlingPaginationRender(selectedPageNumber,resourceForm,fullWorkList);//fix for 496
                         resourceForm.setSelectedPage(String.valueOf(selectedPageNumber));
@@ -2037,6 +2044,57 @@ private void setAdvanceSearchfieldsFromAjax(ResourceRequest request) {
     adSearch.setClassNumber(classNumber);
     adSearch.setCreatedToday(createdToday);
     adSearch.setVendorNumber(vendorNumber);
+    
+    
+    //Fix for 836 start     
+    List<ImageStatusDropValues> imageStatusDropValues = adSearch.getImageStatusDropDown();
+        String[] imageStatusChecked = imageStatus.split(",");
+        for (int i = 0; i < imageStatusDropValues.size(); i++) {
+            imageStatusDropValues.get(i).setChecked(WorkListDisplayConstants.ADV_SEARCH_NO_VALUE);
+            if (null != imageStatus && StringUtils.isNotBlank(imageStatus)) {
+                for (int j = 0; j < imageStatusChecked.length; j++) {
+                    if (imageStatusChecked[j].equals(imageStatusDropValues.get(i).getValue())) {
+                        imageStatusDropValues.get(i).setChecked(WorkListDisplayConstants.ADV_SEARCH_YES_VALUE);
+                    }
+                    if (imageStatusChecked[j].equals("Ready For Review") && imageStatusDropValues.get(i).getValue().equals("Ready_For_Review")) {
+                        imageStatusDropValues.get(i).setChecked(WorkListDisplayConstants.ADV_SEARCH_YES_VALUE);
+                    }
+                }
+            }
+        }
+        adSearch.setImageStatusDropDown(imageStatusDropValues);
+    
+        List<ContentStatusDropValues> contentStatusDropValues = adSearch.getContentStatusDropDown();
+        String[] contentStatusChecked = contentStatus.split(",");
+        for (int k = 0; k < contentStatusDropValues.size(); k++) {
+            contentStatusDropValues.get(k).setChecked(WorkListDisplayConstants.ADV_SEARCH_NO_VALUE);
+            if (null != contentStatus && StringUtils.isNotBlank(contentStatus)) {
+                for (int m = 0; m < contentStatusChecked.length; m++) {
+                    if (contentStatusChecked[m].equals(contentStatusDropValues.get(k).getValue())) {
+                        contentStatusDropValues.get(k).setChecked(WorkListDisplayConstants.ADV_SEARCH_YES_VALUE);
+                    }
+                    if (contentStatusChecked[m].equals("Ready For Review") && contentStatusDropValues.get(k).getValue().equals("Ready_For_Review")) {
+                        contentStatusDropValues.get(k).setChecked(WorkListDisplayConstants.ADV_SEARCH_YES_VALUE);
+                    }
+                }
+            }
+        }
+        adSearch.setContentStatusDropDown(contentStatusDropValues);
+        
+        List<RequestTypeDropValues> requestTypeDropValues = adSearch.getRequestTypeDropDown();
+        String[] requestTypeChecked = requestType.split(",");
+        for (int q = 0; q < requestTypeDropValues.size(); q++) {
+            requestTypeDropValues.get(q).setChecked(WorkListDisplayConstants.ADV_SEARCH_NO_VALUE);
+            if (null != requestType && StringUtils.isNotBlank(requestType)) {
+                for (int r = 0; r < requestTypeChecked.length; r++) {
+                    if (requestTypeChecked[r].equals(requestTypeDropValues.get(q).getValue())) {
+                        requestTypeDropValues.get(q).setChecked(WorkListDisplayConstants.ADV_SEARCH_YES_VALUE);
+                    }                    
+                }
+            }
+        }
+        adSearch.setRequestTypeDropDown(requestTypeDropValues);
+        //Fix for 836 End
     
     resourceForm.setAdvanceSearch(adSearch);
    

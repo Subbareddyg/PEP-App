@@ -1,7 +1,8 @@
 package com.belk.pep.service.impl;
 
 import java.sql.SQLException;
-import java.util.logging.Logger;
+//import java.util.logging.Logger;
+import org.apache.log4j.Logger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -78,14 +79,14 @@ public class ImageRequestServiceImpl implements ImageRequestService {
         }
         catch (PEPPersistencyException e) {
 
-            LOGGER.severe("Exception occurred at the Service DAO Layer");
+            LOGGER.info("Exception occurred at the Service DAO Layer");
             throw e;
         }
 
         catch (Exception e) {
 
             LOGGER
-                .severe("Exception occurred at the Service Implementation Layer");
+                .info("Exception occurred at the Service Implementation Layer");
             throw new PEPServiceException(e.getMessage());
         }
         return imageStyleList;
@@ -106,14 +107,14 @@ public class ImageRequestServiceImpl implements ImageRequestService {
         }
         catch (PEPPersistencyException e) {
 
-            LOGGER.severe("Exception occurred at the Service DAO Layer");
+            LOGGER.info("Exception occurred at the Service DAO Layer");
             throw e;
         }
 
         catch (Exception e) {
 
             LOGGER
-                .severe("Exception occurred at the Service Implementation Layer");
+                .info("Exception occurred at the Service Implementation Layer");
             throw new PEPServiceException(e.getMessage());
         }
         return imageProductList;
@@ -132,14 +133,14 @@ public class ImageRequestServiceImpl implements ImageRequestService {
        }
        catch (PEPPersistencyException e) {
 
-           LOGGER.severe("Exception occurred at the Service DAO Layer");
+           LOGGER.info("Exception occurred at the Service DAO Layer");
            throw e;
        }
 
        catch (Exception e) {
 
            LOGGER
-               .severe("Exception occurred at the Service Implementation Layer");
+               .info("Exception occurred at the Service Implementation Layer");
            throw new PEPServiceException(e.getMessage());
        }
        return vendorInfoList;
@@ -159,14 +160,14 @@ public class ImageRequestServiceImpl implements ImageRequestService {
        }
        catch (PEPPersistencyException e) {
 
-           LOGGER.severe("Exception occurred at the Service DAO Layer");
+           LOGGER.info("Exception occurred at the Service DAO Layer");
            throw e;
        }
 
        catch (Exception e) {
 
            LOGGER
-               .severe("Exception occurred at the Service Implementation Layer");
+               .info("Exception occurred at the Service Implementation Layer");
            throw new PEPServiceException(e.getMessage());
        }
        return contactInfoList;
@@ -184,14 +185,14 @@ public class ImageRequestServiceImpl implements ImageRequestService {
        }
        catch (PEPPersistencyException e) {
 
-           LOGGER.severe("Exception occurred at the Service DAO Layer");
+           LOGGER.info("Exception occurred at the Service DAO Layer");
            throw e;
        }
 
        catch (Exception e) {
 
            LOGGER
-               .severe("Exception occurred at the Service Implementation Layer");
+               .info("Exception occurred at the Service Implementation Layer");
            throw new PEPServiceException(e.getMessage());
        }
        return pepHistoryList;
@@ -211,14 +212,14 @@ public class ImageRequestServiceImpl implements ImageRequestService {
        }
        catch (PEPPersistencyException e) {
 
-           LOGGER.severe("Exception occurred at the Service DAO Layer getSampleImageLinks");
+           LOGGER.info("Exception occurred at the Service DAO Layer getSampleImageLinks");
            throw e;
        }
 
        catch (Exception e) {
 
            LOGGER
-               .severe("Exception occurred at the Service Implementation Layer getSampleImageLinks");
+               .info("Exception occurred at the Service Implementation Layer getSampleImageLinks");
            throw new PEPServiceException(e.getMessage());
        }
        return sampleImageLinkList;
@@ -239,14 +240,14 @@ public class ImageRequestServiceImpl implements ImageRequestService {
        }
        catch (PEPPersistencyException e) {
 
-           LOGGER.severe("Exception occurred at the Service DAO Layer getArtDirectorRequestDetails");
+           LOGGER.info("Exception occurred at the Service DAO Layer getArtDirectorRequestDetails");
            throw e;
        }
 
        catch (Exception e) {
 
            LOGGER
-               .severe("Exception occurred at the Service Implementation Layer getArtDirectorRequestDetails");
+               .info("Exception occurred at the Service Implementation Layer getArtDirectorRequestDetails");
            throw new PEPServiceException(e.getMessage());
        }
        return artDirectorList;
@@ -363,7 +364,7 @@ public String callRemoveImageWebService(JSONArray jsonArray) throws Exception,PE
 
            httpConnection.disconnect();
        } catch (MalformedURLException e) {
-           LOGGER.severe("inside malformedException");
+           LOGGER.info("inside malformedException");
            throw new PEPFetchException();
           // e.printStackTrace();
 
@@ -372,19 +373,19 @@ public String callRemoveImageWebService(JSONArray jsonArray) throws Exception,PE
            e.printStackTrace();
            throw new PEPFetchException();
        } catch (IOException e) {
-           LOGGER.severe("inside IOException");
+           LOGGER.info("inside IOException");
 
            e.printStackTrace();
            throw new Exception();
 
        } catch (JSONException e) {
-           LOGGER.severe("inside JSOnException");
+           LOGGER.info("inside JSOnException");
            
 
            e.printStackTrace();
            throw new PEPFetchException();
        } catch (Exception e) {
-           LOGGER.severe("inside Exception" + e);
+           LOGGER.info("inside Exception" + e);
 
            e.printStackTrace();
            throw new Exception();
@@ -471,7 +472,7 @@ public String callUploadVPIService(JSONArray jsonArray) throws Exception,PEPFetc
 
         httpConnection.disconnect();
     } catch (MalformedURLException e) {
-        LOGGER.severe("inside malformedException callUploadImageservice");
+        LOGGER.info("inside malformedException callUploadImageservice");
         throw new PEPFetchException();
        // e.printStackTrace();
 
@@ -480,19 +481,19 @@ public String callUploadVPIService(JSONArray jsonArray) throws Exception,PEPFetc
         e.printStackTrace();
         throw new PEPFetchException();
     } catch (IOException e) {
-        LOGGER.severe("inside IOException callUploadImageservice");
+        LOGGER.info("inside IOException callUploadImageservice");
 
         e.printStackTrace();
         throw new Exception();
 
     } catch (JSONException e) {
-        LOGGER.severe("inside JSOnException callUploadImageservice");
+        LOGGER.info("inside JSOnException callUploadImageservice");
         
 
         e.printStackTrace();
         throw new PEPFetchException();
     } catch (Exception e) {
-        LOGGER.severe("inside Exception callUploadImageservice" + e);
+        LOGGER.info("inside Exception callUploadImageservice" + e);
 
         e.printStackTrace();
         throw new Exception();
@@ -520,13 +521,13 @@ public List<WorkFlow> getImageMgmtDetailsByOrin(String orinNum)
     }
     catch (PEPPersistencyException e) {
         
-        LOGGER.severe("Exception occurred at the Service DAO Layer");
+        LOGGER.info("Exception occurred at the Service DAO Layer");
         throw e;
     }
     
     catch (Exception e) {
           
-            LOGGER.severe("Exception occurred at the Service Implementation Layer");
+            LOGGER.info("Exception occurred at the Service Implementation Layer");
             throw new PEPServiceException(e.getMessage());
         }
     
@@ -566,7 +567,7 @@ public String callApproveorRejectActionService(JSONArray jsonArray) throws Excep
     try {
         Properties prop =PropertyLoader.getPropertyLoader(ImageConstants.MESS_PROP);
         String targetURLs = prop.getProperty(ImageConstants.IMAGE_APPROVE_WEBSERVICE_URL);
-        //String targetURLs = "http://ralpimwsasit02:7507/JERSYRest/rest/UpdateItemServices/imageStatusUpdateService";
+        //String targetURLs = "http://cltpimwsaspt01.belkinc.com:7507/JERSYRest/rest/UpdateItemServices/imageStatusUpdateService";
         LOGGER.info("targetURLs-----SIT#####" +targetURLs);
         URL targetUrl = new URL(targetURLs);
         HttpURLConnection httpConnection =(HttpURLConnection) targetUrl.openConnection();
@@ -597,7 +598,7 @@ public String callApproveorRejectActionService(JSONArray jsonArray) throws Excep
             if ((jsonArray != null) && (jsonArray.length() <= 1)) {
                 if ((output != null)
                     && (output.contains("not") && (output.indexOf("not") != -1))) {
-                    responseMsg = ImageConstants.IMAGE_ERROR_STATUS;
+                    responseMsg = prop.getProperty(ImageConstants.IMAGE_ERROR_STATUS);
 
                 } else {
                     responseMsg =
@@ -643,7 +644,7 @@ public String callApproveorRejectActionService(JSONArray jsonArray) throws Excep
                     LOGGER.info("ImageRequestServiceImpl:::callApproveorRejectActionService:::responseMsg" + responseMsg);
 
                 } else {
-                    responseMsg = ImageConstants.IMAGE_ERROR_STATUS;
+                    responseMsg = prop.getProperty(ImageConstants.IMAGE_ERROR_STATUS);
                     LOGGER.info("ImageRequestServiceImpl:::callApproveorRejectActionService:::responseMsg"+ responseMsg);
 
                 }
@@ -653,7 +654,7 @@ public String callApproveorRejectActionService(JSONArray jsonArray) throws Excep
 
         httpConnection.disconnect();
     } catch (MalformedURLException e) {
-        LOGGER.severe("inside malformedException");
+        LOGGER.info("inside malformedException");
         throw new PEPFetchException();
        // e.printStackTrace();
 
@@ -662,19 +663,19 @@ public String callApproveorRejectActionService(JSONArray jsonArray) throws Excep
         e.printStackTrace();
         throw new PEPFetchException();
     } catch (IOException e) {
-        LOGGER.severe("inside IOException");
+        LOGGER.info("inside IOException");
 
         e.printStackTrace();
         throw new Exception();
 
     } catch (JSONException e) {
-        LOGGER.severe("inside JSOnException");
+        LOGGER.info("inside JSOnException");
         
 
         e.printStackTrace();
         throw new PEPFetchException();
     } catch (Exception e) {
-        LOGGER.severe("inside Exception" + e);
+        LOGGER.info("inside Exception" + e);
 
         e.printStackTrace();
         throw new Exception();
@@ -802,7 +803,7 @@ public String callApproveorRejectActionService(JSONArray jsonArray) throws Excep
     	httpConnection.disconnect();
 }
 		catch (MalformedURLException e) {
-			LOGGER.severe("inside malformedException");
+			LOGGER.info("inside malformedException");
 				throw new PEPFetchException();
 		}
 		catch (ClassCastException e) {
@@ -810,15 +811,15 @@ public String callApproveorRejectActionService(JSONArray jsonArray) throws Excep
 			throw new PEPFetchException();
 		}
 		catch (IOException e) {
-			LOGGER.severe("inside IOException");
+			LOGGER.info("inside IOException");
 			e.printStackTrace();
 		}
 		catch (JSONException e) {
-			LOGGER.severe("inside JSOnException callSubmitOrRejectService");
+			LOGGER.info("inside JSOnException callSubmitOrRejectService");
 			e.printStackTrace();
 		}
 		catch (Exception e) {
-			LOGGER.severe("inside Exception" + e);
+			LOGGER.info("inside Exception" + e);
 				e.printStackTrace();
 		}
 		LOGGER.info("Exiting callSubmitOrRejectService:::" +responseMsg);
@@ -955,7 +956,7 @@ public String callSaveImageShotTypeService(JSONArray jsonArray)
         httpConnection.disconnect();
     }
     catch (MalformedURLException e) {
-        LOGGER.severe("inside malformedException");
+        LOGGER.info("inside malformedException");
         throw new PEPFetchException();
     }
     catch (ClassCastException e) {
@@ -963,16 +964,16 @@ public String callSaveImageShotTypeService(JSONArray jsonArray)
         throw new PEPFetchException();
     }
     catch (IOException e) {
-        LOGGER.severe("inside IOException");
+        LOGGER.info("inside IOException");
         e.printStackTrace();
     }
     catch (JSONException e) {
-        LOGGER.severe("inside JSOnException");
+        LOGGER.info("inside JSOnException");
         e.printStackTrace();
         throw new PEPFetchException();
     }
     catch (Exception e) {
-        LOGGER.severe("inside Exception" + e);
+        LOGGER.info("inside Exception" + e);
         e.printStackTrace();
         throw new Exception();
     }
@@ -987,7 +988,7 @@ public boolean releseLockedPet(  String orin, String pepUserID,String pepFunctio
     	isPetReleased = imageRequestDAO.releseLockedPet(orin,pepUserID,pepFunction);
     } 
     catch (PEPPersistencyException e) {        
-        LOGGER.severe("Exception occurred at the Service DAO Layer");
+        LOGGER.info("Exception occurred at the Service DAO Layer");
         throw e;
     }
         

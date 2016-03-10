@@ -16,8 +16,10 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+//import java.util.logging.Level;
+//import java.util.logging.Logger;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -308,19 +310,19 @@ public class FtpUtil {
 					if (log.isInfoEnabled())
 						log.info("FTP:  SUCCESS for file " + f.getName());
 				} catch (FileNotFoundException ex) {
-					Logger.getLogger(FtpUtil.class.getName()).log(Level.SEVERE, null, ex);
+					Logger.getLogger(FtpUtil.class.getName()).log(Level.INFO, null, ex);
 				} finally {
 					try {
 						if (fis != null)
 							fis.close();
 					} catch (IOException ex) {
-						Logger.getLogger(FtpUtil.class.getName()).log(Level.SEVERE, null, ex);
+						Logger.getLogger(FtpUtil.class.getName()).log(Level.INFO, null, ex);
 					}
 				}
 			}
 		}
 		catch (IOException ex) {
-			Logger.getLogger(FtpUtil.class.getName()).log(Level.SEVERE, null, ex);
+			Logger.getLogger(FtpUtil.class.getName()).log(Level.INFO, null, ex);
 		}
 	}
 		
@@ -466,7 +468,7 @@ public class FtpUtil {
 			FtpUtil.sendDataFiles(ftpClient, filesToSend, "/BelkMeta/to_rrd");
 		}
 		catch (IOException ex) {
-			Logger.getLogger(FtpUtil.class.getName()).log(Level.SEVERE, null, ex);
+			Logger.getLogger(FtpUtil.class.getName()).log(Level.INFO, null, ex);
 		}
 	}
 }

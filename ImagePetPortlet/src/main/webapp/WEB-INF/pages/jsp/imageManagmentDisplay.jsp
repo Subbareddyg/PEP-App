@@ -32,8 +32,12 @@ function trClick(){
 	
 	var selectedOrin = $("#selectedOrinVPI").val();	
 	document.getElementById("selectedColorOrinNum").value = selectedOrin;	
-	   selectedOrin = selectedOrin.trim().length;  	
-	   completionStatusId1 = $("#selectedOrinVPI").val()+'_statusId';	  
+	selectedOrin = selectedOrin.trim().length;  	
+	completionStatusId1 = $("#selectedOrinVPI").val()+'_statusId';
+	   
+	var returnCarsFlag = $('#'+ $("#selectedOrinVPI").val() +'_carsFlag').text();
+	
+	
 		if(selectedOrin <= 9){
 			return;
 		}else{	
@@ -61,13 +65,7 @@ function trClick(){
 		         data: { selectedColorOrin:selectedOrin },
 			         success: function(data){
 			         var json = $.parseJSON(data);   
-					 $(json).each(function(i,val){
-						
-					
-					
-					
-					 
-					
+					 $(json).each(function(i,val){					
 					//Logic for approve disbaled on submit image status	
 					if(val.imageStatus == 'Initiated' || val.imageStatus == 'Rejected'){						
 						document.getElementById('image_approve').disabled=true;
@@ -99,7 +97,7 @@ function trClick(){
 					 	
 					}
 				});
-				   
+								
 				if(count > 10 ){
 					document.getElementById('btnImageUploadAction').disabled=true;
 					document.getElementById('saveImage').disabled=true;
@@ -112,12 +110,8 @@ function trClick(){
 					document.getElementById('btnImageUploadAction').disabled = true ;					
 					document.getElementById('saveImage').disabled = true ;
 					document.getElementById('image_approve').disabled=true;				
-					document.getElementById('shotType').disabled=true;
-						
-				
-				
-				}else{
-					
+					document.getElementById('shotType').disabled=true;				
+				}else{					
 					
 					document.getElementById('btnImageUploadAction').disabled = false ;
 					document.getElementById('saveImage').disabled = false ;
@@ -125,8 +119,7 @@ function trClick(){
 					
 				}				
 				//Logic for Image Status and SuperImage Status combination
-				if(flag == false){	
-					
+				if(flag == false){					
 					if(document.getElementById('hiddenImageStatus').value == "Completed" || document.getElementById('hiddenImageStatus').value == "Approved" || $("#"+completionStatusId1).text() == 'Approved' || $("#"+completionStatusId1).text() == 'Completed'){
 						
 						document.getElementById('image_approve').disabled = true ;
@@ -165,19 +158,23 @@ function trClick(){
 					}						
 					if(flag == true){
 						document.getElementById('image_approve').disabled=true;
-					}	
-						
+					}						
 				}
-				if(count==0){
-				   document.getElementById('saveImage').disabled=true;
-				   //document.getElementById('image_approve').disabled=true;//Fix for 720
+				if(count==0){					
+						document.getElementById('saveImage').disabled=true;
+						//document.getElementById('image_approve').disabled=true;//Fix for 720									   
 				}
                   
-				   
+				 if(returnCarsFlag == 'Yes'){
+					document.getElementById('btnImageUploadAction').disabled=true; 
+				 }
+						  
 				   var reject_status = 'N';
 				   var review_status = 'N';
 				   var initiated_status = 'N';
-				   var completed_status = 'N';
+				   var completed_status = 'N';				   
+				   
+				   
 				   
 				  // Setting the image status for image management based on the child status for 275
 						$(json).each(function(k,val2){						
@@ -202,30 +199,27 @@ function trClick(){
 						  
 						  });
 						  
+				    var onSubmitId = $('#onSubmitId').val();//Replace upper image status on Ajax Success
+					var OnRemovalImageId = $('#OnRemovalImageId').val();
 						  
-					
-						  if(reject_status == 'Y'){
-							  document.getElementById(completionStatusId1).innerHTML = 'Rejected_By_DCA';
-							  
+					if((typeof onSubmitId != 'undefined' &&  onSubmitId == '100')|| (typeof OnRemovalImageId != 'undefined' &&  OnRemovalImageId == '100')){
+						//alert('--OnRemovalImageId--' +OnRemovalImageId +'--onSubmitId--'+onSubmitId);
+						  if(reject_status == 'Y'){							  
+							  document.getElementById(completionStatusId1).innerHTML = 'Rejected_By_DCA';							  
 						  }
-						  else if(review_status == 'Y'){
-							  
-							  document.getElementById(completionStatusId1).innerHTML = 'Ready_For_Review';
-							  
+						  else if(review_status == 'Y'){							  
+							  document.getElementById(completionStatusId1).innerHTML = 'Ready_For_Review';							  
 						  }
-						  else if(initiated_status == 'Y'){
-							  
-							  document.getElementById(completionStatusId1).innerHTML = 'Initiated';
-							  
+						  else if(initiated_status == 'Y'){							  
+							  document.getElementById(completionStatusId1).innerHTML = 'Initiated';							  
 						  }
 						  else if(completed_status == 'Y'){
-							  document.getElementById(completionStatusId1).innerHTML = 'Completed';
-							  
+							  document.getElementById(completionStatusId1).innerHTML = 'Completed';							  
 						  }
 						  else{
-							   document.getElementById(completionStatusId1).innerHTML = 'Initiated';
-							  
+							   document.getElementById(completionStatusId1).innerHTML = 'Initiated';							  
 						  }
+					}
 					// Setting the image status for image management based on the child status END for 275
 		  }//End of Success
 				   
@@ -266,13 +260,16 @@ function removeVPISampleImageRows(imageId,imageName,rowCount,selectedOrin){
    $.ajax({
 			type: 'POST',
 			url : removeImageUrl,
+			datatype:'json',			
 			data: {selectedColorOrin:selectedOrin,imageIDToDel:imageId,imageNameToDel:imageName},			
-			success: function(e,response){
+			success: function(data){
+				var json = $.parseJSON(data);
+				var responseCodeOnRemove = json.responseCodeOnRemove;
+				//alert('--responseCodeOnRemove--' + responseCodeOnRemove);
+				document.getElementById('OnRemovalImageId').value = responseCodeOnRemove;
 			},
-			error:function (xhr, ajaxOptions, thrownError){
-            	
-            	var error = $.parseJSON(xhr.responseText);
-               
+			error:function (xhr, ajaxOptions, thrownError){            	
+            	var error = $.parseJSON(xhr.responseText);               
              }
 
 		});	
@@ -573,14 +570,14 @@ function getValuesforSubmitorRejectAjax(imageId,imageStatus,element,event){
 	var shotTypeValueOnSubmit = $(target).parent().parent().find('select :selected').length ? 
 	$(target).parent().parent().find('select :selected').val() : null;
 	var url = document.getElementById('submitOrRejectAjaxUrlId').value;
-	var selectedOrin = document.getElementById("selectedColorOrinNum").value;
+	var selectedOrin = document.getElementById("selectedColorOrinNum").value; 
 	var statusparam;
 	if(element.value == "Submit"){
 		statusparam = "Submit";
 	}else if(element.value == "Reject"){
 		statusparam = "Reject";
 	}
-	
+	$("#overlay_imageLoading").show();
 	$.ajax({
 			type: 'POST',
 			url : url,
@@ -590,20 +587,22 @@ function getValuesforSubmitorRejectAjax(imageId,imageStatus,element,event){
 			async: true,
 			success: function(data){					
 				var json = $.parseJSON(data);				
-				var responseCode = json.resCodeRet;
+				var responseCode = json.resCodeRet;				
 				var responseStatusParam = json.statusParamRet;
-				var responseImageId = json.imageIdRet;
+				var responseImageId = json.imageIdRet;				
+				var responseCodeOnSubmit = json.responseCodeOnSubmit;
+				//alert('--responseCode--' +responseCode);
+				//alert('--responseCodeOnSubmit--' +responseCodeOnSubmit);
+				document.getElementById('onSubmitId').value = responseCodeOnSubmit;//Replace upper image status on Ajax Success				
 				if(responseStatusParam == 'Submit'){					
 					if(responseCode == '100'){						
 						var spanSubmitSuccessId = document.getElementById('imageIdSubmitSuccessSpan');
 						if ('textContent' in spanSubmitSuccessId){
 							spanSubmitSuccessId.textContent = '';
-							spanSubmitSuccessId.textContent = responseImageId;
-							//document.getElementById('saveShotTypeID').style.display = 'none';
+							spanSubmitSuccessId.textContent = responseImageId;							
 						}else{
 								spanSubmitSuccessId.innerText = '';
-								spanSubmitSuccessId.innerText = responseImageId;
-								//document.getElementById('saveShotTypeID').style.display = 'none';
+								spanSubmitSuccessId.innerText = responseImageId;								
 						}
 							$("#overlay_submitOrReject").show();
 							$("#dialog_submitSuccess").show();
@@ -655,7 +654,10 @@ function getValuesforSubmitorRejectAjax(imageId,imageStatus,element,event){
 				error:function (xhr, ajaxOptions, thrownError){            	
             	var error1 = $.parseJSON(xhr.responseText);
                
-             }
+             },
+			 complete: function(){
+					$("#overlay_imageLoading").hide();
+				}
 
 		});//Ajax Ends		/*setTimeout(function(){setUploadVPILink($("#ajaxaction").val(),document.getElementById("selectedColorOrinNum").value,$("#removeImageUrl").val());trClick();scrollToView('vImage','vImage');},2000); */	
 }
@@ -701,7 +703,8 @@ function checkApproveImageStatus(orinId,imageStatus){
 <input type="hidden" id="removeFlagOff" name="removeFlagOff" value="" />
 <input type="hidden" id="saveImageShotTypeHiddenID" name="saveImageShotTypeHiddenID" value="" />
 
-
+<input type="hidden" id="onSubmitId" name="onSubmitId" value="" />
+<input type="hidden" id="OnRemovalImageId" name="OnRemovalImageId" value="" />
 
 <!-- Submit Render Starts -->
 <div id="overlay_submitOrReject" class="web_dialog_overlay"></div>
@@ -875,7 +878,8 @@ function checkApproveImageStatus(orinId,imageStatus){
 					<th><fmt:message key="label.imageManagement.styleNumber"/></th>
 					<th><fmt:message key="label.imageManagement.color"/></th>																
 					<th><fmt:message key="label.imageManagement.imageStatus"/></th>
-					<th><fmt:message key="label.imageManagement.completionDate"/></th>	
+					<th><fmt:message key="label.imageManagement.completionDate"/></th>
+					<th>Pre-cutover CARS Flag</th>
 				</tr>
 				</thead>
 				<tbody >
@@ -896,7 +900,7 @@ function checkApproveImageStatus(orinId,imageStatus){
 							</script>							
 								<tr name="tablereport" class="treegrid-${countList}"  onclick="setUploadVPILink('${getUploadVPIDetails}','<c:out value="${workFlow.orinNumber}" />','${removeSampleImageUrl}')" id='petTableRowId'>
 								<td align="center"></td>
-								<td><c:out value="${workFlow.orinNumber}" />								
+								<td><c:out value="${workFlow.orinNumber}" />						
 								</td>								
 								<td><c:out value="${workFlow.vendorStyle}" />
 								</td>								
@@ -908,6 +912,7 @@ function checkApproveImageStatus(orinId,imageStatus){
 								</td>
 								<td><c:out value="${workFlow.completionDate}" />
 								</td>
+								<td></td>
 							</tr>
 						
 						<c:forEach items="${workFlow.styleColor}" var="style"
@@ -922,7 +927,7 @@ function checkApproveImageStatus(orinId,imageStatus){
 									class="treegrid-${subcount} treegrid-parent-${countList}"  onclick="populateColorCode('${style.vendorColorCode}');setUploadVPILink('${getUploadVPIDetails}','<c:out value="${style.orinNumber}" />','${removeSampleImageUrl}');checkApproveImageStatus('${style.orinNumber}','${style.imageStatus}');disableAllButtons();">
 
 									<td><input type="hidden" name="supplierId" id="supplierId" value="<c:out value="${style.supplierID}" />"/></td>
-									<td><c:out value="${style.orinNumber}" />
+									<td><a href="javascript:;" onclick=" populateColorCode('${style.vendorColorCode}');setUploadVPILink('${getUploadVPIDetails}','<c:out value="${style.orinNumber}" />','${removeSampleImageUrl}');checkApproveImageStatus('${style.orinNumber}','${style.imageStatus}');disableAllButtons();"><c:out value="${style.orinNumber}" /> </a>
 									<input type="hidden" name="orinHiddenId" id="${style.orinNumber}" value="<c:out value="${style.orinNumber}" />" />
 									</td>
 									<input type="hidden" name="vendorStyle" id="vendorStyle" value="<c:out value="${style.vendorStyle}" />" />
@@ -937,9 +942,10 @@ function checkApproveImageStatus(orinId,imageStatus){
 									<td id="${style.orinNumber}_statusId">
 									<c:out value="${style.imageStatus}" />
 									</td>
-									<td><c:out value="${style.completionDate}" />
+									<td><c:out value="${style.completionDate}" /> 
 
 									</td>
+									<td id="${style.orinNumber}_carsFlag"><c:out value="${style.returnCarsFlag}" /></td>
 								</tr>			
 							</c:forEach>
 							<c:set var="countList" value="${countList+1}" />

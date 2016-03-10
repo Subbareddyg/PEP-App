@@ -1,6 +1,7 @@
 package com.belk.pep.service.impl;
 
-import java.util.logging.Logger;
+//import java.util.logging.Logger;
+import org.apache.log4j.Logger;
 import com.belk.pep.dao.InternalPortalLoginDao;
 import com.belk.pep.model.UserObject;
 import com.belk.pep.exception.checked.PEPPersistencyException;
@@ -32,10 +33,10 @@ public class  InternalPortalLoginServiceImpl implements InternalPortalLoginServi
         }
         catch (PEPPersistencyException e) {
 
-            LOGGER.severe("Exception occurred at the Service Implementation Layer");
+            LOGGER.info("Exception occurred at the Service Implementation Layer");
         }		
         catch (Exception e) {	          
-            LOGGER.severe("Exception occurred at the Service Implementation Layer");
+            LOGGER.info("Exception occurred at the Service Implementation Layer");
         }
         return userObject;
     }

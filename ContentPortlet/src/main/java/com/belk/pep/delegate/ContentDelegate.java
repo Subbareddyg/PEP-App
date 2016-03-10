@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+//import org.apache.log4j.Logger;
 
 import com.belk.pep.constants.ContentScreenConstants;
 import com.belk.pep.exception.checked.PEPDelegateException;
@@ -158,6 +159,51 @@ public class ContentDelegate {
 
     }
 
+    /**
+     * Call iph mapping web service.
+     *
+     * @param webserviceRequest the webservice request
+     * @return the string
+     */
+    public void callasyncIPHMappingWebService(String webserviceRequest)
+    {
+
+        LOGGER.info("start of createIPHMappingWebServiceMapping ");
+        String webServiceResponseCode = null;
+        String webServiceResponseDescription = null;
+        String webServiceResponseStatus = null;
+        String responseMsg = null;
+        String webServiceResponse = null;
+        LOGGER.info("callIPHMappingWebService called");
+        LOGGER.info("callIPHMappingWebService JSON Request....."+webserviceRequest);
+        final Properties prop =   PropertiesFileLoader.getPropertyLoader(ContentScreenConstants.MESS_PROP);
+        final String targetURL =  prop.getProperty(ContentScreenConstants.IPH_MAPPING_WEBSERVICE_URL);
+
+        LOGGER.info("IPHMappingWebService URL = "+targetURL);
+
+        try{
+
+            final URL createWebServiceURL = new URL(targetURL);
+            final HttpURLConnection con = (HttpURLConnection)createWebServiceURL.openConnection();
+            con.setDoOutput(true);
+            con.setDoInput(true);
+
+            con.setRequestProperty("Content-Type", "application/json;");
+            con.setRequestProperty("Accept", "application/json");
+            con.setRequestProperty("Method", "POST");
+            final OutputStream os = con.getOutputStream();
+            os.write(webserviceRequest.getBytes("UTF-8"));
+            os.close(); // Calling Web Service
+
+           // final StringBuilder sb = new StringBuilder();
+           // final int httpResult =con.getResponseCode();
+
+            LOGGER.info("HTTP Result from IPHMappingWebService =  ");
+            
+            }catch(final Exception exception){
+            LOGGER.severe("Exception Occurred callasyncIPHMappingWebService =  "+exception.getCause());
+        }
+    }
 
     /**
      * Creates the content web service.

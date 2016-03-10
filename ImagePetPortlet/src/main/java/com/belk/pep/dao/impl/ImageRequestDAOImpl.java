@@ -7,7 +7,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
-import java.util.logging.Logger;
+//import java.util.logging.Logger;
+import org.apache.log4j.Logger;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -669,7 +670,10 @@ public class ImageRequestDAOImpl implements ImageRequestDAO {
                     String petStateCode=row[9] == null? "" : row[9].toString();
                     String petStateDesc = prop.getProperty(petStateCode);
                     String petState = petStateDesc != null ? petStateDesc.toString() : null;
-                    pet  = mapAdseDbPetsToPortal(parentStyleORIN,orinNumber,entryType,vendorColor,vendorColorDesc,imageState,completionDate,vendorStyle,pet,supplierId);                                    
+                    
+                    String returnCarsFlag = row[10] == null? "" : row[10].toString();;
+                    
+                    pet  = mapAdseDbPetsToPortal(parentStyleORIN,orinNumber,entryType,vendorColor,vendorColorDesc,imageState,completionDate,vendorStyle,pet,supplierId,returnCarsFlag);                                    
                     petList.add(pet);
                 }
           } 
@@ -735,6 +739,8 @@ public class ImageRequestDAOImpl implements ImageRequestDAO {
                 styleColor.setVendorColorDesc(vendorColorDesc);
                 styleColor.setImageStatus(imageState);
                 styleColor.setSupplierID(pet.getSupplierID());
+                
+                styleColor.setReturnCarsFlag(pet.getReturnCarsFlag());
              
                 styleColorList.add(styleColor);//Add all the StyleColor to the  Style Color list 
                 
@@ -838,7 +844,7 @@ public class ImageRequestDAOImpl implements ImageRequestDAO {
     private PetsFound mapAdseDbPetsToPortal(String parentStyleORIN,
         String orinNumber, String entryType, String vendorColor,String vendorColorDesc, 
         String imageState,
-         String completionDate,String vendorStyle, PetsFound pet,String supplierId) {
+         String completionDate,String vendorStyle, PetsFound pet,String supplierId,String returnCarsFlag) {
     try{
         pet = new PetsFound();
         pet.setParentStyleOrin(parentStyleORIN);       
@@ -849,7 +855,16 @@ public class ImageRequestDAOImpl implements ImageRequestDAO {
         pet.setVendorStyle(vendorStyle);
         pet.setImageState(imageState);   
         pet.setCompletionDate(completionDate);   
-        pet.setSupplierID(supplierId);    
+        pet.setSupplierID(supplierId);
+        if(returnCarsFlag.equalsIgnoreCase("true"))
+        {
+        	pet.setReturnCarsFlag("Yes");
+        }
+        else
+        {
+        	pet.setReturnCarsFlag("No");
+        }
+        
         //LOGGER.info("This is from mapAdseDbPetsToPortal..Exit" );
       
   

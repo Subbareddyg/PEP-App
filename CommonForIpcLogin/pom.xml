@@ -42,7 +42,11 @@
 		</plugins>
 	</build>
 	<dependencies>
-		
+		<dependency>
+		    <groupId>com.ibm.websphere</groupId>
+    		<artifactId>websphere_apis</artifactId>
+    		<version>1.0</version>
+		</dependency>
 
 	</dependencies>
 </project>

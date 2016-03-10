@@ -1,7 +1,8 @@
 package com.belk.pep.dao.impl;
 
 import java.util.List;
-import java.util.logging.Logger;
+//import java.util.logging.Logger;
+import org.apache.log4j.Logger;
 
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;

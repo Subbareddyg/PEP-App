@@ -233,4 +233,6 @@ public static final String LOGGEDIN_USER_DETAILS = "LoggedInUserDetailsOBJ";
 //constants for PET page locked scenarios
 public static final String SEARCH_LOCKED_TYPE_CONTENT = "Content";
 public static final String SEARCH_LOCKED_TYPE_IMAGE = "Image";
+public static final String TEST = "TEst";
+
 }

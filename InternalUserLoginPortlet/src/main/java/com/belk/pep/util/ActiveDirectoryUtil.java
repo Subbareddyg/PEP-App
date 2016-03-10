@@ -11,7 +11,8 @@ import javax.naming.directory.DirContext;
 
 import com.belk.pep.constants.InternalPortalConstants;
 import com.sun.jndi.ldap.LdapCtxFactory;
-import java.util.logging.Logger;
+//import java.util.logging.Logger;
+import org.apache.log4j.Logger;
 
 
 public class ActiveDirectoryUtil  {
@@ -55,12 +56,12 @@ public class ActiveDirectoryUtil  {
 			setDirContext(dirContext);
 			validUser = true;
 		} catch (NamingException e) {
-			LOGGER.severe("Unexpected Exception :: " + e.toString());
+			LOGGER.info("Unexpected Exception :: " + e.toString());
 			validUser = false;
 			throw e;
 		}
 		catch(Exception e){
-			LOGGER.severe("Inside exception");
+			LOGGER.info("Inside exception");
 		}
 		LOGGER.info("Validate user against of LDAP---> "+validUser);
 		return validUser;

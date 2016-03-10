@@ -1,25 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" output="target/classes" path="src/main/java"/>
-	<classpathentry excluding="**" kind="src" output="target/classes" path="src/main/resources"/>
-	<classpathentry kind="src" output="target/test-classes" path="src/test/java"/>
-	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
-	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
-	<classpathentry kind="lib" path="C:/Program Files (x86)/IBM/SDP/runtimes/base_v7_stub/runtimes/websphere_apis.jar">
+	<classpathentry kind="src" output="target/classes" path="src/main/java">
 		<attributes>
-			<attribute name="javadoc_location" value="jar:file:/C:/Program Files (x86)/IBM/SDPShared/plugins/com.ibm.jee5.api.doc_1.1.0.v20110712_2011.jar!/topics/api"/>
+			<attribute name="optional" value="true"/>
+			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6">
+	<classpathentry excluding="**" kind="src" output="target/classes" path="src/main/resources">
 		<attributes>
-			<attribute name="owner.project.facets" value="java"/>
+			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/afusyg6/.m2/repository/org/hibernate/hibernate/3.2.5.ga/hibernate-3.2.5.ga.jar"/>
-	<classpathentry kind="lib" path="C:/jar files/spring-webmvc-portlet-3.1.1.RELEASE.jar"/>
-	<classpathentry kind="lib" path="C:/Users/afusyg6/.m2/repository/org/json/json/20140107/json-20140107.jar"/>
-	<classpathentry kind="lib" path="C:/Users/afusyg6/.m2/repository/com/googlecode/json-simple/json-simple/1.1/json-simple-1.1.jar"/>
-	<classpathentry kind="lib" path="C:/Users/afusyg6/.m2/repository/com/google/code/gson/gson/2.2.2/gson-2.2.2.jar"/>
-	<classpathentry kind="lib" path="C:/Users/afusyg6/.m2/repository/CommonForIpcLogin/CommonForIpcLogin/1.0/CommonForIpcLogin-1.0.jar"/>
+	<classpathentry kind="src" output="target/test-classes" path="src/test/java">
+		<attributes>
+			<attribute name="optional" value="true"/>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

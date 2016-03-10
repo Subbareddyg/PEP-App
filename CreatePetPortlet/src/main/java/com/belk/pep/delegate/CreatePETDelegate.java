@@ -1,7 +1,8 @@
 package com.belk.pep.delegate;
 
 import java.util.ArrayList;
-import java.util.logging.Logger;
+//import java.util.logging.Logger;
+import org.apache.log4j.Logger;
 
 import org.json.JSONArray;
 

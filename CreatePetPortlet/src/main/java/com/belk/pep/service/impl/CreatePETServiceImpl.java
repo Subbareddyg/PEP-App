@@ -10,7 +10,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Properties;
-import java.util.logging.Logger;
+//import java.util.logging.Logger;
+import org.apache.log4j.Logger;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -94,15 +95,16 @@ public class CreatePETServiceImpl implements CreatePETService {
 
                 // Below if block is for handling single row data.
                 if ((jsonArray != null) && (jsonArray.length() <= 1)) {
-                    if ((output != null)
-                        && (output.contains("not") && (output.indexOf("not") != -1))) {
-                       
+                    if ((output != null) && (output.contains("not") && (output.indexOf("not") != -1))) {                    
                         responseMsg = CreatePETPortalConstants.PET_NOT_CREATED;
-
-                    } else {                      
-                        responseMsg =
-                            prop.getProperty(CreatePETPortalConstants.RESPONSE_MSG);
-                    }
+                    } else if((output != null) && (output.contains("already") && (output.indexOf("already") != -1))) {          	
+                    	 responseMsg = prop.getProperty(CreatePETPortalConstants.NOT_MET_PET_CRITERIA);
+                    }else if((output != null) && (output.contains("Something") && (output.indexOf("Something") != -1))){
+                    	  responseMsg = CreatePETPortalConstants.PET_NOT_CREATED;
+                    }                    
+                    else{                  
+                    	responseMsg =  prop.getProperty(CreatePETPortalConstants.RESPONSE_MSG);
+                   }
 
                 } else {
                     // This block is for handling multiple row data.
@@ -182,7 +184,7 @@ public class CreatePETServiceImpl implements CreatePETService {
 
             httpConnection.disconnect();
         } catch (MalformedURLException e) {
-            LOGGER.severe("inside malformedException");
+            LOGGER.info("inside malformedException");
             throw new PEPFetchException();
            // e.printStackTrace();
 
@@ -191,19 +193,19 @@ public class CreatePETServiceImpl implements CreatePETService {
             e.printStackTrace();
             throw new PEPFetchException();
         } catch (IOException e) {
-            LOGGER.severe("inside IOException");
+            LOGGER.info("inside IOException");
 
             e.printStackTrace();
             throw new Exception();
 
         } catch (JSONException e) {
-            LOGGER.severe("inside JSOnException");
+            LOGGER.info("inside JSOnException");
             
 
             e.printStackTrace();
             throw new PEPFetchException();
         } catch (Exception e) {
-            LOGGER.severe("inside Exception" + e);
+            LOGGER.info("inside Exception" + e);
 
             e.printStackTrace();
             throw new Exception();
@@ -244,12 +246,12 @@ public class CreatePETServiceImpl implements CreatePETService {
             e.printStackTrace();
             e.getCause();
 
-            LOGGER.severe("Exception occurred at the  Implementation Layer");
+            LOGGER.info("Exception occurred at the  Implementation Layer");
         } catch (Exception e) {
             e.printStackTrace();
             e.getCause();
 
-            LOGGER.severe("Exception occurred at the  Implementation Layer");
+            LOGGER.info("Exception occurred at the  Implementation Layer");
         }
 
         return arrList;
@@ -289,10 +291,10 @@ public class CreatePETServiceImpl implements CreatePETService {
         } catch (PEPPersistencyException e) {
 
             LOGGER
-                .severe("Exception occurred at the Service Implementation Layer");
+                .info("Exception occurred at the Service Implementation Layer");
         } catch (Exception e) {
             LOGGER
-                .severe("Exception occurred at the Service Implementation Layer");
+                .info("Exception occurred at the Service Implementation Layer");
         }
 
         return result;

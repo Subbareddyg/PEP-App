@@ -2,7 +2,8 @@ package com.belk.pep.delegate;
 
 import java.util.List;
 import java.util.Properties;
-import java.util.logging.Logger;
+//import java.util.logging.Logger;
+import org.apache.log4j.Logger;
 
 import com.belk.pep.domain.ExternalUser;
 import com.belk.pep.domain.PepRole;

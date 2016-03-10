@@ -4,7 +4,8 @@ import javax.crypto.*;
 import javax.crypto.spec.*;
 
 import java.io.*;
-import java.util.logging.Logger;
+//import java.util.logging.Logger;
+import org.apache.log4j.Logger;
 
 
 /**

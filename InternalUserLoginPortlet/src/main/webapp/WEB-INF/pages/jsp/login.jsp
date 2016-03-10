@@ -4,9 +4,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <head>         
 <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/css/portletBorder.css" /> 
-<script type="text/javascript" src="<%=request.getContextPath()%>/js/libs/jq-plugins-adapter.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath()%>/js/libs/ext-all.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath()%>/js/libs/jquery.scrollTo-min.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/js/belk.cars.login.js"></script>
 <script>
 

@@ -21,6 +21,8 @@ public class PetsFound {
     /** The parent style orin. */
     private String parentStyleOrin;
     
+    private String returnCarsFlag;
+    
     /**omniChannelVendor**/
     String omniChannelVendor;
     
@@ -432,6 +434,22 @@ public class PetsFound {
     public void setOmniChannelVendor(String omniChannelVendor) {
         this.omniChannelVendor = omniChannelVendor;
     }
+
+
+	/**
+	 * @return the returnCarsFlag
+	 */
+	public String getReturnCarsFlag() {
+		return returnCarsFlag;
+	}
+
+
+	/**
+	 * @param returnCarsFlag the returnCarsFlag to set
+	 */
+	public void setReturnCarsFlag(String returnCarsFlag) {
+		this.returnCarsFlag = returnCarsFlag;
+	}
     
     
     

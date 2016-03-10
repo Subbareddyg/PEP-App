@@ -2,7 +2,8 @@ package com.belk.pep.util;
 
 import java.util.Comparator;
 import com.belk.pep.model.PetsFound;
-import java.util.logging.Logger;
+//import java.util.logging.Logger;
+import org.apache.log4j.Logger;
 
 
 public class ComplexPackComparator implements Comparator<PetsFound> {

@@ -1,7 +1,6 @@
 <%@ include file="/WEB-INF/pages/jsp/include.jsp" %>
 
 
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <head>
@@ -35,38 +34,15 @@
     <script src="<%=response.encodeURL(request.getContextPath()+"/js/jquery.min.js")%>"></script>
     <script type="text/javascript" src="<%=response.encodeURL(request.getContextPath()+"/js/jquery.treegrid.js")%>"></script>
   
-  <style type="text/css">
-  #loading {
-   width: 100%;
-   height: 100%;
-   top: 0px;
-   left: 0px;
-   position: absolute;
-   display: none;
-   opacity: 0.7;
-   z-index: 99;
-   text-align: center;
-   margin: inherit;
-  
-}
-#loading-image {
-  position: absolute;
-  top: 150px;
-  left: 240px;
-  z-index: 100;
-}
-
-  </style>
-  
     <script type="text/javascript">
     var inputChanged = true;
    
             $(document).ready(function() {
             	 //code for alternate colors for Product and legacy attribute table rows-START
-	$("#productAttr_table tr:even").css("background-color", "#F9F9F9");
-	$("#productAttr_table tr:odd").css("background-color", "#FFFFFF");
-	$("#legacyAttributeTable tr:even").css("background-color", "#F9F9F9");
-	$("#legacyAttributeTable tr:odd").css("background-color", "#FFFFFF");
+			$("#productAttr_table tr:even").css("background-color", "#F9F9F9");
+			$("#productAttr_table tr:odd").css("background-color", "#FFFFFF");
+			$("#legacyAttributeTable tr:even").css("background-color", "#F9F9F9");
+			$("#legacyAttributeTable tr:odd").css("background-color", "#FFFFFF");
             //code for alternate colors for Product and legacy attribute table rows-END
             	//Logic for disabling the Product Name , Product Description Text  Area ,Style Submit button ,omni channel ,car brand
             	// when the Style Pet Status is completed or closed
@@ -81,6 +57,141 @@
                 	   styleColorRowCount = document.getElementById("styleColorCountId").value; 
                   }
             
+                  //Retain the value entered in the field   logic  when the IPH drop down changes
+          		  var selectedCategoryID="${requestScope.selectedCategory}";
+          			selectedCategoryID = selectedCategoryID.trim();
+
+          			if (typeof selectedCategoryID !== "undefined" && selectedCategoryID !== null && selectedCategoryID!='' ) { 
+          				
+          			  $("#iphCategoryDropDownId").val("${requestScope.selectedCategory}").attr('selected', 'selected');
+          			 // $("#iphCategoryDropDownId").focus();
+          			} 
+          			
+          	    //Logic for highlighting the selected omnichannel brand name 	in its drop  down  on change of IPH Drop Down	
+          		    var selectedOmnichannelbrand="${requestScope.selectedOmnichannelbrand}";
+          			if (typeof selectedOmnichannelbrand != "undefined" && selectedOmnichannelbrand != null && selectedOmnichannelbrand.trim()!='') {  
+              			$("#omnichannelbrand").val("${requestScope.selectedOmnichannelbrand}").attr('selected', 'selected');
+              			document.getElementById("selectedOmniBrand").value = selectedOmnichannelbrand;
+              			
+          			} //else{
+               			//$("#omnichannelbrand").val('-1').attr('selected', 'selected');
+               		//}	 		
+          	
+          			//Logic for highlighting the selected car brand name 	in its drop  down  on change of IPH Drop Down	
+             				var selectedCarbrand="${requestScope.selectedCarbrand}";
+                    		if (typeof selectedCarbrand != "undefined" && selectedCarbrand != null && selectedCarbrand.trim()!='' ) {   
+                        			$("#carbrand").val("${requestScope.selectedCarbrand}").attr('selected', 'selected');
+                        			document.getElementById("selectedCarsBrand").value = selectedCarbrand;
+                    		} //else{
+                   			//$("#carbrand").val('-1').attr('selected', 'selected');
+                   		//}	
+                        				
+                    		
+                    			var selectedChannelEx="${requestScope.selectedChannelExclusive}";
+                       		if (typeof selectedChannelEx != "undefined" && selectedChannelEx != null && selectedChannelEx.trim()!='' ) {   
+                           			$("#channelExclId").val("${requestScope.selectedChannelExclusive}").attr('selected', 'selected');
+                           			document.getElementById("selectedChannelExclusive").value = selectedChannelEx;
+                       		} else{
+                       			$("#channelExclId").val('-1').attr('selected', 'selected');
+                       		}
+                    		
+                 		 		var selectedBelkEx="${requestScope.selectedBelkExclusive}";
+                       		if (typeof selectedBelkEx != "undefined" && selectedBelkEx != null && selectedBelkEx.trim()!='' ) {   
+                           			$("#belkExclId").val("${requestScope.selectedBelkExclusive}").attr('selected', 'selected');
+                           			document.getElementById("selectedBelkExclusive").value = selectedBelkEx;
+                       		} else{
+                       			$("#belkExclId").val('-1').attr('selected', 'selected');
+                       		}
+              		
+                       		var selectedGWP="${requestScope.selectedGWP}";
+                       		if (typeof selectedGWP != "undefined" && selectedGWP != null && selectedGWP.trim()!='' ) {   
+                           			$("#globalGWPId").val("${requestScope.selectedGWP}").attr('selected', 'selected');
+                           			document.getElementById("selectedGWP").value = selectedGWP;
+                       		} else{
+                       			$("#globalGWPId").val('No').attr('selected', 'selected');
+                       		}
+                       		
+                       		var selectedPWP="${requestScope.selectedPWP}";
+                       		if (typeof selectedPWP != "undefined" && selectedPWP != null && selectedPWP.trim()!='' ) {   
+                           			$("#globalPWPId").val("${requestScope.selectedPWP}").attr('selected', 'selected');
+                           			document.getElementById("selectedPWP").value = selectedPWP;
+                       		} else{
+                       			$("#globalPWPId").val('No').attr('selected', 'selected');
+                       		}
+                       		
+                       		var selectedPYG="${requestScope.selectedPYG}";
+                       		if (typeof selectedPYG != "undefined" && selectedPYG != null && selectedPYG.trim()!='' ) {   
+                           			$("#globalPYGId").val("${requestScope.selectedPYG}").attr('selected', 'selected');
+                           			document.getElementById("selectedPYG").value = selectedPYG;
+                       		} else{
+                       			$("#globalPYGId").val('No').attr('selected', 'selected');
+                       		}
+                       		
+                       		var selectedBopis="${requestScope.selectedBopis}";
+                       		if (typeof selectedBopis != "undefined" && selectedBopis != null && selectedBopis.trim()!='') {  
+                       			if(selectedBopis=='Yes' || selectedBopis=='No' ){
+                       				$("#bopislId").val("${requestScope.selectedBopis}").attr('selected', 'selected');
+                           			document.getElementById("selectedBopis").value = selectedBopis;
+                       			}else{
+                       				$("#bopislId").val('-1').attr('selected', 'selected');
+                       				document.getElementById("selectedBopis").value = '-1';
+                       			}
+                       		} else{
+                            			$("#bopislId").val('-1').attr('selected', 'selected');
+                            			document.getElementById("selectedBopis").value = '-1';
+                       		}
+                       		
+             	//Logic for highlighting the selected omni channel color family in its  drop down on change of IPH Drop Down	
+             	
+             	   var selectedOmniColorFamily='${requestScope.selectedOmniColorFamily}';
+                 			if (typeof selectedOmniColorFamily !== "undefined" && selectedOmniColorFamily !== null && selectedOmniColorFamily!='' ) {   
+                     			$("#a_drop_down_box").val("${requestScope.selectedOmniColorFamily}").attr('selected', 'selected');
+                    } 
+                 			
+	              //Logic for highlighting the selected secondaryColor1 in its  drop down on change of IPH Drop Down	
+	                         	
+	               	 var selectedSecondaryColor1='${requestScope.selectedSecondaryColor1}';
+	                            			if (typeof selectedSecondaryColor1 !== "undefined" && selectedSecondaryColor1 !== null && selectedSecondaryColor1!='' ) {   
+	                                			$("#secondaryColorId").val("${requestScope.selectedSecondaryColor1}").attr('selected', 'selected');
+	              	} 
+                            			
+	                //Logic for highlighting the selected secondaryColor2 in its  drop down on change of IPH Drop Down	
+	                                     	
+	                	 var selectedSecondaryColor2='${requestScope.selectedSecondaryColor2}';
+	                          if (typeof selectedSecondaryColor2 !== "undefined" && selectedSecondaryColor2 !== null && selectedSecondaryColor2!='' ) {   
+	                    $("#secondaryColorId2").val("${requestScope.selectedSecondaryColor2}").attr('selected', 'selected');
+	                 	}  else{
+	           			$("#secondaryColorId2").val("-1").attr('selected', 'selected');
+	           		}
+                          
+                          
+	            //Logic for highlighting the selected secondaryColor3 in its  drop down on change of IPH Drop Down	
+	                         	
+	              var selectedSecondaryColor3='${requestScope.selectedSecondaryColor3}';
+	                                 if (typeof selectedSecondaryColor3 !== "undefined" && selectedSecondaryColor3 !== null && selectedSecondaryColor3!='' ) {   
+	                           $("#secondaryColorId3").val("${requestScope.selectedSecondaryColor3}").attr('selected', 'selected');
+	                 	}   
+                                 
+                                 
+	            //Logic for highlighting the selected secondaryColor4 in its  drop down on change of IPH Drop Down	
+	                                	
+	               var selectedSecondaryColor4='${requestScope.selectedSecondaryColor4}';
+	                            if (typeof selectedSecondaryColor4 !== "undefined" && selectedSecondaryColor4 !== null && selectedSecondaryColor4!='' ) {   
+	                                              $("#secondaryColorId4").val("${requestScope.selectedSecondaryColor4}").attr('selected', 'selected');
+	                       	}                            			
+                                                          	
+		         //Logic for highlighting the selected Omni Channel Color Description in its  drop down on change of IPH Drop Down	
+		                          	
+		               var selectedOmniChannelColorDescription='${requestScope.selectedOmniChannelColorDescription}';
+		                 if (typeof selectedOmniChannelColorDescription !== "undefined" && selectedOmniChannelColorDescription !== null && selectedOmniChannelColorDescription!='' ) {   
+		                                $("#omniChannelColorDescriptionId").val("${requestScope.selectedOmniChannelColorDescription}");
+		                  	}                            			
+			      //Logic for highlighting the selected selectedVendorColor in its  drop down on change of IPH Drop Down	
+			             	
+			        var selectedVendorColor='${requestScope.selectedVendorColor}';
+			                if (typeof selectedVendorColor !== "undefined" && selectedVendorColor !== null && selectedVendorColor!='' ) {   
+			                                  $("#vendorColorId").val("${requestScope.selectedVendorColor}");
+			       	}     
                   
                   // Disable color section
                   if(pepUserRoleName == "vendor")
@@ -251,41 +362,22 @@
 	     	      			// or style pet status is Closed and all its child style color pet status is Closed
 	     	      			// or style pet status is Deactivated and all its child style color pet status is Deactivated
 	     	      			
-	     	      			if(stylePetContentStatus=='Ready_For_Review' || stylePetContentStatus=='Closed' || stylePetContentStatus=='Completed')
-	     	      			{
 	     	      			for(i=1; i<=styleColorRowCount; i++){
 	     	      				var styleColorContentPetStatus= $(".petColorRowClass"+(i)).text();	     	      			
 	     	      			    var submitButtonId = "styleColorSubmitButtonId"+i;	 
 	     	      			    
 	     	      				if(styleColorContentPetStatus=="Ready_For_Review"  || styleColorContentPetStatus=='Closed' || styleColorContentPetStatus=='Completed' || styleColorContentPetStatus=='Deactivated')
 		     	           		{ 
-	     	            		      $('#txt_outfitName').attr("disabled", "disabled"); 		            		  
-	     		            		  $('#vendorStyleId').attr("disabled", "disabled"); 		            		  
-	     		            		  $('#styleSubmit').attr("disabled", "disabled");         		  
-	     		            		  $('#omnichannelbrand').attr("disabled", "disabled");         		  
-	     		            		  $('#carbrand').attr("disabled", "disabled");             		  
-	     		            		  $('#a_drop_down_box').attr("disabled", "disabled");              		  
-	     		            		  $('#secondaryColorId').attr("disabled", "disabled");          		  
-	     		            		  $('#secondaryColorId2').attr("disabled", "disabled"); 		            		  
-	     		            		  $('#secondaryColorId3').attr("disabled", "disabled");       		  
-	     		            		  $('#secondaryColorId4').attr("disabled", "disabled"); 	            		  
-	     		            		  $('#omniChannelColorDescriptionId').attr("disabled", "disabled");        		  
-	     		            		  $('#vendorColorId').attr("disabled", "disabled"); 	
-	     		            		  $('#saveButtonId').attr("disabled", "disabled"); 
-	     		            		  $('#channelExclId').attr("disabled", "disabled");
-	    		            		  $('#belkExclId').attr("disabled", "disabled");
-	    		            		  $('#globalGWPId').attr("disabled", "disabled");
-	    		            		  $('#globalPWPId').attr("disabled", "disabled");
-	    		            		  $('#globalPYGId').attr("disabled", "disabled");
-	    		            		  $('#bopislId').attr("disabled", "disabled");
 	    		            		  document.getElementById(submitButtonId).disabled = true;
-	    		            		 // document.getElementById(styleColorHyperLinkId).disabled = true;
+	    		            		  
+		     	           		} else  if(styleColorContentPetStatus=="Initiated") {
+		     	           			
+		     	           			 document.getElementById(submitButtonId).disabled = false;
 		     	           		}
 	     	      				
 	     	      			}   
-	     	      		}
         		  
-        		  }
+        		  }// End of Vendor
             
             	//End of logic for vendor
             	
@@ -455,63 +547,22 @@
             	 //Logic for disabling the Product Name , Product Description Text  Area ,Style Color  Approve button ,omni channel ,car brand
             	 //when the Style Color Pet Status is completed or closed
             	             
-                    var finalStatus = false;             	
 	      			for(i=1; i<=styleColorRowCount; i++){
       				   var styleColorContentPetStatus= $(".petColorRowClass"+(i)).text();
       				   var approveButtonId = "styleColorApproveButtonId"+i;
 	      	    	   if(styleColorContentPetStatus=='Completed' || styleColorContentPetStatus=='Closed' || styleColorContentPetStatus=='Deactivated')
 		           		{ 
-	      	    			
-	            		      $('#txt_outfitName').attr("disabled", "disabled"); 		            		  
-		            		  $('#vendorStyleId').attr("disabled", "disabled"); 		            		  
-		            		  $('#styleSubmit').attr("disabled", "disabled");         		  
-		            		  $('#omnichannelbrand').attr("disabled", "disabled");         		  
-		            		  $('#carbrand').attr("disabled", "disabled");             		  
-		            		  $('#a_drop_down_box').attr("disabled", "disabled");              		  
-		            		  $('#secondaryColorId').attr("disabled", "disabled");          		  
-		            		  $('#secondaryColorId2').attr("disabled", "disabled"); 		            		  
-		            		  $('#secondaryColorId3').attr("disabled", "disabled");       		  
-		            		  $('#secondaryColorId4').attr("disabled", "disabled"); 	            		  
-		            		  $('#omniChannelColorDescriptionId').attr("disabled", "disabled");        		  
-		            		  $('#vendorColorId').attr("disabled", "disabled"); 	
-		            		  $('#saveButtonId').attr("disabled", "disabled"); 		            		  
 		            		  document.getElementById(approveButtonId).disabled = true;
 		           		}
-	      	    	   
 	            	   else if(styleColorContentPetStatus=='Initiated'|| styleColorContentPetStatus=='Ready_For_Review' )
 	            		   {    
-	            		   
-	            		     // $('#txt_outfitName').removeAttr('disabled'); 		            		  
-		            		//  $('#vendorStyleId').removeAttr('disabled');		            		  
-		            		//  $('#styleSubmit').removeAttr('disabled');         		  
-		            		//  $('#omnichannelbrand').removeAttr('disabled');         		  
-		            		//  $('#carbrand').removeAttr('disabled');             		  
-		            		//  $('#a_drop_down_box').removeAttr('disabled');              		  
-		            		//  $('#secondaryColorId').removeAttr('disabled');          		  
-		            		//  $('#secondaryColorId2').removeAttr('disabled'); 		            		  
-		            		//  $('#secondaryColorId3').removeAttr('disabled');       		  
-		            		//  $('#secondaryColorId4').removeAttr('disabled'); 	            		  
-		            		//  $('#omniChannelColorDescriptionId').removeAttr('disabled');        		  
 		            		  $('#vendorColorId').attr("disabled", "disabled"); //	vendorColor would always be non editable -defect 358
 		            		//  $('#saveButtonId').removeAttr('disabled'); 		            		  
 		            		  document.getElementById(approveButtonId).disabled = false;            		   
-		            		//  finalStatus= true;
 	            		   }  		
-	      				
 	      			}   	  
-	      			if(finalStatus){ //enable style color attributes
-	      				 $('#a_drop_down_box').removeAttr('disabled');              		  
-	            		  $('#secondaryColorId').removeAttr('disabled');          		  
-	            		  $('#secondaryColorId2').removeAttr('disabled'); 		            		  
-	            		  $('#secondaryColorId3').removeAttr('disabled');       		  
-	            		  $('#secondaryColorId4').removeAttr('disabled'); 	            		  
-	            		  $('#omniChannelColorDescriptionId').removeAttr('disabled');        		  
-	            		  $('#vendorColorId').attr("disabled", "disabled"); //	vendorColor would always be non editable -defect 358
-	            		  $('#saveButtonId').removeAttr('disabled'); 		         
-	      			}
-            	          	  
             	  //End of logic for disabling for role name dca       	      
-        		  }	    	  
+        		  } // End of DCA	    	  
             	  
             	  //End of logic for disabling
             	  
@@ -611,144 +662,6 @@
             	  }
             	  
             	  
-            	  //Retain the value entered in the field   logic  when the IPH drop down changes
-            	
-            		var selectedCategoryID="${requestScope.selectedCategory}";
-            			selectedCategoryID = selectedCategoryID.trim();
-
-            			if (typeof selectedCategoryID !== "undefined" && selectedCategoryID !== null && selectedCategoryID!='' ) { 
-            				
-            			  $("#iphCategoryDropDownId").val("${requestScope.selectedCategory}").attr('selected', 'selected');
-            			 // $("#iphCategoryDropDownId").focus();
-            			} 
-            			
-            	//Logic for highlighting the selected omnichannel brand name 	in its drop  down  on change of IPH Drop Down	
-            		 var selectedOmnichannelbrand="${requestScope.selectedOmnichannelbrand}";
-            			if (typeof selectedOmnichannelbrand != "undefined" && selectedOmnichannelbrand != null && selectedOmnichannelbrand.trim()!='' 
-            					&& selectedOmnichannelbrand != "${requestScope.selectedOmnichannelbrand}") {   
-                			$("#omnichannelbrand").val("${requestScope.selectedOmnichannelbrand}").attr('selected', 'selected');
-                			document.getElementById("selectedOmniBrand").value = selectedOmnichannelbrand;
-                			
-            			} //else{
-                 			//$("#omnichannelbrand").val('-1').attr('selected', 'selected');
-                 		//}	 		
-            	
-            			//Logic for highlighting the selected car brand name 	in its drop  down  on change of IPH Drop Down	
-               				 var selectedCarbrand="${requestScope.selectedCarbrand}";
-                      		if (typeof selectedCarbrand != "undefined" && selectedCarbrand != null && selectedCarbrand.trim()!='' &&
-                      				selectedCarbrand != "${requestScope.selectedCarbrand}") {   
-                          			$("#carbrand").val("${requestScope.selectedCarbrand}").attr('selected', 'selected');
-                          			document.getElementById("selectedCarsBrand").value = selectedCarbrand;
-                      		} //else{
-                     			//$("#carbrand").val('-1').attr('selected', 'selected');
-                     		//}	
-                          				
-                      		
-                      			var selectedChannelEx="${requestScope.selectedChannelExclusive}";
-                         		if (typeof selectedChannelEx != "undefined" && selectedChannelEx != null && selectedChannelEx.trim()!='' ) {   
-                             			$("#channelExclId").val("${requestScope.selectedChannelExclusive}").attr('selected', 'selected');
-                             			document.getElementById("selectedChannelExclusive").value = selectedChannelEx;
-                         		} else{
-                         			$("#channelExclId").val('-1').attr('selected', 'selected');
-                         		}
-                      		
-                   		 		var selectedBelkEx="${requestScope.selectedBelkExclusive}";
-                         		if (typeof selectedBelkEx != "undefined" && selectedBelkEx != null && selectedBelkEx.trim()!='' ) {   
-                             			$("#belkExclId").val("${requestScope.selectedBelkExclusive}").attr('selected', 'selected');
-                             			document.getElementById("selectedBelkExclusive").value = selectedBelkEx;
-                         		} else{
-                         			$("#belkExclId").val('-1').attr('selected', 'selected');
-                         		}
-                		
-                         		var selectedGWP="${requestScope.selectedGWP}";
-                         		if (typeof selectedGWP != "undefined" && selectedGWP != null && selectedGWP.trim()!='' ) {   
-                             			$("#globalGWPId").val("${requestScope.selectedGWP}").attr('selected', 'selected');
-                             			document.getElementById("selectedGWP").value = selectedGWP;
-                         		} else{
-                         			$("#globalGWPId").val('No').attr('selected', 'selected');
-                         		}
-                         		
-                         		var selectedPWP="${requestScope.selectedPWP}";
-                         		if (typeof selectedPWP != "undefined" && selectedPWP != null && selectedPWP.trim()!='' ) {   
-                             			$("#globalPWPId").val("${requestScope.selectedPWP}").attr('selected', 'selected');
-                             			document.getElementById("selectedPWP").value = selectedPWP;
-                         		} else{
-                         			$("#globalPWPId").val('No').attr('selected', 'selected');
-                         		}
-                         		
-                         		var selectedPYG="${requestScope.selectedPYG}";
-                         		if (typeof selectedPYG != "undefined" && selectedPYG != null && selectedPYG.trim()!='' ) {   
-                             			$("#globalPYGId").val("${requestScope.selectedPYG}").attr('selected', 'selected');
-                             			document.getElementById("selectedPYG").value = selectedPYG;
-                         		} else{
-                         			$("#globalPYGId").val('No').attr('selected', 'selected');
-                         		}
-                         		
-                         		var selectedBopis="${requestScope.selectedBopis}";
-                         		if (typeof selectedBopis != "undefined" && selectedBopis != null && selectedBopis.trim()!='') {  
-                         			if(selectedBopis=='Yes' || selectedBopis=='No' ){
-                         				$("#bopislId").val("${requestScope.selectedBopis}").attr('selected', 'selected');
-                             			document.getElementById("selectedBopis").value = selectedBopis;
-                         			}else{
-                         				$("#bopislId").val('-1').attr('selected', 'selected');
-                         				document.getElementById("selectedBopis").value = '-1';
-                         			}
-                         		} else{
-                              			$("#bopislId").val('-1').attr('selected', 'selected');
-                              			document.getElementById("selectedBopis").value = '-1';
-                         		}
-                         		
-               	//Logic for highlighting the selected omni channel color family in its  drop down on change of IPH Drop Down	
-               	
-               	 var selectedOmniColorFamily='${requestScope.selectedOmniColorFamily}';
-                   			if (typeof selectedOmniColorFamily !== "undefined" && selectedOmniColorFamily !== null && selectedOmniColorFamily!='' ) {   
-                       			$("#a_drop_down_box").val("${requestScope.selectedOmniColorFamily}").attr('selected', 'selected');
-                       		} 
-                   			
-                //Logic for highlighting the selected secondaryColor1 in its  drop down on change of IPH Drop Down	
-                           	
-                 	 var selectedSecondaryColor1='${requestScope.selectedSecondaryColor1}';
-                              			if (typeof selectedSecondaryColor1 !== "undefined" && selectedSecondaryColor1 !== null && selectedSecondaryColor1!='' ) {   
-                                  			$("#secondaryColorId").val("${requestScope.selectedSecondaryColor1}").attr('selected', 'selected');
-                	} 
-                              			
-                  //Logic for highlighting the selected secondaryColor2 in its  drop down on change of IPH Drop Down	
-                                       	
-                  	 var selectedSecondaryColor2='${requestScope.selectedSecondaryColor2}';
-                            if (typeof selectedSecondaryColor2 !== "undefined" && selectedSecondaryColor2 !== null && selectedSecondaryColor2!='' ) {   
-                      $("#secondaryColorId2").val("${requestScope.selectedSecondaryColor2}").attr('selected', 'selected');
-                   	}  else{
-             			$("#secondaryColorId2").val("-1").attr('selected', 'selected');
-             		}
-                            
-                            
-              //Logic for highlighting the selected secondaryColor3 in its  drop down on change of IPH Drop Down	
-                           	
-                var selectedSecondaryColor3='${requestScope.selectedSecondaryColor3}';
-                                   if (typeof selectedSecondaryColor3 !== "undefined" && selectedSecondaryColor3 !== null && selectedSecondaryColor3!='' ) {   
-                             $("#secondaryColorId3").val("${requestScope.selectedSecondaryColor3}").attr('selected', 'selected');
-                   	}   
-                                   
-                                   
-              //Logic for highlighting the selected secondaryColor4 in its  drop down on change of IPH Drop Down	
-                                  	
-                 var selectedSecondaryColor4='${requestScope.selectedSecondaryColor4}';
-                              if (typeof selectedSecondaryColor4 !== "undefined" && selectedSecondaryColor4 !== null && selectedSecondaryColor4!='' ) {   
-                                                $("#secondaryColorId4").val("${requestScope.selectedSecondaryColor4}").attr('selected', 'selected');
-                         	}                            			
-                                                            	
-           //Logic for highlighting the selected Omni Channel Color Description in its  drop down on change of IPH Drop Down	
-                            	
-                 var selectedOmniChannelColorDescription='${requestScope.selectedOmniChannelColorDescription}';
-                   if (typeof selectedOmniChannelColorDescription !== "undefined" && selectedOmniChannelColorDescription !== null && selectedOmniChannelColorDescription!='' ) {   
-                                  $("#omniChannelColorDescriptionId").val("${requestScope.selectedOmniChannelColorDescription}");
-                    	}                            			
-        //Logic for highlighting the selected selectedVendorColor in its  drop down on change of IPH Drop Down	
-               	
-          var selectedVendorColor='${requestScope.selectedVendorColor}';
-                  if (typeof selectedVendorColor !== "undefined" && selectedVendorColor !== null && selectedVendorColor!='' ) {   
-                                    $("#vendorColorId").val("${requestScope.selectedVendorColor}");
-         	}                                                                  			    			
             			  
                    			
 
@@ -795,7 +708,6 @@
                      				finalVal = finalVal +","+ list.options[z].value;
                      			}
                    	 	}
-             	  
             	 		}
                      	var exisVal = document.getElementById("blueMartiniDropDownHidden_id"+(selectedDropDown)).value;
                      	document.getElementById("blueMartiniDropDownHidden_id"+(selectedDropDown)).value = finalVal;
@@ -839,20 +751,6 @@
 	
      <script>
      
-   //TimeOut
-      var timeOutFlag = 'no';
-     var timeOutvar = null;
-     var timeOutConfirm ='N';
-
-     function redirectSessionTimedOut(){ 
-         timeOutFlag ="yes";
-         var releseLockedPetURL = $("#releseLockedPet").val();
-         var loggedInUser= $("#loggedInUser").val();
-        releseLockedPet(loggedInUser,releseLockedPetURL);
-         return timeOutFlag;
-         //$("#timeOutId").show();
-         
-     }
 	     function calliph(iph,petId)
 	     {
 
@@ -920,9 +818,16 @@
       		}
             var stylePetContentStatus =    $(".contentStatusId").html();  
 			
-			if(pepUserRoleName == 'vendor' || pepUserRoleName == 'dca'){
+			if(pepUserRoleName == 'vendor'){
 				if(stylePetContentStatus=='Initiated'){
-					var response =  confirm("You are trying to close the page. Data entered will be lost if you have not saved. Still would you like to close? ");
+					var response =  confirm("Are you sure you want to close without saving ? ");
+					if(response == false){
+						return false;
+				 	}
+				}
+			} else if(pepUserRoleName == 'dca'){
+				if(stylePetContentStatus=='Initiated' || stylePetContentStatus=='Ready_For_Review'){
+					var response =  confirm("Are you sure you want to close without saving ? ");
 					if(response == false){
 						return false;
 				 	}
@@ -1000,7 +905,7 @@
 		
 		//on click of the style Color orin number hyperlink get the style Color attributes
 		function getStyleColorAttributes(url,selectedOrinNumber, currentRecord, userRole){	
-						 
+			resetColorAttributes();			 
 			var ajaxCall=  $.ajax({
 				  
 		        url: url,
@@ -1015,8 +920,10 @@
 		            	 success: function(data){
 		            		 
 		            		 var obj = $.parseJSON(data);//parsing the json data
-		                     setStyleColorAttributeValue(obj.styleColorObjectInfo.colorFamilyCode,obj.styleColorObjectInfo.secondaryColorOne,obj.styleColorObjectInfo.secondaryColorTwo,obj.styleColorObjectInfo.secondaryColorThree, obj.styleColorObjectInfo.secondaryColorFour,obj.styleColorObjectInfo.nrfColorCode,obj.styleColorObjectInfo.omniChannelColor,obj.styleColorObjectInfo.nrfColorDescription,currentRecord,userRole);
-		                    // enableStyleColorSectionForVendor()//when the style color pet is in initiated status
+		            		 if(obj.styleColorObjectInfo){ 
+		                    	 setStyleColorAttributeValue(obj.styleColorObjectInfo.colorFamilyCode,obj.styleColorObjectInfo.secondaryColorOne,obj.styleColorObjectInfo.secondaryColorTwo,obj.styleColorObjectInfo.secondaryColorThree, obj.styleColorObjectInfo.secondaryColorFour,obj.styleColorObjectInfo.nrfColorCode,obj.styleColorObjectInfo.omniChannelColor,obj.styleColorObjectInfo.nrfColorDescription,currentRecord,userRole);
+		            		 }
+		                     // enableStyleColorSectionForVendor()//when the style color pet is in initiated status
 		                   //  $("#selectedStyleColorOrinNumber").val = selectedOrinNumber;
 		                     document.getElementById("selectedStyleColorOrinNumber").value = selectedOrinNumber;
 		                     $("#ajaxResponseStyleColorAttribute").html("");
@@ -1036,17 +943,21 @@
 		 function setStyleColorAttributeValue(omniChannelColorFamilyValue,secondaryColor1Value,secondaryColor2Value,secondaryColor3Value,secondaryColor4Value,nrfColorCodeValue,omniChannelColorDescriptionValue,vendorColorValue, currentRecord, userRole)
 		 {
 			
-			//   document.getElementById("colorAttributeSection").className = "cars_panel x-panel ";
-			  // $('#a_drop_down_box').focus();
-			 
 			 var styleColorStatus = $("#petColorRow_id"+currentRecord).html();
 			  if(userRole == 'dca'){
 				  if(styleColorStatus == 'Initiated' || styleColorStatus == 'Ready_For_Review'){
 					  removeStyleColorDisable();
 				  }
+				  if(styleColorStatus == 'Completed' || styleColorStatus == 'Closed'){
+					  disableStyleColoreFields();
+				  }
+				  
 			  }else if('vendor'){
 				 if(styleColorStatus == 'Initiated'){
 					 removeStyleColorDisable();
+				  }
+				 if(styleColorStatus == 'Completed' || styleColorStatus == 'Ready_For_Review' || styleColorStatus == 'Closed'){
+					 disableStyleColoreFields();
 				  }
 			  }
 			               
@@ -1074,7 +985,7 @@
 		 }
 		
 		function removeStyleColorDisable(){
-			  $('#a_drop_down_box').removeAttr('disabled');              		  
+			//  $('#a_drop_down_box').removeAttr('disabled');              		  
     		   $('#secondaryColorId').removeAttr('disabled');          		  
     		   $('#secondaryColorId2').removeAttr('disabled'); 		            		  
     		   $('#secondaryColorId3').removeAttr('disabled');       		  
@@ -1138,20 +1049,19 @@
 			 var status = true;
 			// var val =  document.getElementById("styleContentStatusId").value;
 			 
-			     var a_drop_down_sel= document.getElementById("a_drop_down_box");
+			    /*  var a_drop_down_sel= document.getElementById("a_drop_down_box");
 			     if(a_drop_down_sel.value == null || a_drop_down_sel.value == '-1'){
 					 alert("Please select value for Omnichannel Color Family");
 					 return;
-				 }   
+				 }    */
 			     
-				 var  omniChannelColorDescriptionId=   $("#omniChannelColorDescriptionId").val();
+				 /* var  omniChannelColorDescriptionId=   $("#omniChannelColorDescriptionId").val();
 				 if(omniChannelColorDescriptionId == null || omniChannelColorDescriptionId.trim() == ''){
-					 alert("Please select value for Omnichannel Color Description");
+					 alert("Please complete Color fields");
 					 return;
-				 }
+				 } */
 			  
-			     var val = $('.contentStatusId').html(); 
-			 
+			    var val = $('.contentStatusId').html(); 
 				if(roleName=='dca' && val != null && (val == 'Initiated' || val == 'Ready_For_Review')){
 					status = false;
 					alert("Please approve style level before approving the style Color Pet.");
@@ -1187,7 +1097,7 @@
                     	   
                     	                                
                                  $("#ajaxResponseUpdateStylePetContentStatus").html("");
-                                 $("#ajaxResponseUpdateStylePetContentStatus").append("<b>Style Color Pet Status updated successfully !</b>" );      
+                                 $("#ajaxResponseUpdateStylePetContentStatus").append("<b><font size='2'>Style Color Pet Status updated successfully !</font></b>" );      
                                  $("#saveButtonId").attr("disabled", "disabled");
                                  //logic to dynamically generate unique ids for the  Style Color Submit or Style Color Approve button and disable the action button
                           	     document.getElementById(clickedButtonId).disabled = true;
@@ -1200,7 +1110,7 @@
                        error: function(XMLHttpRequest, textStatus, errorThrown){
    	                	
    	                	$("#ajaxResponseUpdateStylePetContentStatus").html("");
-   	                	$("#ajaxResponseUpdateStylePetContentStatus").append("<b>Style Color Pet Status could not be updated ,contact System Administrator. </b> <br>"); 
+   	                	$("#ajaxResponseUpdateStylePetContentStatus").append("<b><font size='2'>Style Color Pet Status could not be updated, please contact Belk helpdesk </font></b> <br>"); 
    	                    $("#ajaxResponseUpdateStylePetContentStatus").append("<br>");
    	                    $("#saveButtonId").removeAttr("disabled");
    	                    //logic to dynamically generate unique ids for the  Style Color Submit or Style Color Approve button and disable the action button
@@ -1230,7 +1140,7 @@
                        success: function(data){
                     	                                
                                  $("#ajaxResponseUpdateStylePetContentStatus").html("");
-                                 $("#ajaxResponseUpdateStylePetContentStatus").append("<b>Style Color Pet Status updated successfully !</b>" );      
+                                 $("#ajaxResponseUpdateStylePetContentStatus").append("<b><font size='2'>Style Color Pet Status updated successfully !</font></b>" );      
                                  $("#saveButtonId").attr("disabled", "disabled");
                                  //logic to dynamically generate unique ids for the  Style Color Submit or Style Color Approve button and disable the action button
                                  document.getElementById(clickedButtonId).disabled = true;
@@ -1243,7 +1153,7 @@
                        error: function(XMLHttpRequest, textStatus, errorThrown){
    	                	
    	                	$("#ajaxResponseUpdateStylePetContentStatus").html("");
-   	                	$("#ajaxResponseUpdateStylePetContentStatus").append("<b>Style Color Pet Status could not be updated ,contact System Administrator. </b> <br>"); 
+   	                	$("#ajaxResponseUpdateStylePetContentStatus").append("<b><font size='2'>Style Color Pet Status could not be updated, please contact Belk helpdesk </font></b> <br>"); 
    	                    $("#ajaxResponseUpdateStylePetContentStatus").append("<br>");
    	                    $("#saveButtonId").removeAttr("disabled");
    	                    //logic to dynamically generate unique ids for the  Style Color Submit or Style Color Approve button and disable the action button
@@ -1325,7 +1235,6 @@
 						$(json).each(function(i,val){
 				
 						var status = val.UpdateStatus;
-						$("#loading").hide();
 						  if(val.UpdateStatus == 'Success'){
 								 $("#ajaxResponseStyleColorAttribute").html("");
                     	                              $("#ajaxResponseStyleColorAttribute").append("<b><font size='2'>Color Attribute saved successfully!</font></b>"); 
@@ -1334,7 +1243,7 @@
                     	                              
                     	  						 }else{
                     	  							$("#ajaxResponseStyleColorAttribute").html("");
-                    		   	                	$("#ajaxResponseStyleColorAttribute").append("<b><font size='2'>Color Attribute save failed! </font></b>"); 
+                    		   	                	$("#ajaxResponseStyleColorAttribute").append("<b><font size='2'>Color Attribute save failed, please contact Belk helpdesk </font></b>"); 
                     		   	                    $("#ajaxResponseStyleColorAttribute").focus();
                     	  						 }
 									});	
@@ -1345,7 +1254,8 @@
 	 
 		 //on click of the Save button ,pass content pet attributes and make a ajax call to the  webservice
 		function saveContentPetAttributesWebserviceResponse(url,stylePetOrinNumber,user,dropdownCount,bmDropDownCount, pimRadioButtonCount, bmRadionButtonCount, approveUrl, roleName, from, styleOrColor){	
-			// Validate Form data
+			
+			 // Validate Form data
 			 if(from == 'Approve'){
 				if(!validateFormData(dropdownCount,bmDropDownCount, pimRadioButtonCount, bmRadionButtonCount, styleOrColor)){
 					return;
@@ -1524,7 +1434,11 @@
 		     
 		     var selectedCategory = document.getElementById("iphCategoryDropDownId");
 		 
-		     $('#loading').show();
+		     if(from == 'Approve'){
+				  	$('#overlay_pageLoadingapprove').show();
+				  }else{
+					$('#overlay_pageLoadingsave').show();
+			  }
 		     
 		  //Make the ajax call
 			 $.ajax({
@@ -1571,7 +1485,7 @@
                     	  						$(json).each(function(i,val){
                     	  						 
                     	  						var status = val.UpdateStatus;
-                    	  						$("#loading").hide();
+                    	  						$("#overlay_pageLoadingsave").hide();
                     	  						 if(val.UpdateStatus == 'Success'){
                     	  							 $("#ajaxResponseSaveContentPetAttribute").html("");
                     	                              $("#ajaxResponseSaveContentPetAttribute").append("<b><font size='3'>Pet Content saved successfully!</font></b>"); 
@@ -1596,9 +1510,8 @@
                     	                                           
                     	                                       
                     	                                          success: function(data){
-                    	                                                  
                     	                                                    $("#ajaxResponseUpdateStylePetContentStatus").html("");
-                    	                                                    $("#ajaxResponseUpdateStylePetContentStatus").append("<b>Style Pet Status updated successfully !</b>" );      
+                    	                                                    $("#ajaxResponseUpdateStylePetContentStatus").append("<b><font size='2'>Style Pet Status updated successfully !</font></b>" );      
                     	                                                    $("#saveButtonId").attr("disabled", "disabled");
                     	                                                    $("#styleSubmit").attr("disabled", "disabled"); 
                     	                                                    $('.contentStatusId').html('Completed');		
@@ -1611,7 +1524,7 @@
                     	                                          error: function(XMLHttpRequest, textStatus, errorThrown){
                     	                      	                	
                     	                      	                	$("#ajaxResponseUpdateStylePetContentStatus").html("");
-                    	                      	                	$("#ajaxResponseUpdateStylePetContentStatus").append("<b>Style Pet Status could not be updated ,contact System Administrator. </b> <br>"); 
+                    	                      	                	$("#ajaxResponseUpdateStylePetContentStatus").append("<b><font size='2'>Style Pet Status could not be updated, please contact Belk helpdesk.</font></b> <br>"); 
                     	                      	                    $("#ajaxResponseUpdateStylePetContentStatus").append("<br>");
                     	                      	                    $("#saveButtonId").removeAttr("disabled");
                     	                      	                    $("#styleSubmit").removeAttr("disabled");    
@@ -1640,9 +1553,8 @@
                     	                                           
                     	                                       
                     	                                          success: function(data){
-                    	                                                  
                     	                                                    $("#ajaxResponseUpdateStylePetContentStatus").html("");
-                    	                                                    $("#ajaxResponseUpdateStylePetContentStatus").append("<b>Style Pet Status updated successfully !</b>" );      
+                    	                                                    $("#ajaxResponseUpdateStylePetContentStatus").append("<b><font size='2'>Style Pet Status updated successfully !</font></b>" );      
                     	                                                    $("#saveButtonId").attr("disabled", "disabled");
                     	                                                    $("#styleSubmit").attr("disabled", "disabled");                                 
                     	                                                    styleContentPetWebserviceResponseFlag="true";
@@ -1655,7 +1567,7 @@
                     	                                          error: function(XMLHttpRequest, textStatus, errorThrown){
                     	                      	                	
                     	                      	                	$("#ajaxResponseUpdateStylePetContentStatus").html("");
-                    	                      	                	$("#ajaxResponseUpdateStylePetContentStatus").append("<b>Style Pet Status could not be updated, contact System Administrator. </b> <br>"); 
+                    	                      	                	$("#ajaxResponseUpdateStylePetContentStatus").append("<b><font size='2'>Style Pet Status could not be updated, please contact Belk helpdesk. </font></b> <br>"); 
                     	                      	                    $("#ajaxResponseUpdateStylePetContentStatus").append("<br>");
                     	                      	                    $("#saveButtonId").removeAttr("disabled");
                     	                      	                    $("#styleSubmit").removeAttr("disabled");  
@@ -1667,16 +1579,17 @@
                     	                               });
 
                     	                  			}
+                    	                              $("#overlay_pageLoadingapprove").hide();
                     	                              } //
                     	                              
                     	  						 }else{
                     	  							$("#ajaxResponseSaveContentPetAttribute").html("");
-                    		   	                	$("#ajaxResponseSaveContentPetAttribute").append("<b><font size='3'>Pet Content save failed! </font></b>"); 
+                    		   	                	$("#ajaxResponseSaveContentPetAttribute").append("<b><font size='3'>Pet save failed. Please contact Belk helpdesk. </font></b>"); 
                     		   	                    $("#ajaxResponseSaveContentPetAttribute").focus();
                     		   	                    
                     		   	                 	if(from == 'Approve') {//End of Approve
 	                 	                            	$("#ajaxResponseUpdateStylePetContentStatus").html("");
-	       	                      	                	$("#ajaxResponseUpdateStylePetContentStatus").append("<b>Style Pet Status could not be updated as Pet Content save failed.  </b> <br>"); 
+	       	                      	                	$("#ajaxResponseUpdateStylePetContentStatus").append("<b><font size='2'>Style Pet Status could not be updated as Pet Content save failed. Please contact Belk helpdesk.</font></b> <br>"); 
 	       	                      	                    $("#ajaxResponseUpdateStylePetContentStatus").append("<br>");
 	                 	                              }
                     	  						 }
@@ -1687,12 +1600,12 @@
             
 			//saveContentFormDetailsForSaveAndApprove(url,stylePetOrinNumber,user,dropdownCount,bmDropDownCount, pimRadioButtonCount, bmRadionButtonCount)
 		}
-
+		 
 		 // Saving details
 		 function validateFormData(dropdownCount,bmDropDownCount, pimRadioButtonCount, bmRadionButtonCount, styleOrColor){
 				var omniBrandCount = document.getElementById("omniBrandCount").value
 				var carBrandCount = document.getElementById("carBrandCount").value
-				if(omniBrandCount > 0){
+				//if(omniBrandCount > 0){
 					if(omniBrandCount != 1){
 						var onminvalue =  $("#selectedOmniBrand").val();
 						 if(onminvalue == null || onminvalue == '' || onminvalue == '-1'){
@@ -1708,8 +1621,8 @@
 							document.getElementById("selectedOmniBrand").value = firstValue;
 					}
 				}
-				}
-				if(carBrandCount > 0){
+				//}
+				//if(carBrandCount > 0){
 					if(carBrandCount != 1){
 					 var carsvalue =  $("#selectedCarsBrand").val();
 						 if(carsvalue == null || carsvalue == '' || carsvalue == '-1'){
@@ -1726,7 +1639,7 @@
 						 }
 					}
 
-				}
+				//}
 				
 				var  productName= document.getElementById("txt_outfitName").value;
 				if(productName == null || productName.trim() == ""){
@@ -1755,7 +1668,7 @@
 			    	 return;
 			     }
 
-			     if(styleOrColor == 'Color'){
+			     /* if(styleOrColor == 'Color'){
 				     var a_drop_down_sel= document.getElementById("a_drop_down_box");
 				     if(a_drop_down_sel.value == null || a_drop_down_sel.value == '-1'){
 						 alert("Please select value for Omnichannel Color Family");
@@ -1767,7 +1680,7 @@
 						 alert("Please select value for Omnichannel Color Description");
 						 return;
 					 }
-			     }
+			     } */
 			       var values = document.getElementById("iphCategoryDropDownId");
 					if(values != null && (values.value == 'select' || values.value == null) ){
 						alert("IPH selection is mandatory.");
@@ -1781,8 +1694,12 @@
 					var finalString = "";
 					for(i=0; i<dropdownCount; i++){
 						var temp = $("#dropdownhidden_id"+(i+1)).val();
+						// Added to get the last two value by Cognizant.
+						var lastTwo= temp.substr(temp.length -2);
+						// Added to get the last two value by Cognizant.
 						var mandatory = $("#isPIMMandatory_id"+(i+1)).val();
-						if(!(temp == null || temp =="")){ 
+						// Added the condition in If condition by Cognizant.
+						if(!(lastTwo == "-1" || temp == null || temp =="")){ 
 							if(finalString==null || finalString==""){
 								finalString = temp;
 							}else{
@@ -1857,7 +1774,11 @@
 		             for(i=0; i<bmDropDownCount; i++){ 
 		                      var temp = $("#blueMartiniDropDownHidden_id"+(i+1)).val();
 		                      var mandatory = $("#isBMMandatory_id"+(i+1)).val();
-		                      if(!(temp == null || temp =="")){ 
+					// Added to get the last two value by Cognizant.
+					 var lastTwo= temp.substr(temp.length -2);
+					// Added to get the last two value by Cognizant.
+					// Added in If condition for the "Please Select" value select.
+		                      if(!(temp == null || temp =="" || lastTwo== "-1")){ 
 		                                if(bmFinalString==null || bmFinalString==""){
 		                                          bmFinalString = temp;
 		                                }else{
@@ -1896,14 +1817,15 @@
 			   			
 		   		 if(document.getElementById("bmTextAttributeCount")){
 					 var bmTextFieldCount = document.getElementById("bmTextAttributeCount").value;
-
 						for(var a=0; a<bmTextFieldCount; a++){
 						    var textFieldAttNameAndPath = document.getElementById("blueMartiniTextAttributeNameXpath_id"+(a+1)).value;
-						    var mandatory = $("#isBMTextMandatory_id"+(i+1)).val();
+						    var mandatory = $("#isBMTextMandatory_id"+(a+1)).val();
 						    var userEnteredValue = document.getElementById("blueMartiniText_Id"+(a+1)).value;
 						    if(userEnteredValue == null || userEnteredValue.trim() == '' ){
-						      	alert(" Please enter mandatory legacy text field attributes");
-						    	return;  
+						    	if(mandatory == 'Yes'){ 
+						      		alert(" Please enter mandatory legacy text field attributes");
+						    		return;  
+						    	}
 						    }else{ 
 						    var temp  = textFieldAttNameAndPath +"#"+userEnteredValue 
 
@@ -2000,10 +1922,43 @@ function createmannualpet(){
 window.location = '<%=request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort()+"/wps/portal/home/CreatePET" %>';
 }
 
+//TimeOut
+var timeOutFlag = 'no';
+var timeOutvar = null;
+var timeOutConfirm ='N';
 
+function timeOutPage(){
+	if(timeOutConfirm=='N')
+	{	
+		timeOutvar = setTimeout(redirectSessionTimedOut, 600000);
+	}
+}
+
+function redirectSessionTimedOut(){ 
+	   timeOutFlag ="yes";
+	   var releseLockedPetURL = $("#releseLockedPet").val();
+	   var loggedInUser= $("#loggedInUser").val();
+	   releseLockedPet(loggedInUser,releseLockedPetURL);
+	 
+	}
+	
+function redirectSessionTimedOutContent(){ 
+ //  timeOutFlag ="yes";
+   confirmationMessage = false;
+   var releseLockedPetURL = $("#releseLockedPet").val();
+   var loggedInUser= $("#loggedInUser").val();
+   releseLockedPet(loggedInUser,releseLockedPetURL);
+   if(loggedInUser.indexOf('@') === -1) 
+   {
+      window.location = "/wps/portal/home/InternalLogin";
+   } else {
+         
+         window.location = "/wps/portal/home/ExternalVendorLogin";
+   }
+}
 
 function logout_home(loggedInUser,releseLockedPetURL){
-inputChanged  = false ;
+	inputChanged  = false ;
     releseLockedPet(loggedInUser,releseLockedPetURL);
     if(loggedInUser.indexOf('@') === -1) 
           {
@@ -2012,25 +1967,23 @@ inputChanged  = false ;
                 
                 window.location = "/wps/portal/home/ExternalVendorLogin";
           }
-          
     }
 
-
+var confirmationMessage = '';  // a space
 var myEvent = window.attachEvent || window.addEventListener;
 var chkevent = window.attachEvent ? 'onbeforeunload' : 'beforeunload'; /// make IE7, IE8 compitable
 
            myEvent(chkevent, function(e) { // For >=IE7, Chrome, Firefox
-           if(inputChanged){
-           var confirmationMessage = '';  // a space
+           if(inputChanged && confirmationMessage != false){ 
            (e || window.event).returnValue = confirmationMessage;
 
-	var releseLockedPetURL = $("#releseLockedPet").val();
-	var loggedInUser= $("#loggedInUser").val();
- 	releseLockedPet(loggedInUser,releseLockedPetURL);
-
-                return confirmationMessage;
-}
- });
+				var releseLockedPetURL = $("#releseLockedPet").val();
+				var loggedInUser= $("#loggedInUser").val();
+			 	releseLockedPet(loggedInUser,releseLockedPetURL);
+			
+			    return confirmationMessage;
+			}
+			 });
 
 
 function releseLockedPet(loggedInUser,releseLockedPetURL){
@@ -2053,20 +2006,21 @@ function releseLockedPet(loggedInUser,releseLockedPetURL){
 
 }
 
+var timeOutvarContent = null;
+timeOutvarContent = setTimeout(redirectSessionTimedOutContent, 3600000);
 
-function timeOutPage(){
-    if(timeOutConfirm=='N')
-    {     
-    timeOutvar = setTimeout(redirectSessionTimedOut, 600000);
-    }
+function timeOutContentPage(){
+	timeOutvarContent = setTimeout(redirectSessionTimedOutContent, 3600000);
 }
-function clickListener(e){
-    clearTimeout(timeOutvar);
-    timeOutPage();
+
+document.onclick = clickListenerContent;
+function clickListenerContent(e){
+    clearTimeout(timeOutvar);	
+	clearTimeout(timeOutvarContent);
+	timeOutFlag = 'no';
+	timeOutPage();
+	timeOutContentPage();
 }
-document.onclick = clickListener;
-document.onmousemove=clickListener;
-document.onkeypress=clickListener
 
 
 </script>
@@ -2090,6 +2044,14 @@ document.onkeypress=clickListener
 				<div id="main">
 
 					<form:form commandName="contentDisplayForm" method="post" action="${getChangedIPHCategoryData}" name="contentDisplayForm" id="contentDisplayForm">
+				
+				 
+							 <div id="overlay_pageLoadingsave" style="display:none;position:absolute;top:200px; left:350px;">
+										<img src="<%=response.encodeURL(request.getContextPath()+"/img/loading.gif")%>" height="100px;" />
+							</div> 
+							 <div id="overlay_pageLoadingapprove" style="display:none;position:absolute;top:1000px; left:350px;">
+										<img src="<%=response.encodeURL(request.getContextPath()+"/img/loading.gif")%>" height="100px;" />
+							</div> 
 				
 					        <input type="hidden" id="getIPHCategory" name="getIPHCategory" value=""></input>
 					        <input type="hidden" id="petIdForWebservice" name="petIdForWebservice" value=""/>
@@ -2125,9 +2087,6 @@ document.onkeypress=clickListener
 								<p style="color: red; font-weight: bold; font-size: 14pt;">Your session has been ended due to inactivity</p> 
 							</div>
 
-								<div id="loading">
-										<img id="loading-image" src="<%=response.encodeURL(request.getContextPath()+"/img/loading.gif")%>" alt="Loading..." />
-								</div>
 							<!--Style Info Section starts over here  -->					  
 							<div  class="cars_panel x-hidden">
 								<div class="x-panel-header">
@@ -2143,51 +2102,50 @@ document.onkeypress=clickListener
 									<!-- to show message from save content web service  -->
 									
 									<div id="ajaxResponseSaveContentPetAttribute"></div>
+								    <div id="formIphMappingErrorMessage">
+								     <c:if test="${not empty  contentDisplayForm.iphMappingMessage}">	
+										     <table><tr><td><b><font size='2'><c:out value="${contentDisplayForm.iphMappingMessage}"/></font></b></td></tr></table>
+									 </c:if>
+								   </div>
 								    
 								   	<ul class="pep_info" style="font-size: 11px; padding: 0 0 10px !important;">								   	    
-
 										<li class="txt_attr_name" style="width: 30%;">
-										    <c:if test="${not empty  contentDisplayForm.iphMappingMessage}">	
-										        <c:out value="${contentDisplayForm.iphMappingMessage}"/>										  
-										    </c:if>
+										   
 										</li>				
-										
 									</ul> 
 									  
-									<ul class="pep_info" style="font-size: 11px; padding: 0 0 10px !important;">
-
+									 									<ul class="pep_info" style="font-size: 11px; padding: 0 0 10px !important;">
 										<li class="txt_attr_name" style="width: 30%;"><fmt:message key="labelOrinGrouping" bundle="${display}"/><c:out value="${contentDisplayForm.styleInformationVO.orin}"/></li>				
-										<li class="txt_attr_name" style="width: 25%;"><fmt:message key="labelDepartment" bundle="${display}"/><c:out value="${contentDisplayForm.styleInformationVO.departmentId}"/></li>
-										<li class="txt_attr_name" style="width: 25%;"><fmt:message key="labelVendorName" bundle="${display}"/><c:out value="${contentDisplayForm.styleInformationVO.vendorName}"/></li>	
+										<li class="txt_attr_name" style="width: 30%;"><fmt:message key="labelDepartment" bundle="${display}"/><c:out value="${contentDisplayForm.styleInformationVO.departmentId}"/></li>
+										<li class="txt_attr_name" style="width: 20%;"><fmt:message key="labelDeptDescription" bundle="${display}"/><c:out value="${contentDisplayForm.styleInformationVO.deptDescription}"/></li>
 									</ul>
 
 
 									<ul class="pep_info"
 										style="font-size: 11px; padding: 0 0 10px !important;">
-										<li class="ctxt_attr_name" style="width: 30%;"><fmt:message key="labelStyleNumber" bundle="${display}"/><c:out value="${contentDisplayForm.styleInformationVO.styleId}"/></li>
-										<li class="txt_attr_name" style="width: 25%;"><fmt:message key="labelClass" bundle="${display}"/><c:out value="${contentDisplayForm.styleInformationVO.classId}"/></li>
-										<li class="txt_attr_name" style="width: 25%;"><fmt:message key="labelVendorNumber" bundle="${display}"/><c:out value="${contentDisplayForm.styleInformationVO.vendorId}"/></li>
-										
+										<li class="txt_attr_name" style="width: 30%;"><fmt:message key="labelOmnichannelVendor" bundle="${display}"/><c:out value="${contentDisplayForm.styleInformationVO.omniChannelVendorIndicator}"/></li>
+										<li class="txt_attr_name" style="width: 30%;"><fmt:message key="labelClass" bundle="${display}"/><c:out value="${contentDisplayForm.styleInformationVO.classId}"/></li>
+										<li class="txt_attr_name" style="width: 20%;"><fmt:message key="labelClassDescription" bundle="${display}"/><c:out value="${contentDisplayForm.styleInformationVO.classDescription}"/></li>										
 									</ul>
 			
 									<ul class="pep_info"
 										style="font-size: 11px; padding: 0 0 10px !important;">
-										<li class="ctxt_attr_name" style="width: 30%;"><fmt:message key="labelDescription" bundle="${display}"/><c:out value="${contentDisplayForm.styleInformationVO.description}"/></li>
-										<li class="txt_attr_name" style="width: 25%;"><fmt:message key="labelOmnichannelVendor" bundle="${display}"/><c:out value="${contentDisplayForm.styleInformationVO.omniChannelVendorIndicator}"/></li>
-										<li class="txt_attr_name"><fmt:message key="labelVendorProvidedImage" bundle="${display}"/><c:out value="${contentDisplayForm.styleInformationVO.vendorProvidedImageIndicator}"/></li>
-										
+										<li class="txt_attr_name"  style="width: 30%;"><fmt:message key="labelVendorProvidedImage" bundle="${display}"/><c:out value="${contentDisplayForm.styleInformationVO.vendorProvidedImageIndicator}"/></li>
+										<li class="ctxt_attr_name" style="width: 30%;"><fmt:message key="labelStyleNumber" bundle="${display}"/><c:out value="${contentDisplayForm.styleInformationVO.styleId}"/></li>
+										<li class="ctxt_attr_name" style="width: 20%;"><fmt:message key="labelDescription" bundle="${display}"/><c:out value="${contentDisplayForm.styleInformationVO.description}"/></li>
 									</ul>
 									
 									<ul class="pep_info"
 										style="font-size: 11px; padding: 0 0 10px !important;">
 										<li class="txt_attr_name" style="width: 30%;"><fmt:message key="labelVendorProvidedSample" bundle="${display}"/><c:out value="${contentDisplayForm.styleInformationVO.vendorSampleIndicator}"/></li>
-										<li class="txt_attr_name" style="width: 25%;"><fmt:message key="labelCompletionDate" bundle="${display}"/><c:out value="${contentDisplayForm.styleInformationVO.completionDateOfStyle}"/></li>			
+										<li class="txt_attr_name" style="width: 30%;"><fmt:message key="labelVendorNumber" bundle="${display}"/><c:out value="${contentDisplayForm.styleInformationVO.vendorId}"/></li>
+										<li class="txt_attr_name" style="width: 20%;"><fmt:message key="labelVendorName" bundle="${display}"/><c:out value="${contentDisplayForm.styleInformationVO.vendorName}"/></li>	
 									</ul>
-									
 									
 									<!-- Added by Sriharsha -->
 									<ul class="pep_info" style="font-size: 11px; padding: 0 0 10px !important;">
-										 <li class="txt_attr_name" style="width: 30%;"><fmt:message key="lableOminChannelBrand" bundle="${display}"/>
+										 <li class="txt_attr_name" style="width: 30%;">
+										 <fmt:message key="lableOminChannelBrand" bundle="${display}"/>
 										 <input type="hidden" name="omniBrandCount"  id="omniBrandCount" value="${contentDisplayForm.lstOmniChannelBrandVO.size()}"  /> 
 										 <select style="width:52%;height: 27px;"  id="omnichannelbrand" name="omnichannelbrand" onclick="javascript:getSelectedOmniBrand(omnichannelbrand)">
 											       
@@ -2222,6 +2180,7 @@ document.onkeypress=clickListener
 													</c:if>												
 										</select>
 										</li>
+										 <li class="txt_attr_name" style="width: 20%;"><fmt:message key="labelCompletionDate" bundle="${display}"/><c:out value="${contentDisplayForm.styleInformationVO.completionDateOfStyle}"/></li>
 									</ul>
 									<!-- End Added by Sriharsha -->
 									
@@ -2395,8 +2354,9 @@ document.onkeypress=clickListener
 												<li class="txt_attr_name" style="width: 30%;"><b>Channel Exclusive : </b> 
 												 <select style="width:50%;height: 27px;" id="channelExclId" name="channelExclId" onclick="javascript:getSelectedChannelExclId(channelExclId)"> 
 													<option id="-1" value="-1">Please Select</option>
-													<option id="true" value="Store">Store</option>
-													<option id="false" value="Ecomm">Ecomm</option>
+													<option id="Store" value="Store">Store</option>
+													<option id="Ecomm" value="Ecomm">Ecomm</option>
+													<option id="Store and Ecomm" value="Store and Ecomm">Store and Ecomm</option>
 												</select>
 												</li>
 												
@@ -2574,20 +2534,10 @@ document.onkeypress=clickListener
 															   <td>&nbsp;</td> 
 															   <c:choose>
 															   <c:when test="${contentDisplayForm.roleName == 'vendor'}">
-															  	 <c:if test="${styleDisplayColorList.contentStatus == 'Completed' || styleDisplayColorList.contentStatus == 'Ready_For_Review'}">
-															   		<td>${styleDisplayColorList.orinNumber}</td>
-															   	</c:if>
-															   	<c:if test="${styleDisplayColorList.contentStatus == 'Initiated'}">
 															  	 <td><a id="<c:out value="${styleDisplayColorList.orinNumber}"/>"  href="#"  onclick="getStyleColorAttributes('${getStyleColorAttributeDetails}','<c:out value="${styleDisplayColorList.orinNumber}"/>', <%= colorRows %>, 'vendor')">${styleDisplayColorList.orinNumber}</a></td>
-															   </c:if>
 															   </c:when>
 															   <c:when test="${contentDisplayForm.roleName == 'dca'}">
-															  	 <c:if test="${styleDisplayColorList.contentStatus == 'Completed'}">
-															   		<td>${styleDisplayColorList.orinNumber}</td>
-															   	</c:if>
-															   	<c:if test="${styleDisplayColorList.contentStatus == 'Initiated' || styleDisplayColorList.contentStatus == 'Ready_For_Review'}">
 															  	 <td><a  id="<c:out value="${styleDisplayColorList.orinNumber}"/>" href="#"  onclick="getStyleColorAttributes('${getStyleColorAttributeDetails}','<c:out value="${styleDisplayColorList.orinNumber}"/>', <%= colorRows %>, 'dca')">${styleDisplayColorList.orinNumber}</a></td>
-															   </c:if>
 															   </c:when>
 															   </c:choose>
 															   <input type="hidden" id="selectedStyleColorOrinNumber" name="selectedStyleColorOrinNumber" value=""></input>   
@@ -2713,7 +2663,7 @@ document.onkeypress=clickListener
 										</tr>
 										<tr>
 										<td><b>* Omnichannel Color Description</b></td>
-											<td><input type="text" id="omniChannelColorDescriptionId" name="omniChannelColorDescription" value=" " disabled="disabled"/></td>
+											<td><input type="text" id="omniChannelColorDescriptionId" name="omniChannelColorDescription" disabled="disabled"/></td>
 											<td width="30px"></td>
 											<td><b>&nbsp;Secondary Color 3</b></td>
 											<td>
@@ -2840,19 +2790,21 @@ document.onkeypress=clickListener
 																	
 																	<c:if test="${categoryDisplayList.maximumOcurrence == '1'}">
 																	<select id="dropDownsId_id<%= i %>" name="dropDownsName_id<%= i %>" onchange="javascript:dropDownValues(dropDownsName_id<%= i %>, <%= i %>, '<c:out value="${contentDisplayForm.productAttributesDisplay.dropDownList.size()}"/>')">
-																        
+																      
+																	<option id="-1" value="-1">Please Select</option>
+																      
 																        <c:forEach var="dropDownMap" items="${categoryDisplayList.dropDownValuesMap}">												
 																			<c:set var="highlited" value=""/>
 																			<c:forEach  var="savedDropDownMap"  items="${categoryDisplayList.savedDropDownValuesMap}" >
 																				<c:set var="stSelected" value=""/>
 																				<c:if test="${dropDownMap.key ==savedDropDownMap.key}">
 																					<c:set var="stSelected" value="selected='selected'"/>
-																					 <option value="${dropDownMap.key}"  <c:out value="${stSelected}"/> escapeXml="false"><c:out value="${dropDownMap.value}"  escapeXml="false"/></option> 
+																					 <option value="${dropDownMap.key}"  <c:out value="${stSelected}"/> ><c:out value="${dropDownMap.value}"  escapeXml="false"/></option> 
 																					 <c:set var="highlited" value="${savedDropDownMap.key}"/>
 																				</c:if>                                                     
 					                                                        							</c:forEach>
 																			  <c:if test="${dropDownMap.key != highlited}">
-																			  	<option value="${dropDownMap.key}"/> <c:out value="${dropDownMap.value}"  escapeXml="false"/></option>
+																			  	<option value="${dropDownMap.key}" /> <c:out value="${dropDownMap.value}"  escapeXml="false"/></option>
 																			</c:if>			
 																		</c:forEach>														
 															        	</select>
@@ -2969,18 +2921,21 @@ document.onkeypress=clickListener
 																	<!-- Change for Multi/Single Drop Down Starts. -->
 																	<c:if test="${blueMartiniAllList.maximumOcurrence =='1'}">
 																	<select id="bmDropDownsId_id<%= bmDropDownCount %>" name="bmDropDownsName_id<%= bmDropDownCount %>" onchange="javascript:bmDropDownValues(bmDropDownsId_id<%= bmDropDownCount %>, <%= bmDropDownCount %>, '<c:out value="${contentDisplayForm.legacyAttributesDisplay.dropDownList.size()}"/>')">
-																        <c:forEach var="dropDownMap" items="${blueMartiniAllList.dropDownValuesMap}">												
+																       		 
+																			<option id="-1" value="-1">Please Select</option>
+																		 
+																		 	<c:forEach var="dropDownMap" items="${blueMartiniAllList.dropDownValuesMap}">												
 																			<c:set var="highlited" value=""/>
 																			<c:forEach  var="savedDropDownMap"  items="${blueMartiniAllList.savedDropDownValuesMap}" >
 																				<c:set var="stSelected" value=""/>
 																				 	<c:if test="${dropDownMap.key ==savedDropDownMap.key}">
 																				 	<c:set var="stSelected" value="selected='selected'"/>
-																				 	 <option value="${dropDownMap.key}"  <c:out value="${stSelected}"/> escapeXml="false" ><c:out value="${dropDownMap.value}"  escapeXml="false"/></option>
+																				 	 <option value="${dropDownMap.key}"  <c:out value="${stSelected}"/> ><c:out value="${dropDownMap.value}"  escapeXml="false"/></option>
 																				 		 <c:set var="highlited" value="${savedDropDownMap.key}"/>
 																				 	</c:if>
 					                                                        							</c:forEach>
 					                                                      	 					<c:if test="${dropDownMap.key != highlited}">
-																			  	<option value="${dropDownMap.key}"  ><c:out value="${dropDownMap.value}" escapeXml="false"/></option>
+																			  	<option value="${dropDownMap.key}"  escapeXml="false" ><c:out value="${dropDownMap.value}" escapeXml="false"/></option>
 																			</c:if>																			  
 																		</c:forEach>														
 															       	 </select>
@@ -3050,7 +3005,7 @@ document.onkeypress=clickListener
 															    <input type="hidden" name="bmTextAttributeCount"  id="bmTextAttributeCount" value="${contentDisplayForm.legacyAttributesDisplay.textFieldList.size()}"  />
 																<input type="hidden" name="blueMartiniTextAttributeNameXpath"  id="blueMartiniTextAttributeNameXpath_id<%= bmTextFieldCount %>"  value="${blueMartiniAllList.attributeName}#${blueMartiniAllList.attributePath}" />
 																<input type="hidden" name="bmTextFieldHidden" id="bmTextFieldHidden_id<%= bmTextFieldCount %>" value="" />
-																<input type="hidden" name="isBMTextMandatory_id"  id="isBMTextMandatory_id<%= bmTextFieldCount %>"  value="${blueMartiniTextFieldList.isMandatory}" />
+																<input type="hidden" name="isBMTextMandatory_id"  id="isBMTextMandatory_id<%= bmTextFieldCount %>"  value="${blueMartiniAllList.isMandatory}" />
 																<td><c:if test="${blueMartiniAllList.isMandatory == 'Yes'}">* </c:if><c:out value="${blueMartiniAllList.displayName}"/></td>
 																<td><input type="text" id="blueMartiniText_Id<%=bmTextFieldCount%>" name="blueMartiniTextName_Id<%=bmTextFieldCount%>" value="${blueMartiniAllList.attributeFieldValue}" /></td>																
 																										
@@ -3224,4 +3179,3 @@ document.onkeypress=clickListener
 				</div>
 		</div>
 		</body>
-	
