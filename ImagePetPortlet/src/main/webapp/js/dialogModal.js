@@ -51,21 +51,26 @@ $(document).ready(function () {
    {
 	
    
-      $("#overlay_UploadImage").show();
-      $("#dialog_UploadImage").fadeIn(300);
-
-      if (modal)
-      {
-         $("#overlay_UploadImage").unbind("click");
-      }
-      else
-      {
-		  
-         $("#overlay_UploadImage").click(function (e)
-         {
-            HideImageUploadPopUp();
-         });
-      }
+      //$("#overlay_UploadImage").show();
+      //$("#dialog_UploadImage").fadeIn(300);
+	try{
+		if (modal)
+		{
+			//$("#overlay_UploadImage").unbind("click");
+			jq('#dialog_UploadImage').dialog( "option", "modal", true );
+		}
+		else
+		{
+			/*  $("#overlay_UploadImage").click(function (e)
+			 {
+				HideImageUploadPopUp();
+			 }); */
+		}
+		
+		jq('#dialog_UploadImage').dialog( "open");
+	}catch(e){
+		console.log(e.message);
+	}
    }
    
     function HideImageUploadPopUp()

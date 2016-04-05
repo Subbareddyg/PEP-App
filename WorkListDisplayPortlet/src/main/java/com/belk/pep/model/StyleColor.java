@@ -497,7 +497,23 @@ public class StyleColor {
     }
 
    
-    
+    /**
+     * Modified for Defect# 927
+     * Date: 03/09/2016
+     * Modified by: AFUAXK4
+     */
+    String sourceType;
+
+    public String getSourceType() {
+        return sourceType;
+    }
+
+    public void setSourceType(String sourceType) {
+        this.sourceType = sourceType;
+    }
+    /**
+     * Modification end
+     */
     
 
 }

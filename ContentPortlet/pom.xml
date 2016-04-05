@@ -8,43 +8,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<properties>
 		<spring.version>3.1.1.RELEASE</spring.version>
-		<appfuse.version>2.0.1</appfuse.version>
 	</properties>
-	<repositories>
-		<repository>
-			<id>java.net</id>
-			<url>http://download.java.net/maven/2/</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
-		<repository>
-			<id>appfuse</id>
-			<url>http://static.appfuse.org/repository</url>
-		</repository>
-
-
-	</repositories>
-	<pluginRepositories>
-		<pluginRepository>
-			<id>java.net</id>
-			<url>http://download.java.net/maven/2/</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</pluginRepository>
-		<pluginRepository>
-			<id>appfuse</id>
-			<url>http://static.appfuse.org/repository</url>
-		</pluginRepository>
-
-	</pluginRepositories>
 
 	<packaging>war</packaging>
 	<build>
@@ -258,7 +222,7 @@
 			<version>1.1</version>
 		</dependency>
 		<dependency>
-			<groupId>CommonForIpcLogin</groupId>
+			<groupId>ProductEnrichmentPortal</groupId>
 			<artifactId>CommonForIpcLogin</artifactId>
 			<version>1.0</version>
 		</dependency>
@@ -276,11 +240,6 @@
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
 			<version>3.0</version>
-		</dependency>
-		<dependency>
-		    <groupId>com.ibm.websphere</groupId>
-    		<artifactId>websphere_apis</artifactId>
-    		<version>1.0</version>
 		</dependency>
 
 	</dependencies>

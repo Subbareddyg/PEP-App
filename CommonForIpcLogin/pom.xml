@@ -1,33 +1,16 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-
-	<groupId>CommonForIpcLogin</groupId>
+	<groupId>ProductEnrichmentPortal</groupId>
 	<version>1.0</version>
 	<name>CommonForIpcLogin</name>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>CommonForIpcLogin</artifactId>
 	<properties>
 		<spring.version>3.1.1.RELEASE</spring.version>
-		<appfuse.version>2.0.1</appfuse.version>
 	</properties>
-	 <repositories>       
-        <repository>
-            <id>appfuse</id>
-            <url>http://static.appfuse.org/repository</url>
-        </repository>
-    </repositories>
-    <pluginRepositories>
-        <pluginRepository>
-            <id>appfuse</id>
-            <url>http://static.appfuse.org/repository</url>
-        </pluginRepository>
-    </pluginRepositories>
-
 	<packaging>jar</packaging>
 	<build>
 		<plugins>
-			
-			
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -37,16 +20,7 @@
 					<target>1.7</target>
 				</configuration>
 			</plugin>
-
-			
 		</plugins>
 	</build>
-	<dependencies>
-		<dependency>
-		    <groupId>com.ibm.websphere</groupId>
-    		<artifactId>websphere_apis</artifactId>
-    		<version>1.0</version>
-		</dependency>
 
-	</dependencies>
 </project>

@@ -7,7 +7,7 @@ package com.belk.pep.constants;
  * @author AFUBXJ1
  */
 public class ExternalVendorLoginConstants {
-	
+    
 /** The Constant ACTION_LOGIN_SUBMIT. */
 public static final String ACTION_LOGIN_SUBMIT="loginSubmit";
 
@@ -134,6 +134,8 @@ public static final String PROPERTIES_KEY_RESET_EMAIL_EMPTY_MSG = "external.logi
 /** The Constant EXTERNAL_VENDOR_LOGIN_URL. */
 public static final String EXTERNAL_VENDOR_LOGIN_URL="external.login.url";
 
+public static final String BELK_BEST_PLAN = "belkbestplanurl";
+public static final String BELK_BEST_PLAN_URL_KEY = "BEBESTPLAN";
 
 
 }

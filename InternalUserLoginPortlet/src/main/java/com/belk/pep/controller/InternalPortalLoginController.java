@@ -13,7 +13,6 @@ import org.springframework.web.portlet.mvc.Controller;
 
 //import java.util.logging.Logger;
 import org.apache.log4j.Logger;
-
 import com.belk.pep.exception.checked.PEPServiceException;
 import com.belk.pep.model.UserObject;
 import com.belk.pep.common.model.Common_BelkUser;
@@ -68,6 +67,8 @@ public class InternalPortalLoginController implements Controller {
 	    
 		errorMsg            = "";
 		boolean flag        =false;
+		boolean isUserIdNull        =false;
+		boolean isPasswordNull        =false;
 		UserObject  userObj = null;		
 		Properties prop = PropertyLoader.getPropertyLoader(InternalPortalConstants.MESS_PROP);
 		LOGGER.info("Action -->"+request.getParameter("action"));
@@ -94,6 +95,7 @@ public class InternalPortalLoginController implements Controller {
 		/* VALIDATIONS */
 		else{
 			if(null == userID || userID.isEmpty() ){
+				isUserIdNull =  true;
 				try{
 					LOGGER.info("userID"+userID);
 					
@@ -108,6 +110,7 @@ public class InternalPortalLoginController implements Controller {
 				}
 			}
 			if(null == password ||password.isEmpty() ){
+				isPasswordNull = true;
 				try{
 					LOGGER.info("password"+password);
 					errorMsg =prop.getProperty(InternalPortalConstants.INVALID_PWD);
@@ -120,6 +123,22 @@ public class InternalPortalLoginController implements Controller {
 					LOGGER.info("Exception password");
 				}
 			}
+			
+			if(isUserIdNull && isPasswordNull){
+				try{
+					//errorMsg =prop.getProperty(InternalPortalConstants.INVALID_PWD);
+					errorMsg ="Please enter a valid lanid and password";
+				}catch(NullPointerException e){
+					errorMsg = "Please enter a valid lanid and password";
+					LOGGER.info("NullPointerException password");
+				}
+				catch(Exception ex){
+					errorMsg = "Please enter a valid lanid and password";	
+					LOGGER.info("Exception password");
+				}
+				
+			}
+			
 		}
 		/* Flag set after LanID verification in LDAP and DB called */
 		if(flag){
@@ -160,7 +179,10 @@ public class InternalPortalLoginController implements Controller {
 			userDetails.setBelkUser(commonData);
 			response.setEvent(InternalPortalConstants.USER_OBJ, userDetails);						
 		}		
-		response.setRenderParameter(InternalPortalConstants.ERR_MSG, errorMsg);					
+		response.setRenderParameter(InternalPortalConstants.ERR_MSG, errorMsg);	
+		response.setRenderParameter(InternalPortalConstants.USER_NAME, userID);					
+		response.setRenderParameter(InternalPortalConstants.PASSWORD, password);
+		LOGGER.info("End of Method :USERID"+userID+" PASSWORD:"+password);	 	        			
 	}
 
 	/* (non-Javadoc)
@@ -171,10 +193,25 @@ public class InternalPortalLoginController implements Controller {
 		LOGGER.info("InternalPortalLoginController:::handleRenderRequest" + request.getParameter("action"));
 		ModelAndView mv = null;		
 		String errMsg =request.getParameter(InternalPortalConstants.ERR_MSG);
+		String userID =request.getParameter(InternalPortalConstants.USER_NAME);
+		String password =request.getParameter(InternalPortalConstants.PASSWORD);
 		if(null !=  errMsg && errMsg!= ""){				
 			LOGGER.info("InternalPortalLoginController:::ErrMsg"+errMsg);
+			LOGGER.info("InternalPortalLoginController:::userID"+userID);
+			LOGGER.info("InternalPortalLoginController:::password"+password);
 			mv= new ModelAndView(InternalPortalConstants.LOGIN_PAGE);			
-			mv.addObject(InternalPortalConstants.ERROR_MSG,errMsg );			
+			mv.addObject(InternalPortalConstants.ERROR_MSG,errMsg );
+			
+			mv.addObject("userName",userID );	
+			if(null !=  password && password!= ""){				
+				mv.addObject(InternalPortalConstants.PASSWORD,password );	
+			}
+			//Santanu 03/16/16 
+			if(null !=  password && password!= "" && errMsg.equalsIgnoreCase("Please enter a valid LAN id and password")){
+				LOGGER.info("Lin 211");
+				mv.addObject(InternalPortalConstants.PASSWORD,"" );	
+			}
+			
 		}		
 		else{			
 			LOGGER.info("login");

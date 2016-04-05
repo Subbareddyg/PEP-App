@@ -1,5 +1,5 @@
 
-package com.belk.pep.controller;
+package com.belk.pep.controller; 
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Properties;
 //import java.util.logging.Logger;
 import org.apache.log4j.Logger;
-
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
 import javax.portlet.RenderRequest;
@@ -115,7 +114,11 @@ public class ExternalVendorLoginController implements Controller {
         else{
              LOGGER.info("VendorPortalLoginController:handleRenderRequest:login ");
              mv= new ModelAndView(ExternalVendorLoginConstants.MODELVIEW_LOGIN);           
-        }       
+        }
+        
+        String belkBestPlan = prop.getProperty(ExternalVendorLoginConstants.BELK_BEST_PLAN);
+        mv.addObject(ExternalVendorLoginConstants.BELK_BEST_PLAN_URL_KEY, belkBestPlan);
+        
         return mv;  
     }
     

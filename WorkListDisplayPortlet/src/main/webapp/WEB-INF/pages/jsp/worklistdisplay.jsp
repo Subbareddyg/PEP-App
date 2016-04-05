@@ -10,6 +10,37 @@
 	 
 
 <style type = "text/css">
+input.btn-new, input.btn-new:hover {
+    background: #cedff5;
+    border: 1px solid #aaaaaa;
+    color: #15428b;
+    cursor: pointer;
+    #display: block;
+    #float: left;
+    #font-size: 13px;
+    #font-weight: bold;
+    #margin-right: 1px;
+    #padding: 1px 0;
+    text-decoration: none;
+}
+.dlg-custom .ui-widget-header{
+	background: #369 repeat-x;
+	color: #fff;
+}
+.dlg-custom .ui-dialog-titlebar-close {
+  display: none;
+}
+
+.dlg-custom #advanceSearchDiv{
+	overflow-x: hidden !important;
+	height: 100%;
+}
+#search_tabs li.text label{
+	clear: both;
+}
+#search_tabs{
+	margin: 0 !important;
+}
 .treegrid-expander{
 	display:none;
 }
@@ -78,13 +109,18 @@ lockClearOnBack.value='1';
     <input type="hidden" id="stylepetstatid" name="stylepetstatid" value=""/>
     <input type="hidden" id="stylecolorpetstatid" name="stylecolorpetstatid" value=""/>
     <input type="hidden"  name="createManualPet" id="createManualPet" value=""/>
-	<input type="hidden" id="petStatus" name="petStatus" value=""/>
-    
-    
-    
+	<input type="hidden" id="petStatus" name="petStatus" value=""/>    
     
     <input type="hidden" id="searchReturnId" name="searchReturnId" value="false" />	
-		 		 
+	
+	<!--Commented Belk Best Plan for displaying DCA afuszr6-->
+	<!--<c:if test="${isInternal =='yes' && workflowForm.readOnlyUser == 'no'}"> 
+		<div style="float:left;width: 200px;margin-bottom: 0.5cm;"><a href="<c:out value='${BEBESTPLAN}'/>" target="_blank">Belk Best Plan</a></div>
+	</c:if>-->
+	<c:if test="${isInternal =='no'}"> 
+		<div style="float:left;width: 200px;margin-bottom: 0.5cm;"><a href="<c:out value='${BEBESTPLAN}'/>" target="_blank">Belk Best Plan</a></div>
+	</c:if>	
+	
 		 <div align="right" style="margin-bottom: 0.5cm" >	
 			<c:out value="${workflowForm.pepUserID}"/> &nbsp;	 
 			<input type="button"   style="font-weight: bold" name="logout" value="Logout" 
@@ -137,7 +173,7 @@ lockClearOnBack.value='1';
 				<c:if test="${workflowForm.totalNumberOfPets ne '0'}">
 				<span class="pagebanner">&nbsp;<c:out value="${workflowForm.totalNumberOfPets}"/>
 				
-					 <fmt:message key="worklist.pets.found.displaying.label"/>					
+					 <fmt:message key="worklist.pets.found.displaying.label"/> 					
 					
 					 
 				
@@ -200,7 +236,7 @@ lockClearOnBack.value='1';
 							
 				</span>
 				</c:if>
-				</c:if>
+				</c:if>				
 				<div class="scrollbarset">
 				<!-- Image Loading message starts -->
 					<div id="overlay_pageLoading" style="display:none;">
@@ -212,21 +248,27 @@ lockClearOnBack.value='1';
 				<!-- Image Loading message ends -->
 				
 				<div id="overlay_petStatus" class="web_dialog_imageUploadPopUp"></div>
-				<div id="dialog_petStatus" class="web_dialog_petStatusPopUp" >
-	<div id="content">
-		<div class="x-panel-header" id="petStatusID">
+				<div id="dialog_petStatus" style="display:none">
+		<div id="content">
+		<!-- <div class="x-panel-header" id="petStatusID">
 			Pet Status
-		</div>
+		</div> -->
 		<div class="x-panel-body;border: 0px solid #99bbe8;">
 			</br>
 			</br>
+			<div class="ui-widget">
+							<div class="ui-state-error ui-corner-all" style="padding: 0 .7em;">
+								<p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>
+								<strong id="petStatusLabelId"></strong></p>
+							</div>
+						</div>
 			<ul>
-				<li>				
+				<!-- <li>				
 					<label id = "petStatusLabelId" style="margin-left:53px;height: 16px;"></label>
-				</li>				
+				</li> -->				
 			</br>
-				<li>
-					<input class="btn"   id="petStatusPopUpClose" type="button" onclick='$("#overlay_petStatus").hide();$("#dialog_petStatus").hide();' name="Close" value="Close" style="float: right;" />
+				<li class="buttons" style="float:right;">
+					<input class="btn-new ui-button ui-corner-all ui-widget" id="petStatusPopUpClose" type="button" onclick="$('#dialog_petStatus').dialog('close');" name="Close" value="Close" />
 				</li>
 			</ul>
 
@@ -284,7 +326,13 @@ lockClearOnBack.value='1';
 				<c:if test="${workflowForm.selectedColumn =='completionDate'}">
 					<img src="${contextpath}${imagemidpath}${imagename}"> </img>
 				</c:if>
-				</th></tr>
+				</th>
+				<th><a href="#" onclick="columnsorting('petSourceType')">PET Source</a>
+				<c:if test="${workflowForm.selectedColumn =='petSourceType'}">
+					<img src="${contextpath}${imagemidpath}${imagename}"> </img>
+				</c:if>					
+				</th>
+				</tr>
 				</thead>
 				<tbody >
 						<input type="hidden" id="hidden_roleEditable" name="hidden_roleEditable" value="${workflowForm.roleEditable}"/>
@@ -299,7 +347,7 @@ lockClearOnBack.value='1';
 				<!-- Table Grid logic Start -->
 						<c:set var="subcount" value="260" />
 						<c:set var="countList" value="0" />
-						<c:if test="${workflowForm.petNotFound ne null}"><tr><td colspan="9"><c:out value="${workflowForm.petNotFound}"/></td></tr> </c:if>
+						<c:if test="${workflowForm.petNotFound ne null}"><tr><td colspan="10"><c:out value="${workflowForm.petNotFound}"/></td></tr> </c:if>
 						<c:forEach items="${workflowForm.workFlowlist}" var="workFlow"
 							varStatus="status">
 							
@@ -369,6 +417,8 @@ lockClearOnBack.value='1';
 								<input type="hidden" id="tbisPCompletionDateNull_${workFlow.orinNumber}" name="tbisPCompletionDateNull_${workFlow.orinNumber}" value="${workFlow.isPCompletionDateNull}" />
 								</td>
 								
+								<td><c:out value="${workFlow.sourceType}" /></td>
+								
 								<td style="display: none;"><c:out value="${workFlow.petStatus}" />
 								</td>
 								
@@ -407,6 +457,7 @@ lockClearOnBack.value='1';
 									 #TD_COMPLETION_DATE
 									</div>
 									</td>
+									<td>#TD_SOURCE_TYPE</td>
 									<td style="display: none;">#TD_PET_STATUS</td>
 								</tr>	
 				<!--  Table Grid Login End -->	       
@@ -418,10 +469,11 @@ lockClearOnBack.value='1';
 					<div id="tableDeptStart"></div>
 					<div  id="deptTable" name="deptTable">					
 					<!---------------  -->
-						<div style="display: none;" id="dialog_Dept" class="web_dialog_dept" name="dialog_Dept">
-					
+						<div id="dialog_Dept" name="dialog_Dept" style="padding: 10px; border: 2px solid #336699; height: 90%">
+						
 					   <table class="deptmaintable" cellpadding="3" cellspacing="0" >
-					      <tbody><tr>
+					      <tbody>
+						  <!-- <tr>
 					         <td class="web_dialog_title"><fmt:message key="worklist.dept.filter.department.label"/></td>
 					         <td class="web_dialog_title align_right">           
 					         </td>
@@ -431,7 +483,7 @@ lockClearOnBack.value='1';
 					         <td>&nbsp;</td>
 					      </tr>
 						  <tr>  
-						 </tr>	 
+						 </tr> --> 
 					         
 							<tr>
 							 
@@ -482,7 +534,9 @@ lockClearOnBack.value='1';
 															 
 															  
 															<tr class="deptintabletrheading"  >
-																		<th width="8%" style="border:1px solid black;"></th>
+																		<th width="8%" style="border:1px solid black;">
+																			<input type="checkbox" id="selectAllDeptOnSearch" checked="checked" style="display:none;"/>
+																		</th>
 																		<th width="20%" style="border:1px solid black;font-weight: bold">Dept #</th> 
 																		<th width="71%" style="border:1px solid black;font-weight: bold">Dept Description</th>
 																  </tr>		
@@ -563,23 +617,21 @@ lockClearOnBack.value='1';
 				<!-- Search Loading Santanu Popup -->	
 					
 				</div>
-				<div id="advTableStart"></div><div id="advanceSearchDiv" name="advanceSearchDiv" style="background-color:#f0f0f0">
+				<div id="advTableStart"></div>
+				<div id="advanceSearchDiv" name="advanceSearchDiv" style="background-color:#f0f0f0">
 				<div id="dialog_ASearch" class="search_web_dialog_search" name="dialog_ASearch" style="background-color:#f0f0f0">
 				<div id="search_tabs">
 					<div id="login1" title="" class="tab">
-						<li align="right">
+						<div>
 						     <input type="button"  value="<fmt:message key="worklist.adv.jsp.main.search.button.label"/>" onclick="searchSearch();setHiddenFieldValue();"/>
 						     <input type="button"  value="<fmt:message key="worklist.adv.jsp.main.clear.button.label"/>" onclick="searchClear();"/> 
 						     <input type="button"  value="<fmt:message key="worklist.adv.jsp.main.reset.button.label"/>" onclick="searchReset();" />	
 						     <input type="button" value="<fmt:message key="worklist.adv.jsp.main.close.button.label"/>" onclick="searchClose();" value=""/>				
 										
-							</li>
-						<br>		
-							<li>				
-									</li>
-										Enter Your Search Criteria below.
-									</li>
-										<fieldset>
+							</div>
+							<br />							
+							<p>Enter Your Search Criteria below.</p>
+										
 												<ol>
 					
 								
@@ -616,14 +668,14 @@ lockClearOnBack.value='1';
 											<input type="text" id="advContentStatus" name="advContentStatus" value="${workflowForm.advanceSearch.contentStatus}"/>
 											<input type="button" id="btnShowSimpleContents1" value="Open" onclick="searchcontentStatusopen();" />
 										</li>
-										<fieldset>
+										
 										<li class= "text">
 											<label for="Content Status"><fmt:message key="worklist.adv.jsp.main.pet.status.body.label"/></label>
 											<input type="radio" name="petActive" id="petActive"  value='yes' <c:if test="${'01'== workflowForm.advanceSearch.active}"> checked="checked" </c:if> onclick="petactiveclicked(); disableStyleOrin(this.value);"> Active
 											<input type="radio" name="petInActive"  id="petInActive" value='yes' <c:if test="${'05'== workflowForm.advanceSearch.inActive}"> checked="checked" </c:if> onclick="petinactiveclicked(); disableStyleOrin(this.value);"> InActive
 											<input type="radio" name="petClosed" id="petClosed"  value='yes' <c:if test="${'06'== workflowForm.advanceSearch.closed}"> checked="checked" </c:if> onclick="petclosedclicked(); disableStyleOrin(this.value);"> Closed
 										</li>
-										</fieldset>
+										
 										<li class="text">
 											<label for="Request Type"><fmt:message key="worklist.adv.jsp.main.request.type.body.label"/></label>						
 					
@@ -665,7 +717,7 @@ lockClearOnBack.value='1';
 										</li>
 					
 					                 </ol>
-							</fieldset>
+							
 							
 					    </div>
 					
@@ -678,81 +730,84 @@ lockClearOnBack.value='1';
 				
 				<div id="overlay_ClassNo" class="web_dialog_overlay_advSearch_popup"></div>
     
-				<div id="dialog_ClassNo" class="search_web_dialog_class" style="background-color:#f0f0f0">
-				   <table style="width: 100%; border: 0px;" cellpadding="3" cellspacing="0">
-				      <tr>
-				         <td class="web_dialog_title"><fmt:message key="worklist.adv.jsp.popup.class.no.header.label"/></td>
-				         <td class="web_dialog_title align_right">
-				           
-				         </td>
-				      </tr>
-				      <tr>
-				         <td>&nbsp;</td>
-				         <td>&nbsp;</td>
-				      </tr>
-					  <tr>  
-					 </tr> 
-				       
+				<div id="dialog_ClassNo" class="search_web_dialog_class_new" style="background-color:#f0f0f0">
+				   <div style="border: 2px solid #336699;margin: 5px auto;padding: 10px; height: 86%;">
+					   <table style="width: 100%; border: 0px;" cellpadding="3" cellspacing="0">
+						  <!--<tr>
+							 <td class="web_dialog_title"><fmt:message key="worklist.adv.jsp.popup.class.no.header.label"/></td>
+							 <td class="web_dialog_title align_right">
+							   
+							 </td>
+						  </tr>
+						  <tr>
+							 <td>&nbsp;</td>
+							 <td>&nbsp;</td>
+						  </tr>
+						  <tr>  
+						 </tr> 
+						   
+						 
+						  <tr>
+							 <td>&nbsp;</td>
+							 <td>&nbsp;</td>
+						  </tr> -->
+						   
+							<tr>
+						 <td colspan="2" align="center">	 
+								<input id="btnClearClassNos1" type="button" value="<fmt:message key="worklist.adv.jsp.popup.class.no.button.clear.label"/>" onclick="searchClassNumberClear();" />        
+								<input id="btnSaveClassNos1" type="button" value="<fmt:message key="worklist.adv.jsp.popup.class.no.button.sac.label"/>" onclick="searchClassNumberSaveAndClose();" />        
+								<input id="btnCloseClassNos1" type="button" value="<fmt:message key="worklist.adv.jsp.popup.class.no.button.close.label"/>"  onclick="searchClassNumberClose();"/>       
+							 </td>	   
+						   </tr>
+						   <tr>
+							  <td>&nbsp;</td>
+							 <td>&nbsp;</td>
+						  </tr>
+						 </table> 
+						<div class="table-container-uidlg" style="height: 150px; overflow:auto;">
+						<table align="center"  border="1" width="100%">	
+						   
+							
+					  <tr style="background-color:#f0f0f0" >
+						<th class="popupborderline"></th>
+						<th class="popupborderline"><fmt:message key="worklist.adv.jsp.popup.class.no.caption.class.label"/> #</th> 
+						<th class="popupborderline"><fmt:message key="worklist.adv.jsp.popup.class.no.caption.class.desc.label"/></th>
+					  </tr>
 					 
-				      <tr>
-				         <td>&nbsp;</td>
-				         <td>&nbsp;</td>
-				      </tr>
-					   
-						<tr>
-					 <td colspan="2" align="center">	 
-				            <input id="btnClearClassNos1" type="button" value="<fmt:message key="worklist.adv.jsp.popup.class.no.button.clear.label"/>" onclick="searchClassNumberClear();" />        
-				            <input id="btnSaveClassNos1" type="button" value="<fmt:message key="worklist.adv.jsp.popup.class.no.button.sac.label"/>" onclick="searchClassNumberSaveAndClose();" />        
-				            <input id="btnCloseClassNos1" type="button" value="<fmt:message key="worklist.adv.jsp.popup.class.no.button.close.label"/>"  onclick="searchClassNumberClose();"/>       
-						 </td>	   
-				       </tr>
-					   <tr>
-				          <td>&nbsp;</td>
-				         <td>&nbsp;</td>
-				      </tr>
-					  
-					<table align="center"  border="1" style="width=60%">	
-					   
-					    
-				  <tr style="background-color:#f0f0f0" >
-				    <th colspan="2" class="popupborderline"></th>
-				    <th colspan="2" class="popupborderline"><fmt:message key="worklist.adv.jsp.popup.class.no.caption.class.label"/> #</th> 
-				    <th colspan="2" class="popupborderline"><fmt:message key="worklist.adv.jsp.popup.class.no.caption.class.desc.label"/></th>
-				  </tr>
-				 
-				  <c:forEach items="${workflowForm.advanceSearch.classDetails}" var="ascd"
-													varStatus="ascdstatus">
-													<tr  >
-														<td colspan="2"  class="popupborderline">
-														<input type="checkbox" name="advChkSelectionClassNo" id ="advChkSelectionClassNo" value="${ascd.id}" class="advClassscheckboxclass" /> 
-														</td>
-														<td colspan="2" class="popupborderline"><c:out value="${ascd.id}" /></td>
-														<td colspan="2"  class="popupborderline"><c:out value="${ascd.desc}" /></td>
-													</tr>
-							</c:forEach>
-				    
-				</table> 
-				      <tr>
-				         <td>&nbsp;</td>
-				         <td>&nbsp;</td>
-				      </tr>
-				      <tr>
-				         
-				      </tr>
-				   </table>
+					  <c:forEach items="${workflowForm.advanceSearch.classDetails}" var="ascd"
+														varStatus="ascdstatus">
+														<tr  >
+															<td  class="popupborderline">
+															<input type="checkbox" name="advChkSelectionClassNo" id ="advChkSelectionClassNo" value="${ascd.id}" class="advClassscheckboxclass" /> 
+															</td>
+															<td class="popupborderline"><c:out value="${ascd.id}" /></td>
+															<td class="popupborderline"><c:out value="${ascd.desc}" /></td>
+														</tr>
+								</c:forEach>
+						  <tr>
+							 <td>&nbsp;</td>
+							 <td>&nbsp;</td>
+						  </tr>
+						  <tr>
+							 
+						  </tr>
+					   </table>
+					   </div>
+					</div>
 				</div>
 				
 				<!-- Class Details end -->	
 				<!-- Image Details start -->
 				<div id="overlay_Image" class="web_dialog_overlay_advSearch_popup"></div>
-    
-					<div id="dialog_Image" class="search_web_dialog_imageaction">
-					   <table style="width: 100%; border: 0px;" cellpadding="3" cellspacing="0">
-					      <tr>
+					
+					<div id="dialog_Image" class="search_web_dialog_imageaction_new">
+						<div style="border: 2px solid #336699;margin: 5px auto;padding: 10px; height: 81%">
+					   <table style="width: 100%; border: 0px;" cellpadding="3" cellspacing="0" align="center">
+					      <!-- <tr>
 					         <td class="web_dialog_title"><fmt:message key="worklist.adv.jsp.popup.image.header.label"/></td>
 					         <td class="web_dialog_title align_right">
 					            <!--<a href="#" id="btnClose">Close</a>-->
-					         </td>
+					      <!--   </td>
 					      </tr>
 					      <tr>
 					         <td>&nbsp;</td>
@@ -766,7 +821,7 @@ lockClearOnBack.value='1';
 					         <td>&nbsp;</td>
 					         <td>&nbsp;</td>
 					      </tr>
-						   
+						   -->
 							<tr>
 						 <td colspan="2" align="center">	 
 					            <!--<input id="btnSearch" type="button" value="Search" />-->        
@@ -781,10 +836,10 @@ lockClearOnBack.value='1';
 					      </tr>
 						  
 						  
-					 <table style="width:60%" border="1" align="center">
+					 <table style="width:100%" border="1" align="center">
 					  <tr>
-					    <th width="20%" class="popupborderline"></th>
-					    <th colspan="2" class="popupborderline"><fmt:message key="worklist.adv.jsp.popup.image.caption.image.status.label"/></th>		
+					    <th class="popupborderline"></th>
+					    <th class="popupborderline"><fmt:message key="worklist.adv.jsp.popup.image.caption.image.status.label"/></th>		
 					  
 					  </tr>
 					  <c:forEach items="${workflowForm.advanceSearch.imageStatusDropDown}" var="imagedropvalue"
@@ -804,70 +859,73 @@ lockClearOnBack.value='1';
 					         
 					      </tr>
 					   </table>
+					   </div>
 					</div>
 				<!--  Image Details End -->
 				<!-- Content Status Start-->
 				<div id="overlay_Content" class="web_dialog_overlay_advSearch_popup"></div>
     
-				<div id="dialog_Content" class="search_web_dialog_content">
-				   <table style="width: 100%; border: 0px;" cellpadding="3" cellspacing="0">
-				      <tr>
-				         <td class="web_dialog_title"><fmt:message key="worklist.adv.jsp.popup.content.header.label"/></td>
-				         <td class="web_dialog_title align_right">
-				         </td>
-				      </tr>
-				      <tr>
-				         <td>&nbsp;</td>
-				         <td>&nbsp;</td>
-				      </tr>
-					  <tr>  
-					 </tr> 
-				       
-					 
-				      <tr>
-				         <td>&nbsp;</td>
-				         <td>&nbsp;</td>
-				      </tr>
-					   
-						<tr>
-					 <td colspan="2" align="center">	 
-				            <!--<input id="btnSearch" type="button" value="Search" />-->       
-				            <input id="btnClearContents1" type="button" value="<fmt:message key="worklist.adv.jsp.popup.content.button.clear.label"/>" onclick="searchContentClear();" />        
-				            <input id="btnSaveContents1" type="button" value="<fmt:message key="worklist.adv.jsp.popup.content.button.sac.label"/>" onclick="searchContentSaveAndClose();"/>        
-				            <input id="btnCloseContents1" type="button" value="<fmt:message key="worklist.adv.jsp.popup.content.button.close.label"/>" onclick="searchContentClose();" />       
-						 </td>	   
-				       </tr>
-					   <tr>
-				          <td>&nbsp;</td>
-				         <td>&nbsp;</td>
-				      </tr>
+				<div id="dialog_Content" class="search_web_dialog_content_new">
+					<div style="border: 2px solid #336699;margin: 5px auto;padding: 10px; height: 82%;">
+					   <table style="width: 100%; border: 0px;" cellpadding="3" cellspacing="0">
+						  <!-- <tr>
+							 <td class="web_dialog_title"><fmt:message key="worklist.adv.jsp.popup.content.header.label"/></td>
+							 <td class="web_dialog_title align_right">
+							 </td>
+						  </tr>
+						  <tr>
+							 <td>&nbsp;</td>
+							 <td>&nbsp;</td>
+						  </tr>
+						  <tr>  
+						 </tr> 
+						   
+						 
+						  <tr>
+							 <td>&nbsp;</td>
+							 <td>&nbsp;</td>
+						  </tr> -->
+						   
+							<tr>
+						 <td colspan="2" align="center">	 
+								<!--<input id="btnSearch" type="button" value="Search" />-->       
+								<input id="btnClearContents1" type="button" value="<fmt:message key="worklist.adv.jsp.popup.content.button.clear.label"/>" onclick="searchContentClear();" />        
+								<input id="btnSaveContents1" type="button" value="<fmt:message key="worklist.adv.jsp.popup.content.button.sac.label"/>" onclick="searchContentSaveAndClose();"/>        
+								<input id="btnCloseContents1" type="button" value="<fmt:message key="worklist.adv.jsp.popup.content.button.close.label"/>" onclick="searchContentClose();" />       
+							 </td>	   
+						   </tr>
+						   <tr>
+							  <td>&nbsp;</td>
+							 <td>&nbsp;</td>
+						  </tr>
+						  
+						  
+					
+					<table style="width:100%" border="1" align="center">
+					  <tr>
+						<th class="popupborderline"></th>
+						<th class="popupborderline"><fmt:message key="worklist.adv.jsp.popup.content.caption.image.status.label"/></th>		
 					  
-					  
-				
-				<table style="width:60%" border="1" align="center">
-				  <tr>
-				    <th width="20%" class="popupborderline"></th>
-				    <th class="popupborderline"><fmt:message key="worklist.adv.jsp.popup.content.caption.image.status.label"/></th>		
-				  
-				  </tr>
-				  <c:forEach items="${workflowForm.advanceSearch.contentStatusDropDown}" var="contentdropvalue"
-							varStatus="contentdropvalueststus">
-							 <tr>
-							    <td align="center" class="popupborderline"><input type="checkbox" name ="advChkContentStatus" id="advChkContentStatus" <c:if test="${contentdropvalue.checked =='yes'}"> checked="checked" </c:if> value="${contentdropvalue.value}" class="advContcheckboxclass"/>  </td>
-							    <td class="popupborderline">${contentdropvalue.value}</td>		
-							  </tr>
-						</c:forEach>
-				</table>
-				
-					  
-				      <tr>
-				         <td>&nbsp;</td>
-				         <td>&nbsp;</td>
-				      </tr>
-				      <tr>
-				         
-				      </tr>
-				   </table>
+					  </tr>
+					  <c:forEach items="${workflowForm.advanceSearch.contentStatusDropDown}" var="contentdropvalue"
+								varStatus="contentdropvalueststus">
+								 <tr>
+									<td align="center" class="popupborderline"><input type="checkbox" name ="advChkContentStatus" id="advChkContentStatus" <c:if test="${contentdropvalue.checked =='yes'}"> checked="checked" </c:if> value="${contentdropvalue.value}" class="advContcheckboxclass"/>  </td>
+									<td class="popupborderline">${contentdropvalue.value}</td>		
+								  </tr>
+							</c:forEach>
+					</table>
+					
+						  
+						  <tr>
+							 <td>&nbsp;</td>
+							 <td>&nbsp;</td>
+						  </tr>
+						  <tr>
+							 
+						  </tr>
+					   </table>
+					</div>
 				</div>
 				<!-- Content Status End -->
 				<!-- Image Start -->
@@ -876,57 +934,58 @@ lockClearOnBack.value='1';
 				<!-- Request Type -->
 				<div id="overlay_ReqType" class="web_dialog_overlay_advSearch_popup"></div>
     
-				<div id="dialog_ReqType" class="search_web_dialog_request">
-				   <table style="width: 100%; border: 0px;" cellpadding="3" cellspacing="0">
-				      <tr>
-				         <td class="web_dialog_title"><fmt:message key="worklist.adv.jsp.popup.request.header.label"/></td>
-				         <td class="web_dialog_title align_right">
-				            <!--<a href="#" id="btnClose">Close</a>-->
-				         </td>
-				      </tr>
-				      <tr>
-				         <td>&nbsp;</td>
-				         <td>&nbsp;</td>
-				      </tr>
-					  <tr>  
-					 </tr> 
-				       
-					 
-				      <tr>
-				         <td>&nbsp;</td>
-				         <td>&nbsp;</td>
-				      </tr>
-					   
-						<tr>
-					 <td colspan="2" align="center">	 
-				                   
-				            <input id="btnClearReqType" type="button" value="<fmt:message key="worklist.adv.jsp.popup.request.button.clear.label"/>" onclick="searchRequestTypeClear();"/>        
-				            <input id="btnSaveReqType" type="button" value="<fmt:message key="worklist.adv.jsp.popup.request.button.sac.label"/>" onclick="searchRequestTypeSaveAndClose();"/>        
-				            <input id="btnCloseReqType" type="button" value="<fmt:message key="worklist.adv.jsp.popup.request.button.close.label"/>" onclick="searchRequestTypeClose();"/>       
-						 </td>	   
-				       </tr>
-					   <tr>
-				          <td>&nbsp;</td>
-				         <td>&nbsp;</td>
-				      </tr>
+				<div id="dialog_ReqType" class="search_web_dialog_request_new">
+				   <div style="border: 2px solid #336699;margin: 5px auto;padding: 10px; height: 82%;">
+					   <table style="width: 100%; border: 0px;" cellpadding="3" cellspacing="0">
+						  <!-- <tr>
+							 <td class="web_dialog_title"><fmt:message key="worklist.adv.jsp.popup.request.header.label"/></td>
+							 <td class="web_dialog_title align_right">
+								<!--<a href="#" id="btnClose">Close</a>-->
+						   <!--  </td>
+						  </tr>
+						  <tr>
+							 <td>&nbsp;</td>
+							 <td>&nbsp;</td>
+						  </tr>
+						  <tr>  
+						 </tr> 
+						   
+						 
+						  <tr>
+							 <td>&nbsp;</td>
+							 <td>&nbsp;</td>
+						  </tr> -->
+						   
+							<tr>
+						 <td colspan="2" align="center">	 
+									   
+								<input id="btnClearReqType" type="button" value="<fmt:message key="worklist.adv.jsp.popup.request.button.clear.label"/>" onclick="searchRequestTypeClear();"/>        
+								<input id="btnSaveReqType" type="button" value="<fmt:message key="worklist.adv.jsp.popup.request.button.sac.label"/>" onclick="searchRequestTypeSaveAndClose();"/>        
+								<input id="btnCloseReqType" type="button" value="<fmt:message key="worklist.adv.jsp.popup.request.button.close.label"/>" onclick="searchRequestTypeClose();"/>       
+							 </td>	   
+						   </tr>
+						   <tr>
+							  <td>&nbsp;</td>
+							 <td>&nbsp;</td>
+						  </tr>
+						  
+					</table>  
+					 <table style="width:100%" border="1" align="center">
+					  <tr>
+						<th class="popupborderline"></th>
+						<th class="popupborderline"><fmt:message key="worklist.adv.jsp.popup.request.caption.image.status.label"/></th>		
 					  
+					  </tr>
+					  <c:forEach items="${workflowForm.advanceSearch.requestTypeDropDown}" var="requestdropvalue"
+								varStatus="requestdropvalueststus">
+								 <tr>
+									<td align="center" class="popupborderline"><input type="checkbox" name="advChkRequestType" id="advChkRequestType" <c:if test="${requestdropvalue.checked =='yes'}"> checked="checked" </c:if> value="${requestdropvalue.value}" class="advReqcheckboxclass"/>  </td>
+									<td class="popupborderline">${requestdropvalue.value}</td>		
+								  </tr>
+							</c:forEach>
 					  
-				 <table style="width:60%" border="1" align="center">
-				  <tr>
-				    <th width="20%" class="popupborderline"></th>
-				    <th class="popupborderline"><fmt:message key="worklist.adv.jsp.popup.request.caption.image.status.label"/></th>		
-				  
-				  </tr>
-				  <c:forEach items="${workflowForm.advanceSearch.requestTypeDropDown}" var="requestdropvalue"
-							varStatus="requestdropvalueststus">
-							 <tr>
-							    <td align="center" class="popupborderline"><input type="checkbox" name="advChkRequestType" id="advChkRequestType" <c:if test="${requestdropvalue.checked =='yes'}"> checked="checked" </c:if> value="${requestdropvalue.value}" class="advReqcheckboxclass"/>  </td>
-							    <td class="popupborderline">${requestdropvalue.value}</td>		
-							  </tr>
-						</c:forEach>
-				  
-				</table>
-				</table>
+					</table>
+					</div>
 				</div>
 				<!-- Request Type End -->
 				<!-- pop ups End-->	
@@ -991,10 +1050,88 @@ $("#datepicker2").datepicker({
     $(".ui-datepicker-trigger").mouseover(function() {
         $(this).css('cursor', 'pointer');
     });
-    
+	
+$('#deptTable').dialog({
+		modal: true,
+		autoOpen: false,
+		resizable: true,
+		dialogClass: "dlg-custom dlg-dept",
+		title: 'Department',
+		width: 310,
+		height: 340,
+		minWidth: 310,
+		minHeight: 340,
+		open: function( event, ui ) {
+			$('#selectedDeptSearch').focus();
+		},
+		resizeStop: function(event, ui){
+			$(this).find('#deptTable').css({height: '100%'});
+		},
+	});
+$('#dialog_petStatus').dialog({
+	modal: true,
+	autoOpen: false,
+	resizable: true,
+	dialogClass: "dlg-custom dlg-pet-status",
+	title: 'Pet Status',
+	minWidth: 350,
+	minHeight: 140,
+});	
 }
 
-
+function attachAdvSearchParamsDlg(){
+	setTimeout(function(){ //made async delay for internal processing
+		$('div.dlg-imgStat').remove(); //ui dlg fix
+		$('div.dlg-contentStat').remove(); //ui dlg fix
+		$('div.dlg-reqType').remove(); //ui dlg fix
+		$('div.dlg-classNo').remove(); //ui dlg fix
+		
+		$('#dialog_Image').dialog({
+			modal: true,
+			autoOpen: false,
+			resizable: true,
+			dialogClass: "dlg-custom dlg-imgStat",
+			title: 'Image',
+			minWidth: 309,
+			minHeight: 241,
+		});
+		
+		$('#dialog_Content').dialog({
+			modal: true,
+			autoOpen: false,
+			resizable: true,
+			dialogClass: "dlg-custom dlg-contentStat",
+			title: 'Content Status',
+			minWidth: 309,
+			minHeight: 241,
+		});
+		
+		$('#dialog_ReqType').dialog({
+			modal: true,
+			autoOpen: false,
+			resizable: true,
+			dialogClass: "dlg-custom dlg-reqType",
+			title: 'Request Type',
+			minWidth: 346,
+			minHeight: 238,
+		});
+		
+		$('#dialog_ClassNo').dialog({
+			modal: true,
+			autoOpen: false,
+			resizable: true,
+			dialogClass: "dlg-custom dlg-classNo",
+			title: 'Class Number',
+			minWidth: 321,
+			minHeight: 293,
+			resizeStop: function(event, ui){
+				//console.log(ui.size);
+				$(this).find('.table-container-uidlg').css({height: '80%'});
+			},
+		});
+		
+	}, 10);
+}
 function resetAdvSearchSettings()
 {
 		$("#adDeptNo").attr("disabled","disabled");
@@ -1069,13 +1206,92 @@ constrainInput: true
 }).datepicker("setDate", "+90");
 
 
-$(".ui-datepicker-trigger").mouseover(function() {
+$('body').on('click', '#selectAllDeptOnSearch', function(e){
+	if($(this).is(':checked')){
+		$('[name=chkSelectedDept]').prop('checked', true);
+	}else{
+		$('[name=chkSelectedDept]').prop('checked', false);
+	}
+});
+//code for dept search popup select all checkbox 
+$('body').on('click', '[name=chkSelectedDept]', function(e){
+	if($(this).is(':checked')){
+		var toatDeptsPresent = $('[name=chkSelectedDept]').length;
+		var totalDeptsChecked = $('[name=chkSelectedDept]:checked').length;
+		if(toatDeptsPresent == totalDeptsChecked)
+			$('#selectAllDeptOnSearch').prop('checked', true);
+	}else{
+		$('#selectAllDeptOnSearch').prop('checked', false);
+	}
+});
+//code for dept search popup search on enter key
+$('body').on('keypress', '#selectedDeptSearch', function(e){
+	if(e.which && e.which == 13){
+		//console.log($('#advanceSearchDiv').dialog( "isOpen" ));
+		try{
+			if($('#advanceSearchDiv').dialog( "isOpen" ))
+				$("#AdseachClicked").val("yes");	
+		}catch(ex){
+			
+		}finally{
+			depSearch('depSearch');
+		}
+		return false;
+	}
+});
+
+$('#deptTable').dialog({
+	modal: true,
+	autoOpen: false,
+	resizable: true,
+	dialogClass: "dlg-custom dlg-dept",
+	title: 'Department',
+	width: 310,
+	height: 340,
+	minWidth: 310,
+	minHeight: 340,
+	open: function( event, ui ) {
+		$('#selectedDeptSearch').focus();
+	},
+	resizeStop: function(event, ui){
+		$(this).find('#deptTable').css({height: '100%'});
+	},
+});
+$('#dialog_petStatus').dialog({
+	modal: true,
+	autoOpen: false,
+	resizable: true,
+	dialogClass: "dlg-custom dlg-pet-status",
+	title: 'Pet Status',
+	minWidth: 350,
+	minHeight: 140,
+});
+
+	$(".ui-datepicker-trigger").mouseover(function() {
 $(this).css('cursor', 'pointer');
 });
 
 });
 
-
+function bindDeptDialog (){
+	$('#deptTable').dialog({
+		modal: true,
+		autoOpen: false,
+		resizable: true,
+		dialogClass: "dlg-custom dlg-dept",
+		title: 'Department',
+		width: 310,
+		height: 340,
+		minWidth: 310,
+		minHeight: 340,
+		open: function( event, ui ) {
+			$('#selectedDeptSearch').focus();
+		},
+		resizeStop: function(event, ui){
+			$(this).find('#deptTable').css({height: '100%'});
+		},
+	});
+}
 	
 function timeOutWLDPage()
 {

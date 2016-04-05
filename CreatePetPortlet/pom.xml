@@ -1,7 +1,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-	<groupId>CreatePetPortlet</groupId>
+	<groupId>ProductEnrichmentPortal</groupId>
 	<version>1.0</version>
 	<name>CreatePetPortlet</name>
 	<modelVersion>4.0.0</modelVersion>
@@ -10,42 +10,6 @@
 		<spring.version>3.1.1.RELEASE</spring.version>
 		<appfuse.version>2.0.1</appfuse.version>
 	</properties>
-	 <repositories>  
-	  <repository>
-      <id>java.net</id>
-      <url>http://download.java.net/maven/2/</url>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </repository>     
-        <repository>
-            <id>appfuse</id>
-            <url>http://static.appfuse.org/repository</url>
-        </repository>
-        
-        
-    </repositories>
-    <pluginRepositories>
-         <pluginRepository>
-      <id>java.net</id>
-      <url>http://download.java.net/maven/2/</url>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-        </pluginRepository>
-        <pluginRepository>
-            <id>appfuse</id>
-            <url>http://static.appfuse.org/repository</url>
-        </pluginRepository>
-   
-    </pluginRepositories>
-
 	<packaging>war</packaging>
 	<build>
 		<plugins>
@@ -261,7 +225,7 @@
 	<version>1.1</version>
 </dependency>
 <dependency>
-        	<groupId>CommonForIpcLogin</groupId>
+        	<groupId>ProductEnrichmentPortal</groupId>
         	<artifactId>CommonForIpcLogin</artifactId>
         	<version>1.0</version>
        		</dependency>
@@ -269,11 +233,6 @@
 		<groupId>log4j</groupId>
 		<artifactId>log4j</artifactId>
 		<version>1.2.14</version>
-		</dependency>
-		<dependency>
-		    <groupId>com.ibm.websphere</groupId>
-    		<artifactId>websphere_apis</artifactId>
-    		<version>1.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>

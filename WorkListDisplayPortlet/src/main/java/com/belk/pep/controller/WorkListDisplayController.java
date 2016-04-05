@@ -264,8 +264,7 @@ public class WorkListDisplayController implements Controller,EventAwareControlle
         // Setting the Userdata for Testing purpose since the Login screen is not working because of DBdesign change.
         List<WorkFlow> workFlowListSri = null;
         WorkListDisplayForm  renderForm = null;
-        
-        Properties prop= PropertiesFileLoader.getExternalLoginProperties();
+        Properties prop= PropertiesFileLoader.getExternalLoginProperties();       
         getUserDetailsFromLoginScreen(request);
         ArrayList departmentDetailsListToLoadPet = new ArrayList();
         mv = new ModelAndView(WorkListDisplayConstants.MODEL_VIEW_NAME);
@@ -315,10 +314,13 @@ public class WorkListDisplayController implements Controller,EventAwareControlle
                     List firstTimedeptdetailsFromADSE = workListDisplayDelegate.getDepartmentDetailsForInernalFirstTimeLogin(custuser.getBelkUser().getLanId());
                     //LOGGER.info("searchedDeptdetailsFromADSE..Size" + firstTimedeptdetailsFromADSE.size());
                     if(firstTimedeptdetailsFromADSE.size()>0){
-                        renderForm.setFirstTimesearchedDeptdetailsFromADSE(firstTimedeptdetailsFromADSE);
+                        LOGGER.info("<<<< Line 316 >>>>>");
+                        renderForm.setFirstTimesearchedDeptdetailsFromADSE(firstTimedeptdetailsFromADSE); 
                     }
+                    LOGGER.info("<<<< Line 319 >>>>>");
                     mv.addObject(WorkListDisplayConstants.IS_PET_AVAILABLE,WorkListDisplayConstants.YES_VALUE);//This is to show the Department section
-                    renderForm.setPetNotFound(prop.getProperty(WorkListDisplayConstants.PET_NOT_FOUND_FIRST_LOGIN));
+                    //renderForm.setPetNotFound(prop.getProperty(WorkListDisplayConstants.PET_NOT_FOUND_FIRST_LOGIN));
+                    renderForm.setPetNotFound(prop.getProperty(WorkListDisplayConstants.FIRST_TIME_USER_LOGIN_MESSAGE));
                     renderForm.setTotalNumberOfPets("0");
                 }
                 //User may enter the department no Directly overriding the dep details with entered one
@@ -360,21 +362,25 @@ public class WorkListDisplayController implements Controller,EventAwareControlle
                 //Formating the Department details to display in the JSP
                 departmentDetailsListToLoadPet= (ArrayList) populateDepartmentDetailsFromDB(depListFromDB);
                 if(departmentDetailsListToLoadPet.size()>0){
+                    LOGGER.info("<<<< Line 364 >>>>>");
                     renderForm.setSelectedDepartmentFromDB(departmentDetailsListToLoadPet);
                 }else{ // First time External 
                     LOGGER.info("WorkListDisplayController:This is first time login External user get the Department details using XML query input is LAN ID");
                     // getting the all department details from ADSE table using XML query using supplier id and supplier email 
                     List firstTimedeptdetailsFromADSE = workListDisplayDelegate.getDepartmentDetailsForExternalFirstTimeLogin(custuser.getVpUser().getUserEmailAddress());
                     if(firstTimedeptdetailsFromADSE.size()>0){
+                        LOGGER.info("<<<< Line 371 >>>>>");
                         renderForm.setFirstTimesearchedDeptdetailsFromADSE(firstTimedeptdetailsFromADSE);
                     }
-                    // getting the PET details on base of supplier id(vendorID) from ADSE table.
-                     //MultiSupplierID Changes start
-                     workFlowListSri =  workListDisplayDelegate.getPetDetailsByVendor(custuser.getVpUser().getUserEmailAddress(),custuser.getVpUser().getSupplierIdsList());
-                     
-                     // workFlowList = workFlowListSri;
+                    //getting the PET details on base of supplier id(vendorID) from ADSE table.
+                    //MultiSupplierID Changes start
+                    //workFlowListSri =  workListDisplayDelegate.getPetDetailsByVendor(custuser.getVpUser().getUserEmailAddress(),custuser.getVpUser().getSupplierIdsList());
+                    //Santanu afuszr6 commented above line
+                    workFlowListSri =  workListDisplayDelegate.getPetDetailsByDepNosForParent(departmentDetailsListToLoadPet,custuser.getVpUser().getUserEmailAddress(),custuser.getVpUser().getSupplierIdsList());
+                     //workFlowList = workFlowListSri;
                      //MultiSupplierID Changes end
                      if(workFlowListSri != null && workFlowListSri.size() > 0){
+                         LOGGER.info("<<<< Line 382 >>>>>");
                     //LOGGER.info("setAdvanceSearchfieldsFromAjax 410 fullWorkList2:"+renderForm.getFullWorkFlowlist().size()+" workFlowlist2:"+renderForm.getWorkFlowlist().size());    
                      renderForm.setWorkFlowlist(workFlowListSri);
                      renderForm.setFullWorkFlowlist(workFlowListSri);//fix for 496
@@ -396,7 +402,8 @@ public class WorkListDisplayController implements Controller,EventAwareControlle
                     }else{
                         LOGGER.info("workFlowList.size == 0 On default Load");
                         mv.addObject(WorkListDisplayConstants.IS_PET_AVAILABLE,WorkListDisplayConstants.YES_VALUE);
-                        renderForm.setPetNotFound(prop.getProperty(WorkListDisplayConstants.PET_NOT_FOUND_FIRST_LOGIN));
+                        //renderForm.setPetNotFound(prop.getProperty(WorkListDisplayConstants.PET_NOT_FOUND_FIRST_LOGIN));
+                        renderForm.setPetNotFound(prop.getProperty(WorkListDisplayConstants.FIRST_TIME_USER_LOGIN_MESSAGE));
                         renderForm.setTotalNumberOfPets("0");
                     }//Fix for 261 end
 
@@ -404,6 +411,7 @@ public class WorkListDisplayController implements Controller,EventAwareControlle
                //User may enter the dep no Directly so overriding the dep details with entered one
                 if(null!=request.getParameter(WorkListDisplayConstants.DEPT_NO_PARAM) && request.getParameter(WorkListDisplayConstants.DEPT_NO_PARAM).length()>1){
                     LOGGER.info("This is from Reneder External User and enter the dep details directly in the box");
+                    LOGGER.info(" <<<< Line 413 >>>>>");
                     String depNo=request.getParameter(WorkListDisplayConstants.DEPT_NO_PARAM);
                     DepartmentDetails departmentDetails = new DepartmentDetails();
                     departmentDetails.setId(depNo);
@@ -413,6 +421,7 @@ public class WorkListDisplayController implements Controller,EventAwareControlle
             }
           
             if(null!=departmentDetailsListToLoadPet && departmentDetailsListToLoadPet.size()>0){
+                LOGGER.info(" <<<< Line 425 >>>>>");
                 mv.addObject(WorkListDisplayConstants.IS_PET_AVAILABLE,WorkListDisplayConstants.YES_VALUE);
                 //Getting the  Pet Details 
                 
@@ -432,6 +441,7 @@ public class WorkListDisplayController implements Controller,EventAwareControlle
                 
                 //Changes for multi supplier id end
                 if(workFlowListSri!=null && workFlowListSri.size()>0){
+                    LOGGER.info(" <<<< Line 443 >>>>>");
                 renderForm.setPetNotFound(null);
                 String selectedColumn=WorkListDisplayConstants.COMPLETION_DATE;
                 
@@ -439,18 +449,21 @@ public class WorkListDisplayController implements Controller,EventAwareControlle
                 //Default Pagination  
                 int selectedPageNumber = 1;
                 if(null!=request.getParameter(WorkListDisplayConstants.CURRENT_PAGE_NUMBER)){
+                    LOGGER.info(" <<<< Line 451 >>>>>");
                     selectedPageNumber = Integer.valueOf(request.getParameter(WorkListDisplayConstants.CURRENT_PAGE_NUMBER)); 
                 }
                 handlingPaginationRender(selectedPageNumber, renderForm, workFlowListSri);
                 renderForm.setSelectedPage(String.valueOf(selectedPageNumber));
                 }else{//There is no PET for searched content
+                    LOGGER.info(" <<<< Line 457 >>>>>");
                     renderForm.setPetNotFound(prop.getProperty(WorkListDisplayConstants.PET_NOT_FOUND));
                     renderForm.setTotalNumberOfPets("0");
                 }
-            }else{//There is no PET for searched content
+            }/*else{//There is no PET for searched content
+                LOGGER.info("Line 458");
                 renderForm.setPetNotFound(prop.getProperty(WorkListDisplayConstants.PET_NOT_FOUND));
                 renderForm.setTotalNumberOfPets("0");
-            }
+            }*/
 
             populatingAdvanceSearchDefaultValues(renderForm); 
             
@@ -469,7 +482,8 @@ public class WorkListDisplayController implements Controller,EventAwareControlle
             mv.addObject(WorkListDisplayConstants.WORK_FLOW_FORM, ((WorkListDisplayForm)request.getPortletSession().getAttribute(formSessionKey)));  
         } 
         
-        
+        String belkBestPlan = prop.getProperty(WorkListDisplayConstants.BELK_BEST_PLAN);
+        mv.addObject(WorkListDisplayConstants.BELK_BEST_PLAN_URL_KEY, belkBestPlan);
        
              LOGGER.info("WorkListDisplayController:handleRenderRequest:Exit");
             return mv;
@@ -492,10 +506,10 @@ public class WorkListDisplayController implements Controller,EventAwareControlle
         initialted.setValue(prop.getProperty(WorkListDisplayConstants.ADV_SEARCH_IMG_DROPDOWN_INITIATED));
         
         ImageStatusDropValues readyForReview= new ImageStatusDropValues();
-        readyForReview.setChecked(WorkListDisplayConstants.ADV_SEARCH_YES_VALUE);
+        readyForReview.setChecked(WorkListDisplayConstants.ADV_SEARCH_YES_VALUE);        
         readyForReview.setValue(prop.getProperty(WorkListDisplayConstants.ADV_SEARCH_IMG_DROPDOWN_READYFORREVIEW));
         
-        ImageStatusDropValues pending= new ImageStatusDropValues();
+        /*ImageStatusDropValues pending= new ImageStatusDropValues();
         pending.setChecked(WorkListDisplayConstants.ADV_SEARCH_YES_VALUE);
         pending.setValue(prop.getProperty(WorkListDisplayConstants.ADV_SEARCH_IMG_DROPDOWN_PENDING));
         
@@ -506,9 +520,10 @@ public class WorkListDisplayController implements Controller,EventAwareControlle
         ImageStatusDropValues approved= new ImageStatusDropValues();
         approved.setChecked(WorkListDisplayConstants.ADV_SEARCH_YES_VALUE);
         approved.setValue(prop.getProperty(WorkListDisplayConstants.ADV_SEARCH_IMG_DROPDOWN_APPROVED));
+        */
         
         ImageStatusDropValues completed= new ImageStatusDropValues();
-        completed.setChecked(WorkListDisplayConstants.ADV_SEARCH_NO_VALUE);
+        completed.setChecked(WorkListDisplayConstants.ADV_SEARCH_YES_VALUE);
         completed.setValue(prop.getProperty(WorkListDisplayConstants.ADV_SEARCH_IMG_DROPDOWN_COMPLETED));
         
         ImageStatusDropValues closed = new ImageStatusDropValues();
@@ -934,7 +949,60 @@ public class WorkListDisplayController implements Controller,EventAwareControlle
         }
             sortedList = workFlowList2;
         }
-      }else if(WorkListDisplayConstants.VENDOR_NAME.equalsIgnoreCase(selectedColumn)){
+      }
+      //PetSource Sort Flow Starts Afuszr6
+      else if("petSourceType".equalsIgnoreCase(selectedColumn)){
+          LOGGER.info("<<<< Sorting happening on base of petSourceType >>>> "+renderForm.getSortingAscending()); 
+        WorkFlow currentWorkFlow = null;
+        WorkFlow nextWorkFlow = null;
+        if(renderForm.getSortingAscending().equalsIgnoreCase(WorkListDisplayConstants.TRUE_VALUE)){
+            //Ascending Sorting
+            LOGGER.info("This is petSourceType sorting....Ascending is true"); 
+            for(int i=0;i< workFlowList2.size();i++){
+                
+                    for (int j = i + 1; j < workFlowList2.size(); j++) 
+                    {
+                       
+                        if(null!=workFlowList2.get(i) && null!=workFlowList2.get(j)){
+                            currentWorkFlow = (WorkFlow)workFlowList2.get(i);
+                            nextWorkFlow = (WorkFlow)workFlowList2.get(j);
+                            if(null!=currentWorkFlow.getSourceType() && null!=nextWorkFlow.getSourceType()){
+                                  if(currentWorkFlow.getSourceType().compareTo(nextWorkFlow.getSourceType()) > 0 ){
+                                      Collections.swap(workFlowList2, i, j);
+                                    }
+                              
+                            }
+                        }
+                      
+                    }
+            }
+            sortedList = workFlowList2;
+        }else{
+            //Descending sorting
+            LOGGER.info("This is petSourceType sorting....Ascending is false"); 
+            for(int i=0;i< workFlowList2.size();i++){
+                for (int j = i + 1; j < workFlowList2.size(); j++) 
+                {
+                    if(null!=workFlowList2.get(i) && null!=workFlowList2.get(j)){
+                        currentWorkFlow = (WorkFlow)workFlowList2.get(i);
+                        nextWorkFlow = (WorkFlow)workFlowList2.get(j);
+                        if(null!=currentWorkFlow.getSourceType() && null!=nextWorkFlow.getSourceType()){
+                            if(currentWorkFlow.getSourceType().compareTo(nextWorkFlow.getSourceType()) < 0 ){
+                                Collections.swap(workFlowList2, i, j);
+                              }
+                        
+                      }
+                    }
+                  
+                }
+        }
+            sortedList = workFlowList2;
+        }
+      }
+      
+      //PetSource Sort floe Ends
+      
+      else if(WorkListDisplayConstants.VENDOR_NAME.equalsIgnoreCase(selectedColumn)){
         LOGGER.info("Sorting happening on base of vendorName"+renderForm.getSortingAscending());  
         WorkFlow currentWorkFlow = null;
         WorkFlow nextWorkFlow = null;
@@ -1348,7 +1416,13 @@ private void assignRole(WorkListDisplayForm workListDisplayForm2,
         if(null!=request.getParameter(WorkListDisplayConstants.AJAX_SELECTED_COLUMN_NAME) && request.getParameter(WorkListDisplayConstants.AJAX_SELECTED_COLUMN_NAME).length()>0){
             selectedColumn = request.getParameter(WorkListDisplayConstants.AJAX_SELECTED_COLUMN_NAME);
             LOGGER.info("Selected Column is="+selectedColumn);
-            handlingSortingRender(selectedColumn, resourceForm, workFlowList);            
+            /**
+             * 031916
+             * afuszr6
+             * for 1012
+             */
+            //handlingSortingRender(selectedColumn, resourceForm, workFlowList);
+            handlingSortingRender(selectedColumn, resourceForm, fullWorkList);
             handlingPaginationRender(1,resourceForm, fullWorkList);//fix for 496
             }
         // Department Flow
@@ -2045,9 +2119,8 @@ private void setAdvanceSearchfieldsFromAjax(ResourceRequest request) {
     adSearch.setCreatedToday(createdToday);
     adSearch.setVendorNumber(vendorNumber);
     
-    
     //Fix for 836 start     
-    List<ImageStatusDropValues> imageStatusDropValues = adSearch.getImageStatusDropDown();
+     List<ImageStatusDropValues> imageStatusDropValues = adSearch.getImageStatusDropDown();
         String[] imageStatusChecked = imageStatus.split(",");
         for (int i = 0; i < imageStatusDropValues.size(); i++) {
             imageStatusDropValues.get(i).setChecked(WorkListDisplayConstants.ADV_SEARCH_NO_VALUE);
@@ -2685,6 +2758,8 @@ public String ConvertDate(String completionDate){
                     jsonObj.put("imageStatus",styleColor.getImageStatus());
                     jsonObj.put("completionDate",styleColor.getCompletionDate());
                     jsonObj.put("petStatus",styleColor.getPetStatus());
+                    
+                    jsonObj.put("petSourceType",styleColor.getSourceType());
                    
                     
                     jsonArrayPetDtls.put(jsonObj); 

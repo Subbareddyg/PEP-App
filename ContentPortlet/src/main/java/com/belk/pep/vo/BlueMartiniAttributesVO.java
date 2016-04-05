@@ -1,6 +1,7 @@
 
 package com.belk.pep.vo;
 
+
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,6 +9,7 @@ import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.belk.pep.model.DropDownContainer;
+import com.belk.pep.util.SortComparator;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -95,7 +97,7 @@ public class BlueMartiniAttributesVO implements Comparable<BlueMartiniAttributes
 
     /** The drop down values map. */
 	// Changed to LinkedHash Map for the sorting of attributes.
-    Map<String,String> dropDownValuesMap =  new TreeMap<String,String>(String.CASE_INSENSITIVE_ORDER);
+    Map<String,String> dropDownValuesMap =  new TreeMap<String,String>(new SortComparator());
 
     /** The saved drop down values map. */
     Map<String,String> savedDropDownValuesMap =  new ConcurrentHashMap<String,String>();
@@ -623,8 +625,12 @@ public class BlueMartiniAttributesVO implements Comparable<BlueMartiniAttributes
         Map<String, String> savedRadioButtonValuesMap) {
         this.savedRadioButtonValuesMap = savedRadioButtonValuesMap;
     }
+    
+    
+    
+    
     @Override
-    public int compareTo(BlueMartiniAttributesVO obj) {
+      public int compareTo(BlueMartiniAttributesVO obj) {
         int value = 0;
         if(null != obj && obj.getDisplayName() != null && this.getDisplayName() != null)
         {
@@ -633,8 +639,10 @@ public class BlueMartiniAttributesVO implements Comparable<BlueMartiniAttributes
         }
         return value;
     }
+    
 	 public String toString(){
         return this.getDisplayName()+ " " +this.getAttributeFieldType() ;
         
     }
+
 }

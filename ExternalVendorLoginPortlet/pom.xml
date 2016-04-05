@@ -1,7 +1,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-       <groupId>ExternalVendorLoginPortlet</groupId>
+       <groupId>ProductEnrichmentPortal</groupId>
        <version>1.0</version>
        <name>ExternalVendorLoginPortlet</name>
        <modelVersion>4.0.0</modelVersion>
@@ -10,39 +10,6 @@
               <spring.version>3.1.1.RELEASE</spring.version>  
               <appfuse.version>2.0.1</appfuse.version>
        </properties>
-       <repositories>       
-        <repository>
-            <id>appfuse</id>
-            <url>http://static.appfuse.org/repository</url>
-        </repository>
-        <repository>
-      <id>java.net</id>
-      <url>http://download.java.net/maven/2/</url>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </repository>
-    </repositories>
-    
-    <pluginRepositories>
-        <pluginRepository>
-            <id>appfuse</id>
-            <url>http://static.appfuse.org/repository</url>
-        </pluginRepository>
-        <pluginRepository>
-      <id>java.net</id>
-      <url>http://download.java.net/maven/2/</url>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </pluginRepository>
-    </pluginRepositories>
 
        <packaging>war</packaging>
        <build>
@@ -235,9 +202,10 @@
 			</dependency>  
 			
 			<dependency>
-        	<groupId>CommonForIpcLogin</groupId>
+        	<groupId>ProductEnrichmentPortal</groupId>
         	<artifactId>CommonForIpcLogin</artifactId>
         	<version>1.0</version>
+        	<scope>provided</scope>
        		</dependency>
 			
 			<dependency>
@@ -249,11 +217,6 @@
 		<groupId>log4j</groupId>
 		<artifactId>log4j</artifactId>
 		<version>1.2.14</version>
-		</dependency>
-		<dependency>
-		    <groupId>com.ibm.websphere</groupId>
-    		<artifactId>websphere_apis</artifactId>
-    		<version>1.0</version>
 		</dependency>
        </dependencies>
 </project>

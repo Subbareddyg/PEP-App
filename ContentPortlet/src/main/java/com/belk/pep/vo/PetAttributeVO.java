@@ -8,6 +8,7 @@ import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.belk.pep.model.DropDownContainer;
+import com.belk.pep.util.SortComparator;
 
 /**
  * The Class PetAttributeVO.
@@ -88,7 +89,7 @@ public class PetAttributeVO implements Serializable,Comparable<PetAttributeVO>{
     Map<String,List<DropDownContainer>> dropDownValueMap = new LinkedHashMap<String,List<DropDownContainer>>();
 
     /** The drop down values map. */
-    Map<String,String> dropDownValuesMap =  new TreeMap<String,String>(String.CASE_INSENSITIVE_ORDER);
+    Map<String,String> dropDownValuesMap =  new TreeMap<String,String>(new SortComparator());
 
     /** The drop down values map. */
     Map<String,String> radioButtonValuesMap =  new ConcurrentHashMap<String,String>();

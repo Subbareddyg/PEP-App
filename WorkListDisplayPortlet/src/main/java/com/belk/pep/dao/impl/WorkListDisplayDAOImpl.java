@@ -50,7 +50,7 @@ import com.belk.pep.util.PropertiesFileLoader;
 public class WorkListDisplayDAOImpl implements WorkListDisplayDAO{
     /** The Constant LOGGER. */
     private final static Logger LOGGER = Logger.getLogger(WorkListDisplayDAOImpl.class
-        .getName());
+        .getName()); 
 
     /** The session factory. */
     private SessionFactory sessionFactory;
@@ -551,7 +551,7 @@ public ArrayList<DepartmentDetails> getLikeSearchDepartmentDetails(String search
          tx = session.beginTransaction(); 
    //Hibernate provides a createSQLQuery method to let you call your native SQL statement directly. 
    
-    if(searchString.matches("[0-9]+")){//If contains only numbers then it is Department ID
+   /* if(searchString.matches("[0-9]+")){//If contains only numbers then it is Department ID
         Query query = session.createSQLQuery(xqueryConstants.getLikeDepartmentDetailsForNumber(searchString)); 
         LOGGER.info("511..Query.." + query);
         if(query!=null)
@@ -569,7 +569,7 @@ public ArrayList<DepartmentDetails> getLikeSearchDepartmentDetails(String search
             }
         }
         
-    }else{
+    }else{*/
         LOGGER.info("This is from getLikeSearchDepartmentDetails search is a desc");
       //Hibernate provides a createSQLQuery method to let you call your native SQL statement directly.   
         Query query1 = session.createSQLQuery(xqueryConstants.getLikeDepartmentDetailsForString(searchString));  
@@ -589,7 +589,7 @@ public ArrayList<DepartmentDetails> getLikeSearchDepartmentDetails(String search
             
         }
         
-    }
+    //}
    
   }catch(Exception e){
  }
@@ -1917,6 +1917,19 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
                            style.setIsChildPresent("Y");
                        }
                    }
+                   
+                   /**
+                    * Modified for Defect# 927
+                    * Date: 03/09/2016
+                    * Modified by: AFUAXK4
+                    */
+                   String sourceType = pet.getReq_Type();
+                   //LOGGER.info("sourceType ="+sourceType);
+                   style.setSourceType(sourceType);
+                  
+                   /**
+                    * Modification end
+                    */
 
                    styleListForWorkListDisplay.add(style);
                }
@@ -2000,6 +2013,19 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
                    petContentState = (null == petContentState ? "" : petContentState);
                    
                    style.setIsChildPresent("N");
+                   
+                   /**
+                    * Modified for Defect# 927
+                    * Date: 03/09/2016
+                    * Modified by: AFUAXK4
+                    */
+                   String sourceType = pet.getReq_Type();
+                   //LOGGER.info("sourceType ="+sourceType);
+                   style.setSourceType(sourceType);
+                  
+                   /**
+                    * Modification end
+                    */
 
 //                   styleListForWorkListDisplay.add(style);
                }else{
@@ -2086,6 +2112,20 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
                    styleColor.setDeptId(deptId);
                    styleColor.setImageStatus(imageState);
                    styleColor.setOmniChannelVendor(ominInd);
+                   
+                   /**
+                    * Modified for Defect# 927
+                    * Date: 03/09/2016
+                    * Modified by: AFUAXK4
+                    */
+                   String sourceType = pet.getReq_Type();
+                   //LOGGER.info("sourceType ="+sourceType);
+                   styleColor.setSourceType(sourceType);
+                  
+                   /**
+                    * Modification end
+                    */
+                    
                    styleColorList.add(styleColor);
                }
                    

@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>com.belk.prtl1.mws.belkvendorthemesskins</groupId>
 		<artifactId>BelkVendorThemeskins</artifactId>
-		<version>01.00.00</version>
+		<version>01.00.00-SNAPSHOT</version>
 	</parent>
 	
 	<!--<groupId>com.belk.prtl1.mws.belkvendorthemesskins</groupId>
@@ -39,4 +39,4 @@
 			</plugin>
 		</plugins>
 	</build>
-</project>
+</project>

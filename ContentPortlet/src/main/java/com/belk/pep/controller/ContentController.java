@@ -61,6 +61,7 @@ import com.belk.pep.jsonconverter.UpdateContentStatusDataObject;
 import com.belk.pep.model.PetsFound;
 import com.belk.pep.model.WebserviceResponse;
 import com.belk.pep.util.ExtractColorCode;
+import com.belk.pep.util.SortComparator;
 import com.belk.pep.vo.BlueMartiniAttributesVO;
 import com.belk.pep.vo.CarBrandVO;
 import com.belk.pep.vo.ChildSkuVO;
@@ -414,7 +415,7 @@ public class ContentController implements ResourceAwareController,EventAwareCont
                     String htmlFieldValue=petBlueMartiniAttributeDropDownObject.getAttributeFieldValue();
                     LOGGER.info("BM Drop Down Saved Value --------- " +secondarySpecificationValue);
                     //Convert the field values separated by pipe to the hash map of values for displaying in the drop down from the Pet Attribute Table
-                    Map<String ,String > dropdownValueMap=  new TreeMap<String, String>(String.CASE_INSENSITIVE_ORDER);
+                    Map<String ,String > dropdownValueMap=  new TreeMap<String, String>(new SortComparator());
 
                   //Code for Alphabetical order sorting added by -START
                     List<String> sortedList = new ArrayList<String>();
@@ -437,7 +438,12 @@ public class ContentController implements ResourceAwareController,EventAwareCont
                       //Code for Alphabetical order sorting added by -end
                         for(String dropDownValue:sortedList)
                         {
+                            if(("N/A").equals(dropDownValue.trim())){
+                                dropdownValueMap.put("0", dropDownValue);
+                            }
+                            else{
                             dropdownValueMap.put(dropDownValue, dropDownValue);
+                            }
                         }
                         petBlueMartiniAttributeDropDownObject.setDropDownValuesMap(dropdownValueMap);//uncommented for now to display the value of data saved value
 
@@ -456,7 +462,11 @@ public class ContentController implements ResourceAwareController,EventAwareCont
                         if(savedDropDownValue.indexOf('"') > 0){
                             savedDropDownValue = savedDropDownValue.replace("\"", "&quot;");
                         }
+                        if(savedDropDownValue.trim().equals("N/A")){
+                            savedDropDownValueMap.put("0", savedDropDownValue.trim());   
+                        }else{
                             savedDropDownValueMap.put(savedDropDownValue.trim(), savedDropDownValue.trim());
+                        }
                         }
                        // LOGGER.info("dropdownValueMap---size-------" +savedDropDownValueMap.size());
                         petBlueMartiniAttributeDropDownObject.setSavedDropDownValuesMap(savedDropDownValueMap);
@@ -696,7 +706,7 @@ public class ContentController implements ResourceAwareController,EventAwareCont
                         String htmlFieldValue=petAttributeDropDownObject.getAttributeFieldValue();
                         LOGGER.info("Saved Drop Down Value --------- " +secondarySpecificationValue);
                         //Convert the field values separated by pipe to the hash map of values for displaying in the drop down from the Pet Attribute Table
-                        Map<String ,String > dropdownValueMap=  new TreeMap<String, String>(String.CASE_INSENSITIVE_ORDER);
+                        Map<String ,String > dropdownValueMap=  new TreeMap<String, String>(new SortComparator());
                      //   LOGGER.info("New Code Deployed --------- ");
                       //Code for Alphabetical order sorting -START
                         List<String> sortedList = new ArrayList<String>();
@@ -720,7 +730,13 @@ public class ContentController implements ResourceAwareController,EventAwareCont
                             //Iterate over the  dropDownValueList to put the key value  in the Hash Map
                             for(String dropDownValue:sortedList)
                             {
+                                if(("N/A").equals(dropDownValue.trim())){
+                                   // dropdownValueMap.remove(dropDownValue);
+                                    dropdownValueMap.put("0", dropDownValue);
+                                }
+                                else{
                                 dropdownValueMap.put(dropDownValue.trim(), dropDownValue.trim());
+                                }
                             }
                             petAttributeDropDownObject.setDropDownValuesMap(dropdownValueMap);//uncommented for now to display the value of data saved value
 
@@ -740,7 +756,11 @@ public class ContentController implements ResourceAwareController,EventAwareCont
                                 if(savedDropDownValue.indexOf('"') > 0){
                                     savedDropDownValue = savedDropDownValue.replace("\"", "&quot;");
                                 }
+                                if(savedDropDownValue.trim().equals("N/A")){
+                                    savedDropDownValueMap.put("0", savedDropDownValue.trim());   
+                                }else{
                                 savedDropDownValueMap.put(savedDropDownValue.trim(), savedDropDownValue.trim());
+                                }
                             }
                             petAttributeDropDownObject.setSavedDropDownValuesMap(savedDropDownValueMap);
                         }
@@ -2851,6 +2871,7 @@ public class ContentController implements ResourceAwareController,EventAwareCont
                             String userSelected=values[2]!=null?values[2]:null;
                             if(userSelected != null && !userSelected.equalsIgnoreCase("-1")){
                                 userSelected = StringEscapeUtils.escapeHtml4(userSelected);
+                                if(userSelected.equals("0"))userSelected="N/A";
                                 attributesBeanProductName = new AttributesBean(attributeXPath,userSelected);
                                 beanList.add(attributesBeanProductName);
                             }
@@ -2941,6 +2962,7 @@ public class ContentController implements ResourceAwareController,EventAwareCont
                             String userSelected=values[2]!=null?values[2]:null;
                             if(userSelected != null && !userSelected.equalsIgnoreCase("-1")){
                                 userSelected = StringEscapeUtils.escapeHtml4(userSelected);
+                                if(userSelected.equals("0"))userSelected ="N/A";
                                 attributesBeanProductName = new AttributesBean(attributeXPath,userSelected);
                                 beanList.add(attributesBeanProductName);
                             }

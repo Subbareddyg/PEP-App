@@ -87,9 +87,23 @@ function activatepets() {
 function columnsorting(selectedColumn)
 {
                  var url = $("#ajaxaction").val();
-                 $.get(url,{selectedColumnName:selectedColumn},function(responseText) { 
-                        responseText = repalcePetTable(responseText);
-                        $("#petTable").html(responseText);         
+				
+				$("#overlay_Image_advSearch").show();
+				$("#overlay_pageLoading").show();
+                 
+				$.get(url,{selectedColumnName:selectedColumn},function(responseText) { 
+                        $('#deptTable').dialog( "destroy" );
+						//$('div.dlg-dept').remove();
+						
+						responseText = repalcePetTable(responseText);
+                        
+						$("#petTable").html(responseText);
+						//$("#petTable").find('#deptTable').remove();		
+						
+						
+						
+						bindDeptDialog();
+						
 						$('.tree').treegrid();
 							$('.tree2').treegrid({
 								expanderExpandedClass: 'icon-minus-sign',
@@ -108,7 +122,10 @@ function columnsorting(selectedColumn)
 							    }
 							});
 							
-                    });
+                    }).always(function(){
+						$("#overlay_Image_advSearch").hide();
+						$("#overlay_pageLoading").hide();
+					});
 }
 
 
@@ -125,9 +142,22 @@ function getpetdetails(){
 
 function getThePageContent(pageNumber){
                     var url = $("#ajaxaction").val();
-                 $.get(url,{pageNo:pageNumber},function(responseText) { 
-                        responseText = repalcePetTable(responseText);
-                        $("#petTable").html(responseText);         
+					
+					$("#overlay_Image_advSearch").show();
+					$("#overlay_pageLoading").show();
+                 
+				 $.get(url,{pageNo:pageNumber},function(responseText) { 
+						
+						$('#deptTable').dialog( "destroy" );
+                        
+						
+						responseText = repalcePetTable(responseText);
+                        
+						$("#petTable").html(responseText);
+						//$("#petTable").find('#deptTable').remove();						
+						
+						bindDeptDialog();
+						
 						$('.tree').treegrid();
 						$('.tree2').treegrid({
 							expanderExpandedClass: 'icon-minus-sign',
@@ -144,7 +174,10 @@ function getThePageContent(pageNumber){
 						        });         
 						    }
 						});
-                    });
+                    }).always(function(){
+						$("#overlay_Image_advSearch").hide();
+						$("#overlay_pageLoading").hide();
+					});
                 
 }
 
@@ -267,7 +300,9 @@ function depSearch(depOperation) {
 						vendorNumber =$("#advVenNumber").val().trim();
 					}			  
 			   var url = $("#ajaxaction").val();				
-               depSearchInProgress = true;			   
+               depSearchInProgress = true;
+			   var btnSaveDept1Text = $('#btnSaveDept1').val();
+			   $('#btnSaveDept1').val('Saving..');
 			   $.get(url,{advSearchOperation:'advsaveandclose',advSelectedDepartments:advSelectedDepartments,
             	   	 completionDateFrom:completionDateFrom,
 	                 completionDateTo:completionDateTo,
@@ -282,23 +317,34 @@ function depSearch(depOperation) {
 	                 createdToday:createdToday,
 	                 finalTodayDate:finalTodayDate,
 	                 vendorNumber:vendorNumber
-               },function(responseText) { 
-                      responseText = repalceAdvPetTable(responseText);
-                      $("#advanceSearchDiv").html(responseText);         
-					  $("#dialog_ASearch").css("display","block");
-					  defaultAdvSearchSettings();
-					  depSearchInProgress = false;					  
-                  });
+               },function(responseText) {
+					$('#deptTable').dialog('close');
+					$('div.dlg-dept').remove();
+                    responseText = repalceAdvPetTable(responseText);
+                    $("#advanceSearchDiv").html(responseText);
+					$("#overlay_pageLoading1").hide();
+					$("#dialog_ASearch").css("display","block");
+					defaultAdvSearchSettings();
+					
+					attachAdvSearchParamsDlg(); //attaching params dlg when adv saearch dlg is open
+					
+					depSearchInProgress = false;					  
+                  })
+				  .always(function(){
+					  $('#btnSaveDept1').val(btnSaveDept1Text);
+				  });
 				  
-				   $("#adDeptNo").attr("disabled","disabled");
-				   $("#overlay_Dept").css("display","none");
-				   $("#dialog_Dept").css("display","none");	 
+				  $("#adDeptNo").attr("disabled","disabled");
+				   //$("#overlay_Dept").css("display","none");
+				   //$("#dialog_Dept").css("display","none");
+									   
 			}else{
 				 document.getElementById('searchReturnId').value = 'false';//Need to check		
 				 var depts = [];
 				 $.each($("input[name='chkSelectedDept']:checked"), function(){            
 				               depts.push($(this).val());
 				           });
+				
 				if(depts.length==0){
 				$("#overlay_pageLoading1").hide();
 				alert("Please select at least one department.");
@@ -316,9 +362,19 @@ function depSearch(depOperation) {
 									var departs = $("#deptNo").val();
 									var done="no";
 								
-				                 $.get(url,{departmentOperation:depOperation,selectedDepartments:departs},function(responseText) { 
-				                        responseText = repalcePetTable(responseText);
-				                        $("#petTable").html(responseText);         
+								var btnSaveDept1Text = $('#btnSaveDept1').val();
+								$('#btnSaveDept1').val('Saving..');
+				                
+								$.get(url,{departmentOperation:depOperation,selectedDepartments:departs},function(responseText) { 
+										$('#deptTable').dialog('close'); //closing the dept search ui dialog
+										$('div.dlg-dept').remove(); //fix applied for this struct to make it compatible with ui dialog from rpeating content
+										$('div.dlg-advSearch').remove(); //fix for ui dlg
+										
+										responseText = repalcePetTable(responseText);
+										
+										
+				                        
+										$("#petTable").html(responseText);         
 										
 										$('.tree').treegrid();
 										$('.tree2').treegrid({
@@ -336,21 +392,39 @@ function depSearch(depOperation) {
 										        });         
 										    }
 										});
-				                    });
+										
+										//binding ui dialogs
+										bindDeptDialog();
+										
+										
+										
+				                    }).always(function(){
+										$('#btnSaveDept1').val(btnSaveDept1Text);
+									});
 						}
 			}else if(depOperation == 'depClose'){
 					 var url = $("#ajaxaction").val();
+					 var btnCloseBtnText = $('#btnCloseDept1').val();
+					 
+						$('#btnCloseDept1').val('Closing..');
 				                 $.get(url,{departmentOperation:depOperation},function(responseText) { 
-				                        responseText = repalceDeptTable(responseText);
+										$('#deptTable').dialog('close'); //closing the dept search ui dialog
+										$('div.dlg-dept').remove();
+										
+										responseText = repalceDeptTable(responseText);
 				                        $("#deptTable").html(responseText);         
 										
-										$("#overlay_Dept").css("display","none");
-										$("#dialog_Dept").css("display","none");
+										//$("#overlay_Dept").css("display","none");
+										//$("#dialog_Dept").css("display","none");
+										bindDeptDialog();
 										
-				                    });
+				                    }).always(function(){
+										$('#btnCloseDept1').val(btnCloseBtnText);
+									});
 			}else if(depOperation == 'depClear'){
 				
-				        $('.deptcheckbox').each(function() { //loop through each checkbox
+				        $('#selectAllDeptOnSearch').prop('checked', false);
+						$('.deptcheckbox').each(function() { //loop through each checkbox
 				            this.checked = false; //deselect all checkboxes with class "checkbox1"                       
 				        });         
 				   
@@ -369,29 +443,42 @@ function depSearch(depOperation) {
 									}
 									
 									var departs = $("#deptNo").val();
+									var srchBtnText= $('#btnSearch1').val();
+									$('#btnSearch1').val('Searching..');
 				                 $.get(url,{departmentOperation:depOperation,departmentsToSearch:departsToSearch,AdseachClicked:adsrch,selectedDepartments:departs},function(responseText) { 
 				                        responseText = repalceDeptTable(responseText);
-				                        $("#deptTable").html(responseText);         
+				                        $("#deptTable").html(responseText);
 										
-					$("#overlay_Dept").css("display","block");				
-						$("#dialog_Dept").css("display","block");	
+										var toatDeptsPresent = $('[name=chkSelectedDept]').length;
+										var totalDeptsChecked = $('[name=chkSelectedDept]:checked').length;
+										
+										if(toatDeptsPresent == totalDeptsChecked)
+											$('#selectAllDeptOnSearch').prop('checked', true);
+										else
+											$('#selectAllDeptOnSearch').prop('checked', false); //making the all dept selecter checkbox uncheckd
+										
+						//$("#overlay_Dept").css("display","block");				
+						//$("#dialog_Dept").css("display","block");	
 						
 						if('yes'==$("#AdseachClicked").val()){
 							$("#dialog_ASearch").css("display","block");
 						}
 						
+				  }).always(function(){
+					  $('#btnSearch1').val(srchBtnText);
 				  });
 			}
 }
 
 
 function showDeptPopup() {
-	$("#overlay_Dept").css("display","block");
-	$("#dialog_Dept").css("display","block");
+	//$("#overlay_Dept").css("display","block");
+	//$("#dialog_Dept").css("display","block");
 	$("#AdseachClicked").val("no");
 	document.getElementById("searchClicked").value = "no";
 	$("#searchDeptResultsId").html("");
 	
+	$('#deptTable').dialog('open');
 }
 
 function contentStatus(contentStatusValue){
@@ -407,10 +494,11 @@ function imageStatus(contentStatusValue){
 function searchClose()
 {	
 	//populateReset();
-	$("#overlay_pageLoading1").hide();
-   $("#dialog_ASearch").css("display","none");
+	//$("#overlay_pageLoading1").hide();
+   //$("#dialog_ASearch").css("display","none");
    $("#overlay_Image_advSearch").css("display","none");
    
+   $('#advanceSearchDiv').dialog('close');
    
 }
 
@@ -458,7 +546,7 @@ function populateReset()
 				                 $.get(url,{advSearchOperation:'searchReset'},function(responseText) { 
 				                        responseText = repalceAdvPetTable(responseText);
 				                        $("#advanceSearchDiv").html(responseText);   
-										resetAdvSearchSettings();   
+										resetAdvSearchSettings(); 
 				                    });
 				                 
 				                    
@@ -475,11 +563,13 @@ function searchReset()
 				                        responseText = repalceAdvPetTable(responseText);
 				                        $("#advanceSearchDiv").html(responseText);   
 										
-										$("#overlay_Dept").css("display","none");
-										$("#dialog_Dept").css("display","none");
+										//$("#overlay_Dept").css("display","none");
+										//$("#dialog_Dept").css("display","none");
 										
 										$("#dialog_ASearch").css("display","block");
-										resetAdvSearchSettings();   
+										resetAdvSearchSettings();
+										
+										attachAdvSearchParamsDlg();
 				                    });
 				                 
 
@@ -641,15 +731,35 @@ if(advSelectedDepartments.length == 0 && completionDateFrom.length == 0 && compl
 		return false;
 	}else{
 		$("#overlay_pageLoading1").hide();
-		$("#dialog_ASearch").css("display","none");  
+		//$("#dialog_ASearch").css("display","none");
+		
+		if($('#advanceSearchDiv').dialog('instance') !== undefined)
+			$('#advanceSearchDiv').dialog('close');		
+		
 		$("#overlay_pageLoading").show();
 if(upc.length>0){	
 	$.get(url,{advSearchOperation:'searchSearch',
-       upc:upc},function(responseText) { 
+								 callType:callType,
+								 searchClicked:searchClicked,
+				                 advSelectedDepartments:advSelectedDepartments,
+				                 completionDateFrom:completionDateFrom,
+				                 completionDateTo:completionDateTo,
+				                 imageStatus:imageStatus,
+				                 contentStatus:contentStatus,
+				                 petStatus:petStatus,
+				                 requestType:requestType,
+				                 orinNumber:orinNumber,
+				                 vendorStyle:vendorStyle,
+				                 upc:upc,
+				                 classNumber:classNumber,
+				                 createdToday:createdToday,
+				                 finalTodayDate:finalTodayDate,
+				                 vendorNumber:vendorNumber},function(responseText) { 
+			//$("#overlay_pageLoading").hide();
               responseText = repalcePetTable(responseText);
               if(responseText.indexOf('No pet found!') !== -1){
-            	  $("#dialog_ASearch").css("display","block"); 
-				  $("#overlay_pageLoading").hide();
+				  $('#advanceSearchDiv').dialog('open');
+            	  //$("#dialog_ASearch").css("display","block"); 
 				  alert("UPC is not valid - please re-enter.");
             	  return false;
 				  
@@ -674,15 +784,21 @@ if(upc.length>0){
 				                 createdToday:createdToday,
 				                 finalTodayDate:finalTodayDate,
 				                 vendorNumber:vendorNumber},function(responseText) { 
-				                        responseText = repalcePetTable(responseText);
+										if($('#advanceSearchDiv').dialog('instance') !== undefined)
+											$('#advanceSearchDiv').dialog('close');
+										
+										$('div.dlg-dept').remove(); //fix for ui dlg
+										$('div.dlg-advSearch').remove(); //fix for ui dlg
+										
+										responseText = repalcePetTable(responseText);
 				                        $("#petTable").html(responseText);         
 										$('.tree').treegrid();
 										$('.tree2').treegrid({
 											expanderExpandedClass: 'icon-minus-sign',
 											expanderCollapsedClass: 'icon-plus-sign'
 										});
-										$("#overlay_Dept").css("display","none");
-										$("#dialog_Dept").css("display","none");
+										//$("#overlay_Dept").css("display","none");
+										//$("#dialog_Dept").css("display","none");
 										
 										$('#selectAllRow').click(function(event) {  //on click 
 										    if(this.checked) { // check select status
@@ -695,11 +811,18 @@ if(upc.length>0){
 										        });         
 										    }
 										});
-										$("#dialog_ASearch").css("display","none");
+										
+										
+										//$("#dialog_ASearch").css("display","none");
+										
 										defaultAdvSearchSettings();   
 										
-										$("#overlay_pageLoading").hide();
-				                 });
+										//$("#overlay_pageLoading").hide();
+				                 })
+								.always(function(){
+									$("#overlay_pageLoading").hide();
+									$("#overlay_Image_advSearch").hide();
+								});
 				  
 				  
 				  
@@ -707,8 +830,11 @@ if(upc.length>0){
 				  
 			  }
 			  
-       });
-	
+       }).always(function(){
+		$("#overlay_pageLoading").hide();
+		$("#overlay_Image_advSearch").hide();
+	});
+		
 	
 	
 }   
@@ -731,16 +857,26 @@ else{
 				                 classNumber:classNumber,
 				                 createdToday:createdToday,
 				                 finalTodayDate:finalTodayDate,
-				                 vendorNumber:vendorNumber},function(responseText) { 
-				                        responseText = repalcePetTable(responseText);
-				                        $("#petTable").html(responseText);         
+				                 vendorNumber:vendorNumber},function(responseText) {
+										
+										if($('#advanceSearchDiv').dialog('instance') !== undefined)
+											$('#advanceSearchDiv').dialog('close');
+										
+										$('div.dlg-dept').remove(); //fix for ui dlg
+										
+										$('div.dlg-advSearch').remove(); //fix for ui dlg
+				                        
+										responseText = repalcePetTable(responseText);
+				                        $("#petTable").html(responseText);
+										
+										
 										$('.tree').treegrid();
 										$('.tree2').treegrid({
 											expanderExpandedClass: 'icon-minus-sign',
 											expanderCollapsedClass: 'icon-plus-sign'
 										});
-										$("#overlay_Dept").css("display","none");
-										$("#dialog_Dept").css("display","none");
+										//$("#overlay_Dept").css("display","none");
+										//$("#dialog_Dept").css("display","none");
 										
 										$('#selectAllRow').click(function(event) {  //on click 
 										    if(this.checked) { // check select status
@@ -753,11 +889,15 @@ else{
 										        });         
 										    }
 										});
-										$("#dialog_ASearch").css("display","none");
+										//$("#dialog_ASearch").css("display","none");
+										
 										defaultAdvSearchSettings();   
 										
-										$("#overlay_pageLoading").hide();
-				                 });
+										//$("#overlay_pageLoading").hide();
+				                 }).always(function(){
+									$("#overlay_pageLoading").hide();
+									$("#overlay_Image_advSearch").hide();
+								});
 	
 	
 }
@@ -770,18 +910,25 @@ else{
 
 function searchSearchDeptopen()
 {
-	$("#overlay_Dept").css("display","block");
-	$("#dialog_Dept").css("display","block");
+	//$("#overlay_Dept").css("display","block");
+	//$("#dialog_Dept").css("display","block");
 	$("#AdseachClicked").val("yes");
 	$("#searchDeptResultsId").html("");
 	
+	$('#deptTable').dialog('open');
  
 }
 
 function searchimageStatusopen()
 {
-   $("#overlay_Image").css("display","block");
- $("#dialog_Image").css("display","block");
+  // $("#overlay_Image").css("display","block");
+ //$("#dialog_Image").css("display","block");
+ 
+var selctdAttrs = $('#advImageStatus').val() || '';	
+//calling method to clear any unsaved attrs
+dispayOnlySavedSearchAttrs(selctdAttrs, $('.advImgcheckboxclass'));
+	
+$('#dialog_Image').dialog('open');
  
 }
 
@@ -801,8 +948,11 @@ function searchImageSave()
 				           });
 				 $("#advImageStatus").val(selectedImages.join(",")); 
 				  $("#advImageStatus").attr("disabled","disabled");
-				  $("#overlay_Image").css("display","none");
-				  $("#dialog_Image").css("display","none");
+				  //$("#overlay_Image").css("display","none");
+				  //$("#dialog_Image").css("display","none");
+				  
+				  $('#dialog_Image').dialog('close');
+				 
  
 }
 function dispayOnlySavedSearchAttrs(savedValue, jqObjClass){
@@ -824,18 +974,28 @@ function dispayOnlySavedSearchAttrs(savedValue, jqObjClass){
 
 function searchImageClose()
 {
-   $("#overlay_Image").css("display","none");
-	$("#dialog_Image").css("display","none");
+   //$("#overlay_Image").css("display","none");
+	//$("#dialog_Image").css("display","none");
+	
 	//searchReset();
-	var selctdAttrs = $('#advImageStatus').val() || '';	
+	/* var selctdAttrs = $('#advImageStatus').val() || '';	
 	//calling method to clear any unsaved attrs
-	dispayOnlySavedSearchAttrs(selctdAttrs, $('.advImgcheckboxclass'));
+	dispayOnlySavedSearchAttrs(selctdAttrs, $('.advImgcheckboxclass')); */
+	
+	$('#dialog_Image').dialog('close');
+	//$('div.dlg-imgStat').remove();
 }
 
 function searchcontentStatusopen()
 {
-  $("#overlay_Content").css("display","block");
-  $("#dialog_Content").css("display","block"); 
+  //$("#overlay_Content").css("display","block");
+  //$("#dialog_Content").css("display","block"); 
+  
+  var selctdAttrs = $('#advContentStatus').val() || '';	
+  //calling method to clear any unsaved attrs
+  dispayOnlySavedSearchAttrs(selctdAttrs, $('.advContcheckboxclass'));
+  
+  $('#dialog_Content').dialog('open');
 }
 
 function searchContentClear()
@@ -854,25 +1014,37 @@ function searchContentSaveAndClose()
 				           });
 				 $("#advContentStatus").val(selectedContent.join(",")); 
 				  $("#advContentStatus").attr("disabled","disabled");
-				  $("#overlay_Content").css("display","none");
-				  $("#dialog_Content").css("display","none");
+				 
+				 //$("#overlay_Content").css("display","none");
+				  //$("#dialog_Content").css("display","none");
+				  
+				  $('#dialog_Content').dialog('close');
  
 }
 function searchContentClose()
 {
-  $("#overlay_Content").css("display","none");
-	$("#dialog_Content").css("display","none");
+	//$("#overlay_Content").css("display","none");
+	//$("#dialog_Content").css("display","none");
+	
 	//searchReset();	
-	var selctdAttrs = $('#advContentStatus').val() || '';	
+	/* var selctdAttrs = $('#advContentStatus').val() || '';	
 	//calling method to clear any unsaved attrs
-	dispayOnlySavedSearchAttrs(selctdAttrs, $('.advContcheckboxclass'));
+	dispayOnlySavedSearchAttrs(selctdAttrs, $('.advContcheckboxclass')); */
+	
+	$('#dialog_Content').dialog('close');
  
 }
 
 function searchRequestTypeopen()
 {
-  $("#overlay_ReqType").css("display","block");
-  $("#dialog_ReqType").css("display","block");
+  //$("#overlay_ReqType").css("display","block");
+  //$("#dialog_ReqType").css("display","block");
+  
+  var selctdAttrs = $('#advRequestType').val() || '';	
+  //calling method to clear any unsaved attrs
+  dispayOnlySavedSearchAttrs(selctdAttrs, $('.advReqcheckboxclass'));
+  
+  $('#dialog_ReqType').dialog('open');
  
 }
 
@@ -892,8 +1064,11 @@ function searchRequestTypeSaveAndClose()
 				           });
 				 $("#advRequestType").val(selectedRequest.join(",")); 
 				  $("#advRequestType").attr("disabled","disabled");
-				  $("#overlay_ReqType").css("display","none");
-				  $("#dialog_ReqType").css("display","none");
+				  
+				  //$("#overlay_ReqType").css("display","none");
+				  //$("#dialog_ReqType").css("display","none");
+				  
+				  $('#dialog_ReqType').dialog('close');
  
 }
 function searchRequestTypeClose()
@@ -901,10 +1076,12 @@ function searchRequestTypeClose()
    $("#overlay_ReqType").css("display","none");
 	$("#dialog_ReqType").css("display","none");
 	//searchReset();	
-	var selctdAttrs = $('#advRequestType').val() || '';	
-	//calling method to clear any unsaved attrs
-	dispayOnlySavedSearchAttrs(selctdAttrs, $('.advReqcheckboxclass'));
 	
+	/* var selctdAttrs = $('#advRequestType').val() || '';	
+	//calling method to clear any unsaved attrs
+	dispayOnlySavedSearchAttrs(selctdAttrs, $('.advReqcheckboxclass')); */
+	
+	$('#dialog_ReqType').dialog('close');
 }
 
 function searchClassNumberopen()
@@ -924,8 +1101,11 @@ function searchClassNumberopen()
 				 }		
 			 });
 			$("#overlay_pageLoading").hide(); 			
-			$("#overlay_ClassNo").css("display","block");
-			$("#dialog_ClassNo").css("display","block");
+			
+			//$("#overlay_ClassNo").css("display","block");
+			//$("#dialog_ClassNo").css("display","block");
+			
+			$('#dialog_ClassNo').dialog('open');
 			
 			clearInterval(timeoutID);
 		}else{
@@ -950,14 +1130,17 @@ function searchClassNumberSaveAndClose()
 				           });
 				 $("#advClassNumber").val(selectedClass.join(",")); 
 				  $("#advClassNumber").attr("disabled","disabled");
-				  $("#overlay_ClassNo").css("display","none");
-				  $("#dialog_ClassNo").css("display","none");
- 
+				  
+				  //$("#overlay_ClassNo").css("display","none");
+				  //$("#dialog_ClassNo").css("display","none");
+	$('#dialog_ClassNo').dialog('close');
 }
 function searchClassNumberClose()
 {
-   $("#overlay_ClassNo").css("display","none");
-   $("#dialog_ClassNo").css("display","none");	
+   //$("#overlay_ClassNo").css("display","none");
+   //$("#dialog_ClassNo").css("display","none");
+
+   $('#dialog_ClassNo').dialog('close');
 }
 
 
@@ -1039,7 +1222,7 @@ function isVendorNumber() {
 function advSearch() {
 	//searchReset();
 	$("#overlay_Image_advSearch").css("display","block");
-	$("#dialog_ASearch").css("display","block");
+	//$("#dialog_ASearch").css("display","block");
 	defaultAdvSearchSettings();	
 	var deptNos = $("#deptNo").val();
 	var advSelectedDepartments="";
@@ -1124,7 +1307,7 @@ function advSearch() {
 					
 					
 	var url = $("#ajaxaction").val();
-	$("#dialog_ASearch").css("display","none");
+	//$("#dialog_ASearch").css("display","none");
 	$("#overlay_pageLoading").show();
 	 $.get(url,{advSearchPopUp:'advSearchPopUp',
 				defaultDeptNos: deptNos,
@@ -1145,12 +1328,33 @@ function advSearch() {
                },function(responseText) {					
 					responseText = repalceAdvPetTable(responseText);
 					  $("#advanceSearchDiv").html(responseText);
-					  $("#overlay_Image_advSearch").css("display","block");					
+					  //$("#overlay_Image_advSearch").css("display","block");					
 					  $("#dialog_ASearch").css("display","block");
 					  defaultAdvSearchSettings();
 					  
-					  //depSearchInProgress = false;
-					$("#overlay_pageLoading").hide();  
+					  //mapping ui dialog to the searchbox 
+					  $('#advanceSearchDiv').dialog({
+							modal: true,
+							dialogClass: "dlg-custom dlg-advSearch",
+							autoOpen: false,
+							resizable: true,
+							title: 'Search PET',
+							width: 440,
+							height: 565,
+							minHeight: 565,
+							minWidth: 440,
+							open: function( event, ui ) {
+								//$('#selectedDeptSearch').focus();
+							}
+						});
+						
+						//mapping image status, content status, class popup ui dlg handler
+						attachAdvSearchParamsDlg();
+						
+						//depSearchInProgress = false;
+						$("#overlay_pageLoading").hide();
+
+						$('#advanceSearchDiv').dialog('open');
                   });
 }
 
@@ -1374,7 +1578,7 @@ function inactivateAjaxCall(){
 				}
 			if(flag == 'yes'){
 			//$("#dialog_ASearch").css("display","none");	
-			$("#overlay_pageLoading").show();
+			$("#overlay_pageLoading1").show();
 			$.get(url,{styleItem: inactivateOrinValue,statusParam: 'inactivate'},function(responseText) {
 				
 				if('false'== $("#searchReturnId").val()){
@@ -1388,12 +1592,14 @@ function inactivateAjaxCall(){
 				}
 				
 			});
-			$("#overlay_pageLoading").hide();
+			$("#overlay_pageLoading1").hide();
 			}else if(flag == 'no'){
-				document.getElementById('petStatusID').innerHTML = 'Pet Status';
-				$("#overlay_petStatus").show();
-				$("#dialog_petStatus").show();
+				//document.getElementById('petStatusID').innerHTML = 'Pet Status';
+				//$("#overlay_petStatus").show();
+				//$("#dialog_petStatus").show();
 				$("#petStatusLabelId").html("Selected PET/PETs are already inactive. Please select active PET.");
+				$('#dialog_petStatus').dialog('option', 'title', 'Pet Status');
+				$('#dialog_petStatus').dialog('open');
 			}
 }
 		
@@ -1498,8 +1704,9 @@ function activateAjaxCall(){
 			
 			
 			if(flag == 'yes'){
-			$("#dialog_ASearch").css("display","none");	
-			$("#overlay_pageLoading").show();
+			//$("#dialog_ASearch").css("display","none");	
+			//$("#overlay_pageLoading").show();
+			$("#overlay_pageLoading1").show();
 			$.get(url,{styleItem: activateOrinValue,statusParam: 'activate'},function(responseText) {					
 				if('false'== $("#searchReturnId").val()){
 					//alert('not come from search Activate');
@@ -1513,13 +1720,16 @@ function activateAjaxCall(){
 				}				
 			
 			});
-			$("#overlay_pageLoading").hide();
+			//$("#overlay_pageLoading").hide();
+			$("#overlay_pageLoading1").hide();
 		}else if(flag == 'no'){
 				//alert('no flag in Activate');
-				document.getElementById('petStatusID').innerHTML = 'Pet Status';
-				$("#overlay_petStatus").show();
-				$("#dialog_petStatus").show();
+				//document.getElementById('petStatusID').innerHTML = 'Pet Status';
+				//$("#overlay_petStatus").show();
+				//$("#dialog_petStatus").show();
 				$("#petStatusLabelId").html("Selected PET/PETs are already active. Please select inactive PET.");
+				$('#dialog_petStatus').dialog('option', 'title', 'Pet Status');
+				$('#dialog_petStatus').dialog('open');
 			}
 	}
 }
@@ -1643,11 +1853,13 @@ function checkcompletiondate(dtElm, count){
 		}
 		if(!returnval){
 			$("#tCompletionDate").val(completionDateBackup);			
-			$("#overlay_petStatus").show();
-			$("#dialog_petStatus").show();			
-			document.getElementById('petStatusID').innerHTML = 'Completion Date Update Status';			
+			//$("#overlay_petStatus").show();
+			//$("#dialog_petStatus").show();			
+			//document.getElementById('petStatusID').innerHTML = 'Completion Date Update Status';			
 			$("#petStatusLabelId").html('Please enter completion date in yyyy-mm-dd format.');
 			
+			$('#dialog_petStatus').dialog('option', 'title', 'Completion Date Update Status');
+			$('#dialog_petStatus').dialog('open');
 		}else{
 
 				var newCompletionDate = new Date(completionDate);
@@ -1677,18 +1889,22 @@ function checkcompletiondate(dtElm, count){
 					
 					$(dtElm).val(completionDateBackup);
 					
-					$("#overlay_petStatus").show();
-					$("#dialog_petStatus").show();			
-					document.getElementById('petStatusID').innerHTML = 'Completion Date Update Status';			
+					//$("#overlay_petStatus").show();
+					//$("#dialog_petStatus").show();			
+					//document.getElementById('petStatusID').innerHTML = 'Completion Date Update Status';			
 					$("#petStatusLabelId").html('Date invalid - please enter a future date.');
+					$('#dialog_petStatus').dialog('option', 'title', 'Completion Date Update Status');
+					$('#dialog_petStatus').dialog('open');
 				}
 				
 		}
 	}else {
-					$("#overlay_petStatus").show();
-					$("#dialog_petStatus").show();			
-					document.getElementById('petStatusID').innerHTML = 'Completion Date Update Status';			
+					//$("#overlay_petStatus").show();
+					//$("#dialog_petStatus").show();			
+					//document.getElementById('petStatusID').innerHTML = 'Completion Date Update Status';			
 					$("#petStatusLabelId").html('Please enter the completion date.');
+					$('#dialog_petStatus').dialog('option', 'title', 'Completion Date Update Status');
+					$('#dialog_petStatus').dialog('open');
 	}
 	
 	
@@ -1724,10 +1940,12 @@ $.get(url,{completionDate:completionDate,orinNumber:orinNumber,styleorinNumber:s
 			    }
 			});			
 			var showDateUpdate= document.getElementById("updateDateMessage").value;			
-			$("#overlay_petStatus").show();
-			$("#dialog_petStatus").show();			
-			document.getElementById('petStatusID').innerHTML = 'Completion Date Update Status';			
+			//$("#overlay_petStatus").show();
+			//$("#dialog_petStatus").show();			
+			//document.getElementById('petStatusID').innerHTML = 'Completion Date Update Status';			
 			$("#petStatusLabelId").html(showDateUpdate);
+			$('#dialog_petStatus').dialog('option', 'title', 'Completion Date Update Status');
+			$('#dialog_petStatus').dialog('open');
 			
    });
 }
@@ -1926,6 +2144,8 @@ function populateChildData(jsonArray,orinNum, showHideFlag){
 			
 		}
 	
+		tempHtml = tempHtml.replace("#TD_SOURCE_TYPE", val.petSourceType);
+		
 		tempHtml = tempHtml.replace("#TD_PET_STATUS", val.petStatus);
 		
 		$(tempTr).html(tempHtml);

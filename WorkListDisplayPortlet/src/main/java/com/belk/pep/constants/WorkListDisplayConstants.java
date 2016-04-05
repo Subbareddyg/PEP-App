@@ -7,7 +7,7 @@ package com.belk.pep.constants;
  * @author AFUBXJ1
  */
 public class WorkListDisplayConstants {
-	
+    
 /** The Constant SYSTEM_FAILURE_MSG. */
 public static final String SYSTEM_FAILURE_MSG = "System Failure.";
 
@@ -233,6 +233,10 @@ public static final String LOGGEDIN_USER_DETAILS = "LoggedInUserDetailsOBJ";
 //constants for PET page locked scenarios
 public static final String SEARCH_LOCKED_TYPE_CONTENT = "Content";
 public static final String SEARCH_LOCKED_TYPE_IMAGE = "Image";
-public static final String TEST = "TEst";
+
+public static final String BELK_BEST_PLAN = "belkbestplanurl";
+public static final String BELK_BEST_PLAN_URL_KEY = "BEBESTPLAN";
+
+public static final String FIRST_TIME_USER_LOGIN_MESSAGE = "message.firstTimeUser";
 
 }

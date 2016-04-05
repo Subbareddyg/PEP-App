@@ -13,7 +13,6 @@ import java.util.Properties;
 import java.util.Random;
 //import java.util.logging.Logger;
 import org.apache.log4j.Logger;
-
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
 import javax.portlet.Event;
@@ -366,21 +365,24 @@ public class ImageRequestController {
 	   String imagName = request.getParameter("imageNameToDel");
 	   
 	   Properties prop =PropertyLoader.getPropertyLoader(ImageConstants.LOAD_IMAGE_PROPERTY_FILE);
+	   
 	   String fileDir = prop.getProperty(ImageConstants.FILE_UPLOAD_PATH);
+	   //String fileDir = "/tmp/";
+	   
 	   String fileToBeDeleted = fileDir + imagName;
 	   LOGGER.info("File to be deleted::----" +fileToBeDeleted);
 	   
 	   boolean fileRemove = false ;
-	   
-	   
-       JSONArray jsonArray = new JSONArray();
+	   JSONObject removeJSON = new JSONObject();
+	   JSONArray jsonArray = new JSONArray();
        try {  
-           JSONObject jsonStyle =populateJson(orinId.trim(),imagId);
+    	   JSONObject jsonStyle =populateJson(orinId.trim(),imagId);
            jsonArray.put(jsonStyle);        
            responseMsg = callRemoveImageWebService(jsonArray);          
            String [] resCodeWithMsg = responseMsg.split("_");
            String resMsg = resCodeWithMsg[0];
            String resCode = resCodeWithMsg[1];
+           
            if("100".equalsIgnoreCase(resCode)){
         	   LOGGER.info("***Service success response For Remove***");
         	   
@@ -480,6 +482,16 @@ public class ImageRequestController {
 			catch(Exception ex){
 				ex.printStackTrace();
 			}
+           }else{
+        	   //Remove Failure
+        	   LOGGER.info("Remove Respone Failing code::" + resCode);
+        	   removeJSON.put("resCodeRemove", resCode);
+        	   removeJSON.put("imageIdRemove", imagId);
+        	   LOGGER.info("removeJSON::" + removeJSON.toString());
+        	   response.getWriter().write(removeJSON.toString());
+        	   response.getWriter().flush();
+        	   response.getWriter().close();
+        	   
            }
        } catch (Exception e) {
            LOGGER.info("Caught Exception**************removeSampleImageMethod---Controller");
@@ -616,7 +628,7 @@ public class ImageRequestController {
     			  
     			  Properties prop =PropertyLoader.getPropertyLoader(ImageConstants.LOAD_IMAGE_PROPERTY_FILE);
     			  String fileDir = prop.getProperty(ImageConstants.FILE_UPLOAD_PATH);
-    			  //String fileDir = "U:\\Santanu\\uploadedImage\\";
+    			  //String fileDir = "/tmp/";
     			  
     			  	String imageLocationType="";
     				String ftpResult="";
@@ -656,19 +668,23 @@ public class ImageRequestController {
 	        				try {
 	        					is = multipartfile.getInputStream();	        					
 	        					String filepath=fileDir+ uploadImagesDTO.getImageName();
-	        					os = new FileOutputStream(filepath);
-	        					 LOGGER.info("filepath-->>>>" + filepath);
+	        					
+	        					//os = new FileOutputStream(filepath);
+	        					
+	        					LOGGER.info("filepath-->>>>" + filepath);
 	        					//Setting Image Location
 	        					uploadImagesDTO.setCdImageLocation(imageLocation);
 	        					uploadImagesDTO.setImageType("");
 	        					LOGGER.info(" uploadImagesDTO.getImageName() "+uploadImagesDTO.getImageName());
 	        					imageNameRender= uploadImagesDTO.getImageName();
-	        					OutputStream out = new FileOutputStream(filepath);
+	        					
+	        					/*OutputStream out = new FileOutputStream(filepath);
 	        					byte[] b = new byte[2048];
 	        					int length;
 	        					while ((length = is.read(b)) != -1) {
 	        						os.write(b, 0, length);
-	        					}
+	        					}*/
+	        					
 	        					ImageDetails imageDetailsFromIPC = getUserDetailsfromLogin(request);
 	        				     String updatedBy = "";
 	        				     if(imageDetailsFromIPC.getUserData().getBelkUser()!= null){
@@ -686,21 +702,35 @@ public class ImageRequestController {
 	        				           jsonArray.put(jsonUploadVPI);
 	        				           LOGGER.info("jsonArray --> "+jsonArray);         				         
 	        				           responseMsg = callUploadVPIService(jsonArray);
-	        				           LOGGER.info("json Object petId "+ jsonUploadVPI.getString("petId")+"responseMsg::" +responseMsg);
+	        				           LOGGER.info("json Object petId:: "+ jsonUploadVPI.getString("petId")+"responseMsg::" +responseMsg);
 	        				       } catch (Exception e) {
-	        				           LOGGER.info("inside catch for removeSampleImageMethod ");
+	        				           LOGGER.info("inside catch for UploadImage ");
 	        				           e.printStackTrace();
 	        				       }
-	        					//TODO Service Call needed to upload images	        					
-	        					uploadedSucess = "Y";       					
-	        					
+	        					//TODO Service Call needed to upload images	
+	        				    if("New image id generated and image attributes successfully uploaded".trim().equalsIgnoreCase(responseMsg)){
+	        				    	LOGGER.info("Image Upload Success in controller");
+	        				    	uploadedSucess = "Y";
+	        				    	os = new FileOutputStream(filepath);
+	        				    	byte[] b = new byte[2048];
+		        					int length;
+		        					while ((length = is.read(b)) != -1) {
+		        						os.write(b, 0, length);
+		        					}
+		        					//Closing opStream after Successful file upload
+		        					os.close();
+	        				    }else{
+	        				    	LOGGER.info("Image Upload Failed in controller");
+	        				    	uploadedSucess = "N";
+	        				    }
+	        					//uploadedSucess = "Y"; 					
 	        				} catch (Exception e) {
-	        					uploadedSucess = "N";
+	        					//uploadedSucess = "N";
 	        					LOGGER.info("Unable to upload the local image" + e);
 	        				}finally{
 	        					try{
 	        						is.close();
-	        						os.close();
+	        						//os.close();
 	        					}catch(Exception e){
 	        						LOGGER.info("Unable to close OutputStream objects" + e);
 	        					}
@@ -708,8 +738,9 @@ public class ImageRequestController {
 	        				if (uploadedSucess=="Y"){
 	        					uploadedSucess = "Y";
 	        					LOGGER.info("Image uploaded successfully........");
-	        				}else{
+	        				}else if(uploadedSucess =="N"){
 	        					LOGGER.info("Error occured while saving the vendor image data to database");
+	        					uploadedSucess = "N";	        					
 	        				}	    					
 	                  
 	    				} catch (Exception e) {                  
@@ -796,8 +827,10 @@ public class ImageRequestController {
          LOGGER.info("Entering populateJsonVPI....Controller::");
          LOGGER.info("roleToPass----" +roleToPass);
          Properties prop =PropertyLoader.getPropertyLoader(ImageConstants.LOAD_IMAGE_PROPERTY_FILE);
-		  String fileDir = prop.getProperty(ImageConstants.FILE_UPLOAD_PATH);
-        try {
+		 
+         String fileDir = prop.getProperty(ImageConstants.FILE_UPLOAD_PATH);
+         //String fileDir = "/tmp/";
+		 try {
         	 ArrayList<SamleImageDetails> sampleImageLinkList = imageRequestDelegate.getSampleImageLinks(OrinNo);
         	if (sampleImageLinkList.size() > 0 && sampleImageLinkList !=null) {
         	for (SamleImageDetails item : sampleImageLinkList) {
@@ -1021,12 +1054,12 @@ public class ImageRequestController {
  			  	if("Image status update is successful".equalsIgnoreCase(responseMsg1)){
 						LOGGER.info(" ---Service Response is Success on SubmitOrReject--- ");
 						String responseCodeOnSubmit = "100";
-						jsonObj.remove(resCodeRet);						
+						//jsonObj.remove(resCodeRet);					
 						jsonObj.put("responseCodeOnSubmit", responseCodeOnSubmit);	
 					}
  			  	response.getWriter().write(jsonObj.toString());					
 				response.getWriter().flush();
-				response.getWriter().close();
+				response.getWriter().close(); 
 	       } catch (Exception e) {
 	           LOGGER.info("Caught Exception getSubmitorRejectStatus controller******************");
 	           e.printStackTrace();
@@ -1085,17 +1118,24 @@ public class ImageRequestController {
 		   String orinNumber = "";
 		   String passImgid = "";
 		   String passShotType = "";
-		   String selectedArray = request.getParameter("selectedOrinImageShotArray");
+		   String selectedArray = request.getParameter("selectedOrinImageShotArray");	   
+   
+		  
 		   String[] selectedOrinImageShotArray = selectedArray.split(";");
 		   
 		   LOGGER.info("selectedOrinImageShotArray::" + selectedOrinImageShotArray.length);
+		   
+		   
 		   for(int i=0; i<selectedOrinImageShotArray.length; i++){
 			   
 			   orinNumber = "";
 			   passImgid = "";
 			   passShotType = "";
-			   			   
+			   //LOGGER.info("selectedOrinImageShotArray[i]" +selectedOrinImageShotArray[i]);			   
 			   String[] arrayInnerSelectedOrin = selectedOrinImageShotArray[i].split("_");
+			   
+			   //LOGGER.info("arrayInnerSelectedOrin........" +arrayInnerSelectedOrin.length);
+			   
 			   	
 			   orinNumber = arrayInnerSelectedOrin[0].replace("//s", "");
 			   passImgid  = arrayInnerSelectedOrin[1].replace("//s", "");
@@ -1122,7 +1162,8 @@ public class ImageRequestController {
 			   LOGGER.info("inside catch for service call---......Controller");
                ex.printStackTrace();
 		   }
-	   }
+	
+	 }
 	   
 	   
 	   /**
@@ -1320,7 +1361,7 @@ public class ImageRequestController {
 			        } 
 			        
 			        long length = tempFile.length();
-			        LOGGER.info("Exception tempFile.length() method" +length);	
+			        LOGGER.info("tempFile.length() method" +length);	
 			        if(length > 0){
 			        	isImageValid = true;
 			        }
@@ -1328,7 +1369,7 @@ public class ImageRequestController {
 			    	LOGGER.info(" readFile method mimeType: "+mimeType+ "  isImageValid:"+isImageValid);
 				if(isImageValid && tempFile.exists()){
 					response.setContentType(mimeType);
-			        response.addProperty("Content-disposition", "attachment; filename="+imageName);
+			        //response.addProperty("Content-disposition", "attachment; filename="+imageName);
 			        
 					response.setContentLength((int) length);
 					 FileInputStream inStream = new FileInputStream(tempFile);

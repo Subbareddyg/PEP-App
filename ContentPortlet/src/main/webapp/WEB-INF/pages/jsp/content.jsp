@@ -13,7 +13,8 @@
      <link rel="stylesheet" href="http://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
      <link rel="stylesheet" type="text/css"  href="<%=response.encodeURL(request.getContextPath()+"/css/bootstrap.css")%>">
      <link rel="stylesheet"  type="text/css"  href="<%=response.encodeURL(request.getContextPath()+"/css/jquery.treegrid.css")%>">
-     
+	     <link rel="stylesheet" type="text/css" href="<%=response.encodeURL(request.getContextPath()+ "/css/jquery.alerts.css")%>" >
+          
 	<script type="text/javascript" 	src="<%=request.getContextPath()%>/js/libs/jq-plugins-adapter.js"></script>	
 	<script type="text/javascript"  src="<%=request.getContextPath()%>/js/libs/ext-all.js"></script>
 	<script type="text/javascript" src="<%=request.getContextPath()%>/js/libs/jquery.scrollTo-min.js"></script>
@@ -23,8 +24,8 @@
 	<script type="text/javascript" src="<%=request.getContextPath()%>/js/libs/jquery-plugins.js"></script> 	
 
 
+	<script  type="text/javascript" src="<%=request.getContextPath()%>/js/jquery.alerts.js"></script>
 	<script type="text/javascript" src="<%=request.getContextPath()%>/js/contentScreen.js"></script>
-	
 
 	
   	<script src="http://code.jquery.com/jquery-1.10.2.js"></script>
@@ -33,6 +34,12 @@
 	
     <script src="<%=response.encodeURL(request.getContextPath()+"/js/jquery.min.js")%>"></script>
     <script type="text/javascript" src="<%=response.encodeURL(request.getContextPath()+"/js/jquery.treegrid.js")%>"></script>
+  
+  <style type="text/css">
+  .confirm {
+  display: inherit;
+  }
+  </style>
   
     <script type="text/javascript">
     var inputChanged = true;
@@ -200,160 +207,19 @@
 	                      //when the Style  Pet Status is ready for review for vendor
 	                       if(stylePetContentStatus=='Ready_For_Review' || stylePetContentStatus=='Closed' || stylePetContentStatus=='Completed' || stylePetContentStatus=='Deactivated')
 	            		{  
-		            		  $('#txt_outfitName').attr("disabled", "disabled"); 
-		            		  $('#vendorStyleId').attr("disabled", "disabled");  
-		            		  $('#styleSubmit').attr("disabled", "disabled"); 	            		  
-		            		  $('#omnichannelbrand').attr("disabled", "disabled");  
-		            		  $('#carbrand').attr("disabled", "disabled"); 
-		            		  $('#iphCategoryDropDownId').attr("disabled", "disabled"); 
-		            		  $('#saveButtonId').attr("disabled", "disabled");
-		            		  $('#channelExclId').attr("disabled", "disabled");
-		            		  $('#belkExclId').attr("disabled", "disabled");
-		            		  $('#globalGWPId').attr("disabled", "disabled");
-		            		  $('#globalPWPId').attr("disabled", "disabled");
-		            		  $('#globalPYGId').attr("disabled", "disabled");
-		            		  $('#bopislId').attr("disabled", "disabled");
 		            		  
+		            		  disableStyleLevelAttributes();
 		            		  
-		            		  //logic for disabling the product attribute multi  select drop down
-		            		  if(document.getElementById("paDropDownCounter")){ 
-		            		  var  dropDownCounting=document.getElementById("paDropDownCounter").value;
-		            		  for(q=1; q<=dropDownCounting; q++){
-		            				
-		            				 var paDropDownId = "dropDownsId_id"+q;
-		            				 document.getElementById(paDropDownId).disabled = true;
-		            			}
-		            		  }
-		            		  
-		            		//logic for disabling the product attribute  text field
-		            		  if(document.getElementById("paTextAttributeCount")){
-		          				var textFieldCount = document.getElementById("paTextAttributeCount").value;
-		          				for(var a=0; a<textFieldCount; a++){
-		          					document.getElementById("paText_Id"+(a+1)).disabled=true;		          					    
-		          				}
-		                       }
-		            		
-		            		  //logic for disabling the blue nartini attribute multi  select drop down
-		            		  if(document.getElementById("bmDropDownCounter")){
-		            		   var  bmDropDownCounting=document.getElementById("bmDropDownCounter").value;
-		            		  for(z=1; z<=bmDropDownCounting; z++){
-		            				
-		            				 var bmDropDownId = "bmDropDownsId_id"+z;
-		            				 document.getElementById(bmDropDownId).disabled = true;
-		            			}
-		            		  }
-		            		  
-		            		  //logic for disabling the blue martini text field 
-							   	
-			            	  if(document.getElementById("bmTextAttributeCount")){
-			         			 var bmTextFieldCount = document.getElementById("bmTextAttributeCount").value;
-			         				for(var a=0; a<bmTextFieldCount; a++){
-			         					document.getElementById("blueMartiniText_Id"+(a+1)).disabled=true;
-			         				   
-			         				}
-			         			  } 
-		            		  
-			            	  if(document.getElementById("paRadioButtonCounter")){ 
-			            		  var  radioButtonCount =document.getElementById("paRadioButtonCounter").value;		
-			            	   
-			     				  for(var j=1; j<=radioButtonCount; j++){
-			                	  	 for(var i=1; i<3; i++){ 
-			                		 var temp = j+""+i;
-				    	            	  document.getElementById("paRadio_Id"+temp).disabled = true;
-			                		 }  
-			     				  }
-			            	  }
-			            	  
-			            	  if(document.getElementById("bmRadioButtonCounter")){ 
-			            		  var  radioButtonCount =document.getElementById("bmRadioButtonCounter").value;	
-			     				  for(var j=1; j<=radioButtonCount; j++){
-			                	  	 for(var i=1; i<3; i++){ 
-			                		 var temp = j+""+i;
-				    	            	 document.getElementById("bmRadio_Id"+temp).disabled = true; 
-				    	             }
-			     				  }
-			            	  }
+		            		  // Disable Product & Legacy Attributes
+		            		  disabledProductAndLegacyAttributes();
 		            		  
 	            		}
 	                       else if(stylePetContentStatus=='Initiated')
 	                    	   { 
-	                    	     $('#txt_outfitName').removeAttr('disabled'); 
-			            		  $('#vendorStyleId').removeAttr('disabled');  
-			            		  $('#styleSubmit').removeAttr('disabled'); 	            		  
-			            		  $('#omnichannelbrand').removeAttr('disabled');  
-			            		  $('#carbrand').removeAttr('disabled'); 
-			            		  $('#iphCategoryDropDownId').removeAttr('disabled'); 
-			            		  $('#saveButtonId').removeAttr('disabled');   
-			            		  $('#channelExclId').removeAttr('disabled');  
-			            		  $('#belkExclId').removeAttr('disabled');  
-			            		  $('#globalGWPId').removeAttr('disabled');  
-			            		  $('#globalPWPId').removeAttr('disabled');  
-			            		  $('#globalPYGId').removeAttr('disabled');  
-			            		  $('#bopislId').removeAttr('disabled');
+	                    	  	  enabledStyleLevelAttributes();
 			            		 
-			            		 
-			            		//logic for enabling the product attribute multi  select drop down
-			            		if(document.getElementById("paDropDownCounter")){
-			            		 var  dropDownCounting = document.getElementById("paDropDownCounter").value;
-			            		  for(q=1; q<=dropDownCounting; q++){
-			            				
-			            				 var paDropDownId = "dropDownsId_id"+q;
-			            				 document.getElementById(paDropDownId).disabled = false;
-			            				 
-			            			}
-			            		}
-			            		 
-			            		//logic for enabling the product attribute  text field
-			            		  if(document.getElementById("paTextAttributeCount")){
-			            			var textFieldCount = document.getElementById("paTextAttributeCount").value;
-			          				for(var a=1; a<textFieldCount; a++){
-			          					      var paTextId="paText_Id"+a;
-			          					      document.getElementById(paTextId).disabled = false;
-			          				     
-			          				}
-			                       }
-			            		 
-			            		  //logic for enabling the blue martini attribute multi  select drop down
-			            		  if(document.getElementById("bmDropDownCounter")){ 
-			            		   var  bmDropDownCounting=document.getElementById("bmDropDownCounter").value;
-			            		  for(z=1; z<=bmDropDownCounting; z++){
-			            				
-			            				 var bmDropDownId = "bmDropDownsId_id"+z;
-			            				 document.getElementById(bmDropDownId).disabled = false;
-			            			}
-			            		  }
-			            		  
-			            		  //logic for disabling the blue martini text field 
-								 
-				            	  if(document.getElementById("bmTextAttributeCount")){
-				         			 var bmTextFieldCount = document.getElementById("bmTextAttributeCount").value;
-				         				for(var a=0; a<bmTextFieldCount; a++){
-				         					document.getElementById("blueMartiniText_Id"+(a+1)).disabled=false;
-				         				   
-				         				}
-				         			  } 
-	                    	   
-	                       
-			            	  if(document.getElementById("paRadioButtonCounter")){ 
-			            		  var  radioButtonCount =document.getElementById("paRadioButtonCounter").value;		
-			            	   
-			     				  for(var j=1; j<=radioButtonCount; j++){
-			                	  	 for(var i=1; i<3; i++){ 
-			                		 var temp = j+""+i;
-				    	            	  document.getElementById("paRadio_Id"+temp).disabled = false;
-			                		 }  
-			     				  }
-			            	  }
-			            	  
-			            	  if(document.getElementById("bmRadioButtonCounter")){ 
-			            		  var  radioButtonCount =document.getElementById("bmRadioButtonCounter").value;	
-			     				  for(var j=1; j<=radioButtonCount; j++){
-			                	  	 for(var i=1; i<3; i++){ 
-			                		 var temp = j+""+i;
-				    	            	 document.getElementById("bmRadio_Id"+temp).disabled = false; 
-				    	             }
-			     				  }
-			            	  }
+			            		  // Enable Product & Legacy Attriutes
+			            		  enableProductAndLegacyAttributes();
 			            	  
 	                    	   }
 	                   
@@ -387,157 +253,21 @@
             	      //Logic for Style
 	            	  if(stylePetContentStatus=='Completed' || stylePetContentStatus=='Closed' || stylePetContentStatus=='Deactivated')
 	            		{ 
-		            		  $('#txt_outfitName').attr("disabled", "disabled"); 
-		            		  $('#vendorStyleId').attr("disabled", "disabled");  
-		            		  $('#styleSubmit').attr("disabled", "disabled"); 	            		  
-		            		  $('#omnichannelbrand').attr("disabled", "disabled");  
-		            		  $('#carbrand').attr("disabled", "disabled"); 
-		            		  $('#iphCategoryDropDownId').attr("disabled", "disabled"); 
-		            		  $('#saveButtonId').attr("disabled", "disabled");  
-		            		  $('#channelExclId').attr("disabled", "disabled");
-		            		  $('#belkExclId').attr("disabled", "disabled");
-		            		  $('#globalGWPId').attr("disabled", "disabled");
-		            		  $('#globalPWPId').attr("disabled", "disabled");
-		            		  $('#globalPYGId').attr("disabled", "disabled");
-		            		  $('#bopislId').attr("disabled", "disabled");
+	            			  disableStyleLevelAttributes();
 		            		  
-		            		 //Logic for disabling the product attribute multi select drop down 
-		            		 if(document.getElementById("paDropDownCounter")){
-		            		  var  dropDownCounting=document.getElementById("paDropDownCounter").value;
-		            			for(q=1; q<=dropDownCounting; q++){
-		            				 var paDropDownId = "dropDownsId_id"+q;
-		            				 document.getElementById(paDropDownId).disabled = true;
-		            			}
-		            		 }
-		            			
-		             
-		            			 
-			            	 //logic for disabling the blue martini attribute multi  select drop down
-			            	 if(document.getElementById("bmDropDownCounter")){ 
-			            		   var  bmDropDownCounting=document.getElementById("bmDropDownCounter").value;
-					            	  for(z=1; z<=bmDropDownCounting; z++){
-					            				 var bmDropDownId = "bmDropDownsId_id"+z;
-					            				 document.getElementById(bmDropDownId).disabled = true;
-					            			}	
-			            	 }
-					            	  
-					            	  
-		            		//logic for disabling the product attribute  text field
-		            		  if(document.getElementById("paTextAttributeCount")){
-		          				var textFieldCount = document.getElementById("paTextAttributeCount").value;
-		          				for(var a=0; a<textFieldCount; a++){
-		          					document.getElementById("paText_Id"+(a+1)).disabled=true;		          					    
-		          				}
-		                       } 	  
-					            		 
-						   	 //logic for disabling the blue martini text field 
-						   	
-					            	  if(document.getElementById("bmTextAttributeCount")){
-					         			 var bmTextFieldCount = document.getElementById("bmTextAttributeCount").value;
-					         				for(var a=0; a<bmTextFieldCount; a++){
-					         					document.getElementById("blueMartiniText_Id"+(a+1)).disabled=true;
-					         				   
-					         				}
-					         			  } 	  
-				            		  
-					            	  if(document.getElementById("paRadioButtonCounter")){ 
-					            		  var  radioButtonCount =document.getElementById("paRadioButtonCounter").value;		
-					            	   
-					     				  for(var j=1; j<=radioButtonCount; j++){
-					                	  	 for(var i=1; i<3; i++){ 
-					                		 var temp = j+""+i;
-						    	            	  document.getElementById("paRadio_Id"+temp).disabled = true;
-					                		 }  
-					     				  }
-					            	  }
-					            	  
-					            	  if(document.getElementById("bmRadioButtonCounter")){ 
-					            		  var  radioButtonCount =document.getElementById("bmRadioButtonCounter").value;	
-					     				  for(var j=1; j<=radioButtonCount; j++){
-					                	  	 for(var i=1; i<3; i++){ 
-					                		 var temp = j+""+i;
-						    	            	 document.getElementById("bmRadio_Id"+temp).disabled = true; 
-						    	             }
-					     				  }
-					            	  }
-		            		  
+		            		  // Disable Product & Legacy Attriutes
+		            		  disabledProductAndLegacyAttributes();
 	            		}
 	            	  
 	            	  else  if(stylePetContentStatus=='Initiated' || stylePetContentStatus=='Ready_For_Review')
 		          		{  
 		            		  
-	            		      $('#txt_outfitName').removeAttr('disabled');		            		  
-		            		  $('#vendorStyleId').removeAttr('disabled');		            		  
-		            		  $('#styleSubmit').removeAttr('disabled'); 		            		  
-		            		  $('#omnichannelbrand').removeAttr('disabled'); 		            		  
-		            		  $('#carbrand').removeAttr('disabled'); 		            		  
-		            		  $('#iphCategoryDropDownId').removeAttr('disabled'); 
-		            		  $('#saveButtonId').removeAttr('disabled');		
-		            		  $('#channelExclId').removeAttr('disabled'); 
-		            		  $('#belkExclId').removeAttr('disabled');  
-		            		  $('#globalGWPId').removeAttr('disabled');  
-		            		  $('#globalPWPId').removeAttr('disabled');  
-		            		  $('#globalPYGId').removeAttr('disabled');  
-		            		  $('#bopislId').removeAttr('disabled');  
+		            		  enabledStyleLevelAttributes();
+		            		  //$('#styleSubmit').removeAttr('disabled');     	
 		            		  
-		            		  //$('#styleSubmit').removeAttr('disabled');     		         		  
+		            		  // Enable Product & Legacy Attributes
+		            		  enableProductAndLegacyAttributes();
 		            	 
-		            		  //Logic for enabling the product attribute multi select drop down 
-		            		  if(document.getElementById("paDropDownCounter")){ 
-		            		  var  dropDownCounting=document.getElementById("paDropDownCounter").value;		            		
-		            			for(q=1; q<=dropDownCounting; q++){	           				
-		            				 var paDropDownId = "dropDownsId_id"+q;		 
-		            				 document.getElementById(paDropDownId).disabled = false;
-		            			}
-		            		  }
-		             
-		            		 //Logic for enabling the blue martini attribute multi  select drop down
-		            		 if(document.getElementById("bmDropDownCounter")){ 
-			            		   var  bmDropDownCounting=document.getElementById("bmDropDownCounter").value;
-					            	  for(z=1; z<=bmDropDownCounting; z++){
-					            				 var bmDropDownId = "bmDropDownsId_id"+z;
-					            				 document.getElementById(bmDropDownId).disabled = false;
-					            	}	
-		            		 }
-					            	  
-		             
-					            	//logic for disabling the product attribute  text field
-				            		  if(document.getElementById("paTextAttributeCount")){
-				          				var textFieldCount = document.getElementById("paTextAttributeCount").value;
-				          				for(var a=0; a<textFieldCount; a++){
-				          					document.getElementById("paText_Id"+(a+1)).disabled=false;		          					    
-				          				}
-				                       } 
-					            	  
-					            	  //logic for disabling the blue martini text field 
-					            	  if(document.getElementById("bmTextAttributeCount")){  
-					         			 var bmTextFieldCount = document.getElementById("bmTextAttributeCount").value;
-					         				for(var a=0; a<bmTextFieldCount; a++){
-					         					document.getElementById("blueMartiniText_Id"+(a+1)).disabled=false;
-					         			 
-					         				}
-					         			  }
-					            	  
-					            	  if(document.getElementById("paRadioButtonCounter")){ 
-					            		  var  radioButtonCount =document.getElementById("paRadioButtonCounter").value;		
-					            	   
-					     				  for(var j=1; j<=radioButtonCount; j++){
-					                	  	 for(var i=1; i<3; i++){ 
-					                		 var temp = j+""+i;
-						    	            	  document.getElementById("paRadio_Id"+temp).disabled = false;
-					                		 }  
-					     				  }
-					            	  }
-					            	  
-					            	  if(document.getElementById("bmRadioButtonCounter")){ 
-					            		  var  radioButtonCount =document.getElementById("bmRadioButtonCounter").value;	
-					     				  for(var j=1; j<=radioButtonCount; j++){
-					                	  	 for(var i=1; i<3; i++){ 
-					                		 var temp = j+""+i;
-						    	            	 document.getElementById("bmRadio_Id"+temp).disabled = false; 
-						    	             }
-					     				  }
-					            	  }
 					            
 		          		}
 
@@ -570,20 +300,11 @@
             	  //Logic for disabling the Omni channel color fields and Car brand field ,style color fields  for the user role read only            	  
             	  if(pepUserRoleName == "readonly")
         		  {            		              		  
-            		  $('#txt_outfitName').attr("disabled", "disabled"); 		            		  
-            		  $('#vendorStyleId').attr("disabled", "disabled"); 		            		  
-            		  $('#styleSubmit').attr("disabled", "disabled");         		  
-            		  $('#omnichannelbrand').attr("disabled", "disabled");         		  
-            		  $('#carbrand').attr("disabled", "disabled");             		  
-            		  $('#a_drop_down_box').attr("disabled", "disabled");              		  
-            		  $('#secondaryColorId').attr("disabled", "disabled");          		  
-            		  $('#secondaryColorId2').attr("disabled", "disabled"); 		            		  
-            		  $('#secondaryColorId3').attr("disabled", "disabled");       		  
-            		  $('#secondaryColorId4').attr("disabled", "disabled"); 	            		  
-            		  $('#omniChannelColorDescriptionId').attr("disabled", "disabled");        		  
-            		  $('#vendorColorId').attr("disabled", "disabled"); 
+            		  disableStyleLevelAttributes();
+              		 
+            		  disabledProductAndLegacyAttributes();
             		  
-        		  }
+        		  }// End of vendor
             	  
             	  
                
@@ -672,6 +393,161 @@
                 });
             });
             
+            
+            function enabledStyleLevelAttributes(){
+            	  $('#txt_outfitName').removeAttr('disabled'); 
+        		  $('#vendorStyleId').removeAttr('disabled');  
+        		  $('#styleSubmit').removeAttr('disabled'); 	            		  
+        		  $('#omnichannelbrand').removeAttr('disabled');  
+        		  $('#carbrand').removeAttr('disabled'); 
+        		  $('#iphCategoryDropDownId').removeAttr('disabled'); 
+        		  $('#saveButtonId').removeAttr('disabled');   
+        		  $('#channelExclId').removeAttr('disabled');  
+        		  $('#belkExclId').removeAttr('disabled');  
+        		  $('#globalGWPId').removeAttr('disabled');  
+        		  $('#globalPWPId').removeAttr('disabled');  
+        		  $('#globalPYGId').removeAttr('disabled');  
+        		  $('#bopislId').removeAttr('disabled');
+            }
+            
+            function disableStyleLevelAttributes(){
+	              $('#txt_outfitName').attr("disabled", "disabled"); 
+	       		  $('#vendorStyleId').attr("disabled", "disabled");  
+	       		  $('#styleSubmit').attr("disabled", "disabled"); 	            		  
+	       		  $('#omnichannelbrand').attr("disabled", "disabled");  
+	       		  $('#carbrand').attr("disabled", "disabled"); 
+	       		  $('#iphCategoryDropDownId').attr("disabled", "disabled"); 
+	       		  $('#saveButtonId').attr("disabled", "disabled");
+	       		  $('#channelExclId').attr("disabled", "disabled");
+	       		  $('#belkExclId').attr("disabled", "disabled");
+	       		  $('#globalGWPId').attr("disabled", "disabled");
+	       		  $('#globalPWPId').attr("disabled", "disabled");
+	       		  $('#globalPYGId').attr("disabled", "disabled");
+	       		  $('#bopislId').attr("disabled", "disabled");
+            }
+            
+            // disableProductAndLegacy Attributes
+            function disabledProductAndLegacyAttributes(){
+            	 //logic for disabling the product attribute multi  select drop down
+      		  if(document.getElementById("paDropDownCounter")){ 
+      		  var  dropDownCounting=document.getElementById("paDropDownCounter").value;
+      		  for(q=1; q<=dropDownCounting; q++){
+      				
+      				 var paDropDownId = "dropDownsId_id"+q;
+      				 document.getElementById(paDropDownId).disabled = true;
+      			}
+      		  }
+      		  
+      		//logic for disabling the product attribute  text field
+      		  if(document.getElementById("paTextAttributeCount")){
+    				var textFieldCount = document.getElementById("paTextAttributeCount").value;
+    				for(var a=0; a<textFieldCount; a++){
+    					document.getElementById("paText_Id"+(a+1)).disabled=true;		          					    
+    				}
+                 }
+      		
+      		  //logic for disabling the blue nartini attribute multi  select drop down
+      		  if(document.getElementById("bmDropDownCounter")){
+      		   var  bmDropDownCounting=document.getElementById("bmDropDownCounter").value;
+      		  for(z=1; z<=bmDropDownCounting; z++){
+      				
+      				 var bmDropDownId = "bmDropDownsId_id"+z;
+      				 document.getElementById(bmDropDownId).disabled = true;
+      			}
+      		  }
+      		  
+      		  //logic for disabling the blue martini text field 
+				   	
+          	  if(document.getElementById("bmTextAttributeCount")){
+       			 var bmTextFieldCount = document.getElementById("bmTextAttributeCount").value;
+       				for(var a=0; a<bmTextFieldCount; a++){
+       					document.getElementById("blueMartiniText_Id"+(a+1)).disabled=true;
+       				   
+       				}
+       			  } 
+      		  
+          	  if(document.getElementById("paRadioButtonCounter")){ 
+          		  var  radioButtonCount =document.getElementById("paRadioButtonCounter").value;		
+          	   
+   				  for(var j=1; j<=radioButtonCount; j++){
+              	  	 for(var i=1; i<3; i++){ 
+              		 var temp = j+""+i;
+	    	            	  document.getElementById("paRadio_Id"+temp).disabled = true;
+              		 }  
+   				  }
+          	  }
+          	  
+          	  if(document.getElementById("bmRadioButtonCounter")){ 
+          		  var  radioButtonCount =document.getElementById("bmRadioButtonCounter").value;	
+   				  for(var j=1; j<=radioButtonCount; j++){
+              	  	 for(var i=1; i<3; i++){ 
+              		 var temp = j+""+i;
+	    	            	 document.getElementById("bmRadio_Id"+temp).disabled = true; 
+	    	             }
+   				  }
+          	  }
+            }
+            
+            // Enable Product Attributes
+            function enableProductAndLegacyAttributes(){
+            	 //Logic for enabling the product attribute multi select drop down 
+      		  if(document.getElementById("paDropDownCounter")){ 
+      		  var  dropDownCounting=document.getElementById("paDropDownCounter").value;		            		
+      			for(q=1; q<=dropDownCounting; q++){	           				
+      				 var paDropDownId = "dropDownsId_id"+q;		 
+      				 document.getElementById(paDropDownId).disabled = false;
+      			}
+      		  }
+       
+      		 //Logic for enabling the blue martini attribute multi  select drop down
+      		 if(document.getElementById("bmDropDownCounter")){ 
+          		 
+      			 var  bmDropDownCounting=document.getElementById("bmDropDownCounter").value;
+		            	  for(z=1; z<=bmDropDownCounting; z++){
+		            				 var bmDropDownId = "bmDropDownsId_id"+z;
+		            				 document.getElementById(bmDropDownId).disabled = false;
+		            	}	
+      			 }
+		            	  
+       
+            	//logic for disabling the product attribute  text field
+           		  if(document.getElementById("paTextAttributeCount")){
+         				var textFieldCount = document.getElementById("paTextAttributeCount").value;
+         				for(var a=0; a<textFieldCount; a++){
+         					document.getElementById("paText_Id"+(a+1)).disabled=false;		          					    
+         				}
+                      } 
+            	  
+            	  //logic for disabling the blue martini text field 
+            	  if(document.getElementById("bmTextAttributeCount")){  
+         			 var bmTextFieldCount = document.getElementById("bmTextAttributeCount").value;
+         				for(var a=0; a<bmTextFieldCount; a++){
+         					document.getElementById("blueMartiniText_Id"+(a+1)).disabled=false;
+         			 
+         				}
+         			  }
+            	  
+            	  if(document.getElementById("paRadioButtonCounter")){ 
+            		  var  radioButtonCount =document.getElementById("paRadioButtonCounter").value;		
+            	   
+     				  for(var j=1; j<=radioButtonCount; j++){
+                	  	 for(var i=1; i<3; i++){ 
+                		 var temp = j+""+i;
+	    	            	  document.getElementById("paRadio_Id"+temp).disabled = false;
+                		 }  
+     				  }
+            	  }
+            	  
+            	  if(document.getElementById("bmRadioButtonCounter")){ 
+            		  var  radioButtonCount =document.getElementById("bmRadioButtonCounter").value;	
+     				  for(var j=1; j<=radioButtonCount; j++){
+                	  	 for(var i=1; i<3; i++){ 
+                		 var temp = j+""+i;
+	    	            	 document.getElementById("bmRadio_Id"+temp).disabled = false; 
+	    	             }
+     				  }
+            	  }
+            }
             
             function dropDownValues(selectedDropdwonValue, selectedDropDown, totalDropDwons){
          	 var list =  document.forms['contentDisplayForm'].elements["dropDownsName_id"+selectedDropDown+""];
@@ -812,7 +688,6 @@
 		function goToWorkListDisplayScreen(loggedInUser,releseLockedPetURL) {			
 			var  pepUserRoleName = "";
 			inputChanged  = false ; 
-			
 	 		if(document.getElementById("roleNameId") != null){
       		 	 pepUserRoleName = document.getElementById("roleNameId").value;  
       		}
@@ -820,21 +695,35 @@
 			
 			if(pepUserRoleName == 'vendor'){
 				if(stylePetContentStatus=='Initiated'){
-					var response =  confirm("Are you sure you want to close without saving ? ");
-					if(response == false){
-						return false;
-				 	}
+					jConfirm('Are you sure you want to close without saving ?', 'Confirm', function(result) {     
+						if(!result){
+						 return false;
+						}else{
+							goBackToWorkList(loggedInUser,releseLockedPetURL);
+						}
+					});
+				} else {
+					goBackToWorkList(loggedInUser,releseLockedPetURL);
 				}
 			} else if(pepUserRoleName == 'dca'){
 				if(stylePetContentStatus=='Initiated' || stylePetContentStatus=='Ready_For_Review'){
-					var response =  confirm("Are you sure you want to close without saving ? ");
-					if(response == false){
-						return false;
-				 	}
+					jConfirm('Are you sure you want to close without saving ?', 'Confirm', function(result) {     
+						if(!result){
+						 return false;
+						}else{
+							goBackToWorkList(loggedInUser,releseLockedPetURL);
+						}
+					});
+				} else {
+					goBackToWorkList(loggedInUser,releseLockedPetURL);
 				}
+			} else {
+				goBackToWorkList(loggedInUser,releseLockedPetURL);
 			}
-			
-			if(timeOutFlag == 'yes'){
+		}
+	 	
+	 	function goBackToWorkList(loggedInUser,releseLockedPetURL){
+	 		if(timeOutFlag == 'yes'){
 				$("#timeOutId").show();
 				timeOutConfirm = 'Y';		
 				setTimeout(function(){
@@ -845,9 +734,8 @@
 				$("#timeOutId").hide();
 				releseLockedPet(loggedInUser,releseLockedPetURL);
 				window.location = "/wps/portal/home/worklistDisplay";	
-			}
-		}
-	 	
+			} 
+	 	}
 		
 //on click of the sku orin number hyper link get the sku attributes
 		function getSkuAttributes(url,selectedOrinNumber){	
@@ -952,13 +840,15 @@
 					  disableStyleColoreFields();
 				  }
 				  
-			  }else if('vendor'){
+			  }else if(userRole == 'vendor'){
 				 if(styleColorStatus == 'Initiated'){
 					 removeStyleColorDisable();
 				  }
 				 if(styleColorStatus == 'Completed' || styleColorStatus == 'Ready_For_Review' || styleColorStatus == 'Closed'){
 					 disableStyleColoreFields();
 				  }
+			  } else if(userRole == 'readonly'){
+				  disableStyleColoreFields();
 			  }
 			               
                var number = document.getElementById('a_drop_down_box');
@@ -1046,28 +936,17 @@
 	 //on click of the Style Color  Data row submit button ,pass the style color orin number ,styleColor  pet status and logger in user to the update content pet style color  status by caling webservice
 		function getUpdateStyleColorContentPetStatusWebserviceResponse(url,styleColorPetOrinNumber,styleColorPetContentStatus,user,roleName,clickedButtonId,colorRowCount){
  
-			 var status = true;
-			// var val =  document.getElementById("styleContentStatusId").value;
-			 
-			    /*  var a_drop_down_sel= document.getElementById("a_drop_down_box");
-			     if(a_drop_down_sel.value == null || a_drop_down_sel.value == '-1'){
-					 alert("Please select value for Omnichannel Color Family");
-					 return;
-				 }    */
-			     
-				 /* var  omniChannelColorDescriptionId=   $("#omniChannelColorDescriptionId").val();
-				 if(omniChannelColorDescriptionId == null || omniChannelColorDescriptionId.trim() == ''){
-					 alert("Please complete Color fields");
-					 return;
-				 } */
+				var status = true;
 			  
 			    var val = $('.contentStatusId').html(); 
 				if(roleName=='dca' && val != null && (val == 'Initiated' || val == 'Ready_For_Review')){
 					status = false;
-					alert("Please approve style level before approving the style Color Pet.");
+					jAlert('Please approve style level before approving the style color pet.', 'Alert');
+					//alert("Please approve style level before approving the style Color Pet.");
 				} else if( (roleName=='vendor' || roleName=='readonly') && val != null && (val == 'Initiated')){  
 					status = false;
-					alert("Please submit style level before submitting the Style Color Pet.");
+					jAlert('Please submit style level before submitting the style color pet', 'Alert');
+					//alert("Please submit style level before submitting the Style Color Pet.");
 				}
 				
 			if(status){
@@ -1204,7 +1083,11 @@
 			var secondaryColorId4Options = secondaryColorId4_sel.options[secondaryColorId4_sel.selectedIndex].value;
 				
 			var  nrfColorCodeId=   $("#nrfColorCodeId").val();			
-			var  omniChannelColorDescriptionId=   $("#omniChannelColorDescriptionId").val();			
+			var  omniChannelColorDescriptionId=   $("#omniChannelColorDescriptionId").val();	
+			if(omniChannelColorDescriptionId == null || omniChannelColorDescriptionId.trim() == ''){
+				 jAlert("Please enter Omnichannel Color Description", "Alert");
+				 return;
+			 }
 			var  vendorColorId=   $("#vendorColorId").val();	
 			
  
@@ -1263,7 +1146,8 @@
 			 } else if(from == 'Save'){
 				 var values = document.getElementById("iphCategoryDropDownId");
 				 if(values != null && (values.value == 'select' || values.value == null) ){
-					alert("IPH selection is mandatory.");
+					//alert("IPH selection is mandatory.");
+					jAlert('IPH selection is mandatory', 'Alert');
 					return false;
 				 }  
 			 }
@@ -1609,13 +1493,15 @@
 					if(omniBrandCount != 1){
 						var onminvalue =  $("#selectedOmniBrand").val();
 						 if(onminvalue == null || onminvalue == '' || onminvalue == '-1'){
-					    	 alert("Please select value for Omni Channel Brand");
+							 jAlert('Please select value for Omni Channel Brand', 'Alert');
+					    	// alert("Please select value for Omni Channel Brand");
 					    	 return;
 					     }
 					}else if(omniBrandCount == 1){
 						var firstValue = document.getElementById("omnichannelbrand").value;
 						 if(firstValue == null || firstValue == '' || firstValue == '-1'){
-							 alert("Please select value for Omni Channel Brand");
+							 jAlert('Please select value for Omni Channel Brand', 'Alert');
+							// alert("Please select value for Omni Channel Brand");
 							 return;
 						}else{
 							document.getElementById("selectedOmniBrand").value = firstValue;
@@ -1626,13 +1512,15 @@
 					if(carBrandCount != 1){
 					 var carsvalue =  $("#selectedCarsBrand").val();
 						 if(carsvalue == null || carsvalue == '' || carsvalue == '-1'){
-					    	 alert("Please select value for Car Brand");
+							 jAlert('Please select value for Car Brand', 'Alert');
+					    	 //alert("Please select value for Car Brand");
 					    	 return;
 					     }
 					}else if(carBrandCount == 1){
 						var firstValue = document.getElementById("carbrand").value;
 						 if(firstValue == null || firstValue == '' || firstValue == '-1'){
-							 alert("Please select value for Car Brand");
+							 jAlert('Please select value for Car Brand', 'Alert');
+							// alert("Please select value for Car Brand");
 					    	 return;
 						 }else{
 							 document.getElementById("selectedCarsBrand").value = firstValue;
@@ -1643,47 +1531,41 @@
 				
 				var  productName= document.getElementById("txt_outfitName").value;
 				if(productName == null || productName.trim() == ""){
-					 alert("Please enter Product Name");
+					 jAlert('Please enter Product Name', 'Alert');
+					// alert("Please enter Product Name");
 					 return;
 				}else if(productName != null && productName.trim().length > 300){
-					 alert("Product Name should be less than 300 characters.");
+					 jAlert('Product Name should be less than 300 characters', 'Alert');
+					// alert("Product Name should be less than 300 characters.");
 					 return;
 				}
 				
 				var  productDescription= document.getElementById("vendorStyleId").value;
 				if(productDescription == null || productDescription.trim() == ""){
-					 alert("Please enter Product Description");
+					 jAlert('Please enter Product Description', 'Alert');
+					// alert("Please enter Product Description");
 			    	 return;
 				}else if (productDescription != null && productDescription.length < 40) {
-					 alert("Product Description should be minimum of 40 characters");
+					 jAlert('Product Description should be minimum of 40 characters', 'Alert');
+					// alert("Product Description should be minimum of 40 characters");
 					 return;
 				}else if (productDescription != null && productDescription.trim().length > 2000) {
-					 alert("Product Description should be less than 2000 characters");
+					 jAlert('Product Description should be less than 2000 characters', 'Alert');
+					// alert("Product Description should be less than 2000 characters");
 					 return;
 				}
 				
 				 var belkExcVal =  $("#selectedBelkExclusive").val();
 			     if(belkExcVal == null || belkExcVal == '-1' || belkExcVal == ''){
-			    	 alert("Please select value for Belk Exclusive");
+			    	 jAlert('Please select value for Belk Exclusive', 'Alert');
+			    	// alert("Please select value for Belk Exclusive");
 			    	 return;
 			     }
 
-			     /* if(styleOrColor == 'Color'){
-				     var a_drop_down_sel= document.getElementById("a_drop_down_box");
-				     if(a_drop_down_sel.value == null || a_drop_down_sel.value == '-1'){
-						 alert("Please select value for Omnichannel Color Family");
-						 return;
-					 }   
-				     
-					 var  omniChannelColorDescriptionId=   $("#omniChannelColorDescriptionId").val();
-					 if(omniChannelColorDescriptionId == null || omniChannelColorDescriptionId.trim() == ''){
-						 alert("Please select value for Omnichannel Color Description");
-						 return;
-					 }
-			     } */
 			       var values = document.getElementById("iphCategoryDropDownId");
 					if(values != null && (values.value == 'select' || values.value == null) ){
-						alert("IPH selection is mandatory.");
+						jAlert('IPH selection is mandatory', 'Alert');
+						//alert("IPH selection is mandatory.");
 						return;
 				 }  
 				
@@ -1693,6 +1575,7 @@
 			   //Logic for passing selected multi select product attribute drop downs ,its value and  the xpath
 					var finalString = "";
 					for(i=0; i<dropdownCount; i++){
+						var attNameAndPath = document.getElementById("dropdownAttributeNameXpath_id"+(i+1)).value;
 						var temp = $("#dropdownhidden_id"+(i+1)).val();
 						// Added to get the last two value by Cognizant.
 						var lastTwo= temp.substr(temp.length -2);
@@ -1708,7 +1591,10 @@
 						} 
 						else {
 							if(mandatory == 'Yes'){ 
-							alert(" Please select mandatory product attributes");
+								var attName = attNameAndPath.split("#");
+								jAlert('Please select mandatory product attribute : <b> '+attName[0] + '</b>', 'Alert');
+								//jAlert('Please select mandatory product attributes', 'Alert');
+								//alert(" Please select mandatory product attributes");
 								return;
 							}
 						} 
@@ -1718,6 +1604,7 @@
 					  //Get the ration buttons
 			   		  var finalPIMRadioString = "";
 			   			for(i=0; i<(pimRadioButtonCount); i++){
+			   			   var attributePath = document.getElementById("paRadioAttributeXpath_id"+(i+1)).value;
 			   				var temp = $("#radioButtonHidden_id"+(i+1)).val();
 			   				var mandatory = $("#isPIMRadioMandatory_id"+(i+1)).val();
 			   				if(!(temp == null || temp =="")){ 
@@ -1729,7 +1616,10 @@
 			   				} 
 			   				  else {
 			   					if(mandatory == 'Yes'){ 
-			   						alert(" Please make a selection to mandatory product radio attributes");
+			   						var attName = attributePath.split("#");
+			   						jAlert('Please make a selection to mandatory product radio attribute :'+attName[0], 'Alert');
+			   						//jAlert('Please make a selection to mandatory product radio attributes', 'Alert');
+			   					//	alert(" Please make a selection to mandatory product radio attributes");
 			   						return;
 			   					}
 			   				}  
@@ -1746,7 +1636,10 @@
 						    var userEnteredValue = document.getElementById("paText_Id"+(a+1)).value;
 						    if(userEnteredValue == null || userEnteredValue.trim() == '' ){
 						    	if(mandatory == 'Yes'){ 
-					         		 alert(" Please enter mandatory product text field attributes");
+						    		 var attName = textFieldAttNameAndPath.split("#");
+						    		 jAlert('Please enter mandatory product text field attribute :'+attName[0], 'Alert');
+						    		//jAlert('Please enter mandatory product text field attributes', 'Alert');
+					         		// alert(" Please enter mandatory product text field attributes");
 					         		return; 
 						    	}
 						    }else{ 
@@ -1772,8 +1665,9 @@
 			        // For Blue Martini values
 		            var bmFinalString = "";
 		             for(i=0; i<bmDropDownCount; i++){ 
-		                      var temp = $("#blueMartiniDropDownHidden_id"+(i+1)).val();
-		                      var mandatory = $("#isBMMandatory_id"+(i+1)).val();
+		            	 var attNameAndPath = document.getElementById("blueMartiniDropDownAttributeNameXpath_id"+(i+1)).value;
+		                 var temp = $("#blueMartiniDropDownHidden_id"+(i+1)).val();
+		                 var mandatory = $("#isBMMandatory_id"+(i+1)).val();
 					// Added to get the last two value by Cognizant.
 					 var lastTwo= temp.substr(temp.length -2);
 					// Added to get the last two value by Cognizant.
@@ -1787,7 +1681,10 @@
 		                      } 
 		                        else {
 		                        	if(mandatory == 'Yes'){ 
-		      						 alert(" Please select mandatory legacy attributes");
+		                        	 var attName = attNameAndPath.split("#");
+		                        	 jAlert('Please select mandatory legacy attribute : <b> '+attName[0] + '</b>', 'Alert');
+		                        	 //jAlert('Please select mandatory legacy attributes', 'Alert');
+		      						// alert(" Please select mandatory legacy attributes");
 		      						return;
 		                        	}
 		      				 }  
@@ -1797,6 +1694,7 @@
 	             //Get the bm ration buttons
 		   		  var finalBMRadioString = "";
 		   			for(i=0; i<(bmRadionButtonCount); i++){
+		   				var attributePath = document.getElementById("bmRadioAttributeXpath_id"+(i+1)).value;
 		   				var temp = $("#bmradioButtonHidden_id"+(i+1)).val();
 		   				 var mandatory = $("#isBMRadioMandatory_id"+(i+1)).val();
 		   				if(!(temp == null || temp =="")){ 
@@ -1808,7 +1706,10 @@
 		   				} 
 		   				  else {
 		   					if(mandatory == 'Yes'){ 
-		   						alert(" Please make a selection to mandatory legacy radio attributes");
+		   						var attName = attributePath.split("#");
+		   					    jAlert('Please make a selection to mandatory legacy radio attribute : '+attName[0], 'Alert');
+		   					    //jAlert('Please make a selection to mandatory legacy radio attributes', 'Alert');
+		   						//alert(" Please make a selection to mandatory legacy radio attributes");
 		   						return;
 		   					}
 		   				}  
@@ -1823,7 +1724,10 @@
 						    var userEnteredValue = document.getElementById("blueMartiniText_Id"+(a+1)).value;
 						    if(userEnteredValue == null || userEnteredValue.trim() == '' ){
 						    	if(mandatory == 'Yes'){ 
-						      		alert(" Please enter mandatory legacy text field attributes");
+						    		var attName = textFieldAttNameAndPath.split("#");
+						    		jAlert('Please enter mandatory legacy text field attribute :'+attName[0], 'Alert');
+						    		//jAlert('Please enter mandatory legacy text field attributes', 'Alert');
+						      		//alert(" Please enter mandatory legacy text field attributes");
 						    		return;  
 						    	}
 						    }else{ 
@@ -1974,7 +1878,7 @@ var myEvent = window.attachEvent || window.addEventListener;
 var chkevent = window.attachEvent ? 'onbeforeunload' : 'beforeunload'; /// make IE7, IE8 compitable
 
            myEvent(chkevent, function(e) { // For >=IE7, Chrome, Firefox
-           if(inputChanged && confirmationMessage != false){ 
+           if(inputChanged && confirmationMessage !== false){ 
            (e || window.event).returnValue = confirmationMessage;
 
 				var releseLockedPetURL = $("#releseLockedPet").val();
@@ -2361,7 +2265,7 @@ function clickListenerContent(e){
 												</li>
 												
 												</li>
-												 <li class="txt_attr_name" style="width: 25%;"><b>Bopis :</b>
+												 <li class="txt_attr_name" style="width: 25%;"><b>BOPIS :</b>
 												 <select style="width:50%;height: 27px;" id="bopislId" name="bopislId" onclick="javascript:getSelectedBopislId(bopislId)"> 
 													<option id="-1" value="-1">Please Select</option>
 													<option id="Yes" value="Yes">Yes</option>
@@ -2472,6 +2376,7 @@ function clickListenerContent(e){
 										   	
 										   	<c:set var="subcount" value="260"/>
 						                    <c:set var="countList" value="0"/>
+						                    <c:set var="skuCount" value="500"/>
 						                    
 										   	<c:forEach items="${contentDisplayForm.styleAndItsChildDisplay.styleList}" 
 							                             var="styleDisplayList"  varStatus="status">							                             
@@ -2483,7 +2388,7 @@ function clickListenerContent(e){
 							                         
 													<tr id="tablereport"  class="treegrid-${countList}">	
 														<td></td>													
-													 	<td><a  href="#"  id="styleAnchorTag"  onclick="resetColorAttributes()" >${styleDisplayList.orinNumber}</a></td>
+													 	<td><a  href="javascript:;"  id="styleAnchorTag"  onclick="resetColorAttributes()" >${styleDisplayList.orinNumber}</a></td>
 													 	<input type="hidden" id="styleOrinNumberId" name="styleOrinNumber" value="${styleDisplayList.orinNumber}"></input>
 														<td><c:out value="${contentDisplayForm.styleInformationVO.styleId}"/></td>
 														<td><c:out value="${styleDisplayList.color}"/></td>
@@ -2526,19 +2431,22 @@ function clickListenerContent(e){
 											
 											         <% int colorRows=1;  %>
 													<c:forEach items="${styleDisplayList.styleColorList}" var="styleDisplayColorList"  varStatus="styleColorList">	
-													          <c:set var="subcount" value="${subcount + styleColorList.count}" />																					
+													         <!--  <c:set var="subcount" value="${subcount + styleColorList.count}" />	-->																				
 													       	  <portlet:resourceURL var="getStyleColorAttributeDetails" id ="getStyleColorAttributeDetails">		
 																             	<portlet:param name="styleColorOrinNumber" value="${styleDisplayColorList.orinNumber}"></portlet:param>
 							                                  </portlet:resourceURL>
-													          <tr name="treegrid-${subcount} treegrid-parent-${countList}"  class="treegrid-${subcount} treegrid-parent-${countList}" >               
+													          <tr class="treegrid-${subcount} treegrid-parent-${countList}" >               
 															   <td>&nbsp;</td> 
 															   <c:choose>
 															   <c:when test="${contentDisplayForm.roleName == 'vendor'}">
-															  	 <td><a id="<c:out value="${styleDisplayColorList.orinNumber}"/>"  href="#"  onclick="getStyleColorAttributes('${getStyleColorAttributeDetails}','<c:out value="${styleDisplayColorList.orinNumber}"/>', <%= colorRows %>, 'vendor')">${styleDisplayColorList.orinNumber}</a></td>
+															  	 <td><a id="<c:out value="${styleDisplayColorList.orinNumber}"/>"  href="#colorAttributeSection"  onclick="getStyleColorAttributes('${getStyleColorAttributeDetails}','<c:out value="${styleDisplayColorList.orinNumber}"/>', <%= colorRows %>, 'vendor')">${styleDisplayColorList.orinNumber}</a></td>
 															   </c:when>
 															   <c:when test="${contentDisplayForm.roleName == 'dca'}">
-															  	 <td><a  id="<c:out value="${styleDisplayColorList.orinNumber}"/>" href="#"  onclick="getStyleColorAttributes('${getStyleColorAttributeDetails}','<c:out value="${styleDisplayColorList.orinNumber}"/>', <%= colorRows %>, 'dca')">${styleDisplayColorList.orinNumber}</a></td>
+															  	 <td><a  id="<c:out value="${styleDisplayColorList.orinNumber}"/>" href="#colorAttributeSection"  onclick="getStyleColorAttributes('${getStyleColorAttributeDetails}','<c:out value="${styleDisplayColorList.orinNumber}"/>', <%= colorRows %>, 'dca')">${styleDisplayColorList.orinNumber}</a></td>
 															   </c:when>
+															    <c:when test="${contentDisplayForm.roleName == 'readonly'}">
+															    	<td><a  id="<c:out value="${styleDisplayColorList.orinNumber}"/>" href="#colorAttributeSection"  onclick="getStyleColorAttributes('${getStyleColorAttributeDetails}','<c:out value="${styleDisplayColorList.orinNumber}"/>', <%= colorRows %>, 'readonly')">${styleDisplayColorList.orinNumber}</a></td>
+															    </c:when>
 															   </c:choose>
 															   <input type="hidden" id="selectedStyleColorOrinNumber" name="selectedStyleColorOrinNumber" value=""></input>   
 															   															  														  
@@ -2574,7 +2482,7 @@ function clickListenerContent(e){
 														   	 
 															   <c:forEach items="${styleDisplayColorList.skuList}" var="styleColorsChildSkuList"  varStatus="skuList">
 															      	
-															       <c:set var="subcount" value="${subcount +styleColorList.count +skuList.count}" />
+															     <!--  <c:set var="skuCount" value="${subcount +styleColorList.count +skuList.count}" /> --> 
 																       <!--   <portlet:actionURL name="loadSkuAttribute" var="loadSkuAttributeURL">	
 											                                     <portlet:param name="selectSkuOrinNumberaction" value="loadSkuAttributeAction"></portlet:param>						                         
 											                         	          <portlet:param name="skuOrinNumber" value="${styleColorsChildSkuList.orin}"></portlet:param>
@@ -2585,9 +2493,9 @@ function clickListenerContent(e){
 							                                            </portlet:resourceURL>
 								                        		        
 								                        		        <input type="hidden" id="selectedSkuOrinNumber" name="selectedSkuOrinNumber" value=""/>		
-															       <tr name="treegrid2" class="treegrid-${subcount} treegrid-parent-${countList}">               
+															       <tr  class="treegrid-parent-${subcount}">               
 															          <td>&nbsp;</td>
-															          <td><a  href="#"  id="skuAnchorTag"  onclick="resetColorAttributes(); getSkuAttributes('${getSKUAttributeDetails}','<c:out value="${styleColorsChildSkuList.orin}"/>')">${styleColorsChildSkuList.orin}</a></td> 															          								      
+															          <td><a  href="#skuAttributeSection"  id="skuAnchorTag"  onclick="resetColorAttributes(); getSkuAttributes('${getSKUAttributeDetails}','<c:out value="${styleColorsChildSkuList.orin}"/>')">${styleColorsChildSkuList.orin}</a></td> 															          								      
 															          <td><c:out value="${contentDisplayForm.styleInformationVO.styleId}"/></td>                                                                                         
 															          <td><c:out value="${styleColorsChildSkuList.color}"/></td> 
 															          <td><c:out value="${styleColorsChildSkuList.vendorSize}" /></td>                                                                                        
@@ -2597,12 +2505,11 @@ function clickListenerContent(e){
 															           <td>&nbsp;</td>											    		 
 														          </tr>   
 														   
-															            	
+															            <c:set var="skucount" value="${skucount+1}" />	
 													          </c:forEach>
 													           <% colorRows++;  %>  	                                                            
-											                  
+											                  <c:set var="subcount" value="${subcount+1}" />
 												    </c:forEach>
-												  
 												    <c:set var="countList" value="${countList+1}" />
 							               	</c:forEach> 
 							
@@ -2615,7 +2522,7 @@ function clickListenerContent(e){
 								</c:if>					
 									
 							</div>
-							
+									<!--<a name= "StyleColorSection"></a>-->
 									<div id="colorAttributeSection" class="cars_panel x-hidden">
 							
 										<div class="x-panel-header">
@@ -2716,6 +2623,7 @@ function clickListenerContent(e){
 				
 						
 						<!--SKU Attributes Section starts here  -->	
+						<!--<a name= "SKU_Attribute_Section"></a>-->
 						<div class="cars_panel x-hidden"  id="skuAttributeSection" >
 							
 									<div class="x-panel-header">
@@ -2749,6 +2657,7 @@ function clickListenerContent(e){
 													    <input type=hidden id="petId" name="petId" value="${contentDisplayForm.styleInformationVO.orin}"/>	
 													   	<c:if test="${contentDisplayForm.roleName == 'readonly'}">												   
 														    <select style="width:58%;height: 27px;"  id="iphCategoryDropDownId" name="iphCategoryDropDown" onchange="calliph('${getIPHCategory}','<c:out value="${contentDisplayForm.styleInformationVO.orin}"/>')" disabled="disabled">
+														        <option id="select" value="select" selected> Please Select</option>
 														        <c:forEach var="categoryMap" items="${contentDisplayForm.categoryReferenceData}">												
 																	<option value="${categoryMap.key}"  [b]selected="true"[/b] ><c:out value="${categoryMap.value}"/></option>              
 																</c:forEach>														
@@ -2781,7 +2690,7 @@ function clickListenerContent(e){
 																<td><c:if test="${categoryDisplayList.isMandatory == 'Yes'}">* </c:if>
 																<c:out value="${categoryDisplayList.displayName}"/></td>
 																
-																<input type="hidden" name="dropdownAttributeNameXpath"  id="dropdownAttributeNameXpath_id<%= i %>"  value="${categoryDisplayList.attributeName}#${categoryDisplayList.attributePath}" />	
+																<input type="hidden" name="dropdownAttributeNameXpath"  id="dropdownAttributeNameXpath_id<%= i %>"  value="${categoryDisplayList.displayName}#${categoryDisplayList.attributePath}" />	
 																<input type="hidden" name="isPIMMandatory_id"  id="isPIMMandatory_id<%= i %>"  value="${categoryDisplayList.isMandatory}" />															
 																<td>
 																	<input type="hidden" name="dropdownhidden" id="dropdownhidden_id<%= i %>" value="" /> 
@@ -2842,7 +2751,7 @@ function clickListenerContent(e){
 												    
 												      <c:if test="${categoryDisplayList.attributeFieldType == 'Radio Button'}">
 												     
-															<input type="hidden" name="paRadioAttributeXpath"  id="paRadioAttributeXpath_id<%= k%>"  value="${categoryDisplayList.attributeName}#${categoryDisplayList.attributePath}" />
+															<input type="hidden" name="paRadioAttributeXpath"  id="paRadioAttributeXpath_id<%= k%>"  value="${categoryDisplayList.displayName}#${categoryDisplayList.attributePath}" />
 															<input type="hidden" name="radioButtonHidden_id" id="radioButtonHidden_id<%= k %>" value="" />
 															<input type="hidden" name="isPIMRadioMandatory_id"  id="isPIMRadioMandatory_id<%= k %>"  value="${categoryDisplayList.isMandatory}" />	
 															 <div id="radiofieldSet_id<%=k %>" >
@@ -2877,7 +2786,7 @@ function clickListenerContent(e){
                                                   <c:if test="${categoryDisplayList.attributeFieldType == 'Text Field'}">
                                                          <input type="hidden" name="isPIMTextMandatory_id"  id="isPIMTextMandatory_id<%= j %>"  value="${categoryDisplayList.isMandatory}" />	
                                                          <input type="hidden" name="textFieldHidden" id="textFieldHidden_id<%= j %>" value="" />
-                                                         <input type="hidden" name="paTextAttributeXpath"  id="paTextAttributeXpath_id<%= j %>"  value="${categoryDisplayList.attributeName}#${categoryDisplayList.attributePath}" />
+                                                         <input type="hidden" name="paTextAttributeXpath"  id="paTextAttributeXpath_id<%= j %>"  value="${categoryDisplayList.displayName}#${categoryDisplayList.attributePath}" />
                                                              <tr>                                                                                         
                                                                        <td><c:if test="${categoryDisplayList.isMandatory == 'Yes'}">* </c:if><c:out value="${categoryDisplayList.displayName}"/></td>
                                                                        <td><input type="text" id="paText_Id<%=j%>" name="paText_Id<%=j%>" value="${categoryDisplayList.attributeFieldValue}" /></td>                                                                                                                                     
@@ -2914,7 +2823,7 @@ function clickListenerContent(e){
 															<tr>
 																<td><c:if test="${blueMartiniAllList.isMandatory == 'Yes'}">* </c:if><c:out value="${blueMartiniAllList.displayName}"/></td>
 																<input type="hidden" name="isBMMandatory_id"  id="isBMMandatory_id<%= bmDropDownCount %>"  value="${blueMartiniAllList.isMandatory}" />	
-																<input type="hidden" name="blueMartiniDropDownAttributeNameXpath"  id="blueMartiniDropDownAttributeNameXpath_id<%= bmDropDownCount %>"  value="${blueMartiniAllList.attributeName}#${blueMartiniAllList.attributePath}" />															
+																<input type="hidden" name="blueMartiniDropDownAttributeNameXpath"  id="blueMartiniDropDownAttributeNameXpath_id<%= bmDropDownCount %>"  value="${blueMartiniAllList.displayName}#${blueMartiniAllList.attributePath}" />															
 																<td>
 																	<input type="hidden" name="blueMartiniDropDownHidden" id="blueMartiniDropDownHidden_id<%= bmDropDownCount %>" value="" />
 																	
@@ -2972,7 +2881,7 @@ function clickListenerContent(e){
 												    
 												    
 												     <c:if test="${blueMartiniAllList.attributeFieldType == 'Radio Button'}">
-															<input type="hidden" name="bmRadioAttributeXpath"  id="bmRadioAttributeXpath_id<%= c%>"  value="${blueMartiniAllList.attributeName}#${blueMartiniAllList.attributePath}" />
+															<input type="hidden" name="bmRadioAttributeXpath"  id="bmRadioAttributeXpath_id<%= c%>"  value="${blueMartiniAllList.displayName}#${blueMartiniAllList.attributePath}" />
 															 <input type="hidden" name="bmradioButtonHidden_id" id="bmradioButtonHidden_id<%= c%>" value="" />
 															<input type="hidden" name="isBMRadioMandatory_id"  id="isBMRadioMandatory_id<%= c %>"  value="${blueMartiniAllList.isMandatory}" />
 															 <div id="bmradiofieldSet_id<%=c %>" >
@@ -3003,7 +2912,7 @@ function clickListenerContent(e){
   													<c:if test="${blueMartiniAllList.attributeFieldType == 'Text Field'}">
 															<tr>
 															    <input type="hidden" name="bmTextAttributeCount"  id="bmTextAttributeCount" value="${contentDisplayForm.legacyAttributesDisplay.textFieldList.size()}"  />
-																<input type="hidden" name="blueMartiniTextAttributeNameXpath"  id="blueMartiniTextAttributeNameXpath_id<%= bmTextFieldCount %>"  value="${blueMartiniAllList.attributeName}#${blueMartiniAllList.attributePath}" />
+																<input type="hidden" name="blueMartiniTextAttributeNameXpath"  id="blueMartiniTextAttributeNameXpath_id<%= bmTextFieldCount %>"  value="${blueMartiniAllList.displayName}#${blueMartiniAllList.attributePath}" />
 																<input type="hidden" name="bmTextFieldHidden" id="bmTextFieldHidden_id<%= bmTextFieldCount %>" value="" />
 																<input type="hidden" name="isBMTextMandatory_id"  id="isBMTextMandatory_id<%= bmTextFieldCount %>"  value="${blueMartiniAllList.isMandatory}" />
 																<td><c:if test="${blueMartiniAllList.isMandatory == 'Yes'}">* </c:if><c:out value="${blueMartiniAllList.displayName}"/></td>

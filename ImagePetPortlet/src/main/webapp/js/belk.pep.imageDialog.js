@@ -38,8 +38,8 @@ $("#btnImageUploadAction").click(function (e)
 	document.getElementById('selectedColorOrin').value = document.getElementById('selectedOrinVPI').value;
 	document.getElementById('supplierIdVPI').value = document.getElementById('supplierId').value;
 	document.getElementById('vendorStyle#').value =document.getElementById('vendorStyle').value;
-	document.getElementById('colorCode').value =document.getElementById('selectedVendorColorCode').value;     
-	ShowImageUploadPopUp(false);
+	document.getElementById('colorCode').value = document.getElementById('selectedVendorColorCode').value || '';     
+	ShowImageUploadPopUp(true);
      e.preventDefault();
  });
  

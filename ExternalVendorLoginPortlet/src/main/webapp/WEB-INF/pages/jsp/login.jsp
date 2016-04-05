@@ -54,7 +54,7 @@ var sTime=new Date();
 				<div id="login" title="Login"   class="tab x-hide-display">	
 				<form:form commandName="loginForm" method="post" action="${formAction}">
 							<fieldset>
-							<ol>
+							<ol style="margin-bottom:10px;">
 								<c:if test="${not empty loginFailureUserNameinvalid}">
 								<li class="text"><img src="<%=response.encodeURL(request.getContextPath()+"/images/iconWarning.gif")%>" class="messagedisplay"/><c:out value="${loginFailureUserNameinvalid}"/></li>
 								</c:if>
@@ -70,6 +70,7 @@ var sTime=new Date();
 								<c:if test="${not empty exceptionMessage}">
 								<li class="text"><img src="<%=response.encodeURL(request.getContextPath()+"/images/iconWarning.gif")%>" class="messagedisplay"/><c:out value="${exceptionMessage}"/></li>
 								</c:if>
+							
 							<li class="text">
 								<label for="j_username"><fmt:message key="external.login.label.email"/></label>
 								<input type="text" id="j_username" name="j_username" value="${userName}" />
@@ -82,6 +83,8 @@ var sTime=new Date();
 							<input type="submit" value="Login" class="btn" />
 							<a href='<portlet:renderURL> <portlet:param name="action" value="forgotPassword"/></portlet:renderURL>'><fmt:message key="external.login.label.forgot.password"/></a>
 						   </li>
+						   
+						  <li class="text"><div align="center"><a href="<c:out value='${BEBESTPLAN}'/>" target="_blank" title="">Belk Best Plan</a></div></li>
 	                      </ol>
 						 </fieldset>
 					 </form:form>

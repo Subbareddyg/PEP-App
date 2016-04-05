@@ -53,7 +53,7 @@
 <br/>
 <img src=<r:url uri="dav:fs-type1/common-resources/BelkVendorStaticResources/assets/cars/images/s.gif" allowRelativeURL="true" mode="download" lateBinding="false"/> alt="Belk" width="650" height="2" >
 
-<label style="float:right; font-family: Tahoma; font-weight: normal; width:200px;">System Availability 7AM to 8PM, EST</label>
+<label style="float:right; font-family: Tahoma; font-weight: normal; ">System Availability 6:30AM to 9:00PM, EST</label>
 </div>
 
 			
