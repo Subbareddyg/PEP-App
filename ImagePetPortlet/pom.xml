@@ -1,8 +1,8 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-	<groupId>ProductEnrichmentPortal</groupId>
-	<version>1.0</version>
+	<groupId>com.belk.pim</groupId>
+	<version>1.0.0.0-SNAPSHOT</version>
 	<name>ImagePetPortlet</name>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>ImagePetPortlet</artifactId>
@@ -13,6 +13,9 @@
 	<packaging>war</packaging>
 	<build>
 		<plugins>
+					
+			
+		
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>
@@ -47,6 +50,8 @@
 					<target>1.7</target>
 				</configuration>
 			</plugin>
+			
+			
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -58,7 +63,7 @@
 						<!-- here the phase you need -->
 						<phase>install</phase>
 						<goals>
-							<goal>copy-resources</goal>
+							<goal>copy-resources</goal>							
 						</goals>
 						<configuration>
 							<outputDirectory>../target/belkbuild</outputDirectory>
@@ -75,11 +80,45 @@
 										<include>**/*.properties</include>
 									</includes>
 								</resource>
+								<resource>
+									<directory>src/main/resources/dev</directory>									
+								</resource>								
 							</resources>
 						</configuration>
 					</execution>
 				</executions>
 			</plugin>
+			<!-- Modified by AFUAXK4 > -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.1</version>
+				<executions>
+					<execution>
+						<phase>test</phase>
+						<goals><goal>run</goal></goals>
+						<configuration>
+							<tasks>
+								<echo>Delete properties</echo>
+								<delete><fileset dir="src/main/resources" includes="*.properties"/></delete>
+								<delete><fileset dir="${basedir}/target/classes" includes="*.properties"/></delete>
+								<delete><fileset dir="src/main/webapp/WEB-INF" includes="applicationContext.xml"/></delete>
+								<echo>Copy properties</echo>
+								<copy file="src/main/resources/${param}/log4j.properties" tofile="src/main/resources/log4j.properties"/>
+								<copy file="src/main/resources/${param}/log4j.properties" tofile="${basedir}/target/classes/log4j.properties"/>
+								<copy file="src/main/resources/${param}/ftp.properties" tofile="src/main/resources/ftp.properties"/>
+								<copy file="src/main/resources/${param}/ftp.properties" tofile="${basedir}/target/classes/ftp.properties"/>
+								<copy file="src/main/resources/${param}/imagePortletResources.properties" tofile="src/main/resources/imagePortletResources.properties"/>
+								<copy file="src/main/resources/${param}/imagePortletResources.properties" tofile="${basedir}/target/classes/imagePortletResources.properties"/>
+								<copy file="src/main/resources/${param}/message.properties" tofile="src/main/resources/message.properties"/>
+								<copy file="src/main/resources/${param}/message.properties" tofile="${basedir}/target/classes/message.properties"/>
+								<copy file="src/main/webapp/WEB-INF/${param}/applicationContext.xml" tofile="src/main/webapp/WEB-INF/applicationContext.xml"/>
+							</tasks>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<!-- Modification End -->
 		</plugins>
 	</build>
 	<dependencies>	
@@ -225,10 +264,10 @@
 	<version>1.1</version>
 </dependency>
 <dependency>
-	<groupId>ProductEnrichmentPortal</groupId>
-	<artifactId>CommonForIpcLogin</artifactId>
-	<version>1.0</version>
-</dependency>
+			<groupId>com.belk.pim</groupId>
+			<artifactId>CommonForIpcLogin</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 <dependency>
 	<groupId>commons-net</groupId>
 	<artifactId>commons-net</artifactId>

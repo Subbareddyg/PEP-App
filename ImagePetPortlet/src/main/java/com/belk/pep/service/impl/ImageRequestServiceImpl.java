@@ -266,6 +266,9 @@ public String callRemoveImageWebService(JSONArray jsonArray) throws Exception,PE
        String msgCodeStr = "";
        String responseMSGCode = "";
        try {
+    	   String envVariable = System.getProperty("envVariable");
+    	   System.out.println("envVariable **********"+envVariable);
+    	   LOGGER.info("envVariable **********"+envVariable);
            Properties prop =PropertyLoader.getPropertyLoader(ImageConstants.MESS_PROP);
            String targetURLs = prop.getProperty(ImageConstants.DEV_SERVICE_URL);
            //String targetURLs = "http://ralpimwsasit02:7507/JERSYRest/rest/UpdateItemServices/deleteImage";

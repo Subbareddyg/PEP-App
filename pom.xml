@@ -23,6 +23,7 @@
 		<module>ImagePetPortlet</module>
 		<module>InternalUserLoginPortlet</module>
 		<module>WorkListDisplayPortlet</module>
+		<module>ThemeProjectCreation</module>
   </modules>
 <build>
 		<plugins>

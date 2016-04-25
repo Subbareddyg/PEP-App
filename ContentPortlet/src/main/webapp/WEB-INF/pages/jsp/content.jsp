@@ -2042,7 +2042,7 @@ function clickListenerContent(e){
 									<ul class="pep_info"
 										style="font-size: 11px; padding: 0 0 10px !important;">
 										<li class="txt_attr_name" style="width: 30%;"><fmt:message key="labelVendorProvidedSample" bundle="${display}"/><c:out value="${contentDisplayForm.styleInformationVO.vendorSampleIndicator}"/></li>
-										<li class="txt_attr_name" style="width: 30%;"><fmt:message key="labelVendorNumber" bundle="${display}"/><c:out value="${contentDisplayForm.styleInformationVO.supplierSiteId}"/></li>
+										<li class="txt_attr_name" style="width: 30%;"><fmt:message key="labelVendorNumber" bundle="${display}"/><c:out value="${contentDisplayForm.styleInformationVO.vendorId}"/></li>
 										<li class="txt_attr_name" style="width: 20%;"><fmt:message key="labelVendorName" bundle="${display}"/><c:out value="${contentDisplayForm.styleInformationVO.vendorName}"/></li>	
 									</ul>
 									
