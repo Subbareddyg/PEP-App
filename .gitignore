@@ -36,6 +36,7 @@ Thumbs.db
 
 .project
 .classpath
+*.classpath
 */.classpath
 .idea
 *.iml

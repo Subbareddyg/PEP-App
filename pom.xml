@@ -23,8 +23,8 @@
 		<module>ImagePetPortlet</module>
 		<module>InternalUserLoginPortlet</module>
 		<module>WorkListDisplayPortlet</module>
-		<module>ThemeProjectCreation</module>
-		<module>PepConfiguration</module>
+		<!-- <module>ThemeProjectCreation</module>
+		<module>PepConfiguration</module> -->
 
 
 

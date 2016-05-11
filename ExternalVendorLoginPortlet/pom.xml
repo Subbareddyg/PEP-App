@@ -1,261 +1,261 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-       <groupId>com.belk.pim</groupId>
-       <!--version>1.0.0.0-SNAPSHOT</version-->
-       <version>1.0</version>
-       <name>ExternalVendorLoginPortlet</name>
-       <modelVersion>4.0.0</modelVersion>
-       <artifactId>ExternalVendorLoginPortlet</artifactId>
-       <properties>
-              <spring.version>3.1.1.RELEASE</spring.version>  
-              <appfuse.version>2.0.1</appfuse.version>
-       </properties>
+	<groupId>com.belk.pim</groupId>
+	<version>1.0.0.0-SNAPSHOT</version>
+	<!-- <version>1.0</version> -->
+	<name>ExternalVendorLoginPortlet</name>
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>ExternalVendorLoginPortlet</artifactId>
+	<properties>
+		<spring.version>3.1.1.RELEASE</spring.version>
+		<appfuse.version>2.0.1</appfuse.version>
+	</properties>
 
-       <packaging>war</packaging>
-       <build>
-              <plugins>
-                     <plugin>
-                           <groupId>org.apache.maven.plugins</groupId>
-                           <artifactId>maven-war-plugin</artifactId>
-                           <version>2.4</version>
+	<packaging>war</packaging>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>2.4</version>
 
-                     </plugin>
-                     <plugin>
-                           <groupId>org.apache.maven.plugins</groupId>
-                           <artifactId>maven-clean-plugin</artifactId>
-                           <version>2.6.1
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-clean-plugin</artifactId>
+				<version>2.6.1
                            </version>
-                           <configuration>
-                                  <filesets>
-                                         <fileset>
-                                                <directory>
-                                                       src/main/webapp/WEB-INF/
+				<configuration>
+					<filesets>
+						<fileset>
+							<directory>
+								src/main/webapp/WEB-INF/
                                                 </directory>
-                                                <includes>
-                                                       <include>lib/</include>
-                                                       <include>classes</include>
-                                                </includes>
-                                         </fileset>
-                                  </filesets>
-                           </configuration>
-                     </plugin>
-                     <plugin>
-                           <groupId>org.apache.maven.plugins</groupId>
-                           <artifactId>maven-compiler-plugin</artifactId>
-                           <version>3.3</version>
-                           <configuration>
-                                  <source>1.7</source>
-                                  <target>1.7</target>
-                           </configuration>
-                     </plugin>
+							<includes>
+								<include>lib/</include>
+								<include>classes</include>
+							</includes>
+						</fileset>
+					</filesets>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.3</version>
+				<configuration>
+					<source>1.7</source>
+					<target>1.7</target>
+				</configuration>
+			</plugin>
 
-                     <plugin>
-                           <groupId>org.apache.maven.plugins</groupId>
-                           <artifactId>maven-resources-plugin</artifactId>
-                           <version>2.6</version>
-                           <executions>
-                                  <execution>
-                                         <id>copy-resources</id>
-                                         <!-- here the phase you need -->
-                                         <phase>install</phase>
-                                         <goals>
-                                                <goal>copy-resources</goal>
-                                         </goals>
-                                         <configuration>
-                                                <outputDirectory>../target/belkbuild</outputDirectory>
-                                                <resources>
-                                                       <resource>
-                                                              <directory>${basedir}/target</directory>
-                                                              <includes>
-                                                                     <include>*.war</include>
-                                                              </includes>
-                                                       </resource>
-                                                       <resource>
-                                                              <directory>src/main/resources</directory>
-                                                              <includes>
-                                                                     <include>**/*.properties</include>
-                                                              </includes>
-                                                       </resource>
-                                                </resources>
-                                         </configuration>
-                                  </execution>
-                           </executions>
-                     </plugin>
-                     
-                     <!-- Modified by AFUAXK4 > -->
-					<!--plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-antrun-plugin</artifactId>
-						<version>1.1</version>
-						<executions>
-							<execution>
-								<phase>test</phase>
-								<goals><goal>run</goal></goals>
-								<configuration>
-									<tasks>
-										<echo>Delete properties</echo>
-										<delete><fileset dir="src/main/resources" includes="*.properties"/></delete>
-										<delete><fileset dir="${basedir}/target/classes" includes="*.properties"/></delete>
-										<delete><fileset dir="src/main/webapp/WEB-INF" includes="applicationContext.xml"/></delete>
-										<echo>Copy properties</echo>
-										<copy file="src/main/resources/${param}/log4j.properties" tofile="src/main/resources/log4j.properties"/>
-										<copy file="src/main/resources/${param}/log4j.properties" tofile="${basedir}/target/classes/log4j.properties"/>
-										<copy file="src/main/resources/${param}/belkLoginPortlets.properties" tofile="src/main/resources/belkLoginPortlets.properties"/>
-										<copy file="src/main/resources/${param}/belkLoginPortlets.properties" tofile="${basedir}/target/classes/belkLoginPortlets.properties"/>										
-										<copy file="src/main/webapp/WEB-INF/${param}/applicationContext.xml" tofile="src/main/webapp/WEB-INF/applicationContext.xml"/>
-									</tasks>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin-->
-					<!-- Modification End -->
-              </plugins>
-       </build>
-       <dependencies>   
-       		  <dependency>
-			    <groupId>org.apache.logging.log4j</groupId>
-			    <artifactId>log4j-api</artifactId>
-			    <version>2.5</version>
-			  </dependency>
-			  <dependency>
-			    <groupId>org.apache.logging.log4j</groupId>
-			    <artifactId>log4j-core</artifactId>
-			    <version>2.5</version>
-			  </dependency>
-       		
-       		<dependency>
-		        <groupId>org.slf4j</groupId>
-		        <artifactId>slf4j-log4j12</artifactId>
-		        <version>1.5.2</version>
-   			 </dependency> 
-   			  <dependency>
-				<groupId>commons-dbcp</groupId>
-				<artifactId>commons-dbcp</artifactId>
-				<version>1.2.2</version>
-				<scope>compile</scope>
-			</dependency> 
-			<dependency>
-				<groupId>commons-pool</groupId>
-				<artifactId>commons-pool</artifactId>
-				<version>1.6</version>
-				<scope>compile</scope>
-			</dependency>     
-              <dependency>
-                     <groupId>org.springframework</groupId>
-                     <artifactId>spring-core</artifactId>
-                     <version>${spring.version}</version>
-                     <scope>compile</scope>
-              </dependency>
-              <dependency>
-                     <groupId>org.springframework</groupId>
-                     <artifactId>spring-webmvc-portlet</artifactId>
-                     <version>${spring.version}</version>
-                     <scope>compile</scope>
-              </dependency>
-              <dependency>
-                     <groupId>org.springframework</groupId>
-                     <artifactId>spring-aop</artifactId>
-                     <version>${spring.version}</version>
-                     <scope>compile</scope>
-              </dependency>
-              <dependency>
-               <groupId>org.aspectj</groupId>
-               <artifactId>aspectjweaver</artifactId>
-               <version>1.6.1</version>
-              </dependency>             
-              <dependency>
-                     <groupId>org.springframework</groupId>
-                     <artifactId>spring-beans</artifactId>
-                     <version>${spring.version}</version>
-                     <scope>compile</scope>
-              </dependency>
-              <dependency>
-                     <groupId>org.springframework</groupId>
-                     <artifactId>spring-context</artifactId>
-                     <version>${spring.version}</version>
-                     <scope>compile</scope>
-              </dependency>
-              <dependency>
-                     <groupId>org.springframework</groupId>
-                     <artifactId>spring-context-support</artifactId>
-                     <version>${spring.version}</version>
-                     <scope>compile</scope>
-              </dependency>
-              <dependency>
-                     <groupId>org.springframework</groupId>
-                     <artifactId>spring-expression</artifactId>
-                     <version>${spring.version}</version>
-                     <scope>compile</scope>
-              </dependency>
-              <dependency>
-                     <groupId>org.springframework</groupId>
-                     <artifactId>spring-web</artifactId>
-                     <version>${spring.version}</version>
-                     <scope>compile</scope>
-              </dependency>
-              <dependency>
-                     <groupId>org.springframework</groupId>
-                     <artifactId>spring-webmvc</artifactId>
-                     <version>${spring.version}</version>
-                     <scope>compile</scope>
-              </dependency>
-              <dependency>
-                     <groupId>org.springframework</groupId>
-                     <artifactId>spring-orm</artifactId>
-                     <version>${spring.version}</version>
-              </dependency>
-              <dependency>
-	        	<groupId>javax.portlet</groupId>
-	        	<artifactId>portlet-api</artifactId>
-	        	<version>2.0</version>
-	        	<scope>provided</scope>
-       		</dependency>
-              <dependency>
-                     <groupId>org.appfuse</groupId>
-                     <artifactId>appfuse-service</artifactId>
-                     <version>2.0.1</version>
-              </dependency>
-              <dependency>
-                     <groupId>org.appfuse</groupId>
-                     <artifactId>appfuse-data-common</artifactId>
-                     <version>2.0.1</version>
-              </dependency>
-              <dependency>
-               <groupId>groupid</groupId>
-               <artifactId>artifiactId</artifactId>
-               <version>2.0.1</version>
-               <scope>system</scope>
-               <systemPath>${java.home}/lib/rt.jar</systemPath>
-               </dependency> 
-               
-              <dependency>
-				<groupId>org.hibernate</groupId>
-				<artifactId>hibernate-core</artifactId>
-				<version>3.6.3.Final</version>
-			 </dependency>
- 
-			<dependency>
-				<groupId>javassist</groupId>
-				<artifactId>javassist</artifactId>
-				<version>3.12.1.GA</version>
-			</dependency>  
-			
-			<dependency>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>2.6</version>
+				<executions>
+					<execution>
+						<id>copy-resources</id>
+						<!-- here the phase you need -->
+						<phase>install</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>../target/belkbuild</outputDirectory>
+							<resources>
+								<resource>
+									<directory>${basedir}/target</directory>
+									<includes>
+										<include>*.war</include>
+									</includes>
+								</resource>
+								<resource>
+									<directory>src/main/resources</directory>
+									<includes>
+										<include>**/*.properties</include>
+									</includes>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- Modified by AFUAXK4 > -->
+			<!--plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-antrun-plugin</artifactId> 
+				<version>1.1</version> <executions> <execution> <phase>test</phase> <goals><goal>run</goal></goals> 
+				<configuration> <tasks> <echo>Delete properties</echo> <delete><fileset dir="src/main/resources" 
+				includes="*.properties"/></delete> <delete><fileset dir="${basedir}/target/classes" 
+				includes="*.properties"/></delete> <delete><fileset dir="src/main/webapp/WEB-INF" 
+				includes="applicationContext.xml"/></delete> <echo>Copy properties</echo> 
+				<copy file="src/main/resources/${param}/log4j.properties" tofile="src/main/resources/log4j.properties"/> 
+				<copy file="src/main/resources/${param}/log4j.properties" tofile="${basedir}/target/classes/log4j.properties"/> 
+				<copy file="src/main/resources/${param}/belkLoginPortlets.properties" tofile="src/main/resources/belkLoginPortlets.properties"/> 
+				<copy file="src/main/resources/${param}/belkLoginPortlets.properties" tofile="${basedir}/target/classes/belkLoginPortlets.properties"/> 
+				<copy file="src/main/webapp/WEB-INF/${param}/applicationContext.xml" tofile="src/main/webapp/WEB-INF/applicationContext.xml"/> 
+				</tasks> </configuration> </execution> </executions> </plugin -->
+			<!-- Modification End -->
+		</plugins>
+	</build>
+	<dependencies>
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-api</artifactId>
+			<version>2.5</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-core</artifactId>
+			<version>2.5</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>1.5.2</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-dbcp</groupId>
+			<artifactId>commons-dbcp</artifactId>
+			<version>1.2.2</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>commons-pool</groupId>
+			<artifactId>commons-pool</artifactId>
+			<version>1.6</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-core</artifactId>
+			<version>${spring.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webmvc-portlet</artifactId>
+			<version>${spring.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-aop</artifactId>
+			<version>${spring.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.aspectj</groupId>
+			<artifactId>aspectjweaver</artifactId>
+			<version>1.6.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-beans</artifactId>
+			<version>${spring.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>${spring.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context-support</artifactId>
+			<version>${spring.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-expression</artifactId>
+			<version>${spring.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-web</artifactId>
+			<version>${spring.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webmvc</artifactId>
+			<version>${spring.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-orm</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.portlet</groupId>
+			<artifactId>portlet-api</artifactId>
+			<version>2.0</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.appfuse</groupId>
+			<artifactId>appfuse-service</artifactId>
+			<version>2.0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.appfuse</groupId>
+			<artifactId>appfuse-data-common</artifactId>
+			<version>2.0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>groupid</groupId>
+			<artifactId>artifiactId</artifactId>
+			<version>2.0.1</version>
+			<scope>system</scope>
+			<systemPath>${java.home}/lib/rt.jar</systemPath>
+		</dependency>
+
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-core</artifactId>
+			<version>3.6.3.Final</version>
+		</dependency>
+
+		<dependency>
+			<groupId>javassist</groupId>
+			<artifactId>javassist</artifactId>
+			<version>3.12.1.GA</version>
+		</dependency>
+
+		<dependency>
 			<groupId>com.belk.pim</groupId>
 			<artifactId>CommonForIpcLogin</artifactId>
-			<version>${project.version}</version>
-			</dependency>
-			
-			<dependency>
-				<groupId>org.bouncycastle</groupId>
-				<artifactId>bcprov-jdk15</artifactId>
-				<version>1.45</version>
-			</dependency>			
-		<dependency>
-		<groupId>log4j</groupId>
-		<artifactId>log4j</artifactId>
-		<version>1.2.14</version>
+			<version>LATEST</version>
 		</dependency>
-       </dependencies>
+
+		<dependency>
+			<groupId>org.bouncycastle</groupId>
+			<artifactId>bcprov-jdk15</artifactId>
+			<version>1.45</version>
+		</dependency>
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.14</version>
+		</dependency>
+	</dependencies>
+	<scm>
+		<connection>scm:git:ssh://git@bitbucket.org/belk_ecom/pep-application</connection>
+		<developerConnection>scm:git:ssh://git@bitbucket.org/belk_ecom/pep-application</developerConnection>
+		<tag>1.0.0.0-SNAPSHOT</tag>
+	</scm>
+
+	<distributionManagement>
+		<repository>
+			<id>belk-m2</id>
+			<name>Belk M2 Repo</name>
+			<url>http://colxljeniesd001.belkinc.com:8081/nexus/content/repositories/stage/</url>
+		</repository>
+	</distributionManagement>
 </project>
