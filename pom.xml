@@ -69,7 +69,7 @@
 					<repository>
 								<id>belk-m2</id>
 											<name>Belk M2 Repo</name>
-														<url>http://belkecaral103:8081/nexus/content/repositories/stage/</url>
+														<url>http://colxljeniesd001.belkinc.com:8081/nexus/content/repositories/stage/</url>
 																</repository>
 																</distributionManagement>
 </project>
