@@ -271,6 +271,7 @@ public String callRemoveImageWebService(JSONArray jsonArray) throws Exception,PE
     	   LOGGER.info("envVariable **********"+envVariable);
            Properties prop =PropertyLoader.getPropertyLoader(ImageConstants.MESS_PROP);
            String targetURLs = prop.getProperty(ImageConstants.DEV_SERVICE_URL);
+           //String targetURLs = ImageConstants.DEV_SERVICE_URL;
            //String targetURLs = "http://ralpimwsasit02:7507/JERSYRest/rest/UpdateItemServices/deleteImage";
            LOGGER.info("targetURLs **********"+targetURLs);
            URL targetUrl = new URL(targetURLs);
@@ -408,6 +409,7 @@ public String callUploadVPIService(JSONArray jsonArray) throws Exception,PEPFetc
     try {
         Properties prop =PropertyLoader.getPropertyLoader(ImageConstants.MESS_PROP);
         String targetURLs = prop.getProperty(ImageConstants.DEV_SERVICE_UPLOADVPI_IMAGE_URL);        
+        //String targetURLs = ImageConstants.DEV_SERVICE_UPLOADVPI_IMAGE_URL;
         //String targetURLs = "http://ralpimwsasit02:7507/JERSYRest/rest/UpdateItemServices/uploadImage";
         URL targetUrl = new URL(targetURLs);
         LOGGER.info("ImageRequestServiceImpl::targetURLs callUploadVPIService  " + targetURLs);
@@ -567,6 +569,8 @@ public List<WorkFlow> getImageMgmtDetailsByOrin(String orinNum)
 public String getVendorImageUploadDir() throws Exception {
 	Properties properties = PropertyLoader.getPropertyLoader("ftp.properties");
 	return properties.getProperty("vendorImageUploadDir");
+	/*String url = System.getenv("vendorImageUploadDir"); // AFUPYB3
+	return url;*/
 }
 
 /**
@@ -577,6 +581,9 @@ public String getVendorImageUploadDir() throws Exception {
 public String getRRDImageUploadedDir() throws Exception {
 	Properties properties = PropertyLoader.getPropertyLoader("ftp.properties");
 	return properties.getProperty("RRDImageUploadedDir");
+	/*String url = System.getenv("RRDImageUploadedDir"); // AFUPYB3
+	return url;*/
+	
 }
 
 
@@ -593,6 +600,7 @@ public String callApproveorRejectActionService(JSONArray jsonArray) throws Excep
     try {
         Properties prop =PropertyLoader.getPropertyLoader(ImageConstants.MESS_PROP);
         String targetURLs = prop.getProperty(ImageConstants.IMAGE_APPROVE_WEBSERVICE_URL);
+        //String targetURLs = ImageConstants.IMAGE_APPROVE_WEBSERVICE_URL;
         //String targetURLs = "http://cltpimwsaspt01.belkinc.com:7507/JERSYRest/rest/UpdateItemServices/imageStatusUpdateService";
         LOGGER.info("targetURLs-----SIT#####" +targetURLs);
         URL targetUrl = new URL(targetURLs);
@@ -722,6 +730,7 @@ public String callApproveorRejectActionService(JSONArray jsonArray) throws Excep
 		 	Properties prop = PropertyLoader.getPropertyLoader(ImageConstants.MESS_PROP);
 		 	LOGGER.info("prop ::" + prop);
 		 	String targetURLs = prop.getProperty(ImageConstants.IMAGE_SUBMITOREJECT_URL);
+		 	//String targetURLs = ImageConstants.IMAGE_SUBMITOREJECT_URL;
 		 	//String targetURLs = "http://ralpimwsasit02:7507/JERSYRest/rest/UpdateItemServices/imageSubStatusService";
 	        LOGGER.info("targetURLs ::" + targetURLs);
 	        URL targetUrl = new URL(targetURLs);			
@@ -871,6 +880,7 @@ public String callSaveImageShotTypeService(JSONArray jsonArray)
     try {
     	Properties prop =PropertyLoader.getPropertyLoader(ImageConstants.MESS_PROP);
         String targetURLs = prop.getProperty(ImageConstants.IMAGE_SAVESHOTTYPE_URL);
+        //String targetURLs = ImageConstants.IMAGE_SAVESHOTTYPE_URL;
     	//String targetURLs = "http://ralpimwsasit02:7507/JERSYRest/rest/UpdateItemServices/updateImageShotType";
         LOGGER.info("callSaveImageShotTypeService serviceURL::" + targetURLs);
         URL targetUrl = new URL(targetURLs);

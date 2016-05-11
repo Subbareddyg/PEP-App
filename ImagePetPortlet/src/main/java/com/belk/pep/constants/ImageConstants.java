@@ -35,6 +35,7 @@ public class ImageConstants {
     
     public static final String MESS_PROP = "message.properties";
     public static final String DEV_SERVICE_URL = "dev.service.url";
+    //public static final String DEV_SERVICE_URL =System.getenv("IMAGE_SERVICE_URL"); // AFUPYB3
     public static final String SERVICE_REMOVE_IMAGE_LIST = "list";
     public static final String IMAGE_NOT_REMOVED = "image.remove.service.response.message";
     public static final String RESPONSE_MSG = "imageremove.success.msg";
@@ -56,6 +57,7 @@ public class ImageConstants {
     
     //For Approve or Reject Service Parameter    
     public static final String IMAGE_APPROVE_WEBSERVICE_URL = "image.approve.webservice.url";
+    //public static final String IMAGE_APPROVE_WEBSERVICE_URL =System.getenv("IMAGE_APPROVE_WEBSERVICE_URL"); // AFUPYB3
    
     public static final String SERVICE_APPROVEORREJECT_ACTION_VALUE_LIST = "list";
     
@@ -67,6 +69,7 @@ public class ImageConstants {
     
     //For Submit VPI Service
     public static final String DEV_SERVICE_SUBMIT_VPI_URL = "dev.service.url.submitVPI";
+    //public static final String DEV_SERVICE_SUBMIT_VPI_URL =System.getenv("SERVICE_URL_SUBMIT_VPI"); // AFUPYB3
     public static final String SERVICE_SUBMIT_VPI_LIST = "list";
     public static final String SERVICE_SUBMIT_IMAGE_STATUS_NOTUPATED = "service.message.submit.imageStatus.notUpdated";
     public static final String SERVICE_SUBMIT_IMAGE_STATUS_UPATED = "service.message.submit.imageStatus.Updated";
@@ -80,6 +83,7 @@ public class ImageConstants {
     
     //For Upload VPI Service Call
     public static final String DEV_SERVICE_UPLOADVPI_IMAGE_URL = "dev.service.url.uploadVPI";
+    //public static final String DEV_SERVICE_UPLOADVPI_IMAGE_URL = System.getenv("SERVICE_URL_UPLOAD_VPI"); // AFUPYB3
     public static final String DEV_SERVICE_UPLOADVPI_IMAGE_LIST = "listUploadVPI";
     public static final String DEV_SERVICE_UPLOADVPI_ERROR_IMAGE_MESSAGE = "message.error.imageupload";
     public static final String DEV_SERVICE_UPLOADVPI_SUCCESS_IMAGE_MESSAGE = "message.success.imageupload";
@@ -115,9 +119,12 @@ public class ImageConstants {
     public static final String IMAGE_STATUS_COMPLETED = "02";
     public static final String DEV_SERVICE_APPROVE_URL = "dev.service.url.approveImage";
     public static final String FILE_UPLOAD_PATH = "vendor.uploadfile.path";
+    //public static final String FILE_UPLOAD_PATH = System.getenv("VENDOR_UPLOAD_FILE_PATH"); // AFUPYB3
     public static final String LOAD_IMAGE_PROPERTY_FILE = "imagePortletResources.properties";
     public static final String IMAGE_SUBMITOREJECT_URL = "image.submitORReject.webservice.url";
+    //public static final String IMAGE_SUBMITOREJECT_URL = System.getenv("IMAGE_SUBMIT_TO_REJECT_WEBSERVICE_URL"); // AFUPYB3
     public static final String IMAGE_SAVESHOTTYPE_URL = "image.saveImageShotType.webservice.url";
+    //public static final String IMAGE_SAVESHOTTYPE_URL = System.getenv("IMAGE_SAVEIMAGE_SHOT_TYPE_WEBSERVICE_URL"); // AFUPYB3
     public static final String IMAGE_REJECTSTATUS = "04";
     public static final String IMAGE_READYFORREVIEWSTATUS = "08";
     public static final String IMAGE_INITIATEDSTATUS = "01";

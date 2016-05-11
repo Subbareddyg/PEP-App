@@ -27,6 +27,7 @@ public class CreatePETPortalConstants {
     
     /** The Constant DEV_SERVICE_URL. */
     public static final String DEV_SERVICE_URL = "dev.service.url";
+    //public static final String DEV_SERVICE_URL=System.getenv("CREATEPET_SERVICE_URL"); // AFUPYB3
     
     /** The Constant WEB_SERVICE_EXCEPTION. */
     public static final String WEB_SERVICE_EXCEPTION = "createpet.ws.exception";

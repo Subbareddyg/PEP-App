@@ -16,6 +16,7 @@
 	               org.springframework.web.context.ContextLoaderListener
 		        </listener-class>
   </listener>
+  
   <servlet>
     <servlet-name>ViewRendererServlet</servlet-name>
     <servlet-class>org.springframework.web.servlet.ViewRendererServlet</servlet-class>

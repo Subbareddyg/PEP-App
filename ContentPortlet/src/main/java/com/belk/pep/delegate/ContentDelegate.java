@@ -69,6 +69,7 @@ public class ContentDelegate {
         LOGGER.info("callIPHMappingWebService JSON Request....."+webserviceRequest);
         final Properties prop =   PropertiesFileLoader.getPropertyLoader(ContentScreenConstants.MESS_PROP);
         final String targetURL =  prop.getProperty(ContentScreenConstants.IPH_MAPPING_WEBSERVICE_URL);
+        //final String targetURL =  ContentScreenConstants.IPH_MAPPING_WEBSERVICE_URL;
 
         LOGGER.info("IPHMappingWebService URL = "+targetURL);
 
@@ -178,6 +179,7 @@ public class ContentDelegate {
         LOGGER.info("callIPHMappingWebService JSON Request....."+webserviceRequest);
         final Properties prop =   PropertiesFileLoader.getPropertyLoader(ContentScreenConstants.MESS_PROP);
         final String targetURL =  prop.getProperty(ContentScreenConstants.IPH_MAPPING_WEBSERVICE_URL);
+        //final String targetURL =  ContentScreenConstants.IPH_MAPPING_WEBSERVICE_URL;
 
         LOGGER.info("IPHMappingWebService URL = "+targetURL);
 
@@ -219,6 +221,7 @@ public class ContentDelegate {
         LOGGER.info("createContentWebService called");
         final Properties prop =   PropertiesFileLoader.getPropertyLoader(ContentScreenConstants.MESS_PROP);
         final String targetURL =  prop.getProperty(ContentScreenConstants.DEV_SERVICE_URL);
+        //final String targetURL =  ContentScreenConstants.DEV_SERVICE_URL;
 
         LOGGER.info("createContentWebService URL = "+targetURL);
 
@@ -770,6 +773,7 @@ public class ContentDelegate {
         LOGGER.info("updateContentStatusWebService JSON Request....."+webserviceRequest);
         final Properties prop =   PropertiesFileLoader.getPropertyLoader(ContentScreenConstants.MESS_PROP);
         final String targetURL =  prop.getProperty(ContentScreenConstants.UPDATE_CONTENT_STATUS_WEBSERVICE_URL);
+        //final String targetURL =  ContentScreenConstants.UPDATE_CONTENT_STATUS_WEBSERVICE_URL;
 
         LOGGER.info("UPDATE_CONTENT_STATUS_WEBSERVICE_URL  = "+targetURL);
 

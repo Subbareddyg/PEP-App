@@ -367,6 +367,7 @@ public class ImageRequestController {
 	   Properties prop =PropertyLoader.getPropertyLoader(ImageConstants.LOAD_IMAGE_PROPERTY_FILE);
 	   
 	   String fileDir = prop.getProperty(ImageConstants.FILE_UPLOAD_PATH);
+	   //String fileDir = ImageConstants.FILE_UPLOAD_PATH;
 	   //String fileDir = "/tmp/";
 	   
 	   String fileToBeDeleted = fileDir + imagName;
@@ -628,6 +629,7 @@ public class ImageRequestController {
     			  
     			  Properties prop =PropertyLoader.getPropertyLoader(ImageConstants.LOAD_IMAGE_PROPERTY_FILE);
     			  String fileDir = prop.getProperty(ImageConstants.FILE_UPLOAD_PATH);
+    			  //String fileDir = ImageConstants.FILE_UPLOAD_PATH;
     			  //String fileDir = "/tmp/";
     			  
     			  	String imageLocationType="";
@@ -829,6 +831,7 @@ public class ImageRequestController {
          Properties prop =PropertyLoader.getPropertyLoader(ImageConstants.LOAD_IMAGE_PROPERTY_FILE);
 		 
          String fileDir = prop.getProperty(ImageConstants.FILE_UPLOAD_PATH);
+         //String fileDir = ImageConstants.FILE_UPLOAD_PATH;
          //String fileDir = "/tmp/";
 		 try {
         	 ArrayList<SamleImageDetails> sampleImageLinkList = imageRequestDelegate.getSampleImageLinks(OrinNo);

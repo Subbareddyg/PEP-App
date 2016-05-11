@@ -36,13 +36,16 @@ public class ContentScreenConstants {
 
     /** The Constant DEV_SERVICE_URL. */
     public static final String  DEV_SERVICE_URL ="dev.service.url";
+    //public static final String  DEV_SERVICE_URL=System.getenv("CONTENT_SERVICE_URL"); // AFUPYB3
 
     /** The Constant IPH_MAPPING_WEBSERVICE_URL. */
     public static final String  IPH_MAPPING_WEBSERVICE_URL="iphMapping.webservice.url";
+    //public static final String  IPH_MAPPING_WEBSERVICE_URL=System.getenv("IPHMAPPING_WEBSERVICE_URL"); // AFUPYB3
 
 
     /** The Constant UPDATE_CONTENT_STATUS_WEBSERVICE_URL. */
     public static final String  UPDATE_CONTENT_STATUS_WEBSERVICE_URL="updateContentStatus.webservice.url";
+    //public static final String  UPDATE_CONTENT_STATUS_WEBSERVICE_URL=System.getenv("UPDATECONTENT_STATUS_WS_URL"); // AFUPYB3
 
     /** The Constant MESS_PROP. */
     public static final String  MESS_PROP="contentWebservice.properties";

@@ -24,7 +24,13 @@
 		<module>InternalUserLoginPortlet</module>
 		<module>WorkListDisplayPortlet</module>
 		<module>ThemeProjectCreation</module>
-  </modules>
+		
+
+
+		
+		<module>../../Workspace1/PepConfiguration</module>
+		
+	</modules>
 <build>
 		<plugins>
 			<plugin>

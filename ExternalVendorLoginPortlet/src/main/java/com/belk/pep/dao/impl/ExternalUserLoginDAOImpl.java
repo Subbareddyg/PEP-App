@@ -192,6 +192,8 @@ public class ExternalUserLoginDAOImpl implements ExternalUserLoginDAO{
         
         LOGGER.info("email id= " + externalUser.getId().getSupplierEmail());
         LOGGER.info("vendor login= " + props.getProperty(ExternalVendorLoginConstants.EXTERNAL_VENDOR_LOGIN_URL));
+        //LOGGER.info("vendor login= " + ExternalVendorLoginConstants.EXTERNAL_VENDOR_LOGIN_URL);
+        System.out.println("vendor login= " + props.getProperty(ExternalVendorLoginConstants.EXTERNAL_VENDOR_LOGIN_URL));
         
         message = createEmailMessage(resetPassword,externalUser.getId().getSupplierEmail(),props.getProperty(ExternalVendorLoginConstants.EXTERNAL_VENDOR_LOGIN_URL));
         String recipientAddress = externalUser.getId().getSupplierEmail();

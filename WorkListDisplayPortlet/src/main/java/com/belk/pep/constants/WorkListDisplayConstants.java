@@ -203,6 +203,7 @@ public static final String ACTIVATE_PET_ACTION = "activate";
 public static final String SELECTED_ROWS_FOR_ACTIVATE_OR_INACTIVATE = "styleItem";
 //public static final String ACTIVATE_OR_INACTIVATE_SERVICE_URL = "dev.service.url";
 public static final String ACTIVATE_OR_INACTIVATE_SERVICE_URL = "sit2.service.url";
+//public static final String ACTIVATE_OR_INACTIVATE_SERVICE_URL=System.getenv("WORKLIST_SERVICE_URL"); // AFUPYB3
 public static final String ACTIVATE_OR_INACTIVATE_SERVICE_LIST = "list";
 public static final String ACTIVATE_OR_INACTIVATE_SERVICE_FAILURE = "inactivateActivate.failure.message";
 public static final String ACTIVATE_OR_INACTIVATE_SERVICE_SUCCESS = "inactivateActivate.success.message";
@@ -213,6 +214,7 @@ public static final String PET_ID = "petId";
 public static final String PET_STATUS = "petStatus";
 
 public static final String REINITIATE_SERVICE_URL = "sit2.reinitiate.service.url";
+//public static final String REINITIATE_SERVICE_URL=System.getenv("WORKLIST_REINITIATE_SERVICE_URL"); // AFUPYB3
 public static final String REINITIATE_SERVICE_FAILURE = "sit2.reinitiate.service.failure.message";
 public static final String REINITIATE_SERVICE_SUCCESS = "sit2.reinitiate.service.success.message";
 
@@ -220,6 +222,7 @@ public static final String REINITIATE_SERVICE_SUCCESS = "sit2.reinitiate.service
 /**  Completion date changes **/
 public static final String MESS_PROP = "message.properties";
 public static final String COMPLETION_DATE_SERVICE_URL = "completion.date.service.url";
+//public static final String COMPLETION_DATE_SERVICE_URL=System.getenv("COMPLETION_DATE_SERVICE_URL"); // AFUPYB3
 public static final String COMPLETION_DATE_SERVICE_LIST = "list";
 public static final String COMPLETION_DATE_ERROR_STATUS = "completion.date.error.message";
 public static final String COMPLETION_DATE_SUCCESS_STATUS = "completion.date.success.message";

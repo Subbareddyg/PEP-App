@@ -14,7 +14,7 @@ http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
 	               org.springframework.web.context.ContextLoaderListener
 		        </listener-class>
     	</listener>
-
+    	
   <servlet>
     <servlet-name>ViewRendererServlet</servlet-name>
     <servlet-class>org.springframework.web.servlet.ViewRendererServlet</servlet-class>

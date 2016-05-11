@@ -52,8 +52,8 @@ public class CreatePETServiceImpl implements CreatePETService {
             Properties prop =
                 PropertyLoader
                     .getPropertyLoader(CreatePETPortalConstants.MESS_PROP);
-            String targetURLs =
-                prop.getProperty(CreatePETPortalConstants.DEV_SERVICE_URL);
+            String targetURLs = prop.getProperty(CreatePETPortalConstants.DEV_SERVICE_URL);
+            //String targetURLs = CreatePETPortalConstants.DEV_SERVICE_URL;
             URL targetUrl = new URL(targetURLs);
             HttpURLConnection httpConnection =
                 (HttpURLConnection) targetUrl.openConnection();

@@ -13,9 +13,12 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.apache.log4j.Logger;
 
 
@@ -30,6 +33,7 @@ public class PropertyLoader {
      * Instance variable to hold the configuration loader instance.
      */
     private volatile static PropertyLoader instance = null;	
+    private final static Pattern pattern = Pattern.compile("\\$\\{([^}]*)\\}");
 	
    
 		
@@ -88,10 +92,26 @@ public class PropertyLoader {
         InputStream input = null;
         try {
             
-            input =PropertyLoader.class.getClassLoader().getResourceAsStream(fileName);           
+            /*input =PropertyLoader.class.getClassLoader().getResourceAsStream(fileName);           
 
               
+            properties.load(input);*/
+
+            
+            input =PropertyLoader.class.getClassLoader().getResourceAsStream(fileName);   
+            LOGGER.info("getPropertyLoader");  
             properties.load(input);
+        
+            Enumeration e = properties.propertyNames();
+            while (e.hasMoreElements()) {
+              String key = (String) e.nextElement();
+              String value = properties.getProperty(key);
+              Matcher matchPattern = pattern.matcher(value);
+              if(matchPattern.find()){
+                  properties.setProperty(key, System.getenv(matchPattern.group(1)));
+              }
+            }
+            LOGGER.info("properties"+properties);  
            
 
         }

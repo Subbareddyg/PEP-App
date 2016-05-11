@@ -435,7 +435,10 @@ public String callInActivateAndActivatePetService(JSONArray jsonArray)
     try {
         Properties prop =PropertyLoader.getPropertyLoader(WorkListDisplayConstants.MESS_PROP);
         String serviceURL = prop.getProperty(WorkListDisplayConstants.ACTIVATE_OR_INACTIVATE_SERVICE_URL);
+        //String serviceURL = WorkListDisplayConstants.ACTIVATE_OR_INACTIVATE_SERVICE_URL; // AFUPYB3
         LOGGER.info("serviceURL::" + serviceURL);
+        System.out.println("Service URL--------------------------------------------------------------->"+serviceURL);
+        
         URL targetUrl = new URL(serviceURL);
         HttpURLConnection httpConnection = (HttpURLConnection) targetUrl.openConnection();
         httpConnection.setDoOutput(true);
@@ -567,6 +570,7 @@ String singleResponseCode = "";
 try {
     Properties prop =PropertyLoader.getPropertyLoader(WorkListDisplayConstants.MESS_PROP);
     String serviceURL = prop.getProperty(WorkListDisplayConstants.REINITIATE_SERVICE_URL);
+    //String serviceURL = WorkListDisplayConstants.REINITIATE_SERVICE_URL; // AFUPYB3
     LOGGER.info("reinitiate...serviceURL::" + serviceURL);
     URL targetUrl = new URL(serviceURL);
     HttpURLConnection httpConnection = (HttpURLConnection) targetUrl.openConnection();
@@ -699,6 +703,7 @@ public String callSaveCompletionDateService(JSONArray jsonArray) throws Exceptio
     try {
         Properties prop =PropertiesFileLoader.getPropertyLoader(WorkListDisplayConstants.MESS_PROP);
         String targetURLs = prop.getProperty(WorkListDisplayConstants.COMPLETION_DATE_SERVICE_URL);
+        //String targetURLs = WorkListDisplayConstants.COMPLETION_DATE_SERVICE_URL; // AFUPYB3
         URL targetUrl = new URL(targetURLs);
         HttpURLConnection httpConnection =(HttpURLConnection) targetUrl.openConnection();
         httpConnection.setDoOutput(true);

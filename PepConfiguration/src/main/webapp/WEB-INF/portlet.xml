@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<portlet-app xmlns="http://java.sun.com/xml/ns/portlet/portlet-app_2_0.xsd"
+	version="2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/portlet/portlet-app_2_0.xsd 
+http://java.sun.com/xml/ns/portlet/portlet-app_2_0.xsd">
+	<portlet>
+		<portlet-name>WorkListDisplay</portlet-name>
+		<display-name>WorkListDisplay</display-name>
+		<portlet-class>org.springframework.web.portlet.DispatcherPortlet
+		</portlet-class>
+		<init-param>
+			<name>contextConfigLocation</name>
+			<value>/WEB-INF/applicationContext.xml,/WEB-INF/WorkListDisplay-portlet.xml
+			</value>
+		</init-param>
+		<expiration-cache>0</expiration-cache>
+		<supports>
+			<mime-type>text/html</mime-type>
+			<portlet-mode>view</portlet-mode>
+		</supports>
+		<portlet-info>
+			<title>WorkListDisplay</title>
+			<short-title>WorkListDisplay</short-title>
+			<keywords>WorkListDisplay</keywords>
+		</portlet-info>
+		
+		<supported-processing-event>
+			<name>userDataOBJ</name>
+		</supported-processing-event>
+		
+		<supported-publishing-event>
+ 		  <name>ImageDetailsOBJ</name>
+	   </supported-publishing-event>
+	   
+	   <supported-publishing-event>
+ 		  <name>ContentPetDetailsOBJ</name>
+	   </supported-publishing-event>
+	   
+	   <supported-publishing-event>
+ 		  <name>LoggedInUserDetailsOBJ</name>
+	   </supported-publishing-event>
+	   		
+	</portlet>
+	<default-namespace>http://JSR286EventRenderParam/</default-namespace>
+
+	<event-definition>
+		<name>userDataOBJ</name>
+		<value-type>com.belk.pep.common.userdata.UserData</value-type>
+	</event-definition>
+	
+	<event-definition>
+	 	<name>ImageDetailsOBJ</name>
+	 	<value-type>com.belk.pep.common.model.ImageDetails</value-type>
+    </event-definition>
+    
+    <event-definition>
+	 	<name>ContentPetDetailsOBJ</name>
+	 	<value-type>com.belk.pep.common.model.ContentPetDetails</value-type>
+    </event-definition>
+    <event-definition>
+		<name>LoggedInUserDetailsOBJ</name>
+		<value-type>com.belk.pep.common.userdata.UserData</value-type>
+	</event-definition>
+
+
+</portlet-app>
