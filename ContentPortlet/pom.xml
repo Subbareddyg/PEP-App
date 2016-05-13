@@ -3,7 +3,7 @@
 	<groupId>com.belk.pim</groupId>
 	<artifactId>ContentPortlet</artifactId>
 	<!--version>1.0.0.0-SNAPSHOT</version-->
-	<version>1.3-SNAPSHOT</version>
+	<version>1.3</version>
 	<name>ContentPortlet</name>
 	<modelVersion>4.0.0</modelVersion>
 	<properties>
@@ -288,7 +288,7 @@
 	<scm>
 		<connection>scm:git:ssh://git@bitbucket.org/belk_ecom/pep-application</connection>
 		<developerConnection>scm:git:ssh://git@bitbucket.org/belk_ecom/pep-application</developerConnection>
-		<tag>1.0.0.0-SNAPSHOT</tag>
+		<tag>ContentPortlet-1.3</tag>
 	</scm>
 
 	<distributionManagement>
