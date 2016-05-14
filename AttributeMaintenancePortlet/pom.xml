@@ -1,5 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
 	<groupId>ProductEnrichmentPortal</groupId>
 	<artifactId>AttributeMaintenancePortlet</artifactId>
@@ -91,7 +90,7 @@
 				<executions>
 					<execution>
 						<id>copy-resources</id>
-						<!-- here the phase you need -->
+						
 						<phase>install</phase>
 						<goals>
 							<goal>copy-resources</goal>
@@ -240,8 +239,7 @@
 			<version>3.12.1.GA</version>
 		</dependency>
 
-		<!-- <dependency> <groupId>java.json</groupId> <artifactId>java.json</artifactId> 
-			<version>1.0</version> </dependency> -->
+		
 		<dependency>
 			<groupId>com.google.code.gson</groupId>
 			<artifactId>gson</artifactId>
@@ -260,7 +258,7 @@
 		<dependency>
 			<groupId>CommonForIpcLogin</groupId>
 			<artifactId>CommonForIpcLogin</artifactId>
-			<version>1.0</version>
+			<version>1.0.0.8</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>

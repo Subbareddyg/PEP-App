@@ -1,9 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-	<!--
-     | project information
-    -->
+	
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.belk</groupId>
 	<artifactId>pim</artifactId>
@@ -12,9 +9,7 @@
 	<name>Belk PEP</name>
 	<description>Belk Product Enrichment Portal Applications</description>
 
-	<!--
-     | modules of this project
-    -->
+	
 	<modules>
 		<module>CommonForIpcLogin</module>
 		<module>ContentPortlet</module>
@@ -23,8 +18,7 @@
 		<module>ImagePetPortlet</module>
 		<module>InternalUserLoginPortlet</module>
 		<module>WorkListDisplayPortlet</module>
-		<!-- <module>ThemeProjectCreation</module>
-		<module>PepConfiguration</module> -->
+		
 
 
 
@@ -37,10 +31,7 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>2.5</version>
-				<!--
-					<configuration> <source>1.4</source> <target>1.4</target>
-					</configuration>
-				-->
+				
 				<configuration>
 					<verbose>false</verbose>
 					<fork>true</fork>
@@ -49,7 +40,7 @@
 					<meminitial>256m</meminitial>
                     <source>1.7</source>
 					<target>1.7</target>
-					<!--encoding>UTF-8</encoding-->
+					
 					<maxmem>512m</maxmem>
 				</configuration>
 			</plugin>

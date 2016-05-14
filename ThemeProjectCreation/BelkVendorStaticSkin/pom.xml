@@ -6,8 +6,7 @@
 			<version>1.0.0.0-SNAPSHOT</version>
 	</parent>
 	
-	<!--<groupId>com.belk.prtl1.mws.belkvendorthemesskins</groupId>
-	<version>01.00.00</version>-->
+	
 	
 	<artifactId>BelkVendorStaticSkin</artifactId>
 	<url>http://www.belk.com</url>
@@ -39,4 +38,4 @@
 			</plugin>
 		</plugins>
 	</build>
-</project>
+</project>

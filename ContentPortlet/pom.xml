@@ -2,7 +2,7 @@
 
 	<groupId>com.belk.pim</groupId>
 	<artifactId>ContentPortlet</artifactId>
-	<!--version>1.0.0.0-SNAPSHOT</version-->
+	
 	<version>1.4-SNAPSHOT</version>
 	<name>ContentPortlet</name>
 	<modelVersion>4.0.0</modelVersion>
@@ -55,7 +55,7 @@
 				<executions>
 					<execution>
 						<id>copy-resources</id>
-						<!-- here the phase you need -->
+						
 						<phase>install</phase>
 						<goals>
 							<goal>copy-resources</goal>
@@ -81,35 +81,9 @@
 				</executions>
 			</plugin>
 			
-			<!-- Modified by AFUAXK4 > -->
-			<!--plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-antrun-plugin</artifactId>
-				<version>1.1</version>
-				<executions>
-					<execution>
-						<phase>test</phase>
-						<goals><goal>run</goal></goals>
-						<configuration>
-							<tasks>
-								<echo>Delete properties</echo>
-								<delete><fileset dir="src/main/resources" includes="*.properties" /></delete>
-								<delete><fileset dir="${basedir}/target/classes" includes="*.properties" /></delete>
-								<delete><fileset dir="src/main/webapp/WEB-INF" includes="applicationContext.xml" /></delete>
-								<echo>Copy properties</echo>
-								<copy file="src/main/resources/${param}/log4j.properties" tofile="src/main/resources/log4j.properties" />
-								<copy file="src/main/resources/${param}/log4j.properties" tofile="${basedir}/target/classes/log4j.properties" />
-								<copy file="src/main/resources/${param}/contentDisplay.properties" tofile="src/main/resources/contentDisplay.properties" />
-								<copy file="src/main/resources/${param}/contentDisplay.properties" tofile="${basedir}/target/classes/contentDisplay.properties" />
-								<copy file="src/main/resources/${param}/contentWebservice.properties" tofile="src/main/resources/contentWebservice.properties" />
-								<copy file="src/main/resources/${param}/contentWebservice.properties" tofile="${basedir}/target/classes/contentWebservice.properties" />								
-								<copy file="src/main/webapp/WEB-INF/${param}/applicationContext.xml" tofile="src/main/webapp/WEB-INF/applicationContext.xml" />
-							</tasks>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin-->
-			<!-- Modification End -->
+			
+			
+			
 			
 		</plugins>
 	</build>
@@ -246,8 +220,7 @@
 			<version>3.12.1.GA</version>
 		</dependency>
 
-		<!-- <dependency> <groupId>java.json</groupId> <artifactId>java.json</artifactId> 
-			<version>1.0</version> </dependency> -->
+		
 		<dependency>
 			<groupId>com.google.code.gson</groupId>
 			<artifactId>gson</artifactId>
@@ -266,7 +239,7 @@
 		<dependency>
 			<groupId>com.belk.pim</groupId>
 			<artifactId>CommonForIpcLogin</artifactId>
-			<version>1.0.0.1</version>
+			<version>1.0.0.8</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
