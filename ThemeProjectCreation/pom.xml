@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.belk.pim</groupId>
 	<artifactId>BelkVendorThemeskins</artifactId>
-	<version>1.0.0.0</version>
+	<version>1.0.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>${project.artifactId}</name>
 	<modules>
@@ -31,7 +31,7 @@
 	<scm>
 		<connection>scm:git:ssh://git@bitbucket.org/belk_ecom/pep-application</connection>
 		<developerConnection>scm:git:ssh://git@bitbucket.org/belk_ecom/pep-application</developerConnection>
-		<tag>BelkVendorThemeskins-1.0.0.0</tag>
+		<tag>1.0.0.0-SNAPSHOT</tag>
 	</scm>
 
 	<distributionManagement>
