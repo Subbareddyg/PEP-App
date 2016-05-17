@@ -815,6 +815,31 @@ public class XqueryConstants {
 		return ARD_REQUEST ;
 	}
       
-     
+    /**
+     * Method to get the Image attribute details query.
+     *    
+     * @return the query string
+     * 
+     * Method added For PIM Phase 2 - Regular Item Image Link Attribute
+     * Date: 05/13/2016
+     * Added By: Cognizant
+     */
+    public  String getCopyImageLinksQuery() {
+        
+        LOGGER.info("***Entering getCopyImageLinksQuery() method.");
+        
+        String IMAGE_LINKS_QUERY = " SELECT AIC.MDMID,  "+
+        "   T.IMAGEURL,                    "+
+        "   T.SWATCHURL,                   "+
+        "   T.VIEWERURL,                   "+
+        "   T.SHOTTYPE                     "+
+        " FROM ADSE_PET_CATALOG AIC,       "+
+        "   XMLTABLE( 'for $image in $XML_DATA/pim_entry/entry/Image_Sec_Spec/Scene7_Images/Id return $image' passing AIC.XML_DATA AS \"XML_DATA\" COLUMNS IMAGEURL VARCHAR(1000) path 'ImageURL', SWATCHURL VARCHAR(1000) path 'SwatchURL', VIEWERURL VARCHAR(1000) path 'ViewerURL', SHOTTYPE VARCHAR(100) path 'ViewerURL/Shot_Type') T "+
+        " WHERE AIC.MDMID = :orinNum   ";
+
+        LOGGER.debug("IMAGE LINKS QUERY -- \n" + IMAGE_LINKS_QUERY);
+        LOGGER.info("***Exiting getCopyImageLinksQuery() method.");
+        return IMAGE_LINKS_QUERY;
+    }
 
 }

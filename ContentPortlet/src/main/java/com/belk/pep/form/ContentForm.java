@@ -12,6 +12,7 @@ import com.belk.pep.vo.ChildSkuVO;
 import com.belk.pep.vo.ColorAttributesVO;
 import com.belk.pep.vo.ContentHistoryVO;
 import com.belk.pep.vo.ContentManagementVO;
+import com.belk.pep.vo.CopyAttributeVO;
 import com.belk.pep.vo.CopyAttributesVO;
 import com.belk.pep.vo.GlobalAttributesVO;
 import com.belk.pep.vo.GroupingVO;
@@ -1727,7 +1728,28 @@ public class ContentForm implements Serializable{
     }
 
 
+    /**
+     * Attribute added to show the Copy attribute details in screen.
+     * 
+     * Attribute added For PIM Phase 2 - Regular Item Copy Attribute
+     * Date: 05/16/2016
+     * Added By: Cognizant
+     */
+    private CopyAttributeVO copyAttributeVO;
 
+    /**
+     * @return the copyAttributeVO
+     */
+    public CopyAttributeVO getCopyAttributeVO() {
+        return copyAttributeVO;
+    }
+
+    /**
+     * @param copyAttributeVO the copyAttributeVO to set
+     */
+    public void setCopyAttributeVO(CopyAttributeVO copyAttributeVO) {
+        this.copyAttributeVO = copyAttributeVO;
+    }
 
 
 

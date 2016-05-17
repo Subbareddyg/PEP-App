@@ -27,6 +27,7 @@ import com.belk.pep.dao.ImageRequestDAO;
 import com.belk.pep.exception.checked.PEPFetchException;
 import com.belk.pep.exception.checked.PEPPersistencyException;
 import com.belk.pep.exception.checked.PEPServiceException;
+import com.belk.pep.model.ImageLinkVO;
 import com.belk.pep.model.WorkFlow;
 import com.belk.pep.service.ImageRequestService;
 //import com.belk.pep.service.impl.ArrayList;
@@ -1031,5 +1032,40 @@ public boolean releseLockedPet(  String orin, String pepUserID,String pepFunctio
     return isPetReleased;
     
 }   
+
+	/**
+	 * Method to get the Image attribute details from database.
+	 *    
+	 * @param orin String   
+	 * @return imageLinkVOList List<ImageLinkVO>
+	 * 
+	 * Method added For PIM Phase 2 - Regular Item Image Link Attribute
+	 * Date: 05/13/2016
+	 * Added By: Cognizant
+	 */	
+	@Override
+	public List<ImageLinkVO> getCopyImageLinks(String orin) throws PEPServiceException, PEPPersistencyException{
+		
+		LOGGER.info("***Entering ImageRequestService.getCopyImageLinks() method.");
+	    
+		List<ImageLinkVO> imageLinkVOList = null;
+		
+	    try {
+	    	imageLinkVOList = imageRequestDAO.getCopyImageLinks(orin);
+	    }
+	    catch (PEPPersistencyException persistencyException) {
+	
+	    	LOGGER.error("PEPPersistencyException in getCopyImageLinks() method, Service Layer -- " + persistencyException.getMessage());
+	        throw persistencyException;
+	    }
+	    catch (Exception exception) {
+	
+	    	LOGGER.error("Exception in getCopyImageLinks() method, Service Layer -- " + exception.getMessage());
+	        throw new PEPServiceException(exception.getMessage());
+	    }
+	    LOGGER.info("***Exiting ImageRequestService.getCopyImageLinks() method.");
+	    return imageLinkVOList;
+	    
+	}
     
 }

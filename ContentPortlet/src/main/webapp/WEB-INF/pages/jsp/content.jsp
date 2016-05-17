@@ -2305,6 +2305,73 @@ function clickListenerContent(e){
 									    </div>	
 							</div>	 
 						
+						<!-- Copy Attribute section starts here -->
+							<!-- Method modified to show the Copy attribute details in screen. -->
+							<!-- Modified For PIM Phase 2 - Regular Item Copy Attribute -->
+							<!-- Date: 05/16/2016 -->
+							<!-- Modified By: Cognizant -->
+							<div class="cars_panel x-hidden" id="copyAttributeSection">
+								
+										<div class="x-panel-header">
+											<fmt:message key="sectionCopyAttribute" bundle="${display}"/>
+										</div>
+										
+										<div id="ajaxResponseStyleAttribute" class="x-panel-body" style="width:906px;">	
+											
+											<ul class="pep_info" style="font-size: 11px; padding: 0 0 10px !important;">
+												<li class="txt_attr_name" style="width: 20%;"><b>Product Copy Text : </b> </li>
+												<li class="txt_attr_name" style="width: 20%;"><input type="text" id="productCopyText" name="productCopyText" value="${contentDisplayForm.copyAttributeVO.productCopyText}" disabled="disabled"/></li>
+												<li class="txt_attr_name" style="width: 20%;"><b>Copy_Material :</b> </li>
+												<li class="txt_attr_name" style="width: 20%;"><input type="text" id="copyMaterial" name="copyMaterial" value="${contentDisplayForm.copyAttributeVO.material}" disabled="disabled"/></li>
+											</ul>
+											
+											<ul class="pep_info" style="font-size: 11px; padding: 0 0 10px !important;">
+												<li class="txt_attr_name" style="width: 20%;"><b>Copy_Line_1 : </b> </li>
+												<li class="txt_attr_name" style="width: 20%;"><input type="text" id="copyLine1" name="copyLine1" value="${contentDisplayForm.copyAttributeVO.copyLine1}" disabled="disabled"/></li>
+												<li class="txt_attr_name" style="width: 20%;"><b>Copy_Care :</b> </li>
+												<li class="txt_attr_name" style="width: 20%;"><input type="text" id="copyCare" name="copyCare" value="${contentDisplayForm.copyAttributeVO.care}" disabled="disabled"/></li>
+											</ul>
+											
+											<ul class="pep_info" style="font-size: 11px; padding: 0 0 10px !important;">
+												<li class="txt_attr_name" style="width: 20%;"><b>Copy_Line_2 : </b> </li>
+												<li class="txt_attr_name" style="width: 20%;"><input type="text" id="copyLine2" name="copyLine2" value="${contentDisplayForm.copyAttributeVO.copyLine2}" disabled="disabled"/></li>
+												<li class="txt_attr_name" style="width: 20%;"><b>Copy_Country Of Origin :</b> </li>
+												<li class="txt_attr_name" style="width: 20%;"><input type="text" id="countryOfOrigin" name="countryOfOrigin" value="${contentDisplayForm.copyAttributeVO.countryOfOrigin}" disabled="disabled"/></li>
+											</ul>
+											
+											<ul class="pep_info" style="font-size: 11px; padding: 0 0 10px !important;">
+												<li class="txt_attr_name" style="width: 20%;"><b>Copy_Line_3 : </b> </li>
+												<li class="txt_attr_name" style="width: 20%;"><input type="text" id="copyLine3" name="copyLine3" value="${contentDisplayForm.copyAttributeVO.copyLine3}" disabled="disabled"/></li>
+												<li class="txt_attr_name" style="width: 20%;"><b>Copy_Exclusive :</b> </li>
+												<li class="txt_attr_name" style="width: 20%;"><input type="text" id="copyExclusive" name="copyExclusive" value="${contentDisplayForm.copyAttributeVO.exclusive}" disabled="disabled"/></li>
+											</ul>
+											
+											<ul class="pep_info" style="font-size: 11px; padding: 0 0 10px !important;">
+												<li class="txt_attr_name" style="width: 20%;"><b>Copy_Line_4 : </b> </li>
+												<li class="txt_attr_name" style="width: 20%;"><input type="text" id="copyLine4" name="copyLine4" value="${contentDisplayForm.copyAttributeVO.copyLine4}" disabled="disabled"/></li>
+												<li class="txt_attr_name" style="width: 20%;"><b>Copy_Import Domestic :</b> </li>
+												<li class="txt_attr_name" style="width: 20%;"><input type="text" id="copyImportDomestic" name="copyImportDomestic" value="${contentDisplayForm.copyAttributeVO.importDomestic}" disabled="disabled"/></li>
+											</ul>																																																																	
+											
+											<ul class="pep_info" style="font-size: 11px; padding: 0 0 10px !important;">
+												<li class="txt_attr_name" style="width: 20%;"><b>Copy_Line_5 : </b> </li>
+												<li class="txt_attr_name" style="width: 20%;"><input type="text" id="copyLine5" name="copyLine5" value="${contentDisplayForm.copyAttributeVO.copyLine5}" disabled="disabled"/></li>
+												<li class="txt_attr_name" style="width: 20%;"><b>Copy_CAProp65 Compliant :</b> </li>
+												<li class="txt_attr_name" style="width: 20%;"><input type="text" id="copyCaprop65" name="copyCaprop65" value="${contentDisplayForm.copyAttributeVO.caprop65Compliant}" disabled="disabled"/></li>
+											</ul>
+																						
+											<ul class="pep_info" style="font-size: 11px; padding: 0 0 10px !important;">
+												<li class="txt_attr_name" style="width: 20%;"><b>Copy_Product Name : </b> </li>
+												<li class="txt_attr_name" style="width: 25%;"><input type="text" id="copyProductName" name="copyProductName" value="${contentDisplayForm.copyAttributeVO.copyProductName}" disabled="disabled"/></li>
+												<li class="txt_attr_name" style="width: 20%;"></li>
+												<li class="txt_attr_name" style="width: 25%;"></li>
+											</ul>
+											
+									    </div>	
+							</div>
+							
+							<!-- Copy Attribute section ends here -->
+						
 						<!--Color Attributes Section starts here  -->
 						
 							<!--Style,Style Color,SKU Content Section starts over here  -->					

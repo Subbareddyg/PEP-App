@@ -1,9 +1,12 @@
 package com.belk.pep.form;
 
 import java.util.ArrayList;
+import java.util.List;
+
 import com.belk.pep.form.StyleInfoDetails;
 import com.belk.pep.form.ImageProductDetails;
 import com.belk.pep.form.VendorInfoDetails;
+import com.belk.pep.model.ImageLinkVO;
 
 /**
  * The Class LoginBean.
@@ -176,5 +179,27 @@ public class ImageForm {
         this.imageProductInfo = imageProductInfo;
     }
 
+    /**
+     * Attribute added to show the Image link attribute details in screen.
+     * 
+     * Attribute added For PIM Phase 2 - Regular Item Image Link Attribute
+     * Date: 05/13/2016
+     * Added By: Cognizant
+     */
+    private List<ImageLinkVO> imageLinkVOList;
+
+	/**
+	 * @return the imageLinkVOList
+	 */
+	public List<ImageLinkVO> getImageLinkVOList() {
+		return imageLinkVOList;
+	}
+
+	/**
+	 * @param imageLinkVOList the imageLinkVOList to set
+	 */
+	public void setImageLinkVOList(List<ImageLinkVO> imageLinkVOList) {
+		this.imageLinkVOList = imageLinkVOList;
+	}
 
 }

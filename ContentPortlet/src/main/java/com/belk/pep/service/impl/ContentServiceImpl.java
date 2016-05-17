@@ -18,6 +18,7 @@ import com.belk.pep.vo.ChildSkuVO;
 import com.belk.pep.vo.ColorAttributesVO;
 import com.belk.pep.vo.ContentHistoryVO;
 import com.belk.pep.vo.ContentManagementVO;
+import com.belk.pep.vo.CopyAttributeVO;
 import com.belk.pep.vo.CopyAttributesVO;
 import com.belk.pep.vo.GlobalAttributesVO;
 import com.belk.pep.vo.ItemPrimaryHierarchyVO;
@@ -538,6 +539,34 @@ public class ContentServiceImpl implements ContentService {
         return isPetReleased;
     } 
 
+    
+    /**
+     * Method to get the Copy attribute details from database.
+     *    
+     * @param orin String   
+     * @return copyAttributeVO CopyAttributeVO
+     * 
+     * Method added For PIM Phase 2 - Regular Item Copy Attribute
+     * Date: 05/16/2016
+     * Added By: Cognizant
+     */
+    @Override
+    public CopyAttributeVO getCopyAttribute(String orin)
+            throws PEPServiceException {
+
+        LOGGER.info("***Entering getCopyAttribute() method.");
+
+        CopyAttributeVO copyAttributeVO = null;
+        try {
+            copyAttributeVO = contentDAO.fetchCopyAttributes(orin);            
+        }
+        catch (final PEPFetchException fetchException) {
+            LOGGER.error("Exception in getCopyAttribute() method. -- " + fetchException.getMessage());
+            throw new PEPServiceException(fetchException.getMessage());
+        }
+        LOGGER.info("***Exiting getCopyAttribute() method.");
+        return copyAttributeVO;
+    }
 }
 
 

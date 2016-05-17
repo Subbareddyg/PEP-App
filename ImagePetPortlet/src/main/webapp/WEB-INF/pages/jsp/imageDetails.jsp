@@ -835,7 +835,48 @@ function releseLockedPet(loggedInUser,releseLockedPetURL){
 
 
 
+<%--Scene 7 Image URL starts--%>
+<!-- Method to get the Image attribute details in screen. -->
+<!-- Modified For PIM Phase 2 - Regular Item Image Link Attribute -->
+<!-- Date: 05/13/2016 -->
+<!-- Modified By: Cognizant -->
+<div id="img_mgmt_pnl" class="x-panel-header">
+	<div class="x-panel-header">
+		<strong><fmt:message key="image.scene7.header" /></strong>
+	</div>
+	<div class="x-panel-body">
+	<div id="image-operations-Message-Area" class="message-area">
+		
+	</div>
+	<br />
 
+		<div class="need_images">							
+			<div id="vendor_images">
+				<table id="vImage" cellpadding="0" cellspacing="0" width="90%">
+				<thead>
+				<tr>
+				<th class="sorted order1"><fmt:message key="image.scene7.shottype" /></th>
+				<th><fmt:message key="image.scene7.imageurl" /></th>
+				<th><fmt:message key="image.scene7.swatchurl" /></th>
+				<th><fmt:message key="image.scene7.viewurl" /></th>
+				</tr>
+				</thead>
+				<c:forEach items= "${imageDetailsForm.imageLinkVOList}"  var="imageLinkVOList">
+				<tr>
+					<td><c:out value="${imageLinkVOList.shotType}"/></td>
+					<td><a href="${imageLinkVOList.imageURL}" target="_blank">URL</a></td>
+					<td><a href="${imageLinkVOList.swatchURL}" target="_blank">URL</a></td>
+					<td><a href="${imageLinkVOList.viewURL}" target="_blank">URL</a></td>										
+				</tr>
+				</c:forEach>
+				</table>
+				</form>
+			</div>
+		</div>	
+		
+	</div>
+</div>
+<!-- Scene 7 Image URL block ends -->
 
 <%--Contact Information Starts--%>
 <div id="contact_Information" class="cars_panel x-hidden collapsed">

@@ -12,6 +12,7 @@ import org.json.JSONArray;
 import com.belk.pep.exception.checked.PEPFetchException;
 import com.belk.pep.exception.checked.PEPPersistencyException;
 import com.belk.pep.exception.checked.PEPServiceException;
+import com.belk.pep.model.ImageLinkVO;
 import com.belk.pep.model.WorkFlow;
 import com.belk.pep.service.ImageRequestService;
 
@@ -176,5 +177,34 @@ public class ImageRequestDelegate {
 	        LOGGER.info("Image requestdelegate :: releseLockedPet");
 	        boolean  isPetReleased = imageRequestService.releseLockedPet(orin,pepUserID,pepFunction);     
 	        return isPetReleased;
+	 }
+	 
+	 /**
+	 * Method to get the Image attribute details from database.
+	 *    
+	 * @param orin String   
+	 * @return imageLinkVOList List<ImageLinkVO>
+	 * 
+	 * Method added For PIM Phase 2 - Regular Item Image Link Attribute
+	 * Date: 05/13/2016
+	 * Added By: Cognizant
+	*/	
+	public List<ImageLinkVO> getCopyImageLinks(String orin) throws PEPServiceException, PEPPersistencyException{
+		
+		LOGGER.info("***Entering ImageRequestDelegate.getCopyImageLinks() method.");
+	    
+		List<ImageLinkVO> imageLinkVOList = null;
+		
+	    try {
+	    	imageLinkVOList = imageRequestService.getCopyImageLinks(orin);
+	    }		    
+	    catch (Exception exception) {
+	
+	    	LOGGER.error("Exception in getCopyImageLinks() method, Delegate Layer -- " + exception.getMessage());
+	        throw new PEPServiceException(exception.getMessage());
 	    }
+	    LOGGER.info("***Exiting ImageRequestDelegate.getCopyImageLinks() method.");
+	    return imageLinkVOList;
+	    
+	}
 }
