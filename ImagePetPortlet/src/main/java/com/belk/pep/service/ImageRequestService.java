@@ -10,6 +10,7 @@ import org.json.JSONArray;
 
 import com.belk.pep.exception.checked.PEPPersistencyException;
 import com.belk.pep.exception.checked.PEPServiceException;
+import com.belk.pep.model.ImageLinkVO;
 import com.belk.pep.model.WorkFlow;
 //import com.belk.pep.service.ArrayList;
 //import com.belk.pep.service.String;
@@ -117,5 +118,16 @@ public interface ImageRequestService {
     
     public boolean releseLockedPet(String orin, String pepUserID,String pepFunction)throws PEPPersistencyException;  
     
+    /**
+     * Method to get the Image attribute details from database.
+     *    
+     * @param orin String   
+     * @return imageLinkVOList List<ImageLinkVO>
+     * 
+     * Method added For PIM Phase 2 - Regular Item Image Link Attribute
+     * Date: 05/13/2016
+     * Added By: Cognizant
+     */
+    public List<ImageLinkVO> getCopyImageLinks(String orin) throws PEPServiceException, PEPPersistencyException;
     
 }

@@ -54,6 +54,7 @@ import com.belk.pep.form.ImageForm;
 import com.belk.pep.form.SamleImageDetails;
 import com.belk.pep.form.StyleInfoDetails;
 import com.belk.pep.form.WorkListDisplayForm;
+import com.belk.pep.model.ImageLinkVO;
 import com.belk.pep.model.UploadImagesDTO;
 import com.belk.pep.model.WorkFlow;
 import com.belk.pep.util.FtpUtil;
@@ -245,6 +246,19 @@ public class ImageRequestController {
         ArrayList contactInformationList = imageRequestDelegate.getContactInformation(orinNumber); 
         ArrayList pepHistoryList = imageRequestDelegate.getPepHistoryDetails(orinNumber);
 
+        /**
+    	 * Method to get the Image attribute details in screen.
+    	 * 
+    	 * Method added For PIM Phase 2 - Regular Item Image Link Attribute
+    	 * Date: 05/13/2016
+    	 * Added By: Cognizant
+    	 */	
+        List<ImageLinkVO> imageLinkVOList = imageRequestDelegate.getCopyImageLinks(orinNumber);
+        LOGGER.debug("Image link attribute list size -- " + imageLinkVOList.size());
+        /**
+         * Modification End.
+         */
+        
         LOGGER.info("****inside the  handle handleRenderRequest method****"
             + request.getParameter(ImageConstants.ACTION));
         
@@ -287,7 +301,21 @@ public class ImageRequestController {
                     LOGGER.info("exiting inside pepHistoryList");
                 }
                             
-                
+                /**
+            	 * Method to get the Image attribute details in screen.
+            	 * 
+            	 * Method added For PIM Phase 2 - Regular Item Image Link Attribute
+            	 * Date: 05/13/2016
+            	 * Added By: Cognizant
+            	 */	
+                if (imageLinkVOList.size() > 0 && imageLinkVOList != null) {
+                    LOGGER.debug("inside imageLinkVOList");
+                    imageForm.setImageLinkVOList(imageLinkVOList);
+                    LOGGER.debug("exiting inside imageLinkVOList");
+                }
+                /**
+                 * Modification End.
+                 */
                 
                 List<WorkFlow> workFlowList   = new ArrayList<WorkFlow>();   	
             	workFlowList =  imageRequestDelegate.getImageMgmtDetailsByOrin(orinNumber);

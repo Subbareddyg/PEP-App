@@ -25,6 +25,7 @@ import com.belk.pep.vo.ChildSkuVO;
 import com.belk.pep.vo.ColorAttributesVO;
 import com.belk.pep.vo.ContentHistoryVO;
 import com.belk.pep.vo.ContentManagementVO;
+import com.belk.pep.vo.CopyAttributeVO;
 import com.belk.pep.vo.CopyAttributesVO;
 import com.belk.pep.vo.GlobalAttributesVO;
 import com.belk.pep.vo.ItemPrimaryHierarchyVO;
@@ -1578,4 +1579,81 @@ public boolean releseLockedPet(  String orin, String pepUserID,String pepFunctio
     }
 
 
+    /**
+     * Method to get the Copy attribute details from database.
+     *    
+     * @param orin String   
+     * @return copyAttributeVO CopyAttributeVO
+     * 
+     * Method added For PIM Phase 2 - Regular Item Copy Attribute
+     * Date: 05/16/2016
+     * Added By: Cognizant
+     */
+    @Override
+    public CopyAttributeVO fetchCopyAttributes(String orin) throws PEPFetchException {
+
+        LOGGER.info("***Entering fetchCopyAttributes() method.");
+        Session session = null;
+        Transaction transaction = null;
+        CopyAttributeVO copyAttributeVO = null;
+        List<Object[]> rows=null;
+        final XqueryConstants xqueryConstants = new XqueryConstants();
+        try {
+            session = sessionFactory.openSession();
+            transaction= session.beginTransaction();
+            final Query query =session.createSQLQuery(xqueryConstants.fetchCopyAttributesQuery());
+            if(query!=null)
+            {
+                query.setParameter("orinNum", orin);
+                query.setFetchSize(10);
+                rows = query.list();
+            }
+
+            if(rows!=null)
+            {
+                for (final Object[] row : rows) {
+                    copyAttributeVO = new CopyAttributeVO();
+                    copyAttributeVO.setOrin(checkNull(row[0]));
+                    copyAttributeVO.setProductCopyText(checkNull(row[1]));
+                    copyAttributeVO.setCopyLine1(checkNull(row[2]));
+                    copyAttributeVO.setCopyLine2(checkNull(row[3]));
+                    copyAttributeVO.setCopyLine3(checkNull(row[4]));
+                    copyAttributeVO.setCopyLine4(checkNull(row[5]));
+                    copyAttributeVO.setCopyLine5(checkNull(row[6]));
+                    copyAttributeVO.setCopyProductName(checkNull(row[7]));
+                    copyAttributeVO.setMaterial(checkNull(row[8]));
+                    copyAttributeVO.setCare(checkNull(row[9]));
+                    copyAttributeVO.setCountryOfOrigin(checkNull(row[10]));
+                    copyAttributeVO.setExclusive(checkNull(row[11]));
+                    copyAttributeVO.setCaprop65Compliant(checkNull(row[12]));
+                    
+                    LOGGER.debug("Copy Attribute Values -- \nORIN: " + copyAttributeVO.getOrin() +
+                        "\nPRODUCT COPY TEXT: " + copyAttributeVO.getProductCopyText() +
+                        "\nCOPY LINE 1: " + copyAttributeVO.getCopyLine1() + 
+                        "\nCOPY LINE 2: " + copyAttributeVO.getCopyLine2() + 
+                        "\nCOPY LINE 3: " + copyAttributeVO.getCopyLine3() + 
+                        "\nCOPY LINE 4: " + copyAttributeVO.getCopyLine4() + 
+                        "\nCOPY LINE 5: " + copyAttributeVO.getCopyLine5() + 
+                        "\nCOPY PRODUCT NAME: " + copyAttributeVO.getCopyProductName() +
+                        "\nMATERIAL: " + copyAttributeVO.getMaterial() +
+                        "\nCARE: " + copyAttributeVO.getCare() +
+                        "\nCOUNTRY OF ORIGIN: " + copyAttributeVO.getCountryOfOrigin() +
+                        "\nEXCLUSIVE: " + copyAttributeVO.getExclusive() +
+                        "\nCAPROP65 COMPLIANT: " + copyAttributeVO.getCaprop65Compliant());
+                }
+            }
+        }
+        catch(final Exception exception)
+        {
+            LOGGER.error("Exception in fetchCopyAttributes() method. -- " + exception.getMessage());
+            throw new PEPFetchException(exception);
+        }
+        finally {
+            session.flush();
+            transaction.commit();
+            session.close();
+        }
+        LOGGER.info("***Exiting fetchCopyAttributes() method.");
+        return copyAttributeVO;
+    }
 }

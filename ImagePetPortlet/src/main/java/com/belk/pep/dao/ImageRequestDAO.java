@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.belk.pep.exception.checked.PEPPersistencyException;
 import com.belk.pep.form.ArtDirectorRequestDetails;
+import com.belk.pep.model.ImageLinkVO;
 import com.belk.pep.model.WorkFlow;
 
 /**
@@ -83,4 +84,16 @@ public  interface ImageRequestDAO {
     throws PEPPersistencyException;
     public boolean releseLockedPet(String orin, String pepUserID,String pepFunction)throws PEPPersistencyException;  
 
+    
+    /**
+     * Method to get the Image attribute details from database.
+     *    
+     * @param orin String   
+     * @return imageLinkVOList List<ImageLinkVO>
+     * 
+     * Method added For PIM Phase 2 - Regular Item Image Link Attribute
+     * Date: 05/13/2016
+     * Added By: Cognizant
+     */
+    public List<ImageLinkVO> getCopyImageLinks(String orin) throws PEPPersistencyException;
 }

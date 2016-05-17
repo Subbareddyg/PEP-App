@@ -25,6 +25,7 @@ import com.belk.pep.vo.ChildSkuVO;
 import com.belk.pep.vo.ColorAttributesVO;
 import com.belk.pep.vo.ContentHistoryVO;
 import com.belk.pep.vo.ContentManagementVO;
+import com.belk.pep.vo.CopyAttributeVO;
 import com.belk.pep.vo.CopyAttributesVO;
 import com.belk.pep.vo.GlobalAttributesVO;
 import com.belk.pep.vo.ItemPrimaryHierarchyVO;
@@ -865,4 +866,30 @@ public class ContentDelegate {
     }
 
 
+    /**
+     * Method to get the Copy attribute details from database.
+     *    
+     * @param orin String   
+     * @return copyAttributeVO CopyAttributeVO
+     * 
+     * Method added For PIM Phase 2 - Regular Item Copy Attribute
+     * Date: 05/16/2016
+     * Added By: Cognizant
+     */
+    public CopyAttributeVO getCopyAttributeDetails(String orin)
+            throws PEPServiceException {
+
+        LOGGER.info("***Entering getCopyAttributeDetails() method.");
+
+        CopyAttributeVO copyAttributeVO=null;
+        try {
+            copyAttributeVO = contentService.getCopyAttribute(orin);            
+        }
+        catch (final Exception exception) {
+            LOGGER.severe("Exception in getCopyAttributeDetails() method. -- " + exception.getMessage());
+            throw new PEPServiceException(exception.getMessage());
+        }
+        LOGGER.info("***Exiting getCopyAttributeDetails() method.");
+        return copyAttributeVO;
+    }
 }
