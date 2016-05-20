@@ -261,7 +261,7 @@
 	<scm>
 		<connection>scm:git:ssh://git@bitbucket.org/belk_ecom/pep-application</connection>
 		<developerConnection>scm:git:ssh://git@bitbucket.org/belk_ecom/pep-application</developerConnection>
-		<tag>WorkListDisplayPortlet-1.0.0.0</tag>
+		<tag>pim-1.0.0.0</tag>
 	</scm>
 
 	<distributionManagement>
