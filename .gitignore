@@ -44,3 +44,4 @@ atlassian-ide-plugin.xml
 target
 .m2
 .settings
+*.settings/org.eclipse.wst.common.component
