@@ -35,7 +35,7 @@
     <scm>
 		<connection>scm:git:ssh://git@bitbucket.org/belk_ecom/pep-application</connection>
 		<developerConnection>scm:git:ssh://git@bitbucket.org/belk_ecom/pep-application</developerConnection>
-		<tag>1.0.0.0-SNAPSHOT</tag>
+		<tag>1.0.0.0-SNAPSHOT-SNAPSHOT</tag>
 	</scm>
 
 	<distributionManagement>
