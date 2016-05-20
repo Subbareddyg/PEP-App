@@ -1,6 +1,6 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-	<groupId>com.belk.pim</groupId>
+	<groupId>com.belk.pep</groupId>
 	<version>1.0.0.1-SNAPSHOT</version>
 	
 	<name>WorkListDisplayPortlet</name>
@@ -216,7 +216,7 @@
 		</dependency>
 
 		<dependency>
-			<groupId>com.belk.pim</groupId>
+			<groupId>com.belk.pep</groupId>
 			<artifactId>CommonForIpcLogin</artifactId>
 			<version>1.0.0.1-SNAPSHOT</version>
 		</dependency>
@@ -258,17 +258,5 @@
 		</dependency>
 
 	</dependencies>
-	<scm>
-		<connection>scm:git:ssh://git@bitbucket.org/belk_ecom/pep-application</connection>
-		<developerConnection>scm:git:ssh://git@bitbucket.org/belk_ecom/pep-application</developerConnection>
-		<tag>pim-1.0.0.0-SNAPSHOT</tag>
-	</scm>
-
-	<distributionManagement>
-		<repository>
-			<id>belk-m2</id>
-			<name>Belk M2 Repo</name>
-			<url>http://colxljeniesd001.belkinc.com:8081/nexus/content/repositories/stage/</url>
-		</repository>
-	</distributionManagement>
+	
 </project>
