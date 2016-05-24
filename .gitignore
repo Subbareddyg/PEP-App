@@ -37,10 +37,11 @@ Thumbs.db
 .project
 .classpath
 *.classpath
-*/.classpath
+*/*.classpath
 .idea
 *.iml
 atlassian-ide-plugin.xml
 target
 .m2
 .settings
+*.settings/org.eclipse.wst.common.component

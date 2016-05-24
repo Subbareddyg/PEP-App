@@ -1,6 +1,6 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<groupId>com.belk.pim</groupId>
-	<version>1.0.0.11-SNAPSHOT</version>
+	<groupId>com.belk.pep</groupId>
+	<version>1.0.0.4-SNAPSHOT</version>
 	
 	
 	<name>CommonForIpcLogin</name>
@@ -23,18 +23,17 @@
 			</plugin>
 		</plugins>
 	</build>
-	<scm>
-		<connection>scm:git:ssh://git@bitbucket.org/belk_ecom/pep-application</connection>
-		<developerConnection>scm:git:ssh://git@bitbucket.org/belk_ecom/pep-application</developerConnection>
-		<tag>CommonForIpcLogin-1.0.0.0</tag>
-	</scm>
+<scm>
+ 	    <connection>scm:git:ssh://git@bitbucket.org/belk_ecom/pep-application</connection>
+	            <developerConnection>scm:git:ssh://git@bitbucket.org/belk_ecom/pep-application</developerConnection>
+		    		<tag>pep-1.0.0.3-SNAPSHOT</tag>
+				    </scm>
 
-	<distributionManagement>
-		<repository>
-			<id>belk-m2</id>
-			<name>Belk M2 Repo</name>
-			<url>http://colxljeniesd001.belkinc.com:8081/nexus/content/repositories/stage/</url>
-		</repository>
-	</distributionManagement>
-
+			<distributionManagement>
+					<repository>
+								<id>belk-m2</id>
+											<name>Belk M2 Repo</name>
+														<url>http://colxljeniesd001.belkinc.com:8081/nexus/content/repositories/stage/</url>
+																</repository>
+																</distributionManagement>
 </project>
