@@ -1044,26 +1044,26 @@ public boolean releseLockedPet(  String orin, String pepUserID,String pepFunctio
 	 * Added By: Cognizant
 	 */	
 	@Override
-	public List<ImageLinkVO> getCopyImageLinks(String orin) throws PEPServiceException, PEPPersistencyException{
+	public List<ImageLinkVO> getScene7ImageLinks(String orin) throws PEPServiceException, PEPPersistencyException{
 		
-		LOGGER.info("***Entering ImageRequestService.getCopyImageLinks() method.");
+		LOGGER.info("***Entering ImageRequestService.getScene7ImageLinks() method.");
 	    
 		List<ImageLinkVO> imageLinkVOList = null;
 		
 	    try {
-	    	imageLinkVOList = imageRequestDAO.getCopyImageLinks(orin);
+	    	imageLinkVOList = imageRequestDAO.getScene7ImageLinks(orin);
 	    }
 	    catch (PEPPersistencyException persistencyException) {
 	
-	    	LOGGER.error("PEPPersistencyException in getCopyImageLinks() method, Service Layer -- " + persistencyException.getMessage());
+	    	LOGGER.error("PEPPersistencyException in getScene7ImageLinks() method, Service Layer -- " + persistencyException.getMessage());
 	        throw persistencyException;
 	    }
 	    catch (Exception exception) {
 	
-	    	LOGGER.error("Exception in getCopyImageLinks() method, Service Layer -- " + exception.getMessage());
+	    	LOGGER.error("Exception in getScene7ImageLinks() method, Service Layer -- " + exception.getMessage());
 	        throw new PEPServiceException(exception.getMessage());
 	    }
-	    LOGGER.info("***Exiting ImageRequestService.getCopyImageLinks() method.");
+	    LOGGER.info("***Exiting ImageRequestService.getScene7ImageLinks() method.");
 	    return imageLinkVOList;
 	    
 	}

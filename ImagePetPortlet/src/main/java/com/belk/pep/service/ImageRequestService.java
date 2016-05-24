@@ -128,6 +128,6 @@ public interface ImageRequestService {
      * Date: 05/13/2016
      * Added By: Cognizant
      */
-    public List<ImageLinkVO> getCopyImageLinks(String orin) throws PEPServiceException, PEPPersistencyException;
+    public List<ImageLinkVO> getScene7ImageLinks(String orin) throws PEPServiceException, PEPPersistencyException;
     
 }

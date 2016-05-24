@@ -189,21 +189,21 @@ public class ImageRequestDelegate {
 	 * Date: 05/13/2016
 	 * Added By: Cognizant
 	*/	
-	public List<ImageLinkVO> getCopyImageLinks(String orin) throws PEPServiceException, PEPPersistencyException{
+	public List<ImageLinkVO> getScene7ImageLinks(String orin) throws PEPServiceException, PEPPersistencyException{
 		
-		LOGGER.info("***Entering ImageRequestDelegate.getCopyImageLinks() method.");
+		LOGGER.info("***Entering ImageRequestDelegate.getScene7ImageLinks() method.");
 	    
 		List<ImageLinkVO> imageLinkVOList = null;
 		
 	    try {
-	    	imageLinkVOList = imageRequestService.getCopyImageLinks(orin);
+	    	imageLinkVOList = imageRequestService.getScene7ImageLinks(orin);
 	    }		    
 	    catch (Exception exception) {
 	
-	    	LOGGER.error("Exception in getCopyImageLinks() method, Delegate Layer -- " + exception.getMessage());
+	    	LOGGER.error("Exception in getScene7ImageLinks() method, Delegate Layer -- " + exception.getMessage());
 	        throw new PEPServiceException(exception.getMessage());
 	    }
-	    LOGGER.info("***Exiting ImageRequestDelegate.getCopyImageLinks() method.");
+	    LOGGER.info("***Exiting ImageRequestDelegate.getScene7ImageLinks() method.");
 	    return imageLinkVOList;
 	    
 	}

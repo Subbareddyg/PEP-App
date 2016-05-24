@@ -824,9 +824,9 @@ public class XqueryConstants {
      * Date: 05/13/2016
      * Added By: Cognizant
      */
-    public  String getCopyImageLinksQuery() {
+    public  String getScene7ImageLinks() {
         
-        LOGGER.info("***Entering getCopyImageLinksQuery() method.");
+        LOGGER.info("***Entering getScene7ImageLinks() method.");
         
         String IMAGE_LINKS_QUERY = " SELECT AIC.MDMID,  "+
         "   T.IMAGEURL,                    "+
@@ -838,7 +838,7 @@ public class XqueryConstants {
         " WHERE AIC.MDMID = :orinNum   ";
 
         LOGGER.debug("IMAGE LINKS QUERY -- \n" + IMAGE_LINKS_QUERY);
-        LOGGER.info("***Exiting getCopyImageLinksQuery() method.");
+        LOGGER.info("***Exiting getScene7ImageLinks() method.");
         return IMAGE_LINKS_QUERY;
     }
 

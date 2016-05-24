@@ -95,5 +95,5 @@ public  interface ImageRequestDAO {
      * Date: 05/13/2016
      * Added By: Cognizant
      */
-    public List<ImageLinkVO> getCopyImageLinks(String orin) throws PEPPersistencyException;
+    public List<ImageLinkVO> getScene7ImageLinks(String orin) throws PEPPersistencyException;
 }

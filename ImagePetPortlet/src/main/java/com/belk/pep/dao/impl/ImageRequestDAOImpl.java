@@ -913,23 +913,20 @@ public class ImageRequestDAOImpl implements ImageRequestDAO {
      * Added By: Cognizant
      */
     @Override
-    public List<ImageLinkVO> getCopyImageLinks(String orin) throws PEPPersistencyException {
+    public List<ImageLinkVO> getScene7ImageLinks(String orin) throws PEPPersistencyException {
 
-        LOGGER.info("***Entering ImageRequestDAO.getCopyImageLinks() method.");
-        Session session = null;
-        Transaction transaction = null;
+        LOGGER.info("***Entering getScene7ImageLinks() method.");
+        Session session = null;        
         List<ImageLinkVO> imageLinkVOList = new ArrayList<ImageLinkVO>();
         ImageLinkVO imageLinkVO = null;
         List<Object[]> rows=null;
         final XqueryConstants xqueryConstants = new XqueryConstants();
         try {
-            session = sessionFactory.openSession();
-            transaction= session.beginTransaction();
-            final Query query =session.createSQLQuery(xqueryConstants.getCopyImageLinksQuery());
+            session = sessionFactory.openSession();            
+            final Query query =session.createSQLQuery(xqueryConstants.getScene7ImageLinks());
             if(query!=null)
             {
-                query.setParameter("orinNum", orin);
-                query.setFetchSize(10);
+                query.setParameter("orinNum", orin);                
                 rows = query.list();
             }
 
@@ -955,15 +952,14 @@ public class ImageRequestDAOImpl implements ImageRequestDAO {
         }
         catch(final Exception exception)
         {
-            LOGGER.error("Exception in getCopyImageLinks() method DAO layer. -- " + exception.getMessage());
+            LOGGER.error("Exception in getScene7ImageLinks() method DAO layer. -- " + exception.getMessage());
             throw new PEPPersistencyException(exception);
         }
         finally {
-            session.flush();
-            transaction.commit();
+            session.flush();            
             session.close();
         }
-        LOGGER.info("***Exiting ImageRequestDAO.getCopyImageLinks() method.");
+        LOGGER.info("***Exiting ImageRequestDAO.getScene7ImageLinks() method.");
         return imageLinkVOList;
     }
 

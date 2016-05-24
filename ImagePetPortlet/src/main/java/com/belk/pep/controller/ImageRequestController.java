@@ -253,7 +253,7 @@ public class ImageRequestController {
     	 * Date: 05/13/2016
     	 * Added By: Cognizant
     	 */	
-        List<ImageLinkVO> imageLinkVOList = imageRequestDelegate.getCopyImageLinks(orinNumber);
+        List<ImageLinkVO> imageLinkVOList = imageRequestDelegate.getScene7ImageLinks(orinNumber);
         LOGGER.debug("Image link attribute list size -- " + imageLinkVOList.size());
         /**
          * Modification End.
