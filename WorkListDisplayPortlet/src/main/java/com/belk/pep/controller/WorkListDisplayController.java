@@ -246,9 +246,14 @@ public class WorkListDisplayController implements Controller,EventAwareControlle
                 && custuser!=null){
             LOGGER.info("createManualPet  inside ****************"+request.getParameter("createManualPet"));
             response.setEvent(WorkListDisplayConstants.LOGGEDIN_USER_DETAILS, (Serializable) custuser); //TODO
-        }   
-        
-       
+        }
+        /** Belk PIM Phase - II. Change for Create Grouping - Start. AFUPYB3 **/
+        if((request.getParameter("goToGrouping")!=null && !request.getParameter("goToGrouping").isEmpty()) 
+                && custuser!=null){
+            LOGGER.info("goToGrouping  inside ****************"+request.getParameter("goToGrouping"));
+            response.setEvent("GroupingUserObj", (Serializable) custuser); //AFUPYB3
+        }
+        /** Belk PIM Phase - II. Change for Create Grouping - End. AFUPYB3 **/
         
     }
     

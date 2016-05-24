@@ -73,11 +73,9 @@ $("#advOrin").on({
 function createmannualpet() {
 	window.location = "/wps/portal/home/createmannualpet";
 }
-// Belk PIM Phase - II. Change for Create Grouping - Start. AFUPYB3
-function goToGrouping() {
+function createGrouping() {
 	window.location = "/wps/portal/home/creategrouping";
 }
-//Belk PIM Phase - II. Change for Create Grouping - Start. AFUPYB3
 function inactivepets() {
 	window.location = "/wps/portal/home/inactivepets";
 }

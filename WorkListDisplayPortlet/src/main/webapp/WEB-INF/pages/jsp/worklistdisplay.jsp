@@ -109,6 +109,9 @@ lockClearOnBack.value='1';
     <input type="hidden" id="stylepetstatid" name="stylepetstatid" value=""/>
     <input type="hidden" id="stylecolorpetstatid" name="stylecolorpetstatid" value=""/>
     <input type="hidden"  name="createManualPet" id="createManualPet" value=""/>
+    <!-- Belk PIM Phase - II. Change for Create Grouping - Start. AFUPYB3 -->
+    <input type="hidden"  name="goToGrouping" id="goToGrouping" value=""/>
+    <!-- Belk PIM Phase - II. Change for Create Grouping - End -->
 	<input type="hidden" id="petStatus" name="petStatus" value=""/>    
     
     <input type="hidden" id="searchReturnId" name="searchReturnId" value="false" />	
@@ -143,7 +146,7 @@ lockClearOnBack.value='1';
 				 </c:if>  
 				<c:if test="${workflowForm.readOnlyUser !='yes'}">    
 					<input type="button"  id="createGrouping" value="<fmt:message key="worklist.grouping.label"/>" 
-					    onclick=createGrouping();  class="creategroupingbutton" disabled/>  
+					    onclick=createGroup();  class="creategroupingbutton"/>  
 				</c:if>  
 				 <c:if test="${workflowForm.readOnlyUser !='yes'}">   
 					
@@ -1013,7 +1016,13 @@ document.getElementById("createManualPet").value = 'gotoCreateManualPet';
 
 $("#workListDisplayForm").submit();
 }
+//** Belk PIM Phase - II. Change for Create Grouping - Start. AFUPYB3 **/
+function createGroup(){
+	document.getElementById("goToGrouping").value = 'goToGrouping';
 
+	$("#workListDisplayForm").submit();
+	}
+//** Belk PIM Phase - II. Change for Create Grouping - End **/
 window.onload = onloaddept;
 
 function defaultAdvSearchSettings()

@@ -39,6 +39,9 @@ http://java.sun.com/xml/ns/portlet/portlet-app_2_0.xsd">
 	   <supported-publishing-event>
  		  <name>LoggedInUserDetailsOBJ</name>
 	   </supported-publishing-event>
+	   <supported-publishing-event>
+			<name>GroupingUserObj</name>
+		</supported-publishing-event>
 	   		
 	</portlet>
 	<default-namespace>http://JSR286EventRenderParam/</default-namespace>
@@ -61,6 +64,9 @@ http://java.sun.com/xml/ns/portlet/portlet-app_2_0.xsd">
 		<name>LoggedInUserDetailsOBJ</name>
 		<value-type>com.belk.pep.common.userdata.UserData</value-type>
 	</event-definition>
-
+	<event-definition>
+		<name>GroupingUserObj</name>
+		<value-type>com.belk.pep.common.userdata.UserData</value-type>
+	</event-definition>
 
 </portlet-app>
