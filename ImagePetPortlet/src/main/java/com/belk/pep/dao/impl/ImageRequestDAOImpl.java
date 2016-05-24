@@ -27,6 +27,7 @@ import com.belk.pep.form.PepDetailsHistory;
 import com.belk.pep.form.SamleImageDetails;
 import com.belk.pep.form.StyleInfoDetails;
 import com.belk.pep.form.VendorInfoDetails;
+import com.belk.pep.model.ImageLinkVO;
 import com.belk.pep.model.PetsFound;
 import com.belk.pep.model.StyleColor;
 import com.belk.pep.model.WorkFlow;
@@ -901,5 +902,65 @@ public class ImageRequestDAOImpl implements ImageRequestDAO {
         
     }
 
+    /**
+     * Method to get the Image attribute details from database.
+     *    
+     * @param orin String   
+     * @return imageLinkVOList List<ImageLinkVO>
+     * 
+     * Method added For PIM Phase 2 - Regular Item Image Link Attribute
+     * Date: 05/13/2016
+     * Added By: Cognizant
+     */
+    @Override
+    public List<ImageLinkVO> getScene7ImageLinks(String orin) throws PEPPersistencyException {
+
+        LOGGER.info("***Entering getScene7ImageLinks() method.");
+        Session session = null;        
+        List<ImageLinkVO> imageLinkVOList = new ArrayList<ImageLinkVO>();
+        ImageLinkVO imageLinkVO = null;
+        List<Object[]> rows=null;
+        final XqueryConstants xqueryConstants = new XqueryConstants();
+        try {
+            session = sessionFactory.openSession();            
+            final Query query =session.createSQLQuery(xqueryConstants.getScene7ImageLinks());
+            if(query!=null)
+            {
+                query.setParameter("orinNum", orin);                
+                rows = query.list();
+            }
+
+            if(rows!=null)
+            {
+                for (final Object[] row : rows) {
+                	imageLinkVO = new ImageLinkVO();
+                	imageLinkVO.setOrin(row[0] == null? "" : row[0].toString());
+                	imageLinkVO.setShotType(row[4] == null? "" : row[4].toString());
+                	imageLinkVO.setImageURL(row[1] == null? "" : row[1].toString());
+                	imageLinkVO.setSwatchURL(row[2] == null? "" : row[2].toString());
+                	imageLinkVO.setViewURL(row[3] == null? "" : row[3].toString());                    
+                    
+                    LOGGER.debug("Image Link Attribute Values -- \nORIN: " + imageLinkVO.getOrin() +
+                        "\nSHOT TYPE: " + imageLinkVO.getShotType() +
+                        "\nIMAGE URL: " + imageLinkVO.getImageURL() + 
+                        "\nSWATCH URL: " + imageLinkVO.getSwatchURL() + 
+                        "\nVIEW URL: " + imageLinkVO.getViewURL());
+                    
+                    imageLinkVOList.add(imageLinkVO);
+                }
+            }
+        }
+        catch(final Exception exception)
+        {
+            LOGGER.error("Exception in getScene7ImageLinks() method DAO layer. -- " + exception.getMessage());
+            throw new PEPPersistencyException(exception);
+        }
+        finally {
+            session.flush();            
+            session.close();
+        }
+        LOGGER.info("***Exiting ImageRequestDAO.getScene7ImageLinks() method.");
+        return imageLinkVOList;
+    }
 
 }

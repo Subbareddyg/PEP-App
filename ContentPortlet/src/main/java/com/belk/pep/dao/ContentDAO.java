@@ -12,6 +12,7 @@ import com.belk.pep.vo.ChildSkuVO;
 import com.belk.pep.vo.ColorAttributesVO;
 import com.belk.pep.vo.ContentHistoryVO;
 import com.belk.pep.vo.ContentManagementVO;
+import com.belk.pep.vo.CopyAttributeVO;
 import com.belk.pep.vo.CopyAttributesVO;
 import com.belk.pep.vo.GlobalAttributesVO;
 import com.belk.pep.vo.ItemPrimaryHierarchyVO;
@@ -259,5 +260,17 @@ public  interface ContentDAO {
      * @throws PEPPersistencyException the PEP persistency exception
      */
     boolean releseLockedPet(String orin, String pepUserID,String pepFunction)throws PEPPersistencyException;  
+
+    /**
+     * Method to get the Copy attribute details from database.
+     *    
+     * @param orin String   
+     * @return copyAttributeVO CopyAttributeVO
+     * 
+     * Method added For PIM Phase 2 - Regular Item Copy Attribute
+     * Date: 05/16/2016
+     * Added By: Cognizant
+     */
+    CopyAttributeVO fetchCopyAttributes(String orin) throws PEPFetchException;  
 
 }

@@ -68,6 +68,7 @@ import com.belk.pep.vo.ChildSkuVO;
 import com.belk.pep.vo.ColorAttributesVO;
 import com.belk.pep.vo.ContentHistoryVO;
 import com.belk.pep.vo.ContentManagementVO;
+import com.belk.pep.vo.CopyAttributeVO;
 import com.belk.pep.vo.CopyAttributesVO;
 import com.belk.pep.vo.GlobalAttributesVO;
 import com.belk.pep.vo.IPHMappingVO;
@@ -2601,6 +2602,21 @@ public class ContentController implements ResourceAwareController,EventAwareCont
             }
             
         }
+        
+        /**
+         * Method modified to show the Copy attribute details in screen.
+         * 
+         * Modified For PIM Phase 2 - Regular Item Copy Attribute
+         * Date: 05/16/2016
+         * Modified By: Cognizant
+         */
+        CopyAttributeVO copyAttributeVO = contentDelegate.getCopyAttributeDetails(orinNumber);
+        contentDisplayForm.setCopyAttributeVO(copyAttributeVO);
+        modelAndView.addObject(ContentScreenConstants.CONTENT_DISPLAY_FORM, contentDisplayForm);
+        /**
+         * Modification End.
+         */
+        
         request.getPortletSession().setAttribute(formSessionKey, contentDisplayForm);
         
         modelAndView.addObject(ContentScreenConstants.CONTENT_DISPLAY_FORM, ((ContentForm)request.getPortletSession().getAttribute(formSessionKey)));

@@ -3,8 +3,8 @@
 	
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.belk</groupId>
-	<artifactId>pim</artifactId>
-	<version>1.0</version>
+	<artifactId>pep</artifactId>
+	<version>1.0.0.5-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>Belk PEP</name>
 	<description>Belk Product Enrichment Portal Applications</description>
@@ -18,12 +18,6 @@
 		<module>ImagePetPortlet</module>
 		<module>InternalUserLoginPortlet</module>
 		<module>WorkListDisplayPortlet</module>
-		
-
-
-
-
-
 	</modules>
 <build>
 		<plugins>
@@ -53,7 +47,7 @@
 	<scm>
  	    <connection>scm:git:ssh://git@bitbucket.org/belk_ecom/pep-application</connection>
 	            <developerConnection>scm:git:ssh://git@bitbucket.org/belk_ecom/pep-application</developerConnection>
-		    		<tag>pim-1.0.0.0-SNAPSHOT</tag>
+		    		<tag>pep-1.0.0.3-SNAPSHOT</tag>
 				    </scm>
 
 			<distributionManagement>

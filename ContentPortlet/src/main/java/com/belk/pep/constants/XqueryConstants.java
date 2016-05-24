@@ -2455,5 +2455,67 @@ public class XqueryConstants {
     }
 
 
+    /**
+     * Method to get the Copy attribute details query.
+     *    
+     * @return the query string
+     * 
+     * Method added For PIM Phase 2 - Regular Item Copy Attribute
+     * Date: 05/16/2016
+     * Added By: Cognizant
+     */
+    public String fetchCopyAttributesQuery() {
+        
+        LOGGER.info("***Entering fetchCopyAttributesQuery() method.");
+        
+        String COPY_ATTRIBUTE_QUERY = " SELECT AIC.MDMID,                                                                                                       "+
+        "   T.PRODUCTCOPYTEXT,                                                                                                     "+
+        "   T.COPYLINE1,                                                                                                           "+
+        "   T.COPYLINE2,                                                                                                           "+
+        "   T.COPYLINE3,                                                                                                           "+
+        "   T.COPYLINE4,                                                                                                           "+
+        "   T.COPYLINE5,                                                                                                           "+
+        "   T.COPYPRODUCTNAME,                                                                                                     "+
+        "   T.COPYMATERIAL,                                                                                                        "+
+        "   T.COPYCARE,                                                                                                            "+
+        "   T.COPYCOUNTRYOFORIGIN,                                                                                                 "+
+        "   T.COPYEXCLUSIVE,                                                                                                       "+
+        "   T.COPYCAPROP65COMPLIANT                                                                                                "+
+        " FROM ADSE_PET_CATALOG AIC,                                                                                              "+
+        "   XMLTABLE(                                                                                                              "+
+        "   'let $productCopyText := $XML_DATA/pim_entry/entry/Copy_Sec_Spec/Product_Copy_Text,                                    "+
+        " $copyLine1 := $XML_DATA/pim_entry/entry/Copy_Sec_Spec/Copy_Line_1,                                                       "+
+        " $copyLine2 := $XML_DATA/pim_entry/entry/Copy_Sec_Spec/Copy_Line_2,                                                       "+
+        " $copyLine3 := $XML_DATA/pim_entry/entry/Copy_Sec_Spec/Copy_Line_3,                                                       "+
+        " $copyLine4 := $XML_DATA/pim_entry/entry/Copy_Sec_Spec/Copy_Line_4,                                                       "+
+        " $copyLine5 := $XML_DATA/pim_entry/entry/Copy_Sec_Spec/Copy_Line_5,                                                       "+
+        " $copyProductName := $XML_DATA/pim_entry/entry/Copy_Sec_Spec/Copy_Product_Name,                                           "+
+        " $copyMaterial := $XML_DATA/pim_entry/entry/Copy_Sec_Spec/Copy_Material,                                                  "+
+        " $copyCare := $XML_DATA/pim_entry/entry/Copy_Sec_Spec/Copy_Care,                                                          "+
+        " $copyCountryOfOrigin := $XML_DATA/pim_entry/entry/Copy_Sec_Spec/Copy_Country_of_Origin,                                  "+
+        " $copyExclusive := $XML_DATA/pim_entry/entry/Copy_Sec_Spec/Copy_Import_Domestic,                                          "+
+        " $copyCAProp65Compliant := $XML_DATA/pim_entry/entry/Copy_Sec_Spec/Copy_CAProp65_Compliant                               "+
+        " return                                                                                                                   "+
+        " <category>                                                                                                               "+
+        " <productCopyText>{$productCopyText}</productCopyText>                                                                    "+
+        " <copyLine1>{$copyLine1}</copyLine1>                                                                                      "+
+        " <copyLine2>{$copyLine2}</copyLine2>                                                                                      "+
+        " <copyLine3>{$copyLine3}</copyLine3>                                                                                      "+
+        " <copyLine4>{$copyLine4}</copyLine4>                                                                                      "+
+        " <copyLine5>{$copyLine5}</copyLine5>                                                                                      "+
+        " <copyProductName>{$copyProductName}</copyProductName>                                                                    "+
+        " <copyMaterial>{$copyMaterial}</copyMaterial>                                                                             "+
+        " <copyCare>{$copyCare}</copyCare>                                                                                         "+
+        " <copyCountryOfOrigin>{$copyCountryOfOrigin}</copyCountryOfOrigin>                                                        "+
+        " <copyExclusive>{$copyExclusive}</copyExclusive>                                                                          "+
+        " <copyCAProp65Compliant>{$copyCAProp65Compliant}</copyCAProp65Compliant>                                                  "+
+        " </category>'                                                                                                             "+
+        "   passing AIC.XML_DATA AS \"XML_DATA\" COLUMNS PRODUCTCOPYTEXT CLOB path '/category/productCopyText', COPYLINE1 VARCHAR(3000) path '/category/copyLine1', COPYLINE2 VARCHAR(3000) path '/category/copyLine2', COPYLINE3 VARCHAR(3000) path '/category/copyLine3', COPYLINE4 VARCHAR(3000) path '/category/copyLine4', COPYLINE5 VARCHAR(3000) path '/category/copyLine5', COPYPRODUCTNAME VARCHAR(3000) path '/category/copyProductName', COPYMATERIAL VARCHAR(3000) path '/category/copyMaterial', COPYCARE VARCHAR(3000) path '/category/copyCare', COPYCOUNTRYOFORIGIN VARCHAR(3000) path '/category/copyCountryOfOrigin', COPYEXCLUSIVE VARCHAR(3000) path '/category/copyExclusive', COPYCAPROP65COMPLIANT VARCHAR(3000) path '/category/copyCAProp65Compliant') T "+
+        " WHERE AIC.MDMID = :orinNum   ";
+
+        LOGGER.debug("COPY ATTRIBUTE QUERY -- \n" + COPY_ATTRIBUTE_QUERY);
+        LOGGER.info("***Exiting fetchCopyAttributesQuery() method.");
+        return COPY_ATTRIBUTE_QUERY;
+    }
 
 }
