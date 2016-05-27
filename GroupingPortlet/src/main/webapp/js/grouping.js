@@ -33,11 +33,34 @@ var app = app || {};
 				);
 				
 				//attching date pickers
-				$( "#startDate, #endDate" ).datepicker({
+				/*$( "#startDate, #endDate" ).datepicker({
 					showOn: "button",
 					buttonImage: app.Global.defaults.contextPath + "/img/iconCalendar.gif",
 					buttonImageOnly: false,
+					//minDate: 0 ,
 					buttonText: ""
+				});*/
+				
+				$('#startDate').datepicker({
+					showOn: "button",
+					buttonImage: app.Global.defaults.contextPath + "/img/iconCalendar.gif",
+					buttonImageOnly: false,
+					buttonText: "",
+					minDate: 0 ,
+					onClose: function( selectedDate ) {
+					 $( "#endDate" ).datepicker( "option", "minDate", selectedDate );
+					}
+				});
+				
+				$('#endDate').datepicker({
+					showOn: "button",
+					buttonImage: app.Global.defaults.contextPath + "/img/iconCalendar.gif",
+					buttonImageOnly: false,
+					buttonText: "",
+					
+					onClose: function( selectedDate ) {
+					$( "#startDate" ).datepicker( "option", "maxDate", selectedDate );
+					}
 				});
 				
 			}catch(ex){
@@ -65,14 +88,16 @@ var app = app || {};
 							break;
 						case 'BCG':
 							_super.addAddlFields();
-							$('#dlgGroupCreate').dialog( "option", "minHeight", 437 );
-							$('#dlgGroupCreate').dialog( "option", "height", 437 );
+							$('#dlgGroupCreate').dialog( "option", "minHeight", 457 );
+							$('#dlgGroupCreate').dialog( "option", "height", 457 );
 							$('#groupTypeDropDown option[value="' +groupType +'"]').prop('selected', true);
+							$('#groupType').val(groupType);
 							$('#dlgGroupCreate').dialog('open');
 							break;
 						default:
 							$('#dlgGroupCreate').dialog( "option", "height", 370 );
 							$('#groupTypeDropDown option[value="' +groupType +'"]').prop('selected', true);
+							$('#groupType').val(groupType);
 							$('#dlgGroupCreate').dialog('open');
 					}
 				});
@@ -81,6 +106,37 @@ var app = app || {};
 				$('#closeGrpDlg').on('click', function(e){
 					$('#createGroupForm')[0].reset();
 					$('#dlgGroupCreate').dialog('close');
+					if($('#closeGrpDlg').hasClass('refresh')){
+						$('.overlay_pageLoading').removeClass('hidden');
+						app.GroupFactory.searchSCGComponents($('#frmComponentSearch').serialize())						
+							.done(function(result){
+								var response = $.parseJSON(result);
+								//console.log(response.componentList);
+								if(response.componentList){
+									//processing data table generation
+									//passing only components
+									var componentList = response.componentList;
+									//deleting componentList to pass only header
+									delete response.componentList;
+									
+									app.DataTable.dataHeader = response;
+									app.DataTable.data = componentList;
+									app.DataTable.init();
+								}								
+								
+								$("#search-result-panel").removeClass('hidden');
+																
+							}).complete(function(){
+								$('#closeGrpDlg').val('Cancel');
+								$('#group-creation-messages').html('&nbsp;');
+								$('#closeGrpDlg').removeClass('refresh');
+								$('#select-all').prop('checked', false);
+								$('#btnCreateGroup').prop('disabled', false)
+								$('#dlgGroupCreate').dialog( "option", "height", 370 );
+								$('.overlay_pageLoading').addClass('hidden');
+								
+							});
+					}				
 				});
 				
 				//group name char limit and display
@@ -128,22 +184,27 @@ var app = app || {};
 				//group create button action
 				$('#btnCreateGroup').on('click', function(e){
 					if($('#createGroupForm')[0].checkValidity()){
-						e.preventDefault();  //preventing default form submission 
-					
+						e.preventDefault();  //preventing default form submission
+						var checkString = []
+						 
+						 //serializing All checkbox value in one hidden field  
+						 $('.item-check:checked').each(function(){
+							 checkString.push($(this).val());
+						 });
+						$('#splitCheckboxValue').val(checkString.toString());
+						
+						
+						var selectedComponentLists =  $('#selectedComponentForm').serialize();
 						var createFormValues = $('#createGroupForm').serialize();
-					
+						
 						try{
-							app.GroupFactory.createGroup(createFormValues)
+							app.GroupFactory.createGroup(createFormValues + '&' + selectedComponentLists)
 								.done(function(result){
-									//console.log(result);
 									var resultJSON = $.parseJSON(result);
-									console.log(resultJSON);
-								
-								_super.handleGroupCreationResponse(resultJSON, $('#groupType').val());
+									//console.log(resultJSON);
 									
-									//redirecting to the add component page when group creation is successful
-									//if(resultJSON.groupCreationStatus && resultJSON.groupCreationStatus == app.Global.constants.groupStatus.GROUP_CREATED)
-										//window.location.href = app.GroupLandingApp.urlCollection.addComponentUrl;
+									//handling and taking care of the response 
+									_super.handleGroupCreationResponse(resultJSON, $('#groupType').val());
 								}).error(function(){
 									$('#group-creation-messages').html(_super.buildMessage('Group Creation Error', 'error'));
 								});
@@ -226,10 +287,19 @@ var app = app || {};
 				}
 			}
 			
-			if((!errorFlag) && (groupType != 'SCG' || groupType != 'SSG')){
+			//console.log(errorFlag);
+			//console.log(groupType);
+			//console.log((!errorFlag) && (groupType != 'SCG' && groupType != 'SSG'));
+			
+			if((!errorFlag) && (groupType != 'SCG' && groupType != 'SSG')){
 				window.location.href = app.GroupLandingApp.urlCollection.addComponentUrl;
 			}else
 				$('#group-creation-messages').html(message);
+				$('#closeGrpDlg').val('Close');
+				$('#closeGrpDlg').addClass('refresh');
+				$('#btnCreateGroup').prop('disabled', true)
+				$('#dlgGroupCreate').dialog( "option", "minHeight", 400 );
+				$('#dlgGroupCreate').dialog( "option", "height", 400 );
 		},
 		
 		init: function(){
@@ -238,7 +308,7 @@ var app = app || {};
 		},
 	};
 	
-	app.SKUGroupLanding = {
+	app.SplitGroupLanding = {
 		
 		handleEvents: function(){
 			try{
@@ -248,12 +318,14 @@ var app = app || {};
 				$('#select-all').on('click', function(e){
 					if($(this).is(':checked')){
 						$('.item-check').prop('checked', true);
+						$('#selectedComponentForm input[type="radio"]').prop('disabled', false);
 					}else{
 						$('.item-check').prop('checked', false);
+						$('#selectedComponentForm input[type="radio"]').prop('disabled', true);
 					}
 				});
 				
-				$('.item-check').on('click', function(){
+				$('#row-container').on('click', '.item-check', function(){
 					if($(this).is(':checked')){
 						if($('.item-check').length == $('.item-check:checked').length)
 							$('#select-all').prop('checked', true);			
@@ -261,9 +333,20 @@ var app = app || {};
 						$('#select-all').prop('checked', false);
 				});
 				
+				$('#row-container').on('click', '.item-check', function(e){
+					//console.log($(this).parent().parent().find('input[type=radio]'));
+					
+					if($(this).is(':checked'))
+						$(this).parent().parent().find('input[type=radio]').prop('disabled', false);
+					else
+						$(this).parent().parent().find('input[type=radio]').prop('disabled', true);
+				});
+				
 				//split color search component
 				$('#search-components').on('click', function(e){
-					if($('#VendorStyleNum').val().trim()=='' && $('#StyleNum').val().trim()==''){
+					
+					//dialog to show error when no field is entered
+					if($('#styleOrinNo').val().trim() == '' && $('#vendorStyleNo').val().trim() == ''){
 						$('#error-massege').html('Atleast one field is required');
 						$('#errorBox').dialog({
 							   autoOpen: true, 
@@ -274,21 +357,46 @@ var app = app || {};
 								  OK: function() {$(this).dialog("close");}
 							   },
 							});
-							
-							} else if ($('#VendorStyleNum').val().trim() && $('#StyleNum').val().trim()){
-								$('#error-massege').html("You cannot search for both fields at once. Please only fill in one fields before continuing.");
-								$('#errorBox').dialog({
-								   autoOpen: true, 
-								   modal: true,
-								   resizable: false,
-								   dialogClass: "dlg-custom",
-								   buttons: {
-									  OK: function() {$(this).dialog("close");}
-								   },
-								});
-							}else{
+					//dialog to show error when both fields are entered
+					} else if ($('#styleOrinNo').val().trim() && $('#vendorStyleNo').val().trim()){
+						$('#error-massege').html("You cannot search for both fields at once. Please only fill in one fields before continuing.");
+						$('#errorBox').dialog({
+						   autoOpen: true, 
+						   modal: true,
+						   resizable: false,
+						   dialogClass: "dlg-custom",
+						   buttons: {
+							  OK: function() {$(this).dialog("close");}
+						   },
+						});
+					}else{
+						$('.overlay_pageLoading').removeClass('hidden');
+						app.GroupFactory.searchSCGComponents($('#frmComponentSearch').serialize())						
+							.done(function(result){
+								var response = $.parseJSON(result);
+								//console.log(response.componentList);
+								if(response.componentList){
+									//processing data table generation
+									//passing only components
+									var componentList = response.componentList;
+									//deleting componentList to pass only header
+									delete response.componentList;
+									
+									app.DataTable.dataHeader = response;
+									app.DataTable.data = componentList;
+									app.DataTable.init();
+								}
+								
+								
 								$("#search-result-panel").removeClass('hidden');
-							}
+																
+							}).complete(function(){
+								
+								$('.overlay_pageLoading').addClass('hidden');
+								
+							});
+							
+					}
 				});
 				
 				$('#split-components').on('click',function(){

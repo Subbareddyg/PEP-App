@@ -1,5 +1,6 @@
 package com.belk.pep.controller;
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -29,9 +30,12 @@ import com.belk.pep.common.model.Common_BelkUser;
 import com.belk.pep.common.userdata.UserData;
 import com.belk.pep.constants.GroupingConstants;
 import com.belk.pep.exception.checked.PEPFetchException;
+import com.belk.pep.exception.checked.PEPPersistencyException;
+import com.belk.pep.exception.checked.PEPServiceException;
 import com.belk.pep.form.CreateGroupForm;
 import com.belk.pep.form.GroupAttributeForm;
 import com.belk.pep.service.GroupingService;
+import com.belk.pep.util.DateUtil;
 import com.belk.pep.util.PropertyLoader;
 
 /**
@@ -285,30 +289,48 @@ public class GroupingController  {
 
         }
     }
+    
+    
+    
+    public ModelAndView handleResourceRequest(ResourceRequest request,
+            ResourceResponse response) throws Exception {
+        	LOGGER.info("Entering handleResourceRequest-->");
+        	ModelAndView view=new ModelAndView("groupingPage");
+
+            LOGGER.info("Exit handleResourceRequest-->");
+            return view;
+        }
 
 
     /**
-     * This method will take care of handleResourceRequest, handles all Ajax calls
+     * This method will take care of handleResourceRequest, handles all Ajax calls.
+     * Used to handle Split Color and Split SKU search request
+     * @param request
+     * @param response
+     * @return
+     * @throws Exception
      */
-    @ResourceMapping
-    public ModelAndView handleResourceRequest(ResourceRequest request,
+    @ResourceMapping("splitAttributeSearch")
+    public ModelAndView handleSplitAttrSearchRequest(ResourceRequest request,
         ResourceResponse response) throws Exception {
-    	LOGGER.info("Entering handleResourceRequest-->");
+    	LOGGER.info("Entering handleSplitAttrSearchRequest-->");
     	String vendorStyleNo = "";
     	String styleOrin = "";
     	String updatedBy = "";
-
+    	String message = "";
+    	
+    	Properties prop =PropertyLoader.getPropertyLoader(GroupingConstants.GROUPING_PROPERTIES_FILE_NAME);  
+       
         String formSessionKey =  (String)request.getPortletSession().getAttribute("formSessionKey");
         CreateGroupForm createGroupForm =  (CreateGroupForm)request.getPortletSession().getAttribute(formSessionKey);
         String sessionDataKey =  (String)request.getPortletSession().getAttribute("sessionDataKey");
         UserData custuser = (UserData) request.getPortletSession().getAttribute(sessionDataKey);
 
-        LOGGER.debug(" handleResourceRequest formSessionKey --------------------------------------------------------------> "+formSessionKey);
-        LOGGER.debug(" handleResourceRequest resourceForm ----------------------------------------------------------------> "+createGroupForm);
-        LOGGER.debug(" handleResourceRequest sessionDataKey --------------------------------------------------------------> "+sessionDataKey);
-        LOGGER.info(" handleResourceRequest custuser ---------------------------------------------------------------------> "+custuser);
+        LOGGER.debug(" handleSplitAttrSearchRequest formSessionKey --------------------------------------------------------------> "+formSessionKey);
+        LOGGER.debug(" handleSplitAttrSearchRequest resourceForm ----------------------------------------------------------------> "+createGroupForm);
+        LOGGER.debug(" handleSplitAttrSearchRequest sessionDataKey --------------------------------------------------------------> "+sessionDataKey);
+        LOGGER.info(" handleSplitAttrSearchRequest custuser ---------------------------------------------------------------------> "+custuser);
         ModelAndView view=new ModelAndView("groupingPage");
-        
 
         if(custuser !=null){
             LOGGER.info("userData---->in activate");
@@ -325,40 +347,75 @@ public class GroupingController  {
             LOGGER.debug("in fetch split color attribute-->");
             vendorStyleNo = request.getParameter(GroupingConstants.VENDOR_STYLE_NO);
             styleOrin = request.getParameter(GroupingConstants.STYLE_ORIN_NO);
+            LOGGER.debug("Search Attribute: -- vendorStyleNo-->"+vendorStyleNo+"  styleOrin-->"+styleOrin);
             //List<GroupAttributeForm> getSplitColorDetailsList = groupingDelegate.getSplitColorDetails(vendorStyleNo, styleOrin);
             List<GroupAttributeForm> getSplitColorDetailsList = groupingService.getSplitColorDetails(vendorStyleNo, styleOrin);
             LOGGER.debug("Size of getSplitColorDetailsList-->"+ getSplitColorDetailsList.size());
             
-            /*JSONObject jsonObj = getSCGJsonResponse(String totalRecords, String defaultSortCol, String defaultSortOrder, selectedSplitAttributeList);
+            /** Validate Split Attribute List **/
+            List<GroupAttributeForm> updatedSplitColorDetailsList = groupingService.validateSCGAttributeDetails(getSplitColorDetailsList);
+            LOGGER.debug("Size of updatedSplitColorDetailsList-->"+ updatedSplitColorDetailsList.size());
+            if(getSplitColorDetailsList.size() == 0){
+            	message = prop.getProperty(GroupingConstants.MESSAGE_SPLITGROUP_VALIDATION_NO_DATA); // "No record found!"
+            }else if(updatedSplitColorDetailsList.size() == 0){
+            	message = prop.getProperty(GroupingConstants.MESSAGE_SPLITGROUP_VALIDATION_INVALID_DATA); //"Please complete this Style before spliting.";
+            }
+            /** set in session to call add attribute webservice after creating group **/
+            request.getPortletSession().setAttribute(GroupingConstants.SELECTED_ATTRIBUTE_LIST, updatedSplitColorDetailsList);
+            
+            /** Code to generate response to display Search result in JSP **/
+            String totalRecords = String.valueOf(updatedSplitColorDetailsList.size());
+            String defaultSortCol = GroupingConstants.STYLE_ORIN_NO; // No Default sort column is required
+            String defaultSortOrder = GroupingConstants.SORT_ASC; // ASC/DESC
+            JSONObject jsonObj = getSplitGrpJsonResponse(message, totalRecords, defaultSortCol, defaultSortOrder, updatedSplitColorDetailsList);
+            LOGGER.debug("getSCGJsonResponse-->"+jsonObj);
             try {
                 response.getWriter().write(jsonObj.toString());
             }
             catch (IOException e) {
-                LOGGER.info("GroupingControlle:handleCreateGroupForm ResourceRequest:Exception------------>"+e.getMessage());
+                LOGGER.info("GroupingControlle:handleCreateGroupForm handleSplitAttrSearchRequest:Exception------------>"+e.getMessage());
                 e.printStackTrace();
-            }*/
-            
+            }
+            view=new ModelAndView(null); // GroupingConstants.GROUPING_CREATE_SPLIT_COLOR_GROUP
         }
         else{
             /** Fetch SKU details for Split group **/
             LOGGER.debug("in fetch split SKU attribute-->");
             vendorStyleNo = request.getParameter(GroupingConstants.VENDOR_STYLE_NO);
             styleOrin = request.getParameter(GroupingConstants.STYLE_ORIN_NO);
+            LOGGER.debug("Search Attribute: -- vendorStyleNo-->"+vendorStyleNo+"  styleOrin-->"+styleOrin);
             //List<GroupAttributeForm> getSplitSKUDetailsList = groupingDelegate.getSplitSKUDetails(vendorStyleNo, styleOrin);
             List<GroupAttributeForm> getSplitSKUDetailsList = groupingService.getSplitSKUDetails(vendorStyleNo, styleOrin);      
             LOGGER.debug("Size of getSplitSKUDetailsList-->"+ getSplitSKUDetailsList.size());
+
+            /** Validate Split Attribute List **/
+            List<GroupAttributeForm> updatedSplitSKUDetailsList = groupingService.validateSSGAttributeDetails(getSplitSKUDetailsList);
+            LOGGER.debug("Size of updatedSplitSKUDetailsList-->"+ updatedSplitSKUDetailsList.size());
+            if(getSplitSKUDetailsList.size() == 0){
+            	message = prop.getProperty(GroupingConstants.MESSAGE_SPLITGROUP_VALIDATION_NO_DATA); // "No record found!"
+            }else if(updatedSplitSKUDetailsList.size() == 0){
+            	message = prop.getProperty(GroupingConstants.MESSAGE_SPLITGROUP_VALIDATION_INVALID_DATA); //"Please complete this Style before spliting.";
+            }
+            /** set in session to call add attribute webservice after creating group **/
+            request.getPortletSession().setAttribute(GroupingConstants.SELECTED_ATTRIBUTE_LIST, updatedSplitSKUDetailsList);
             
-            /*JSONObject jsonObj = getSCGJsonResponse(String totalRecords, String defaultSortCol, String defaultSortOrder, selectedSplitAttributeList);
+            /** Code to generate response to display Search result in JSP **/
+            String totalRecords = String.valueOf(updatedSplitSKUDetailsList.size());
+            String defaultSortCol = GroupingConstants.STYLE_ORIN_NO; // No Default sort column is required
+            String defaultSortOrder = GroupingConstants.SORT_ASC; // ASC/DESC
+            JSONObject jsonObj = getSplitGrpJsonResponse(message, totalRecords, defaultSortCol, defaultSortOrder, updatedSplitSKUDetailsList);
+            LOGGER.debug("getSCGJsonResponse-->"+jsonObj);
             try {
                 response.getWriter().write(jsonObj.toString());
             }
             catch (IOException e) {
-                LOGGER.info("GroupingControlle:handleCreateGroupForm ResourceRequest:Exception------------>"+e.getMessage());
+                LOGGER.info("GroupingControlle:handleCreateGroupForm handleSplitAttrSearchRequest:Exception------------>"+e.getMessage());
                 e.printStackTrace();
-            }*/
+            }
+            view=new ModelAndView(null); // GroupingConstants.GROUPING_CREATE_SPLIT_SKU_GROUP
         }
 
-        LOGGER.info("Exit handleResourceRequest-->");
+        LOGGER.info("Exit handleSplitAttrSearchRequest-->");
         return view;
     }
     
@@ -370,38 +427,46 @@ public class GroupingController  {
      * @return
      * @author Cognizant
      */
-    public JSONObject getSCGJsonResponse(String totalRecords, String defaultSortCol, String defaultSortOrder, 
+    public JSONObject getSplitGrpJsonResponse(String message, String totalRecords, String defaultSortCol, String defaultSortOrder, 
         List<GroupAttributeForm> selectedSplitAttributeList) {
-
+    	LOGGER.info("Enter getSplitGrpJsonResponse-->");
         JSONObject jsonObj = new JSONObject();
-        JSONObject jsonObjComponent = new JSONObject();
+        JSONObject jsonObjComponent = null;
         GroupAttributeForm groupAttributeForm = null;
         JSONArray jsonArray = new JSONArray();
         try {       
             for(int i = 0; i < selectedSplitAttributeList.size(); i++){
+            	jsonObjComponent = new JSONObject();
                 groupAttributeForm = selectedSplitAttributeList.get(i);
+                //LOGGER.debug("ColorCode------------------added------------------------------------111>"+groupAttributeForm.getColorCode());
                 jsonObjComponent.put(GroupingConstants.STYLE_ORIN_NO, groupAttributeForm.getOrinNumber());
                 jsonObjComponent.put(GroupingConstants.VENDOR_STYLE_NO, groupAttributeForm.getStyleNumber());
                 jsonObjComponent.put(GroupingConstants.PRODUCT_NAME, groupAttributeForm.getProdName());
                 jsonObjComponent.put(GroupingConstants.COLOR_CODE, groupAttributeForm.getColorCode());
                 jsonObjComponent.put(GroupingConstants.COLOR_NAME, groupAttributeForm.getColorName());
-                jsonObjComponent.put(GroupingConstants.COMPONENT_IS_DEFAULT, groupAttributeForm.getIsDefault());
+                String defaultColor = (null == groupAttributeForm.getIsDefault() ? "" : groupAttributeForm.getIsDefault());
+                //LOGGER.debug("groupAttributeForm.getIsDefault()-->"+defaultColor);
+                
+                jsonObjComponent.put(GroupingConstants.COMPONENT_DEFAULT_COLOR, defaultColor);
                 String isAlreadyInGroup = groupAttributeForm.getIsAlreadyInGroup();
-                isAlreadyInGroup = (null == isAlreadyInGroup ? "No" : ("N").equalsIgnoreCase(isAlreadyInGroup) ? "No" : ("Y").equalsIgnoreCase(isAlreadyInGroup) ? "Yes" : "No");
+                isAlreadyInGroup = (null == isAlreadyInGroup ? "No" : ("N").equalsIgnoreCase(isAlreadyInGroup.trim()) ? "No" : ("Y").equalsIgnoreCase(isAlreadyInGroup.trim()) ? "Yes" : "No");
+                //LOGGER.debug("groupAttributeForm.isAlreadyInGroup()-->"+isAlreadyInGroup);
                 jsonObjComponent.put(GroupingConstants.ALREADY_IN_GROUP, isAlreadyInGroup);
                 jsonObjComponent.put(GroupingConstants.COMPONENT_SIZE, groupAttributeForm.getSize()); // Only for Split SKU Group
                 jsonArray.put(jsonObjComponent);
             }
             
+            jsonObj.put(GroupingConstants.MESSAGE, message);
             jsonObj.put(GroupingConstants.SPLIT_GROUP_TOTAL_RECORDS, totalRecords);
             jsonObj.put(GroupingConstants.SPLIT_GROUP_DEFAULT_SORT_COL, defaultSortCol);
             jsonObj.put(GroupingConstants.SPLIT_GROUP_DEFAULT_SORT_ORDER, defaultSortOrder);
             jsonObj.put(GroupingConstants.COMPONENT_LIST, jsonArray);
-            
+            LOGGER.debug("JSON getSplitGrpJsonResponse-->"+jsonObj);
         } catch (JSONException e) {
             LOGGER.info("Exeception in parsing the jsonObj");
             e.printStackTrace();
         }
+        LOGGER.info("Exit getSplitGrpJsonResponse-->");
         return jsonObj;
      }
     
@@ -411,9 +476,11 @@ public class GroupingController  {
      * @param request
      * @param response
      * @return
+     * @throws PEPPersistencyException 
+     * @throws PEPServiceException 
      */
     @ResourceMapping("submitCreateGroupForm")
-    public ModelAndView handleCreateGroupForm(ResourceRequest request, ResourceResponse response   ){
+    public ModelAndView handleCreateGroupForm(ResourceRequest request, ResourceResponse response   ) throws PEPServiceException, PEPPersistencyException{
         LOGGER.info("GroupingControlle:handleCreateGroupForm ResourceRequest:Enter------------>");
         
         String formSessionKey =  (String)request.getPortletSession().getAttribute("formSessionKey");
@@ -425,11 +492,18 @@ public class GroupingController  {
         String pepUserId = custuser.getBelkUser().getLanId();
         LOGGER.info("This is from Reneder Internal User--------------------->"+pepUserId);
 
+        String[] selectedItemsArr = null;
         String groupType = request.getParameter(GroupingConstants.GROUP_TYPE);
         String groupName = request.getParameter(GroupingConstants.GROUP_NAME);
         String groupDesc = request.getParameter(GroupingConstants.GROUP_DESC);
-        String startDate = request.getParameter(GroupingConstants.START_DATE); // dd/mm/yyyy
-        String endDate = request.getParameter(GroupingConstants.END_DATE); // dd/mm/yyyy
+        String startDate = request.getParameter(GroupingConstants.START_DATE);
+        String endDate = request.getParameter(GroupingConstants.END_DATE);
+        String defaultSelectedAttr = request.getParameter(GroupingConstants.COMPONENT_DEFAULT_COLOR);
+        defaultSelectedAttr = (null == defaultSelectedAttr ? "" : defaultSelectedAttr.trim());
+        String selectedItems = request.getParameter(GroupingConstants.COMPONENT_SELECTED_ITEMS);
+        if(null != selectedItems){
+        	selectedItemsArr = selectedItems.split(",");
+        }
                 
         /*String groupType = createGroupForm.getGroupType();
         String groupName = createGroupForm.getGroupName();
@@ -444,16 +518,28 @@ public class GroupingController  {
         LOGGER.debug("groupDesc----------------->"+groupDesc);
         LOGGER.debug("startDate----------------->"+startDate);
         LOGGER.debug("endDate----------------->"+endDate);
+        LOGGER.debug("defaultSelectedAttr----------------->"+defaultSelectedAttr);
+        LOGGER.debug("selectedItems----------------->"+selectedItems);
         
         /** If request came with create group request **/
         CreateGroupForm createGroupForm = new CreateGroupForm();
         List<GroupAttributeForm> selectedSplitAttributeList = new ArrayList<GroupAttributeForm>();
         
-        if(null != groupType && ((GroupingConstants.GROUP_TYPE_SPLIT_COLOR).equals(groupType) || (GroupingConstants.GROUP_TYPE_SPLIT_SKU).equals(groupType))){
+        if(null != groupType && (GroupingConstants.GROUP_TYPE_SPLIT_COLOR).equals(groupType) && null != selectedItems && null != selectedItemsArr){
             // TODO
             /** Add Selected Attribute to List (selectedSplitAttributeList) for Split Color and Group **/
-            
+        	List<GroupAttributeForm> updatedSplitColorDetailsList = 
+        			(List<GroupAttributeForm>) request.getPortletSession().getAttribute(GroupingConstants.SELECTED_ATTRIBUTE_LIST);
+        	LOGGER.debug("All Color Attribute List Size()-->"+updatedSplitColorDetailsList.size());
+        	selectedSplitAttributeList =  groupingService.getSelectedColorAttributeList(updatedSplitColorDetailsList, selectedItemsArr, defaultSelectedAttr);
             //createGroupForm.setGroupAttributeFormList(selectedSplitAttributeList);
+        }
+        if(null != groupType && (GroupingConstants.GROUP_TYPE_SPLIT_SKU).equals(groupType) && null != selectedItems && null != selectedItemsArr){
+        	List<GroupAttributeForm> updatedSplitSkuDetailsList = 
+        			(List<GroupAttributeForm>) request.getPortletSession().getAttribute(GroupingConstants.SELECTED_ATTRIBUTE_LIST);
+        	LOGGER.debug("All SKU Attribute List Size()-->"+updatedSplitSkuDetailsList.size());
+        	selectedSplitAttributeList =  groupingService.getSelectedSKUAttributeList(updatedSplitSkuDetailsList, selectedItemsArr, defaultSelectedAttr);
+        	//createGroupForm.setGroupAttributeFormList(selectedSplitAttributeList);
         }
 
         createGroupForm.setGroupType(groupType);
@@ -467,7 +553,11 @@ public class GroupingController  {
         CreateGroupForm createGroupFormRes = createGroup(createGroupForm, pepUserId);
         LOGGER.debug("After calling createGroup()-->getGroupCreationStatus: "+createGroupFormRes.getGroupCreationStatus());
         LOGGER.debug("After calling createGroup()-->getGroupCretionMsg: "+createGroupFormRes.getGroupCretionMsg());
-        
+        LOGGER.debug("After calling createGroup()-->GroupID: "+createGroupFormRes.getGroupId());
+        LOGGER.debug("After calling createGroup()-->GroupType: "+createGroupFormRes.getGroupType());
+        LOGGER.debug("After calling createGroup()-->GroupDesc: "+createGroupFormRes.getGroupDesc());
+
+        request.getPortletSession().setAttribute(GroupingConstants.GROUP_DETAILS_FORM, createGroupFormRes);
         
         JSONObject jsonObj = new JSONObject();
         jsonObj.put(GroupingConstants.GROUP_ID, createGroupFormRes.getGroupId());
@@ -488,6 +578,7 @@ public class GroupingController  {
         //modelAndView.addObject(GroupingConstants.CREATE_GROUP_FORM, jsonObj);
         //request.setAttribute(GroupingConstants.CREATE_GROUP_FORM, jsonObj);
         
+        
         ModelAndView modelAndView = null;
         try {
             response.getWriter().write(jsonObj.toString());
@@ -507,12 +598,38 @@ public class GroupingController  {
      * @param renderRequest
      * @param renderResponse
      * @return
+     * @throws ParseException 
      */
     @RenderMapping(params="createGroupSuccessRender=CreateGrpSuccess")
-    public ModelAndView createGroupSuccessRender(RenderRequest renderRequest, RenderResponse renderResponse){
+    public ModelAndView createGroupSuccessRender(RenderRequest renderRequest, RenderResponse renderResponse) throws ParseException{
         //do some processing here
         LOGGER.info("GroupingControlle:createGroupSuccessRender:Enter");
+        Properties prop =PropertyLoader.getPropertyLoader(GroupingConstants.GROUPING_PROPERTIES_FILE_NAME);  
+        
+        CreateGroupForm objCreateGroupForm = (CreateGroupForm)
+        		renderRequest.getPortletSession().getAttribute(GroupingConstants.GROUP_DETAILS_FORM);
+        String groupTypeCode = (null == objCreateGroupForm.getGroupType() ? "" : objCreateGroupForm.getGroupType().trim());
+        String groupTypeDesc = prop.getProperty(groupTypeCode); 
+        String groupStatusCode = (null == objCreateGroupForm.getGroupStatus() ? "" : objCreateGroupForm.getGroupStatus().trim());
+        String groupStatusDesc = prop.getProperty(GroupingConstants.GROUP_STATUS_EXT+groupStatusCode);
+        String startDate = objCreateGroupForm.getGroupLaunchDate();
+        String startDateString = DateUtil.stringToStringMMddyyyy(startDate);
+        LOGGER.debug("createGroupSuccessRender.startDateString-->"+startDateString);
+        String endDate = objCreateGroupForm.getEndDate();
+        String endDateString = DateUtil.stringToStringMMddyyyy(endDate);
+        LOGGER.debug("createGroupSuccessRender.endDateString-->"+endDateString);
+        
+        objCreateGroupForm.setGroupTypeDesc(groupTypeDesc);
+        objCreateGroupForm.setGroupStatusDesc(groupStatusDesc);
+        objCreateGroupForm.setGroupLaunchDate(startDateString);
+        objCreateGroupForm.setEndDate(endDateString);
+        LOGGER.debug("createGroupSuccessRender.objCreateGroupForm-->"+objCreateGroupForm);
+        LOGGER.debug("createGroupSuccessRender.objCreateGroupForm.getGroupId()-->"+objCreateGroupForm.getGroupId());
+        LOGGER.debug(groupTypeCode+" createGroupSuccessRender.objCreateGroupForm.groupTypeDesc-->"+groupTypeDesc);
+        LOGGER.debug(groupStatusCode+" createGroupSuccessRender.objCreateGroupForm.groupStatus-->"+groupStatusDesc);
         ModelAndView mv=new ModelAndView(GroupingConstants.GROUPING_ADD_COMPONENT);
+        mv.addObject(GroupingConstants.GROUP_DETAILS_FORM,objCreateGroupForm);
+
         LOGGER.info("GroupingControlle:createGroupSuccessRender:Exit");
         return mv;
     }

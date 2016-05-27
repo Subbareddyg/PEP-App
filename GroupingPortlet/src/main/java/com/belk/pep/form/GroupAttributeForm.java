@@ -19,6 +19,8 @@ public class GroupAttributeForm {
     private String size;
     private String isAlreadyInGroup;
     private String isDefault;
+    private String petStatus;
+    private String entryType;
     /**
      * @return the orinNumber
      */
@@ -115,5 +117,29 @@ public class GroupAttributeForm {
     public void setIsDefault(String isDefault) {
         this.isDefault = isDefault;
     }
+	/**
+	 * @return the petStatus
+	 */
+	public String getPetStatus() {
+		return petStatus;
+	}
+	/**
+	 * @param petStatus the petStatus to set
+	 */
+	public void setPetStatus(String petStatus) {
+		this.petStatus = petStatus;
+	}
+	/**
+	 * @return the entryType
+	 */
+	public String getEntryType() {
+		return entryType;
+	}
+	/**
+	 * @param entryType the entryType to set
+	 */
+	public void setEntryType(String entryType) {
+		this.entryType = entryType;
+	}
     
   }

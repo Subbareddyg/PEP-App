@@ -34,6 +34,14 @@ public interface GroupingService {
 
 	public List<GroupAttributeForm> getSplitColorDetails(String vendorStyleNo, String styleOrin) throws PEPServiceException, PEPPersistencyException;
 	public List<GroupAttributeForm> getSplitSKUDetails(String vendorStyleNo, String styleOrin) throws PEPServiceException, PEPPersistencyException;
+	
+	public List<GroupAttributeForm> validateSCGAttributeDetails(List<GroupAttributeForm> getSplitColorDetailsList) throws PEPServiceException, PEPPersistencyException;
+	public List<GroupAttributeForm> validateSSGAttributeDetails(List<GroupAttributeForm> getSplitSKUDetailsList)  throws PEPServiceException, PEPPersistencyException;
+	
+	public List<GroupAttributeForm> getSelectedColorAttributeList(List<GroupAttributeForm> updatedSplitColorDetailsList, String[] selectedItemsArr, String defaultSelectedAttr) 
+			throws PEPServiceException, PEPPersistencyException;
+	public List<GroupAttributeForm> getSelectedSKUAttributeList(List<GroupAttributeForm> updatedSplitSKUDetailsList, String[] selectedItemsArr, String defaultSelectedAttr) 
+			throws PEPServiceException, PEPPersistencyException;
 
 }
 

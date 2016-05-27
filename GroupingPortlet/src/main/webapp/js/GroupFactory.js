@@ -12,9 +12,15 @@ var app = app || {};
 			return $.post(app.GroupLandingApp.urlCollection.createGroupUrl, data)
 				.error(handleException);
 		},
+		
+		//Search SCG Component code block
+		searchSCGComponents: function(params){
+			return $.post(app.GroupLandingApp.urlCollection.splitComponentSearchUrl, params)
+				.error(handleException);
+		},
 	};
 	
 	function handleException(jqXHR, textStatus, errorThrown){
-		console.log(jqXHR.status + " - " + textStatus + " - " + errorThrown);
+		console.log(textStatus + " - " + jqXHR.status + " - " + errorThrown);
 	}
 })(jQuery);

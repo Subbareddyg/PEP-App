@@ -1,6 +1,7 @@
 package com.belk.pep.dao.impl;
 
 
+import java.sql.Clob;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -10,13 +11,12 @@ import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
 
 import com.belk.pep.constants.XqueryConstants;
 import com.belk.pep.dao.GroupingDAO;
 import com.belk.pep.dto.CreateGroupDTO;
-import com.belk.pep.form.CreateGroupForm;
 import com.belk.pep.form.GroupAttributeForm;
+import com.belk.pep.util.GroupingUtil;
 
 /**
  * This class responsible for handling all the DAO call to the VP Database.
@@ -87,23 +87,30 @@ public class GroupingDAOImpl implements GroupingDAO{
                 
                 //for(Object[] row : rows){  
                 for(Object row : rows){
-                    LOGGER.info("In..." + rows.size());
+                    //LOGGER.info("In..." + rows.size());
                     Map rowMap = (Map)row;
-                    /*String groupName=row[1]!=null?row[1].toString():null;
-                    String groupDesc=row[2]!=null?row[2].toString():null;
-                    String startDate=row[3]!=null?row[3].toString():null;
-                    String endDate=row[4]!=null?row[4].toString():null;*/
                     String groupName=rowMap.get("GROUP_NAME") != null ? rowMap.get("GROUP_NAME").toString() : "";
-                    String groupDesc=rowMap.get("Description") != null ? rowMap.get("Description").toString() : "";
-                    String startDate=rowMap.get("Effective_Start_Date") != null ? rowMap.get("Effective_Start_Date").toString() : "";
-                    String endDate=rowMap.get("Effective_End_Date") != null ? rowMap.get("Effective_End_Date").toString() : "";
+                    //String groupDesc=rowMap.get("DESCRIPTION") != null ? rowMap.get("DESCRIPTION").toString() : "";
+                    Clob groupDescClob=(Clob) rowMap.get("DESCRIPTION");
+                    String groupDesc = GroupingUtil.clobToString(groupDescClob);
+                    groupDesc=groupDesc != null ? groupDesc : "";
+                    
+                    String startDate=rowMap.get("EFFECTIVE_START_DATE") != null ? rowMap.get("EFFECTIVE_START_DATE").toString() : "";
+                    String endDate=rowMap.get("EFFECTIVE_END_DATE") != null ? rowMap.get("EFFECTIVE_END_DATE").toString() : "";
+                    String groupStatus=rowMap.get("GROUP_OVERALL_STATUS_CODE") != null ? rowMap.get("GROUP_OVERALL_STATUS_CODE").toString() : "";
+                    String groupType=rowMap.get("GROUP_TYPE") != null ? rowMap.get("GROUP_TYPE").toString() : "";
+                    
                     LOGGER.debug("getGroupHeaderDetails.groupName-->"+groupName);
                     LOGGER.debug("getGroupHeaderDetails.startDate-->"+startDate);
+                    LOGGER.debug("getGroupHeaderDetails.groupDesc-->"+groupDesc);
+                    LOGGER.debug("getGroupHeaderDetails.groupType-->"+groupType);
                     createGroupDTO.setGroupId(groupId);
                     createGroupDTO.setGroupName(groupName);
                     createGroupDTO.setGroupDesc(groupDesc);
                     createGroupDTO.setGroupLaunchDate(startDate);
                     createGroupDTO.setEndDate(endDate);
+                    createGroupDTO.setGroupStatus(groupStatus);
+                    createGroupDTO.setGroupType(groupType);
                 }
             }
           }catch(Exception e){
@@ -197,7 +204,7 @@ public class GroupingDAOImpl implements GroupingDAO{
         XqueryConstants xqueryConstants= new XqueryConstants();
           try{
             session = sessionFactory.openSession();
-            vendorStyleNo = (null == vendorStyleNo ? null : vendorStyleNo.equals("") ? null : vendorStyleNo.equals("") ? null : vendorStyleNo.trim());
+            vendorStyleNo = (null == vendorStyleNo ? null : vendorStyleNo.trim().equals("") ? null : vendorStyleNo.trim());
            //Hibernate provides a createSQLQuery method to let you call your native SQL statement directly.   
             Query query = session.createSQLQuery(xqueryConstants.getSplitColorDetails(vendorStyleNo));
             
@@ -228,6 +235,8 @@ public class GroupingDAOImpl implements GroupingDAO{
                     String colorCode=rowMap.get("COLOR_CODE") != null ? rowMap.get("COLOR_CODE").toString() : "";
                     String colorDesc=rowMap.get("COLOR_DESC") != null ? rowMap.get("COLOR_DESC").toString() : "";
                     String isAlreadyInGroup=rowMap.get("ALREADY_IN_GROUP") != null ? rowMap.get("ALREADY_IN_GROUP").toString() : "";
+                    String petStatus = rowMap.get("PET_STATE") != null ? rowMap.get("PET_STATE").toString() : "";
+            		String entryType = rowMap.get("ENTRY_TYPE") != null ? rowMap.get("ENTRY_TYPE").toString() : "";
                     
                     groupAttributeForm.setOrinNumber(mdmid);
                     groupAttributeForm.setStyleNumber(styleNo);
@@ -235,6 +244,9 @@ public class GroupingDAOImpl implements GroupingDAO{
                     groupAttributeForm.setColorCode(colorCode);
                     groupAttributeForm.setColorName(colorDesc);
                     groupAttributeForm.setIsAlreadyInGroup(isAlreadyInGroup);
+                    groupAttributeForm.setSize("");
+                    groupAttributeForm.setPetStatus(petStatus);
+                    groupAttributeForm.setEntryType(entryType);
                     
                     groupAttributeFormList.add(groupAttributeForm);
                 }
@@ -272,7 +284,7 @@ public class GroupingDAOImpl implements GroupingDAO{
         XqueryConstants xqueryConstants= new XqueryConstants();
           try{
             session = sessionFactory.openSession();
-            vendorStyleNo = (null == vendorStyleNo ? null : vendorStyleNo.equals("") ? null : vendorStyleNo.equals("") ? null : vendorStyleNo.trim());
+            vendorStyleNo = (null == vendorStyleNo ? null : vendorStyleNo.trim().equals("") ? null : vendorStyleNo.trim());
            //Hibernate provides a createSQLQuery method to let you call your native SQL statement directly.   
             Query query = session.createSQLQuery(xqueryConstants.getSplitSKUDetails(vendorStyleNo));
 
@@ -282,7 +294,7 @@ public class GroupingDAOImpl implements GroupingDAO{
                 query.setParameter("mdmidSql", styleOrin);
             }
             query.setFetchSize(100);
-            LOGGER.info("Query-->getSplitColorDetails-->" + query);
+            LOGGER.info("Query-->getSplitSKUDetails-->" + query);
             
             groupAttributeFormList = new ArrayList<GroupAttributeForm>();
             
@@ -293,7 +305,7 @@ public class GroupingDAOImpl implements GroupingDAO{
                 LOGGER.info("recordsFetched..." + rows.size());
                 
                 for(Object row : rows){
-                    LOGGER.info("In..." + rows.size());
+                    //LOGGER.info("In..." + rows.size());
                     Map rowMap = (Map)row;
                     groupAttributeForm = new GroupAttributeForm();
                     
@@ -304,6 +316,8 @@ public class GroupingDAOImpl implements GroupingDAO{
                     String colorDesc=rowMap.get("COLOR_NAME") != null ? rowMap.get("COLOR_NAME").toString() : "";
                     String sizeDesc=rowMap.get("SIZEDESC") != null ? rowMap.get("SIZEDESC").toString() : "";
                     String isAlreadyInGroup=rowMap.get("ALREADY_IN_GROUP") != null ? rowMap.get("ALREADY_IN_GROUP").toString() : "";
+                    String petStatus = rowMap.get("PET_STATE") != null ? rowMap.get("PET_STATE").toString() : "";
+            		String entryType = rowMap.get("ENTRY_TYPE") != null ? rowMap.get("ENTRY_TYPE").toString() : "";
                     
                     groupAttributeForm.setOrinNumber(mdmid);
                     groupAttributeForm.setStyleNumber(styleNo);
@@ -312,6 +326,8 @@ public class GroupingDAOImpl implements GroupingDAO{
                     groupAttributeForm.setColorName(colorDesc);
                     groupAttributeForm.setSize(sizeDesc);
                     groupAttributeForm.setIsAlreadyInGroup(isAlreadyInGroup);
+                    groupAttributeForm.setPetStatus(petStatus);
+                    groupAttributeForm.setEntryType(entryType);
                     
                     groupAttributeFormList.add(groupAttributeForm);
                 }

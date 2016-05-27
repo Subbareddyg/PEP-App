@@ -24,6 +24,7 @@ public class CreateGroupDTO {
     private String groupDesc;
     private String groupLaunchDate;
     private String endDate;
+    private String groupStatus;
 
     /** User role**/
     private String roleEditable;
@@ -167,6 +168,18 @@ public class CreateGroupDTO {
         List<GroupAttributeForm> groupAttributeDTOList) {
         this.groupAttributeDTOList = groupAttributeDTOList;
     }
+	/**
+	 * @return the groupStatus
+	 */
+	public String getGroupStatus() {
+		return groupStatus;
+	}
+	/**
+	 * @param groupStatus the groupStatus to set
+	 */
+	public void setGroupStatus(String groupStatus) {
+		this.groupStatus = groupStatus;
+	}
     
     
     

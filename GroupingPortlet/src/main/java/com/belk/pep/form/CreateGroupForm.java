@@ -22,7 +22,9 @@ public class CreateGroupForm {
     private String groupDesc;
     private String groupLaunchDate;
     private String endDate;
-
+    private String groupStatus;
+    private String groupTypeDesc;
+    private String groupStatusDesc;
     /** User role**/
     private String roleEditable;
     private String readOnlyUser="no";
@@ -178,6 +180,42 @@ public class CreateGroupForm {
     public void setGroupCreationStatus(String groupCreationStatus) {
         this.groupCreationStatus = groupCreationStatus;
     }
+	/**
+	 * @return the groupStatus
+	 */
+	public String getGroupStatus() {
+		return groupStatus;
+	}
+	/**
+	 * @param groupStatus the groupStatus to set
+	 */
+	public void setGroupStatus(String groupStatus) {
+		this.groupStatus = groupStatus;
+	}
+	/**
+	 * @return the groupTypeDesc
+	 */
+	public String getGroupTypeDesc() {
+		return groupTypeDesc;
+	}
+	/**
+	 * @param groupTypeDesc the groupTypeDesc to set
+	 */
+	public void setGroupTypeDesc(String groupTypeDesc) {
+		this.groupTypeDesc = groupTypeDesc;
+	}
+	/**
+	 * @return the groupStatusDesc
+	 */
+	public String getGroupStatusDesc() {
+		return groupStatusDesc;
+	}
+	/**
+	 * @param groupStatusDesc the groupStatusDesc to set
+	 */
+	public void setGroupStatusDesc(String groupStatusDesc) {
+		this.groupStatusDesc = groupStatusDesc;
+	}
     
     
   }

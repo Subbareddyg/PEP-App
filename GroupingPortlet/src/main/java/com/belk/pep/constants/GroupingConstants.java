@@ -64,6 +64,9 @@ public static final String PRODUCT_NAME = "productName";
 public static final String COLOR_CODE = "colorCode";
 public static final String COLOR_NAME = "colorName";
 public static final String ALREADY_IN_GROUP = "alreadyInGroup";
+public static final String COMPONENT_DEFAULT_COLOR = "defaultColor";
+public static final String COMPONENT_SELECTED_ITEMS = "selectedItems";
+public static final String MESSAGE = "message";
 
 
 
@@ -71,8 +74,8 @@ public static final String VENDOR_STYLE_NO = "vendorStyleNo";
 public static final String STYLE_ORIN_NO = "StyleOrinNo";
 
 public static final String SPLIT_GROUP_TOTAL_RECORDS = "totalRecords";
-public static final String SPLIT_GROUP_DEFAULT_SORT_COL = "defaultSortCol";
-public static final String SPLIT_GROUP_DEFAULT_SORT_ORDER = "defaultSortOrder";
+public static final String SPLIT_GROUP_DEFAULT_SORT_COL = "sortedColumn";
+public static final String SPLIT_GROUP_DEFAULT_SORT_ORDER = "sortedOrder";
 
 
 /** Create Group Error Message Code**/
@@ -84,11 +87,28 @@ public static final String GROUP_CREATED_WITH_COMPONENT_SSG = "204";
 public static final String GROUP_CREATED_WITH_OUT_COMPONENT_SSG = "205";
 
 public static final String GROUP_TYPES = "group.types";
+public static final String GROUP_STATUS_EXT = "group.status.";
 
 
+/** PET Status **/
+public static final String PET_STATUS_INITIATED = "01";
+public static final String PET_STATUS_COMPLETED = "02";
+public static final String PET_STATUS_APPROVED = "03";
+public static final String PET_STATUS_REJECTED = "04";
+public static final String PET_STATUS_DEACTIVATED = "05";
+public static final String PET_STATUS_CLOSED = "06";
+public static final String PET_STATUS_WAITING_TO_BE_CLOSED = "07";
+public static final String PET_STATUS_READY_FOR_REVIEW = "08";
 
+/** Sorting Order**/
+public static final String SORT_ASC = "ASC";
+public static final String SORT_DESC = "DESC";
 
+public static final String MESSAGE_SPLITGROUP_VALIDATION_NO_DATA = "message.splitGroup.validation.no.data";
+public static final String MESSAGE_SPLITGROUP_VALIDATION_INVALID_DATA = "message.splitGroup.validation.invalid.data";
 
+public static final String GROUP_DETAILS_FORM = "groupDetailsForm";
+public static final String SELECTED_ATTRIBUTE_LIST = "selectedAttributeList";
 
 
 

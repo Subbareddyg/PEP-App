@@ -6,23 +6,24 @@
 	
 	<div class="x-panel-body">
 		<div class="group-search-area">
-			<form name="frmGroupSearch" action="">
+			<form name="frmComponentSearch" id="frmComponentSearch" action="">
+			<input type="hidden" name="fromPage" value="SearchSKU" />
 			<table cellspacing="5" cellpadding="0" border="0" class="content-table">
 				<tr>
 					<td width="15%" align="right">
 						<label for="s-grouping-id">Vendor Style Number#:</label>
 					</td>
 					<td>
-						<input type="text" name="groupId" id="VendorStyleNum" value="" />
+						<input type="text" name="vendorStyleNo" id="vendorStyleNo" value="" />
 					</td>
 					<td width="20%" align="center">
 						OR
 					</td>
 					<td width="15%" align="right">
-						<label for="s-grouping-id">OR Style ORIN#:</label>
+						<label for="s-grouping-id">Style ORIN#:</label>
 					</td>
 					<td>
-						<input type="text" name="groupId" id="StyleNum" value="" />
+						<input type="text" name="styleOrinNo" id="styleOrinNo" value="" />
 					</td>
 				</tr>
 				<tr>
@@ -50,7 +51,7 @@
 				<div class="pagination-left">
 					<div class="pagination-left-wrapper">
 						<label for="page-limit-1">Show: </label>
-						<select name="page-limit-1" id="page-limit-1">
+						<select name="page-limit-1" id="page-limit-1" class="record-limit">
 							<option value="10">10</option>
 							<option value="50">50</option>
 							<option value="100">100</option>
@@ -59,20 +60,17 @@
 					</div>
 				</div>
 				<div class="pagination-right">
-					<ul class="paginator">
-						<li><a href="#"><<</a></li>
-						<li><a href="#" class="active">1</a></li>
-						<li><a href="#">2</a></li>
-						<li><a href="#">>></a></li>
-					</ul>
+					<ul class="paginator"></ul>
 				</div>
 			</div>
 			<div class="clearfix"></div>
+			<form name="selectedComponentForm" id="selectedComponentForm">
+			<input type="hidden" name="selectedItems" value="" id="splitCheckboxValue" >
 			<table cellpadding="0" cellspacing="0" border="1" class="content-table border-simple colored-row tree-grid">
 				<thead>
 					<tr>
 						<th width="10%"><label><input type="checkbox" id="select-all" /> Select All</label></th>
-						<th width="9%"><a href="#" class="sorting-available">ORIN#</a></th>
+						<th width="9%"><a href="#" class="sorting-available">Style ORIN#</a></th>
 						<th width="10%"><a href="#" class="sorting-available">Style Number</a></th>
 						<th width="15%"><a href="#" class="sorting-available">Name</a></th>
 						<th width="10%"><a href="#" class="sorting-available">Color Code</a></th>
@@ -82,69 +80,14 @@
 						<th width="10%"><a href="#" class="sorting-available">Already in group</a></th>
 					</tr>
 				</thead>
-				<tbody>
-					<tr>
-						<td><input type="checkbox" name="selectedItem[]" class="item-check" style="margin-left:14px" />
-						<td class="text-center">123456789</td>
-						<td class="text-center">010101 </td>
-						<td>T-Shirt</td>
-						<td class="text-center">798</td>
-						<td class="text-center">Red</td>
-						<td class="text-center">S</td>
-						<td class="text-center"><input type="radio" name="defaultSize" checked="checked" value="1" /></td>
-						<td class="text-center">No</td>
-					</tr>
-					<tr>
-						<td><input type="checkbox" name="selectedItem[]" class="item-check" style="margin-left:14px" />
-						<td class="text-center">123456789</td>
-						<td class="text-center">010101 </td>
-						<td>T-Shirt</td>
-						<td class="text-center">798</td>
-						<td class="text-center">Red</td>
-						<td class="text-center">M</td>
-						<td class="text-center"><input type="radio" name="defaultSize" value="1" /></td>
-						<td class="text-center">No</td>
-					</tr>
-					<tr>
-						<td><input type="checkbox" name="selectedItem[]" class="item-check" style="margin-left:14px" />
-						<td class="text-center">123456789</td>
-						<td class="text-center">010101 </td>
-						<td>T-Shirt</td>
-						<td class="text-center">798</td>
-						<td class="text-center">Red</td>
-						<td class="text-center">L</td>
-						<td class="text-center"><input type="radio" name="defaultSize" value="1" /></td>
-						<td class="text-center">No</td>
-					</tr>
-					<tr>
-						<td><input type="checkbox" name="selectedItem[]" class="item-check" style="margin-left:14px" />
-						<td class="text-center">123456789</td>
-						<td class="text-center">010101 </td>
-						<td>T-Shirt</td>
-						<td class="text-center">798</td>
-						<td class="text-center">Red</td>
-						<td class="text-center">XL</td>
-						<td class="text-center"><input type="radio" name="defaultSize" value="1" /></td>
-						<td class="text-center">No</td>
-					</tr>
-					<tr>
-						<td><input type="checkbox" name="selectedItem[]" class="item-check" style="margin-left:14px" />
-						<td class="text-center">123456789</td>
-						<td class="text-center">010101 </td>
-						<td>T-Shirt</td>
-						<td class="text-center">798</td>
-						<td class="text-center">Red</td>
-						<td class="text-center">XXL</td>
-						<td class="text-center"><input type="radio" name="defaultSize" value="1" /></td>
-						<td class="text-center">No</td>
-					</tr>
-				</tbody>
+				<tbody id="row-container"></tbody>
 			</table>
+			</form>
 			<div class="pagination-container">
 				<div class="pagination-left">
 					<div class="pagination-left-wrapper">
 						<label for="page-limit-2">Show: </label>
-						<select name="page-limit-2" id="page-limit-2">
+						<select name="page-limit-2" id="page-limit-2" class="record-limit">
 							<option value="10">10</option>
 							<option value="50">50</option>
 							<option value="100">100</option>
@@ -153,12 +96,7 @@
 					</div>
 				</div>
 				<div class="pagination-right">
-					<ul class="paginator">
-						<li><a href="#"><<</a></li>
-						<li><a href="#" class="active">1</a></li>
-						<li><a href="#">2</a></li>
-						<li><a href="#">>></a></li>
-					</ul>
+					<ul class="paginator"></ul>
 				</div>
 				<div class="clearfix"></div>
 			</div>
@@ -173,7 +111,7 @@
 </div>
 <portlet:resourceURL var="ajaxUrl"> 
 </portlet:resourceURL>
-<input type="hidden" id="ajaxaction" name="ajaxaction" value="${ajaxUrl}"></input>	
+
 <script type="text/javascript" src="<%=response.encodeURL(request.getContextPath()+"/js/jquery.min.js")%>"></script>
 <script type="text/javascript" src="<%=response.encodeURL(request.getContextPath()+"/js/jquery-ui.js")%>"></script>
 <script type="text/javascript" src="<%=response.encodeURL(request.getContextPath()+"/js/constants.js")%>"></script>
@@ -234,7 +172,7 @@
 			</tr>
 			<tr>
 				<td align="right">&nbsp;</td>
-				<td>
+				<td>				
 					<input type="button" class="btn" value="Cancel" id="closeGrpDlg" />
 					<input type="submit" class="btn" value="Save" id="btnCreateGroup"/>
 				</td>
@@ -248,34 +186,48 @@
 		</form>
 	</div>
 </div>
-
 <portlet:resourceURL id="submitCreateGroupForm" var="createGroupFormSubmitURL" />
 
 <!-- Group Creation dialog ends -->
+
+<!-- div loading starts-->
+<div class="overlay_pageLoading hidden"><img src="<%=response.encodeURL(request.getContextPath())%>/img/loading.gif" alt="Loading.."></div>
+<!-- div loading ends-->
+
+<!-- Component Table Row Template starts -->
+<script type="text/template" id="row-template">
+{{ if(data.length){ }}
+	{{_.each(data, function(row, key){ }}
+		<tr>
+			<td><input type="checkbox" name="selectedItem[]" value="{{=row.size}}" class="item-check" style="margin-left:14px" />
+			<td class="text-center">{{=row.StyleOrinNo}}</td>
+			<td class="text-center">{{=row.vendorStyleNo}}</td>
+			<td>{{=row.productName}}</td>
+			<td class="text-center">{{=row.colorCode}}</td>
+			<td class="text-center">{{=row.colorName}}</td>
+			<td class="text-center">{{=row.size}}</td>
+			<td class="text-center"><input type="radio" name="defaultColor" value="{{=row.size}}" disabled="disabled" /></td>
+			<td class="text-center">{{=row.alreadyInGroup}}</td>
+		</tr>
+	{{ }) }}	
+{{ }else{ }}
+	<tr>
+		<td colspan="10" align="center"><strong>{{=dataHeader.message ? dataHeader.message : 'No record Found!'}}</strong></td>
+	</tr>
+{{ } }}
+</script>
+<!-- Component Table Row Template ends -->
+<script type="text/javascript" src="<%=response.encodeURL(request.getContextPath()+"/js/underscore-min.js")%>"></script>
 <script>
 	app.Global.defaults.contextPath = '<%=response.encodeURL(request.getContextPath())%>';
 </script>
+<script type="text/javascript" src="<%=response.encodeURL(request.getContextPath()+"/js/DataTable.js")%>"></script>
 <script type="text/javascript" src="<%=response.encodeURL(request.getContextPath()+"/js/grouping.js")%>"></script>
 <script type="text/javascript" src="<%=response.encodeURL(request.getContextPath()+"/js/GroupFactory.js")%>"></script>
 <script>
 	app.GroupLandingApp.urlCollection.createGroupUrl = "${createGroupFormSubmitURL}";
+	app.GroupLandingApp.urlCollection.splitComponentSearchUrl = "${ajaxUrl}";
 	
 	app.GroupLandingApp.init();
-	app.SKUGroupLanding.init();
-
-	
-	var searchSplitColor = function(){
-		//alert("in-->");
-		       var url = document.getElementById('ajaxaction').value;
-		  /*     $.ajax({
-		              url:url,
-		              type:'GET',
-		              datatype:'json',
-		              data :       {'fromPage':'SearchColor','StyleOrinNo':$(StyleNum).val(),'vendorStyleNo':$(VendorStyleNum).val() },
-		              success:function(data){
-		                  //   console.debug(data);
-		              }
-		}); */
-		}
-
+	app.SplitGroupLanding.init();
 </script>

@@ -16,6 +16,16 @@ table.colored-row tr:nth-child(even){#background-color: #B8CFEE}
 table.colored-row .text-center{text-align:center;}
 .hidden{display:none;}
 .divider{content: ''; width:100%; border: 2px solid #008FD4}
+/* .overlay_pageLoading{   
+   position: fixed;
+   width: 550px;
+   height: 250px;
+   top: 40%;
+   left: 40%;	
+   z-index: 9999;   
+} */
+.overlay_pageLoading {width: 100%;height: 100%;position: fixed;left:0;top:0;background-color: rgba(0,0,0,0.5);}
+.overlay_pageLoading img {position: absolute;top: 50%;left: 44%;width: 128px;}
 
 /* css rules for ui dialog */
 .dlg-custom .ui-widget-header {background: #369 repeat-x;color: #fff;}
@@ -47,4 +57,7 @@ ul.paginator li{display: inline;}
 ul.paginator li span, ul.paginator li a{#position: relative;#float: left;padding: 6px 12px;margin-left: -4px;line-height: 1.42857143;color: #337ab7;text-decoration: none;background-color: #fff;border: 1px solid #ddd;}
 ul.paginator li a:hover{color: #23527c; background-color: #eee; border-color: #ddd; text-decoration: none;}
 ul.paginator li a.active{color: #23527c; background-color: #eee; border-color: #ddd; text-decoration: none; cursor:default;}
-    
+
+.checkboxAlign{margin-left:11px;}
+.checkboxAlign-existing{margin-left:23px;}
+#group-creation-messages{min-height:20px}
