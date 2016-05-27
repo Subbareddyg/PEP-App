@@ -230,6 +230,7 @@ public class GroupingDAOImpl implements GroupingDAO{
                     groupAttributeForm = new GroupAttributeForm();
                     
                     String mdmid=rowMap.get("MDMID") != null ? rowMap.get("MDMID").toString() : "";
+                    //String parentMdmid=rowMap.get("PARENT_MDMID") != null ? rowMap.get("PARENT_MDMID").toString() : "";
                     String styleNo=rowMap.get("PRIMARYSUPPLIERVPN") != null ? rowMap.get("PRIMARYSUPPLIERVPN").toString() : "";
                     String productName=rowMap.get("PRODUCT_NAME") != null ? rowMap.get("PRODUCT_NAME").toString() : "";
                     String colorCode=rowMap.get("COLOR_CODE") != null ? rowMap.get("COLOR_CODE").toString() : "";

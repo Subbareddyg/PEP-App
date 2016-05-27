@@ -109,8 +109,7 @@
 <div class="group-search-footer-area">
 	<div class="footer-content"><input type="button" onclick="history.back(1)" class="btn" value="Close"></div>
 </div>
-<portlet:resourceURL var="ajaxUrl"> 
-</portlet:resourceURL>
+<portlet:resourceURL var="ajaxUrl" id="splitAttributeSearch"></portlet:resourceURL>
 
 <script type="text/javascript" src="<%=response.encodeURL(request.getContextPath()+"/js/jquery.min.js")%>"></script>
 <script type="text/javascript" src="<%=response.encodeURL(request.getContextPath()+"/js/jquery-ui.js")%>"></script>

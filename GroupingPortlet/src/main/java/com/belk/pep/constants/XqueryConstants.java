@@ -84,7 +84,7 @@ public class XqueryConstants {
     public  String getSplitColorDetails(String vendorStyleNo) {          
         String getSplitColorDetailsQuery=
                 "   Select                                                                                              "
-                        +"  ITEM.MDMID,                                                                                         "
+                        +"  ITEM.MDMID, ITEM.PARENT_MDMID,                                                                      "
                         +"  ITEM.PRIMARYSUPPLIERVPN,                                                                            "
                         +"  PET_XML.PRODUCT_NAME,                                                                               "
                         +"  PET_XML.COLOR_CODE,                                                                                 "

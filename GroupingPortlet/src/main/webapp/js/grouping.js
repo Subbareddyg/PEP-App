@@ -41,10 +41,13 @@ var app = app || {};
 					buttonText: ""
 				});*/
 				
+				$('#startDate , #endDate').prop("readonly", true);
+				
 				$('#startDate').datepicker({
 					showOn: "button",
+					 showOn: "both",
 					buttonImage: app.Global.defaults.contextPath + "/img/iconCalendar.gif",
-					buttonImageOnly: false,
+					buttonImageOnly: true,
 					buttonText: "",
 					minDate: 0 ,
 					onClose: function( selectedDate ) {
@@ -54,8 +57,9 @@ var app = app || {};
 				
 				$('#endDate').datepicker({
 					showOn: "button",
+					 showOn: "both",
 					buttonImage: app.Global.defaults.contextPath + "/img/iconCalendar.gif",
-					buttonImageOnly: false,
+					buttonImageOnly: true,
 					buttonText: "",
 					
 					onClose: function( selectedDate ) {
@@ -131,7 +135,7 @@ var app = app || {};
 								$('#group-creation-messages').html('&nbsp;');
 								$('#closeGrpDlg').removeClass('refresh');
 								$('#select-all').prop('checked', false);
-								$('#btnCreateGroup').prop('disabled', false)
+								$('#btnCreateGroup').prop('disabled', false).css('opacity','1');
 								$('#dlgGroupCreate').dialog( "option", "height", 370 );
 								$('.overlay_pageLoading').addClass('hidden');
 								
@@ -297,7 +301,7 @@ var app = app || {};
 				$('#group-creation-messages').html(message);
 				$('#closeGrpDlg').val('Close');
 				$('#closeGrpDlg').addClass('refresh');
-				$('#btnCreateGroup').prop('disabled', true)
+				$('#btnCreateGroup').prop('disabled', true).css('opacity','0.5')
 				$('#dlgGroupCreate').dialog( "option", "minHeight", 400 );
 				$('#dlgGroupCreate').dialog( "option", "height", 400 );
 		},
