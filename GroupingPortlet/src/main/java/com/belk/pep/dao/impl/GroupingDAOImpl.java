@@ -1,6 +1,7 @@
 package com.belk.pep.dao.impl;
 
 
+import java.math.BigDecimal;
 import java.sql.Clob;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,8 +15,14 @@ import org.hibernate.SessionFactory;
 
 import com.belk.pep.constants.XqueryConstants;
 import com.belk.pep.dao.GroupingDAO;
+import com.belk.pep.dto.ClassDetails;
 import com.belk.pep.dto.CreateGroupDTO;
+import com.belk.pep.dto.DepartmentDetails;
+import com.belk.pep.dto.GroupSearchDTO;
+import com.belk.pep.exception.checked.PEPPersistencyException;
+import com.belk.pep.exception.checked.PEPServiceException;
 import com.belk.pep.form.GroupAttributeForm;
+import com.belk.pep.form.GroupSearchForm;
 import com.belk.pep.util.GroupingUtil;
 
 /**
@@ -99,11 +106,13 @@ public class GroupingDAOImpl implements GroupingDAO{
                     String endDate=rowMap.get("EFFECTIVE_END_DATE") != null ? rowMap.get("EFFECTIVE_END_DATE").toString() : "";
                     String groupStatus=rowMap.get("GROUP_OVERALL_STATUS_CODE") != null ? rowMap.get("GROUP_OVERALL_STATUS_CODE").toString() : "";
                     String groupType=rowMap.get("GROUP_TYPE") != null ? rowMap.get("GROUP_TYPE").toString() : "";
+                    String carsGroupType=rowMap.get("CARS_GROUP_TYPE") != null ? rowMap.get("CARS_GROUP_TYPE").toString() : "";
                     
                     LOGGER.debug("getGroupHeaderDetails.groupName-->"+groupName);
                     LOGGER.debug("getGroupHeaderDetails.startDate-->"+startDate);
                     LOGGER.debug("getGroupHeaderDetails.groupDesc-->"+groupDesc);
                     LOGGER.debug("getGroupHeaderDetails.groupType-->"+groupType);
+                    LOGGER.debug("getGroupHeaderDetails.carsGroupType-->"+carsGroupType);
                     createGroupDTO.setGroupId(groupId);
                     createGroupDTO.setGroupName(groupName);
                     createGroupDTO.setGroupDesc(groupDesc);
@@ -111,6 +120,7 @@ public class GroupingDAOImpl implements GroupingDAO{
                     createGroupDTO.setEndDate(endDate);
                     createGroupDTO.setGroupStatus(groupStatus);
                     createGroupDTO.setGroupType(groupType);
+                    createGroupDTO.setCarsGroupType(carsGroupType);
                 }
             }
           }catch(Exception e){
@@ -345,6 +355,285 @@ public class GroupingDAOImpl implements GroupingDAO{
 
         LOGGER.info("Fetch Split SKU Details--> getSplitSKUDetails-->End");
         return groupAttributeFormList;
+    }
+    
+    /**
+     * Method to get the groups for search group.
+     *    
+     * @param groupSearchForm GroupSearchForm   
+     * @return GroupSearchForm 
+     * 
+     * Method added For PIM Phase 2 - groupSearch
+     * Date: 05/19/2016
+     * Added By: Cognizant
+     * @throws PEPPersistencyException 
+     */
+    @Override
+    public List<GroupSearchDTO> groupSearch(GroupSearchForm groupSearchForm)
+        throws PEPServiceException, PEPPersistencyException {
+        
+        LOGGER.info("Entering GroupingDAO.groupSearch() method.");
+        //System.out.println("Entering GroupingDAO.groupSearch() method.");
+        Session session = null;
+        List<GroupSearchDTO> groupList = new ArrayList<GroupSearchDTO>();
+        GroupSearchDTO groupSearchDTO = null;
+        List<Object> rows = null;
+        final XqueryConstants xqueryConstants = new XqueryConstants();
+        try {
+            session = sessionFactory.openSession();
+            final Query query = session.createSQLQuery(xqueryConstants.getGroupDetailsQuery(groupSearchForm));
+            query.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
+            query.setFirstResult((groupSearchForm.getPageNumber() - 1) * groupSearchForm.getRecordsPerPage());
+            query.setMaxResults(groupSearchForm.getRecordsPerPage());
+            rows = query.list();
+            
+            if(rows!=null)
+            {
+                for (final Object rowObj : rows) {
+                    Map row = (Map)rowObj;
+                    groupSearchDTO = new GroupSearchDTO();
+                    groupSearchDTO.setGroupId(row.get("GROUP_ID") == null? "" : row.get("GROUP_ID").toString());
+                    groupSearchDTO.setGroupName(row.get("GROUP_NAME") == null? "" : row.get("GROUP_NAME").toString());
+                    groupSearchDTO.setGroupType(row.get("GROUP_TYPE") == null? "" : row.get("GROUP_TYPE").toString());
+                    groupSearchDTO.setGroupContentStatus(row.get("GROUP_CONTENT_STATUS_CODE") == null? "" : row.get("GROUP_CONTENT_STATUS_CODE").toString());
+                    groupSearchDTO.setStartDate(row.get("START_DATE") == null? "" : row.get("START_DATE").toString());
+                    groupSearchDTO.setEndDate(row.get("END_DATE") == null? "" : row.get("END_DATE").toString());
+                    groupSearchDTO.setGroupImageStatus(row.get("GROUP_IMAGE_STATUS_CODE") == null? "" : row.get("GROUP_IMAGE_STATUS_CODE").toString());
+                    
+                    LOGGER.debug("Grouping Attribute Values -- \nGROUP ID: " + groupSearchDTO.getGroupId() +
+                        "\nGROUP NAME: " + groupSearchDTO.getGroupName() +
+                        "\nGROUP TYPE: " + groupSearchDTO.getGroupType() + 
+                        "\nGROUP CONTENT STATUS: " + groupSearchDTO.getGroupContentStatus() + 
+                        "\nGROUP IMAGE STATUS: " + groupSearchDTO.getGroupImageStatus() +  
+                        "\nSTART DATE: " + groupSearchDTO.getStartDate() +
+                        "\nEND DATE: " + groupSearchDTO.getEndDate());
+                    
+                    groupList.add(groupSearchDTO);
+                }
+            }
+        }
+        catch(final Exception exception)
+        {
+            LOGGER.error("Exception in GroupingDAO.groupSearch() -- " + exception.getMessage());
+            throw new PEPPersistencyException(exception);
+        }
+        finally {
+            session.flush();
+            session.close();
+        }
+        LOGGER.info("Exiting GroupingDAO.groupSearch() method.");
+        
+        return groupList;
+    }
+
+    /**
+     * Method to get the groups count for search group.
+     *    
+     * @param groupSearchForm GroupSearchForm   
+     * @return GroupSearchForm 
+     * 
+     * Method added For PIM Phase 2 - groupSearch
+     * Date: 05/27/2016
+     * Added By: Cognizant
+     * @throws PEPPersistencyException 
+     */
+    @Override
+    public int groupSearchCount(GroupSearchForm groupSearchForm)
+        throws PEPServiceException, PEPPersistencyException {
+        
+        LOGGER.info("Entering GroupingDAO.groupSearchCount() method.");
+        //System.out.println("Entering GroupingDAO.groupSearchCount() method.");
+        Session session = null;
+        BigDecimal rowCount = new BigDecimal(0);
+        List<Object> rows = null;
+        final XqueryConstants xqueryConstants = new XqueryConstants();
+        try {
+            session = sessionFactory.openSession();
+            final Query query = session.createSQLQuery(xqueryConstants.getGroupDetailsCountQuery(groupSearchForm));
+            query.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
+            rows = query.list();
+            
+            if(rows!=null)
+            {
+                for (final Object rowObj : rows) {
+                    Map row = (Map)rowObj;
+                    rowCount = (BigDecimal) (row.get("TOTAL_COUNT") == null? "" : row.get("TOTAL_COUNT"));                    
+                    
+                    LOGGER.debug("Grouping Attribute Count -- \nCOUNT OF RECORDS: " + rowCount);
+                }
+            }
+        }
+        catch(final Exception exception)
+        {
+            LOGGER.error("Exception in GroupingDAO.groupSearchCount() -- " + exception.getMessage());
+            throw new PEPPersistencyException(exception);
+        }
+        finally {
+            session.flush();
+            session.close();
+        }
+        LOGGER.info("Exiting GroupingDAO.groupSearchCount() method.");
+        
+        return rowCount.intValue();
+    }
+    
+    /**
+     * Method to get the groups for search group.
+     *    
+     * @param groupSearchForm GroupSearchForm   
+     * @return GroupSearchForm 
+     * 
+     * Method added For PIM Phase 2 - groupSearch
+     * Date: 05/19/2016
+     * Added By: Cognizant
+     * @throws PEPPersistencyException 
+     */
+    @Override
+    public List<GroupSearchDTO> groupSearchParent(List<GroupSearchDTO> groupSearchDTOList)
+        throws PEPServiceException, PEPPersistencyException {
+        
+        LOGGER.info("Entering GroupingDAO.groupSearchParent() method.");
+        Session session = null;
+        List<GroupSearchDTO> groupList = new ArrayList<GroupSearchDTO>();
+        GroupSearchDTO groupSearchDTO = null;
+        List<Object> rows=null;
+        final XqueryConstants xqueryConstants = new XqueryConstants();
+        try {
+            session = sessionFactory.openSession();
+            final Query query =session.createSQLQuery(xqueryConstants.getGroupDetailsQueryParent(groupSearchDTOList));
+            query.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
+            rows = query.list();
+            
+            if(rows!=null)
+            {
+                for (final Object rowObj : rows) {
+                    Map row = (Map)rowObj;
+                    groupSearchDTO = new GroupSearchDTO();
+                    groupSearchDTO.setGroupId(row.get("GROUP_ID") == null? "" : row.get("GROUP_ID").toString());
+                    groupSearchDTO.setGroupName(row.get("GROUP_NAME") == null? "" : row.get("GROUP_NAME").toString());
+                    groupSearchDTO.setGroupType(row.get("GROUP_TYPE") == null? "" : row.get("GROUP_TYPE").toString());
+                    groupSearchDTO.setGroupContentStatus(row.get("GROUP_CONTENT_STATUS_CODE") == null? "" : row.get("GROUP_CONTENT_STATUS_CODE").toString());
+                    groupSearchDTO.setStartDate(row.get("START_DATE") == null? "" : row.get("START_DATE").toString());
+                    groupSearchDTO.setEndDate(row.get("END_DATE") == null? "" : row.get("END_DATE").toString());
+                    groupSearchDTO.setComponentGroupId(row.get("COMPONENT_GROUPING_ID") == null? "" : row.get("COMPONENT_GROUPING_ID").toString());
+                    groupSearchDTO.setGroupImageStatus(row.get("GROUP_IMAGE_STATUS_CODE") == null? "" : row.get("GROUP_IMAGE_STATUS_CODE").toString());                    
+                    
+                    LOGGER.debug("Grouping Attribute Values -- \nGROUP ID: " + groupSearchDTO.getGroupId() +
+                        "\nGROUP NAME: " + groupSearchDTO.getGroupName() +
+                        "\nGROUP TYPE: " + groupSearchDTO.getGroupType() + 
+                        "\nGROUP CONTENT STATUS: " + groupSearchDTO.getGroupContentStatus() + 
+                        "\nGROUP IMAGE STATUS: " + groupSearchDTO.getGroupImageStatus() + 
+                        "\nSTART DATE: " + groupSearchDTO.getStartDate() +
+                        "\nEND DATE: " + groupSearchDTO.getEndDate() + 
+                        "\nCOMPONENT GROUP ID: " + groupSearchDTO.getComponentGroupId());
+                    
+                    groupList.add(groupSearchDTO);
+                }
+            }
+        }
+        catch(final Exception exception)
+        {
+            LOGGER.error("Exception in GroupingDAO.groupSearchParent() -- " + exception.getMessage());
+            throw new PEPPersistencyException(exception);
+        }
+        finally {
+            session.flush();
+            session.close();
+        }
+        LOGGER.info("Exiting GroupingDAO.groupSearchParent() method.");
+        
+        return groupList;
+    }
+    
+    /**
+     * Method to get the departments for search group.
+     *    
+     * @param departmentsToBesearched String   
+     * @return ArrayList<DepartmentDetails> 
+     * 
+     * Method added For PIM Phase 2 - groupSearch
+     * Date: 05/25/2016
+     * Added By: Cognizant
+     * @throws PEPPersistencyException 
+     */
+    @Override
+    public ArrayList<DepartmentDetails> getDeptDetailsByDepNoFromADSE() throws PEPPersistencyException
+        {
+        LOGGER.info("Entering getDeptDetailsByDepNoFromADSE() in GroupingDAOImpl class..");
+        Session session = null;
+        ArrayList<DepartmentDetails> adseDepartmentList = new ArrayList<DepartmentDetails>();    
+        try{
+             session = sessionFactory.openSession();     
+             Query query1 = session.createSQLQuery(xqueryConstants.getLikeDepartmentDetailsForString()); 
+             query1.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
+             if(query1!=null)
+             {
+                List<Object> rows1 = query1.list();
+                if(rows1!=null && rows1.size()>0)
+                {
+                    for(Object row : rows1){  
+                        Map rowObj = (Map)row;
+                        DepartmentDetails departmentDetails = new DepartmentDetails();
+                        departmentDetails.setId(rowObj.get("DEPTID") == null? "" : rowObj.get("DEPTID").toString());
+                        departmentDetails.setDesc(rowObj.get("DEPTNAME") == null? "" : rowObj.get("DEPTNAME").toString());   
+                        adseDepartmentList.add(departmentDetails);                           
+                    }
+                }
+             }
+        }catch(Exception exception){
+            LOGGER.error("Exception in getDeptDetailsByDepNoFromADSE() -- " + exception.getMessage());
+            throw new PEPPersistencyException(exception);
+        }
+        finally
+        {
+            session.flush(); 
+            session.close();
+        }
+        LOGGER.info("Exiting getDeptDetailsByDepNoFromADSE() in GroupingDAOImpl class..");
+        return adseDepartmentList; 
+       
+    }
+    
+    /**
+     * Method to get the classes for search group.
+     *    
+     * @param departmentNumbers String   
+     * @return List<ClassDetails> 
+     * 
+     * Method added For PIM Phase 2 - groupSearch
+     * Date: 05/25/2016
+     * Added By: Cognizant
+     * @throws PEPPersistencyException 
+     */
+    @Override
+    public List<ClassDetails> getClassDetailsByDepNos(String departmentNumbers)
+        throws PEPPersistencyException {
+        LOGGER.info("Entering getClassDetailsByDepNos() in GroupingDAOImpl class..");
+        Session session = null;
+        List<ClassDetails> classDetailsList = new ArrayList<ClassDetails>();
+        try{
+            session = sessionFactory.openSession();               
+            Query query = session.createSQLQuery(xqueryConstants.getClassDetailsUsingDeptnumbers(departmentNumbers));
+            query.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
+            List<Object> rows = query.list();
+            for(Object row : rows){    
+                Map rowObj = (Map)row;
+                ClassDetails classDetails = new ClassDetails();
+                classDetails.setId(rowObj.get("CLASS_ID") == null? "" : rowObj.get("CLASS_ID").toString());
+                classDetails.setDesc(rowObj.get("CLASS_NAME") == null? "" : rowObj.get("CLASS_NAME").toString());   
+                classDetailsList.add(classDetails);          
+            } 
+        }catch(Exception exception){
+            LOGGER.error("Exception in getClassDetailsByDepNos() -- " + exception.getMessage());
+            throw new PEPPersistencyException(exception);
+        }
+        finally{
+            session.flush();   
+            session.close();
+        }
+        LOGGER.info("Exiting getClassDetailsByDepNos() in GroupingDAOImpl class..");
+        return classDetailsList; 
+        
     }
 
 }

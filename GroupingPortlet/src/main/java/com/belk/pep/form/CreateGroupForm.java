@@ -25,6 +25,7 @@ public class CreateGroupForm {
     private String groupStatus;
     private String groupTypeDesc;
     private String groupStatusDesc;
+    private String carsGroupType;
     /** User role**/
     private String roleEditable;
     private String readOnlyUser="no";
@@ -216,6 +217,19 @@ public class CreateGroupForm {
 	public void setGroupStatusDesc(String groupStatusDesc) {
 		this.groupStatusDesc = groupStatusDesc;
 	}
+	/**
+	 * @return the carsGroupType
+	 */
+	public String getCarsGroupType() {
+		return carsGroupType;
+	}
+	/**
+	 * @param carsGroupType the carsGroupType to set
+	 */
+	public void setCarsGroupType(String carsGroupType) {
+		this.carsGroupType = carsGroupType;
+	}
+	
     
     
   }

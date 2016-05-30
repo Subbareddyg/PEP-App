@@ -8,7 +8,10 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
@@ -18,13 +21,17 @@ import org.json.JSONObject;
 
 import com.belk.pep.constants.GroupingConstants;
 import com.belk.pep.dao.GroupingDAO;
+import com.belk.pep.dto.ClassDetails;
 import com.belk.pep.dto.CreateGroupDTO;
+import com.belk.pep.dto.DepartmentDetails;
+import com.belk.pep.dto.GroupSearchDTO;
 import com.belk.pep.exception.checked.PEPFetchException;
 import com.belk.pep.exception.checked.PEPPersistencyException;
 import com.belk.pep.exception.checked.PEPServiceException;
-import com.belk.pep.form.Component;
 import com.belk.pep.form.CreateGroupForm;
 import com.belk.pep.form.GroupAttributeForm;
+import com.belk.pep.form.GroupForm;
+import com.belk.pep.form.GroupSearchForm;
 import com.belk.pep.service.GroupingService;
 import com.belk.pep.util.PropertyLoader;
 
@@ -75,8 +82,8 @@ public class GroupingServiceImpl implements GroupingService {
         //LOGGER.debug("------>"+createGroupD.getGroupName());
         
         String groupIdRes = "";
-        Component component = null;
-        List<Component> componentList = null;
+        /*Component component = null;
+        List<Component> componentList = null;*/
         String responseMsg = "";
         String[] responseMsgArray = null;
         String responseMsgCode = "";
@@ -169,7 +176,7 @@ public class GroupingServiceImpl implements GroupingService {
                 }
             }
             if(null != responseMsgCode && responseMsgCode.equals(GroupingConstants.SUCCESS_CODE)){
-                responseMsg = prop.getProperty(GroupingConstants.ADD_COMPONENT_SCG_SERVICE_SUCCESS);
+                responseMsg = "#" +groupIdRes+" "+prop.getProperty(GroupingConstants.ADD_COMPONENT_SCG_SERVICE_SUCCESS);
                 groupCreationStatus = GroupingConstants.GROUP_CREATED_WITH_COMPONENT_SCG;
                 LOGGER.info("Add Component to Split Color Group. ResponseMsg100::Success-->" + responseMsg);
             }else{
@@ -219,11 +226,11 @@ public class GroupingServiceImpl implements GroupingService {
                 }
             }
             if(null != responseMsgCode && responseMsgCode.equals(GroupingConstants.SUCCESS_CODE)){
-                responseMsg = prop.getProperty(GroupingConstants.ADD_COMPONENT_SSG_SERVICE_SUCCESS);
+                responseMsg = groupIdRes+"-"+prop.getProperty(GroupingConstants.ADD_COMPONENT_SSG_SERVICE_SUCCESS);
                 groupCreationStatus = GroupingConstants.GROUP_CREATED_WITH_COMPONENT_SSG;
                 LOGGER.info("Add Component to Split SKU Group. ResponseMsg100::Success-->" + responseMsg);
             }else{
-                responseMsg = prop.getProperty(GroupingConstants.ADD_COMPONENT_SSG_SERVICE_FAILURE);
+                responseMsg = "#" + groupIdRes+" "+prop.getProperty(GroupingConstants.ADD_COMPONENT_SSG_SERVICE_FAILURE);
                 groupCreationStatus = GroupingConstants.GROUP_CREATED_WITH_OUT_COMPONENT_SSG;
                 LOGGER.info("Add Component to Split SKU Group. ResponseMsg101::Failure-->" + responseMsg);
             }
@@ -253,6 +260,7 @@ public class GroupingServiceImpl implements GroupingService {
         createGroupForm.setGroupAttributeFormList(createGroupDTO.getGroupAttributeDTOList());
         createGroupForm.setGroupCreationStatus(groupCreationStatus);
         createGroupForm.setGroupStatus(createGroupDTO.getGroupStatus());
+        createGroupForm.setCarsGroupType(createGroupDTO.getCarsGroupType());
         
         LOGGER.debug("Transfer object value from DTO to Form Object End");
         /** **/
@@ -816,6 +824,336 @@ public class GroupingServiceImpl implements GroupingService {
           LOGGER.debug("selectedSplitAttributeList.size()-->"+selectedSplitAttributeList.size());
           LOGGER.info("Exit-->calling getSelectedSKUAttributeList from GroupingServiceImpl.");
           return selectedSplitAttributeList;
+      }
+      
+      /**
+       * Method to get the groups for search group.
+       *    
+       * @param groupSearchForm GroupSearchForm   
+       * @return GroupSearchForm 
+       * 
+       * Method added For PIM Phase 2 - groupSearch
+       * Date: 05/19/2016
+       * Added By: Cognizant
+       * @throws PEPPersistencyException 
+       */
+      @Override
+      public GroupSearchForm groupSearch(GroupSearchForm groupSearchForm)
+          throws PEPServiceException, PEPPersistencyException {
+          
+          LOGGER.info("Entering groupSearch() in GroupingService class.");
+          //System.out.println("Entering groupSearch() in GroupingService class.");
+          
+          List<GroupForm> groupFormList = new ArrayList<GroupForm>();
+          List<GroupSearchDTO> listOneGroup = groupingDAO.groupSearch(groupSearchForm);
+          LOGGER.debug("List one size -- " + listOneGroup.size());
+          //System.out.println("List one size -- " + listOneGroup.size());
+          if(listOneGroup.size() > 0)
+          {
+              GroupForm groupFormParent = null;
+              Map<String, GroupForm> mapGroup = new HashMap<String, GroupForm>();
+              Properties prop =PropertyLoader.getPropertyLoader(GroupingConstants.GROUPING_PROPERTIES_FILE_NAME);
+              for (Iterator<GroupSearchDTO> iterator = listOneGroup.iterator(); iterator.hasNext();) 
+              {
+                  GroupSearchDTO groupSearchDTOParent = (GroupSearchDTO) iterator.next();            
+                  if(groupSearchDTOParent!= null)
+                  {
+                      groupFormParent = new GroupForm();
+                      groupFormParent.setGroupId(groupSearchDTOParent.getGroupId()); 
+                      groupFormParent.setGroupName(groupSearchDTOParent.getGroupName());                           
+                      groupFormParent.setGroupContentStatus(prop.getProperty("Content" + groupSearchDTOParent.getGroupContentStatus()));
+                      groupFormParent.setGroupImageStatus(prop.getProperty("Image" + groupSearchDTOParent.getGroupImageStatus()));
+                      groupFormParent.setGroupType(prop.getProperty("group.types." + groupSearchDTOParent.getGroupType()));
+                      groupFormParent.setGroupTypeCode(groupSearchDTOParent.getGroupType());
+                      if(groupSearchDTOParent.getStartDate().length() >= 10)
+                      {
+                          groupFormParent.setStartDate(groupSearchDTOParent.getStartDate().substring(0, 10));
+                      }
+                      else
+                      {
+                          groupFormParent.setStartDate(groupSearchDTOParent.getStartDate());
+                      }
+                      if(groupSearchDTOParent.getEndDate().length() >= 10)
+                      {
+                          groupFormParent.setEndDate(groupSearchDTOParent.getEndDate().substring(0, 10));
+                      }
+                      else
+                      {
+                          groupFormParent.setEndDate(groupSearchDTOParent.getEndDate());
+                      }
+                      mapGroup.put(groupFormParent.getGroupId(), groupFormParent);
+                      groupFormList.add(groupFormParent);
+                  }
+              }
+              
+              List<GroupSearchDTO> listTwoGroup = groupingDAO.groupSearchParent(listOneGroup);
+              LOGGER.debug("List two size -- " + listTwoGroup.size());
+              //System.out.println("List two size -- " + listTwoGroup.size());
+              if(listTwoGroup.size() > 0)
+              {
+                  GroupForm groupForm = null;
+                  List<GroupForm> childGroupFormList = null;
+                  List<GroupForm> parentGroupFormList = new ArrayList<GroupForm>();
+                  for (Iterator<GroupSearchDTO> iterator = listTwoGroup.iterator(); iterator.hasNext();) {
+                      GroupSearchDTO groupSearchDTO = (GroupSearchDTO) iterator.next();
+                      if(groupSearchDTO!= null)
+                      {
+                          groupForm = new GroupForm();
+                          
+                          groupForm.setGroupId(groupSearchDTO.getGroupId()); 
+                          groupForm.setGroupName(groupSearchDTO.getGroupName());
+                          groupForm.setGroupContentStatus(prop.getProperty("Content" + groupSearchDTO.getGroupContentStatus()));
+                          groupForm.setGroupImageStatus(prop.getProperty("Image" + groupSearchDTO.getGroupImageStatus()));
+                          groupForm.setGroupType(prop.getProperty("group.types." + groupSearchDTO.getGroupType()));
+                          groupForm.setGroupTypeCode(groupSearchDTO.getGroupType());
+                          if(groupSearchDTO.getStartDate().length() >= 10)
+                          {
+                              groupForm.setStartDate(groupSearchDTO.getStartDate().substring(0, 10));
+                          }
+                          else
+                          {
+                              groupForm.setStartDate(groupSearchDTO.getStartDate());
+                          }
+                          if(groupSearchDTO.getEndDate().length() >= 10)
+                          {
+                              groupForm.setEndDate(groupSearchDTO.getEndDate().substring(0, 10));
+                          }
+                          else
+                          {
+                              groupForm.setEndDate(groupSearchDTO.getEndDate());
+                          }                        
+                          
+                          if(!groupSearchDTO.getComponentGroupId().equalsIgnoreCase("")){
+                              childGroupFormList = new ArrayList<GroupForm>();
+                              GroupForm childGroupForm = mapGroup.get(groupSearchDTO.getComponentGroupId());
+                              if(childGroupForm != null)
+                              {
+                                  childGroupFormList.add(childGroupForm);
+                              }
+                          }
+                          if(childGroupFormList != null && !childGroupFormList.isEmpty())
+                          {
+                              groupForm.setChildList(childGroupFormList);
+                              parentGroupFormList.add(groupForm);
+                          }
+                      }
+                  }
+                  groupFormList.addAll(parentGroupFormList);
+              }            
+              
+              LOGGER.debug("FInal List size -- " + groupFormList.size());
+          }
+          groupSearchForm.setGroupList(groupFormList);
+          
+          LOGGER.info("Exiting groupSearch() in GroupingService class.");
+          return groupSearchForm;
+      }
+      
+      /**
+       * Method to get Group search record count
+       * @param groupSearchForm GroupSearchForm
+       * @return resordCount int
+       * 
+       * Method added For PIM Phase 2 - groupSearch
+       * Date: 05/27/2016
+       * Added By: Cognizant
+       * @throws PEPPersistencyException 
+       * @throws PEPServiceException 
+       */
+      @Override
+      public int groupSearchCount(GroupSearchForm groupSearchForm) throws PEPPersistencyException, PEPServiceException{
+          LOGGER.info("Entering groupSearchCount() in GroupingService class.");
+          int recordCount = 0;
+          try {
+              recordCount = groupingDAO.groupSearchCount(groupSearchForm);
+          }
+          catch (Exception e) {
+              LOGGER.info("Exception occurred at groupSearchCount() in GroupingService class");
+              throw new PEPServiceException(e.getMessage());
+          }
+          LOGGER.info("Exiting groupSearchCount() in GroupingService class.");
+          return recordCount;
+      }
+      
+      /**
+       * Method to get the Depts for search group.
+       *    
+       * @param departmentsToBesearched String   
+       * @return ArrayList 
+       * 
+       * Method added For PIM Phase 2 - groupSearch
+       * Date: 05/26/2016
+       * Added By: Cognizant
+       * @throws PEPPersistencyException 
+       * @throws PEPServiceException 
+       */
+      @Override
+      public ArrayList<DepartmentDetails> getDeptDetailsByDepNoFromADSE() throws PEPPersistencyException, PEPServiceException{
+          LOGGER.info("Entering getDeptDetailsByDepNoFromADSE() in GroupingService class.");
+          ArrayList<DepartmentDetails> getDepartmentList = null;
+          try {
+              getDepartmentList = groupingDAO.getDeptDetailsByDepNoFromADSE();
+          }
+          catch (Exception e) {
+              LOGGER.info("Exception occurred at getDeptDetailsByDepNoFromADSE() in GroupingService class");
+              throw new PEPServiceException(e.getMessage());
+          }
+          LOGGER.info("Exiting getDeptDetailsByDepNoFromADSE() in GroupingService class.");
+          return getDepartmentList;
+      }
+      
+      /**
+       * Method to get the classes for search group.
+       *    
+       * @param departmentNumbers String   
+       * @return List<ClassDetails> 
+       * 
+       * Method added For PIM Phase 2 - groupSearch
+       * Date: 05/26/2016
+       * Added By: Cognizant
+       * @throws PEPPersistencyException 
+       * @throws PEPServiceException 
+       */
+      @Override
+      public List<ClassDetails> getClassDetailsByDepNos(String departmentNumbers) throws PEPPersistencyException, PEPServiceException{
+          LOGGER.info("Entering getClassDetailsByDepNos() in GroupingService class.");
+          List<ClassDetails> getClassList = null;
+          try {
+              getClassList = groupingDAO.getClassDetailsByDepNos(departmentNumbers);
+          }
+          catch (Exception e) {
+              LOGGER.info("Exception occurred at getClassDetailsByDepNos() in GroupingService class");
+              throw new PEPServiceException(e.getMessage());
+          }
+          LOGGER.info("Exiting getClassDetailsByDepNos() in GroupingService class.");
+          return getClassList;
+      }
+      
+      /**
+       * 
+       * @param jsonGroup
+       * @return
+       * @throws Exception
+       * @throws PEPFetchException
+       */
+      private String callDeleteGroupService(JSONObject jsonGroup) throws Exception, PEPFetchException {
+          LOGGER.info("Entering callDeletGroupService-->");
+          LOGGER.debug("jsonArray-->" + jsonGroup);
+          String responseMsg = "";
+          try {
+              Properties prop =PropertyLoader.getPropertyLoader(GroupingConstants.MESS_PROP);
+              String serviceURL = prop.getProperty(GroupingConstants.DELETE_GROUP_SERVICE_URL);
+              LOGGER.info("Delete Group ServiceURL-->" + serviceURL);
+
+              URL targetUrl = new URL(serviceURL);
+              HttpURLConnection httpConnection = (HttpURLConnection) targetUrl.openConnection();
+              httpConnection.setDoOutput(true);
+              httpConnection.setRequestMethod("POST");
+              httpConnection.setRequestProperty("Content-Type","application/json");
+
+              LOGGER.info("callDeletGroupService Service::Json Array-->"+ jsonGroup.toString());
+              
+              String input = jsonGroup.toString();
+              LOGGER.debug("final object in json-->" +"\t"+ jsonGroup.toString());
+              LOGGER.info("input....json-->"+ input);
+              OutputStream outputStream = httpConnection.getOutputStream();
+              outputStream.write(input.getBytes());
+              outputStream.flush();
+
+              BufferedReader responseBuffer = new BufferedReader(new InputStreamReader((httpConnection.getInputStream())));
+              String output;
+              LOGGER.info("Output from Server:::"+"\t"+"after Calling-->");
+              while ((output = responseBuffer.readLine()) != null) {
+                  LOGGER.info("DeleteGroupService Service Output-->"+output);
+
+                      LOGGER.info("Single Request-->");
+                      responseMsg = output;
+              }
+
+              httpConnection.disconnect();
+          }
+          catch (MalformedURLException e) {
+              LOGGER.info("inside malformedException");
+              throw new PEPFetchException();
+          }
+          catch (ClassCastException e) {
+              e.printStackTrace();
+              throw new PEPFetchException();
+          }
+          catch (IOException e) {
+              LOGGER.info("inside IOException");
+              e.printStackTrace();
+          }
+          catch (JSONException e) {
+              LOGGER.info("inside JSOnException");
+              e.printStackTrace();
+          }
+          catch (Exception e) {
+              LOGGER.info("inside Exception" + e);
+              e.printStackTrace();
+          }
+          LOGGER.info("Exiting callCreateGroupService-->" +responseMsg);
+          return responseMsg;
+      }
+    
+      /**
+       * This method is used to call Group Delete Service
+       * @param groupId
+       * @param updatedBy
+       * @return String
+       * @throws Exception
+       * @throws PEPFetchException
+       */
+      @Override
+      public String deleteGroup(String groupId, String groupType, String updatedBy) 
+      throws Exception, PEPFetchException {
+          LOGGER.info("Entering deleteGroup-->");
+  //System.out.println("Entering deleteGroup-->");
+          String responseMsg = "";
+          String[] responseMsgArray = null;
+          String responseMsgCode = "";
+          
+          JSONObject jsonObj = new JSONObject();
+          jsonObj.put(GroupingConstants.GROUP_ID, groupId);
+          jsonObj.put(GroupingConstants.GROUP_TYPE, groupType);
+          jsonObj.put(GroupingConstants.CREATED_BY, updatedBy);
+          
+          /** Calling Web Service to create Group except Split type**/
+          LOGGER.debug("Delete Group Service Start currentTimeMillis-->"+System.currentTimeMillis());
+          String resMsg = callDeleteGroupService(jsonObj);
+          LOGGER.debug("Delete Group Service End currentTimeMillis-->"+System.currentTimeMillis());
+          LOGGER.debug("Delete Group Service message-->"+resMsg);
+          //System.out.println("Delete Group Service message-->"+resMsg);
+          resMsg = (null == resMsg ? "" : resMsg.replaceAll("\"", ""));
+          resMsg = resMsg.substring(1, resMsg.length() - 1);
+          LOGGER.debug("Delete Group Service message 1-->"+resMsg);
+          Properties prop =PropertyLoader.getPropertyLoader(GroupingConstants.MESS_PROP);
+          LOGGER.debug("------------------------>Start");
+          /** Extract Service message **/
+          responseMsgArray = resMsg.split(",");
+          LOGGER.debug("responseMsgArray-->"+responseMsgArray);
+          for(int i = 0; i < responseMsgArray.length; i++){
+              if(responseMsgArray[i].split(":").length == 2){
+                  String key = responseMsgArray[i].split(":")[0];
+                  String value = responseMsgArray[i].split(":")[1];
+                  if(("code").equalsIgnoreCase(key)){
+                      responseMsgCode = value;
+                  }
+              }
+          }
+          
+          LOGGER.debug("responseMsgCode-->"+responseMsgCode);
+          
+          if(null != responseMsgCode && responseMsgCode.equals(GroupingConstants.SUCCESS_CODE)){
+            responseMsg = prop.getProperty(GroupingConstants.DELETE_GROUP_SERVICE_SUCCESS);
+   //System.out.println("if(null != responseMsgCode && responseMsgCode.equals(GroupingConstants.SUCCESS_CODE)");         LOGGER.info("responseMsg100::Success-->" + responseMsg);
+          }else{
+              responseMsg = prop.getProperty(GroupingConstants.DELETE_GROUP_SERVICE_FAILURE);
+    //System.out.println("ELSE");          LOGGER.info("responseMsg101::Failure-->" + responseMsg);
+          }  
+          
+          LOGGER.info("Exist deleteGroup-->");
+          return responseMsg;
       }
 
 }

@@ -2,6 +2,7 @@ package com.belk.pep.controller;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -10,6 +11,7 @@ import java.util.TreeMap;
 import javax.portlet.Event;
 import javax.portlet.EventRequest;
 import javax.portlet.EventResponse;
+import javax.portlet.PortletSession;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
 import javax.portlet.ResourceRequest;
@@ -29,11 +31,15 @@ import org.springframework.web.portlet.bind.annotation.ResourceMapping;
 import com.belk.pep.common.model.Common_BelkUser;
 import com.belk.pep.common.userdata.UserData;
 import com.belk.pep.constants.GroupingConstants;
+import com.belk.pep.dto.ClassDetails;
+import com.belk.pep.dto.DepartmentDetails;
 import com.belk.pep.exception.checked.PEPFetchException;
 import com.belk.pep.exception.checked.PEPPersistencyException;
 import com.belk.pep.exception.checked.PEPServiceException;
 import com.belk.pep.form.CreateGroupForm;
 import com.belk.pep.form.GroupAttributeForm;
+import com.belk.pep.form.GroupForm;
+import com.belk.pep.form.GroupSearchForm;
 import com.belk.pep.service.GroupingService;
 import com.belk.pep.util.DateUtil;
 import com.belk.pep.util.PropertyLoader;
@@ -149,12 +155,12 @@ public class GroupingController  {
         RenderResponse response) throws Exception {
 
         LOGGER.info("GroupingControlle.renderGroupLandingPage - enter");
-        System.out.println("GroupingControlleController:renderGroupLandingPage:Enter-->");
+        //System.out.println("GroupingControlleController:renderGroupLandingPage:Enter-->");
         CreateGroupForm createGroupFormRes = (CreateGroupForm)request.getAttribute("createGroupFormRes");
         String createGroupType = createGroupFormRes.getGroupType();
         LOGGER.info("createGroupType----------------->"+createGroupType);
         ModelAndView modelAndView = null;
-        System.out.println(" Original Work List ROle -----------------> "+ ((WorkListDisplayForm)request.getPortletSession().getAttribute(formSessionKey)).getRoleName());
+        //System.out.println(" Original Work List ROle -----------------> "+ ((WorkListDisplayForm)request.getPortletSession().getAttribute(formSessionKey)).getRoleName());
         modelAndView = new ModelAndView(GroupingConstants.GROUPING_ADD_COMPONENT);
         modelAndView.addObject(GroupingConstants.CREATE_GROUP_FORM, createGroupFormRes);
         LOGGER.info("GroupingControlle:renderGroupLandingPage:Exit");
@@ -173,6 +179,14 @@ public class GroupingController  {
         //do some processing here
         LOGGER.info("GroupingControlle:splitRenderHandler:Enter");
         ModelAndView mv=new ModelAndView(GroupingConstants.GROUPING_CREATE_SPLIT_COLOR_GROUP);
+        /** changes to display lan id - changed by Ramkumar - starts **/
+    	String sessionDataKey =  (String)renderRequest.getPortletSession().getAttribute("sessionDataKey");
+    	if(null!=sessionDataKey){
+    		String userID=sessionDataKey.split(GroupingConstants.USER_DATA+renderRequest.getPortletSession().getId())[1];
+    		LOGGER.info("display user ID"+userID);
+    		mv.addObject(GroupingConstants.LAN_ID,userID);
+    	}
+    	/** changes to display lan id - changed by Ramkumar - ends **/ 
         LOGGER.info("GroupingControlle:splitRenderHandler:Exit");
         return mv;
     }
@@ -189,6 +203,14 @@ public class GroupingController  {
         //do some processing here
         LOGGER.info("GroupingControlle:splitSKURenderHandler:Enter");
         ModelAndView mv=new ModelAndView(GroupingConstants.GROUPING_CREATE_SPLIT_SKU_GROUP);
+        /** changes to display lan id - changed by Ramkumar - starts **/
+    	String sessionDataKey =  (String)renderRequest.getPortletSession().getAttribute("sessionDataKey");
+    	if(null!=sessionDataKey){
+    		String userID=sessionDataKey.split(GroupingConstants.USER_DATA+renderRequest.getPortletSession().getId())[1];
+    		LOGGER.info("display user ID"+userID);
+    		mv.addObject(GroupingConstants.LAN_ID,userID);
+    	}
+    	/** changes to display lan id - changed by Ramkumar - ends **/
         LOGGER.info("GroupingControlle:splitSKURenderHandler:Exit");
         return mv;
     }
@@ -201,14 +223,22 @@ public class GroupingController  {
     @RenderMapping
     public ModelAndView handleRenderRequest(RenderRequest request,
         RenderResponse response) throws Exception {
-
+    	
         LOGGER.info("GroupingControlle:handleRenderRequest:Enter");
-        System.out.println("GroupingControlleController:handleRenderRequest:Enter");
+        
+        //System.out.println("GroupingControlleController:handleRenderRequest:Enter");
         String createGroupType = request.getParameter("groupTypeSelector");
         LOGGER.info("createGroupType----------------->"+createGroupType);
         ModelAndView modelAndView = null;
         modelAndView = new ModelAndView(GroupingConstants.GROUPING_PAGE); // groupingPage.jsp
-        
+        /** changes to display lan id - changed by Ramkumar - starts **/
+    	String sessionDataKey =  (String)request.getPortletSession().getAttribute("sessionDataKey");
+    	if(null!=sessionDataKey){
+    		String userID=sessionDataKey.split(GroupingConstants.USER_DATA+request.getPortletSession().getId())[1];
+    		LOGGER.info("display user ID"+userID);
+    		modelAndView.addObject(GroupingConstants.LAN_ID,userID);
+    	}
+    	/** changes to display lan id - changed by Ramkumar - ends **/
         Properties prop =PropertyLoader.getPropertyLoader(GroupingConstants.GROUPING_PROPERTIES_FILE_NAME);  
         String groups = prop.getProperty(GroupingConstants.GROUP_TYPES);        
         String groupTypes [] = groups.split(",");
@@ -235,7 +265,7 @@ public class GroupingController  {
     public void handleEventRequest(EventRequest request, EventResponse response)
             throws Exception {
         LOGGER.info("GroupingController:handleEventRequest:Enter "); 
-        System.out.println("GroupingController:handleEventRequest:Enter ");
+        //System.out.println("GroupingController:handleEventRequest:Enter ");
         Event event = request.getEvent();
         String loggedInUser = "";
 
@@ -292,14 +322,14 @@ public class GroupingController  {
     
     
     
-    public ModelAndView handleResourceRequest(ResourceRequest request,
+   /* public ModelAndView handleResourceRequest(ResourceRequest request,
             ResourceResponse response) throws Exception {
         	LOGGER.info("Entering handleResourceRequest-->");
         	ModelAndView view=new ModelAndView("groupingPage");
 
             LOGGER.info("Exit handleResourceRequest-->");
             return view;
-        }
+        }*/
 
 
     /**
@@ -499,6 +529,8 @@ public class GroupingController  {
         String startDate = request.getParameter(GroupingConstants.START_DATE);
         String endDate = request.getParameter(GroupingConstants.END_DATE);
         String defaultSelectedAttr = request.getParameter(GroupingConstants.COMPONENT_DEFAULT_COLOR);
+        String carsGroupingType = request.getParameter(GroupingConstants.CARS_GROUPING_TYPE);
+        carsGroupingType = (null == carsGroupingType ? "" : carsGroupingType.trim());
         defaultSelectedAttr = (null == defaultSelectedAttr ? "" : defaultSelectedAttr.trim());
         String selectedItems = request.getParameter(GroupingConstants.COMPONENT_SELECTED_ITEMS);
         if(null != selectedItems){
@@ -518,6 +550,7 @@ public class GroupingController  {
         LOGGER.debug("groupDesc----------------->"+groupDesc);
         LOGGER.debug("startDate----------------->"+startDate);
         LOGGER.debug("endDate----------------->"+endDate);
+        LOGGER.debug("carsGroupingType----------------->"+carsGroupingType);
         LOGGER.debug("defaultSelectedAttr----------------->"+defaultSelectedAttr);
         LOGGER.debug("selectedItems----------------->"+selectedItems);
         
@@ -547,6 +580,7 @@ public class GroupingController  {
         createGroupForm.setGroupDesc(groupDesc);
         createGroupForm.setGroupLaunchDate(startDate);
         createGroupForm.setEndDate(endDate);
+        createGroupForm.setCarsGroupType(carsGroupingType);
         createGroupForm.setGroupAttributeFormList(selectedSplitAttributeList);
         
         LOGGER.debug("Before calling createGroup()-->");
@@ -556,6 +590,7 @@ public class GroupingController  {
         LOGGER.debug("After calling createGroup()-->GroupID: "+createGroupFormRes.getGroupId());
         LOGGER.debug("After calling createGroup()-->GroupType: "+createGroupFormRes.getGroupType());
         LOGGER.debug("After calling createGroup()-->GroupDesc: "+createGroupFormRes.getGroupDesc());
+        LOGGER.debug("After calling createGroup()-->getCarsGroupType: "+createGroupFormRes.getCarsGroupType());
 
         request.getPortletSession().setAttribute(GroupingConstants.GROUP_DETAILS_FORM, createGroupFormRes);
         
@@ -568,6 +603,7 @@ public class GroupingController  {
         jsonObj.put(GroupingConstants.START_DATE, createGroupFormRes.getEndDate());
         jsonObj.put(GroupingConstants.GROUP_CREATION_MSG, createGroupFormRes.getGroupCretionMsg());
         jsonObj.put(GroupingConstants.GROUP_CREATION_STATUS_CODE, createGroupFormRes.getGroupCreationStatus());
+        jsonObj.put(GroupingConstants.CARS_GROUPING_TYPE, createGroupFormRes.getCarsGroupType());
         //createGroupForm.setGroupAttributeFormList(createGroupDTO.getGroupAttributeDTOList());
         
         //request.getPortletSession().setAttribute(formSessionKey, renderForm); 
@@ -604,6 +640,8 @@ public class GroupingController  {
     public ModelAndView createGroupSuccessRender(RenderRequest renderRequest, RenderResponse renderResponse) throws ParseException{
         //do some processing here
         LOGGER.info("GroupingControlle:createGroupSuccessRender:Enter");
+        String startDateString = "";
+        String endDateString = "";
         Properties prop =PropertyLoader.getPropertyLoader(GroupingConstants.GROUPING_PROPERTIES_FILE_NAME);  
         
         CreateGroupForm objCreateGroupForm = (CreateGroupForm)
@@ -613,10 +651,14 @@ public class GroupingController  {
         String groupStatusCode = (null == objCreateGroupForm.getGroupStatus() ? "" : objCreateGroupForm.getGroupStatus().trim());
         String groupStatusDesc = prop.getProperty(GroupingConstants.GROUP_STATUS_EXT+groupStatusCode);
         String startDate = objCreateGroupForm.getGroupLaunchDate();
-        String startDateString = DateUtil.stringToStringMMddyyyy(startDate);
+        if(null != startDate && !("").equals(startDate)){
+        	startDateString = DateUtil.stringToStringMMddyyyy(startDate);
+        }
         LOGGER.debug("createGroupSuccessRender.startDateString-->"+startDateString);
         String endDate = objCreateGroupForm.getEndDate();
-        String endDateString = DateUtil.stringToStringMMddyyyy(endDate);
+        if(null != endDate && !("").equals(endDate)){
+        	endDateString = DateUtil.stringToStringMMddyyyy(endDate);
+        }
         LOGGER.debug("createGroupSuccessRender.endDateString-->"+endDateString);
         
         objCreateGroupForm.setGroupTypeDesc(groupTypeDesc);
@@ -629,7 +671,14 @@ public class GroupingController  {
         LOGGER.debug(groupStatusCode+" createGroupSuccessRender.objCreateGroupForm.groupStatus-->"+groupStatusDesc);
         ModelAndView mv=new ModelAndView(GroupingConstants.GROUPING_ADD_COMPONENT);
         mv.addObject(GroupingConstants.GROUP_DETAILS_FORM,objCreateGroupForm);
-
+        /** changes to display lan id - changed by Ramkumar - starts **/
+    	String sessionDataKey =  (String)renderRequest.getPortletSession().getAttribute("sessionDataKey");
+    	if(null!=sessionDataKey){
+    		String userID=sessionDataKey.split(GroupingConstants.USER_DATA+renderRequest.getPortletSession().getId())[1];
+    		LOGGER.info("display user ID"+userID);
+    		mv.addObject(GroupingConstants.LAN_ID,userID);
+    	}
+    	/** changes to display lan id - changed by Ramkumar - ends **/
         LOGGER.info("GroupingControlle:createGroupSuccessRender:Exit");
         return mv;
     }
@@ -691,12 +740,363 @@ public class GroupingController  {
             jsonObj.put(GroupingConstants.START_DATE, createGroupForm.getGroupLaunchDate());
             jsonObj.put(GroupingConstants.END_DATE, createGroupForm.getEndDate());
             jsonObj.put(GroupingConstants.CREATED_BY, updatedBy);
-            jsonObj.put(GroupingConstants.GROUP_STATUS, "");
+            jsonObj.put(GroupingConstants.CARS_GROUPING_TYPE, createGroupForm.getCarsGroupType());
         } catch (JSONException e) {
             LOGGER.info("Exeception in parsing the jsonObj");
             e.printStackTrace();
         }
         return jsonObj;
      }
+    
+    /**
+     * Method to create JSON objects for Search Group List
+     * @param groupSearchForm GroupSearchForm
+     * @return JSONObject
+     * 
+     * Method added For PIM Phase 2 - Search Group
+     * Date: 05/20/2016
+     * Added By: Cognizant
+     */
+    public JSONObject searchGroupJsonObject(GroupSearchForm groupSearchForm) {
+        
+        LOGGER.info("Entering searchGroupJsonObject() in GroupingController class.");
+        JSONObject jsonObjSearch = new JSONObject();
+        //System.out.println(groupSearchForm.getGroupId() + "---" + groupSearchForm.getGroupName() + "---" + groupSearchForm.getDepts() + "---" + groupSearchForm.getClasses() + "---" + groupSearchForm.getVendor() + "---" + groupSearchForm.getSupplierSiteId());
+        jsonObjSearch.put(GroupingConstants.GROUP_ID_SEARCH, groupSearchForm.getGroupId());
+        jsonObjSearch.put(GroupingConstants.GROUP_NAME_SEARCH, groupSearchForm.getGroupName());
+        jsonObjSearch.put(GroupingConstants.DEPT_SEARCH, groupSearchForm.getDepts());
+        jsonObjSearch.put(GroupingConstants.CLASS_SEARCH, groupSearchForm.getClasses());
+        jsonObjSearch.put(GroupingConstants.VENDOR_SEARCH, groupSearchForm.getVendor());
+        jsonObjSearch.put(GroupingConstants.SUPPLIER_SEARCH, groupSearchForm.getSupplierSiteId());
+        jsonObjSearch.put(GroupingConstants.TOTAL_RECORD_COUNT, groupSearchForm.getTotalRecordCount());
+        jsonObjSearch.put(GroupingConstants.RECORDS_PER_PAGE, groupSearchForm.getRecordsPerPage());
+        jsonObjSearch.put(GroupingConstants.PAGE_NUMBER, groupSearchForm.getPageNumber());
+        jsonObjSearch.put(GroupingConstants.SORTED_COLUMN, groupSearchForm.getSortColumn());
+        jsonObjSearch.put(GroupingConstants.ASC_DESC_ORDER, groupSearchForm.getAscDescOrder());
+        List<GroupForm> groupListMain = groupSearchForm.getGroupList();
+        JSONArray mainArray = new JSONArray();
+        for (Iterator<GroupForm> iterator = groupListMain.iterator(); iterator.hasNext();) {
+            GroupForm groupForm = (GroupForm) iterator.next();
+            JSONObject jsonObjMain = new JSONObject();
+            //System.out.println(groupForm.getGroupId() + "---" + groupForm.getGroupName() + "---" + groupForm.getGroupType()  + "---" + groupForm.getGroupContentStatus() + "---" + groupForm.getGroupImageStatus() + "---" + groupForm.getStartDate() + "---" + groupForm.getEndDate());
+            jsonObjMain.put(GroupingConstants.GROUP_ID, groupForm.getGroupId());
+            jsonObjMain.put(GroupingConstants.GROUP_NAME, groupForm.getGroupName());
+            jsonObjMain.put(GroupingConstants.GROUP_TYPE, groupForm.getGroupType());
+            jsonObjMain.put(GroupingConstants.GROUP_TYPE_CODE, groupForm.getGroupTypeCode());
+            jsonObjMain.put(GroupingConstants.GROUP_CONTENT_STATUS, groupForm.getGroupContentStatus());
+            jsonObjMain.put(GroupingConstants.GROUP_IMAGE_STATUS, groupForm.getGroupImageStatus());
+            jsonObjMain.put(GroupingConstants.START_DATE, groupForm.getStartDate());
+            jsonObjMain.put(GroupingConstants.END_DATE, groupForm.getEndDate());            
+            List<GroupForm> groupListChild = groupForm.getChildList();
+            JSONArray childArray = new JSONArray();
+            if(groupListChild != null && groupListChild.size() > 0)
+            {                
+                for (Iterator<GroupForm> iterator2 = groupListChild.iterator(); iterator2
+                    .hasNext();) {
+                    GroupForm groupFormChild = (GroupForm) iterator2.next();
+                    JSONObject jsonObj = new JSONObject();
+                    //System.out.println(groupFormChild.getGroupId() + "--->" + groupFormChild.getGroupName() + "--->" + groupFormChild.getGroupType() + "--->" + groupFormChild.getGroupContentStatus() + "--->" + groupFormChild.getGroupImageStatus() + "--->" + groupFormChild.getStartDate() + "--->" + groupFormChild.getEndDate());
+                    jsonObj.put(GroupingConstants.GROUP_ID, groupFormChild.getGroupId());
+                    jsonObj.put(GroupingConstants.GROUP_NAME, groupFormChild.getGroupName());
+                    jsonObj.put(GroupingConstants.GROUP_TYPE, groupFormChild.getGroupType());
+                    jsonObj.put(GroupingConstants.GROUP_TYPE_CODE, groupFormChild.getGroupTypeCode());
+                    jsonObj.put(GroupingConstants.GROUP_CONTENT_STATUS, groupFormChild.getGroupContentStatus());
+                    jsonObj.put(GroupingConstants.GROUP_IMAGE_STATUS, groupFormChild.getGroupImageStatus());
+                    jsonObj.put(GroupingConstants.START_DATE, groupFormChild.getStartDate());
+                    jsonObj.put(GroupingConstants.END_DATE, groupFormChild.getEndDate());                
+                    childArray.put(jsonObj);
+                }
+            }
+            jsonObjMain.put(GroupingConstants.CHILD_LIST, childArray);
+            mainArray.put(jsonObjMain);
+        }
+        jsonObjSearch.put(GroupingConstants.MAIN_LIST, mainArray);       
+        LOGGER.info("Exiting searchGroupJsonObject() in GroupingController class.");
+        //System.out.println("Exiting searchGroupJsonObject() in GroupingController class");
+        return jsonObjSearch;
+     }
 
+    @ResourceMapping
+    public ModelAndView handleResourceRequest(ResourceRequest request,
+        ResourceResponse response) throws Exception {
+        //System.out.println("HERE----");
+        
+        LOGGER.info("Entering handleResourceRequest() in GroupingController class.");
+        String action = checkNull(request.getParameter("resourceType"));
+        ModelAndView modelAndView = null;
+        LOGGER.debug("Action is -- " + action);
+        //System.out.println("Action is -- " + action);
+        if(action.equals("searchGroup"))
+        {
+            //System.out.println("action.equals(searchGroup)");
+            GroupSearchForm searchForm = new GroupSearchForm();
+            
+            searchForm.setVendor(checkNull(request.getParameter("vendor")));
+            searchForm.setOrinNumber(checkNull(request.getParameter("orinNumber")));
+            searchForm.setGroupId(checkNull(request.getParameter("groupId")));
+            searchForm.setGroupName(checkNull(request.getParameter("groupName")));
+            searchForm.setDepts(checkNull(request.getParameter("departments")));
+            searchForm.setClasses(checkNull(request.getParameter("classes")));
+            searchForm.setSupplierSiteId(checkNull(request.getParameter("supplierId")));
+            if(request.getParameter("totalRecordsCount") != null)
+            {
+                searchForm.setTotalRecordCount(Integer.parseInt(request.getParameter("totalRecordsCount")));
+            }
+            else
+            {
+                searchForm.setTotalRecordCount(0);
+            }
+            if(request.getParameter("recordsPerPage") != null)
+            {
+                searchForm.setRecordsPerPage(Integer.parseInt(request.getParameter("recordsPerPage")));
+            }
+            else
+            {
+                searchForm.setRecordsPerPage(0);
+            }
+            if(request.getParameter("pageNumber") != null)
+            {
+                searchForm.setPageNumber(Integer.parseInt(request.getParameter("pageNumber")));
+            }
+            else
+            {
+                searchForm.setPageNumber(1);
+            }
+            searchForm.setSortColumn(checkNull(request.getParameter("sortedColumn")));
+            searchForm.setAscDescOrder(checkNull(request.getParameter("ascDescOrder")));
+            
+            LOGGER.debug("Search values from screen -- \nGROUP ID: " + searchForm.getGroupId()
+                + "\nGROUP NAME: " + searchForm.getGroupName() + "\nORIN#: " + searchForm.getOrinNumber()
+                + "\nVENDOR: " + searchForm.getVendor() + "\nSUPPILER ID: " + searchForm.getSupplierSiteId()
+                + "\nDEPARTMENTS: " + searchForm.getDepts() + "\nCLASSES: " + searchForm.getClasses());
+            
+            //System.out.println(("Search values from screen -- \nGROUP ID: " + searchForm.getGroupId()
+               /* + "\nGROUP NAME: " + searchForm.getGroupName() + "\nORIN#: " + searchForm.getOrinNumber()
+                + "\nVENDOR: " + searchForm.getVendor() + "\nSUPPILER ID: " + searchForm.getSupplierSiteId()
+                + "\nDEPARTMENTS: " + searchForm.getDepts() + "\nCLASSES: " + searchForm.getClasses())
+                + "\nPAGE NUMBER: " + searchForm.getPageNumber() + "\nRECODRS PER PAGE: " + searchForm.getRecordsPerPage());*/
+                          
+            searchForm = groupingService.groupSearch(searchForm);
+            searchForm.setTotalRecordCount(groupingService.groupSearchCount(searchForm));
+            PortletSession portletSession = request.getPortletSession();
+            portletSession.setAttribute("SEARCH_RESULT", searchForm);
+            JSONObject jsonObject = searchGroupJsonObject(searchForm);
+
+            try {
+                response.getWriter().write(jsonObject.toString());
+            }
+            catch (IOException e) {
+                LOGGER.error("GroupingController:Group Search ResourceRequest:Exception------------>"+e.getMessage());
+                e.printStackTrace();    
+            }
+        }
+        
+        if(action.equals("searchDept"))
+        {
+            //System.out.println("action.equals(searchDept)");
+            ArrayList<DepartmentDetails> deptList = groupingService.getDeptDetailsByDepNoFromADSE();
+            JSONObject jsonObject = departmentListJsonObject(deptList);
+            try {
+                response.getWriter().write(jsonObject.toString());
+            }
+            catch (IOException e) {
+                LOGGER.error("GroupingController:Dept Search ResourceRequest:Exception------------>"+e.getMessage());
+                e.printStackTrace();    
+            }
+            
+        }
+        
+        if(action.equals("searchClass"))
+        {
+            String depts = checkNull(request.getParameter("depts"));
+            //System.out.println("action.equals(searchClass)");
+            List<ClassDetails> classList = groupingService.getClassDetailsByDepNos(depts);
+            JSONObject jsonObject = classListJsonObject(classList);
+            try {
+                response.getWriter().write(jsonObject.toString());
+            }
+            catch (IOException e) {
+                LOGGER.error("GroupingController:Dept Search ResourceRequest:Exception------------>"+e.getMessage());
+                e.printStackTrace();    
+            }
+            
+        }
+        if(action.equals("deleteGroup"))
+        {
+            LOGGER.info("handleDeleteGroup ResourceRequest:Enter------------>");        
+            String formSessionKey =  (String)request.getPortletSession().getAttribute("formSessionKey");
+            LOGGER.info("handleDeleteGroup formSessionKey  ----------------------------->"+formSessionKey);
+            String sessionDataKey =  (String)request.getPortletSession().getAttribute("sessionDataKey");
+            LOGGER.info(" handleDeleteGroup sessionDataKey -----------------------------> "+sessionDataKey);
+            UserData custuser = (UserData) request.getPortletSession().getAttribute(sessionDataKey);
+            LOGGER.info(" handleDeleteGroup custuser -----------------------------------> "+custuser);
+            String pepUserId = custuser.getBelkUser().getLanId();
+            LOGGER.info("This is from Reneder Internal User--------------------->"+pepUserId);
+            //System.out.println("IN DELETE...");
+            try{
+                String groupId = request.getParameter(GroupingConstants.GROUP_ID);
+                String groupType = request.getParameter(GroupingConstants.GROUP_TYPE);
+                
+                LOGGER.debug("groupId----------------->"+groupId);
+                LOGGER.debug("groupType----------------->"+groupType);
+                //System.out.println(groupId + "-" + groupType);
+                String responseMesage = "";
+                if(null!=groupId){
+                    responseMesage = groupingService.deleteGroup(groupId,groupType,pepUserId);
+                }      
+                //System.out.println(responseMesage);
+                boolean status = responseMesage.contains("success");
+                JSONObject json = new JSONObject();
+                json.put(GroupingConstants.DELETE_STATUS_MESSAGE, "#" + groupId + " " + responseMesage);
+                json.put(GroupingConstants.DELETE_STATUS, status);               
+                try {
+                    response.getWriter().write(json.toString());
+                }
+                catch (IOException e) {
+                    LOGGER.error("GroupingController:Group delete ResourceRequest:Exception------------>"+e.getMessage());
+                    e.printStackTrace();    
+                }
+            }catch (Exception e) {
+                LOGGER.info("handleDeleteGroup ResourceRequest:Exception------------>"+e.getMessage());
+                e.printStackTrace();
+            }
+        }
+
+        //System.out.println("Exiting handleResourceRequest() in GroupingController class.");
+        LOGGER.info("Exiting handleResourceRequest() in GroupingController class.");
+        return modelAndView;
+    }
+    
+    /**
+     * Method to create JSON objects for Dept List
+     * @param departmentList ArrayList<DepartmentDetails>
+     * @return JSONObject
+     * 
+     * Method added For PIM Phase 2 - Search Group
+     * Date: 05/26/2016
+     * Added By: Cognizant
+     */
+    public JSONObject departmentListJsonObject(ArrayList<DepartmentDetails> departmentList) {
+        
+        LOGGER.info("Entering departmentListJsonObject() in GroupingController class.");
+        JSONObject jsonObjDeptParent = new JSONObject();
+        JSONArray deptListArray = new JSONArray();
+        
+        for (Iterator<DepartmentDetails> iterator = departmentList.iterator(); iterator.hasNext();) {
+            DepartmentDetails deptObj = (DepartmentDetails) iterator.next();
+            JSONObject jsonObj = new JSONObject();            
+            jsonObj.put(GroupingConstants.DEPT_ID, deptObj.getId());
+            jsonObj.put(GroupingConstants.DEPT_DESC, deptObj.getDesc());
+            
+            deptListArray.put(jsonObj);
+        }   
+        jsonObjDeptParent.put(GroupingConstants.DEPT_LIST, deptListArray);
+        LOGGER.info("Exiting departmentListJsonObject() in GroupingController class.");
+        //System.out.println("Exiting departmentListJsonObject() in GroupingController class");
+        return jsonObjDeptParent;
+     }
+    
+    /**
+     * Method to create JSON objects for Class List
+     * @param departmentList ArrayList<DepartmentDetails>
+     * @return JSONObject
+     * 
+     * Method added For PIM Phase 2 - Search Group
+     * Date: 05/26/2016
+     * Added By: Cognizant
+     */
+    public JSONObject classListJsonObject(List<ClassDetails> classList) {
+        
+        LOGGER.info("Entering classListJsonObject() in GroupingController class.");
+        JSONObject jsonObjClassParent = new JSONObject();
+        JSONArray classListArray = new JSONArray();
+        
+        for (Iterator<ClassDetails> iterator = classList.iterator(); iterator.hasNext();) {
+            ClassDetails classObj = (ClassDetails) iterator.next();
+            JSONObject jsonObj = new JSONObject();
+            //System.out.println(classObj.getId() + "---" + classObj.getDesc());
+            jsonObj.put(GroupingConstants.CLASS_ID, classObj.getId());
+            jsonObj.put(GroupingConstants.CLASS_DESC, classObj.getDesc());
+            
+            classListArray.put(jsonObj);
+        }   
+        jsonObjClassParent.put(GroupingConstants.CLASS_LIST, classListArray);
+        LOGGER.info("Exiting classListJsonObject() in GroupingController class.");
+        //System.out.println("Exiting classListJsonObject() in GroupingController class");
+        return jsonObjClassParent;
+     }
+    
+    /**
+     * This method is used to create group 
+     * @param request
+     * @param response
+     * @return
+     */
+    @ResourceMapping("deleteGroupResorceRequest")
+    public ModelAndView handleDeleteGroup(ResourceRequest request, ResourceResponse response   ){
+        LOGGER.info("handleDeleteGroup ResourceRequest:Enter------------>");        
+        String formSessionKey =  (String)request.getPortletSession().getAttribute("formSessionKey");
+        LOGGER.info("handleDeleteGroup formSessionKey  ----------------------------->"+formSessionKey);
+        String sessionDataKey =  (String)request.getPortletSession().getAttribute("sessionDataKey");
+        LOGGER.info(" handleDeleteGroup sessionDataKey -----------------------------> "+sessionDataKey);
+        UserData custuser = (UserData) request.getPortletSession().getAttribute(sessionDataKey);
+        LOGGER.info(" handleDeleteGroup custuser -----------------------------------> "+custuser);
+        String pepUserId = custuser.getBelkUser().getLanId();
+        LOGGER.info("This is from Reneder Internal User--------------------->"+pepUserId);
+        //System.out.println("IN DELETE...");
+        ModelAndView modelAndView = null;
+        try{
+            String groupId = request.getParameter(GroupingConstants.GROUP_ID);
+            String groupType = request.getParameter(GroupingConstants.GROUP_TYPE);
+            
+            LOGGER.debug("groupId----------------->"+groupId);
+            LOGGER.debug("groupType----------------->"+groupType);
+            
+        String responseMesage = "";
+        if(null!=groupId){
+            responseMesage = groupingService.deleteGroup(groupId,groupType,pepUserId);
+        }      
+        //System.out.println(responseMesage);
+        JSONObject json = new JSONObject();
+        json.put(GroupingConstants.DELETE_STATUS_MESSAGE, responseMesage);
+        try {
+            response.getWriter().write(json.toString());
+        }
+        catch (IOException e) {
+            LOGGER.error("GroupingController:Group delete ResourceRequest:Exception------------>"+e.getMessage());
+            e.printStackTrace();    
+        }
+        }catch (Exception e) {
+            LOGGER.info("handleDeleteGroup ResourceRequest:Exception------------>"+e.getMessage());
+            e.printStackTrace();
+        }
+        
+        LOGGER.info("GroupingControlle:handleDeleteGroup ResourceRequest:Exit------------>");
+        return modelAndView;
+    }
+
+
+    /**
+     * Method added to Check null values.
+     *
+     * @param objectValue Object
+     * @return String
+     * 
+     * Method added For PIM Phase 2
+     * Date: 05/18/2016
+     * Added By: Cognizant
+     */
+    public String checkNull(Object objectValue){
+        String valueStr = "";
+
+        if(objectValue == null )
+        {
+            valueStr = "";
+        }
+        else
+        {
+            valueStr = objectValue.toString();
+        }
+        return valueStr;
+    }
 }

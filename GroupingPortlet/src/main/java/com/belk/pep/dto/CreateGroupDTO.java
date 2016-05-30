@@ -25,6 +25,7 @@ public class CreateGroupDTO {
     private String groupLaunchDate;
     private String endDate;
     private String groupStatus;
+    private String carsGroupType;
 
     /** User role**/
     private String roleEditable;
@@ -179,6 +180,18 @@ public class CreateGroupDTO {
 	 */
 	public void setGroupStatus(String groupStatus) {
 		this.groupStatus = groupStatus;
+	}
+	/**
+	 * @return the carsGroupType
+	 */
+	public String getCarsGroupType() {
+		return carsGroupType;
+	}
+	/**
+	 * @param carsGroupType the carsGroupType to set
+	 */
+	public void setCarsGroupType(String carsGroupType) {
+		this.carsGroupType = carsGroupType;
 	}
     
     

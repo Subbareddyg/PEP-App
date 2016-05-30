@@ -1,5 +1,11 @@
 <%@ include file="/WEB-INF/pages/jsp/include.jsp" %>
 <fmt:setBundle basename="grouping" />
+<div align="right" style="margin-bottom: 0.5cm" >	
+			<c:out value="${LAN_ID}"/> &nbsp;	 
+			<input type="button"   style="font-weight: bold" name="logout" value="Logout" 
+			    onclick="grouping_logOut('<c:out value="${LAN_ID}"/>'); " />	
+			
+		 </div>
 <div  class="cars_panel x-hidden">
 	<div class="x-panel-header">
 		<b>Grouping Details</b>
@@ -39,6 +45,14 @@
 						<td><c:out value="${groupDetailsForm.groupLaunchDate}" /></td>
 						<th><b>End Date:</b></th>
 						<td><c:out value="${groupDetailsForm.endDate}" /></td>
+					</tr>
+				</c:if>
+				<c:if test="${groupDetailsForm.groupType == 'RCG'}">
+					<tr>
+						<th><b>CARS Group Type:</b></th>
+						<td><c:out value="${groupDetailsForm.carsGroupType}" /></td>
+						<th></th>
+						<td></td>
 					</tr>
 				</c:if>
 			

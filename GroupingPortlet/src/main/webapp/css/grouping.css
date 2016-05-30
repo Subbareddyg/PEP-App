@@ -8,6 +8,8 @@
 .btn{display: inline !important; padding:3px !important; margin:2px !important; cursor: pointer !important; float: none !important;}
 .content-table{margin: 0 auto; padding: 5px; width: 95%}
 .content-table td, .content-table th{padding: 5px;}
+.content-table a, .content-table a:active, .content-table a:focus, .content-table a:visited{color: #00649d;text-decoration: none;}
+.content-table a:hover{color: #00649d;text-decoration: underline;}
 table.border-simple{border: 1px solid #dddddd}
 .border-simple td, .border-simple th{border: 1px solid #dddddd;}
 .border-simple th{text-align:center; font-weight: bold;}
@@ -16,18 +18,11 @@ table.colored-row tr:nth-child(even){#background-color: #B8CFEE}
 table.colored-row .text-center{text-align:center;}
 .hidden{display:none;}
 .divider{content: ''; width:100%; border: 2px solid #008FD4}
-/* .overlay_pageLoading{   
-   position: fixed;
-   width: 550px;
-   height: 250px;
-   top: 40%;
-   left: 40%;	
-   z-index: 9999;   
-} */
-.overlay_pageLoading {width: 100%;height: 100%;position: fixed;left:0;top:0;background-color: rgba(0,0,0,0.5);}
+.overlay_pageLoading {width: 100%;height: 100%;position: fixed;left:0;top:0;background-color: rgba(0,0,0,0.4);}
 .overlay_pageLoading img {position: absolute;top: 50%;left: 44%;width: 128px;}
 
 /* css rules for ui dialog */
+.ui-custom-message-styling{padding: 10px;margin: 12px;}
 .dlg-custom .ui-widget-header {background: #369 repeat-x;color: #fff;}
 .dlg-custom .ui-dialog-titlebar-close {display: none;}
 .dlg-custom select{height:24px; border-radius:4px; width: 100%}
@@ -35,7 +30,10 @@ table.colored-row .text-center{text-align:center;}
 .dlg-custom input{height:24px;}
 .dlg-custom textarea{height: 110px; resize: none;}
 .dlg-custom td{padding: 5px;}
-.ui-datepicker-trigger{background: transparent; border: none;}
+.dlg-custom  .dept-button-area, .dlg-custom  .dept-search-area, .dlg-custom  .dept-result-area{margin: 0 auto;width: 94%; margin-bottom: 10px; margin-top: 10px;}
+.dlg-custom  .dept-result-area{height: 60%;overflow-y: auto;}
+.dlg-custom  .dept-search-area input[type=text]{width: 38%;}
+.ui-datepicker-trigger{background: transparent; border: none; cursor: pointer; padding-left: 5px;}
 .dialog-wrapper{width: 100%; height: 98%; border: 2px solid #369 }
 .red-text{color:red; font-size: 10px}
 .charlimit{font-size:10px;}
@@ -47,17 +45,28 @@ table.colored-row .text-center{text-align:center;}
 .tree-grid .branch{padding-left: 10px;}
 .tree-grid .leaf{padding-left: 30px;}
 .tree-grid .root-leaf{padding-left: 20px;}
-
+.group-search-area .ui-custom-message-styling{padding: 10px;margin: 12px;}
 .pagination-container{margin: 0 auto; width: 95%;}
-.pagination-left{float: left; width: 50%; height: 35px;}
+.pagination-left{float: left; width: 30%; height: 35px;}
 .pagination-left .pagination-left-wrapper{margin-top: 10px; margin-bottom: 10px;}
-.pagination-right{float: left; width: 50%; text-align:right; height: 35px;}
+.pagination-right{float: left; width: 70%; text-align:right; height: 35px;}
 ul.paginator{margin-top: 10px; margin-bottom: 10px;}
 ul.paginator li{display: inline;}
 ul.paginator li span, ul.paginator li a{#position: relative;#float: left;padding: 6px 12px;margin-left: -4px;line-height: 1.42857143;color: #337ab7;text-decoration: none;background-color: #fff;border: 1px solid #ddd;}
 ul.paginator li a:hover{color: #23527c; background-color: #eee; border-color: #ddd; text-decoration: none;}
-ul.paginator li a.active{color: #23527c; background-color: #eee; border-color: #ddd; text-decoration: none; cursor:default;}
+ul.paginator li.active a, ul.paginator li.disabled a{color: #23527c; background-color: #eee; border-color: #ddd; text-decoration: none; cursor:default; cursor:not-allowed}
 
 .checkboxAlign{margin-left:11px;}
 .checkboxAlign-existing{margin-left:23px;}
-#group-creation-messages{min-height:20px}
+.add-RCG-field{display:none;}
+
+/* css rules specific to tre table */
+.icon-tree{display: inline-block; cursor: pointer;}
+.parent-node-expand{padding-right: 4px; width: 16px; background: url('images/expand.png') no-repeat 50% 50%;}
+.parent-node-collapse{padding-right: 4px; width: 16px; background: url('images/collapsed.png') no-repeat 50% 50%;}
+.parent-leaf{padding-left:17px;}
+.leaf-node{padding-right: 30px;}
+.icon-tree i{ font-size: 17px;font-weight: bold;}
+.hidden-child{display:none;} 
+
+

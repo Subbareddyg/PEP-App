@@ -66,6 +66,7 @@ public static final String COLOR_NAME = "colorName";
 public static final String ALREADY_IN_GROUP = "alreadyInGroup";
 public static final String COMPONENT_DEFAULT_COLOR = "defaultColor";
 public static final String COMPONENT_SELECTED_ITEMS = "selectedItems";
+public static final String CARS_GROUPING_TYPE = "carsGroupType";
 public static final String MESSAGE = "message";
 
 
@@ -147,4 +148,41 @@ public static final String FALSE_VALUE = "false";
 /** The Constant USER_DATA_OBJ. */
 public static final String USER_DATA_OBJ = "GroupingUserObj";
 
+public static final String LAN_ID="LAN_ID";
+
+/**
+ * Grouping Search constants
+ */
+public static final String GROUPING_SERACH_DISPLAY_FORM = "groupingSearchDisplayForm";
+public static final String CHILD_LIST = "childList";
+public static final String MAIN_LIST = "mainList";
+public static final String GROUP_ID_SEARCH = "groupIDSearch";
+public static final String GROUP_NAME_SEARCH = "groupNameSearch";
+public static final String DEPT_SEARCH = "deptSearch";
+public static final String CLASS_SEARCH = "classSearch";
+public static final String VENDOR_SEARCH = "vendorSearch";
+public static final String SUPPLIER_SEARCH = "supplierSearch";
+public static final String TOTAL_RECORD_COUNT = "totalRecordCount";
+public static final String RECORDS_PER_PAGE = "recordsPerPage";
+public static final String PAGE_NUMBER = "pageNumber";
+public static final String SORTED_COLUMN = "sortedColumn";
+public static final String ASC_DESC_ORDER = "ascDescOrder";
+public static final String GROUP_CONTENT_STATUS = "groupContentStatus";
+public static final String GROUP_IMAGE_STATUS = "groupImageStatus";
+public static final String DEPT_ID = "deptId";
+public static final String DEPT_DESC = "deptDesc";
+public static final String DEPT_LIST = "deptList";
+public static final String CLASS_ID = "classId";
+public static final String CLASS_DESC = "classDesc";
+public static final String CLASS_LIST = "classList";
+public static final String GROUP_TYPE_CODE = "groupTypeCode";
+
+/**
+ * Delete group constants
+ */
+public static final String DELETE_GROUP_SERVICE_URL = "deleteGroup.service.url";
+public static final String DELETE_GROUP_SERVICE_FAILURE = "deleteGroup.failure.message";
+public static final String DELETE_GROUP_SERVICE_SUCCESS = "deleteGroup.success.message";
+public static final String DELETE_STATUS_MESSAGE = "deleteStatusMessage";
+public static final String DELETE_STATUS = "deleteStatus";
 }
