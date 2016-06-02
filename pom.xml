@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.belk</groupId>
 	<artifactId>pep</artifactId>
-	<version>1.0.0.8-SNAPSHOT</version>
+	<version>1.0.0.11-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>Belk PEP</name>
 	<description>Belk Product Enrichment Portal Applications</description>
@@ -18,6 +18,7 @@
 		<module>ImagePetPortlet</module>
 		<module>InternalUserLoginPortlet</module>
 		<module>WorkListDisplayPortlet</module>
+		<module>GroupingPortlet</module>
 	</modules>
 <build>
 		<plugins>

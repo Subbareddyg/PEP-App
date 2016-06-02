@@ -1,9 +1,8 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-       <groupId>com.belk.pim</groupId>
+       <groupId>com.belk.pep</groupId>
        <!-- version>1.0.0.0-SNAPSHOT</version-->
-       <version>1.0</version>
+       <version>1.0.0.11-SNAPSHOT</version>
        <name>GroupingPortlet</name>
        <modelVersion>4.0.0</modelVersion>
        <artifactId>GroupingPortlet</artifactId>
@@ -93,17 +92,17 @@
 								<configuration>
 									<tasks>
 										<echo>Delete properties</echo>
-										<delete><fileset dir="src/main/resources" includes="*.properties"/></delete>
-										<delete><fileset dir="${basedir}/target/classes" includes="*.properties"/></delete>
-										<delete><fileset dir="src/main/webapp/WEB-INF" includes="applicationContext.xml"/></delete>
+										<delete><fileset dir="src/main/resources" includes="*.properties" /></delete>
+										<delete><fileset dir="${basedir}/target/classes" includes="*.properties" /></delete>
+										<delete><fileset dir="src/main/webapp/WEB-INF" includes="applicationContext.xml" /></delete>
 										<echo>Copy properties</echo>
-										<copy file="src/main/resources/${param}/log4j.properties" tofile="src/main/resources/log4j.properties"/>
-										<copy file="src/main/resources/${param}/log4j.properties" tofile="${basedir}/target/classes/log4j.properties"/>										
-										<copy file="src/main/resources/${param}/workListDisplay.properties" tofile="src/main/resources/workListDisplay.properties"/>
-										<copy file="src/main/resources/${param}/workListDisplay.properties" tofile="${basedir}/target/classes/workListDisplay.properties"/>
-										<copy file="src/main/resources/${param}/message.properties" tofile="src/main/resources/message.properties"/>
-										<copy file="src/main/resources/${param}/message.properties" tofile="${basedir}/target/classes/message.properties"/>
-										<copy file="src/main/webapp/WEB-INF/${param}/applicationContext.xml" tofile="src/main/webapp/WEB-INF/applicationContext.xml"/>
+										<copy file="src/main/resources/${param}/log4j.properties" tofile="src/main/resources/log4j.properties" />
+										<copy file="src/main/resources/${param}/log4j.properties" tofile="${basedir}/target/classes/log4j.properties" />										
+										<copy file="src/main/resources/${param}/workListDisplay.properties" tofile="src/main/resources/workListDisplay.properties" />
+										<copy file="src/main/resources/${param}/workListDisplay.properties" tofile="${basedir}/target/classes/workListDisplay.properties" />
+										<copy file="src/main/resources/${param}/message.properties" tofile="src/main/resources/message.properties" />
+										<copy file="src/main/resources/${param}/message.properties" tofile="${basedir}/target/classes/message.properties" />
+										<copy file="src/main/webapp/WEB-INF/${param}/applicationContext.xml" tofile="src/main/webapp/WEB-INF/applicationContext.xml" />
 									</tasks>
 								</configuration>
 							</execution>
@@ -243,7 +242,7 @@
 			</dependency>  
 			
 			<dependency>
-			<groupId>com.belk.pim</groupId>
+			<groupId>com.belk.pep</groupId>
 			<artifactId>CommonForIpcLogin</artifactId>
 			<version>${project.version}</version>
 			</dependency>
@@ -285,4 +284,12 @@
 		</dependency>
 
        </dependencies>
+       
+       <distributionManagement>
+		<repository>
+			<id>belk-m2</id>
+			<name>Belk M2 Repo</name>
+			<url>http://colxljeniesd001.belkinc.com:8081/nexus/content/repositories/stage/</url>
+		</repository>
+	</distributionManagement>
 </project>
