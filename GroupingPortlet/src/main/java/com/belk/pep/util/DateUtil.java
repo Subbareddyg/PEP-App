@@ -16,7 +16,7 @@ public class DateUtil {
      * @return the date
      * @throws ParseException the parse exception
      */
-    public static Date stringToDate(String sDate) throws ParseException{
+    public static Date stringToDate(final String sDate) throws ParseException {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
        // String dateInString = "07/06/2013";
         Date date = new Date();
@@ -39,7 +39,7 @@ public class DateUtil {
      * @throws ParseException the parse exception
      * @author AFUPYB3
      */
-    public static Date stringToDateMMddyyyy(String sDate) throws ParseException{
+    public static Date stringToDateMMddyyyy(final String sDate) throws ParseException {
         SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
        // String dateInString = "07/06/2013";
         Date date = new Date();
@@ -62,7 +62,7 @@ public class DateUtil {
      * @throws ParseException the parse exception
      * @author AFUPYB3
      */
-    public static String stringToStringMMddyyyy(String sDate) throws ParseException{
+    public static String stringToStringMMddyyyy(final String sDate) throws ParseException {
         SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
         SimpleDateFormat formatter1 = new SimpleDateFormat("yyyy-MM-dd");
        // String dateInString = "07/06/2013";

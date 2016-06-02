@@ -23,6 +23,20 @@ public class GroupSearchForm {
     private int pageNumber = 0;
     private String sortColumn;
     private String ascDescOrder;
+    private int parentCount = 0;
+    
+    /**
+	 * @return the parentCount
+	 */
+	public int getParentCount() {
+		return parentCount;
+	}
+	/**
+	 * @param parentCount the parentCount to set
+	 */
+	public void setParentCount(int parentCount) {
+		this.parentCount = parentCount;
+	}
     
     /**
      * @return the totalRecordCount

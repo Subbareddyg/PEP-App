@@ -11,11 +11,13 @@
 		curPage: 1,
 
 		totalPages: 1,
+		
+		totalRecords: 0,
 
-		template: _.template($('#row-template').html(), null,  {
+		template: $('#row-template').length ? _.template($('#row-template').html(), null,  {
 			interpolate :  /\{\{\=(.+?)\}\}/g,
 			evaluate: /\{\{(.+?)\}\}/g
-		}),
+		}) : null,
 
 		attachHandler: function(){
 			var _super = this;
@@ -31,76 +33,94 @@
 				$('tr[data-parent-id=' + nodeID + ']').fadeOut('falst');
 					$(this).removeClass('parent-node-collapse').addClass('parent-node-expand');
 			});
-
-			$('.pagination-container').on('click', '.page', function(){
-				var page = parseInt($(this).text());
-				//console.log(page);
-				if(page != _super.curPage){
-					_super.curPage = page;
+			
+			$('#dataTable').on('click', '.sortable', function(){
+				
+				var sortColumn = $(this).data('sort-column') || null;
+				var sortMethod = $(this).data('sorted-by') || 'asc';
+				
+				//console.log(sortColumn);
+				//console.log(sortMethod);
+				//console.log(_super.data);
+				
+				if(sortColumn){
+					var sortedData = _.sortBy(_super.data, sortColumn);
+					var sortedDispClass = 'sort-up';
+					
+					if(sortMethod == 'desc'){
+						sortedData = sortedData.reverse();
+						sortedDispClass = 'sort-down';
+						sortMethod = 'asc';
+					}else{
+						sortMethod = 'desc';
+					}
+					
+					//resetting and regenerating the pagination and data display
+					_super.data = sortedData;
+					
+					//console.log(_super.data);
+					//console.log(sortColumn);
+					//console.log(sortMethod);
+					
+					_super.curPage = 1;
+					
+					$('.paginator').removeData('twbs-pagination'); //reconstructing the paginator
+					
 					_super.generateDataTable();
+					
+					$('a.sortable').removeClass('sort-up sort-down');
+					
+					$(this).addClass(sortedDispClass); //removing sorting dir indicator 
+					
+					$(this).data('sorted-by', sortMethod); //adding necessary sorting dir indicator
 				}
-			});
-
-			$('.pagination-container').on('click', '.prev', function(){
-				if(_super.curPage > 1){
-					_super.curPage -= 1;
-					_super.generateDataTable();
-				}
-			});
-
-			$('.pagination-container').on('click', '.next', function(){
-				if(_super.curPage < _super.totalPages){
-					_super.curPage += 1;
-					_super.generateDataTable();
-				}
+					
 			});
 
 			$('.record-limit').on('change', function(){
+				$('.record-limit').val($(this).val()); //syncing all drop down values
+				
+				if(!_super.totalRecords)
+					return;
+				
 				//console.log($(this).val());
-				$('.record-limit').val($(this).val());
 				_super.curPage = 1;
+				
+				$('.paginator').removeData('twbs-pagination'); //reconstructing the paginator
+				
 				_super.generateDataTable();
 			})
 		},
-
+		
 		handlePagination: function(limit, jqArea){
 			limit = (!isNaN(limit) || limit != 0) ? limit : 1;
-
-			//getting data count
-			var totalRecords = _.size(this.data);
 			
 			//var pages = Math.ceil(totalRecords / limit);
-			this.totalPages = Math.ceil(totalRecords / limit);
-
-			//generating pages
-			var paginationContent = '';
-
-			//if its first page then disable the previous button pager
-			if(this.curPage == 1)
-				paginationContent += '<li class="disabled"><a href="#" aria-label="Previous" class="prev"><span aria-hidden="true">&laquo;</span></a></li>';
-			else
-				paginationContent += '<li><a href="#" aria-label="Previous" class="prev"><span aria-hidden="true">&laquo;</span></a></li>';
-
-			for(var i = 1; i <= this.totalPages; i++){
-				if(i == this.curPage)
-					paginationContent += '<li><a href="#" class="page active">' + i + '</a></li>';
+			this.totalPages = Math.ceil(this.totalRecords / limit);
+			
+			//updating pager text showing current record count of total record 
+			if(this.totalRecords > 0){
+				if(this.curPage == this.totalPages)
+					$('.pagination-text').text('Showing ' + this.totalRecords +' of ' + this.totalRecords + ' records');
 				else
-					paginationContent += '<li><a href="#" class="page">' + i + '</a></li>';
-			}
-
-			//if its last page then disable the next button pager
-			if(this.curPage == this.totalPages)
-				paginationContent += '<li class="disabled"><a href="#" aria-label="Next" class="next"><span aria-hidden="true">&raquo;</span></a></li>';
-			else
-				paginationContent += '<li><a href="#" aria-label="Next" class="next"><span aria-hidden="true">&raquo;</span></a></li>';
-
-
-			/* console.log(paginationContent);
-			console.log(pages);
-			console.log(totalRecords);
-			console.log(jqArea);*/
-
-			jqArea.html(paginationContent);
+					$('.pagination-text').text('Showing ' + (this.curPage * limit) +' of ' + this.totalRecords + ' records');
+			}else
+				$('.pagination-text').text('Showing 0 of 0 record');
+			
+			
+			var _super = this;
+			
+			jqArea.twbsPagination({
+				totalPages: _super.totalPages ? _super.totalPages : 1,
+				visiblePages: 10,
+				onPageClick: function (event, page) {
+					//$('#page-content').text('Page ' + page);
+					if(page != _super.curPage){
+						_super.curPage = page;
+						_super.generateDataTable(_super.dataHeader.recordsPerPage, page, _super.dataHeader.sortedColumn, _super.dataHeader.ascDescOrder);
+					}
+				}
+			});
 		},
 
 		generateDataTable: function(){
@@ -126,8 +146,19 @@
 				return this.data.slice(endIndex - limit, endIndex);
 			}	
 		},
+		
+		clearSorting: function(){
+			$('#dataTable').off('click', '.sortable');
+			$('a.sortable').removeClass('sort-up sort-down');
+			$('a.sortable').data('sorted-by', null);
+		},
 
 		init: function(){
+			this.totalRecords = _.size(this.data); //counting total records
+			
+			//clearing any sorting mechanism used to sort previsouly;
+			this.clearSorting();
+			
 			this.generateDataTable();
 
 			this.attachHandler();

@@ -28,7 +28,7 @@ public class GroupingUtil {
      * Added By: Cognizant
      * @throws PEPFetchException 
      */
-    public static String clobToString(Clob data) throws PEPFetchException {
+	public static String clobToString(Clob data) throws PEPFetchException {
         LOGGER.info("***Entering clobToString() method.");
         StringBuilder sb = new StringBuilder();
         try {
@@ -50,6 +50,28 @@ public class GroupingUtil {
         LOGGER.info("***Exiting clobToString() method.");
         return sb.toString();
     }
+
+
     
+    /**
+     * Method added to Check null values.
+     *
+     * @param objectValue Object
+     * @return String
+     * 
+     * Method added For PIM Phase 2
+     * Date: 05/18/2016
+     * Added By: Cognizant
+     */
+    public static String checkNull(Object objectValue) {
+        String valueStr = "";
+
+        if(objectValue == null) {
+            valueStr = "";
+        } else {
+            valueStr = objectValue.toString();
+        }
+        return valueStr;
+    }
 
 }

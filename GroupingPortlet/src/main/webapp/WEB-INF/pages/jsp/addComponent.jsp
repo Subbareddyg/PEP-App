@@ -12,6 +12,8 @@
 	</div>
 	
 	<div class="x-panel-body">
+		<input type="hidden" name="groupId" value=" <c:out value="${groupDetailsForm.groupId}" /> " id="groupId" >
+		<input type="hidden" name="groupType" value=" <c:out value="${groupDetailsForm.groupType}" /> " id="groupType" >
 		<div class="group-create-area">
 			<table cellspacing="5" cellpadding="0" border="0" class="content-table">
 				<tr>
@@ -233,6 +235,7 @@
 					</tr>							
 				</tbody>
 			</table>
+
 			
 			<div class="pagination-container">
 				<div class="pagination-left">
@@ -300,27 +303,8 @@
 </div>
 
 
+<portlet:resourceURL id="getExistGrpComponent" var="getExistGrpComponentURL" />
 
-<portlet:actionURL var="createAction"> 
-		<portlet:param name="action" value="createAction"/>
-</portlet:actionURL>
-
-<portlet:renderURL var="splitColorGroupingSubmit"> 
-	<portlet:param name="groupingTypeSplitColor" value="splitColor" />
-</portlet:renderURL>
-
-<portlet:resourceURL var="searchGroupResourceRequest"> 
-</portlet:resourceURL>
-
-<portlet:renderURL var="splitSKUGroupingSubmit"> 
-	<portlet:param name="groupingTypeSplitSKU" value="splitSKU" />
-</portlet:renderURL>
-
-<portlet:resourceURL id="submitCreateGroupForm" var="createGroupFormSubmitURL" />
-
-<portlet:renderURL var="createGrpRenderUrl"> 
-    <portlet:param name="createGroupSuccessRender" value="CreateGrpSuccess" />
-</portlet:renderURL>
 <!-- Group Creation dialog starts -->
 <div id="dlgGroupCreate" style="display:none">
 	<div class="dialog-wrapper">
@@ -337,7 +321,7 @@
 						<option value="SSG">Split SKU Grouping</option>
 						<option value="RCG">Regular Collection Grouping</option>
 						<option value="BCG">Beauty Collection Grouping</option>
-						<option value="GSS">Group By Size Grouping</option>
+						<option value="GSG">Group By Size Grouping</option>
 					</select>
 				</td>
 			</tr>
@@ -390,15 +374,11 @@
 <script>
 	app.Global.defaults.contextPath = '<%=response.encodeURL(request.getContextPath())%>';
 </script>
-<script type="text/javascript" src="<%=response.encodeURL(request.getContextPath()+"/js/grouping.js")%>"></script>
 <script type="text/javascript" src="<%=response.encodeURL(request.getContextPath()+"/js/GroupFactory.js")%>"></script>
+<script type="text/javascript" src="<%=response.encodeURL(request.getContextPath()+"/js/editComponent.js")%>"></script>
 <script>
-	app.GroupLandingApp.urlCollection.SCGUrl = "${splitColorGroupingSubmit}";
-	app.GroupLandingApp.urlCollection.SSGUrl = "${splitSKUGroupingSubmit}";
-	app.GroupLandingApp.urlCollection.groupSearchUrl = "${searchGroupResourceRequest}";
-	app.GroupLandingApp.urlCollection.createGroupUrl = "${createGroupFormSubmitURL}";
-	app.GroupLandingApp.urlCollection.addComponentUrl = "${createGrpRenderUrl}";
+	app.componentLandingApp.urlCollection.existingCompUrl = "${getExistGrpComponentURL}";
 	
 	//init main SPA
-	app.GroupLandingApp.init();
+	app.componentLandingApp.init();
 </script>

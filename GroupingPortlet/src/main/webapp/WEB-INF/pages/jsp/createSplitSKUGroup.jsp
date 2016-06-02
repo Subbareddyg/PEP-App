@@ -39,7 +39,7 @@
 					<td>&nbsp;</td>
 					<td>&nbsp;</td>
 					<td align="right">
-						<input type="button" value="Search" class="btn" id="search-components"/>
+						<input type="submit" value="Search" class="btn" id="search-components"/>
 					</td>
 				</tr>
 			</table>
@@ -62,7 +62,7 @@
 							<option value="50">50</option>
 							<option value="100">100</option>
 						</select>
-						<span class="pagination-text">Showing 10 of 12 records</span>
+						<span class="pagination-text"></span>
 					</div>
 				</div>
 				<div class="pagination-right">
@@ -72,18 +72,18 @@
 			<div class="clearfix"></div>
 			<form name="selectedComponentForm" id="selectedComponentForm">
 			<input type="hidden" name="selectedItems" value="" id="splitCheckboxValue" >
-			<table cellpadding="0" cellspacing="0" border="1" class="content-table border-simple colored-row tree-grid">
+			<table cellpadding="0" cellspacing="0" border="1" class="content-table border-simple colored-row tree-grid" id="dataTable">
 				<thead>
 					<tr>
 						<th width="10%"><label><input type="checkbox" id="select-all" /> Select All</label></th>
-						<th width="9%"><a href="#" class="sorting-available">Style ORIN#</a></th>
-						<th width="10%"><a href="#" class="sorting-available">Style Number</a></th>
-						<th width="15%"><a href="#" class="sorting-available">Name</a></th>
-						<th width="10%"><a href="#" class="sorting-available">Color Code</a></th>
-						<th width="10%"><a href="#" class="sorting-available">Color Name</a></th>
-						<th width="8%"><a href="#" class="sorting-available">Size</a></th>
-						<th width="10%"><a href="#" class="sorting-available">Default Size</a></th>
-						<th width="10%"><a href="#" class="sorting-available">Already in group</a></th>
+						<th width="10%"><a href="javascript:;" class="sortable" data-sort-column="StyleOrinNo" data-sorted-by="">Style ORIN#</a></th>
+						<th width="10%">Style Number</th>
+						<th width="15%"><a href="javascript:;" class="sortable" data-sort-column="productName" data-sorted-by="">Name</a></th>
+						<th width="10%"><a href="javascript:;" class="sortable" data-sort-column="colorCode" data-sorted-by="">Color Code</a></th>
+						<th width="10%"><a href="javascript:;" class="sortable" data-sort-column="colorName" data-sorted-by="">Color Name</a></th>
+						<th width="8%"><a href="javascript:;" class="sortable" data-sort-column="size" data-sorted-by="">Size</a></th>
+						<th width="10%">Default Size</th>
+						<th width="10%"><a href="javascript:;" class="sortable" data-sort-column="alreadyInGroup" data-sortedby="">Already in group</a></th>
 					</tr>
 				</thead>
 				<tbody id="row-container"></tbody>
@@ -98,7 +98,7 @@
 							<option value="50">50</option>
 							<option value="100">100</option>
 						</select>
-						<span class="pagination-text">Showing 10 of 12 records</span>
+						<span class="pagination-text"></span>
 					</div>
 				</div>
 				<div class="pagination-right">
@@ -113,7 +113,7 @@
 	</div>
 </div>
 <div class="group-search-footer-area">
-	<div class="footer-content"><input type="button" onclick="history.back(1)" class="btn" value="Close"></div>
+	<div class="footer-content"><input type="button" onclick="window.location.href='/wps/portal/home/creategrouping'" class="btn" value="Close"></div>
 </div>
 <portlet:resourceURL var="ajaxUrl" id="splitAttributeSearch"></portlet:resourceURL>
 
@@ -145,7 +145,7 @@
 						<option value="SSG" selected="selected">Split SKU Grouping</option>
 						<option value="RCG">Regular Collection Grouping</option>
 						<option value="BCG">Beauty Collection Grouping</option>
-						<option value="GSS">Group By Size Grouping</option>
+						<option value="GSG">Group By Size Grouping</option>
 					</select>
 				</td>
 			</tr>
@@ -204,7 +204,7 @@
 {{ if(data.length){ }}
 	{{_.each(data, function(row, key){ }}
 		<tr>
-			<td><input type="checkbox" name="selectedItem[]" value="{{=row.size}}" class="item-check" style="margin-left:14px" />
+			<td><input type="checkbox" name="selectedItem[]" value="{{=row.size}}" class="item-check" style="margin-left:7px" />
 			<td class="text-center">{{=row.StyleOrinNo}}</td>
 			<td class="text-center">{{=row.vendorStyleNo}}</td>
 			<td>{{=row.productName}}</td>
@@ -223,6 +223,7 @@
 </script>
 <!-- Component Table Row Template ends -->
 <script type="text/javascript" src="<%=response.encodeURL(request.getContextPath()+"/js/underscore-min.js")%>"></script>
+<script type="text/javascript" src="<%=response.encodeURL(request.getContextPath()+"/js/jquery.twbsPagination.min.js")%>"></script>
 <script>
 	app.Global.defaults.contextPath = '<%=response.encodeURL(request.getContextPath())%>';
 </script>

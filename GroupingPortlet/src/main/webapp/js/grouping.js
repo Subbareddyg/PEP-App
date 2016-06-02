@@ -17,6 +17,8 @@ var app = app || {};
 	app.GroupLandingApp = {
 		urlCollection: {SCGUrl: '', SSGUrl: '',  searchUrl: '', },
 		
+		regExpCollection: {validDepts: /^[0-9]{1,5}( *, *[0-9]{1,5})*$/, },
+		
 		depts: [],
 		
 		selectedDepts: [],
@@ -26,7 +28,7 @@ var app = app || {};
 		selectedClassList: [],
 		
 		//template parser for dept list 
-		deptTemplate :$('#dept-row-template').length ?  _.template($('#dept-row-template').html(), null,  {
+		deptTemplate : $('#dept-row-template').length ? _.template($('#dept-row-template').html(), null,  {
 			interpolate :  /\{\{\=(.+?)\}\}/g,
 			evaluate: /\{\{(.+?)\}\}/g
 		}) : null,
@@ -69,6 +71,7 @@ var app = app || {};
 						beforeClose: function(event, ui){
 							_super.removeAddlFields();
 							$('.add-RCG-field').hide();
+							$('#group-creation-messages').html('&nbsp;');
 						},
 					})
 				);
@@ -202,9 +205,11 @@ var app = app || {};
 				$('#closeGrpDlg').on('click', function(e){
 					$('#createGroupForm')[0].reset();
 					$('#dlgGroupCreate').dialog('close');
+					
 					if($('#closeGrpDlg').hasClass('refresh')){
 						$('.overlay_pageLoading').removeClass('hidden');
-						app.GroupFactory.searchSCGComponents($('#frmComponentSearch').serialize())						
+						
+						app.GroupFactory.searchSplitComponents($('#frmComponentSearch').serialize())						
 							.done(function(result){
 								var response = $.parseJSON(result);
 								//console.log(response.componentList);
@@ -224,7 +229,6 @@ var app = app || {};
 																
 							}).complete(function(){
 								$('#closeGrpDlg').val('Cancel');
-								$('#group-creation-messages').html('&nbsp;');
 								$('#closeGrpDlg').removeClass('refresh');
 								$('#select-all').prop('checked', false);
 								$('#btnCreateGroup').prop('disabled', false).css('opacity','1');
@@ -262,6 +266,13 @@ var app = app || {};
 						
 				});
 				
+				$('#clrSrchGroup').on('click', function(e){
+					_super.selectedDepts = [];
+					_super.selectedClassList = [];
+					$('#frmGroupSearch')[0].reset();
+					
+				});
+				
 				//group search button action
 				$('#search-groups').on('click', function(e){
 					e.preventDefault(); //preventing default form submission
@@ -269,13 +280,16 @@ var app = app || {};
 					var searchFiledsValue = $('#frmGroupSearch').serialize();
 					
 					try{
-						app.DataTable.searchParams = searchFiledsValue;
-						app.DataTable.columnAlias = ['groupId', 'groupName', 'groupType', 'groupImageStatus', 'groupContentStatus', 'startDate', 'endDate'];
-						app.DataTable.curPage = 1;
+						app.DataTableAjax.searchParams = searchFiledsValue;
+						app.DataTableAjax.columnAlias = [
+							'groupId', 'groupName', 'groupType', 
+							'imageStatus', 'contentStatus', 'startDate', 'endDate'
+						];
+						app.DataTableAjax.curPage = 1;
 						
 						$('.paginator').removeData('twbs-pagination'); //reconstructing the paginator
 						
-						app.DataTable.init();
+						app.DataTableAjax.init();
 							
 					}catch(ex){
 						console.log(ex.message);
@@ -286,35 +300,58 @@ var app = app || {};
 				
 				//group search result item delete link action
 				$('#dataTable').on('click', '.delete-item', function(){
-					if(!confirm('Are you sure you would like to delete?'))
-						return;
-					
-					var groupId = $(this).data('group-id');
-					var groupType = $(this).data('group-type');
-				
-					app.GroupFactory.deleteGroup({groupId: groupId, groupType: groupType})
-						.done(function(result){
+					var _that = $(this);
+					$('#error-massege').html("Are you sure you would like to delete?");
+					$('#errorBox').dialog({
+					   autoOpen: true, 
+					   modal: true,
+					   resizable: false,
+					   dialogClass: "dlg-custom",
+					   title: 'Delete Grouping',
+					   buttons: {
+						"Cancel": function() {$(this).dialog("close");},
+						"Delete": function() {
+							$(this).dialog("close"); //closing dialog
 							
-							var responseJSON = $.parseJSON(result);
-							//console.log(responseJSON);
-							var messageHtml = _super.buildMessage('Unknown Response!', 'error');
+							var groupId = _that.data('group-id');
+							var groupType = _that.data('group-type');
 							
-							if(responseJSON.deleteStatus !== undefined && responseJSON.deleteStatusMessage !== undefined){
-								if(responseJSON.deleteStatus){
-									messageHtml = _super.buildMessage(responseJSON.deleteStatusMessage, 'success');
+							$('#overlay_pageLoading').removeClass('hidden'); //showing as working
+							
+							//requesting factorty to validate and delete
+							app.GroupFactory.deleteGroup({groupId: groupId, groupType: groupType})
+								.done(function(result){
 									
-									//triggering search again after successful deletion
-									$('#search-groups').click();
-								}	
-								else
-									messageHtml = _super.buildMessage(responseJSON.deleteStatusMessage, 'error');
-							}
-							
-							$('#group-deletion-messages').html(messageHtml);
-							
-							//cleaning up message after 4 sec
-							_super.cleanupMessage($('#group-deletion-messages'), 4000);
-						});
+									var responseJSON = $.parseJSON(result);
+									//console.log(responseJSON);
+									var messageHtml = _super.buildMessage('Unknown Response!', 'error');
+									
+									if(responseJSON.deleteStatus !== undefined && responseJSON.deleteStatusMessage !== undefined){
+										if(responseJSON.deleteStatus){
+											messageHtml = _super.buildMessage(responseJSON.deleteStatusMessage, 'success');
+											
+											//triggering search again after successful deletion
+											$('#search-groups').click();
+										}	
+										else
+											messageHtml = _super.buildMessage(responseJSON.deleteStatusMessage, 'error');
+									}
+									
+									$('#group-deletion-messages').html(messageHtml).fadeIn('slow');
+									
+									//cleaning up message after 4 sec
+									_super.cleanupMessage($('#group-deletion-messages'), 4000);
+									
+								})
+								.complete(function(){
+									$('#overlay_pageLoading').addClass('hidden'); //hiding loader icon
+								});
+						},
+					   },
+					});
+					
+					//if(!confirm('Are you sure you would like to delete?'))
+					//	return;
 				});
 
 				
@@ -323,7 +360,8 @@ var app = app || {};
 				$('#btnCreateGroup').on('click', function(e){
 					if($('#createGroupForm')[0].checkValidity()){
 						e.preventDefault();  //preventing default form submission
-						var checkString = []
+						
+						var checkString = [];
 						 
 						 //serializing All checkbox value in one hidden field  
 						 $('.item-check:checked').each(function(){
@@ -344,7 +382,17 @@ var app = app || {};
 									//handling and taking care of the response 
 									_super.handleGroupCreationResponse(resultJSON, $('#groupType').val());
 								}).error(function(){
-									$('#group-creation-messages').html(_super.buildMessage('Group Creation Error', 'error'));
+									if($('#groupType').val()=='BCG'){
+										$('#dlgGroupCreate').dialog( "option", "minHeight", 500 );
+										$('#dlgGroupCreate').dialog( "option", "height", 500 );
+									}else if($('#groupType').val()=='RCG'){
+										$('#dlgGroupCreate').dialog( "option", "minHeight", 447 );
+										$('#dlgGroupCreate').dialog( "option", "height", 447 );
+									}else{
+										$('#dlgGroupCreate').dialog( "option", "minHeight", 427 );
+										$('#dlgGroupCreate').dialog( "option", "height", 427 );
+									}
+									$('#group-creation-messages').html(_super.buildMessage('Group Creation Error', 'error'));									
 								});
 								
 						}catch(ex){
@@ -362,6 +410,53 @@ var app = app || {};
 					$('#dlgdeptSearch').dialog('open');
 				});
 				
+				$('#s-grouping-dept').on('blur', function(e){
+					/** first checking if any valid comma seperated dept is already there or not. 
+					* regardless generated by dialog or typed directly 
+					*/
+					if(!$(this).val().trim().length)
+						return;
+					
+					if(_super.regExpCollection.validDepts.test($(this).val().trim())){
+						//now looking the selected dept list to determine whether it has been generated or typed
+						var deptArr = $(this).val().trim().split(',');
+						var selectedDeptsFlatList = _super.pluckIds(_super.selectedDepts);
+						var diff = _.difference(deptArr, selectedDeptsFlatList);
+						
+						if(diff.length){ //checking for identical array
+							//selecting new depts as changed detected by direct input
+							
+							//now scanning and getting the items matching with new dept ids
+							var matchedItems = _.filter(_super.depts, function(item){
+								return _.contains(diff, item.deptId);
+							});
+							
+							if(_.size(matchedItems)){
+								//joining newly typed items
+								_super.selectedDepts = _.union(_super.selectedDepts, matchedItems);
+								
+								//disabling class selector and textbox to prevent type untill classes are refetched
+								$('#btnDlgClass').prop('disabled', true);
+								$('#s-grouping-class').val('Fetching..').prop('disabled', true);
+								
+								//fetching classes again
+								$.when(_super.fetchClasses(deptArr))
+									.then(function(){
+										//enabling class selector and textbox when classes are fetched
+										$('#btnDlgClass').prop('disabled', false);
+										$('#s-grouping-class').val('').prop('disabled', false);
+									});
+							}else{
+								alert('Entered Dept Ids do not exist');
+								$(this).val(_.difference(deptArr, diff).join(','));
+							}
+						}
+					}else{
+						alert('Invalid depts entered');
+						$(this).val('');
+					}
+				});
+				
 				//close button action
 				$('#btnCloseDept').on('click', function(e){
 					$('#dlgdeptSearch').dialog('close');
@@ -374,54 +469,22 @@ var app = app || {};
 				
 				$('#srchDeptsFrm').on('submit', function(e){
 					e.preventDefault();
-					if(_super.depts.length){
 					
-						var srchTxt = $('#selectedDeptSearch').val().trim();
-						
+					if(_super.depts.length){
 						var btnPrevText = $('#btnDepSearch').val();
 						$('#btnDepSearch').val('Searching..');
-					
-					
-						setTimeout(function(){
-							var reducedData = [];
-							
-							if(_super.selectedDepts.length){
-								//firstly removing already selected items from search
-								reducedData = _.filter(_super.depts, function(item){
-									var matchedItem = _.find(_super.selectedDepts, item);
-									
-									if(matchedItem === undefined)
-										return true;
-									else
-										return false;
-								});
-							}else
-								reducedData = _super.depts;
-							
-							
-							var data = _.filter(reducedData, function(item){
-								if(item.deptDesc.toLowerCase().indexOf(srchTxt.toLowerCase()) != -1 
-									|| item.deptId.toLowerCase().indexOf(srchTxt.toLowerCase()) != -1)
-								{
-									//console.log(item);
-									return true;
-								}else
-									return false;
-							});
-							
-							//adding firstly selected items then searched items if any
-							if(_super.selectedDepts.length)
-								data = _.union(_super.selectedDepts, data);
-							
-							
-							//console.log(data);
-								
-							
+						
+						var dfd = $.Deferred();
+						
+						dfd.then(function(data){
 							$('#dept-search-result').html(_super.deptTemplate({data: data, selected: _super.pluckIds(_super.selectedDepts)}));
-							
-							
+						})
+						.done(function(){
 							$('#btnDepSearch').val(btnPrevText);
-						}, 1000);
+						});
+						
+						//making async call using jq dfd
+						setTimeout(function(){dfd.resolve(_super.searchDepts())}, 1000);
 					}
 				});
 				
@@ -434,39 +497,24 @@ var app = app || {};
 						var selectedItems = [];
 						$('.dept-items:checked').each(function(){
 							selectedItems.push($(this).val());
-						});
-						
-						//scanning global list and filtering the selected items
-						var selectedDepts = _.filter(_super.depts, function(item){
-							return _.contains(selectedItems, item.deptId);
-						});
-						
-						_super.selectedDepts = selectedDepts;
-						
-						//now sending selected depts to fetch available class nos
-						var selectedDeptsFlatList = _super.pluckIds(_super.selectedDepts); //only dept ids in a flat array list
+						});	
 						
 						//sending request
 						var curText = $(this).val();
 						$(this).val('Saving..'); //changing text to show request is in progress
 						
-						app.GroupFactory.fetchClassCodes({depts: selectedDeptsFlatList.join(',')})
-							.done(function(result){
-								var resultJSON = $.parseJSON(result);
-								if(resultJSON.classList){
-									//console.log(resultJSON);
-									
-									_super.classList = resultJSON.classList //assigning class based on current dept selections
-									
-									$('#s-grouping-dept').val(selectedDeptsFlatList.join(','));
-									$('#s-grouping-class').val(''); //clearing already selected class nos as dept changed
-									
-									//finally closeing the dialog
-									$('#dlgdeptSearch').dialog('close');
-								}
-							}).complete(function(){
+						$.when(_super.fetchClasses(selectedItems))
+							.then(function(){
+								var selectedDeptsFlatList = _super.pluckIds(_super.selectedDepts); //only dept ids in a flat array list
+								
+								$('#s-grouping-dept').val(selectedDeptsFlatList.join(','));
+								$('#s-grouping-class').val(''); //clearing already selected class nos as dept changed
+								
+								//finally closeing the dialog
+								$('#dlgdeptSearch').dialog('close');
+								
 								$('#btnSaveDept').val(curText);
-							});
+							}); //resolving the dfd as async method
 					}
 				});
 				
@@ -512,24 +560,135 @@ var app = app || {};
 					
 				});
 				
+				$('#s-grouping-class').on('blur', function(e){
+					if(!$(this).val().trim().length)
+						return;
+					
+					if(_super.regExpCollection.validDepts.test($(this).val().trim())){
+						//now looking the selected dept list to determine whether it has been generated or typed
+						var classArr = $(this).val().trim().split(',');
+						
+						//looking inside the available list to validate
+						var selectedClassFlatList = _super.pluckIds(_super.selectedClassList, false);
+						var diff = _.difference(classArr, selectedClassFlatList);
+						
+						if(diff.length){ //checking for identical array
+							//selecting new depts as changed detected by direct input
+							
+							//now scanning and getting the items matching with new dept ids
+							var matchedItems = _.filter(_super.classList, function(item){
+								return _.contains(diff, item.classId);
+							});
+							
+							//console.log(matchedItems);
+							if(_.size(matchedItems)){
+								//joining newly typed items
+								_super.selectedClassList = _.union(_super.selectedClassList, matchedItems);
+							}else{
+								alert('Entered Class Ids do not exist');
+								$(this).val(_.difference(classArr, diff).join(','));
+							}
+							
+						}
+					}else{
+						alert('Invalid Class IDs Entered');
+						$(this).val('');
+					}	
+				});
+				
+				
 				//bootstrapping events when DOM is ready State
 				$(document).on('ready', function(e){
 					
-					//code to fetch all depts
-					app.GroupFactory.fetchDepts()
-						.done(function(result){
-							//console.log(result)
-							var resultsJSON = $.parseJSON(result);
-							
-							if(resultsJSON.deptList){
-								_super.depts = resultsJSON.deptList;
-							}
-						});
+					if(app.GroupLandingApp.urlCollection.groupSearchUrl){
+						//code to fetch all depts
+						app.GroupFactory.fetchDepts()
+							.done(function(result){
+								//console.log(result)
+								var resultsJSON = $.parseJSON(result);
+								
+								if(resultsJSON.deptList){
+									_super.depts = resultsJSON.deptList;
+								}
+							});
+					}
+					
 				});
 				
 			}catch(ex){
 				console.log(ex.message);
 			}	
+		},
+		
+		searchDepts: function(){
+			var reducedData = [];
+			var _super = this;
+			var srchTxt = $('#selectedDeptSearch').val().trim();
+			
+			if(_super.selectedDepts.length){
+				//firstly removing already selected items from search
+				reducedData = _.filter(_super.depts, function(item){
+					var matchedItem = _.find(_super.selectedDepts, item);
+					
+					if(matchedItem === undefined)
+						return true;
+					else
+						return false;
+				});
+			}else
+				reducedData = _super.depts;
+			
+			
+			var data = _.filter(reducedData, function(item){
+				if(item.deptDesc.toLowerCase().indexOf(srchTxt.toLowerCase()) != -1 
+					|| item.deptId.toLowerCase().indexOf(srchTxt.toLowerCase()) != -1)
+				{
+					//console.log(item);
+					return true;
+				}else
+					return false;
+			});
+			
+			//adding firstly selected items then searched items if any
+			if(_super.selectedDepts.length)
+				data = _.union(_super.selectedDepts, data);
+			
+			
+			//console.log(data);
+			return data;
+		},
+		
+		fetchClasses: function(selectedItems){
+			//collecting selected items to be filtered
+			
+			var _super = this;
+						
+			//scanning global list and filtering the selected items
+			var selectedDepts = _.filter(_super.depts, function(item){
+				return _.contains(selectedItems, item.deptId);
+			});
+						
+			_super.selectedDepts = selectedDepts; //assigning to global selected list
+						
+			//now sending selected depts to fetch available class nos
+			var selectedDeptsFlatList = _super.pluckIds(_super.selectedDepts); //only dept ids in a flat array list
+						
+			//sending request		
+			return app.GroupFactory.fetchClassCodes({depts: selectedDeptsFlatList.join(',')})
+					.done(function(result){
+						var resultJSON = $.parseJSON(result);
+						if(resultJSON.classList){
+							//console.log(resultJSON);
+							
+							_super.classList = resultJSON.classList //assigning class based on current dept selections
+							
+							//$('#s-grouping-dept').val(selectedDeptsFlatList.join(','));
+							//$('#s-grouping-class').val(''); //clearing already selected class nos as dept changed
+							
+							//finally closeing the dialog
+							//$('#dlgdeptSearch').dialog('close');
+						}
+					})
 		},
 		
 		addAddlFields: function(){
@@ -599,15 +758,12 @@ var app = app || {};
 						errorFlag = true;
 						break;
 					default:
-						console.log('here');
+						/* console.log('here');
 						console.log(app.Global.constants.groupStatus.GROUP_NOT_CREATED);
-						console.log(app.Global.constants.groupStatus.GROUP_NOT_CREATED);
+						console.log(app.Global.constants.groupStatus.GROUP_NOT_CREATED); */
 				}
 			}
-			
-			//console.log(errorFlag);
-			//console.log(groupType);
-			//console.log((!errorFlag) && (groupType != 'SCG' && groupType != 'SSG'));
+
 			
 			if((!errorFlag) && (groupType != 'SCG' && groupType != 'SSG')){
 				window.location.href = app.GroupLandingApp.urlCollection.addComponentUrl;
@@ -616,8 +772,8 @@ var app = app || {};
 				$('#closeGrpDlg').val('Close');
 				$('#closeGrpDlg').addClass('refresh');
 				$('#btnCreateGroup').prop('disabled', true).css('opacity','0.5')
-				$('#dlgGroupCreate').dialog( "option", "minHeight", 400 );
-				$('#dlgGroupCreate').dialog( "option", "height", 400 );
+				$('#dlgGroupCreate').dialog( "option", "minHeight", 457 );
+				$('#dlgGroupCreate').dialog( "option", "height", 457 );
 		},
 		
 		init: function(){
@@ -661,15 +817,18 @@ var app = app || {};
 				});
 				
 				//split color search component
-				$('#search-components').on('click', function(e){
+				$('#frmComponentSearch').on('submit', function(e){
+					e.preventDefault(); //preventing default form submission 
 					
 					//dialog to show error when no field is entered
 					if($('#styleOrinNo').val().trim() == '' && $('#vendorStyleNo').val().trim() == ''){
 						$('#error-massege').html('Atleast one field is required');
+						
 						$('#errorBox').dialog({
 							   autoOpen: true, 
 							   modal: true,
 							   resizable: false,
+							   title : 'Search',
 							   dialogClass: "dlg-custom",
 							   buttons: {
 								  OK: function() {$(this).dialog("close");}
@@ -682,6 +841,7 @@ var app = app || {};
 						   autoOpen: true, 
 						   modal: true,
 						   resizable: false,
+						   title : 'Search',
 						   dialogClass: "dlg-custom",
 						   buttons: {
 							  OK: function() {$(this).dialog("close");}
@@ -689,7 +849,7 @@ var app = app || {};
 						});
 					}else{
 						$('.overlay_pageLoading').removeClass('hidden');
-						app.GroupFactory.searchSCGComponents($('#frmComponentSearch').serialize())						
+						app.GroupFactory.searchSplitComponents($('#frmComponentSearch').serialize())						
 							.done(function(result){
 								var response = $.parseJSON(result);
 								//console.log(response.componentList);
@@ -702,6 +862,9 @@ var app = app || {};
 									
 									app.DataTable.dataHeader = response;
 									app.DataTable.data = componentList;
+									
+									$('.paginator').removeData('twbs-pagination'); //reconstructing the paginator
+									
 									app.DataTable.init();
 								}
 								
@@ -717,6 +880,8 @@ var app = app || {};
 					}
 				});
 				
+				
+				
 				$('#split-components').on('click',function(){
 					
 					if($('.item-check:checked').length < 1){
@@ -725,6 +890,7 @@ var app = app || {};
 						   autoOpen: true, 
 						   modal: true,
 						   resizable: false,
+						   title : 'Split Grouping',
 						   dialogClass: "dlg-custom",
 						   buttons: {
 							  OK: function() {$(this).dialog("close");}

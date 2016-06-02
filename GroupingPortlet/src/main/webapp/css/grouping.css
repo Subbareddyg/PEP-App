@@ -24,7 +24,7 @@ table.colored-row .text-center{text-align:center;}
 /* css rules for ui dialog */
 .ui-custom-message-styling{padding: 10px;margin: 12px;}
 .dlg-custom .ui-widget-header {background: #369 repeat-x;color: #fff;}
-.dlg-custom .ui-dialog-titlebar-close {display: none;}
+.dlg-custom .ui-dialog-titlebar-close {#display: none;}
 .dlg-custom select{height:24px; border-radius:4px; width: 100%}
 .dlg-custom input[type=text], .dlg-custom textarea{margin: 3px 0 3px 0; width: 100%}
 .dlg-custom input{height:24px;}
@@ -45,6 +45,9 @@ table.colored-row .text-center{text-align:center;}
 .tree-grid .branch{padding-left: 10px;}
 .tree-grid .leaf{padding-left: 30px;}
 .tree-grid .root-leaf{padding-left: 20px;}
+.tree-grid .sortable{/* background:url(images/arrow_up.png) no-repeat 96% center;display: block;width: 100%; padding-right:5px; */}
+.tree-grid .sort-up{background:url(images/arrow_up.png) no-repeat 96% center;display: block;width: 100%; padding-right:5px;}
+.tree-grid .sort-down{background:url(images/arrow_down.png) no-repeat 96% center;display: block;width: 100%; padding-right:5px;}
 .group-search-area .ui-custom-message-styling{padding: 10px;margin: 12px;}
 .pagination-container{margin: 0 auto; width: 95%;}
 .pagination-left{float: left; width: 30%; height: 35px;}
@@ -67,6 +70,4 @@ ul.paginator li.active a, ul.paginator li.disabled a{color: #23527c; background-
 .parent-leaf{padding-left:17px;}
 .leaf-node{padding-right: 30px;}
 .icon-tree i{ font-size: 17px;font-weight: bold;}
-.hidden-child{display:none;} 
-
-
+.hidden-child{display:none;}

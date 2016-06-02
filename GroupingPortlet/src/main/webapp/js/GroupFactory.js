@@ -20,7 +20,7 @@ var app = app || {};
 		},
 		
 		//Search SCG Component code block
-		searchSCGComponents: function(params){
+		searchSplitComponents: function(params){
 			return $.post(app.GroupLandingApp.urlCollection.splitComponentSearchUrl, params)
 				.error(handleException);
 		},
@@ -36,6 +36,12 @@ var app = app || {};
 			return $.post(app.GroupLandingApp.urlCollection.groupSearchUrl, $.extend({resourceType: 'searchClass'}, params))
 				.error(handleException);
 		},
+		
+		// Featching Exiting Components 
+		fetchComponents : function(params){
+			return $.get(app.componentLandingApp.urlCollection.existingCompUrl,params)
+					.error(handleException);
+		}
 		
 		
 	};
