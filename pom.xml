@@ -2,7 +2,7 @@
 
 	
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.belk</groupId>
+	<groupId>com.belk.pep</groupId>
 	<artifactId>pep</artifactId>
 	<version>1.0.0.14-SNAPSHOT</version>
 	<packaging>pom</packaging>
