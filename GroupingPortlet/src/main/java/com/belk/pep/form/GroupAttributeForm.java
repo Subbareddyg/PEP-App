@@ -9,7 +9,8 @@ package com.belk.pep.form;
  *
  */
 public class GroupAttributeForm {
-    private static final long serialVersionUID = 1L;
+    @SuppressWarnings("unused")
+	private static final long serialVersionUID = 1L;
     
     private String orinNumber;
     private String styleNumber;

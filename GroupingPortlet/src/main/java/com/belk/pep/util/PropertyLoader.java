@@ -18,26 +18,18 @@ import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 
-/**
- * Property file
- * 
- */
+/** Property file */
 public class PropertyLoader {
 
 	/** The Constant LOGGER. */
-	private final static Logger LOGGER = Logger.getLogger(PropertyLoader.class
-			.getName());
-	/**
-	 * Instance variable to hold the configuration loader instance.
-	 */
+	private final static Logger LOGGER = Logger.getLogger(PropertyLoader.class.getName());
+	/** Instance variable to hold the configuration loader instance. */
 	private volatile static PropertyLoader instance = null;
 	private final static Pattern pattern = Pattern.compile("\\$\\{([^}]*)\\}");
 
-	/**
-	 * This method returns an instance of ConfigurationLoader.
+	/** This method returns an instance of ConfigurationLoader.
 	 * 
-	 * @return ConfigurationLoader: The instance of configuration loader.
-	 */
+	 * @return ConfigurationLoader: The instance of configuration loader. */
 	public static PropertyLoader getInstance() {
 		if (instance == null) {
 			instance = new PropertyLoader();
@@ -46,11 +38,8 @@ public class PropertyLoader {
 		return instance;
 	}
 
-	/**
-	 * 
-	 * @param file
-	 * @return
-	 */
+	/** @param file
+	 * @return */
 	public Properties getConnectionProperties(String file) {
 		LOGGER.info("file--->" + file);
 		Properties prop = null;
@@ -83,17 +72,14 @@ public class PropertyLoader {
 		InputStream input = null;
 		try {
 
-			/*
-			 * input
+			/* input
 			 * =PropertyLoader.class.getClassLoader().getResourceAsStream(fileName
 			 * );
 			 * 
 			 * LOGGER.info("getPropertyLoader"); properties.load(input);
-			 * LOGGER.info("properties"+properties);
-			 */
+			 * LOGGER.info("properties"+properties); */
 
-			input = PropertyLoader.class.getClassLoader().getResourceAsStream(
-					fileName);
+			input = PropertyLoader.class.getClassLoader().getResourceAsStream(fileName);
 			LOGGER.info("getPropertyLoader");
 			properties.load(input);
 
@@ -103,8 +89,7 @@ public class PropertyLoader {
 				String value = properties.getProperty(key);
 				Matcher matchPattern = pattern.matcher(value);
 				if (matchPattern.find()) {
-					properties.setProperty(key,
-							System.getenv(matchPattern.group(1)));
+					properties.setProperty(key, System.getenv(matchPattern.group(1)));
 				}
 			}
 			LOGGER.info("properties" + properties);

@@ -30,6 +30,8 @@ public class GroupingConstants {
 	public static final String ADD_COMPONENT_SCG_SERVICE_FAILURE = "add.component.scg.failure.message";
 	public static final String ADD_COMPONENT_SSG_SERVICE_SUCCESS = "add.component.ssg.success.message";
 	public static final String ADD_COMPONENT_SSG_SERVICE_FAILURE = "add.component.ssg.failure.message";
+	public static final String ADD_COMPONENT_SUCCESS = "addComponent.success.message";
+	public static final String ADD_COMPONENT_FAILURE = "addComponent.failure.message";
 	public static final String CREATE_GROUP_FORM = "createGroupForm";
 	public static final String GROUPING_PAGE = "groupingPage";
 	public static final String GROUPING_ADD_COMPONENT = "addComponent";
@@ -76,6 +78,8 @@ public class GroupingConstants {
 
 	public static final String VENDOR_STYLE_NO = "vendorStyleNo";
 	public static final String STYLE_ORIN_NO = "StyleOrinNo";
+	public static final String VENDOR_STYLE_NO_SEARCH = "vendorStyleNoSearch";
+	public static final String STYLE_ORIN_NO_SEARCH = "styleOrinNoSearch";
 
 	public static final String SPLIT_GROUP_TOTAL_RECORDS = "totalRecords";
 	public static final String SPLIT_GROUP_DEFAULT_SORT_COL = "sortedColumn";

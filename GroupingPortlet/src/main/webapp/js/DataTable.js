@@ -13,28 +13,36 @@
 		totalPages: 1,
 		
 		totalRecords: 0,
+		
+		rowTemplateId: '#row-template',
+		
+		dtContainer: '#dataTable',
 
-		template: $('#row-template').length ? _.template($('#row-template').html(), null,  {
-			interpolate :  /\{\{\=(.+?)\}\}/g,
-			evaluate: /\{\{(.+?)\}\}/g
-		}) : null,
+		template: function(data){
+			var tmplElm = this.rowTemplateId;
+		
+			return $(tmplElm).length ? _.template($(tmplElm).html(), null,  {
+				interpolate :  /\{\{\=(.+?)\}\}/g,
+				evaluate: /\{\{(.+?)\}\}/g
+			})(data) : null;
+		},
 
 		attachHandler: function(){
 			var _super = this;
 			
-			$('#dataTable').on('click', '.parent-node-expand', function(){
+			$(this.dtContainer).on('click', '.parent-node-expand', function(){
 				var nodeID = $(this).data('node-id');
 				$('tr[data-parent-id=' + nodeID + ']').fadeIn('falst');
 				$(this).removeClass('parent-node-expand').addClass('parent-node-collapse');
 			});
 
-			$('#dataTable').on('click', '.parent-node-collapse', function(){
+			$(this.dtContainer).on('click', '.parent-node-collapse', function(){
 				var nodeID = $(this).data('node-id');
 				$('tr[data-parent-id=' + nodeID + ']').fadeOut('falst');
 					$(this).removeClass('parent-node-collapse').addClass('parent-node-expand');
 			});
 			
-			$('#dataTable').on('click', '.sortable', function(){
+			$(this.dtContainer).on('click', '.sortable', function(){
 				
 				var sortColumn = $(this).data('sort-column') || null;
 				var sortMethod = $(this).data('sorted-by') || 'asc';
@@ -64,11 +72,11 @@
 					
 					_super.curPage = 1;
 					
-					$('.paginator').removeData('twbs-pagination'); //reconstructing the paginator
+					$(_super.dtContainer).find('.paginator').removeData('twbs-pagination'); //reconstructing the paginator
 					
 					_super.generateDataTable();
 					
-					$('a.sortable').removeClass('sort-up sort-down');
+					$(_super.dtContainer).find('a.sortable').removeClass('sort-up sort-down');
 					
 					$(this).addClass(sortedDispClass); //removing sorting dir indicator 
 					
@@ -77,8 +85,8 @@
 					
 			});
 
-			$('.record-limit').on('change', function(){
-				$('.record-limit').val($(this).val()); //syncing all drop down values
+			$(this.dtContainer).on('change', '.record-limit', function(){
+				$(_super.dtContainer).find('.record-limit').val($(this).val()); //syncing all drop down values
 				
 				if(!_super.totalRecords)
 					return;
@@ -86,7 +94,7 @@
 				//console.log($(this).val());
 				_super.curPage = 1;
 				
-				$('.paginator').removeData('twbs-pagination'); //reconstructing the paginator
+				$(_super.dtContainer).find('.paginator').removeData('twbs-pagination'); //reconstructing the paginator
 				
 				_super.generateDataTable();
 			})
@@ -101,11 +109,11 @@
 			//updating pager text showing current record count of total record 
 			if(this.totalRecords > 0){
 				if(this.curPage == this.totalPages)
-					$('.pagination-text').text('Showing ' + this.totalRecords +' of ' + this.totalRecords + ' records');
+					$(this.dtContainer).find('.pagination-text').text('Showing ' + this.totalRecords +' of ' + this.totalRecords + ' records');
 				else
-					$('.pagination-text').text('Showing ' + (this.curPage * limit) +' of ' + this.totalRecords + ' records');
+					$(this.dtContainer).find('.pagination-text').text('Showing ' + (this.curPage * limit) +' of ' + this.totalRecords + ' records');
 			}else
-				$('.pagination-text').text('Showing 0 of 0 record');
+				$(this.dtContainer).find('.pagination-text').text('Showing 0 of 0 record');
 			
 			
 			var _super = this;
@@ -125,14 +133,17 @@
 
 		generateDataTable: function(){
 			//getting current record limit
-			var limit = limit ? limit : ($('.record-limit').val() || 1);
+			var limit = limit ? limit : ($(this.dtContainer).find('.record-limit').val() || 1);
 			//console.log(this.curPage);
 			var dataOffset = this.getData(parseInt(limit), this.curPage);
-			$('#row-container').html(this.template({data: dataOffset, dataHeader: this.dataHeader}));
+			
+			//console.log(this.template({data: dataOffset, dataHeader: this.dataHeader}));
+			//console.log($(this.dtContainer).find('.row-container'));
+			$(this.dtContainer).find('.row-container').html(this.template({data: dataOffset, dataHeader: this.dataHeader}));
 			
 			//$('#row-container').html(this.template({data: this.data}));
 
-			this.handlePagination(limit, $('.paginator'));
+			this.handlePagination(limit, $(this.dtContainer).find('.paginator'));
 		},
 
 		getData: function(limit, offset){
@@ -148,9 +159,9 @@
 		},
 		
 		clearSorting: function(){
-			$('#dataTable').off('click', '.sortable');
-			$('a.sortable').removeClass('sort-up sort-down');
-			$('a.sortable').data('sorted-by', null);
+			$(this.dtContainer).off('click', '.sortable');
+			$(this.dtContainer).find('a.sortable').removeClass('sort-up sort-down');
+			$(this.dtContainer).find('a.sortable').data('sorted-by', null);
 		},
 
 		init: function(){

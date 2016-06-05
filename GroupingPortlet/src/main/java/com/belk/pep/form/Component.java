@@ -7,7 +7,8 @@ package com.belk.pep.form;
  *
  */
 public class Component {
-    private static final long serialVersionUID = 1L;
+    @SuppressWarnings("unused")
+	private static final long serialVersionUID = 1L;
     
 //    private List <String> pageNumberList;
     

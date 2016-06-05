@@ -21,7 +21,7 @@ var app = app || {};
 		
 		//Search SCG Component code block
 		searchSplitComponents: function(params){
-			return $.post(app.GroupLandingApp.urlCollection.splitComponentSearchUrl, params)
+			return $.post(app.URLFactory.getURL('splitComponentSearchUrl'), params)
 				.error(handleException);
 		},
 		
@@ -38,12 +38,16 @@ var app = app || {};
 		},
 		
 		// Featching Exiting Components 
-		fetchComponents : function(params){
-			return $.get(app.componentLandingApp.urlCollection.existingCompUrl,params)
+		fetchExistingComponents : function(params){
+			return $.get(app.URLFactory.getURL('existingCompUrl'), params)
 					.error(handleException);
-		}
+		},
 		
-		
+		// Featching Exiting Components
+		addNewSplitComponent: function(params){
+			return $.get(app.URLFactory.getURL('addComponentToGroup'), params)
+					.error(handleException);
+		},
 	};
 	
 	function handleException(jqXHR, textStatus, errorThrown){

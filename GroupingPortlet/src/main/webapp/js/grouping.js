@@ -799,7 +799,7 @@ var app = app || {};
 					}
 				});
 				
-				$('#row-container').on('click', '.item-check', function(){
+				$('#dataTable').on('click', '.item-check', function(){
 					if($(this).is(':checked')){
 						if($('.item-check').length == $('.item-check:checked').length)
 							$('#select-all').prop('checked', true);			
@@ -807,7 +807,7 @@ var app = app || {};
 						$('#select-all').prop('checked', false);
 				});
 				
-				$('#row-container').on('click', '.item-check', function(e){
+				$('#dataTable').on('click', '.item-check', function(e){
 					//console.log($(this).parent().parent().find('input[type=radio]'));
 					
 					if($(this).is(':checked'))
@@ -851,6 +851,9 @@ var app = app || {};
 						$('.overlay_pageLoading').removeClass('hidden');
 						app.GroupFactory.searchSplitComponents($('#frmComponentSearch').serialize())						
 							.done(function(result){
+								if(!result.length)
+									return;
+								
 								var response = $.parseJSON(result);
 								//console.log(response.componentList);
 								if(response.componentList){
@@ -860,6 +863,7 @@ var app = app || {};
 									//deleting componentList to pass only header
 									delete response.componentList;
 									
+									app.DataTable.dtContainer = '#dataTable';
 									app.DataTable.dataHeader = response;
 									app.DataTable.data = componentList;
 									

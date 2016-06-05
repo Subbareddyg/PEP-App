@@ -22,8 +22,6 @@ public class DateUtil {
         Date date = new Date();
         try {
             date = formatter.parse(sDate);
-           // System.out.println(date);
-          //  System.out.println(formatter.format(date));
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -45,8 +43,6 @@ public class DateUtil {
         Date date = new Date();
         try {
             date = formatter.parse(sDate);
-           // System.out.println(date);
-          //  System.out.println(formatter.format(date));
         } catch (ParseException e) {
             e.printStackTrace();
         }

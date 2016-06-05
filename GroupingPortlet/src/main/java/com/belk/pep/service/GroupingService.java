@@ -32,9 +32,7 @@ public interface GroupingService {
 	 * @throws Exception
 	 * @throws PEPFetchException
 	 */
-	CreateGroupForm saveGroupHeaderDetails(JSONObject jsonStyle,
-			String updatedBy,
-			List<GroupAttributeForm> selectedSplitAttributeList)
+	CreateGroupForm saveGroupHeaderDetails(JSONObject jsonStyle, String updatedBy, List<GroupAttributeForm> selectedSplitAttributeList)
 			throws Exception, PEPFetchException;
 
 	/**
@@ -45,8 +43,7 @@ public interface GroupingService {
 	 * @throws Exception
 	 * @throws PEPFetchException
 	 */
-	String callCreateGroupService(JSONObject jsonStyle) throws Exception,
-			PEPFetchException;
+	String callCreateGroupService(JSONObject jsonStyle) throws Exception, PEPFetchException;
 
 	/**
 	 * This method is used to get Component details for Split Color
@@ -57,8 +54,7 @@ public interface GroupingService {
 	 * @throws PEPServiceException
 	 * @throws PEPPersistencyException
 	 */
-	List<GroupAttributeForm> getSplitColorDetails(String vendorStyleNo,
-			String styleOrin) throws PEPServiceException,
+	List<GroupAttributeForm> getSplitColorDetails(String vendorStyleNo, String styleOrin) throws PEPServiceException,
 			PEPPersistencyException;
 
 	/**
@@ -70,9 +66,7 @@ public interface GroupingService {
 	 * @throws PEPServiceException
 	 * @throws PEPPersistencyException
 	 */
-	List<GroupAttributeForm> getSplitSKUDetails(String vendorStyleNo,
-			String styleOrin) throws PEPServiceException,
-			PEPPersistencyException;
+	List<GroupAttributeForm> getSplitSKUDetails(String vendorStyleNo, String styleOrin) throws PEPServiceException, PEPPersistencyException;
 
 	/**
 	 * This method is used to validate SCG attribute list before add to group
@@ -82,9 +76,8 @@ public interface GroupingService {
 	 * @throws PEPServiceException
 	 * @throws PEPPersistencyException
 	 */
-	List<GroupAttributeForm> validateSCGAttributeDetails(
-			List<GroupAttributeForm> getSplitColorDetailsList)
-			throws PEPServiceException, PEPPersistencyException;
+	List<GroupAttributeForm> validateSCGAttributeDetails(List<GroupAttributeForm> getSplitColorDetailsList) throws PEPServiceException,
+			PEPPersistencyException;
 
 	/**
 	 * This method is used to validate SCG attribute list before add to group
@@ -94,9 +87,8 @@ public interface GroupingService {
 	 * @throws PEPServiceException
 	 * @throws PEPPersistencyException
 	 */
-	List<GroupAttributeForm> validateSSGAttributeDetails(
-			List<GroupAttributeForm> getSplitSKUDetailsList)
-			throws PEPServiceException, PEPPersistencyException;
+	List<GroupAttributeForm> validateSSGAttributeDetails(List<GroupAttributeForm> getSplitSKUDetailsList) throws PEPServiceException,
+			PEPPersistencyException;
 
 	/**
 	 * This method is used to get the attribute list which is selected by user
@@ -109,10 +101,8 @@ public interface GroupingService {
 	 * @throws PEPServiceException
 	 * @throws PEPPersistencyException
 	 */
-	List<GroupAttributeForm> getSelectedColorAttributeList(
-			List<GroupAttributeForm> updatedSplitColorDetailsList,
-			String[] selectedItemsArr, String defaultSelectedAttr)
-			throws PEPServiceException, PEPPersistencyException;
+	List<GroupAttributeForm> getSelectedColorAttributeList(List<GroupAttributeForm> updatedSplitColorDetailsList,
+			String[] selectedItemsArr, String defaultSelectedAttr) throws PEPServiceException, PEPPersistencyException;
 
 	/**
 	 * This method is used to get the attribute list which is selected by user
@@ -125,10 +115,8 @@ public interface GroupingService {
 	 * @throws PEPServiceException
 	 * @throws PEPPersistencyException
 	 */
-	List<GroupAttributeForm> getSelectedSKUAttributeList(
-			List<GroupAttributeForm> updatedSplitSKUDetailsList,
-			String[] selectedItemsArr, String defaultSelectedAttr)
-			throws PEPServiceException, PEPPersistencyException;
+	List<GroupAttributeForm> getSelectedSKUAttributeList(List<GroupAttributeForm> updatedSplitSKUDetailsList, String[] selectedItemsArr,
+			String defaultSelectedAttr) throws PEPServiceException, PEPPersistencyException;
 
 	/**
 	 * This method is used to Existing Group details from DB
@@ -138,29 +126,27 @@ public interface GroupingService {
 	 * @throws Exception
 	 * @throws PEPFetchException
 	 */
-	CreateGroupForm getExistingGrpDetails(String groupId) throws Exception,
-			PEPFetchException;
-	
+	CreateGroupForm getExistingGrpDetails(String groupId) throws Exception, PEPFetchException;
+
 	/**
 	 * This method is used to get the Existing Style Color details.
+	 * 
 	 * @param groupId
 	 * @return
 	 * @throws PEPServiceException
 	 * @throws PEPPersistencyException
 	 */
-	List<GroupAttributeForm> getExistSplitColorDetails(String groupId) 
-			throws PEPServiceException, PEPPersistencyException;
-	
+	List<GroupAttributeForm> getExistSplitColorDetails(String groupId) throws PEPServiceException, PEPPersistencyException;
 
 	/**
 	 * This method is used to get the Existing Style Sku details.
+	 * 
 	 * @param groupId
 	 * @return
 	 * @throws PEPServiceException
 	 * @throws PEPPersistencyException
 	 */
-	List<GroupAttributeForm> getExistSplitSkuDetails(String groupId) 
-			throws PEPServiceException, PEPPersistencyException;
+	List<GroupAttributeForm> getExistSplitSkuDetails(String groupId) throws PEPServiceException, PEPPersistencyException;
 
 	/**
 	 * Method to get the groups for search group.
@@ -172,8 +158,7 @@ public interface GroupingService {
 	 *         Method added For PIM Phase 2 - groupSearch Date: 05/19/2016 Added
 	 *         By: Cognizant
 	 */
-	GroupSearchForm groupSearch(GroupSearchForm groupSearchForm)
-			throws PEPServiceException, PEPPersistencyException;
+	GroupSearchForm groupSearch(GroupSearchForm groupSearchForm) throws PEPServiceException, PEPPersistencyException;
 
 	/**
 	 * Method to get Group search record count
@@ -187,8 +172,7 @@ public interface GroupingService {
 	 * @throws PEPPersistencyException
 	 * @throws PEPServiceException
 	 */
-	int groupSearchCount(GroupSearchForm groupSearchForm)
-			throws PEPPersistencyException, PEPServiceException;
+	int groupSearchCount(GroupSearchForm groupSearchForm) throws PEPPersistencyException, PEPServiceException;
 
 	/**
 	 * Method to get the Depts for search group.
@@ -201,8 +185,7 @@ public interface GroupingService {
 	 *         By: Cognizant
 	 * @throws PEPPersistencyException
 	 */
-	ArrayList<DepartmentDetails> getDeptDetailsByDepNoFromADSE()
-			throws PEPPersistencyException, PEPServiceException;
+	ArrayList<DepartmentDetails> getDeptDetailsByDepNoFromADSE() throws PEPPersistencyException, PEPServiceException;
 
 	/**
 	 * Method to get the classes for search group.
@@ -215,8 +198,7 @@ public interface GroupingService {
 	 *         By: Cognizant
 	 * @throws PEPPersistencyException
 	 */
-	List<ClassDetails> getClassDetailsByDepNos(String departmentNumbers)
-			throws PEPPersistencyException, PEPServiceException;
+	List<ClassDetails> getClassDetailsByDepNos(String departmentNumbers) throws PEPPersistencyException, PEPServiceException;
 
 	/**
 	 * This method is used to call Group Delete Service
@@ -227,7 +209,19 @@ public interface GroupingService {
 	 * @throws Exception
 	 * @throws PEPFetchException
 	 */
-	String deleteGroup(String groupId, String groupType, String updatedBy)
-			throws Exception, PEPFetchException;
+	String deleteGroup(String groupId, String groupType, String updatedBy) throws Exception, PEPFetchException;
 
+	/**
+	 * This method is used to call add Component Service and fetch data from
+	 * database
+	 * 
+	 * @param updatedBy
+	 * @param groupType
+	 * @param selectedSplitAttributeList
+	 * @return
+	 * @throws Exception
+	 * @throws PEPFetchException
+	 */
+	CreateGroupForm addComponentToGroup(String groupId, String updatedBy, String groupType,
+			List<GroupAttributeForm> selectedSplitAttributeList) throws Exception, PEPFetchException;
 }
