@@ -22,6 +22,11 @@ public class GroupAttributeForm {
     private String isDefault;
     private String petStatus;
     private String entryType;
+    
+    private String parentMdmid;
+    private String componentStyleId;
+    private String classId;
+    
     /**
      * @return the orinNumber
      */
@@ -141,6 +146,42 @@ public class GroupAttributeForm {
 	 */
 	public void setEntryType(String entryType) {
 		this.entryType = entryType;
+	}
+	/**
+	 * @return the parentMdmid
+	 */
+	public String getParentMdmid() {
+		return parentMdmid;
+	}
+	/**
+	 * @param parentMdmid the parentMdmid to set
+	 */
+	public void setParentMdmid(String parentMdmid) {
+		this.parentMdmid = parentMdmid;
+	}
+	/**
+	 * @return the componentStyleId
+	 */
+	public String getComponentStyleId() {
+		return componentStyleId;
+	}
+	/**
+	 * @param componentStyleId the componentStyleId to set
+	 */
+	public void setComponentStyleId(String componentStyleId) {
+		this.componentStyleId = componentStyleId;
+	}
+	/**
+	 * @return the classId
+	 */
+	public String getClassId() {
+		return classId;
+	}
+	/**
+	 * @param classId the classId to set
+	 */
+	public void setClassId(String classId) {
+		this.classId = classId;
 	}
     
   }

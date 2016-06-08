@@ -23,6 +23,7 @@ import com.belk.pep.exception.checked.PEPPersistencyException;
 import com.belk.pep.exception.checked.PEPServiceException;
 import com.belk.pep.form.GroupAttributeForm;
 import com.belk.pep.form.GroupSearchForm;
+import com.belk.pep.form.StyleAttributeForm;
 import com.belk.pep.util.GroupingUtil;
 
 /**
@@ -233,6 +234,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 					groupAttributeForm = new GroupAttributeForm();
 
 					final String mdmid = rowMap.get("MDMID") != null ? rowMap.get("MDMID").toString() : "";
+					final String parentMdmid = rowMap.get("PARENT_MDMID") != null ? rowMap.get("PARENT_MDMID").toString() : "";
 					// String parentMdmid=rowMap.get("PARENT_MDMID") != null ?
 					// rowMap.get("PARENT_MDMID").toString() : "";
 					final String styleNo = rowMap.get("PRIMARYSUPPLIERVPN") != null ? rowMap.get("PRIMARYSUPPLIERVPN").toString() : "";
@@ -253,6 +255,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 					groupAttributeForm.setSize("");
 					groupAttributeForm.setPetStatus(petStatus);
 					groupAttributeForm.setEntryType(entryType);
+					groupAttributeForm.setParentMdmid(parentMdmid);
 
 					groupAttributeFormList.add(groupAttributeForm);
 				}
@@ -317,6 +320,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 					groupAttributeForm = new GroupAttributeForm();
 
 					final String mdmid = rowMap.get("MDMID") != null ? rowMap.get("MDMID").toString() : "";
+					final String parentMdmid = rowMap.get("PARENT_MDMID") != null ? rowMap.get("PARENT_MDMID").toString() : "";
 					final String styleNo = rowMap.get("PRIMARYSUPPLIERVPN") != null ? rowMap.get("PRIMARYSUPPLIERVPN").toString() : "";
 					final String productName = rowMap.get("NAME") != null ? rowMap.get("NAME").toString() : "";
 					final String colorCode = rowMap.get("COLOR_CODE") != null ? rowMap.get("COLOR_CODE").toString() : "";
@@ -336,6 +340,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 					groupAttributeForm.setIsAlreadyInGroup(isAlreadyInGroup);
 					groupAttributeForm.setPetStatus(petStatus);
 					groupAttributeForm.setEntryType(entryType);
+					groupAttributeForm.setParentMdmid(parentMdmid);
 
 					groupAttributeFormList.add(groupAttributeForm);
 				}
@@ -348,6 +353,148 @@ public class GroupingDAOImpl implements GroupingDAO {
 
 		LOGGER.info("Fetch Split SKU Details--> getSplitSKUDetails-->End");
 		return groupAttributeFormList;
+	}
+	
+
+	/**
+	 * This method is used to get the Existing Group Attribute Details for Consolidated Product Grouping from Database.
+	 * 
+	 * @param groupId
+	 * @return groupAttributeFormList
+	 */
+	public List<StyleAttributeForm> getNewCPGDetails(final String vendorStyleNo, final String styleOrin, final String deptNoSearch, 
+			final String classNoSearch,	final String supplierSiteIdSearch, final String upcNoSearch) {
+		LOGGER.info("Fetch New CPG attribute Details. getNewCPGDetails-->Start");
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("Vendor vendorStyleNumber-->" + vendorStyleNo);
+			LOGGER.debug("Style Orin No-->" + styleOrin);
+		}
+		Session session = null;
+		GroupAttributeForm groupAttributeForm = null;
+		StyleAttributeForm styleAttributeForm = null;
+		List<GroupAttributeForm> groupAttributeFormList = null;
+		List<StyleAttributeForm> styleAttributeFormList = null;
+		final XqueryConstants xqueryConstants = new XqueryConstants();
+		try {
+			String deptNoForInSearch = GroupingUtil.getInValForQuery(deptNoSearch);
+			deptNoForInSearch = GroupingUtil.getInValForQuery(classNoSearch);
+			session = sessionFactory.openSession();
+			// Hibernate provides a createSQLQuery method to let you call your
+			// native SQL statement directly.
+			final Query query = session.createSQLQuery(xqueryConstants.getNewCPGDetails(vendorStyleNo, styleOrin, deptNoForInSearch, deptNoForInSearch,
+					supplierSiteIdSearch, upcNoSearch, deptNoSearch, classNoSearch));
+
+			if (null != vendorStyleNo && !("").equals(vendorStyleNo.trim())) {
+				query.setParameter("styleIdSql", vendorStyleNo);
+			} 
+			if (null != styleOrin && !("").equals(styleOrin.trim())) {
+				query.setParameter("mdmidSql", styleOrin);
+			}
+			/*if (null != deptNoSearch && !("").equals(deptNoSearch.trim())) {
+				query.setParameter("deptNoSql", deptNoSearch);
+			}
+			if (null != classNoSearch && !("").equals(classNoSearch.trim())) {
+				query.setParameter("classNoSql", classNoSearch);
+			}*/
+			if (null != supplierSiteIdSearch && !("").equals(supplierSiteIdSearch.trim())) {
+				query.setParameter("supplierIdSql", supplierSiteIdSearch);
+			}
+			if (null != upcNoSearch && !("").equals(upcNoSearch.trim())) {
+				query.setParameter("upcNoSql", upcNoSearch);
+			}
+			
+			//query.setParameter("groupidSql", groupId);
+			query.setFetchSize(100);
+			LOGGER.info("Query-->getExistCPGDetails-->" + query);
+
+			//groupAttributeFormList = new ArrayList<GroupAttributeForm>();
+			styleAttributeFormList = new ArrayList<StyleAttributeForm>();
+
+			// execute select SQL statement
+			query.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
+			@SuppressWarnings("unchecked")
+			final List<Object> rows = query.list();
+			if (rows != null) {
+				LOGGER.info("recordsFetched..." + rows.size());
+
+				for (final Object row : rows) {
+					// LOGGER.info("In..." + rows.size());
+					@SuppressWarnings("rawtypes")
+					final Map rowMap = (Map) row;
+					groupAttributeForm = new GroupAttributeForm();
+					styleAttributeForm = new StyleAttributeForm();
+					
+					final String mdmid = rowMap.get("MDMID") != null ? rowMap.get("MDMID").toString() : "";
+					final String styleNo = rowMap.get("PRIMARYSUPPLIERVPN") != null ? rowMap.get("PRIMARYSUPPLIERVPN").toString() : "";
+					final String productName = rowMap.get("PRODUCT_NAME") != null ? rowMap.get("PRODUCT_NAME").toString() : "";
+					final String colorCode = rowMap.get("COLOR_CODE") != null ? rowMap.get("COLOR_CODE").toString() : "";
+					final String colorDesc = rowMap.get("COLOR_DESC") != null ? rowMap.get("COLOR_DESC").toString() : "";
+					final String entryType = rowMap.get("ENTRY_TYPE") != null ? rowMap.get("ENTRY_TYPE").toString() : "";
+					final String parentMdmid = rowMap.get("PARENT_MDMID") != null ? rowMap.get("PARENT_MDMID").toString() : "";
+					final String componentStyleId = rowMap.get("COMPONENT_STYLE_ID") != null ? rowMap.get("COMPONENT_STYLE_ID").toString() : "";
+					final String isDefaultAttr = rowMap.get("COMPONENT_DEFAULT") != null ? rowMap.get("COMPONENT_DEFAULT").toString() : "";
+					final String classId = rowMap.get("CLASS_ID") != null ? rowMap.get("CLASS_ID").toString() : "";
+					LOGGER.debug("parentMdmid-->"+parentMdmid+"<componentStyleId-->"+componentStyleId+"<mdmid-->"+mdmid+"<entryType-->"+entryType);
+
+					if(("Style").equals(entryType)) {
+						groupAttributeFormList = new ArrayList<GroupAttributeForm>();
+						styleAttributeForm.setOrinNumber(mdmid);
+						styleAttributeForm.setStyleNumber(styleNo);
+						styleAttributeForm.setProdName(productName);
+						styleAttributeForm.setColorCode(colorCode);
+						styleAttributeForm.setColorName(colorDesc);
+						styleAttributeForm.setIsAlreadyInGroup("");
+						styleAttributeForm.setSize("");
+						styleAttributeForm.setPetStatus("");
+						styleAttributeForm.setEntryType(entryType);
+						styleAttributeForm.setParentMdmid(parentMdmid);
+						styleAttributeForm.setComponentStyleId(componentStyleId);
+						styleAttributeForm.setGroupAttributeFormList(groupAttributeFormList);
+						styleAttributeForm.setIsDefault(isDefaultAttr);
+						styleAttributeForm.setClassId(classId);
+
+						styleAttributeFormList.add(styleAttributeForm);
+					}else {
+						groupAttributeForm.setOrinNumber(mdmid);
+						groupAttributeForm.setStyleNumber(styleNo);
+						groupAttributeForm.setProdName(productName);
+						groupAttributeForm.setColorCode(colorCode);
+						groupAttributeForm.setColorName(colorDesc);
+						groupAttributeForm.setIsAlreadyInGroup("");
+						groupAttributeForm.setSize("");
+						groupAttributeForm.setPetStatus("");
+						groupAttributeForm.setEntryType(entryType);
+						groupAttributeForm.setParentMdmid(parentMdmid);
+						groupAttributeForm.setComponentStyleId(componentStyleId);
+						groupAttributeForm.setIsDefault(isDefaultAttr);
+						groupAttributeForm.setClassId(classId);
+ 
+						for(int i = 0; i < styleAttributeFormList.size(); i++){
+							StyleAttributeForm styleAttributeFormSub = styleAttributeFormList.get(i);
+							//if((styleAttributeFormSub.getComponentStyleId()).equals(componentStyleId)){
+							if((styleAttributeFormSub.getOrinNumber()).equals(parentMdmid)){
+								LOGGER.debug("styleAttributeFormSub.getOrinNumber()-->"+styleAttributeFormSub.getOrinNumber());
+								LOGGER.debug("Style Available.parentMdmid-->"+parentMdmid);
+								groupAttributeForm.setProdName(styleAttributeFormSub.getProdName()); // Replacing Product Name from Style
+								groupAttributeFormList = styleAttributeFormSub.getGroupAttributeFormList();
+								groupAttributeFormList.add(groupAttributeForm);
+								break;
+							}
+						}
+						
+					}
+					
+
+				}
+			}
+		} finally {
+			LOGGER.info("recordsFetched. getNewCPGDetails finally block..");
+			session.flush();
+			session.close();
+		}
+
+		LOGGER.info("Fetch New CPG attribute Details. getNewCPGDetails-->End");
+		return styleAttributeFormList;
 	}
 
 	/**
@@ -691,11 +838,13 @@ public class GroupingDAOImpl implements GroupingDAO {
 					groupAttributeForm = new GroupAttributeForm();
 
 					final String mdmid = rowMap.get("MDMID") != null ? rowMap.get("MDMID").toString() : "";
+					final String parentMdmid = rowMap.get("PARENT_MDMID") != null ? rowMap.get("PARENT_MDMID").toString() : "";
 					final String styleNo = rowMap.get("PRIMARYSUPPLIERVPN") != null ? rowMap.get("PRIMARYSUPPLIERVPN").toString() : "";
 					final String productName = rowMap.get("PRODUCT_NAME") != null ? rowMap.get("PRODUCT_NAME").toString() : "";
 					final String colorCode = rowMap.get("COLOR_CODE") != null ? rowMap.get("COLOR_CODE").toString() : "";
 					final String colorDesc = rowMap.get("COLOR_DESC") != null ? rowMap.get("COLOR_DESC").toString() : "";
 					final String entryType = rowMap.get("ENTRY_TYPE") != null ? rowMap.get("ENTRY_TYPE").toString() : "";
+					final String isDefaultColor = rowMap.get("COMPONENT_DEFAULT") != null ? rowMap.get("COMPONENT_DEFAULT").toString() : "";
 
 					groupAttributeForm.setOrinNumber(mdmid);
 					groupAttributeForm.setStyleNumber(styleNo);
@@ -706,6 +855,8 @@ public class GroupingDAOImpl implements GroupingDAO {
 					groupAttributeForm.setSize("");
 					groupAttributeForm.setPetStatus("");
 					groupAttributeForm.setEntryType(entryType);
+					groupAttributeForm.setIsDefault(isDefaultColor);
+					groupAttributeForm.setParentMdmid(parentMdmid);
 
 					groupAttributeFormList.add(groupAttributeForm);
 				}
@@ -760,12 +911,14 @@ public class GroupingDAOImpl implements GroupingDAO {
 					groupAttributeForm = new GroupAttributeForm();
 
 					final String mdmid = rowMap.get("MDMID") != null ? rowMap.get("MDMID").toString() : "";
+					final String parentMdmid = rowMap.get("PARENT_MDMID") != null ? rowMap.get("PARENT_MDMID").toString() : "";
 					final String styleNo = rowMap.get("PRIMARYSUPPLIERVPN") != null ? rowMap.get("PRIMARYSUPPLIERVPN").toString() : "";
 					final String productName = rowMap.get("PRODUCT_NAME") != null ? rowMap.get("PRODUCT_NAME").toString() : "";
 					final String colorCode = rowMap.get("COLOR_CODE") != null ? rowMap.get("COLOR_CODE").toString() : "";
 					final String colorDesc = rowMap.get("COLOR_DESC") != null ? rowMap.get("COLOR_DESC").toString() : "";
 					final String entryType = rowMap.get("ENTRY_TYPE") != null ? rowMap.get("ENTRY_TYPE").toString() : "";
 					final String sizeDesc = rowMap.get("SIZEDESC") != null ? rowMap.get("SIZEDESC").toString() : "";
+					final String isDefaultSize = rowMap.get("COMPONENT_DEFAULT") != null ? rowMap.get("COMPONENT_DEFAULT").toString() : "";
 
 					groupAttributeForm.setOrinNumber(mdmid);
 					groupAttributeForm.setStyleNumber(styleNo);
@@ -777,6 +930,8 @@ public class GroupingDAOImpl implements GroupingDAO {
 					groupAttributeForm.setPetStatus("");
 					groupAttributeForm.setEntryType(entryType);
 					groupAttributeForm.setSize(sizeDesc);
+					groupAttributeForm.setIsDefault(isDefaultSize);
+					groupAttributeForm.setParentMdmid(parentMdmid);
 
 					groupAttributeFormList.add(groupAttributeForm);
 				}
@@ -789,6 +944,122 @@ public class GroupingDAOImpl implements GroupingDAO {
 
 		LOGGER.info("Fetch Split Color Existing Details. getExistSplitColorDetails-->End");
 		return groupAttributeFormList;
+	}
+	
+
+	/**
+	 * This method is used to get the Existing Group Attribute Details for Consolidated Product Grouping from Database.
+	 * 
+	 * @param groupId
+	 * @return groupAttributeFormList
+	 */
+	public List<StyleAttributeForm> getExistCPGDetails(final String groupId) {
+		LOGGER.info("Fetch Split Color Existing Details. getExistCPGDetails-->Start");
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("Vendor groupId-->" + groupId);
+		}
+		Session session = null;
+		GroupAttributeForm groupAttributeForm = null;
+		StyleAttributeForm styleAttributeForm = null;
+		List<GroupAttributeForm> groupAttributeFormList = null;
+		List<StyleAttributeForm> styleAttributeFormList = null;
+		final XqueryConstants xqueryConstants = new XqueryConstants();
+		try {
+			session = sessionFactory.openSession();
+			// Hibernate provides a createSQLQuery method to let you call your
+			// native SQL statement directly.
+			final Query query = session.createSQLQuery(xqueryConstants.getExistCPGDetails());
+
+			query.setParameter("groupidSql", groupId);
+			query.setFetchSize(100);
+			LOGGER.info("Query-->getExistCPGDetails-->" + query);
+
+			//groupAttributeFormList = new ArrayList<GroupAttributeForm>();
+			styleAttributeFormList = new ArrayList<StyleAttributeForm>();
+
+			// execute select SQL statement
+			query.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
+			@SuppressWarnings("unchecked")
+			final List<Object> rows = query.list();
+			if (rows != null) {
+				LOGGER.info("recordsFetched..." + rows.size());
+
+				for (final Object row : rows) {
+					// LOGGER.info("In..." + rows.size());
+					final Map rowMap = (Map) row;
+					groupAttributeForm = new GroupAttributeForm();
+					styleAttributeForm = new StyleAttributeForm();
+					
+					final String mdmid = rowMap.get("MDMID") != null ? rowMap.get("MDMID").toString() : "";
+					final String styleNo = rowMap.get("PRIMARYSUPPLIERVPN") != null ? rowMap.get("PRIMARYSUPPLIERVPN").toString() : "";
+					final String productName = rowMap.get("PRODUCT_NAME") != null ? rowMap.get("PRODUCT_NAME").toString() : "";
+					final String colorCode = rowMap.get("COLOR_CODE") != null ? rowMap.get("COLOR_CODE").toString() : "";
+					final String colorDesc = rowMap.get("COLOR_DESC") != null ? rowMap.get("COLOR_DESC").toString() : "";
+					final String entryType = rowMap.get("ENTRY_TYPE") != null ? rowMap.get("ENTRY_TYPE").toString() : "";
+					final String parentMdmid = rowMap.get("PARENT_MDMID") != null ? rowMap.get("PARENT_MDMID").toString() : "";
+					final String componentStyleId = rowMap.get("COMPONENT_STYLE_ID") != null ? rowMap.get("COMPONENT_STYLE_ID").toString() : "";
+					final String isDefaultAttr = rowMap.get("COMPONENT_DEFAULT") != null ? rowMap.get("COMPONENT_DEFAULT").toString() : "";
+					final String classId = rowMap.get("CLASS_ID") != null ? rowMap.get("CLASS_ID").toString() : "";
+					LOGGER.debug("parentMdmid-->"+parentMdmid+"<componentStyleId-->"+componentStyleId+"<mdmid-->"+mdmid+"<entryType-->"+entryType);
+
+					if(("Style").equals(entryType)) {
+						groupAttributeFormList = new ArrayList<GroupAttributeForm>();
+						styleAttributeForm.setOrinNumber(mdmid);
+						styleAttributeForm.setStyleNumber(styleNo);
+						styleAttributeForm.setProdName(productName);
+						styleAttributeForm.setColorCode(colorCode);
+						styleAttributeForm.setColorName(colorDesc);
+						styleAttributeForm.setIsAlreadyInGroup("");
+						styleAttributeForm.setSize("");
+						styleAttributeForm.setPetStatus("");
+						styleAttributeForm.setEntryType(entryType);
+						styleAttributeForm.setParentMdmid(parentMdmid);
+						styleAttributeForm.setComponentStyleId(componentStyleId);
+						styleAttributeForm.setGroupAttributeFormList(groupAttributeFormList);
+						styleAttributeForm.setIsDefault(isDefaultAttr);
+						styleAttributeForm.setClassId(classId);
+						styleAttributeFormList.add(styleAttributeForm);
+					}else {
+						groupAttributeForm.setOrinNumber(mdmid);
+						groupAttributeForm.setStyleNumber(styleNo);
+						groupAttributeForm.setProdName(productName);
+						groupAttributeForm.setColorCode(colorCode);
+						groupAttributeForm.setColorName(colorDesc);
+						groupAttributeForm.setIsAlreadyInGroup("");
+						groupAttributeForm.setSize("");
+						groupAttributeForm.setPetStatus("");
+						groupAttributeForm.setEntryType(entryType);
+						groupAttributeForm.setParentMdmid(parentMdmid);
+						groupAttributeForm.setComponentStyleId(componentStyleId);
+						groupAttributeForm.setIsDefault(isDefaultAttr);
+						groupAttributeForm.setClassId(classId);
+ 
+						for(int i = 0; i < styleAttributeFormList.size(); i++){
+							StyleAttributeForm styleAttributeFormSub = styleAttributeFormList.get(i);
+							//if((styleAttributeFormSub.getComponentStyleId()).equals(componentStyleId)){
+							if((styleAttributeFormSub.getOrinNumber()).equals(parentMdmid)){
+								LOGGER.debug("styleAttributeFormSub.getOrinNumber()-->"+styleAttributeFormSub.getOrinNumber());
+								LOGGER.debug("Style Available.parentMdmid-->"+parentMdmid);
+								groupAttributeForm.setProdName(styleAttributeFormSub.getProdName()); // Replacing Product Name from Style
+								groupAttributeFormList = styleAttributeFormSub.getGroupAttributeFormList();
+								groupAttributeFormList.add(groupAttributeForm);
+								break;
+							}
+						}
+						
+					}
+					
+
+				}
+			}
+		} finally {
+			LOGGER.info("recordsFetched. getExistCPGDetails finally block..");
+			session.flush();
+			session.close();
+		}
+
+		LOGGER.info("Fetch Split Color Existing Details. getExistCPGDetails-->End");
+		return styleAttributeFormList;
 	}
 
 }

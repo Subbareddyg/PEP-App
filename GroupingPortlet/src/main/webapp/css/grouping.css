@@ -23,6 +23,7 @@ table.colored-row .text-center{text-align:center;}
 
 /* css rules for ui dialog */
 .ui-custom-message-styling{padding: 10px;margin: 12px;}
+.ui-widget{font-family : tahoma, arial, helvetica, sans-serif !important;}
 .dlg-custom .ui-widget-header {background: #369 repeat-x;color: #fff;}
 .dlg-custom .ui-dialog-titlebar-close {#display: none;}
 .dlg-custom select{height:24px; border-radius:4px; width: 100%}

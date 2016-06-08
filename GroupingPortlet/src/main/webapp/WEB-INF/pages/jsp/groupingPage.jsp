@@ -324,7 +324,7 @@
 <div class="ui-widget" id="errorBox" style="display:none">
     <div class="ui-state-error ui-corner-all" style="padding: 15px;"> 
         <p>
-            <span class="ui-icon ui-icon-help" style="float: left; margin-right: .3em;"></span>
+            
             <span id="error-massege"></span>
         </p>
     </div>
@@ -382,7 +382,10 @@
 						&nbsp;
 					</div>
 				{{ } }}
-				{{=row.groupId}}{{=row.childGroup == 'Y' ? '* ' : ''}}
+				{{=row.groupId}}
+				{{if(row.childGroup == 'Y'){ }} 
+					<img src="<%=response.encodeURL(request.getContextPath())%>/img/grouping_indicator.png" alt="In Grouping" width="12" style="position: relative; top: -8px;" />
+				{{ } }}
 			</td>
 			<td>{{=row.groupName}}</td>
 			<td>{{=row.groupType}}</td>

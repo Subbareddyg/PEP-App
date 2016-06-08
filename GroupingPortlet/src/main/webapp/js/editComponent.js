@@ -11,26 +11,41 @@ var app = app || {} ;
 			
 			loadExitingData : function(){
 				var _super = this;
-				app.GroupFactory.fetchExistingComponents({groupType: $('#groupId').val(), groupId: $('#groupType').val()})				
+				app.GroupFactory.fetchExistingComponents({groupType: $('#groupType').val(), groupId: $('#groupId').val()})			
 				.done(function(result){
 					var response = $.parseJSON(result);
 						//console.log(response.componentList);
 						if(response.componentList){
+							
+							_super.searchValue = response;
+							
 							//processing data table generation
 							//passing only components
 							var componentList = response.componentList;
 							//deleting componentList to pass only header
 							delete response.componentList;
 							
-							app.DataTable.dtContainer = '#exisiting-table-dataTable';
+							
+							
+							/* app.DataTable.dtContainer = '#exisiting-table-dataTable';
 							app.DataTable.dataHeader = _super.searchValue = response;
-							app.DataTable.data = componentList;
+							app.DataTable.data = componentList; */
+							
+							var dtTable = new app.DataTable({dtContainer: '#exisiting-table-dataTable', rowTemplateId : '#sku-existing-template'});
+							dtTable.setDataHeader(_super.searchValue);
+							dtTable.setData(componentList);
 							
 							$('.paginator').removeData('twbs-pagination'); //reconstructing the paginator
 							
-							app.DataTable.init();
+							//app.DataTable.init();
+							dtTable.init();
 						}
+					}).complete(function(){
+						_super.searchFormValidate($('#groupType').val().trim());
+						_super.handleEvent();
 					});
+					
+					
 			},
 			
 			handleEvent : function(){
@@ -62,7 +77,17 @@ var app = app || {} ;
 							app.GroupFactory.addNewSplitComponent($('#selectedComponentForm').serialize() 
 								+ '&groupType=' + $('#groupType').val()+ '&groupId=' + $('#groupId').val())
 								.done(function(result){
-									console.log(result);
+									
+									var resultJSON = $.parseJSON(result);
+									
+									app.GroupLandingApp.handleGroupCreationResponse(resultJSON, resultJSON.groupType);
+								}).error(function(jqXHR, textStatus, errorThrown){
+									$('#group-creation-messages').html(app.GroupLandingApp.buildMessage(jqXHR.status + ' - ' + textStatus + ' - ' + errorThrown, 'error'))
+										.fadeIn('slow');
+								}).complete(function(){
+									console.log('here');
+									//cleaning up message after 4 sec
+									app.GroupLandingApp.cleanupMessage($('#group-creation-messages'), 4000);
 								});
 						}catch(ex){
 							console.log(ex.message);
@@ -70,30 +95,67 @@ var app = app || {} ;
 					}
 				});
 				
+				$('.item-check , #select-all').on('click',function(){
+					
+					if($(this).is(':checked')){
+						$('#remove-existing-group').prop('disabled',false).css('opacity',1);
+					}else{
+						$('#remove-existing-group').prop('disabled',true).css('opacity',0.5);
+					}
+				});
+					
+				
+
+
 				
 			},
 			
-			searchFormValidate : function(){
-				$('#frmComponentSearch input[type="text"], #btnDlgClass , #btnDlgDept').prop('disabled',true);
-				var styleOrinValue =  this.searchValue.styleOrinNoSearch ?  this.searchValue.styleOrinNoSearch : '';
-				var vendorNoValue =  this.searchValue.vendorStyleNoSearch ? this.searchValue.vendorStyleNoSearch : '' ;
+			searchFormValidate : function(groupType){
+				var _super = this;			
+				switch(groupType){
+				case  'SSG':
+				case  'SCG':
+					$('#frmComponentSearch input[type="text"], #btnDlgClass , #btnDlgDept').prop('disabled',true);
+					var styleOrinValue =  this.searchValue.styleOrinNoSearch ?  this.searchValue.styleOrinNoSearch : '';
+					var vendorNoValue =  this.searchValue.vendorStyleNoSearch ? this.searchValue.vendorStyleNoSearch : '' ;
+													
+					if(!styleOrinValue.length)
+						$('#styleOrinNo , #styleOrinNoShowOnly').prop('disabled',false);
+						
+					else
+						$('#styleOrinNo , #styleOrinNoShowOnly').val(styleOrinValue);
+						
+					
+					if(!vendorNoValue.length)
+						$('#vendorStyleNo').prop('disabled',false);
+					$('#styleOrinNoShowOnly').on('blur',function(){
+						_super.putValue();
+					});
+					break;
+				case 'CPG' :
+					$('#groupId-search , #groupName-search').prop('disabled',true);
+					_super.putValue();
+					break;
+					
+					
+				default : 
 				
-				if(!styleOrinValue.length)
-					$('#styleOrinNo').prop('disabled',false);
-				else
-					$('#styleOrinNo').val(styleOrinValue);
+				break;
 				
-				if(!vendorNoValue.length)
-					$('#vendorStyleNo').prop('disabled',false);
-				else
-					$('#vendorStyleNo').val(vendorNoValue);
-				
+				}			
 			},
+			putValue : function(){
+				 $('#styleOrinNo').val($('#styleOrinNoShowOnly').val());
+			},
+			
+			
 			
 			init: function(){
 				this.loadExitingData();
 				this.handleEvent();
-				this.searchFormValidate();
+				
+				
+				//app.GroupLandingApp.init();
 				app.SplitGroupLanding.handleEvents();
 			}
 			

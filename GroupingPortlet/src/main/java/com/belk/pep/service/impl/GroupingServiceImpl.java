@@ -32,7 +32,9 @@ import com.belk.pep.form.CreateGroupForm;
 import com.belk.pep.form.GroupAttributeForm;
 import com.belk.pep.form.GroupForm;
 import com.belk.pep.form.GroupSearchForm;
+import com.belk.pep.form.StyleAttributeForm;
 import com.belk.pep.service.GroupingService;
+import com.belk.pep.util.GroupingUtil;
 import com.belk.pep.util.PropertyLoader;
 
 /**
@@ -142,7 +144,7 @@ public class GroupingServiceImpl implements GroupingService {
 				LOGGER.debug("json Object Add Component to Split Color groupId--> " + jsonStyleSpliColor.getString("groupId"));
 			}
 			LOGGER.info("Create Split Color Group Service Start currentTimeMillis-->" + System.currentTimeMillis());
-			final String resMsgSplitColor = ""; // callAddComponentSCGService(jsonStyleSpliColor); // TODO uncomment
+			final String resMsgSplitColor = callAddComponentSCGService(jsonStyleSpliColor); // TODO uncomment
 			LOGGER.info("Create Split Color Group Service End currentTimeMillis-->" + System.currentTimeMillis());
 			if (LOGGER.isDebugEnabled()) {
 				LOGGER.debug("Add Component to Split Color Group Service message-->" + resMsgSplitColor);
@@ -160,11 +162,11 @@ public class GroupingServiceImpl implements GroupingService {
 			}
 
 			if (null != responseMsgCode && responseMsgCode.equals(GroupingConstants.SUCCESS_CODE)) {
-				responseMsg = "#" + groupIdRes + " " + prop.getProperty(GroupingConstants.ADD_COMPONENT_SCG_SERVICE_SUCCESS);
+				responseMsg = "#" + groupIdRes + " - " + prop.getProperty(GroupingConstants.ADD_COMPONENT_SCG_SERVICE_SUCCESS);
 				groupCreationStatus = GroupingConstants.GROUP_CREATED_WITH_COMPONENT_SCG;
 				LOGGER.info("Add Component to Split Color Group. ResponseMsg100::Success-->" + responseMsg);
 			} else {
-				responseMsg = prop.getProperty(GroupingConstants.ADD_COMPONENT_SCG_SERVICE_FAILURE);
+				responseMsg = "#" + groupIdRes + " - " + prop.getProperty(GroupingConstants.ADD_COMPONENT_SCG_SERVICE_FAILURE);
 				groupCreationStatus = GroupingConstants.GROUP_CREATED_WITH_OUT_COMPONENT_SCG;
 				LOGGER.info("Add Component to Split Color Group. ResponseMsg101::Failure-->" + responseMsg);
 			}
@@ -204,11 +206,11 @@ public class GroupingServiceImpl implements GroupingService {
 			}
 
 			if (null != responseMsgCode && responseMsgCode.equals(GroupingConstants.SUCCESS_CODE)) {
-				responseMsg = groupIdRes + "-" + prop.getProperty(GroupingConstants.ADD_COMPONENT_SSG_SERVICE_SUCCESS);
+				responseMsg = "#" + groupIdRes + " - " + prop.getProperty(GroupingConstants.ADD_COMPONENT_SSG_SERVICE_SUCCESS);
 				groupCreationStatus = GroupingConstants.GROUP_CREATED_WITH_COMPONENT_SSG;
 				LOGGER.info("Add Component to Split SKU Group. ResponseMsg100::Success-->" + responseMsg);
 			} else {
-				responseMsg = "#" + groupIdRes + " " + prop.getProperty(GroupingConstants.ADD_COMPONENT_SSG_SERVICE_FAILURE);
+				responseMsg = "#" + groupIdRes + " - " + prop.getProperty(GroupingConstants.ADD_COMPONENT_SSG_SERVICE_FAILURE);
 				groupCreationStatus = GroupingConstants.GROUP_CREATED_WITH_OUT_COMPONENT_SSG;
 				LOGGER.info("Add Component to Split SKU Group. ResponseMsg101::Failure-->" + responseMsg);
 			}
@@ -385,20 +387,48 @@ public class GroupingServiceImpl implements GroupingService {
 	}
 
 	/**
+	 * This method is used to get the SKU details to create Split Color group.
+	 * 
+	 * @param vendorStyleNo
+	 * @param styleOrin
+	 * @return getSplitColorDetailsList
+	 * @throws PEPServiceException
+	 * @throws PEPPersistencyException
+	 */
+	public final List<StyleAttributeForm> getNewCPGDetails(final String vendorStyleNo, final String styleOrin, final String deptNoSearch, 
+			final String classNoSearch,	final String supplierSiteIdSearch, final String upcNoSearch)
+			throws PEPServiceException, PEPPersistencyException {
+		// getting the Style Color details from Database
+		LOGGER.info("*Enter-->calling getNewCPGDetails from GroupingServiceImpl.");
+		List<StyleAttributeForm> getNewCPGDetails = null;
+		try {
+			getNewCPGDetails = groupingDAO.getNewCPGDetails(vendorStyleNo, styleOrin, deptNoSearch, classNoSearch,
+					supplierSiteIdSearch, upcNoSearch);
+		} catch (Exception e) {
+			LOGGER.error("Exception occurred at the Service Implementation Layer.getNewCPGDetails");
+			throw new PEPServiceException(e.getMessage());
+		}
+		LOGGER.info("Exit-->calling getNewCPGDetails from GroupingServiceImpl.");
+		return getNewCPGDetails;
+	}
+
+	/**
 	 * This method is used to validate Split Color Attribute list before add it
 	 * to group.
 	 * 
 	 * @param getSplitColorDetailsList
-	 * @return updatedSplitColorDetailsList
+	 * @return validateMap
 	 * @throws PEPServiceException
 	 * @throws PEPPersistencyException
 	 */
-	public final List<GroupAttributeForm> validateSCGAttributeDetails(final List<GroupAttributeForm> getSplitColorDetailsList)
+	public final Map<String, List<GroupAttributeForm>> validateSCGAttributeDetails(final List<GroupAttributeForm> getSplitColorDetailsList)
 			throws PEPServiceException, PEPPersistencyException {
 		LOGGER.info("Enter-->calling validateSCGAttributeDetails");
 		List<GroupAttributeForm> updatedSplitColorDetailsList = new ArrayList<GroupAttributeForm>();
 		GroupAttributeForm groupAttributeForm = null;
 		String productName = "";
+		String errorCode = "noData";
+		Map<String, List<GroupAttributeForm>> validateMap = new HashMap<String, List<GroupAttributeForm>>();
 		try {
 
 			for (int i = 0; i < getSplitColorDetailsList.size(); i++) {
@@ -428,19 +458,22 @@ public class GroupingServiceImpl implements GroupingService {
 								+ petStatus);
 					}
 					updatedSplitColorDetailsList = new ArrayList<GroupAttributeForm>();
+					errorCode = "notCompleted";
 					break;
 				}
 				if (null != entryType && !("Style").equals(entryType)) {
 					groupAttributeForm.setProdName(productName);
 					updatedSplitColorDetailsList.add(groupAttributeForm);
+					errorCode = "dataAvailable";
 				}
 			}
+			validateMap.put(errorCode, updatedSplitColorDetailsList);
 		} catch (Exception e) {
 			LOGGER.error("Exception occurred at the Service Implementation Layer");
 			throw new PEPServiceException(e.getMessage());
 		}
 		LOGGER.info("Exit-->calling validateSCGAttributeDetails");
-		return updatedSplitColorDetailsList;
+		return validateMap;
 	}
 
 	/**
@@ -448,16 +481,18 @@ public class GroupingServiceImpl implements GroupingService {
 	 * group.
 	 * 
 	 * @param getSplitColorDetailsList
-	 * @return updatedgetSplitSKUDetailsList
+	 * @return validateMap
 	 * @throws PEPServiceException
 	 * @throws PEPPersistencyException
 	 */
-	public final List<GroupAttributeForm> validateSSGAttributeDetails(final List<GroupAttributeForm> getSplitSKUDetailsList)
+	public final Map<String, List<GroupAttributeForm>> validateSSGAttributeDetails(final List<GroupAttributeForm> getSplitSKUDetailsList)
 			throws PEPServiceException, PEPPersistencyException {
 		LOGGER.info("Enter-->calling validateSSGAttributeDetails");
 		List<GroupAttributeForm> updatedgetSplitSKUDetailsList = new ArrayList<GroupAttributeForm>();
 		GroupAttributeForm groupAttributeForm = null;
 		String productName = "";
+		String errorCode = "noData";
+		Map<String, List<GroupAttributeForm>> validateMap = new HashMap<String, List<GroupAttributeForm>>();
 		try {
 
 			for (int i = 0; i < getSplitSKUDetailsList.size(); i++) {
@@ -482,19 +517,72 @@ public class GroupingServiceImpl implements GroupingService {
 								+ petStatus);
 					}
 					updatedgetSplitSKUDetailsList = new ArrayList<GroupAttributeForm>();
+					errorCode = "notCompleted";
 					break;
 				}
 				if (null != entryType && (!("Style").equals(entryType)) && !("StyleColor").equals(entryType)) {
 					groupAttributeForm.setProdName(productName);
 					updatedgetSplitSKUDetailsList.add(groupAttributeForm);
+					errorCode = "dataAvailable";
 				}
 			}
+			validateMap.put(errorCode, updatedgetSplitSKUDetailsList);
 		} catch (Exception e) {
 			LOGGER.error("Exception occurred at the Service Implementation Layer");
 			throw new PEPServiceException(e.getMessage());
 		}
 		LOGGER.info("Exit-->calling validateSSGAttributeDetails");
-		return updatedgetSplitSKUDetailsList;
+		return validateMap;
+	}
+
+	/**
+	 * This method is used to validate CPG Attribute list before add it
+	 * to group.
+	 * @param existClassId
+	 * @param getCPGSelectedAttrbuteList
+	 * @return
+	 * @throws PEPServiceException
+	 * @throws PEPPersistencyException
+	 */
+	public final String validateCPGAttributeDetails(final String existClassId, 
+			final List<StyleAttributeForm> getCPGSelectedAttrbuteList)
+					throws PEPServiceException, PEPPersistencyException {
+		LOGGER.info("Enter-->calling validateCPGAttributeDetails");
+		String message = "";
+		String classIdSelectedPrev = "";
+		StyleAttributeForm styleAttributeForm = null;
+		Properties prop = PropertyLoader.getPropertyLoader(GroupingConstants.GROUPING_PROPERTIES_FILE_NAME);
+		try {
+			String existClassIdSt = GroupingUtil.checkNull(existClassId);
+			for (int i = 0; i < getCPGSelectedAttrbuteList.size(); i++) {
+				styleAttributeForm = getCPGSelectedAttrbuteList.get(i);
+				String classIdSelected = GroupingUtil.checkNull(styleAttributeForm.getClassId());
+				if(("").equals(classIdSelectedPrev)){
+					classIdSelectedPrev = classIdSelected;
+				}
+				if(!("").equals(existClassIdSt) && !existClassIdSt.equals(classIdSelected)){
+					message = prop.getProperty(GroupingConstants.MESSAGE_CPG_VALIDATION_DIFF_CLASS_ID_ONE) + " " 
+							+ classIdSelected + prop.getProperty(GroupingConstants.MESSAGE_CPG_VALIDATION_DIFF_CLASS_ID_TWO) + " " 
+							+ existClassIdSt + prop.getProperty(GroupingConstants.MESSAGE_CPG_VALIDATION_DIFF_CLASS_ID_THREE);
+					break;
+				}
+				if(!classIdSelected.equals(classIdSelectedPrev)){
+					message = prop.getProperty(GroupingConstants.MESSAGE_CPG_VALIDATION_DIFF_CLASS_ID_FOUR);
+					break;
+				}
+			}
+			if (LOGGER.isDebugEnabled()) {
+				LOGGER.debug("CPG Validation message is -->" + message);
+			}
+
+
+			//validateMap.put(errorCode, updatedSplitColorDetailsList);
+		} catch (Exception e) {
+			LOGGER.error("Exception occurred at the Service Implementation Layer");
+			throw new PEPServiceException(e.getMessage());
+		}
+		LOGGER.info("Exit-->calling validateSCGAttributeDetails");
+		return message;
 	}
 
 	/**
@@ -530,8 +618,8 @@ public class GroupingServiceImpl implements GroupingService {
 			for (int i = 0; i < selectedSplitAttributeList.size(); i++) {
 				jsonObjComponent = new JSONObject();
 				groupAttributeForm = selectedSplitAttributeList.get(i);
-				jsonObjComponent.put(GroupingConstants.COMPONENT_ID, groupAttributeForm.getOrinNumber());
-				jsonObjComponent.put(GroupingConstants.COMPONENT_IS_DEFAULT, groupAttributeForm.getIsDefault());
+				jsonObjComponent.put(GroupingConstants.COMPONENT_ID_ATTR, groupAttributeForm.getOrinNumber());
+				jsonObjComponent.put(GroupingConstants.COMPONENT_IS_DEFAULT_ATTR, groupAttributeForm.getIsDefault());
 				jsonArray.put(jsonObjComponent);
 			}
 
@@ -595,15 +683,6 @@ public class GroupingServiceImpl implements GroupingService {
 			while ((output = responseBuffer.readLine()) != null) {
 				LOGGER.info("call callAddComponentSCGService Service Output-->" + output);
 
-				/*
-				 * Response Message format- Pass:-
-				 * {"code":"100","description":"Group created "
-				 * ,"status":"SUCCESS",”groupId”:”XXXXXXX”} Fail:-
-				 * {"code":"101",
-				 * "description":"Group is not created ","status":"FAIL"
-				 * ,”groupId”:””}
-				 */
-
 				// Below if block is for handling single row data.
 				// if ((jsonArray != null) && (jsonArray.length() <= 1)) {
 				LOGGER.info("Single Request-->");
@@ -626,6 +705,70 @@ public class GroupingServiceImpl implements GroupingService {
 			LOGGER.error("inside Exception" + e);
 		}
 		LOGGER.info("Exiting callAddComponentSCGService-->" + responseMsg);
+		return responseMsg;
+	}
+
+	/**
+	 * This method is used to call Add Component to CPG Service
+	 * 
+	 * @param jsonStyleSpliColor
+	 * @return responseMsg
+	 * @throws Exception
+	 * @throws PEPFetchException
+	 */
+	public final String callAddComponentCPGService(final JSONObject jsonCpgComponent) throws Exception, PEPFetchException {
+		LOGGER.info("Entering callAddComponentCPGService-->");
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("jsonCpgComponent-->" + jsonCpgComponent);
+		}
+		String responseMsg = "";
+		try {
+			Properties prop = PropertyLoader.getPropertyLoader(GroupingConstants.MESS_PROP);
+			String serviceURL = prop.getProperty(GroupingConstants.ADD_COMPONENT_TO_CPG_SERVICE_URL);
+			LOGGER.info("Add Component to CPG ServiceURL-->" + serviceURL);
+
+			URL targetUrl = new URL(serviceURL);
+			HttpURLConnection httpConnection = (HttpURLConnection) targetUrl.openConnection();
+			httpConnection.setDoOutput(true);
+			httpConnection.setRequestMethod(prop.getProperty(GroupingConstants.SERVICE_REQUEST_METHOD));
+			httpConnection.setRequestProperty(prop.getProperty(GroupingConstants.SERVICE_REQUEST_PROPERTY_CONTENT_TYPE),
+					prop.getProperty(GroupingConstants.SERVICE_REQUEST_PROPERTY_APPLICATION_TYPE));
+
+			LOGGER.info("callAddComponentCPGService Service::Json Array-->" + jsonCpgComponent.toString());
+
+			String input = jsonCpgComponent.toString();
+			if (LOGGER.isDebugEnabled()) {
+				LOGGER.debug("final object in json-->" + "\t" + jsonCpgComponent.toString());
+			}
+			LOGGER.info("input....json-->" + input);
+			OutputStream outputStream = httpConnection.getOutputStream();
+			outputStream.write(input.getBytes());
+			outputStream.flush();
+
+			BufferedReader responseBuffer = new BufferedReader(new InputStreamReader((httpConnection.getInputStream())));
+			String output;
+			while ((output = responseBuffer.readLine()) != null) {
+				LOGGER.info("call callAddComponentCPGService Service Output-->" + output);
+
+				LOGGER.info("Single Request-->");
+				responseMsg = output;
+			}
+
+			httpConnection.disconnect();
+		} catch (MalformedURLException e) {
+			LOGGER.error("inside malformedException");
+			throw new PEPFetchException();
+		} catch (ClassCastException e) {
+			LOGGER.error("inside ClassCastException");
+			throw new PEPFetchException();
+		} catch (IOException e) {
+			LOGGER.error("inside IOException");
+		} catch (JSONException e) {
+			LOGGER.error("inside JSOnException");
+		} catch (Exception e) {
+			LOGGER.error("inside Exception" + e);
+		}
+		LOGGER.info("Exiting callAddComponentCPGService-->" + responseMsg);
 		return responseMsg;
 	}
 
@@ -806,7 +949,7 @@ public class GroupingServiceImpl implements GroupingService {
 	}
 
 	/**
-	 * This method is used to get the selected Attribute List for SSJ.
+	 * This method is used to get the selected Attribute List for SSG.
 	 * 
 	 * @param updatedSplitSKUDetailsList
 	 * @param selectedItemsArr
@@ -846,6 +989,49 @@ public class GroupingServiceImpl implements GroupingService {
 		}
 		LOGGER.info("Exit-->calling getSelectedSKUAttributeList from GroupingServiceImpl.");
 		return selectedSplitAttributeList;
+	}
+
+	/**
+	 * This method is used to get the selected Attribute List for CPG.
+	 * 
+	 * @param updatedSplitSKUDetailsList
+	 * @param selectedItemsArr
+	 * @param defaultSelectedAttr
+	 * @return selectedSplitAttributeList
+	 * @throws PEPServiceException
+	 * @throws PEPPersistencyException
+	 */
+	public final List<StyleAttributeForm> getSelectedCPGAttributeList(final List<StyleAttributeForm> getCPGDetailsList,
+			final String[] selectedItemsArr, final String defaultSelectedAttr) throws PEPServiceException, PEPPersistencyException {
+		// getting the Style Color details from Database
+		LOGGER.info("*Enter-->calling getSelectedCPGAttributeList from GroupingServiceImpl.");
+		List<StyleAttributeForm> selectedAttributeList = new ArrayList<StyleAttributeForm>();
+		StyleAttributeForm styleAttributeForm = null;
+		String mdmId = "";
+		for (int i = 0; i < getCPGDetailsList.size(); i++) {
+			styleAttributeForm = getCPGDetailsList.get(i);
+			mdmId = (null == styleAttributeForm.getOrinNumber() ? "" : styleAttributeForm.getOrinNumber().trim());
+			/*if (mdmId.equals(defaultSelectedAttr)) {
+				styleAttributeForm.setIsDefault("yes");
+			} else {
+				styleAttributeForm.setIsDefault("no");
+			}*/
+			for (int j = 0; j < selectedItemsArr.length; j++) {
+				/*if (LOGGER.isDebugEnabled()) {
+					LOGGER.debug(sizeCode + "<--Bean Array-->" + selectedItemsArr[j] + "<--");
+				}*/
+				if (selectedItemsArr[j].equals(mdmId)) {
+					selectedAttributeList.add(styleAttributeForm);
+					break;
+				}
+			}
+		}
+
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("selectedAttributeList.size()-->" + selectedAttributeList.size());
+		}
+		LOGGER.info("Exit-->calling getSelectedCPGAttributeList from GroupingServiceImpl.");
+		return selectedAttributeList;
 	}
 
 	/**
@@ -1237,13 +1423,35 @@ public class GroupingServiceImpl implements GroupingService {
 		LOGGER.info("Enter-->calling getSplitSkuDetailsList from GroupingServiceImpl.");
 		List<GroupAttributeForm> getSplitSkuDetailsList = null;
 		try {
-			getSplitSkuDetailsList = groupingDAO.getExistSplitColorDetails(groupId);
+			getSplitSkuDetailsList = groupingDAO.getExistSplitSkuDetails(groupId);
 		} catch (Exception e) {
 			LOGGER.error("Exception occurred at the getSplitSkuDetailsList().Service Implementation Layer");
 			throw new PEPServiceException(e.getMessage());
 		}
 		LOGGER.info("Exit-->calling getSplitSkuDetailsList from GroupingServiceImpl.");
 		return getSplitSkuDetailsList;
+	}
+
+	/**
+	 * This method is used to get the Existing Consolidated Grouping details details.
+	 * 
+	 * @param groupId
+	 * @return getSplitColorDetailsList
+	 * @throws PEPServiceException
+	 * @throws PEPPersistencyException
+	 */
+	public final List<StyleAttributeForm> getExistCPGDetails(final String groupId) throws PEPServiceException, PEPPersistencyException {
+		LOGGER.info("Enter-->calling getSplitSkuDetailsList from GroupingServiceImpl.");
+//		List<GroupAttributeForm> getSplitSkuDetailsList = null;
+		List<StyleAttributeForm> styleAttributeFormList = null;
+		try {
+			styleAttributeFormList = groupingDAO.getExistCPGDetails(groupId);
+		} catch (Exception e) {
+			LOGGER.error("Exception occurred at the getSplitSkuDetailsList().Service Implementation Layer");
+			throw new PEPServiceException(e.getMessage());
+		}
+		LOGGER.info("Exit-->calling getSplitSkuDetailsList from GroupingServiceImpl.");
+		return styleAttributeFormList;
 	}
 	
 	
@@ -1280,7 +1488,7 @@ public class GroupingServiceImpl implements GroupingService {
 				LOGGER.debug("addComponentToGroup.json Object Add Component to Split Color groupId--> " + jsonStyleSpliColor.getString("groupId"));
 			}
 			LOGGER.info("addComponentToGroup.Create Split Color Group Service Start currentTimeMillis-->" + System.currentTimeMillis());
-			final String resMsgSplitColor = ""; // callAddComponentSCGService(jsonStyleSpliColor); // TODO uncomment
+			final String resMsgSplitColor = callAddComponentSCGService(jsonStyleSpliColor); // TODO uncomment
 			LOGGER.info("addComponentToGroup.Create Split Color Group Service End currentTimeMillis-->" + System.currentTimeMillis());
 			if (LOGGER.isDebugEnabled()) {
 				LOGGER.debug("addComponentToGroup.Add Component to Split Color Group Service message-->" + resMsgSplitColor);
@@ -1374,4 +1582,85 @@ public class GroupingServiceImpl implements GroupingService {
 		return createGroupForm;
 	}
 
+
+	/**
+	 * This method is used to call add CPG Component Service and fetch data from database
+	 * @param updatedBy
+	 * @param groupType
+	 * @param selectedSplitAttributeList
+	 * @return
+	 * @throws Exception
+	 * @throws PEPFetchException
+	 */
+	public final CreateGroupForm addCPGComponentToGroup(String groupId, String updatedBy, String groupType,
+			List<StyleAttributeForm> getCPGSelectedAttrbuteList) throws Exception, PEPFetchException {
+		LOGGER.info("Entering addCPGComponentToGroup-->");
+
+		String responseMsg = "";
+		String responseMsgCode = "";
+		String groupCreationStatus = "";
+		JSONObject jsonObjectRes = null;
+		final Properties prop = PropertyLoader.getPropertyLoader(GroupingConstants.MESS_PROP);
+
+		/** Call add component service to add CPG attribute details List **/
+		if (null != groupType && groupType.equals(GroupingConstants.GROUP_TYPE_SPLIT_COLOR)) {
+			if (LOGGER.isDebugEnabled()) {
+				LOGGER.debug("addCPGComponentToGroup.Calling Add component for CPG service Start");
+			}
+			// Create Split Color Group
+			JSONObject jsonCpgComponent = null; // TODO populateAddComponentCPGJson(groupId, groupType, updatedBy, getCPGSelectedAttrbuteList);
+			if (LOGGER.isDebugEnabled()) {
+				LOGGER.debug("addCPGComponentToGroup.Add CPG Attribute JSON-->" + jsonCpgComponent);
+				LOGGER.debug("addCPGComponentToGroup.json Object Add Component to CPG groupId--> " + jsonCpgComponent.getString("groupId"));
+			}
+			LOGGER.info("addCPGComponentToGroup.Create CPG Group Service Start currentTimeMillis-->" + System.currentTimeMillis());
+			final String resMsgCPG = callAddComponentCPGService(jsonCpgComponent);
+			LOGGER.info("addCPGComponentToGroup.Create CPG Group Service End currentTimeMillis-->" + System.currentTimeMillis());
+			if (LOGGER.isDebugEnabled()) {
+				LOGGER.debug("addCPGComponentToGroup.Add Component to CPG Group Service message-->" + resMsgCPG);
+			}
+
+			/** Extract Service message **/
+			if(null != resMsgCPG && !("").equals(resMsgCPG)){
+				jsonObjectRes = new JSONObject(resMsgCPG);
+			}
+			if(null != jsonObjectRes){
+				responseMsgCode = jsonObjectRes.getString(GroupingConstants.MSG_CODE);
+			}
+			if (LOGGER.isDebugEnabled()) {
+				LOGGER.debug("addCPGComponentToGroup.resMsgSplitColor.responseMsgCode-->" + responseMsgCode);
+			}
+
+			if (null != responseMsgCode && responseMsgCode.equals(GroupingConstants.SUCCESS_CODE)) {
+				responseMsg = prop.getProperty(GroupingConstants.ADD_COMPONENT_SUCCESS);
+				groupCreationStatus = GroupingConstants.COMPONENT_ADDEDD_SUCCESSFULLY;
+				LOGGER.info("addCPGComponentToGroup.Add Component to CPG Group. ResponseMsg100::Success-->" + responseMsg);
+			} else {
+				responseMsg = prop.getProperty(GroupingConstants.ADD_COMPONENT_FAILURE);
+				groupCreationStatus = GroupingConstants.COMPONENT_ADDITION_FAILED;
+				LOGGER.info("addCPGComponentToGroup.Add Component to CPG Group. ResponseMsg101::Failure-->" + responseMsg);
+			}
+			if (LOGGER.isDebugEnabled()) {
+				LOGGER.debug("addCPGComponentToGroup.Calling Add component for CPG service End");
+			}
+		}
+		/** End Component Addition for All Type **/
+
+		// Call DAO to fetch Group Details after getting response from service
+		CreateGroupForm createGroupForm = new CreateGroupForm();
+
+		createGroupForm.setGroupId(groupId);
+		createGroupForm.setGroupType(groupType);
+		createGroupForm.setGroupCretionMsg(responseMsg);
+		createGroupForm.setGroupCreationStatus(groupCreationStatus);
+
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("Transfer object value from DTO to Form Object End");
+
+		}
+		/** **/
+
+		LOGGER.info("Exist addComponentToGroup-->");
+		return createGroupForm;
+	}
 }

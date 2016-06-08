@@ -29,7 +29,7 @@
 			<td class="text-center">{{=row.colorCode}}</td>
 			<td class="text-center">{{=row.colorName}}</td>
 			<td class="text-center">{{=row.size}}</td>
-			<td class="text-center"><input type="radio" name="defaultColor" value="{{=row.size}}" disabled="disabled" /></td>
+			<td class="text-center"><input type="radio" name="defaultColor" value="{{=row.size}}" {{ if(row.defaultColor){ }} checked="checked" class="trueDefult" {{ }else{ }} disabled="disabled" {{ } }} /></td>
 			<td class="text-center">{{=row.alreadyInGroup}}</td>
 		</tr>
 	{{ }) }}	

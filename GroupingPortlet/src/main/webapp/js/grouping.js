@@ -128,8 +128,7 @@ var app = app || {};
 					//minDate: 0 ,
 					buttonText: ""
 				});*/
-				
-				$('#startDate , #endDate').prop("readonly", true);
+								
 				
 				$('#startDate').datepicker({
 					showOn: "button",
@@ -140,6 +139,9 @@ var app = app || {};
 					minDate: 0 ,
 					onClose: function( selectedDate ) {
 					 $( "#endDate" ).datepicker( "option", "minDate", selectedDate );
+					},
+					onSelect : function(){
+						$('#startDate').prop('readonly',true);
 					}
 				});
 				
@@ -148,10 +150,12 @@ var app = app || {};
 					 showOn: "both",
 					buttonImage: app.Global.defaults.contextPath + "/img/iconCalendar.gif",
 					buttonImageOnly: true,
-					buttonText: "",
-					
+					buttonText: "",					
 					onClose: function( selectedDate ) {
 					$( "#startDate" ).datepicker( "option", "maxDate", selectedDate );
+					},
+					onSelect : function(){
+						$('#endDate').prop('readonly',true);
 					}
 				});
 				
@@ -206,7 +210,15 @@ var app = app || {};
 					$('#createGroupForm')[0].reset();
 					$('#dlgGroupCreate').dialog('close');
 					
-					if($('#closeGrpDlg').hasClass('refresh')){
+					$('#frmComponentSearch').trigger('submit'); //trigerring search internally
+					
+					$('#closeGrpDlg').val('Cancel');
+					$('#closeGrpDlg').removeClass('refresh');
+					$('#select-all').prop('checked', false);
+					$('#btnCreateGroup').prop('disabled', false).css('opacity','1');
+					$('#dlgGroupCreate').dialog( "option", "height", 370 );
+					
+					/* if($('#closeGrpDlg').hasClass('refresh')){
 						$('.overlay_pageLoading').removeClass('hidden');
 						
 						app.GroupFactory.searchSplitComponents($('#frmComponentSearch').serialize())						
@@ -236,7 +248,7 @@ var app = app || {};
 								$('.overlay_pageLoading').addClass('hidden');
 								
 							});
-					}				
+					} */				
 				});
 				
 				//group name char limit and display
@@ -358,6 +370,7 @@ var app = app || {};
 				
 				//group create button action
 				$('#btnCreateGroup').on('click', function(e){
+					$('#startDate').prop('readonly',false);
 					if($('#createGroupForm')[0].checkValidity()){
 						e.preventDefault();  //preventing default form submission
 						
@@ -374,14 +387,17 @@ var app = app || {};
 						var createFormValues = $('#createGroupForm').serialize();
 						
 						try{
+							$('#btnCreateGroup').prop('disabled', true).css('opacity','0.5').val('Saving..');
 							app.GroupFactory.createGroup(createFormValues + '&' + selectedComponentLists)
 								.done(function(result){
+									$('#btnCreateGroup').prop('disabled', false).css('opacity','1').val('Save');
 									var resultJSON = $.parseJSON(result);
 									//console.log(resultJSON);
 									
 									//handling and taking care of the response 
 									_super.handleGroupCreationResponse(resultJSON, $('#groupType').val());
 								}).error(function(){
+									$('#btnCreateGroup').prop('disabled', false).css('opacity','1').val('Save');
 									if($('#groupType').val()=='BCG'){
 										$('#dlgGroupCreate').dialog( "option", "minHeight", 500 );
 										$('#dlgGroupCreate').dialog( "option", "height", 500 );
@@ -598,10 +614,10 @@ var app = app || {};
 				
 				
 				//bootstrapping events when DOM is ready State
-				$(document).on('ready', function(e){
-					
+				$(document).on('ready', function(e){				
 					if(app.GroupLandingApp.urlCollection.groupSearchUrl){
 						//code to fetch all depts
+						
 						app.GroupFactory.fetchDepts()
 							.done(function(result){
 								//console.log(result)
@@ -714,11 +730,15 @@ var app = app || {};
 		},
 		
 		cleanupMessage: function(jqAreaObj, timeoutMS){
+			
 			timeoutMS = timeoutMS === undefined ? 8000 : timeoutMS;
 			
-			setTimeout(function(){
+			var timer = setTimeout(function(){
+				console.log('here');
 				jqAreaObj.fadeOut('slow');		
 			}, timeoutMS);
+			
+			console.log(timer);
 		},
 		
 		handleGroupCreationResponse: function(responseJSON, groupType){
@@ -767,13 +787,27 @@ var app = app || {};
 			
 			if((!errorFlag) && (groupType != 'SCG' && groupType != 'SSG')){
 				window.location.href = app.GroupLandingApp.urlCollection.addComponentUrl;
-			}else
-				$('#group-creation-messages').html(message);
-				$('#closeGrpDlg').val('Close');
-				$('#closeGrpDlg').addClass('refresh');
-				$('#btnCreateGroup').prop('disabled', true).css('opacity','0.5')
-				$('#dlgGroupCreate').dialog( "option", "minHeight", 457 );
-				$('#dlgGroupCreate').dialog( "option", "height", 457 );
+			}else{
+				if($('#groupType').val()=='BCG'){
+					$('#dlgGroupCreate').dialog( "option", "minHeight", 500 );
+					$('#dlgGroupCreate').dialog( "option", "height", 500 );
+				}else if($('#groupType').val()=='RCG'){
+					$('#dlgGroupCreate').dialog( "option", "minHeight", 447 );
+					$('#dlgGroupCreate').dialog( "option", "height", 447 );
+				}else{
+					$('#dlgGroupCreate').dialog( "option", "minHeight", 427 );
+					$('#dlgGroupCreate').dialog( "option", "height", 427 );
+				}
+				
+				$('#group-creation-messages').html(message).fadeIn('slow');
+				
+				if(!errorFlag){
+					$('#btnCreateGroup').prop('disabled', true).css('opacity','0.5');
+					$('#closeGrpDlg').val('Close');
+					$('#closeGrpDlg').addClass('refresh');
+				}
+											
+			}
 		},
 		
 		init: function(){
@@ -849,6 +883,7 @@ var app = app || {};
 						});
 					}else{
 						$('.overlay_pageLoading').removeClass('hidden');
+						
 						app.GroupFactory.searchSplitComponents($('#frmComponentSearch').serialize())						
 							.done(function(result){
 								if(!result.length)
@@ -863,13 +898,21 @@ var app = app || {};
 									//deleting componentList to pass only header
 									delete response.componentList;
 									
-									app.DataTable.dtContainer = '#dataTable';
+									/* app.DataTable.dtContainer = '#dataTable';
 									app.DataTable.dataHeader = response;
 									app.DataTable.data = componentList;
 									
 									$('.paginator').removeData('twbs-pagination'); //reconstructing the paginator
 									
-									app.DataTable.init();
+									app.DataTable.init(); */
+									
+									var dtTable = new app.DataTable();
+									dtTable.setDataHeader(response);
+									dtTable.setData(componentList);
+									
+									$('.paginator').removeData('twbs-pagination'); //reconstructing the paginator
+									
+									dtTable.init();
 								}
 								
 								

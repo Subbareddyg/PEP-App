@@ -23,6 +23,7 @@ public class GroupingConstants {
 	public static final String CREATE_GROUP_SERVICE_URL = "create.group.url";
 	public static final String ADD_COMPONENT_TO_SCG_SERVICE_URL = "add.componet.to.scg.url";
 	public static final String ADD_COMPONENT_TO_SSG_SERVICE_URL = "add.componet.to.ssg.url";
+	public static final String ADD_COMPONENT_TO_CPG_SERVICE_URL = "add.componet.to.cpg.url";
 	public static final String CREATE_GROUP_SERVICE_LIST = "list";
 	public static final String CREATE_GROUP_SERVICE_SUCCESS = "createGroup.success.message";
 	public static final String CREATE_GROUP_SERVICE_FAILURE = "createGroup.failure.message";
@@ -60,6 +61,9 @@ public class GroupingConstants {
 	public static final String MODIFIED_BY = "modifiedBy";
 	public static final String GROUP_STATUS = "status";
 	public static final String COMPONENT_LIST = "componentList";
+	public static final String COMPONENT_LIST_SUB = "childList";
+	public static final String COMPONENT_ID_ATTR = "componentId";
+	public static final String COMPONENT_IS_DEFAULT_ATTR = "defaultValue";
 	public static final String COMPONENT_ID = "id";
 	public static final String COMPONENT_IS_DEFAULT = "default";
 	public static final String COMPONENT_COLOR = "color";
@@ -75,8 +79,9 @@ public class GroupingConstants {
 	public static final String CARS_GROUPING_TYPE = "carsGroupType";
 	public static final String MESSAGE = "message";
 	public static final String CHILD_GROUP = "childGroup";
-
+	
 	public static final String VENDOR_STYLE_NO = "vendorStyleNo";
+	public static final String STYLE_ORIN_NO_SEARCH_PARAM = "styleOrinNo";
 	public static final String STYLE_ORIN_NO = "StyleOrinNo";
 	public static final String VENDOR_STYLE_NO_SEARCH = "vendorStyleNoSearch";
 	public static final String STYLE_ORIN_NO_SEARCH = "styleOrinNoSearch";
@@ -92,6 +97,8 @@ public class GroupingConstants {
 	public static final String GROUP_CREATED_WITH_OUT_COMPONENT_SCG = "203";
 	public static final String GROUP_CREATED_WITH_COMPONENT_SSG = "204";
 	public static final String GROUP_CREATED_WITH_OUT_COMPONENT_SSG = "205";
+	public static final String COMPONENT_ADDEDD_SUCCESSFULLY = "206";
+	public static final String COMPONENT_ADDITION_FAILED = "207";
 
 	public static final String GROUP_TYPES = "group.types";
 	public static final String GROUP_STATUS_EXT = "group.status.";
@@ -112,6 +119,10 @@ public class GroupingConstants {
 
 	public static final String MESSAGE_SPLITGROUP_VALIDATION_NO_DATA = "message.splitGroup.validation.no.data";
 	public static final String MESSAGE_SPLITGROUP_VALIDATION_INVALID_DATA = "message.splitGroup.validation.invalid.data";
+	public static final String MESSAGE_CPG_VALIDATION_DIFF_CLASS_ID_ONE = "message.cpg.validation.diff.classid.one";
+	public static final String MESSAGE_CPG_VALIDATION_DIFF_CLASS_ID_TWO = "message.cpg.validation.diff.classid.two";
+	public static final String MESSAGE_CPG_VALIDATION_DIFF_CLASS_ID_THREE = "message.cpg.validation.diff.classid.three";
+	public static final String MESSAGE_CPG_VALIDATION_DIFF_CLASS_ID_FOUR = "message.cpg.validation.diff.classid.four";
 
 	public static final String GROUP_DETAILS_FORM = "groupDetailsForm";
 	public static final String SELECTED_ATTRIBUTE_LIST = "selectedAttributeList";
@@ -165,6 +176,7 @@ public class GroupingConstants {
 	public static final String CLASS_SEARCH = "classSearch";
 	public static final String VENDOR_SEARCH = "vendorSearch";
 	public static final String SUPPLIER_SEARCH = "supplierSearch";
+	public static final String UPC_SEARCH = "UPCSearch";
 	public static final String TOTAL_RECORD_COUNT = "totalRecordCount";
 	public static final String RECORDS_PER_PAGE = "recordsPerPage";
 	public static final String PAGE_NUMBER = "pageNumber";

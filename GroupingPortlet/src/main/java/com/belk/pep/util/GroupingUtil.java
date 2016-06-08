@@ -64,5 +64,27 @@ public class GroupingUtil {
 		}
 		return valueStr;
 	}
+	
+	
+	/**
+	 * This method is used to get the comma separated value for query in parameter.
+	 * @param inputVal
+	 * @return
+	 */
+	public static String getInValForQuery(String inputVal) {
+		//String inputVal = "100,101";
+	    String inOutputval = "";
+		inputVal = checkNull(inputVal);
+	    String[] valArr = inputVal.split(",");
+	    for(int i = 0; i < valArr.length; i++){
+	          if(("").equals(inOutputval)){
+	                inOutputval = "\'" + valArr[i].trim() + "\'";
+	          }else{
+	                inOutputval = inOutputval + ",\'" + valArr[i].trim() + "\'";
+	          }
+	    }
+	    return inOutputval;
+	}
+
 
 }
