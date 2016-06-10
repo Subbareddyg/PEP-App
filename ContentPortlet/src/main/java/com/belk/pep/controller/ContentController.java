@@ -2491,6 +2491,7 @@ public class ContentController implements ResourceAwareController,EventAwareCont
             displayAttributesOnLoad(request,response,contentDisplayForm,orinNumber, mappedCategoryId);
             if((lstCarBrands != null) && (lstCarBrands.size() > 0)){
                 String selectedBrand = lstCarBrands.get(0).getSelectedBrand();
+                LOGGER.info("selectedBrand:"+selectedBrand); //JIRA VP9
                 if(selectedBrand != null && !selectedBrand.trim().equalsIgnoreCase("")){
                         request.setAttribute("selectedCarbrand", selectedBrand) ;
                 } 
@@ -2500,6 +2501,7 @@ public class ContentController implements ResourceAwareController,EventAwareCont
             
             if((lstOmniBrands != null) && (lstOmniBrands.size() > 0)){
                 String selectedOmni = lstOmniBrands.get(0).getSelectedBrand();
+                LOGGER.info("selectedOmni:"+selectedOmni); //JIRA VP9
                 if(selectedOmni != null && !selectedOmni.trim().equalsIgnoreCase("")){
                     //request.setAttribute("selectedOmnichannelbrand", (lstOmniBrands.get(0).getSelectedBrand().split("-"))[0]);
                     request.setAttribute("selectedOmnichannelbrand", (lstOmniBrands.get(0).getSelectedBrand()));
@@ -3071,6 +3073,11 @@ public class ContentController implements ResourceAwareController,EventAwareCont
         final String channelExclusive = request.getParameter("channelExclusive");
         final String bopisValue = request.getParameter("bopisSelectedValue");
         
+        LOGGER.info("omniBrandCode:"+omniBrandCode); //JIRA VP9
+        LOGGER.info("carsBrandCode:"+carsBrandCode); //JIRA VP9
+        String carsBrandCodeEncoded = StringEscapeUtils.escapeHtml4(carsBrandCode); //JIRA VP9
+        LOGGER.info("carsBrandCodeEncoded:"+carsBrandCodeEncoded); //JIRA VP9
+        
         if(StringUtils.isNotBlank(styleReq) && styleReq.equalsIgnoreCase("Style"))        {
            
             final String productNameXpath=ContentScreenConstants.PRODUCT_NAME_XPATH;
@@ -3117,8 +3124,8 @@ public class ContentController implements ResourceAwareController,EventAwareCont
                 final AttributesBean attributesOmniBrand = new AttributesBean(omniChannelBrandXpath,(omniBrandCode));
                 beanList.add(attributesOmniBrand);
             }
-            if((carsBrandCode != null) && StringUtils.isNotBlank(carsBrandCode) && !carsBrandCode.equalsIgnoreCase("-1")) {
-                final AttributesBean attributeCarsBrandCode = new AttributesBean(carsBrandXpath,(carsBrandCode));
+            if((carsBrandCodeEncoded != null) && StringUtils.isNotBlank(carsBrandCodeEncoded) && !carsBrandCodeEncoded.equalsIgnoreCase("-1")) { //JIRA VP9
+                final AttributesBean attributeCarsBrandCode = new AttributesBean(carsBrandXpath,(carsBrandCodeEncoded)); //JIRA VP9
                 beanList.add(attributeCarsBrandCode);
             }
            
@@ -3171,8 +3178,8 @@ public class ContentController implements ResourceAwareController,EventAwareCont
                 final AttributesBean attributesOmniBrand = new AttributesBean(omniChannelBrandXpath,(omniBrandCode));
                 beanList.add(attributesOmniBrand);
             }
-            if((carsBrandCode != null) && StringUtils.isNotBlank(carsBrandCode) && !carsBrandCode.equalsIgnoreCase("-1"))  {
-                final AttributesBean attributeCarsBrandCode = new AttributesBean(carsBrandXpath,(carsBrandCode));
+            if((carsBrandCodeEncoded != null) && StringUtils.isNotBlank(carsBrandCodeEncoded) && !carsBrandCodeEncoded.equalsIgnoreCase("-1"))  { //JIRA VP9
+                final AttributesBean attributeCarsBrandCode = new AttributesBean(carsBrandXpath,(carsBrandCodeEncoded)); //JIRA VP9
                 beanList.add(attributeCarsBrandCode);
             }
         }
@@ -3187,7 +3194,7 @@ public class ContentController implements ResourceAwareController,EventAwareCont
         final String createContentWebServiceReq = gson.toJson(finalPIMAndBMAttributesBean);
 
         //request to web service
-        LOGGER.info("Final Save Request object ------------------------------------------> "+createContentWebServiceReq);
+        LOGGER.info("Final Save Request object :"+createContentWebServiceReq);
         //call web service and read response
         LOGGER.info("Before Calling PIM ::  "+new Date());
         final String webserviceResponseMessage=contentDelegate.createContentWebService(createContentWebServiceReq);
@@ -3197,7 +3204,7 @@ public class ContentController implements ResourceAwareController,EventAwareCont
         } else {
             updateStatus = false;
         }
-        LOGGER.info("Final Save Status --------------------"+updateStatus);
+        LOGGER.info("Final Save Status :"+updateStatus);
         return updateStatus;
     }
     

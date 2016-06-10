@@ -79,9 +79,9 @@ public class PropertiesFileLoader {
             
             input =PropertiesFileLoader.class.getClassLoader().getResourceAsStream(fileName);           
 
-            LOGGER.info("getPropertyLoader");            
+           // LOGGER.info("getPropertyLoader");            
             properties.load(input);
-            LOGGER.info("properties"+properties);        
+           // LOGGER.info("properties"+properties);        
 
         }
         catch (FileNotFoundException e) {
