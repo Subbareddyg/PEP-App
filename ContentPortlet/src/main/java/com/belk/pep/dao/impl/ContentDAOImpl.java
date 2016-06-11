@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.Properties;
 //import java.util.logging.Logger;
 import org.apache.log4j.Logger;
+import org.apache.commons.lang3.StringEscapeUtils;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -83,6 +84,7 @@ public class ContentDAOImpl implements ContentDAO{
     @Override
     public List<CarBrandVO> getCardsBrandList(String orinNumber, String supplierId)
             throws PEPFetchException {
+        LOGGER.info("---inside getCardsBrandList---");
         Session session = null;
         Transaction transaction = null;
         List<CarBrandVO> listCarBrandVO=null;
@@ -101,6 +103,7 @@ public class ContentDAOImpl implements ContentDAO{
                 query.setParameter("supplier", supplierId);
                 query.setFetchSize(20);
                 rows = query.list();
+                LOGGER.info("rows size:"+rows.size());
             }
             
             /**
@@ -163,9 +166,10 @@ public class ContentDAOImpl implements ContentDAO{
                     listCarBrandVO.add(carBrandVO);
                     i++;
                 }
+                LOGGER.info("selectedBrand:"+selectedBrand);  //JIRA VP9
                 for(CarBrandVO carBrand: listCarBrandVO)
                 {
-                    carBrand.setSelectedBrand(selectedBrand);
+                    carBrand.setSelectedBrand(StringEscapeUtils.unescapeHtml4(selectedBrand)); //JIRA VP9
                     listCarBrandVOFinal.add(carBrand);
                 }
                 listCarBrandVO = listCarBrandVOFinal;

@@ -187,24 +187,24 @@ public class ExternalUserLoginDAOImpl implements ExternalUserLoginDAO{
         tx.commit();
         isUpdated = true;
         //Sending mail
-        String subject = "Password has been reset";
-        String message = "testmail";
-        
-        LOGGER.info("email id= " + externalUser.getId().getSupplierEmail());
-        LOGGER.info("vendor login= " + props.getProperty(ExternalVendorLoginConstants.EXTERNAL_VENDOR_LOGIN_URL));
-        //LOGGER.info("vendor login= " + ExternalVendorLoginConstants.EXTERNAL_VENDOR_LOGIN_URL);
-        System.out.println("vendor login= " + props.getProperty(ExternalVendorLoginConstants.EXTERNAL_VENDOR_LOGIN_URL));
+        String recipientAddress = "";
+        String message = "";
+        String subject = props.getProperty(ExternalVendorLoginConstants.SUBJECT);
+        String fromAddress = props.getProperty(ExternalVendorLoginConstants.FROM_ADDRESS); //JIRA VP-6
         
         message = createEmailMessage(resetPassword,externalUser.getId().getSupplierEmail(),props.getProperty(ExternalVendorLoginConstants.EXTERNAL_VENDOR_LOGIN_URL));
-        String recipientAddress = externalUser.getId().getSupplierEmail();
+        recipientAddress = externalUser.getId().getSupplierEmail();
         
         // prints debug info
+        LOGGER.info("From: " + fromAddress); //JIRA VP-6
         LOGGER.info("To: " + recipientAddress);
         LOGGER.info("Subject: " + subject);
         LOGGER.info("Message: " + message);
+        LOGGER.info("vendor login= " + props.getProperty(ExternalVendorLoginConstants.EXTERNAL_VENDOR_LOGIN_URL));
         
         // creates a simple e-mail object
         SimpleMailMessage emailMessage = new SimpleMailMessage();
+        emailMessage.setFrom(fromAddress); //JIRA VP-6
         emailMessage.setTo(recipientAddress);
         emailMessage.setSubject(subject);
         emailMessage.setText(message);
@@ -229,11 +229,11 @@ public class ExternalUserLoginDAOImpl implements ExternalUserLoginDAO{
        
        StringBuilder emailMessage= new StringBuilder(); 
        emailMessage.append("Hello,"+
-           "\nYour password for the Belk Product Enrichment Portal (PEP) has been reset." +
+           "\n\nYour password for the Belk Product Enrichment Portal (PEP) has been reset." +
             "\n\nThe new password for user name "+email+" is <"+resetPassword+"> " +
             "\nPlease make a note of it."+
         "\n\nPlease click  "+ externalLoginUrl+"   to access the system."+
-        "\nThank you,"+
+        "\n\nThank you,"+
         "\nThe Belk Digital Content Team");
 
         return emailMessage.toString();

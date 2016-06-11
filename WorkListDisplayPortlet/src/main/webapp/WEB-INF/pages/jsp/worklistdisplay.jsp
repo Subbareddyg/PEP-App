@@ -1009,7 +1009,7 @@ lockClearOnBack.value='1';
 
 
 var timeOutvarWLD = null;
-timeOutvarWLD = setTimeout(redirectSessionTimedOut, 1800000);
+timeOutvarWLD = setTimeout(redirectSessionTimedOut, 3600000);
 
 function createmannualpet(){
 document.getElementById("createManualPet").value = 'gotoCreateManualPet';
@@ -1304,7 +1304,7 @@ function bindDeptDialog (){
 	
 function timeOutWLDPage()
 {
-	timeOutvarWLD = setTimeout(redirectSessionTimedOut, 1800000);
+	timeOutvarWLD = setTimeout(redirectSessionTimedOut, 3600000);
 }
 
 document.onclick = clickListenerWLD;

@@ -38,7 +38,7 @@ function logout_home(){
 var timeOutvarCreatePET = null;	
 function timeOutCreatePETPage()
 {
-	timeOutvarCreatePET = setTimeout(redirectSessionTimedOut, 900000);
+	timeOutvarCreatePET = setTimeout(redirectSessionTimedOut, 3600000);
 }
 
 document.onclick = clickListenerCreatePET;

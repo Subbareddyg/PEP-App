@@ -1834,7 +1834,7 @@ var timeOutConfirm ='N';
 function timeOutPage(){
 	if(timeOutConfirm=='N')
 	{	
-		timeOutvar = setTimeout(redirectSessionTimedOut, 600000);
+		timeOutvar = setTimeout(redirectSessionTimedOut, 3600000);
 	}
 }
 
