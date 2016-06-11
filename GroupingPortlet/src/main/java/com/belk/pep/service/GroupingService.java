@@ -47,7 +47,7 @@ public interface GroupingService {
 	 * @return List<GroupAttributeForm>
 	 * @throws PEPServiceException
 	 * @throws PEPPersistencyException */
-	List<GroupAttributeForm> getSplitColorDetails(String vendorStyleNo, String styleOrin) throws PEPServiceException,
+	List<GroupAttributeForm> getSplitColorDetails(String vendorStyleNo, String styleOrin) throws PEPFetchException, PEPServiceException,
 			PEPPersistencyException;
 
 	/** This method is used to get Component details for CPG
@@ -57,8 +57,8 @@ public interface GroupingService {
 	 * @return List<GroupAttributeForm>
 	 * @throws PEPServiceException
 	 * @throws PEPPersistencyException */
-	List<StyleAttributeForm> getNewCPGDetails(final String vendorStyleNo, final String styleOrin, final String deptNoSearch, final String classNoSearch,
-			final String supplierSiteIdSearch, final String upcNoSearch) throws PEPServiceException,
+	List<StyleAttributeForm> getNewCPGDetails(String vendorStyleNo, String styleOrin, String deptNoSearch, String classNoSearch,
+			String supplierSiteIdSearch, String upcNoSearch, String groupId) throws PEPServiceException,
 			PEPPersistencyException;
 
 	/** This method is used to get Component details for Split SKU
@@ -242,4 +242,10 @@ public interface GroupingService {
 	 * @throws PEPFetchException */
 	CreateGroupForm addCPGComponentToGroup(String groupId, String updatedBy, String groupType,
 			List<StyleAttributeForm> getCPGSelectedAttrbuteList) throws Exception, PEPFetchException;
+	
+	/**
+	 * @param getSplitColorDetailsList
+	 * @return
+	 */
+	List<GroupAttributeForm> prepareListForView(final List<GroupAttributeForm> getSplitColorDetailsList);
 }

@@ -7,6 +7,9 @@ package com.belk.pep.constants;
  */
 public class GroupingConstants {
 
+	private GroupingConstants(){
+		
+	}
 	/** The Constant SYSTEM_FAILURE_MSG. */
 	public static final String SYSTEM_FAILURE_MSG = "System Failure.";
 
@@ -63,6 +66,7 @@ public class GroupingConstants {
 	public static final String COMPONENT_LIST = "componentList";
 	public static final String COMPONENT_LIST_SUB = "childList";
 	public static final String COMPONENT_ID_ATTR = "componentId";
+	public static final String COMPONENT_ATTR = "component";
 	public static final String COMPONENT_IS_DEFAULT_ATTR = "defaultValue";
 	public static final String COMPONENT_ID = "id";
 	public static final String COMPONENT_IS_DEFAULT = "default";
@@ -74,6 +78,7 @@ public class GroupingConstants {
 	public static final String COLOR_CODE = "colorCode";
 	public static final String COLOR_NAME = "colorName";
 	public static final String ALREADY_IN_GROUP = "alreadyInGroup";
+	public static final String ALREADY_IN_SAME_GROUP = "alreadyInSameGroup";
 	public static final String COMPONENT_DEFAULT_COLOR = "defaultColor";
 	public static final String COMPONENT_SELECTED_ITEMS = "selectedItems";
 	public static final String CARS_GROUPING_TYPE = "carsGroupType";
@@ -128,6 +133,14 @@ public class GroupingConstants {
 	public static final String SELECTED_ATTRIBUTE_LIST = "selectedAttributeList";
 	
 	public static final int DATE_FIELD_LENGTH = 10;
+	
+	/** CARS TYPE **/
+	public static final String CARS_GROUP_TYPE_GBS="PATTERN-SGBS-VS";
+	public static final String CARS_GROUP_TYPE_CPG="PATTERN-CONS-VS"; 
+	public static final String CARS_GROUP_TYPE_BCG="OUTFIT"; 
+	public static final String CARS_GROUP_TYPE_RCG_ONE="PATTERN-SPLIT-VS";
+	public static final String CARS_GROUP_TYPE_RCG_TWO="PATTERN-SSKU-VS"; 
+
 
 	/* Need to check below constants - */
 	/** The Constant DCA_ROLE **/
@@ -163,6 +176,7 @@ public class GroupingConstants {
 	public static final String USER_DATA_OBJ = "GroupingUserObj";
 
 	public static final String LAN_ID = "LAN_ID";
+	
 
 	/**
 	 * Grouping Search constants

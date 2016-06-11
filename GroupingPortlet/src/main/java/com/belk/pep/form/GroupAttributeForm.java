@@ -19,6 +19,7 @@ public class GroupAttributeForm {
     private String colorName;
     private String size;
     private String isAlreadyInGroup;
+    private String isAlreadyInSameGroup;
     private String isDefault;
     private String petStatus;
     private String entryType;
@@ -182,6 +183,18 @@ public class GroupAttributeForm {
 	 */
 	public void setClassId(String classId) {
 		this.classId = classId;
+	}
+	/**
+	 * @return the isAlreadyInSameGroup
+	 */
+	public String getIsAlreadyInSameGroup() {
+		return isAlreadyInSameGroup;
+	}
+	/**
+	 * @param isAlreadyInSameGroup the isAlreadyInSameGroup to set
+	 */
+	public void setIsAlreadyInSameGroup(String isAlreadyInSameGroup) {
+		this.isAlreadyInSameGroup = isAlreadyInSameGroup;
 	}
     
   }

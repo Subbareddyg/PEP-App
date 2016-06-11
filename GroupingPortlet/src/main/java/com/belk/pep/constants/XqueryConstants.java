@@ -1,6 +1,5 @@
 package com.belk.pep.constants;
 
-//import java.util.logging.Logger;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -72,6 +71,7 @@ public class XqueryConstants {
 				+ "                                                                                        "
 				+ "      WHERE                                                                             "
 				+ "      MDMID = :groupIdSql AND DELETED_FLAG = 'false'                                     ";
+
 
 		return getGroupHeaderDetailsQuery;
 	}
@@ -180,7 +180,7 @@ public class XqueryConstants {
 
 		LOGGER.info("Entering getGroupDetailsQuery() in Grouping XQueryConstant class.");
 
-		final StringBuffer getGroupDetailsQuery = new StringBuffer();
+		final StringBuilder getGroupDetailsQuery = new StringBuilder();
 		getGroupDetailsQuery.append(" SELECT GRP.MDMID GROUP_ID, GRP.GROUP_NAME, GRP.ENTRY_TYPE GROUP_TYPE,"
 				+ " CONTENT_STATE.THEVALUE CONTENT_STATE, GRP.START_DATE START_DATE, "
 				+ "GRP.END_DATE END_DATE, IMAGE_STATE.THEVALUE IMAGE_STATE, EXIST_IN_GROUP CHILD_GROUP "
@@ -289,7 +289,7 @@ public class XqueryConstants {
 
 		LOGGER.info("Entering getGroupDetailsCountQuery() in Grouping XQueryConstant class.");
 
-		final StringBuffer getGroupDetailsCountQuery = new StringBuffer();
+		final StringBuilder getGroupDetailsCountQuery = new StringBuilder();
 		getGroupDetailsCountQuery.append(" SELECT COUNT(*) TOTAL_COUNT FROM ADSE_GROUP_CATALOG GRP INNER JOIN ");
 		getGroupDetailsCountQuery.append(" ADSE_REFERENCE_DATA CONTENT_STATE ON GROUP_CONTENT_STATUS_CODE = CONTENT_STATE.MDMID ");
 		getGroupDetailsCountQuery.append(" AND CONTENT_STATE.ENTRY_TYPE = 'ContentState_Lookup' ");
@@ -370,7 +370,7 @@ public class XqueryConstants {
 
 		LOGGER.info("Entering getGroupDetailsQueryParent() in Grouping XQueryConstant class.");
 
-		final StringBuffer getGroupDetailsQueryParent = new StringBuffer();
+		final StringBuilder getGroupDetailsQueryParent = new StringBuilder();
 		getGroupDetailsQueryParent.append(" SELECT AGC.MDMID GROUP_ID, AGC.GROUP_NAME GROUP_NAME, AGC.ENTRY_TYPE GROUP_TYPE,"
 				+ " CONTENT_STATE.THEVALUE CONTENT_STATE, START_DATE START_DATE, END_DATE END_DATE, "
 				+ "GCM.COMPONENT_GROUPING_ID COMPONENT_GROUPING_ID, "
@@ -441,7 +441,7 @@ public class XqueryConstants {
 
 		LOGGER.info("Entering getGroupDetailsCountQueryParent() in Grouping XQueryConstant class.");
 
-		final StringBuffer getGroupDetailsQueryParent = new StringBuffer();
+		final StringBuilder getGroupDetailsQueryParent = new StringBuilder();
 		getGroupDetailsQueryParent.append(" SELECT COUNT(*) TOTAL_COUNT_PARENT ");
 		getGroupDetailsQueryParent.append(" FROM ADSE_GROUP_CATALOG AGC INNER JOIN ");
 		getGroupDetailsQueryParent.append(" ADSE_REFERENCE_DATA CONTENT_STATE ON GROUP_CONTENT_STATUS_CODE = CONTENT_STATE.MDMID ");
@@ -527,7 +527,12 @@ public class XqueryConstants {
 		if (null != ids && ids.trim().length() > 0) {
 			final String[] breakId = ids.split(",");
 			for (int count = 0; count < breakId.length; count++) {
-				finalString = finalString + "'" + breakId[count].trim() + "',";
+				StringBuilder strBuilder = new StringBuilder();
+				strBuilder.append(finalString);
+				strBuilder.append("'");
+				strBuilder.append(breakId[count].trim());
+				strBuilder.append("',");
+				finalString =strBuilder.toString();
 			}
 			if (finalString.length() > 0) {
 				finalString = finalString.substring(0, finalString.length() - 1);
@@ -556,7 +561,7 @@ public class XqueryConstants {
 				+ "  return <out><dept_id>{$dept/Identifiers/RMS_Id}</dept_id>" + " <dept_name>{$dept/Name}</dept_name></out>' "
 				+ "  passing dept.XML_DATA as \"XML_DATA\"" + " columns" + " DeptName varchar2(64) path '/out/dept_name',"
 				+ " DeptId varchar2(64) path '/out/dept_id'" + " ) DEPT_NAME"
-				+ " where dept.ENTRY_TYPE = 4 order by cast(DeptId as Integer)";
+				+ " where dept.ENTRY_TYPE = '4' order by cast(DeptId as Integer)";
 
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("SEARCH DEPARTMENT QUERY -- \n" + getAllDepartmentQuery);
@@ -575,7 +580,7 @@ public class XqueryConstants {
 		LOGGER.info("Entering getClassDetailsUsingDeptnumbers() in Grouping XQueryConstant class.");
 		final StringBuilder queryfragment = new StringBuilder();
 
-		queryfragment.append("  SELECT CLS_NAME.ClsId CLASS_ID, CLS_NAME.ClsName CLASS_NAME, CLS_NAME.Removal_Flag  ");
+		queryfragment.append("  SELECT /*+ INDEX(cls MERCH_HIER_IDX2) */ CLS_NAME.ClsId CLASS_ID, CLS_NAME.ClsName CLASS_NAME, CLS_NAME.Removal_Flag  ");
 		queryfragment
 				.append("  FROM ADSE_MERCHANDISE_HIERARCHY cls,                                                                              ");
 		queryfragment
@@ -607,7 +612,7 @@ public class XqueryConstants {
 		queryfragment
 				.append("      Removal_Flag VARCHAR2(10) path '/out/Removal_Flag') CLS_NAME                                                 ");
 		queryfragment
-				.append("  WHERE cls.ENTRY_TYPE = 5                                                                                          ");
+				.append("  WHERE cls.ENTRY_TYPE = '5'                                                                                         ");
 		queryfragment
 				.append("  AND (CLS_NAME.Removal_Flag = 'false' or CLS_NAME.Removal_Flag is null)                                            ");
 		queryfragment.append("  AND deptId in ( ");
@@ -662,7 +667,7 @@ public class XqueryConstants {
 				+ "	AND PET.MDMID=ITEM.MDMID                                                         "
 				+ "	AND (ITEM.MDMID = DETAIL.COMPONENT_MDMID                  " // /*To fetch Color data*/
 				+ "	  OR ITEM.MDMID = DETAIL.COMPONENT_STYLE_ID)  " // /*To fetch Style data for that Color for Product name*/
-				+ "	AND DETAIL.MDMID=:groupidSql  "; // /*StyleColor MDMID*/
+				+ "	AND DETAIL.MDMID=:groupidSql  ORDER BY ITEM.MDMID "; // /*StyleColor MDMID*/
 
 		return getExistSplitColorDetails;
 	}
@@ -769,11 +774,14 @@ public class XqueryConstants {
 		String getNewCPGDetails = "	SELECT                                                              "
 				+"	SEARCH.PARENT_MDMID,                                                                "
 				+"	SEARCH.MDMID,                                                                       "
-				+"	SEARCH.ENTRY_TYPE, SEARCH.CLASS_ID                                                  "
+				+"	SEARCH.ENTRY_TYPE, SEARCH.CLASS_ID,                                                  "
 				+"	SEARCH.PRIMARYSUPPLIERVPN,                                                          "
 				+"	PET_XML.PRODUCT_NAME,                                                               "
 				+"	PET_XML.COLOR_CODE,                                                                 "
-				+"	PET_XML.COLOR_DESC                                                                  "
+				+"  PET.EXIST_IN_GROUP ALREADY_IN_GROUP,                                           "
+				+"	PET_XML.COLOR_DESC,                                                                  "
+				+"	  CASE WHEN AGCM.MDMID is NULL THEN 'N'                                             "
+				+"	  ELSE 'Y' END EXIST_IN_SAME_GROUP                                                  "
 				+"	FROM                                                                                "
 				+"	ADSE_PET_CATALOG PET,                                                               "
 				+"	XMLTABLE(                                                                           "
@@ -791,6 +799,9 @@ public class XqueryConstants {
 				+"	  COLOR_DESC VARCHAR2(20) path '/COLOR/COLOR_DESC',                                 "
 				+"	  PRODUCT_NAME VARCHAR2(20) path '/COLOR/PRODUCT_NAME' ) PET_XML,                   "
 				+"	  ADSE_ITEM_CATALOG SEARCH                                                          "
+				+"	  LEFT  OUTER JOIN ADSE_GROUP_CHILD_MAPPING AGCM         			           "
+				+"	    ON SEARCH.MDMID =AGCM.COMPONENT_STYLE_ID             				       "
+				+"	    AND AGCM.MDMID = :groupIdSql                 							   "
 				+"	WHERE                                                                               "
 				+"	1=1                                                                                 "
 				+"	AND PET.MDMID=SEARCH.MDMID                                                          "

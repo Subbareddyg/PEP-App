@@ -32,43 +32,43 @@ public interface GroupingDAO {
 	 * @param vendorStyleNo String
 	 * @param styleOrin String
 	 * @return List<GroupAttributeForm> */
-	List<GroupAttributeForm> getSplitColorDetails(String vendorStyleNo, String styleOrin);
+	List<GroupAttributeForm> getSplitColorDetails(String vendorStyleNo, String styleOrin) throws PEPFetchException;
 
 	/** Method getSplitColorDetails.
 	 * 
 	 * @param vendorStyleNo String
 	 * @param styleOrin String
 	 * @return List<StyleAttributeForm> */
-	List<StyleAttributeForm> getNewCPGDetails(final String vendorStyleNo, final String styleOrin, final String deptNoSearch, 
-			final String classNoSearch,	final String supplierSiteIdSearch, final String upcNoSearch);
+	List<StyleAttributeForm> getNewCPGDetails(String vendorStyleNo, String styleOrin, String deptNoSearch, 
+			String classNoSearch,	String supplierSiteIdSearch, String upcNoSearch, String groupId) throws PEPFetchException;
 
 	/** Method getSplitSKUDetails.
 	 * 
 	 * @param vendorStyleNo String
 	 * @param styleOrin String
 	 * @return List<GroupAttributeForm> */
-	List<GroupAttributeForm> getSplitSKUDetails(String vendorStyleNo, String styleOrin);
+	List<GroupAttributeForm> getSplitSKUDetails(String vendorStyleNo, String styleOrin) throws PEPFetchException;
 
 	/** This method is used to get the Existing Group Attribute Details for Split
 	 * Color from Database.
 	 * 
 	 * @param groupId
 	 * @return */
-	List<GroupAttributeForm> getExistSplitColorDetails(String groupId);
+	List<GroupAttributeForm> getExistSplitColorDetails(String groupId) throws PEPFetchException;
 
 	/** This method is used to get the Existing Group Attribute Details for Split
 	 * Sku from Database.
 	 * 
 	 * @param groupId
 	 * @return */
-	List<GroupAttributeForm> getExistSplitSkuDetails(String groupId);
+	List<GroupAttributeForm> getExistSplitSkuDetails(String groupId) throws PEPFetchException;
 
 	/** This method is used to get the Existing Group Attribute Details for CPG
 	 * from Database.
 	 * 
 	 * @param groupId
 	 * @return */
-	List<StyleAttributeForm> getExistCPGDetails(String groupId);
+	List<StyleAttributeForm> getExistCPGDetails(String groupId) throws PEPFetchException;
 
 	/** Method to get the groups for search group.
 	 * 

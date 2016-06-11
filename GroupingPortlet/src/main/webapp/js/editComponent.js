@@ -31,7 +31,7 @@ var app = app || {} ;
 							app.DataTable.dataHeader = _super.searchValue = response;
 							app.DataTable.data = componentList; */
 							
-							var dtTable = new app.DataTable({dtContainer: '#exisiting-table-dataTable', rowTemplateId : '#sku-existing-template'});
+							var dtTable = new app.DataTable({dtContainer: '#exisiting-table-dataTable', rowTemplateId : '#existing-template'});
 							dtTable.setDataHeader(_super.searchValue);
 							dtTable.setData(componentList);
 							
@@ -39,8 +39,15 @@ var app = app || {} ;
 							
 							//app.DataTable.init();
 							dtTable.init();
+							console.log($('#groupType').val().trim());
+							if($('#groupType').val().trim() == 'CPG'){
+								
+								console.log(_super.searchValue.classId);
+								$('#classId').val(_super.searchValue.classId);
+							}
 						}
 					}).complete(function(){
+						$('.overlay_pageLoading').addClass('hidden');
 						_super.searchFormValidate($('#groupType').val().trim());
 						_super.handleEvent();
 					});
@@ -80,12 +87,11 @@ var app = app || {} ;
 									
 									var resultJSON = $.parseJSON(result);
 									
-									app.GroupLandingApp.handleGroupCreationResponse(resultJSON, resultJSON.groupType);
+									app.GroupLandingApp.handleGroupCreationResponse(resultJSON, resultJSON.groupType, false);
 								}).error(function(jqXHR, textStatus, errorThrown){
 									$('#group-creation-messages').html(app.GroupLandingApp.buildMessage(jqXHR.status + ' - ' + textStatus + ' - ' + errorThrown, 'error'))
 										.fadeIn('slow');
 								}).complete(function(){
-									console.log('here');
 									//cleaning up message after 4 sec
 									app.GroupLandingApp.cleanupMessage($('#group-creation-messages'), 4000);
 								});
@@ -142,7 +148,15 @@ var app = app || {} ;
 				
 				break;
 				
-				}			
+				}
+				
+				$('#styleOrinNoShowOnly').on('blur',function(e){
+					_super.putValue();
+				});
+
+
+
+				
 			},
 			putValue : function(){
 				 $('#styleOrinNo').val($('#styleOrinNoShowOnly').val());
@@ -152,10 +166,10 @@ var app = app || {} ;
 			
 			init: function(){
 				this.loadExitingData();
-				this.handleEvent();
+				//this.handleEvent();
 				
 				
-				//app.GroupLandingApp.init();
+				app.GroupLandingApp.init();
 				app.SplitGroupLanding.handleEvents();
 			}
 			

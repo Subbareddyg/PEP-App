@@ -65,12 +65,16 @@
 			});
 			
 			//handler to select all the items
-			_super.$(this.config.dtContainer).on('click', '#select-all', function(e){
+			
+			
+			_super.$(this.config.dtContainer).on('click', '.select-all', function(e){
+				
 				if(_super.$(this).is(':checked')){
-					_super.$('.item-check').prop('checked', true);
+										
+					_super.$(_super.config.dtContainer).find('.item-check').prop('checked', true);
 					_super.$(_super.config.dtContainer).find('input[type="radio"]').prop('disabled', false);
 				}else{
-					_super.$('.item-check').prop('checked', false);					
+					_super.$(_super.config.dtContainer).find('.item-check').prop('checked', false);					
 					if(_super.$(_super.config.dtContainer).find('input[type="radio"]').hasClass('trueDefult')){
 						_super.$(_super.config.dtContainer).find('input[type="radio"]').prop('disabled', false);
 					}else{
@@ -83,8 +87,12 @@
 				if(_super.$(this).is(':checked')){
 					_super.$(this).parent().parent().find('input[type=radio]').prop('disabled', false);
 					
-					if(_super.$('.item-check').length == _super.$('.item-check:checked').length)
-						_super.$('#select-all').prop('checked', true);			
+					if(_super.$(_super.config.dtContainer).find('.item-check').length == 
+						_super.$(_super.config.dtContainer).find('.item-check:checked').length){
+						
+						_super.$(_super.config.dtContainer).find('.select-all').prop('checked', true);	
+					}
+									
 				}else{
 					if(_super.$(_super.config.dtContainer).find('input[type="radio"]').hasClass('trueDefult')){
 						_super.$(this).parent().parent().find('input[type=radio]').prop('disabled', false);
@@ -92,7 +100,7 @@
 						_super.$(this).parent().parent().find('input[type=radio]').prop('disabled', true);
 					}
 					
-					_super.$('#select-all').prop('checked', false);
+					_super.$(_super.config.dtContainer).find('.select-all').prop('checked', false);
 				}	
 			});
 			
@@ -212,8 +220,8 @@
 		},
 
 		init: function(){
-			console.log(this);
 			
+		//	console.log(this);
 			this.totalRecords = this._.size(this.data); //counting total records
 			
 			//clearing any sorting mechanism used to sort previsouly;

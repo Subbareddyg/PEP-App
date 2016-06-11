@@ -17,7 +17,7 @@
 				<tr>
 					<th width="18%"><b><fmt:message key="addcomponent.screen.level.groupingId" /></b></th>
 					<td width="32%"><c:out value="${groupDetailsForm.groupId}" /></td>
-					<th width="18%"><b><fmt:message key="addcomponent.screen.level.status" /></b></b></th>
+					<th width="13%"><b><fmt:message key="addcomponent.screen.level.status" /></b></b></th>
 					<td width="32%"><c:out value="${groupDetailsForm.groupStatusDesc}" /></td>
 				</tr>
 				<tr>
@@ -126,7 +126,7 @@
 					<td>&nbsp;</td>
 					<td align="right" >
 						<input type="reset" value="Clear" class="btn" />
-						<input type="submit" value="Search" class="btn"  id="search-groups"/>
+						<input type="submit" value="Search" class="btn"  id="search-components"/>
 					</td>
 				</tr>
 			</table>
@@ -159,6 +159,9 @@
 				</div>
 			</div>
 			<div class="clearfix"></div>
+			<c:if test="${groupDetailsForm.groupType == 'CPG'}">
+				<%@ include file="/WEB-INF/pages/jsp/CPGTemplate.jsp" %>
+			</c:if>
 			<c:if test="${groupDetailsForm.groupType == 'SCG'}">
 				<%@ include file="/WEB-INF/pages/jsp/splitColorTemplate.jsp" %>
 			</c:if>
@@ -217,6 +220,9 @@
 				</div>
 			</div>
 			<div class="clearfix"></div>
+			<c:if test="${groupDetailsForm.groupType == 'CPG'}">
+				<%@ include file="/WEB-INF/pages/jsp/CPGExisting.jsp" %>
+			</c:if>
 			<c:if test="${groupDetailsForm.groupType == 'SCG'}">
 				<%@ include file="/WEB-INF/pages/jsp/splitColorExisting.jsp" %>
 			</c:if>
@@ -227,16 +233,7 @@
 				<div class="pagination-left">
 					<div class="pagination-left-wrapper">
 						<input type="button" class="btn" value="Remove Component" style="width: 140px; opacity:0.5" id="remove-existing-group" disabled="disabled" /> 
-						<!--
-						<br> <br>
-						<label for="page-limit-2">Show: </label>
-						<select name="page-limit-2" id="page-limit-2" class="record-limit">
-							<option value="10">10</option>
-							<option value="50">50</option>
-							<option value="100">100</option>
-						</select>
-						<span class="pagination-text"></span>
-						-->
+						
 					</div>
 				</div>
 				<div class="pagination-right">
@@ -246,7 +243,7 @@
 			</div>
 			<div class="pagination-container" style="text-align:center; margin-top: 15px;">
 				<input type="button" class="btn" value="Save" style="width: 70px;" id="save-existing-group" />
-				<input type="button" class="btn" value="Close" style="width: 80px;" id="close-existing-group" onclick="history.back(1)" />
+				<input type="button" class="btn" value="Close" style="width: 80px;" id="close-existing-group" onclick="window.location.href='/wps/portal/home/creategrouping'" />
 			</div>
 		</div>
 	</div>
@@ -257,7 +254,7 @@
 </div>
 
 <!-- div loading starts-->
-<div class="overlay_pageLoading hidden"><img src="<%=response.encodeURL(request.getContextPath())%>/img/loading.gif" alt="Loading.."></div>
+<div class="overlay_pageLoading"><img src="<%=response.encodeURL(request.getContextPath())%>/img/loading.gif" alt="Loading.."></div>
 <!-- div loading ends-->
 
 <portlet:resourceURL id="getExistGrpComponent" var="getExistGrpComponentURL" />

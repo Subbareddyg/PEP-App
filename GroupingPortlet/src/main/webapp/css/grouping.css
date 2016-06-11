@@ -5,7 +5,7 @@
 .group-search-area .cell{float: left; width:32%; margin:3px;}
 .clearfix{clear:both; content: ''; display:table;}
 .footer-content{margin: 0 auto; width: 10%;}
-.btn{display: inline !important; padding:3px !important; margin:2px !important; cursor: pointer !important; float: none !important;}
+.btn{display: inline !important; padding:3px !important; margin:2px !important; cursor: pointer !important; float: none !important; font-size:13px !important;}
 .content-table{margin: 0 auto; padding: 5px; width: 95%}
 .content-table td, .content-table th{padding: 5px;}
 .content-table a, .content-table a:active, .content-table a:focus, .content-table a:visited{color: #00649d;text-decoration: none;}
@@ -24,6 +24,7 @@ table.colored-row .text-center{text-align:center;}
 /* css rules for ui dialog */
 .ui-custom-message-styling{padding: 10px;margin: 12px;}
 .ui-widget{font-family : tahoma, arial, helvetica, sans-serif !important;}
+.dialog-wrapper td { font-size:11px !important;}
 .dlg-custom .ui-widget-header {background: #369 repeat-x;color: #fff;}
 .dlg-custom .ui-dialog-titlebar-close {#display: none;}
 .dlg-custom select{height:24px; border-radius:4px; width: 100%}

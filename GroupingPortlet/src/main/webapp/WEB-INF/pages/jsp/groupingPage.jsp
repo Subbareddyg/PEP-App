@@ -18,7 +18,9 @@
                         <option value="${groupTypesMap.key}"  [b]selected="true"[/b] ><c:out value="${groupTypesMap.value}"/></option>              
                     </c:forEach>
 				</select>
-				<input type="button" class="btn" id="btnGroupCreate" value="Create Grouping">
+				 
+								<input type="button" class="btn" id="btnGroupCreate" <c:if test="${readonly =='yes'}">disabled style="opacity:0.6;" </c:if> value="Create Grouping">
+				
 		</div>
 	</div>
 </div>

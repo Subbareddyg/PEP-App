@@ -4,11 +4,21 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.apache.log4j.Logger;
+
+import com.belk.pep.controller.GroupingController;
+
 /**
  * The Class DateUtil.
  */
 public class DateUtil {
     
+	private DateUtil(){
+		
+	}
+	/** The Constant LOGGER. */
+	private final static Logger LOGGER = Logger.getLogger(DateUtil.class.getName());
+
     /**
      * String to date.
      *
@@ -23,7 +33,7 @@ public class DateUtil {
         try {
             date = formatter.parse(sDate);
         } catch (ParseException e) {
-            e.printStackTrace();
+           LOGGER.error("Error in DateUtil.stringToDate() -->" + e.getMessage());
         }
         return date;
     }
@@ -44,7 +54,7 @@ public class DateUtil {
         try {
             date = formatter.parse(sDate);
         } catch (ParseException e) {
-            e.printStackTrace();
+        	LOGGER.error("Error in DateUtil.stringToDateMMddyyyy() -->" + e.getMessage());
         }
         return date;
     }
@@ -68,7 +78,7 @@ public class DateUtil {
         	date = formatter1.parse(sDate);
             dateSt = formatter.format(date);
         } catch (ParseException e) {
-            e.printStackTrace();
+        	LOGGER.error("Error in DateUtil.stringToStringMMddyyyy() -->" + e.getMessage());
         }
         return dateSt;
     }

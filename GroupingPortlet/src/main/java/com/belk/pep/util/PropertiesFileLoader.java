@@ -13,6 +13,10 @@ import com.belk.pep.controller.GroupingController;
  * 
  * @author */
 public class PropertiesFileLoader {
+	private PropertiesFileLoader(){
+		
+	}
+	
 	/** This method is responsible for returning the Properties.
 	 * 
 	 * @return

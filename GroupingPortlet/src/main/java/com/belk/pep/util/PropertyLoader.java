@@ -14,6 +14,7 @@ import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.Properties;
 import java.util.regex.Matcher;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
@@ -41,7 +42,7 @@ public class PropertyLoader {
 	/** @param file
 	 * @return */
 	public Properties getConnectionProperties(String file) {
-		LOGGER.info("file--->" + file);
+		LOGGER.info(" Entering getConnectionProperties");
 		Properties prop = null;
 		InputStream inputStream = null;
 		if (prop == null) {
@@ -50,37 +51,33 @@ public class PropertyLoader {
 				inputStream = new FileInputStream(new File(file));
 				prop.load(inputStream);
 			} catch (FileNotFoundException e) {
-				LOGGER.info("Inside FileNotFoundException");
+				LOGGER.error("Inside FileNotFoundException " + e);
 			} catch (IOException e) {
-				LOGGER.info("Inside IOException");
+				LOGGER.error("Inside IOException" + e);
 			}
 
 			if (inputStream != null) {
 				try {
 					inputStream.close();
 				} catch (IOException e) {
+					LOGGER.error("Inside IOException " + e);
 				}
 			}
 
 		}
+		LOGGER.info(" Exiting getConnectionProperties");
 		return prop;
 	}
 
 	public static Properties getPropertyLoader(String fileName) {
 		Properties properties = new Properties();
-		FileInputStream fileInput = null;
 		InputStream input = null;
+		LOGGER.info(" Entering getPropertyLoader");
 		try {
 
-			/* input
-			 * =PropertyLoader.class.getClassLoader().getResourceAsStream(fileName
-			 * );
-			 * 
-			 * LOGGER.info("getPropertyLoader"); properties.load(input);
-			 * LOGGER.info("properties"+properties); */
 
 			input = PropertyLoader.class.getClassLoader().getResourceAsStream(fileName);
-			LOGGER.info("getPropertyLoader");
+			
 			properties.load(input);
 
 			Enumeration e = properties.propertyNames();
@@ -95,22 +92,13 @@ public class PropertyLoader {
 			LOGGER.info("properties" + properties);
 
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			LOGGER.error("Inside FileNotFoundException " + e);
 		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (NullPointerException e) {
-			e.printStackTrace();
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			if (fileInput != null) {
-				try {
-					fileInput.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
+			LOGGER.error("Inside IOException " + e);
+		}  catch (Exception e) {
+			LOGGER.error("Inside error " + e);
 		}
+		LOGGER.info(" Exiting getPropertyLoader");
 		return properties;
 	}
 

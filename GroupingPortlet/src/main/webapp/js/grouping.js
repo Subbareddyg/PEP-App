@@ -208,47 +208,20 @@ var app = app || {};
 				//close group creation dlg-custom
 				$('#closeGrpDlg').on('click', function(e){
 					$('#createGroupForm')[0].reset();
-					$('#dlgGroupCreate').dialog('close');
-					
-					$('#frmComponentSearch').trigger('submit'); //trigerring search internally
-					
-					$('#closeGrpDlg').val('Cancel');
-					$('#closeGrpDlg').removeClass('refresh');
-					$('#select-all').prop('checked', false);
-					$('#btnCreateGroup').prop('disabled', false).css('opacity','1');
+					 $('#dlgGroupCreate').dialog('close');
 					$('#dlgGroupCreate').dialog( "option", "height", 370 );
 					
-					/* if($('#closeGrpDlg').hasClass('refresh')){
-						$('.overlay_pageLoading').removeClass('hidden');
-						
-						app.GroupFactory.searchSplitComponents($('#frmComponentSearch').serialize())						
-							.done(function(result){
-								var response = $.parseJSON(result);
-								//console.log(response.componentList);
-								if(response.componentList){
-									//processing data table generation
-									//passing only components
-									var componentList = response.componentList;
-									//deleting componentList to pass only header
-									delete response.componentList;
-									
-									app.DataTable.dataHeader = response;
-									app.DataTable.data = componentList;
-									app.DataTable.init();
-								}								
-								
-								$("#search-result-panel").removeClass('hidden');
-																
-							}).complete(function(){
-								$('#closeGrpDlg').val('Cancel');
-								$('#closeGrpDlg').removeClass('refresh');
-								$('#select-all').prop('checked', false);
-								$('#btnCreateGroup').prop('disabled', false).css('opacity','1');
-								$('#dlgGroupCreate').dialog( "option", "height", 370 );
-								$('.overlay_pageLoading').addClass('hidden');
-								
-							});
-					} */				
+					
+					if($('#closeGrpDlg').hasClass('refresh')){
+						$('.overlay_pageLoading').removeClass('hidden'); 
+						$('#frmComponentSearch').trigger('submit'); //trigerring search internally																				
+						$('#closeGrpDlg').val('Cancel');
+						$('#closeGrpDlg').removeClass('refresh');
+						$('#select-all').prop('checked', false);
+						$('#btnCreateGroup').prop('disabled', false).css('opacity','1');
+						$('#dlgGroupCreate').dialog( "option", "height", 370 );
+						$('.overlay_pageLoading').addClass('hidden');
+					} 				
 				});
 				
 				//group name char limit and display
@@ -734,11 +707,8 @@ var app = app || {};
 			timeoutMS = timeoutMS === undefined ? 8000 : timeoutMS;
 			
 			var timer = setTimeout(function(){
-				console.log('here');
 				jqAreaObj.fadeOut('slow');		
 			}, timeoutMS);
-			
-			console.log(timer);
 		},
 		
 		handleGroupCreationResponse: function(responseJSON, groupType){

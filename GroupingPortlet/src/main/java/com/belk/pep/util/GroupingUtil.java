@@ -12,6 +12,10 @@ import com.belk.pep.exception.checked.PEPFetchException;
 
 /** The Class GroupingUtil. */
 public class GroupingUtil {
+	
+	private GroupingUtil(){
+		
+	}
 	/** The Constant LOGGER. */
 	private final static Logger LOGGER = Logger.getLogger(GroupingUtil.class.getName());
 
@@ -80,7 +84,12 @@ public class GroupingUtil {
 	          if(("").equals(inOutputval)){
 	                inOutputval = "\'" + valArr[i].trim() + "\'";
 	          }else{
-	                inOutputval = inOutputval + ",\'" + valArr[i].trim() + "\'";
+				  StringBuilder strBuilder = new StringBuilder();
+				  strBuilder.append(inOutputval);
+				  strBuilder.append(",\'");
+				  strBuilder.append(valArr[i].trim());
+				  strBuilder.append("\'");
+	              inOutputval = strBuilder.toString();
 	          }
 	    }
 	    return inOutputval;
