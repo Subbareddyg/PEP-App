@@ -23,24 +23,34 @@
 	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
 		<!-- DB configuration for local Development Database
 		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver"></property>
-		<property name="url" value="jdbc:oracle:thin:@//000PIMPMDBDV02.belkinc.com:1521/VPORTDV"></property>
+		<property name="url"
+			value="jdbc:oracle:thin:@//000PIMPMDBDV02.belkinc.com:1521/VPORTDV"></property>
 		<property name="username" value="VENDORPORTAL"></property>
 		<property name="password" value="vendorportal"></property>-->
 		
-		<!-- DB configuration for SIT   Database -->
-		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver"></property>
-		<!-- property name="url" 	value="jdbc:oracle:thin:@//000PIMPMDBIT02.belkinc.com:1521/VPORTIT"></property>
-		<property name="username" value="VENDORPORTAL"></property>
-		<property name="password" value="vportit"></property-->	
-		<property name="url" value="#{systemEnvironment['SYSTEMENV_URL']}"></property>
-		<property name="username" value="#{systemEnvironment['SYSTEMENV_USERNAME']}"></property>
-		<property name="password" value="#{systemEnvironment['SYSTEMENV_PASSWORD']}"></property>
 		
+		<!-- DB configuration for PROD Database  -->
+		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver"></property>
+		<property name="url" 	value="jdbc:oracle:thin:@//000PIMPRDBPD01.belkinc.com:1521/VPORTPD"></property>
+		<property name="username" value="VENDORPORTAL"></property>
+		<property name="password" value="vportpd"></property>
 		<property name="maxActive" value="100"/>		   
         <property name="maxWait" value="1000"/>
         <property name="maxIdle" value="15"/>
         <property name="removeAbandoned" value="true"/> 
-        <property name="removeAbandonedTimeout" value="120"/> 
+        <property name="removeAbandonedTimeout" value="120"/>  
+		
+		
+		<!-- DB configuration for SIT   Database 
+		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver"></property>
+		<property name="url" value="jdbc:oracle:thin:@//000PIMPMDBIT02.belkinc.com:1521/VPORTIT"></property>
+		<property name="username" value="VENDORPORTAL"></property>
+		<property name="password" value="vportit"></property>
+		<property name="maxActive" value="100"/>	   
+        <property name="maxWait" value="1000"/>
+        <property name="maxIdle" value="15"/>
+        <property name="removeAbandoned" value="true"/> 
+        <property name="removeAbandonedTimeout" value="120"/>   -->
 		
 	</bean>
 

@@ -1,4 +1,5 @@
 <%@ include file="/WEB-INF/pages/jsp/include.jsp" %>
+<fmt:setBundle basename="grouping" />
 <div align="right" style="margin-bottom: 0.5cm" >	
 			<c:out value="${LAN_ID}"/> &nbsp;	 
 			<input type="button"   style="font-weight: bold" name="logout" value="Logout" 
@@ -7,7 +8,7 @@
 		 </div>
 <div  class="cars_panel x-hidden">
 	<div class="x-panel-header">
-		Create Split Color Grouping
+		<fmt:message key="splitgroup.screen.level.header.scg" />
 	</div>
 	
 	<div class="x-panel-body">
@@ -17,16 +18,16 @@
 			<table cellspacing="5" cellpadding="0" border="0" class="content-table">
 				<tr>
 					<td width="15%" align="right">
-						<label for="s-grouping-id">Vendor Style Number#:</label>
+						<label for="s-grouping-id"><fmt:message key="splitgroup.screen.level.vendorStyleNo" /></label>
 					</td>
 					<td>
 						<input type="text" name="vendorStyleNo" id="vendorStyleNo" value="" />
 					</td>
 					<td width="20%" align="center">
-						OR
+						<fmt:message key="splitgroup.screen.level.or" />
 					</td>
 					<td width="15%" align="right">
-						<label for="s-grouping-id">Style ORIN#:</label>
+						<label for="s-grouping-id"><fmt:message key="splitgroup.screen.level.styleOrinNo" /></label>
 					</td>
 					<td>
 						<input type="text" name="styleOrinNo" id="styleOrinNo" value="" />
@@ -39,7 +40,7 @@
 					<td>&nbsp;</td>
 					<td>&nbsp;</td>
 					<td align="right">
-						<input type="button" value="Search" class="btn" id="search-components"/>
+						<input type="submit" value="Search" class="btn" id="search-components"/>
 					</td>
 				</tr>
 			</table>
@@ -49,20 +50,20 @@
 </div>
 <div  class="cars_panel x-hidden hidden" id="search-result-panel">
 	<div class="x-panel-header">
-		Search Result:
+		<fmt:message key="group.screen.level.searchResult" />
 	</div>
 	<div class="x-panel-body">
-		<div class="group-search-area">
+		<div class="group-search-area" id="dataTable">
 			<div class="pagination-container">
 				<div class="pagination-left">
 					<div class="pagination-left-wrapper">
-						<label for="page-limit-1">Show: </label>
+						<label for="page-limit-1"><fmt:message key="splitgroup.screen.level.show" /> </label>
 						<select name="page-limit-1" id="page-limit-1" class="record-limit">
 							<option value="10">10</option>
 							<option value="50">50</option>
 							<option value="100">100</option>
 						</select>
-						<span class="pagination-text">Showing 10 of 12 records</span>
+						<span class="pagination-text"></span>
 					</div>
 				</div>
 				<div class="pagination-right">
@@ -70,33 +71,20 @@
 				</div>
 			</div>
 			<div class="clearfix"></div>
-			<form name="selectedComponentForm" id="selectedComponentForm">
-			<input type="hidden" name="selectedItems" value="" id="splitCheckboxValue" >
-			<table cellpadding="0" cellspacing="0" border="1" class="content-table border-simple colored-row tree-grid">
-				<thead>
-					<tr>
-						<th width="10%"><label><input type="checkbox" id="select-all" /> Select All</label></th>
-						<th width="10%"><a href="#" class="sorting-available">Style ORIN#</a></th>
-						<th width="15%"><a href="#" class="sorting-available">Style Number</a></th>
-						<th width="15%"><a href="#" class="sorting-available">Name</a></th>
-						<th width="10%"><a href="#" class="sorting-available">Color Code</a></th>
-						<th width="10%"><a href="#" class="sorting-available">Default Color</a></th>
-						<th width="10%"><a href="#" class="sorting-available">Already in group</a></th>
-					</tr>
-				</thead>
-				<tbody id="row-container"></tbody>
-			</table>
-			</form>
+			
+			<!-- Including jsp for split color having template and data table -->
+			<%@ include file="/WEB-INF/pages/jsp/splitColorTemplate.jsp" %>
+			
 			<div class="pagination-container">
 				<div class="pagination-left">
 					<div class="pagination-left-wrapper">
-						<label for="page-limit-2">Show: </label>
+						<label for="page-limit-2"><fmt:message key="splitgroup.screen.level.show" /> </label>
 						<select name="page-limit-2" id="page-limit-2" class="record-limit">
 							<option value="10">10</option>
 							<option value="50">50</option>
 							<option value="100">100</option>
 						</select>
-						<span class="pagination-text">Showing 10 of 12 records</span>
+						<span class="pagination-text"></span>
 					</div>
 				</div>
 				<div class="pagination-right">
@@ -111,7 +99,7 @@
 	</div>
 </div>
 <div class="group-search-footer-area">
-	<div class="footer-content"><input type="button" onclick="history.back(1)" class="btn" value="Close"></div>
+	<div class="footer-content"><input type="button" onclick="window.location.href='/wps/portal/home/creategrouping'" class="btn" value="Close"></div>
 </div>
 <portlet:resourceURL var="ajaxUrl" id="splitAttributeSearch"></portlet:resourceURL>
 <script type="text/javascript" src="<%=response.encodeURL(request.getContextPath()+"/js/jquery.min.js")%>"></script>
@@ -122,7 +110,7 @@
     <div class="ui-state-error ui-corner-all" style="padding: 15px;"> 
         <p>
             <span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>
-            <span id="error-massege" >Sample ui-state-error style. </span>
+            <span id="error-massege" ><fmt:message key="splitgroup.screen.level.subHeader" /> </span>
         </p>
     </div>
 </div>
@@ -132,42 +120,48 @@
 		<form action="${createAction}" name="createGroupForm" id = "createGroupForm" method="post">
 		<table cellspacing="5" cellpadding="0" border="0" class="content-table" align="center">
 			<tr>
-				<td align="right">Grouping Type <span class="red-text">(*)</span>:</td>
+				<td align="right"><fmt:message key="splitgroup.screen.level.groupingType" /> <span class="red-text">(*)</span>:</td>
 				<td>
 					<!-- placeholder hidden field for holding selected group type -->
 					<input type="hidden" name="groupType" id="groupType" value="SCG" />
-					<select name="groupTypeDropDown" id="groupTypeDropDown" disabled="disabled">
+					<!-- select name="groupTypeDropDown" id="groupTypeDropDown" disabled="disabled">
 						<option value="CPG">Consolidated Product Grouping</option>
 						<option value="SCG" selected="selected">Split Color Grouping</option>
 						<option value="SSG">Split SKU Grouping</option>
 						<option value="RCG">Regular Collection Grouping</option>
 						<option value="BCG">Beauty Collection Grouping</option>
-						<option value="GSS">Group By Size Grouping</option>
+						<option value="GSG">Group By Size Grouping</option>
+					</select-->
+
+					<select name="groupTypeDropDown" id="groupTypeDropDown" disabled="disabled">
+						<c:forEach var="groupTypesMap" items="${groupTypesMap}">                                                                                                
+	                        <option value="${groupTypesMap.key}"  ${groupTypesMap.key == 'SCG' ? 'selected' : '' }><c:out value="${groupTypesMap.value}"/></option>
+	                    </c:forEach>
 					</select>
 				</td>
 			</tr>
 			<tr>
-				<td align="right">Grouping Name <span class="red-text">(*)</span>:</td>
+				<td align="right"><fmt:message key="splitgroup.screen.level.groupingName" /> <span class="red-text">(*)</span>:</td>
 				<td>
 					<input type="text" name="groupName" id="groupName" value="" class="" required />
-					<div class="charlimit">Current Chars: <span id="nameCurChars">0</span> Max Chars: <span id="nameMaxChars">0</span></div>
+					<div class="charlimit"><fmt:message key="splitgroup.screen.level.currentChars" /> <span id="nameCurChars">0</span> <fmt:message key="splitgroup.screen.level.maxChars" /> <span id="nameMaxChars">0</span></div>
 				</td>
 			</tr>
 			<tr>
-				<td align="right">Grouping Description <span class="red-text">(*)</span>:</td>
+				<td align="right"><fmt:message key="splitgroup.screen.level.groupingDesc" /> <span class="red-text">(*)</span>:</td>
 				<td>
 					<textarea cols="10" rows="4" class="" name="groupDesc" id="groupDesc" required></textarea>
-					<div class="charlimit">Current Chars: <span id="descCurChars">0</span> Max Chars: <span id="descMaxChars">0</span>
+					<div class="charlimit"><fmt:message key="splitgroup.screen.level.currentChars" /> <span id="descCurChars">0</span> <fmt:message key="splitgroup.screen.level.maxChars" /> <span id="descMaxChars">0</span>
 				</td>
 			</tr>
 			<tr class="optional-fields">
-				<td align="right">Launch Date <span class="red-text">(*)</span>:</td>
+				<td align="right"><fmt:message key="splitgroup.screen.level.launchDate" /> <span class="red-text">(*)</span>:</td>
 				<td>
 					<input type="text" name="startDate" id="startDate" value="" class="" style="width: 80%"/>
 				</td>
 			</tr>
 			<tr class="optional-fields">
-				<td align="right">End Date:</td>
+				<td align="right"><fmt:message key="splitgroup.screen.level.endDate" /></td>
 				<td>
 					<input type="text" name="endDate" id="endDate" value="" class="" style="width: 80%" />
 				</td>
@@ -196,37 +190,19 @@
 <div class="overlay_pageLoading hidden"><img src="<%=response.encodeURL(request.getContextPath())%>/img/loading.gif" alt="Loading.."></div>
 <!-- div loading ends-->
 
-<!-- Component Table Row Template starts -->
-<script type="text/template" id="row-template">
-{{ if(data.length){ }}
-	{{_.each(data, function(row, key){ }}
-		<tr>
-			<td><input type="checkbox" name="selectedItem[]" value="{{=row.colorCode}}" class="item-check" style="margin-left:14px" />
-			<td class="text-center">{{=row.StyleOrinNo}}</td>
-			<td class="text-center">{{=row.vendorStyleNo}}</td>
-			<td>{{=row.productName}}</td>
-			<td class="text-center">{{=row.colorCode}}</td>
-			<td class="text-center"><input type="radio" name="defaultColor" value="{{=row.colorCode}}" disabled="disabled" /></td>
-			<td class="text-center">{{=row.alreadyInGroup}}</td>
-		</tr>
-	{{ }) }}	
-{{ }else{ }}
-	<tr>
-		<td colspan="7" align="center"><strong>{{=dataHeader.message ? dataHeader.message : 'No record Found!'}}</strong></td>
-	</tr>
-{{ } }}
-</script>
 <!-- Component Table Row Template ends -->
 <script type="text/javascript" src="<%=response.encodeURL(request.getContextPath()+"/js/underscore-min.js")%>"></script>
+<script type="text/javascript" src="<%=response.encodeURL(request.getContextPath()+"/js/jquery.twbsPagination.min.js")%>"></script>
 <script>
 	app.Global.defaults.contextPath = '<%=response.encodeURL(request.getContextPath())%>';
 </script>
+<script type="text/javascript" src="<%=response.encodeURL(request.getContextPath()+"/js/URLFactory.js")%>"></script>
 <script type="text/javascript" src="<%=response.encodeURL(request.getContextPath()+"/js/DataTable.js")%>"></script>
 <script type="text/javascript" src="<%=response.encodeURL(request.getContextPath()+"/js/grouping.js")%>"></script>
 <script type="text/javascript" src="<%=response.encodeURL(request.getContextPath()+"/js/GroupFactory.js")%>"></script>
 <script>
 	app.GroupLandingApp.urlCollection.createGroupUrl = "${createGroupFormSubmitURL}";
-	app.GroupLandingApp.urlCollection.splitComponentSearchUrl = "${ajaxUrl}";
+	app.URLFactory.urlCollection.splitComponentSearchUrl = "${ajaxUrl}";
 	
 	app.GroupLandingApp.init();
 	app.SplitGroupLanding.init();

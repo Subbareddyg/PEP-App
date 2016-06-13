@@ -3,6 +3,7 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
-	
+
+<link rel="stylesheet" href="<%=response.encodeURL(request.getContextPath()+"/css/jquery-ui.css")%>"> 	
 <link rel="stylesheet" href="<%=response.encodeURL(request.getContextPath()+"/css/grouping.css")%>"> 
-<link rel="stylesheet" href="<%=response.encodeURL(request.getContextPath()+"/css/jquery-ui.css")%>">   	
+  	

@@ -8,32 +8,32 @@
 		 </div>
 <div  class="cars_panel x-hidden">
 	<div class="x-panel-header">
-		<b>Grouping Details</b>
+		<b><fmt:message key="addcomponent.screen.level.groupingDetails" /></b>
 	</div>
 	
 	<div class="x-panel-body">
 		<div class="group-create-area">
 			<table cellspacing="5" cellpadding="0" border="0" class="content-table">
 				<tr>
-					<th width="23%"><b>Grouping ID :</b></th>
-					<td width="31%"><c:out value="${groupDetailsForm.groupId}" /></td>
-					<th width="23%"><b>Status :</b></b></th>
-					<td width="23%"><c:out value="${groupDetailsForm.groupStatusDesc}" /></td>
+					<th width="18%"><b><fmt:message key="addcomponent.screen.level.groupingId" /></b></th>
+					<td width="32%"><c:out value="${groupDetailsForm.groupId}" /></td>
+					<th width="13%"><b><fmt:message key="addcomponent.screen.level.status" /></b></b></th>
+					<td width="32%"><c:out value="${groupDetailsForm.groupStatusDesc}" /></td>
 				</tr>
 				<tr>
-					<th><b>Grouping Name:</b></th>
+					<th><b><fmt:message key="addcomponent.screen.level.groupingName" /></b></th>
 					<td><c:out value="${groupDetailsForm.groupName}" /></td>
 					<td></td>
 					<td></td>
 				</tr>
 				<tr>
-					<th><b>Grouping Description:</b></th>
+					<th><b><fmt:message key="addcomponent.screen.level.groupingDesc" /></b></th>
 					<td><c:out value="${groupDetailsForm.groupDesc}" /></td>
 					<td></td>
 					<td></td>
 				</tr>
 				<tr>
-					<th><b>Grouping Type:</b></th>
+					<th><b><fmt:message key="addcomponent.screen.level.groupingType" /></b></th>
 					<td><c:out value="${groupDetailsForm.groupTypeDesc}" /></td>
 					<td></td>
 					<td></td>
@@ -41,15 +41,15 @@
 				
 				<c:if test="${groupDetailsForm.groupType == 'BCG'}">
 					<tr>
-						<th><b>Start Date:</b></th>
+						<th><b><fmt:message key="addcomponent.screen.level.startDate" /></b></th>
 						<td><c:out value="${groupDetailsForm.groupLaunchDate}" /></td>
-						<th><b>End Date:</b></th>
+						<th><b><fmt:message key="addcomponent.screen.level.endDate" /></b></th>
 						<td><c:out value="${groupDetailsForm.endDate}" /></td>
 					</tr>
 				</c:if>
 				<c:if test="${groupDetailsForm.groupType == 'RCG'}">
 					<tr>
-						<th><b>CARS Group Type:</b></th>
+						<th><b><fmt:message key="addcomponent.screen.level.carsGroupType" /></b></th>
 						<td><c:out value="${groupDetailsForm.carsGroupType}" /></td>
 						<th></th>
 						<td></td>
@@ -62,69 +62,71 @@
 </div>
 <div  class="cars_panel x-hidden">
 	<div class="x-panel-header">
-		<b>Add Components</b>
+		<b><fmt:message key="addcomponent.screen.level.header" /></b>
 	</div>
 	
 	<div class="x-panel-body">
 		<div class="group-search-area">
-			<form name="frmGroupSearch" action="" id="frmGroupSearch">
+			<form name="frmComponentSearch" id="frmComponentSearch" action="">
+			<input type="hidden" name="groupType" value=" <c:out value="${groupDetailsForm.groupType}" /> " id="groupType" >
+			<input type="hidden" name="groupId" value=" <c:out value="${groupDetailsForm.groupId}" /> " id="groupId" >
+			<input type="hidden" name="styleOrinNo" value="" id="styleOrinNo" >
 			<table cellspacing="5" cellpadding="0" border="0" class="content-table">
 				<tr>
 					<td width="10%" align="right">
-						<label for="s-grouping-id">Style ORIN#</label>
+						<label for="styleOrinNoShowOnly"><fmt:message key="addcomponent.screen.level.styleOrinNo" /></label>
 					</td>
 					<td>
-						<input type="text" name="groupId" id="s-grouping-id" value="" />
+						<input type="text" name="styleOrinNo" id="styleOrinNoShowOnly" value="" />
 					</td>
 					<td width="10%" align="right">
-						<label for="s-grouping-name">DEPT#</label>
+						<label for="s-grouping-dept"><fmt:message key="addcomponent.screen.level.deptNo" /></label>
 					</td>
 					<td>
-						<input type="text" name="groupName" id="s-grouping-name" value="" />
-						<input type="button" value="open" id="btnDlgClass"/>
+						<input type="text" name="deptSearch" id="s-grouping-dept" value="" />
+						<input type="button" value="open" id="btnDlgDept"/>
 					</td>
 					<td width="10%" align="right">
-						<label for="s-grouping-ssite">Class</label>
+						<label for="s-grouping-class"><fmt:message key="addcomponent.screen.level.class" /></label>
 					</td>
 					<td>
-						<input type="text" name="supplierId" id="s-grouping-ssite" value="" />
+						<input type="text" name="classSearch" id="s-grouping-class" value="" />
 						<input type="button" value="open" id="btnDlgClass"/>
 					</td>
 				</tr>
 				<tr>
 					<td width="10%" align="right">
-						<label for="s-grouping-dept">Vendor Style Number</label>
+						<label for="vendorStyleNo"><fmt:message key="addcomponent.screen.level.vendorStyleNo" /></label>
 					</td>
 					<td>
-						<input type="text" name="departments" id="s-grouping-dept" value="" />
+						<input type="text" name="vendorStyleNo" id="vendorStyleNo" value="" />
 						
 					</td>
 					<td width="10%" align="right">
-						<label for="s-grouping-dept">Supplier site#</label>
+						<label for="supplier-Search"><fmt:message key="addcomponent.screen.level.supplierSiteNo" /></label>
 					</td>
 					<td>
-						<input type="text" name="classes" id="s-grouping-dept" value="" />
+						<input type="text" name="supplierSearch" id="supplier-Search" value="" />
 						
 					</td>
 					<td width="10%" align="right">
-						<label for="s-grouping-dept">UPC#</label>				
+						<label for="upc-search"><fmt:message key="addcomponent.screen.level.upcNo" /></label>				
 					</td>
-					<td><input type="text" name="orinNumber" id="s-grouping-dept" value="" /></td>
+					<td><input type="text" name="UPCSearch" id="upc-search" value="" /></td>
 				</tr>
 				<tr>
 					<td width="10%" align="right">
-						<label for="s-grouping-dept">Group ID#</label>	
+						<label for="groupId-search"><fmt:message key="addcomponent.screen.level.groupId" /></label>	
 					</td>
-					<td><input type="text" name="vendor" id="s-grouping-dept" value="" /></td>
+					<td><input type="text" name="groupIDSearch" id="groupId-search" value="" /></td>
 					<td width="10%" align="right">
-						<label for="s-grouping-dept">Group Name</label>	
+						<label for="groupName-search"><fmt:message key="addcomponent.screen.level.groupName" /></label>	
 					</td>
-					<td><input type="text" name="vendor" id="s-grouping-dept" value="" /></td>					
+					<td><input type="text" name="groupNameSearch" id="groupName-search" value="" /></td>					
 					<td>&nbsp;</td>
 					<td align="right" >
-						<input type="hidden" value="SearchGroup" name="ResourceType" />
 						<input type="reset" value="Clear" class="btn" />
-						<input type="submit" value="Search" class="btn"  id="search-groups"/>
+						<input type="submit" value="Search" class="btn"  id="search-components"/>
 					</td>
 				</tr>
 			</table>
@@ -132,273 +134,263 @@
 		</div>
 	</div>
 </div>
-<div  class="cars_panel x-hidden">
+<div  class="cars_panel x-hidden hidden" id="search-result-panel">
 	<div class="x-panel-header">
 		<b>Search Results</b>
 	</div>
 	<div class="x-panel-body">
-		<div class="group-search-area">
+		<div class="group-search-area" id="dataTable">
+				<div id="group-creation-messages"></div>
+				
 			<div class="pagination-container">
 				<div class="pagination-left">
 					<div class="pagination-left-wrapper">
-						<label for="page-limit-1">Show: </label>
-						<select name="page-limit-1" id="page-limit-1">
+						<label for="page-limit-1"><fmt:message key="splitgroup.screen.level.show" /> </label>
+						<select name="page-limit-1" id="page-limit-1" class="record-limit">
 							<option value="10">10</option>
 							<option value="50">50</option>
 							<option value="100">100</option>
 						</select>
-						<span class="pagination-text">Showing 10 of 12 records</span>
+						<span class="pagination-text"></span>
 					</div>
 				</div>
 				<div class="pagination-right">
-					<ul class="paginator">
-						<li><a href="#"><<</a></li>
-						<li><a href="#" class="active">1</a></li>
-						<li><a href="#">2</a></li>
-						<li><a href="#">>></a></li>
-					</ul>
+					<ul class="paginator"></ul>
 				</div>
 			</div>
 			<div class="clearfix"></div>
-			<table cellpadding="0" cellspacing="0" border="1" class="content-table border-simple colored-row tree-grid">
-				<thead>
-					<tr>
-						<th width="10%"><a href="#" class="sorting-available"><b><input type="checkbox" name="checkbox" value="1" > Select All</b></a></th>
-						<th width="15%"><a href="#" class="sorting-available"><b>Style ORIN#</b></a></th>
-						<th width="15%"><a href="#" class="sorting-available"><b>Style Number</b></a></th>						
-						<th width="20%"><a href="#" class="sorting-available"><b>Name</b></a></th>
-						<th width="10%"><a href="#" class="sorting-available"><b>Color</b></a></th>
-						<th width="15%"><a href="#" class="sorting-available">Already In Group</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr>
-						<td >
-							<div class="node parent">
-								<input type="checkbox" name="checkbox" value="1" class="checkboxAlign" >
-							</div>
-						</td>
-						<td class="text-center">
-							<a href="#" class="expander collapse"><img src="<%=response.encodeURL(request.getContextPath())%>/img/expand.png" alt="Collapse" /></a>
-							<span class="orin-group">0123456789</span>
-						</td>
-						<td class="text-center" >101010</td>						
-						<td class="text-center">V Neck T-Shirt</td>
-						<td class="text-center"></td>
-						<td class="text-center">No</td>
-					</tr>
-					<tr>
-						<td >
-							<div class="node parent">
-								<input type="checkbox" name="checkbox" value="1" class="checkboxAlign" >
-							</div>
-						</td>
-						<td class="text-center">
-							<a href="#" class="expander collapse"><img src="<%=response.encodeURL(request.getContextPath())%>/img/collapsed.png" alt="Collapse" /></a>
-							<span class="orin-group">0123456789</span>
-						</td>
-						<td class="text-center">101010</td>						
-						<td class="text-center">V Neck T-Shirt</td>
-						<td class="text-center">Green</td>
-						<td class="text-center">No</td>
-					</tr>
-					<tr>
-						<td >
-							<div class="node parent">
-								&nbsp;
-							</div>
-						</td>
-						<td class="text-center">
-							<span class="orin-group">0123456789</span>
-						</td>
-						<td class="text-center">101010</td>						
-						<td class="text-center">V Neck T-Shirt</td>
-						<td class="text-center">Green</td>
-						<td class="text-center">No</td>
-					</tr>
-					<tr>
-						<td >
-							<div class="node parent">
-								<input type="checkbox" name="checkbox" value="1" class="checkboxAlign">
-							</div>
-						</td>
-						<td class="text-center">
-							<a href="#" class="expander collapse"><img src="<%=response.encodeURL(request.getContextPath())%>/img/expand.png" alt="Collapse" /></a>
-							<span class="orin-group">0123456789</span>
-						</td>
-						<td class="text-center">101010</td>						
-						<td class="text-center">Polo T-Shirt</td>
-						<td class="text-center"></td>
-						<td class="text-center">No</td>
-					</tr>							
-				</tbody>
-			</table>
-			
+			<c:if test="${groupDetailsForm.groupType == 'CPG'}">
+				<%@ include file="/WEB-INF/pages/jsp/CPGTemplate.jsp" %>
+			</c:if>
+			<c:if test="${groupDetailsForm.groupType == 'SCG'}">
+				<%@ include file="/WEB-INF/pages/jsp/splitColorTemplate.jsp" %>
+			</c:if>
+			<c:if test="${groupDetailsForm.groupType == 'SSG'}">
+				<%@ include file="/WEB-INF/pages/jsp/splitSKUTemplate.jsp" %>
+			</c:if>			
 			<div class="pagination-container">
 				<div class="pagination-left">
 					<div class="pagination-left-wrapper">
-						<input type="button" name="search-component" value="Add Components" class="btn" >	
+						<label for="page-limit-2"><fmt:message key="splitgroup.screen.level.show" /> </label>
+						<select name="page-limit-2" id="page-limit-2" class="record-limit">
+							<option value="10">10</option>
+							<option value="50">50</option>
+							<option value="100">100</option>
+						</select>
+						<span class="pagination-text"></span>
 					</div>
 				</div>
 				<div class="pagination-right">
-					
+					<ul class="paginator"></ul>
 				</div>
+				<div class="clearfix"></div>
+			</div>
+			<div class="pagination-container" style="text-align:left; margin-top: 15px;">
+				<div class="pagination-left">
+					<input type="button" class="btn" value="Add Component" style="width: 110px;" id="add-components" />
+				</div>
+				<div class="pagination-left" style="width:50%; margin-top:-12px; text-align:center">
+					<div id="group-creation-messages" ></div>
+				</div>
+			<div class="clearfix"></div>
 			</div>
 		</div>
 	</div>
 </div>
-
-<div  class="cars_panel x-hidden">
+<div class="cars_panel x-hidden">
 	<div class="x-panel-header">
-		<b>Existing Components</b>
+		<b><fmt:message key="addcomponent.screen.level.existingComponents" /></b>
 	</div>
 	<div class="x-panel-body">
-			<table cellpadding="0" cellspacing="0" border="1" class="content-table border-simple colored-row tree-grid">
-				<thead>
-					<tr>
-						<th width="10%"><a href="#" class="sorting-available"><b><input type="checkbox" name="checkbox" value="1" > Select All</b></a></th>
-						<th width="15%"><a href="#" class="sorting-available"><b>Style ORIN#</b></a></th>
-						<th width="15%"><a href="#" class="sorting-available"><b>Style Number</b></a></th>						
-						<th width="20%"><a href="#" class="sorting-available"><b>Name</b></a></th>
-						<th width="10%"><a href="#" class="sorting-available"><b>Color</b></a></th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr>
-						<td >
-							<div class="node parent">
-								<input type="checkbox" name="checkbox" value="1" class="checkboxAlign-existing" >
-							</div>
-						</td>
-						<td class="text-center">
-							<a href="#" class="expander collapse"><img src="<%=response.encodeURL(request.getContextPath())%>/img/collapsed.png" alt="Collapse" /></a>
-							<span class="orin-group">0123456789</span>
-						</td>
-						<td class="text-center" >101010</td>						
-						<td class="text-center">V Neck T-Shirt</td>
-						<td class="text-center"></td>						
-					</tr>																	
-				</tbody>
-			</table>
-			
+		<div class="group-search-area" id="exisiting-table-dataTable">
 			<div class="pagination-container">
 				<div class="pagination-left">
 					<div class="pagination-left-wrapper">
-						<input type="button" name="search-component" value="Remove Components" class="btn" >	
+						<label for="page-limit-1"><fmt:message key="splitgroup.screen.level.show" /> </label>
+						<select name="page-limit-1" id="page-limit-1" class="record-limit">
+							<option value="10">10</option>
+							<option value="50">50</option>
+							<option value="100">100</option>
+						</select>
+						<span class="pagination-text"></span>
 					</div>
 				</div>
 				<div class="pagination-right">
-					
+					<ul class="paginator"></ul>
 				</div>
+			</div>
+			<div class="clearfix"></div>
+			<c:if test="${groupDetailsForm.groupType == 'CPG'}">
+				<%@ include file="/WEB-INF/pages/jsp/CPGExisting.jsp" %>
+			</c:if>
+			<c:if test="${groupDetailsForm.groupType == 'SCG'}">
+				<%@ include file="/WEB-INF/pages/jsp/splitColorExisting.jsp" %>
+			</c:if>
+			<c:if test="${groupDetailsForm.groupType == 'SSG'}">
+				<%@ include file="/WEB-INF/pages/jsp/splitSKUExisting.jsp" %>
+			</c:if>
+			<div class="pagination-container">
+				<div class="pagination-left">
+					<div class="pagination-left-wrapper">
+						<input type="button" class="btn" value="Remove Component" style="width: 140px; opacity:0.5" id="remove-existing-group" disabled="disabled" /> 
+						
+					</div>
+				</div>
+				<div class="pagination-right">
+					<ul class="paginator"></ul>
+				</div>
+				<div class="clearfix"></div>
+			</div>
+			<div class="pagination-container" style="text-align:center; margin-top: 15px;">
+				<input type="button" class="btn" value="Save" style="width: 70px;" id="save-existing-group" />
+				<input type="button" class="btn" value="Close" style="width: 80px;" id="close-existing-group" onclick="window.location.href='/wps/portal/home/creategrouping'" />
 			</div>
 		</div>
 	</div>
 </div>
 
 <div class="group-search-footer-area">
-	<div class="footer-content"><input type="button" onclick="history.back(1)" class="btn" value="Close"></div>
+	
 </div>
 
+<!-- div loading starts-->
+<div class="overlay_pageLoading"><img src="<%=response.encodeURL(request.getContextPath())%>/img/loading.gif" alt="Loading.."></div>
+<!-- div loading ends-->
+
+<portlet:resourceURL id="getExistGrpComponent" var="getExistGrpComponentURL" />
+<portlet:resourceURL id="getNewGrpComponent" var="getNewGrpComponentURL" />
+<portlet:resourceURL id="addComponentToGroup" var="addComponentToGroupURL" />
+<portlet:resourceURL var="searchGroupResourceRequest"></portlet:resourceURL>
 
 
-<portlet:actionURL var="createAction"> 
-		<portlet:param name="action" value="createAction"/>
-</portlet:actionURL>
 
-<portlet:renderURL var="splitColorGroupingSubmit"> 
-	<portlet:param name="groupingTypeSplitColor" value="splitColor" />
-</portlet:renderURL>
+<!-- Department Search Result Row Template starts -->
+<script type="text/template" id="dept-row-template">
+{{ if(data.length){ }}
+	{{_.each(data, function(row, key){ }}
+		<tr>
+			<td><input type="checkbox" name="deptitems[]" {{=_.contains(selected, row.deptId) ? 'checked="checked"' : '' }} class="dept-items" value="{{=row.deptId}}" /></td>
+			<td>{{=row.deptId}}</td>
+			<td>{{=row.deptDesc}}</td>
+		</tr>
+	{{ }) }}	
+{{ }else{ }}
+	<tr>
+		<td colspan="3" align="center"><strong>No record Found!</strong></td>
+	</tr>
+{{ } }}
+</script>
+<!-- Department Search Result Row Template ends -->
 
-<portlet:resourceURL var="searchGroupResourceRequest"> 
-</portlet:resourceURL>
+<!-- Class Search Result Row Template starts -->
+<script type="text/template" id="class-row-template">
+{{ if(data.length){ }}
+	{{_.each(data, function(row, key){ }}
+		<tr>
+			<td><input type="checkbox" name="deptitems[]" {{=_.contains(selected, row.classId) ? 'checked="checked"' : '' }} class="class-items" value="{{=row.classId}}" /></td>
+			<td>{{=row.classId}}</td>
+			<td>{{=row.classDesc}}</td>
+		</tr>
+	{{ }) }}	
+{{ }else{ }}
+	<tr>
+		<td colspan="3" align="center"><strong>No record Found!</strong></td>
+	</tr>
+{{ } }}
+</script>
+<!-- Class Sear Result Row Template ends -->
 
-<portlet:renderURL var="splitSKUGroupingSubmit"> 
-	<portlet:param name="groupingTypeSplitSKU" value="splitSKU" />
-</portlet:renderURL>
 
-<portlet:resourceURL id="submitCreateGroupForm" var="createGroupFormSubmitURL" />
 
-<portlet:renderURL var="createGrpRenderUrl"> 
-    <portlet:param name="createGroupSuccessRender" value="CreateGrpSuccess" />
-</portlet:renderURL>
-<!-- Group Creation dialog starts -->
-<div id="dlgGroupCreate" style="display:none">
+
+<!-- Dept selection dialog starts -->
+<div id="dlgdeptSearch" class="hidden">
 	<div class="dialog-wrapper">
-		<form action="${createAction}" name="createGroupForm" id = "createGroupForm" method="post">
-		<table cellspacing="5" cellpadding="0" border="0" class="content-table" align="center">
-			<tr>
-				<td align="right">Grouping Type <span class="red-text">(*)</span>:</td>
-				<td>
-					<!-- placeholder hidden field for holding selected group type -->
-					<input type="hidden" name="groupType" id="groupType" value="" />
-					<select name="groupTypeDropDown" id="groupTypeDropDown" disabled="disabled">
-						<option value="CPG">Consolidated Product Grouping</option>
-						<option value="SCG">Split Color Grouping</option>
-						<option value="SSG">Split SKU Grouping</option>
-						<option value="RCG">Regular Collection Grouping</option>
-						<option value="BCG">Beauty Collection Grouping</option>
-						<option value="GSS">Group By Size Grouping</option>
-					</select>
-				</td>
-			</tr>
-			<tr>
-				<td align="right">Grouping Name <span class="red-text">(*)</span>:</td>
-				<td>
-					<input type="text" name="groupName" id="groupName" value="" class="" required />
-					<div class="charlimit">Current Chars: <span id="nameCurChars">0</span> Max Chars: <span id="nameMaxChars">0</span></div>
-				</td>
-			</tr>
-			<tr>
-				<td align="right">Grouping Description <span class="red-text">(*)</span>:</td>
-				<td>
-					<textarea cols="10" rows="4" class="" name="groupDesc" id="groupDesc" required></textarea>
-					<div class="charlimit">Current Chars: <span id="descCurChars">0</span> Max Chars: <span id="descMaxChars">0</span>
-				</td>
-			</tr>
-			<tr class="optional-fields">
-				<td align="right">Launch Date <span class="red-text">(*)</span>:</td>
-				<td>
-					<input type="text" name="startDate" id="startDate" value="" class="" style="width: 80%"/>
-				</td>
-			</tr>
-			<tr class="optional-fields">
-				<td align="right">End Date:</td>
-				<td>
-					<input type="text" name="endDate" id="endDate" value="" class="" style="width: 80%" />
-				</td>
-			</tr>
-			<tr>
-				<td align="right">&nbsp;</td>
-				<td>
-					<input type="button" class="btn" value="Cancel" id="closeGrpDlg" />
-					<input type="submit" class="btn" value="Save" id="btnCreateGroup"/>
-				</td>
-			</tr>
-			<tr>
-				<td align="center" colspan="2">
-					<div id="group-creation-messages"></div>
-				</td>
-			</tr>
-		</table>
-		</form>
+		<div class="dept-button-area">
+			<input id="btnClearDept" type="button" class="btn" value="Clear"  tabindex="5" /> &nbsp;
+			<input id="btnSaveDept" type="button" value="Save and Close" class="btn" tabindex="3" /> &nbsp;
+			<input id="btnCloseDept" type="button" value="Close" class="btn" tabindex="4" /> 
+		</div>
+		<div class="dept-search-area">
+			<form id="srchDeptsFrm" name="srchDeptsFrm">
+				<label for="selectedDeptSearch">Dept # </label><input type="text" name ="selectedDeptSearch" id ="selectedDeptSearch" tabindex="1" />
+				<input id="btnDepSearch" type="submit" value="Search" class="btn" tabindex="2" />
+			</form>
+		</div>
+		<div class="dept-result-area">
+			<table cellspacing="5" cellpadding="0" border="0" class="content-table border-simple" align="center">
+				<thead>
+					<tr>
+						<th></th>
+						<th>Dept#</th>
+						<th>Dept Description</th>
+					<tr>
+				</thead>
+				<tbody id="dept-search-result">
+					
+				</tbody>
+			</table>
+		</div>
 	</div>
 </div>
-<!-- Group Creation dialog ends -->
+<!-- Dept selection dialog ends -->
+
+<!-- Class selection dialog starts -->
+<div id="dlgClassSearch" class="hidden">
+	<div class="dialog-wrapper">
+		<div class="dept-button-area">
+			<input id="btnClearClass" type="button" class="btn" value="Clear"  tabindex="5" /> &nbsp;
+			<input id="btnSaveClass" type="button" value="Save and Close" class="btn" tabindex="3" /> &nbsp;
+			<input id="btnCloseClass" type="button" value="Close" class="btn" tabindex="4" /> 
+		</div>
+		<div class="dept-result-area">
+			<table cellspacing="5" cellpadding="0" border="0" class="content-table border-simple" align="center">
+				<thead>
+					<tr>
+						<th></th>
+						<th>Class #</th>
+						<th>Class Description</th>
+					<tr>
+				</thead>
+				<tbody id="class-result-area">
+					
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+<!-- Class selection dialog ends -->
+
+
+
+
+<div class="ui-widget" id="errorBox" style="display:none">
+    <div class="ui-state-error ui-corner-all" style="padding: 15px;"> 
+        <p>
+            <span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>
+            <span id="error-massege">Sample ui-state-error style. </span>
+        </p>
+    </div>
+</div>
 <script type="text/javascript" src="<%=response.encodeURL(request.getContextPath()+"/js/jquery.min.js")%>"></script>
 <script type="text/javascript" src="<%=response.encodeURL(request.getContextPath()+"/js/jquery-ui.js")%>"></script>
 <script type="text/javascript" src="<%=response.encodeURL(request.getContextPath()+"/js/constants.js")%>"></script>
 <script>
 	app.Global.defaults.contextPath = '<%=response.encodeURL(request.getContextPath())%>';
 </script>
-<script type="text/javascript" src="<%=response.encodeURL(request.getContextPath()+"/js/grouping.js")%>"></script>
+<script type="text/javascript" src="<%=response.encodeURL(request.getContextPath()+"/js/underscore-min.js")%>"></script>
+<script type="text/javascript" src="<%=response.encodeURL(request.getContextPath()+"/js/jquery.twbsPagination.min.js")%>"></script>
+<script type="text/javascript" src="<%=response.encodeURL(request.getContextPath()+"/js/URLFactory.js")%>"></script>
+<script type="text/javascript" src="<%=response.encodeURL(request.getContextPath()+"/js/DataTable.js")%>"></script>
 <script type="text/javascript" src="<%=response.encodeURL(request.getContextPath()+"/js/GroupFactory.js")%>"></script>
+<script type="text/javascript" src="<%=response.encodeURL(request.getContextPath()+"/js/grouping.js")%>"></script>
+<script type="text/javascript" src="<%=response.encodeURL(request.getContextPath()+"/js/editComponent.js")%>"></script>
 <script>
-	app.GroupLandingApp.urlCollection.SCGUrl = "${splitColorGroupingSubmit}";
-	app.GroupLandingApp.urlCollection.SSGUrl = "${splitSKUGroupingSubmit}";
+	app.URLFactory.urlCollection.existingCompUrl = "${getExistGrpComponentURL}";
+	app.URLFactory.urlCollection.splitComponentSearchUrl = "${getNewGrpComponentURL}";
+	app.URLFactory.urlCollection.addComponentToGroup = "${addComponentToGroupURL}";
 	app.GroupLandingApp.urlCollection.groupSearchUrl = "${searchGroupResourceRequest}";
-	app.GroupLandingApp.urlCollection.createGroupUrl = "${createGroupFormSubmitURL}";
-	app.GroupLandingApp.urlCollection.addComponentUrl = "${createGrpRenderUrl}";
-	
 	//init main SPA
-	app.GroupLandingApp.init();
+	
+	app.EditComponentLandingApp.init();
 </script>

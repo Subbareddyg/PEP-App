@@ -18,7 +18,9 @@
                         <option value="${groupTypesMap.key}"  [b]selected="true"[/b] ><c:out value="${groupTypesMap.value}"/></option>              
                     </c:forEach>
 				</select>
-				<input type="button" class="btn" id="btnGroupCreate" value="Create Grouping">
+				 
+								<input type="button" class="btn" id="btnGroupCreate" <c:if test="${readonly =='yes'}">disabled style="opacity:0.6;" </c:if> value="Create Grouping">
+				
 		</div>
 	</div>
 </div>
@@ -81,7 +83,7 @@
 					<td>&nbsp;</td>
 					<td align="right" >
 						<input type="hidden" value="searchGroup" name="resourceType" />
-						<input type="reset" value="Clear" class="btn" />
+						<input type="button" id="clrSrchGroup" value="Clear" class="btn" />
 						<input type="submit" value="Search" class="btn"  id="search-groups"/>
 					</td>
 				</tr>
@@ -118,13 +120,13 @@
 			<table cellpadding="0" cellspacing="0" border="1" class="content-table border-simple colored-row tree-grid">
 				<thead>
 					<tr>
-						<th width="15%"><a href="#" class="sorting-available"><b><fmt:message key="group.screen.level.table.header1" /></b></a></th>
-						<th width="20%"><a href="#" class="sorting-available"><b><fmt:message key="group.screen.level.table.header2" /></b></a></th>
-						<th width="15%"><a href="#" class="sorting-available"><b><fmt:message key="group.screen.level.table.header3" /></b></a></th>
-						<th width="5%"><a href="#" class="sorting-available"><b><fmt:message key="group.screen.level.table.header4" /></b></a></th>
-						<th width="5%"><a href="#" class="sorting-available"><b><fmt:message key="group.screen.level.table.header5" /></b></a></th>
-						<th width="10%"><a href="#" class="sorting-available"><b><fmt:message key="group.screen.level.table.header6" /></b></a></th>
-						<th width="10%"><a href="#" class="sorting-available"><b><fmt:message key="group.screen.level.table.header7" /></b></a></th>
+						<th width="15%"><a href="javascript:;" class="sortable" data-sort-column="groupId" data-sorted-by=""><b><fmt:message key="group.screen.level.table.header1" /></b></a></th>
+						<th width="20%"><a href="javascript:;" class="sortable" data-sort-column="groupName" data-sorted-by=""><b><fmt:message key="group.screen.level.table.header2" /></b></a></th>
+						<th width="15%"><a href="javascript:;" class="sortable" data-sort-column="groupType" data-sorted-by=""><b><fmt:message key="group.screen.level.table.header3" /></b></a></th>
+						<th width="5%"><a href="javascript:;" class="sortable" data-sort-column="imageStatus" data-sorted-by=""><b><fmt:message key="group.screen.level.table.header4" /></b></a></th>
+						<th width="5%"><a href="javascript:;" class="sortable" data-sort-column="contentStatus" data-sorted-by=""><b><fmt:message key="group.screen.level.table.header5" /></b></a></th>
+						<th width="10%"><a href="javascript:;" class="sortable" data-sort-column="startDate" data-sorted-by=""><b><fmt:message key="group.screen.level.table.header6" /></b></a></th>
+						<th width="10%"><a href="javascript:;" class="sortable" data-sort-column="endDate" data-sorted-by=""><b><fmt:message key="group.screen.level.table.header7" /></b></a></th>
 						<th width="15%">&nbsp;</th>
 					</tr>
 				</thead>
@@ -151,7 +153,7 @@
 	</div>
 </div>
 <div class="group-search-footer-area">
-	<div class="footer-content"><input type="button" onclick="history.back(1)" class="btn" value="Close"></div>
+	<div class="footer-content"><input type="button" onclick="window.location.href='/wps/portal/home/worklistDisplay'" class="btn" value="Close"></div>
 </div>
 
 <!-- div loading starts-->
@@ -181,6 +183,16 @@
 <portlet:renderURL var="createGrpRenderUrl"> 
     <portlet:param name="createGroupSuccessRender" value="CreateGrpSuccess" />
 </portlet:renderURL>
+
+<portlet:renderURL var="getGroupDetailsUrl"> 
+	<portlet:param name="getGroupDetails" value="getGroupDetails" />
+</portlet:renderURL>
+
+
+<portlet:actionURL var="getGroupDetailsUrl"> 
+		<portlet:param name="getGroupDetails" value="getGroupDetails"/>
+</portlet:actionURL>
+
 <!-- Group Creation dialog starts -->
 <div id="dlgGroupCreate" style="display:none">
 	<div class="dialog-wrapper">
@@ -192,12 +204,9 @@
 					<!-- placeholder hidden field for holding selected group type -->
 					<input type="hidden" name="groupType" id="groupType" value="" />
 					<select name="groupTypeDropDown" id="groupTypeDropDown" disabled="disabled">
-						<option value="CPG">Consolidated Product Grouping</option>
-						<option value="SCG">Split Color Grouping</option>
-						<option value="SSG">Split SKU Grouping</option>
-						<option value="RCG">Regular Collection Grouping</option>
-						<option value="BCG">Beauty Collection Grouping</option>
-						<option value="GSS">Group By Size Grouping</option>
+						<c:forEach var="groupTypesMap" items="${groupTypesMap}">
+							<option value="${groupTypesMap.key}"><c:out value="${groupTypesMap.value}"/></option>              
+	                    </c:forEach>
 					</select>
 				</td>
 			</tr>
@@ -313,7 +322,16 @@
 </div>
 <!-- Class selection dialog ends -->
 
-
+<!-- UI Confirmation dialog starts -->
+<div class="ui-widget" id="errorBox" style="display:none">
+    <div class="ui-state-error ui-corner-all" style="padding: 15px;"> 
+        <p>
+            
+            <span id="error-massege"></span>
+        </p>
+    </div>
+</div>
+<!-- UI Confirmation dialog starts -->
 
 <!-- Department Search Result Row Template starts -->
 <script type="text/template" id="dept-row-template">
@@ -367,6 +385,9 @@
 					</div>
 				{{ } }}
 				{{=row.groupId}}
+				{{if(row.childGroup == 'Y'){ }} 
+					<img src="<%=response.encodeURL(request.getContextPath())%>/img/grouping_indicator.png" alt="In Grouping" width="12" style="position: relative; top: -8px;" />
+				{{ } }}
 			</td>
 			<td>{{=row.groupName}}</td>
 			<td>{{=row.groupType}}</td>
@@ -374,7 +395,12 @@
 			<td class="text-center">{{=row.groupContentStatus}}</td>
 			<td class="text-center">{{=row.startDate}}</td>
 			<td class="text-center">{{=row.endDate}}</td>
-			<td class="text-center"><a href="javascript:;" class="gs-item-details" data-id="{{=row.groupId}}">Details</a> | <a href="javascript:;" class="delete-item" data-group-type="{{=row.groupTypeCode}}" data-group-id="{{=row.groupId}}">Delete</a></td>
+			<td class="text-center">
+				<form id="form_{{=row.groupId}}_{{=key}}" action="${getGroupDetailsUrl}">
+					<input type="hidden" name="groupId" value="{{=row.groupId}}" />
+					<input type="hidden" name="groupType" value="{{=row.groupTypeCode}}" />
+				</form>
+				<a href="javascript:;" onclick="document.getElementById('form_{{=row.groupId}}_{{=key}}').submit()" class="gs-item-details" data-id="{{=row.groupId}}">Details</a> | <a href="javascript:;" class="delete-item" data-group-type="{{=row.groupTypeCode}}" data-group-id="{{=row.groupId}}">Delete</a></td>
 		</tr>
 		{{ if(row.childList && row.childList.length){ }}
 			</tr>
@@ -390,8 +416,15 @@
 					<td class="text-center">{{=childRow.groupImageStatus}}</td>
 					<td class="text-center">{{=childRow.groupContentStatus}}</td>
 					<td class="text-center">{{=childRow.startDate}}</td>
+
 					<td class="text-center">{{=childRow.endDate}}</td>
-					<td class="text-center"><a href="javascript:;">Details</a> | <a href="javascript:;" class="delete-item" data-group-type="{{=childRow.groupTypeCode}}" data-group-id="{{=childRow.groupId}}">Delete</a></td>
+					<td class="text-center">
+						<form id="form_{{=childRow.groupId}}_{{=childKey}}" action="${getGroupDetailsUrl}">
+							<input type="hidden" name="groupId" value="{{=childRow.groupId}}" />
+							<input type="hidden" name="groupType" value="{{=childRow.groupTypeCode}}" />
+						</form>
+						<a href="javascript:;" onclick="document.getElementById('form_{{=childRow.groupId}}_{{=childKey}}').submit()" class="gs-item-details" data-id="{{=row.groupId}}">Details</a> | <a href="javascript:;" class="delete-item" data-group-type="{{=childRow.groupTypeCode}}" data-group-id="{{=childRow.groupId}}">Delete</a>
+					</td>
 				</tr>
 			{{ }) }}
 		{{ } }}
@@ -420,6 +453,7 @@
 	app.GroupLandingApp.urlCollection.createGroupUrl = "${createGroupFormSubmitURL}";
 	app.GroupLandingApp.urlCollection.addComponentUrl = "${createGrpRenderUrl}";
 	app.GroupLandingApp.urlCollection.deleteGroupUrl = "${deleteGroupResourceRequest}";
+	
 	//init main SPA
 	app.GroupLandingApp.init();
 </script>

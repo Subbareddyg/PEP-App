@@ -3,7 +3,7 @@
 (function($, _){
 	'use strict';
 	
-	app.DataTable = {
+	app.DataTableAjax = {
 		
 		searchParams: '',
 		
@@ -25,10 +25,10 @@
 		
 		totalRecords: 0,
 
-		template: _.template($('#row-template').html(), null,  {
+		template: $('#row-template').length ? _.template($('#row-template').html(), null,  {
 			interpolate :  /\{\{\=(.+?)\}\}/g,
 			evaluate: /\{\{(.+?)\}\}/g
-		}),
+		}) : null,
 
 		attachHandler: function(){
 			var _super = this;
@@ -57,6 +57,46 @@
 				$('.paginator').removeData('twbs-pagination'); //reconstructing the paginator
 				
 				_super.generateDataTable($(this).val(), _super.curPage, _super.dataHeader.sortedColumn, _super.dataHeader.ascDescOrder);
+			});
+			
+			$('#dataTable').on('click', '.sortable', function(){
+				
+				var sortColumn = $(this).data('sort-column') || null;
+				var sortMethod = $(this).data('sorted-by') || 'asc';
+				
+				//console.log(sortColumn);
+				//console.log(sortMethod);
+				//console.log(_super.data);
+				
+				if(sortColumn){
+					var sortedDispClass = 'sort-up';
+					
+				
+					//console.log(_super.data);
+					//console.log(sortColumn);
+					//console.log(sortMethod);
+					
+					_super.curPage = 1;
+					
+					$('.paginator').removeData('twbs-pagination'); //reconstructing the paginator
+					
+					$('a.sortable').removeClass('sort-up sort-down');
+					
+					//generating the datatable using newly sorted method
+					_super.generateDataTable(_super.dataHeader.recordsPerPage, 1, sortColumn, sortMethod);
+					
+					if(sortMethod == 'desc'){
+						sortedDispClass = 'sort-down';
+						sortMethod = 'asc';
+					}else{
+						sortMethod = 'desc';
+					}
+					
+					$(this).addClass(sortedDispClass); //removing sorting dir indicator 
+					
+					$(this).data('sorted-by', sortMethod); //adding necessary sorting dir indicator
+				}
+					
 			});
 		},
 
@@ -101,10 +141,12 @@
 			pageNumber = pageNumber === undefined ? this.curPage : pageNumber;
 			
 			if(sortedColumn === undefined){
-				sortedColumn = this.columnAlias[this.defaultConfig.sortedColumn] !== undefined ? this.columnAlias[this.defaultConfig.sortedColumn] : ''
+				//sortedColumn = this.columnAlias[this.defaultConfig.sortedColumn] !== undefined ? this.columnAlias[this.defaultConfig.sortedColumn] : '';
+				sortedColumn =  '';
 			}
 			
-			ascDescOrder = ascDescOrder === undefined ? this.defaultConfig.sortMethod : ascDescOrder;
+			//ascDescOrder = ascDescOrder === undefined ? this.defaultConfig.sortMethod : ascDescOrder;
+			ascDescOrder = ascDescOrder === undefined ? '' : ascDescOrder;
 			
 			//console.log(this.curPage);
 			$('.overlay_pageLoading').removeClass('hidden'); //showing overlay
@@ -146,6 +188,12 @@
 			this.handlePagination(this.dataHeader.recordsPerPage, $('.paginator'));
 		},
 		
+		clearSorting: function(){
+			$('#dataTable').off('click', '.sortable');
+			$('a.sortable').removeClass('sort-up sort-down');
+			$('a.sortable').data('sorted-by', null);
+		},
+		
 		serializeObj: function(obj){
 			var str = "";
 			for (var key in obj) {
@@ -159,6 +207,9 @@
 		},
 
 		init: function(){
+			//clearing any sorting mechanism used to sort previsouly;
+			this.clearSorting();
+			
 			this.generateDataTable();
 
 			this.attachHandler();

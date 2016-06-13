@@ -138,5 +138,8 @@ public static final String EXTERNAL_VENDOR_LOGIN_URL="external.login.url";
 public static final String BELK_BEST_PLAN = "belkbestplanurl";
 public static final String BELK_BEST_PLAN_URL_KEY = "BEBESTPLAN";
 
+public static final String FROM_ADDRESS = "external.login.fromaddress";
+
+public static final String SUBJECT = "external.login.subject";
 
 }

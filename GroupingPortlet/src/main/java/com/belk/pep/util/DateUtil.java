@@ -4,11 +4,21 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.apache.log4j.Logger;
+
+import com.belk.pep.controller.GroupingController;
+
 /**
  * The Class DateUtil.
  */
 public class DateUtil {
     
+	private DateUtil(){
+		
+	}
+	/** The Constant LOGGER. */
+	private final static Logger LOGGER = Logger.getLogger(DateUtil.class.getName());
+
     /**
      * String to date.
      *
@@ -16,16 +26,14 @@ public class DateUtil {
      * @return the date
      * @throws ParseException the parse exception
      */
-    public static Date stringToDate(String sDate) throws ParseException{
+    public static Date stringToDate(final String sDate) throws ParseException {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
        // String dateInString = "07/06/2013";
         Date date = new Date();
         try {
             date = formatter.parse(sDate);
-           // System.out.println(date);
-          //  System.out.println(formatter.format(date));
         } catch (ParseException e) {
-            e.printStackTrace();
+           LOGGER.error("Error in DateUtil.stringToDate() -->" + e.getMessage());
         }
         return date;
     }
@@ -39,16 +47,14 @@ public class DateUtil {
      * @throws ParseException the parse exception
      * @author AFUPYB3
      */
-    public static Date stringToDateMMddyyyy(String sDate) throws ParseException{
+    public static Date stringToDateMMddyyyy(final String sDate) throws ParseException {
         SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
        // String dateInString = "07/06/2013";
         Date date = new Date();
         try {
             date = formatter.parse(sDate);
-           // System.out.println(date);
-          //  System.out.println(formatter.format(date));
         } catch (ParseException e) {
-            e.printStackTrace();
+        	LOGGER.error("Error in DateUtil.stringToDateMMddyyyy() -->" + e.getMessage());
         }
         return date;
     }
@@ -62,7 +68,7 @@ public class DateUtil {
      * @throws ParseException the parse exception
      * @author AFUPYB3
      */
-    public static String stringToStringMMddyyyy(String sDate) throws ParseException{
+    public static String stringToStringMMddyyyy(final String sDate) throws ParseException {
         SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
         SimpleDateFormat formatter1 = new SimpleDateFormat("yyyy-MM-dd");
        // String dateInString = "07/06/2013";
@@ -72,7 +78,7 @@ public class DateUtil {
         	date = formatter1.parse(sDate);
             dateSt = formatter.format(date);
         } catch (ParseException e) {
-            e.printStackTrace();
+        	LOGGER.error("Error in DateUtil.stringToStringMMddyyyy() -->" + e.getMessage());
         }
         return dateSt;
     }

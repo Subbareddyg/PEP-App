@@ -17,6 +17,20 @@ public class GroupSearchDTO {
     private String groupContentStatus;
     private String groupImageStatus;
     private String componentGroupId;
+    private String childGroup;
+
+    /**
+	 * @return the childGroup
+	 */
+	public String getChildGroup() {
+		return childGroup;
+	}
+	/**
+	 * @param childGroup the childGroup to set
+	 */
+	public void setChildGroup(String childGroup) {
+		this.childGroup = childGroup;
+	}
     /**
      * @return the groupContentStatus
      */

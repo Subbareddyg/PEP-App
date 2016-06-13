@@ -1,7 +1,7 @@
 package com.belk.pep.dao.impl;
 
-
 import java.math.BigDecimal;
+import java.net.MalformedURLException;
 import java.sql.Clob;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,621 +19,1040 @@ import com.belk.pep.dto.ClassDetails;
 import com.belk.pep.dto.CreateGroupDTO;
 import com.belk.pep.dto.DepartmentDetails;
 import com.belk.pep.dto.GroupSearchDTO;
+import com.belk.pep.exception.checked.PEPFetchException;
 import com.belk.pep.exception.checked.PEPPersistencyException;
 import com.belk.pep.exception.checked.PEPServiceException;
 import com.belk.pep.form.GroupAttributeForm;
 import com.belk.pep.form.GroupSearchForm;
+import com.belk.pep.form.StyleAttributeForm;
 import com.belk.pep.util.GroupingUtil;
 
 /**
  * This class responsible for handling all the DAO call to the VP Database.
+ * 
  * @author AFUPYB3
- *
+ * 
  */
 
-public class GroupingDAOImpl implements GroupingDAO{
-    /** The Constant LOGGER. */
-    private final static Logger LOGGER = Logger.getLogger(GroupingDAOImpl.class
-        .getName()); 
+public class GroupingDAOImpl implements GroupingDAO {
+	/** The Constant LOGGER. */
+	private final static Logger LOGGER = Logger.getLogger(GroupingDAOImpl.class.getName());
 
-    /** The session factory. */
-    private SessionFactory sessionFactory;
-    
-    public SessionFactory getSessionFactory() {
-        return sessionFactory;
-    }
+	/** The session factory. */
+	private SessionFactory sessionFactory;
+	/** The xquery constants. */
+	private XqueryConstants xqueryConstants = new XqueryConstants();
+
+	/**
+	 * 
+	 * @return SessionFactory
+	 */
+	public SessionFactory getSessionFactory() {
+		return sessionFactory;
+	}
+
+	/**
+	 * Sets the session factory.
+	 * 
+	 * @param sessionFactory
+	 *            the new session factory
+	 */
+	public void setSessionFactory(final SessionFactory sessionFactory) {
+		this.sessionFactory = sessionFactory;
+	}
+
+	/**
+	 * This method is used to get the Group Header Details from Database.
+	 * 
+	 * @param groupId
+	 *            String
+	 * @return CreateGroupDTO
+	 * @author Cognizant
+	 * @throws PEPFetchException
+	 */
+	public CreateGroupDTO getGroupHeaderDetails(final String groupId) throws PEPFetchException {
+		LOGGER.info("Fetch Group Header Details--> getGroupHeaderDetails-->Start");
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("Group Id-->" + groupId);
+		}
+
+		final XqueryConstants xqueryConstants = new XqueryConstants();
+		Session session = null;
+		CreateGroupDTO createGroupDTO = null;
+		try {
+			createGroupDTO = new CreateGroupDTO();
+			session = sessionFactory.openSession();
+			// Hibernate provides a createSQLQuery method to let you call your
+			// native SQL statement directly.
+			String queryStr =xqueryConstants.getGroupHeaderDetails();
+			final Query query = session.createSQLQuery(xqueryConstants.getGroupHeaderDetails());
+			query.setParameter("groupIdSql", groupId);
+			
+			// query.setFetchSize(100);
+
+			LOGGER.info("Query-->getGroupHeaderDetails-->" + query);
+			// execute select SQL statement
+			query.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
+			final List<Object> rows = query.list();
+
+			if (rows != null) {
+				LOGGER.info("recordsFetched..." + rows.size());
+
+				for (final Object row : rows) {
+					final Map rowMap = (Map) row;
+					final String groupName = rowMap.get("GROUP_NAME") != null ? rowMap.get("GROUP_NAME").toString() : "";
+					// String groupDesc=rowMap.get("DESCRIPTION") != null ?
+					// rowMap.get("DESCRIPTION").toString() : "";
+					final Clob groupDescClob = (Clob) rowMap.get("DESCRIPTION");
+					String groupDesc = GroupingUtil.clobToString(groupDescClob);
+					
+
+					final String startDate = rowMap.get("EFFECTIVE_START_DATE") != null ? rowMap.get("EFFECTIVE_START_DATE").toString().trim()
+							: "";
+					final String endDate = rowMap.get("EFFECTIVE_END_DATE") != null ? rowMap.get("EFFECTIVE_END_DATE").toString().trim() : "";
+					final String groupStatus = rowMap.get("GROUP_OVERALL_STATUS_CODE") != null ? rowMap.get("GROUP_OVERALL_STATUS_CODE")
+							.toString().trim() : "";
+					final String groupType = rowMap.get("GROUP_TYPE") != null ? rowMap.get("GROUP_TYPE").toString().trim() : "";
+					final String carsGroupType = rowMap.get("CARS_GROUP_TYPE") != null ? rowMap.get("CARS_GROUP_TYPE").toString().trim() : "";
+
+					if (LOGGER.isDebugEnabled()) {
+						LOGGER.debug("getGroupHeaderDetails.groupName-->" + groupName);
+						LOGGER.debug("getGroupHeaderDetails.startDate-->" + startDate);
+						LOGGER.debug("getGroupHeaderDetails.groupDesc-->" + groupDesc);
+						LOGGER.debug("getGroupHeaderDetails.groupType-->" + groupType);
+						LOGGER.debug("getGroupHeaderDetails.carsGroupType-->" + carsGroupType);
+					}
+					createGroupDTO.setGroupId(groupId);
+					createGroupDTO.setGroupName(groupName);
+					createGroupDTO.setGroupDesc(groupDesc);
+					createGroupDTO.setGroupLaunchDate(startDate);
+					createGroupDTO.setEndDate(endDate);
+					createGroupDTO.setGroupStatus(groupStatus);
+					createGroupDTO.setGroupType(groupType);
+					createGroupDTO.setCarsGroupType(carsGroupType);
+				}
+			}
+		} catch (PEPFetchException e) {
+			LOGGER.error("inside PEPFetchException-->" + e);
+			throw new PEPFetchException(e.getMessage());
+		} finally {
+			LOGGER.info("recordsFetched. getGroupHeaderDetails finally block..");
+			if(session!=null) {
+				session.flush();
+				session.close();
+			}
+		}
+
+		LOGGER.info("Fetch Group Header Details--> getGroupHeaderDetails-->End");
+		return createGroupDTO;
+	}
 
 
 
+	/**
+	 * This method is used to get the Group Attribute Details for Split Color
+	 * from Database.
+	 * 
+	 * @param vendorStyleNumber
+	 *            String
+	 * @param styleOrin
+	 *            String
+	 * @return List<GroupAttributeForm>
+	 */
+	public List<GroupAttributeForm> getSplitColorDetails(final String vendorStyleNumber, final String styleOrin) throws PEPFetchException {
+		LOGGER.info("Fetch Split Color Details--> getSplitColorDetails-->Start");
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("Vendor Style No-->" + vendorStyleNumber);
+			LOGGER.debug("Style Orin No-->" + styleOrin);
+		}
+		String vendorStyleNo = vendorStyleNumber;
+		Session session = null;
+		GroupAttributeForm groupAttributeForm = null;
+		List<GroupAttributeForm> groupAttributeFormList = null;
+		final XqueryConstants xqueryConstants = new XqueryConstants();
+		try {
+			session = sessionFactory.openSession();
+			vendorStyleNo = null == vendorStyleNo ? null : vendorStyleNo.trim().equals("") ? null : vendorStyleNo.trim();
+			// Hibernate provides a createSQLQuery method to let you call your
+			// native SQL statement directly.
+			final Query query = session.createSQLQuery(xqueryConstants.getSplitColorDetails(vendorStyleNo));
 
-    /** The xquery constants. */
-    XqueryConstants xqueryConstants= new XqueryConstants();
+			if (vendorStyleNo != null) {
+				query.setParameter("styleIdSql", vendorStyleNo);
+			} else {
+				query.setParameter("mdmidSql", styleOrin);
+			}
+			query.setFetchSize(100);
+			LOGGER.info("Query-->getSplitColorDetails-->" + query);
 
-    /**
-     * Sets the session factory.
-     *
-     * @param sessionFactory
-     *            the new session factory
-     */
-    public void setSessionFactory(SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
-    }
-    
-    
-    /**
-     * This method is used to get the Group Header Details from Database.
-     * @param groupId
-     * @return CreateGroupForm
-     * @author Cognizant
-     */
-    public CreateGroupDTO getGroupHeaderDetails(String groupId){
-        LOGGER.info("Fetch Group Header Details--> getGroupHeaderDetails-->Start");
-        LOGGER.debug("Group Id-->"+groupId);
-        
-        XqueryConstants xqueryConstants= new XqueryConstants();
-        Session session = null;
-        //Transaction tx =  null;
-        CreateGroupDTO createGroupDTO = null;
-          try{
-            createGroupDTO = new CreateGroupDTO();
-            session = sessionFactory.openSession();
-            //tx = session.beginTransaction();      
-           //Hibernate provides a createSQLQuery method to let you call your native SQL statement directly.   
-            Query query = session.createSQLQuery(xqueryConstants.getGroupHeaderDetails());
-            query.setParameter("groupIdSql", groupId);
-            query.setFetchSize(100);
-            
-            LOGGER.info("Query-->getGroupHeaderDetails-->" + query);
-            // execute select SQL statement
-            //List<Object[]> rows = query.list();
-            query.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
-            List<Object> rows = query.list();
-            
-            if (rows != null) {
-                LOGGER.info("recordsFetched..." + rows.size());
-                
-                //for(Object[] row : rows){  
-                for(Object row : rows){
-                    //LOGGER.info("In..." + rows.size());
-                    Map rowMap = (Map)row;
-                    String groupName=rowMap.get("GROUP_NAME") != null ? rowMap.get("GROUP_NAME").toString() : "";
-                    //String groupDesc=rowMap.get("DESCRIPTION") != null ? rowMap.get("DESCRIPTION").toString() : "";
-                    Clob groupDescClob=(Clob) rowMap.get("DESCRIPTION");
-                    String groupDesc = GroupingUtil.clobToString(groupDescClob);
-                    groupDesc=groupDesc != null ? groupDesc : "";
-                    
-                    String startDate=rowMap.get("EFFECTIVE_START_DATE") != null ? rowMap.get("EFFECTIVE_START_DATE").toString() : "";
-                    String endDate=rowMap.get("EFFECTIVE_END_DATE") != null ? rowMap.get("EFFECTIVE_END_DATE").toString() : "";
-                    String groupStatus=rowMap.get("GROUP_OVERALL_STATUS_CODE") != null ? rowMap.get("GROUP_OVERALL_STATUS_CODE").toString() : "";
-                    String groupType=rowMap.get("GROUP_TYPE") != null ? rowMap.get("GROUP_TYPE").toString() : "";
-                    String carsGroupType=rowMap.get("CARS_GROUP_TYPE") != null ? rowMap.get("CARS_GROUP_TYPE").toString() : "";
-                    
-                    LOGGER.debug("getGroupHeaderDetails.groupName-->"+groupName);
-                    LOGGER.debug("getGroupHeaderDetails.startDate-->"+startDate);
-                    LOGGER.debug("getGroupHeaderDetails.groupDesc-->"+groupDesc);
-                    LOGGER.debug("getGroupHeaderDetails.groupType-->"+groupType);
-                    LOGGER.debug("getGroupHeaderDetails.carsGroupType-->"+carsGroupType);
-                    createGroupDTO.setGroupId(groupId);
-                    createGroupDTO.setGroupName(groupName);
-                    createGroupDTO.setGroupDesc(groupDesc);
-                    createGroupDTO.setGroupLaunchDate(startDate);
-                    createGroupDTO.setEndDate(endDate);
-                    createGroupDTO.setGroupStatus(groupStatus);
-                    createGroupDTO.setGroupType(groupType);
-                    createGroupDTO.setCarsGroupType(carsGroupType);
-                }
-            }
-          }catch(Exception e){
-              e.printStackTrace();
-          }
-           finally
-           {
-               LOGGER.info("recordsFetched. getGroupHeaderDetails finally block.." );
-               session.flush();
-               //tx.commit();
-               session.close();
-           }
+			groupAttributeFormList = new ArrayList<GroupAttributeForm>();
 
-        LOGGER.info("Fetch Group Header Details--> getGroupHeaderDetails-->End");
-        return createGroupDTO;
-    }
-    
+			// execute select SQL statement
+			query.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
+			final List<Object> rows = query.list();
+			if (rows != null) {
+				LOGGER.info("recordsFetched..." + rows.size());
 
-    /**
-     * This method is used to get the Group Component Details from Database.
-     * @param groupId
-     * @return CreateGroupForm
-     * @author Cognizant
-     */
-    /*public CreateGroupForm getGroupComponentDetails(String groupId, CreateGroupForm createGroupForm){
-        LOGGER.info("Fetch Group Component Details Details--> getGroupComponentDetails-->Start");
-        LOGGER.debug("Group Id-->"+groupId);
+				for (final Object row : rows) {
+					// LOGGER.info("In..." + rows.size());
+					final Map rowMap = (Map) row;
+					groupAttributeForm = new GroupAttributeForm();
 
-        Session session = null;
-        Transaction tx =  null;
-        List<GroupAttributeForm> groupAttributeFormList = null;
-        XqueryConstants xqueryConstants= new XqueryConstants();
-          try{
-            session = sessionFactory.openSession();
-            tx = session.beginTransaction();      
-            //Hibernate provides a createSQLQuery method to let you call your native SQL statement directly.   
-            Query query = session.createSQLQuery(xqueryConstants.getGroupHeaderDetails());
-            query.setString(1, groupId);
-            query.setFetchSize(100);
-            
-            LOGGER.info("Query-->getGroupComponentDetails-->" + query);
-            // execute select SQL statement
-            List<Object[]> rows = query.list();
-            if (rows != null) {
-                LOGGER.info("recordsFetched..." + rows.size());
-                
-                for(Object[] row : rows){                         
-                    String groupName=row[0]!=null?row[0].toString():null;
-                    String groupDesc=row[1]!=null?row[1].toString():null;
-                    String startDate=row[2]!=null?row[2].toString():null;
-                    String endDate=row[3]!=null?row[3].toString():null;
-                    
-                    createGroupForm.setGroupId(groupId);
-                    createGroupForm.setGroupName(groupName);
-                    createGroupForm.setGroupDesc(groupDesc);
-                    createGroupForm.setGroupLaunchDate(startDate);
-                    createGroupForm.setEndDate(endDate);
-                }
-            }
-          }catch(Exception e){
-              e.printStackTrace();
-          }
-           finally
-           {
-               LOGGER.info("recordsFetched. getGroupComponentDetails finally block.." );
-               session.flush();
-               tx.commit();
-               session.close();
-           }
+					final String mdmid = rowMap.get("MDMID") != null ? rowMap.get("MDMID").toString() : "";
+					final String parentMdmid = rowMap.get("PARENT_MDMID") != null ? rowMap.get("PARENT_MDMID").toString() : "";
+					final String styleNo = rowMap.get("PRIMARYSUPPLIERVPN") != null ? rowMap.get("PRIMARYSUPPLIERVPN").toString() : "";
+					final String productName = rowMap.get("PRODUCT_NAME") != null ? rowMap.get("PRODUCT_NAME").toString() : "";
+					final String colorCode = rowMap.get("COLOR_CODE") != null ? rowMap.get("COLOR_CODE").toString() : "";
+					final String colorDesc = rowMap.get("COLOR_DESC") != null ? rowMap.get("COLOR_DESC").toString() : "";
+					final String isAlreadyInGroup = rowMap.get("ALREADY_IN_GROUP") != null ? rowMap.get("ALREADY_IN_GROUP").toString()
+							: "N";
+					final String petStatus = rowMap.get("PET_STATE") != null ? rowMap.get("PET_STATE").toString() : "";
+					final String entryType = rowMap.get("ENTRY_TYPE") != null ? rowMap.get("ENTRY_TYPE").toString() : "";
 
-        LOGGER.info("Fetch Group Header Details--> getGroupComponentDetails-->End");
-        return createGroupForm;
-    }*/
-    
+					groupAttributeForm.setOrinNumber(mdmid);
+					groupAttributeForm.setStyleNumber(styleNo);
+					groupAttributeForm.setProdName(productName);
+					groupAttributeForm.setColorCode(colorCode);
+					groupAttributeForm.setColorName(colorDesc);
+					groupAttributeForm.setIsAlreadyInGroup(isAlreadyInGroup);
+					groupAttributeForm.setSize("");
+					groupAttributeForm.setPetStatus(petStatus);
+					groupAttributeForm.setEntryType(entryType);
+					groupAttributeForm.setParentMdmid(parentMdmid);
 
-    /**
-     * This method is used to get the Group Attribute Details for Split Color from Database.
-     * @param vendorStyleNo
-     * @param styleOrin
-     * @param groupAttributeFormList
-     * @return
-     */
-    public List<GroupAttributeForm> getSplitColorDetails(String vendorStyleNo, String styleOrin){
-        LOGGER.info("Fetch Split Color Details--> getSplitColorDetails-->Start");
-        LOGGER.debug("Vendor Style No-->"+vendorStyleNo);
-        LOGGER.debug("Style Orin No-->"+styleOrin);
+					groupAttributeFormList.add(groupAttributeForm);
+				}
+			}
+		} finally {
+			LOGGER.info("recordsFetched. getSplitColorDetails finally block..");
+						if(session!=null){
+							session.flush();
+							session.close();
+						}
+			
+		}
 
-        Session session = null;
-        GroupAttributeForm groupAttributeForm = null;
-        List<GroupAttributeForm> groupAttributeFormList = null;
-        XqueryConstants xqueryConstants= new XqueryConstants();
-          try{
-            session = sessionFactory.openSession();
-            vendorStyleNo = (null == vendorStyleNo ? null : vendorStyleNo.trim().equals("") ? null : vendorStyleNo.trim());
-           //Hibernate provides a createSQLQuery method to let you call your native SQL statement directly.   
-            Query query = session.createSQLQuery(xqueryConstants.getSplitColorDetails(vendorStyleNo));
-            
-            if(vendorStyleNo != null){
-                query.setParameter("styleIdSql", vendorStyleNo);
-            }else{
-                query.setParameter("mdmidSql", styleOrin);
-            }
-            query.setFetchSize(100);
-            LOGGER.info("Query-->getSplitColorDetails-->" + query);
-            
-            groupAttributeFormList = new ArrayList<GroupAttributeForm>();
-            
-            // execute select SQL statement
-            query.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
-            List<Object> rows = query.list();
-            if (rows != null) {
-                LOGGER.info("recordsFetched..." + rows.size());
-                
-                for(Object row : rows){
-                    //LOGGER.info("In..." + rows.size());
-                    Map rowMap = (Map)row;
-                    groupAttributeForm = new GroupAttributeForm();
-                    
-                    String mdmid=rowMap.get("MDMID") != null ? rowMap.get("MDMID").toString() : "";
-                    //String parentMdmid=rowMap.get("PARENT_MDMID") != null ? rowMap.get("PARENT_MDMID").toString() : "";
-                    String styleNo=rowMap.get("PRIMARYSUPPLIERVPN") != null ? rowMap.get("PRIMARYSUPPLIERVPN").toString() : "";
-                    String productName=rowMap.get("PRODUCT_NAME") != null ? rowMap.get("PRODUCT_NAME").toString() : "";
-                    String colorCode=rowMap.get("COLOR_CODE") != null ? rowMap.get("COLOR_CODE").toString() : "";
-                    String colorDesc=rowMap.get("COLOR_DESC") != null ? rowMap.get("COLOR_DESC").toString() : "";
-                    String isAlreadyInGroup=rowMap.get("ALREADY_IN_GROUP") != null ? rowMap.get("ALREADY_IN_GROUP").toString() : "";
-                    String petStatus = rowMap.get("PET_STATE") != null ? rowMap.get("PET_STATE").toString() : "";
-            		String entryType = rowMap.get("ENTRY_TYPE") != null ? rowMap.get("ENTRY_TYPE").toString() : "";
-                    
-                    groupAttributeForm.setOrinNumber(mdmid);
-                    groupAttributeForm.setStyleNumber(styleNo);
-                    groupAttributeForm.setProdName(productName);
-                    groupAttributeForm.setColorCode(colorCode);
-                    groupAttributeForm.setColorName(colorDesc);
-                    groupAttributeForm.setIsAlreadyInGroup(isAlreadyInGroup);
-                    groupAttributeForm.setSize("");
-                    groupAttributeForm.setPetStatus(petStatus);
-                    groupAttributeForm.setEntryType(entryType);
-                    
-                    groupAttributeFormList.add(groupAttributeForm);
-                }
-            }
-          }catch(Exception e){
-              e.printStackTrace();
-          }
-           finally
-           {
-               LOGGER.info("recordsFetched. getSplitColorDetails finally block.." );
-               session.flush();
-               session.close();
-           }
+		LOGGER.info("Fetch Split Color Details--> getSplitColorDetails-->End");
+		return groupAttributeFormList;
+	}
 
-        LOGGER.info("Fetch Split Color Details--> getSplitColorDetails-->End");
-        return groupAttributeFormList;
-    }
-    
+	/**
+	 * This method is used to get the Group Attribute Details for Split SKU from
+	 * Database.
+	 * 
+	 * @param vendorStyleNumber
+	 *            String
+	 * @param styleOrin
+	 *            String
+	 * @return List<GroupAttributeForm>
+	 */
+	public List<GroupAttributeForm> getSplitSKUDetails(final String vendorStyleNumber, final String styleOrin) throws PEPFetchException {
 
-    /**
-     * This method is used to get the Group Attribute Details for Split SKU from Database.
-     * @param vendorStyleNo
-     * @param styleOrin
-     * @param groupAttributeFormList
-     * @return
-     */
-    public List<GroupAttributeForm> getSplitSKUDetails(String vendorStyleNo, String styleOrin){
-        LOGGER.info("Fetch Split Color Details--> getSplitSKUDetails-->Start");
-        LOGGER.debug("Vendor Style No-->"+vendorStyleNo);
-        LOGGER.debug("Style Orin No-->"+styleOrin);
+		LOGGER.info("Fetch Split Color Details--> getSplitSKUDetails-->Start");
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("Vendor Style No-->" + vendorStyleNumber);
+			LOGGER.debug("Style Orin No-->" + styleOrin);
+		}
+		String vendorStyleNo = vendorStyleNumber;
+		Session session = null;
+		GroupAttributeForm groupAttributeForm = null;
+		List<GroupAttributeForm> groupAttributeFormList = null;
+		final XqueryConstants xqueryConstants = new XqueryConstants();
+		try {
+			session = sessionFactory.openSession();
+			vendorStyleNo = null == vendorStyleNo ? null : vendorStyleNo.trim().equals("") ? null : vendorStyleNo.trim();
+			// Hibernate provides a createSQLQuery method to let you call your
+			// native SQL statement directly.
+			final Query query = session.createSQLQuery(xqueryConstants.getSplitSKUDetails(vendorStyleNo));
 
-        Session session = null;
-        GroupAttributeForm groupAttributeForm = null;
-        List<GroupAttributeForm> groupAttributeFormList = null;
-        XqueryConstants xqueryConstants= new XqueryConstants();
-          try{
-            session = sessionFactory.openSession();
-            vendorStyleNo = (null == vendorStyleNo ? null : vendorStyleNo.trim().equals("") ? null : vendorStyleNo.trim());
-           //Hibernate provides a createSQLQuery method to let you call your native SQL statement directly.   
-            Query query = session.createSQLQuery(xqueryConstants.getSplitSKUDetails(vendorStyleNo));
+			if (vendorStyleNo != null) {
+				query.setParameter("styleIdSql", vendorStyleNo);
+			} else {
+				query.setParameter("mdmidSql", styleOrin);
+			}
+			query.setFetchSize(100);
+			LOGGER.info("Query-->getSplitSKUDetails-->" + query);
 
-            if(vendorStyleNo != null){
-                query.setParameter("styleIdSql", vendorStyleNo);
-            }else{
-                query.setParameter("mdmidSql", styleOrin);
-            }
-            query.setFetchSize(100);
-            LOGGER.info("Query-->getSplitSKUDetails-->" + query);
-            
-            groupAttributeFormList = new ArrayList<GroupAttributeForm>();
-            
-            // execute select SQL statement
-            query.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
-            List<Object> rows = query.list();
-            if (rows != null) {
-                LOGGER.info("recordsFetched..." + rows.size());
-                
-                for(Object row : rows){
-                    //LOGGER.info("In..." + rows.size());
-                    Map rowMap = (Map)row;
-                    groupAttributeForm = new GroupAttributeForm();
-                    
-                    String mdmid=rowMap.get("MDMID") != null ? rowMap.get("MDMID").toString() : "";
-                    String styleNo=rowMap.get("PRIMARYSUPPLIERVPN") != null ? rowMap.get("PRIMARYSUPPLIERVPN").toString() : "";
-                    String productName=rowMap.get("NAME") != null ? rowMap.get("NAME").toString() : "";
-                    String colorCode=rowMap.get("COLOR_CODE") != null ? rowMap.get("COLOR_CODE").toString() : "";
-                    String colorDesc=rowMap.get("COLOR_NAME") != null ? rowMap.get("COLOR_NAME").toString() : "";
-                    String sizeDesc=rowMap.get("SIZEDESC") != null ? rowMap.get("SIZEDESC").toString() : "";
-                    String isAlreadyInGroup=rowMap.get("ALREADY_IN_GROUP") != null ? rowMap.get("ALREADY_IN_GROUP").toString() : "";
-                    String petStatus = rowMap.get("PET_STATE") != null ? rowMap.get("PET_STATE").toString() : "";
-            		String entryType = rowMap.get("ENTRY_TYPE") != null ? rowMap.get("ENTRY_TYPE").toString() : "";
-                    
-                    groupAttributeForm.setOrinNumber(mdmid);
-                    groupAttributeForm.setStyleNumber(styleNo);
-                    groupAttributeForm.setProdName(productName);
-                    groupAttributeForm.setColorCode(colorCode);
-                    groupAttributeForm.setColorName(colorDesc);
-                    groupAttributeForm.setSize(sizeDesc);
-                    groupAttributeForm.setIsAlreadyInGroup(isAlreadyInGroup);
-                    groupAttributeForm.setPetStatus(petStatus);
-                    groupAttributeForm.setEntryType(entryType);
-                    
-                    groupAttributeFormList.add(groupAttributeForm);
-                }
-            }
-          }catch(Exception e){
-              e.printStackTrace();
-          }
-           finally
-           {
-               LOGGER.info("recordsFetched. getSplitSKUDetails finally block.." );
-               session.flush();
-               session.close();
-           }
+			groupAttributeFormList = new ArrayList<GroupAttributeForm>();
 
-        LOGGER.info("Fetch Split SKU Details--> getSplitSKUDetails-->End");
-        return groupAttributeFormList;
-    }
-    
-    /**
-     * Method to get the groups for search group.
-     *    
-     * @param groupSearchForm GroupSearchForm   
-     * @return GroupSearchForm 
-     * 
-     * Method added For PIM Phase 2 - groupSearch
-     * Date: 05/19/2016
-     * Added By: Cognizant
-     * @throws PEPPersistencyException 
-     */
-    @Override
-    public List<GroupSearchDTO> groupSearch(GroupSearchForm groupSearchForm)
-        throws PEPServiceException, PEPPersistencyException {
-        
-        LOGGER.info("Entering GroupingDAO.groupSearch() method.");
-        //System.out.println("Entering GroupingDAO.groupSearch() method.");
-        Session session = null;
-        List<GroupSearchDTO> groupList = new ArrayList<GroupSearchDTO>();
-        GroupSearchDTO groupSearchDTO = null;
-        List<Object> rows = null;
-        final XqueryConstants xqueryConstants = new XqueryConstants();
-        try {
-            session = sessionFactory.openSession();
-            final Query query = session.createSQLQuery(xqueryConstants.getGroupDetailsQuery(groupSearchForm));
-            query.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
-            query.setFirstResult((groupSearchForm.getPageNumber() - 1) * groupSearchForm.getRecordsPerPage());
-            query.setMaxResults(groupSearchForm.getRecordsPerPage());
-            rows = query.list();
-            
-            if(rows!=null)
-            {
-                for (final Object rowObj : rows) {
-                    Map row = (Map)rowObj;
-                    groupSearchDTO = new GroupSearchDTO();
-                    groupSearchDTO.setGroupId(row.get("GROUP_ID") == null? "" : row.get("GROUP_ID").toString());
-                    groupSearchDTO.setGroupName(row.get("GROUP_NAME") == null? "" : row.get("GROUP_NAME").toString());
-                    groupSearchDTO.setGroupType(row.get("GROUP_TYPE") == null? "" : row.get("GROUP_TYPE").toString());
-                    groupSearchDTO.setGroupContentStatus(row.get("GROUP_CONTENT_STATUS_CODE") == null? "" : row.get("GROUP_CONTENT_STATUS_CODE").toString());
-                    groupSearchDTO.setStartDate(row.get("START_DATE") == null? "" : row.get("START_DATE").toString());
-                    groupSearchDTO.setEndDate(row.get("END_DATE") == null? "" : row.get("END_DATE").toString());
-                    groupSearchDTO.setGroupImageStatus(row.get("GROUP_IMAGE_STATUS_CODE") == null? "" : row.get("GROUP_IMAGE_STATUS_CODE").toString());
-                    
-                    LOGGER.debug("Grouping Attribute Values -- \nGROUP ID: " + groupSearchDTO.getGroupId() +
-                        "\nGROUP NAME: " + groupSearchDTO.getGroupName() +
-                        "\nGROUP TYPE: " + groupSearchDTO.getGroupType() + 
-                        "\nGROUP CONTENT STATUS: " + groupSearchDTO.getGroupContentStatus() + 
-                        "\nGROUP IMAGE STATUS: " + groupSearchDTO.getGroupImageStatus() +  
-                        "\nSTART DATE: " + groupSearchDTO.getStartDate() +
-                        "\nEND DATE: " + groupSearchDTO.getEndDate());
-                    
-                    groupList.add(groupSearchDTO);
-                }
-            }
-        }
-        catch(final Exception exception)
-        {
-            LOGGER.error("Exception in GroupingDAO.groupSearch() -- " + exception.getMessage());
-            throw new PEPPersistencyException(exception);
-        }
-        finally {
-            session.flush();
-            session.close();
-        }
-        LOGGER.info("Exiting GroupingDAO.groupSearch() method.");
-        
-        return groupList;
-    }
+			// execute select SQL statement
+			query.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
+			final List<Object> rows = query.list();
+			if (rows != null) {
+				LOGGER.info("recordsFetched..." + rows.size());
 
-    /**
-     * Method to get the groups count for search group.
-     *    
-     * @param groupSearchForm GroupSearchForm   
-     * @return GroupSearchForm 
-     * 
-     * Method added For PIM Phase 2 - groupSearch
-     * Date: 05/27/2016
-     * Added By: Cognizant
-     * @throws PEPPersistencyException 
-     */
-    @Override
-    public int groupSearchCount(GroupSearchForm groupSearchForm)
-        throws PEPServiceException, PEPPersistencyException {
-        
-        LOGGER.info("Entering GroupingDAO.groupSearchCount() method.");
-        //System.out.println("Entering GroupingDAO.groupSearchCount() method.");
-        Session session = null;
-        BigDecimal rowCount = new BigDecimal(0);
-        List<Object> rows = null;
-        final XqueryConstants xqueryConstants = new XqueryConstants();
-        try {
-            session = sessionFactory.openSession();
-            final Query query = session.createSQLQuery(xqueryConstants.getGroupDetailsCountQuery(groupSearchForm));
-            query.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
-            rows = query.list();
-            
-            if(rows!=null)
-            {
-                for (final Object rowObj : rows) {
-                    Map row = (Map)rowObj;
-                    rowCount = (BigDecimal) (row.get("TOTAL_COUNT") == null? "" : row.get("TOTAL_COUNT"));                    
-                    
-                    LOGGER.debug("Grouping Attribute Count -- \nCOUNT OF RECORDS: " + rowCount);
-                }
-            }
-        }
-        catch(final Exception exception)
-        {
-            LOGGER.error("Exception in GroupingDAO.groupSearchCount() -- " + exception.getMessage());
-            throw new PEPPersistencyException(exception);
-        }
-        finally {
-            session.flush();
-            session.close();
-        }
-        LOGGER.info("Exiting GroupingDAO.groupSearchCount() method.");
-        
-        return rowCount.intValue();
-    }
-    
-    /**
-     * Method to get the groups for search group.
-     *    
-     * @param groupSearchForm GroupSearchForm   
-     * @return GroupSearchForm 
-     * 
-     * Method added For PIM Phase 2 - groupSearch
-     * Date: 05/19/2016
-     * Added By: Cognizant
-     * @throws PEPPersistencyException 
-     */
-    @Override
-    public List<GroupSearchDTO> groupSearchParent(List<GroupSearchDTO> groupSearchDTOList)
-        throws PEPServiceException, PEPPersistencyException {
-        
-        LOGGER.info("Entering GroupingDAO.groupSearchParent() method.");
-        Session session = null;
-        List<GroupSearchDTO> groupList = new ArrayList<GroupSearchDTO>();
-        GroupSearchDTO groupSearchDTO = null;
-        List<Object> rows=null;
-        final XqueryConstants xqueryConstants = new XqueryConstants();
-        try {
-            session = sessionFactory.openSession();
-            final Query query =session.createSQLQuery(xqueryConstants.getGroupDetailsQueryParent(groupSearchDTOList));
-            query.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
-            rows = query.list();
-            
-            if(rows!=null)
-            {
-                for (final Object rowObj : rows) {
-                    Map row = (Map)rowObj;
-                    groupSearchDTO = new GroupSearchDTO();
-                    groupSearchDTO.setGroupId(row.get("GROUP_ID") == null? "" : row.get("GROUP_ID").toString());
-                    groupSearchDTO.setGroupName(row.get("GROUP_NAME") == null? "" : row.get("GROUP_NAME").toString());
-                    groupSearchDTO.setGroupType(row.get("GROUP_TYPE") == null? "" : row.get("GROUP_TYPE").toString());
-                    groupSearchDTO.setGroupContentStatus(row.get("GROUP_CONTENT_STATUS_CODE") == null? "" : row.get("GROUP_CONTENT_STATUS_CODE").toString());
-                    groupSearchDTO.setStartDate(row.get("START_DATE") == null? "" : row.get("START_DATE").toString());
-                    groupSearchDTO.setEndDate(row.get("END_DATE") == null? "" : row.get("END_DATE").toString());
-                    groupSearchDTO.setComponentGroupId(row.get("COMPONENT_GROUPING_ID") == null? "" : row.get("COMPONENT_GROUPING_ID").toString());
-                    groupSearchDTO.setGroupImageStatus(row.get("GROUP_IMAGE_STATUS_CODE") == null? "" : row.get("GROUP_IMAGE_STATUS_CODE").toString());                    
-                    
-                    LOGGER.debug("Grouping Attribute Values -- \nGROUP ID: " + groupSearchDTO.getGroupId() +
-                        "\nGROUP NAME: " + groupSearchDTO.getGroupName() +
-                        "\nGROUP TYPE: " + groupSearchDTO.getGroupType() + 
-                        "\nGROUP CONTENT STATUS: " + groupSearchDTO.getGroupContentStatus() + 
-                        "\nGROUP IMAGE STATUS: " + groupSearchDTO.getGroupImageStatus() + 
-                        "\nSTART DATE: " + groupSearchDTO.getStartDate() +
-                        "\nEND DATE: " + groupSearchDTO.getEndDate() + 
-                        "\nCOMPONENT GROUP ID: " + groupSearchDTO.getComponentGroupId());
-                    
-                    groupList.add(groupSearchDTO);
-                }
-            }
-        }
-        catch(final Exception exception)
-        {
-            LOGGER.error("Exception in GroupingDAO.groupSearchParent() -- " + exception.getMessage());
-            throw new PEPPersistencyException(exception);
-        }
-        finally {
-            session.flush();
-            session.close();
-        }
-        LOGGER.info("Exiting GroupingDAO.groupSearchParent() method.");
-        
-        return groupList;
-    }
-    
-    /**
-     * Method to get the departments for search group.
-     *    
-     * @param departmentsToBesearched String   
-     * @return ArrayList<DepartmentDetails> 
-     * 
-     * Method added For PIM Phase 2 - groupSearch
-     * Date: 05/25/2016
-     * Added By: Cognizant
-     * @throws PEPPersistencyException 
-     */
-    @Override
-    public ArrayList<DepartmentDetails> getDeptDetailsByDepNoFromADSE() throws PEPPersistencyException
-        {
-        LOGGER.info("Entering getDeptDetailsByDepNoFromADSE() in GroupingDAOImpl class..");
-        Session session = null;
-        ArrayList<DepartmentDetails> adseDepartmentList = new ArrayList<DepartmentDetails>();    
-        try{
-             session = sessionFactory.openSession();     
-             Query query1 = session.createSQLQuery(xqueryConstants.getLikeDepartmentDetailsForString()); 
-             query1.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
-             if(query1!=null)
-             {
-                List<Object> rows1 = query1.list();
-                if(rows1!=null && rows1.size()>0)
-                {
-                    for(Object row : rows1){  
-                        Map rowObj = (Map)row;
-                        DepartmentDetails departmentDetails = new DepartmentDetails();
-                        departmentDetails.setId(rowObj.get("DEPTID") == null? "" : rowObj.get("DEPTID").toString());
-                        departmentDetails.setDesc(rowObj.get("DEPTNAME") == null? "" : rowObj.get("DEPTNAME").toString());   
-                        adseDepartmentList.add(departmentDetails);                           
-                    }
-                }
-             }
-        }catch(Exception exception){
-            LOGGER.error("Exception in getDeptDetailsByDepNoFromADSE() -- " + exception.getMessage());
-            throw new PEPPersistencyException(exception);
-        }
-        finally
-        {
-            session.flush(); 
-            session.close();
-        }
-        LOGGER.info("Exiting getDeptDetailsByDepNoFromADSE() in GroupingDAOImpl class..");
-        return adseDepartmentList; 
-       
-    }
-    
-    /**
-     * Method to get the classes for search group.
-     *    
-     * @param departmentNumbers String   
-     * @return List<ClassDetails> 
-     * 
-     * Method added For PIM Phase 2 - groupSearch
-     * Date: 05/25/2016
-     * Added By: Cognizant
-     * @throws PEPPersistencyException 
-     */
-    @Override
-    public List<ClassDetails> getClassDetailsByDepNos(String departmentNumbers)
-        throws PEPPersistencyException {
-        LOGGER.info("Entering getClassDetailsByDepNos() in GroupingDAOImpl class..");
-        Session session = null;
-        List<ClassDetails> classDetailsList = new ArrayList<ClassDetails>();
-        try{
-            session = sessionFactory.openSession();               
-            Query query = session.createSQLQuery(xqueryConstants.getClassDetailsUsingDeptnumbers(departmentNumbers));
-            query.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
-            List<Object> rows = query.list();
-            for(Object row : rows){    
-                Map rowObj = (Map)row;
-                ClassDetails classDetails = new ClassDetails();
-                classDetails.setId(rowObj.get("CLASS_ID") == null? "" : rowObj.get("CLASS_ID").toString());
-                classDetails.setDesc(rowObj.get("CLASS_NAME") == null? "" : rowObj.get("CLASS_NAME").toString());   
-                classDetailsList.add(classDetails);          
-            } 
-        }catch(Exception exception){
-            LOGGER.error("Exception in getClassDetailsByDepNos() -- " + exception.getMessage());
-            throw new PEPPersistencyException(exception);
-        }
-        finally{
-            session.flush();   
-            session.close();
-        }
-        LOGGER.info("Exiting getClassDetailsByDepNos() in GroupingDAOImpl class..");
-        return classDetailsList; 
-        
-    }
+				for (final Object row : rows) {
+					final Map rowMap = (Map) row;
+					groupAttributeForm = new GroupAttributeForm();
+
+					final String mdmid = rowMap.get("MDMID") != null ? rowMap.get("MDMID").toString() : "";
+					final String parentMdmid = rowMap.get("PARENT_MDMID") != null ? rowMap.get("PARENT_MDMID").toString() : "";
+					final String styleNo = rowMap.get("PRIMARYSUPPLIERVPN") != null ? rowMap.get("PRIMARYSUPPLIERVPN").toString() : "";
+					final String productName = rowMap.get("NAME") != null ? rowMap.get("NAME").toString() : "";
+					final String colorCode = rowMap.get("COLOR_CODE") != null ? rowMap.get("COLOR_CODE").toString() : "";
+					final String colorDesc = rowMap.get("COLOR_NAME") != null ? rowMap.get("COLOR_NAME").toString() : "";
+					final String sizeDesc = rowMap.get("SIZEDESC") != null ? rowMap.get("SIZEDESC").toString() : "";
+					final String isAlreadyInGroup = rowMap.get("ALREADY_IN_GROUP") != null ? rowMap.get("ALREADY_IN_GROUP").toString()
+							: "N";
+					final String petStatus = rowMap.get("PET_STATE") != null ? rowMap.get("PET_STATE").toString() : "";
+					final String entryType = rowMap.get("ENTRY_TYPE") != null ? rowMap.get("ENTRY_TYPE").toString() : "";
+
+					groupAttributeForm.setOrinNumber(mdmid);
+					groupAttributeForm.setStyleNumber(styleNo);
+					groupAttributeForm.setProdName(productName);
+					groupAttributeForm.setColorCode(colorCode);
+					groupAttributeForm.setColorName(colorDesc);
+					groupAttributeForm.setSize(sizeDesc);
+					groupAttributeForm.setIsAlreadyInGroup(isAlreadyInGroup);
+					groupAttributeForm.setPetStatus(petStatus);
+					groupAttributeForm.setEntryType(entryType);
+					groupAttributeForm.setParentMdmid(parentMdmid);
+
+					groupAttributeFormList.add(groupAttributeForm);
+				}
+			}
+		} finally {
+			LOGGER.info("recordsFetched. getSplitSKUDetails finally block..");
+						if(session!=null){
+							session.flush();
+							session.close();
+						}
+			
+		}
+
+		LOGGER.info("Fetch Split SKU Details--> getSplitSKUDetails-->End");
+		return groupAttributeFormList;
+	}
+	
+
+	/**
+	 * This method is used to get the Existing Group Attribute Details for Consolidated Product Grouping from Database.
+	 * 
+	 * @param groupId
+	 * @return groupAttributeFormList
+	 */
+	public List<StyleAttributeForm> getNewCPGDetails(final String vendorStyleNo, final String styleOrin, final String deptNoSearch, 
+			final String classNoSearch,	final String supplierSiteIdSearch, final String upcNoSearch, final String groupId) throws PEPFetchException {
+		LOGGER.info("Fetch New CPG attribute Details. getNewCPGDetails-->Start");
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("Vendor vendorStyleNumber-->" + vendorStyleNo);
+			LOGGER.debug("Style Orin No-->" + styleOrin);
+		}
+		Session session = null;
+		GroupAttributeForm groupAttributeForm = null;
+		StyleAttributeForm styleAttributeForm = null;
+		List<GroupAttributeForm> groupAttributeFormList = null;
+		List<StyleAttributeForm> styleAttributeFormList = null;
+		final XqueryConstants xqueryConstants = new XqueryConstants();
+		try {
+			String deptNoForInSearch = GroupingUtil.getInValForQuery(deptNoSearch);
+			deptNoForInSearch = GroupingUtil.getInValForQuery(classNoSearch);
+			session = sessionFactory.openSession();
+			// Hibernate provides a createSQLQuery method to let you call your
+			// native SQL statement directly.
+			final Query query = session.createSQLQuery(xqueryConstants.getNewCPGDetails(vendorStyleNo, styleOrin, deptNoForInSearch, deptNoForInSearch,
+					supplierSiteIdSearch, upcNoSearch, deptNoSearch, classNoSearch));
+
+			query.setParameter("groupIdSql", groupId);
+			if (null != vendorStyleNo && !("").equals(vendorStyleNo.trim())) {
+				query.setParameter("styleIdSql", vendorStyleNo);
+			} 
+			if (null != styleOrin && !("").equals(styleOrin.trim())) {
+				query.setParameter("mdmidSql", styleOrin);
+			}
+
+			if (null != supplierSiteIdSearch && !("").equals(supplierSiteIdSearch.trim())) {
+				query.setParameter("supplierIdSql", supplierSiteIdSearch);
+			}
+			if (null != upcNoSearch && !("").equals(upcNoSearch.trim())) {
+				query.setParameter("upcNoSql", upcNoSearch);
+			}
+			
+			//query.setParameter("groupidSql", groupId);
+			query.setFetchSize(100);
+			LOGGER.info("Query-->getExistCPGDetails-->" + query);
+
+			//groupAttributeFormList = new ArrayList<GroupAttributeForm>();
+			styleAttributeFormList = new ArrayList<StyleAttributeForm>();
+
+			// execute select SQL statement
+			query.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
+			@SuppressWarnings("unchecked")
+			final List<Object> rows = query.list();
+			if (rows != null) {
+				LOGGER.info("recordsFetched..." + rows.size());
+
+				for (final Object row : rows) {
+					// LOGGER.info("In..." + rows.size());
+					@SuppressWarnings("rawtypes")
+					final Map rowMap = (Map) row;
+					groupAttributeForm = new GroupAttributeForm();
+					styleAttributeForm = new StyleAttributeForm();
+					
+					final String mdmid = rowMap.get("MDMID") != null ? rowMap.get("MDMID").toString() : "";
+					final String styleNo = rowMap.get("PRIMARYSUPPLIERVPN") != null ? rowMap.get("PRIMARYSUPPLIERVPN").toString() : "";
+					final String productName = rowMap.get("PRODUCT_NAME") != null ? rowMap.get("PRODUCT_NAME").toString() : "";
+					final String colorCode = rowMap.get("COLOR_CODE") != null ? rowMap.get("COLOR_CODE").toString() : "";
+					final String colorDesc = rowMap.get("COLOR_DESC") != null ? rowMap.get("COLOR_DESC").toString() : "";
+					final String entryType = rowMap.get("ENTRY_TYPE") != null ? rowMap.get("ENTRY_TYPE").toString() : "";
+					final String parentMdmid = rowMap.get("PARENT_MDMID") != null ? rowMap.get("PARENT_MDMID").toString() : "";
+					final String componentStyleId = rowMap.get("COMPONENT_STYLE_ID") != null ? rowMap.get("COMPONENT_STYLE_ID").toString() : "";
+					final String isDefaultAttr = rowMap.get("COMPONENT_DEFAULT") != null ? rowMap.get("COMPONENT_DEFAULT").toString() : "";
+					final String classId = rowMap.get("CLASS_ID") != null ? rowMap.get("CLASS_ID").toString() : "";
+					final String isAlreadyInGroup = rowMap.get("ALREADY_IN_GROUP") != null ? rowMap.get("ALREADY_IN_GROUP").toString() : "";
+					final String isAlreadyInSameGroup = rowMap.get("EXIST_IN_SAME_GROUP") != null ? rowMap.get("EXIST_IN_SAME_GROUP").toString() : "";
+					//LOGGER.debug("parentMdmid-->"+parentMdmid+"<componentStyleId-->"+componentStyleId+"<mdmid-->"+mdmid+"<entryType-->"+entryType);
+
+					if(("Style").equals(entryType)) {
+						groupAttributeFormList = new ArrayList<GroupAttributeForm>();
+						styleAttributeForm.setOrinNumber(mdmid);
+						styleAttributeForm.setStyleNumber(styleNo);
+						styleAttributeForm.setProdName(productName);
+						styleAttributeForm.setColorCode(colorCode);
+						styleAttributeForm.setColorName(colorDesc);
+						styleAttributeForm.setIsAlreadyInGroup(isAlreadyInGroup);
+						styleAttributeForm.setIsAlreadyInSameGroup(isAlreadyInSameGroup);
+						styleAttributeForm.setSize("");
+						styleAttributeForm.setPetStatus("");
+						styleAttributeForm.setEntryType(entryType);
+						styleAttributeForm.setParentMdmid(parentMdmid);
+						styleAttributeForm.setComponentStyleId(componentStyleId);
+						styleAttributeForm.setGroupAttributeFormList(groupAttributeFormList);
+						styleAttributeForm.setIsDefault(isDefaultAttr);
+						styleAttributeForm.setClassId(classId);
+
+						styleAttributeFormList.add(styleAttributeForm);
+					}else {
+						groupAttributeForm.setOrinNumber(mdmid);
+						groupAttributeForm.setStyleNumber(styleNo);
+						groupAttributeForm.setProdName(productName);
+						groupAttributeForm.setColorCode(colorCode);
+						groupAttributeForm.setColorName(colorDesc);
+						groupAttributeForm.setIsAlreadyInGroup(isAlreadyInGroup);
+						groupAttributeForm.setIsAlreadyInSameGroup(isAlreadyInSameGroup);
+						groupAttributeForm.setSize("");
+						groupAttributeForm.setPetStatus("");
+						groupAttributeForm.setEntryType(entryType);
+						groupAttributeForm.setParentMdmid(parentMdmid);
+						groupAttributeForm.setComponentStyleId(componentStyleId);
+						groupAttributeForm.setIsDefault(isDefaultAttr);
+						groupAttributeForm.setClassId(classId);
+ 
+						for(int i = 0; i < styleAttributeFormList.size(); i++){
+							StyleAttributeForm styleAttributeFormSub = styleAttributeFormList.get(i);
+							//if((styleAttributeFormSub.getComponentStyleId()).equals(componentStyleId)){
+							if((styleAttributeFormSub.getOrinNumber()).equals(parentMdmid)){
+								LOGGER.debug("styleAttributeFormSub.getOrinNumber()-->"+styleAttributeFormSub.getOrinNumber());
+								LOGGER.debug("Style Available.parentMdmid-->"+parentMdmid);
+								groupAttributeForm.setProdName(styleAttributeFormSub.getProdName()); // Replacing Product Name from Style
+								groupAttributeFormList = styleAttributeFormSub.getGroupAttributeFormList();
+								groupAttributeFormList.add(groupAttributeForm);
+								break;
+							}
+						}
+						
+					}
+				}
+			}
+		} finally {
+			LOGGER.info("recordsFetched. getNewCPGDetails finally block..");
+						if(session!=null) {
+							session.flush();
+							session.close();
+						}
+			
+		}
+
+		LOGGER.info("Fetch New CPG attribute Details. getNewCPGDetails-->End");
+		return styleAttributeFormList;
+	}
+
+	/**
+	 * Method to get the groups for search group.
+	 * 
+	 * @param groupSearchForm
+	 *            GroupSearchForm
+	 * @return List<GroupSearchDTO>
+	 * 
+	 *         Method added For PIM Phase 2 - groupSearch Date: 05/19/2016 Added
+	 *         By: Cognizant
+	 * @throws PEPPersistencyException
+	 * @throws PEPServiceException
+	 */
+	@Override
+	public List<GroupSearchDTO> groupSearch(final GroupSearchForm groupSearchForm) throws PEPServiceException, PEPPersistencyException {
+
+		LOGGER.info("Entering GroupingDAO.groupSearch() method.");
+		Session session = null;
+		final List<GroupSearchDTO> groupList = new ArrayList<GroupSearchDTO>();
+		GroupSearchDTO groupSearchDTO = null;
+		List<Object> rows = null;
+		final XqueryConstants xqueryConstants = new XqueryConstants();
+		try {
+			session = sessionFactory.openSession();
+			final Query query = session.createSQLQuery(xqueryConstants.getGroupDetailsQuery(groupSearchForm));
+			query.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
+			if (groupSearchForm.getGroupId() == null || groupSearchForm.getGroupId().trim().equals("")) {
+				query.setFirstResult((groupSearchForm.getPageNumber() - 1) * groupSearchForm.getRecordsPerPage());
+				query.setMaxResults(groupSearchForm.getRecordsPerPage());
+			}
+			rows = query.list();
+
+			if (rows != null) {
+				for (final Object rowObj : rows) {
+					final Map row = (Map) rowObj;
+					groupSearchDTO = new GroupSearchDTO();
+					groupSearchDTO.setGroupId(row.get("GROUP_ID") == null ? "" : row.get("GROUP_ID").toString());
+					groupSearchDTO.setGroupName(row.get("GROUP_NAME") == null ? "" : row.get("GROUP_NAME").toString());
+					groupSearchDTO.setGroupType(row.get("GROUP_TYPE") == null ? "" : row.get("GROUP_TYPE").toString());
+					groupSearchDTO.setGroupContentStatus(row.get("CONTENT_STATE") == null ? "" : row.get("CONTENT_STATE").toString());
+					groupSearchDTO.setStartDate(row.get("START_DATE") == null ? "" : row.get("START_DATE").toString());
+					groupSearchDTO.setEndDate(row.get("END_DATE") == null ? "" : row.get("END_DATE").toString());
+					groupSearchDTO.setGroupImageStatus(row.get("IMAGE_STATE") == null ? "" : row.get("IMAGE_STATE").toString());
+					groupSearchDTO.setChildGroup(row.get("CHILD_GROUP") == null ? "" : row.get("CHILD_GROUP").toString());
+
+					if (LOGGER.isDebugEnabled()) {
+						LOGGER.debug("Grouping Attribute Values -- \nGROUP ID: " + groupSearchDTO.getGroupId() + "\nGROUP NAME: "
+								+ groupSearchDTO.getGroupName() + "\nGROUP TYPE: " + groupSearchDTO.getGroupType()
+								+ "\nGROUP CONTENT STATUS: " + groupSearchDTO.getGroupContentStatus() + "\nGROUP IMAGE STATUS: "
+								+ groupSearchDTO.getGroupImageStatus() + "\nSTART DATE: " + groupSearchDTO.getStartDate() + "\nEND DATE: "
+								+ groupSearchDTO.getEndDate());
+					}
+
+					groupList.add(groupSearchDTO);
+				}
+			}
+		} finally {
+						if(session!=null){
+							session.flush();
+							session.close();
+							}
+		}
+		LOGGER.info("Exiting GroupingDAO.groupSearch() method.");
+
+		return groupList;
+	}
+
+	/**
+	 * Method to get the groups count for search group.
+	 * 
+	 * @param groupSearchForm
+	 *            GroupSearchForm
+	 * @return int
+	 * 
+	 *         Method added For PIM Phase 2 - groupSearch Date: 05/27/2016 Added
+	 *         By: Cognizant
+	 * @throws PEPPersistencyException
+	 * @throws PEPServiceException
+	 */
+	@Override
+	public int groupSearchCount(final GroupSearchForm groupSearchForm) throws PEPServiceException, PEPPersistencyException {
+
+		LOGGER.info("Entering GroupingDAO.groupSearchCount() method.");
+		Session session = null;
+		BigDecimal rowCount = new BigDecimal(0);
+		List<Object> rows = null;
+		final XqueryConstants xqueryConstants = new XqueryConstants();
+		try {
+			session = sessionFactory.openSession();
+			final Query query = session.createSQLQuery(xqueryConstants.getGroupDetailsCountQuery(groupSearchForm));
+			query.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
+			rows = query.list();
+
+			if (rows != null) {
+				for (final Object rowObj : rows) {
+					final Map row = (Map) rowObj;
+					rowCount = (BigDecimal) (row.get("TOTAL_COUNT") == null ? "" : row.get("TOTAL_COUNT"));
+					if (LOGGER.isDebugEnabled()) {
+						LOGGER.debug("Grouping Attribute Count -- \nCOUNT OF RECORDS: " + rowCount);
+					}
+				}
+			}
+		} finally {
+						if(session!=null){
+							session.flush();
+							session.close();
+						}
+			
+		}
+		LOGGER.info("Exiting GroupingDAO.groupSearchCount() method.");
+
+		return rowCount.intValue();
+	}
+
+	/**
+	 * Method to get the groups for search group.
+	 * 
+	 * @param groupSearchDTOList
+	 *            List<GroupSearchDTO>
+	 * @param groupSearchForm
+	 *            GroupSearchForm
+	 * @return List<GroupSearchDTO>
+	 * 
+	 *         Method added For PIM Phase 2 - groupSearch Date: 05/19/2016 Added
+	 *         By: Cognizant
+	 * @throws PEPPersistencyException
+	 * @throws PEPServiceException
+	 */
+	@Override
+	public List<GroupSearchDTO> groupSearchParent(final List<GroupSearchDTO> groupSearchDTOList, final GroupSearchForm groupSearchForm)
+			throws PEPServiceException, PEPPersistencyException {
+
+		LOGGER.info("Entering GroupingDAO.groupSearchParent() method.");
+		Session session = null;
+		final List<GroupSearchDTO> groupList = new ArrayList<GroupSearchDTO>();
+		GroupSearchDTO groupSearchDTO = null;
+		List<Object> rows = null;
+		final XqueryConstants xqueryConstants = new XqueryConstants();
+		try {
+			session = sessionFactory.openSession();
+			final Query query = session.createSQLQuery(xqueryConstants.getGroupDetailsQueryParent(groupSearchDTOList, groupSearchForm));
+			query.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
+
+			query.setFirstResult(((groupSearchForm.getPageNumber() - 1) * groupSearchForm.getRecordsPerPage()) - 1);
+			query.setMaxResults(groupSearchForm.getRecordsPerPage());
+			
+			rows = query.list();
+
+			if (rows != null) {
+				for (final Object rowObj : rows) {
+					final Map row = (Map) rowObj;
+					groupSearchDTO = new GroupSearchDTO();
+					groupSearchDTO.setGroupId(row.get("GROUP_ID") == null ? "" : row.get("GROUP_ID").toString());
+					groupSearchDTO.setGroupName(row.get("GROUP_NAME") == null ? "" : row.get("GROUP_NAME").toString());
+					groupSearchDTO.setGroupType(row.get("GROUP_TYPE") == null ? "" : row.get("GROUP_TYPE").toString());
+					groupSearchDTO.setGroupContentStatus(row.get("CONTENT_STATE") == null ? "" : row.get("CONTENT_STATE").toString());
+					groupSearchDTO.setStartDate(row.get("START_DATE") == null ? "" : row.get("START_DATE").toString());
+					groupSearchDTO.setEndDate(row.get("END_DATE") == null ? "" : row.get("END_DATE").toString());
+					groupSearchDTO.setComponentGroupId(row.get("COMPONENT_GROUPING_ID") == null ? "" : row.get("COMPONENT_GROUPING_ID")
+							.toString());
+					groupSearchDTO.setGroupImageStatus(row.get("IMAGE_STATE") == null ? "" : row.get("IMAGE_STATE").toString());
+					groupSearchDTO.setChildGroup(row.get("CHILD_GROUP") == null ? "" : row.get("CHILD_GROUP").toString());
+
+					if (LOGGER.isDebugEnabled()) {
+						LOGGER.debug("Grouping Attribute Values -- \nGROUP ID: " + groupSearchDTO.getGroupId() + "\nGROUP NAME: "
+								+ groupSearchDTO.getGroupName() + "\nGROUP TYPE: " + groupSearchDTO.getGroupType()
+								+ "\nGROUP CONTENT STATUS: " + groupSearchDTO.getGroupContentStatus() + "\nGROUP IMAGE STATUS: "
+								+ groupSearchDTO.getGroupImageStatus() + "\nSTART DATE: " + groupSearchDTO.getStartDate() + "\nEND DATE: "
+								+ groupSearchDTO.getEndDate() + "\nCOMPONENT GROUP ID: " + groupSearchDTO.getComponentGroupId());
+					}
+
+					groupList.add(groupSearchDTO);
+				}
+			}
+		} finally {
+						if(session!=null) {
+							session.flush();
+							session.close();
+						}
+			
+		}
+		LOGGER.info("Exiting GroupingDAO.groupSearchParent() method.");
+		return groupList;
+	}
+
+	/**
+	 * Method to get the parents groups count for search group.
+	 * 
+	 * @param groupSearchDTOList
+	 *            List<GroupSearchDTO>
+	 * @param groupSearchForm
+	 *            GroupSearchForm
+	 * @return int
+	 * 
+	 *         Method added For PIM Phase 2 - groupSearch Date: 05/27/2016 Added
+	 *         By: Cognizant
+	 * @throws PEPPersistencyException
+	 * @throws PEPServiceException
+	 */
+	@Override
+	public int groupSearchParentCount(final List<GroupSearchDTO> groupSearchDTOList, final GroupSearchForm groupSearchForm)
+			throws PEPServiceException, PEPPersistencyException {
+
+		LOGGER.info("Entering GroupingDAO.groupSearchParentCount() method.");
+		Session session = null;
+		BigDecimal rowCount = new BigDecimal(0);
+		List<Object> rows = null;
+		final XqueryConstants xqueryConstants = new XqueryConstants();
+		try {
+			session = sessionFactory.openSession();
+			final Query query = session
+					.createSQLQuery(xqueryConstants.getGroupDetailsCountQueryParent(groupSearchDTOList, groupSearchForm));
+			query.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
+			rows = query.list();
+			if (rows != null) {
+				for (final Object rowObj : rows) {
+					final Map row = (Map) rowObj;
+					rowCount = (BigDecimal) (row.get("TOTAL_COUNT_PARENT") == null ? "" : row.get("TOTAL_COUNT_PARENT"));
+					if (LOGGER.isDebugEnabled()) {
+						LOGGER.debug("Parent Grouping Attribute Count -- \nCOUNT OF PARENT RECORDS: " + rowCount);
+					}
+				}
+			}
+		} finally {
+						if(session!=null){
+							session.flush();
+							session.close();
+						}
+			
+		}
+		LOGGER.info("Exiting GroupingDAO.groupSearchParentCount() method.");
+
+		return rowCount.intValue();
+	}
+
+	/**
+	 * Method to get the departments for search group.
+	 * 
+	 * @return ArrayList<DepartmentDetails>
+	 * 
+	 *         Method added For PIM Phase 2 - groupSearch Date: 05/25/2016 Added
+	 *         By: Cognizant
+	 * @throws PEPPersistencyException
+	 */
+	@Override
+	public ArrayList<DepartmentDetails> getDeptDetailsByDepNoFromADSE() throws PEPPersistencyException {
+		LOGGER.info("Entering getDeptDetailsByDepNoFromADSE() in GroupingDAOImpl class..");
+		Session session = null;
+		final ArrayList<DepartmentDetails> adseDepartmentList = new ArrayList<DepartmentDetails>();
+		try {
+			session = sessionFactory.openSession();
+			final Query query1 = session.createSQLQuery(xqueryConstants.getLikeDepartmentDetailsForString());
+			if (query1 != null) {
+			query1.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
+			
+				final List<Object> rows1 = query1.list();
+				if (rows1 != null && rows1.size() > 0) {
+					for (final Object row : rows1) {
+						final Map rowObj = (Map) row;
+						final DepartmentDetails departmentDetails = new DepartmentDetails();
+						departmentDetails.setId(rowObj.get("DEPTID") == null ? "" : rowObj.get("DEPTID").toString());
+						departmentDetails.setDesc(rowObj.get("DEPTNAME") == null ? "" : rowObj.get("DEPTNAME").toString());
+						adseDepartmentList.add(departmentDetails);
+					}
+				}
+			}
+		} finally {
+						if(session!=null){
+							session.flush();
+							session.close();
+						}
+			
+		}
+		LOGGER.info("Exiting getDeptDetailsByDepNoFromADSE() in GroupingDAOImpl class..");
+		return adseDepartmentList;
+	}
+
+	/**
+	 * Method to get the classes for search group.
+	 * 
+	 * @param departmentNumbers
+	 *            String
+	 * @return List<ClassDetails>
+	 * 
+	 *         Method added For PIM Phase 2 - groupSearch Date: 05/25/2016 Added
+	 *         By: Cognizant
+	 * @throws PEPPersistencyException
+	 */
+	@Override
+	public List<ClassDetails> getClassDetailsByDepNos(final String departmentNumbers) throws PEPPersistencyException {
+		LOGGER.info("Entering getClassDetailsByDepNos() in GroupingDAOImpl class..");
+		Session session = null;
+		final List<ClassDetails> classDetailsList = new ArrayList<ClassDetails>();
+		try {
+			session = sessionFactory.openSession();
+			final Query query = session.createSQLQuery(xqueryConstants.getClassDetailsUsingDeptnumbers(departmentNumbers));
+			query.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
+			final List<Object> rows = query.list();
+			for (final Object row : rows) {
+				final Map rowObj = (Map) row;
+				final ClassDetails classDetails = new ClassDetails();
+				classDetails.setId(rowObj.get("CLASS_ID") == null ? "" : rowObj.get("CLASS_ID").toString());
+				classDetails.setDesc(rowObj.get("CLASS_NAME") == null ? "" : rowObj.get("CLASS_NAME").toString());
+				classDetailsList.add(classDetails);
+			}
+		} finally {
+						if(session!=null) {
+							session.flush();
+							session.close();
+						}
+			
+		}
+		LOGGER.info("Exiting getClassDetailsByDepNos() in GroupingDAOImpl class..");
+		return classDetailsList;
+
+	}
+
+	/**
+	 * This method is used to get the Existing Group Attribute Details for Split
+	 * Color from Database.
+	 * 
+	 * @param groupId
+	 * @return groupAttributeFormList
+	 */
+	public List<GroupAttributeForm> getExistSplitColorDetails(final String groupId) throws PEPFetchException {
+		LOGGER.info("Fetch Split Color Existing Details. getExistSplitColorDetails-->Start");
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("Vendor groupId-->" + groupId);
+		}
+		Session session = null;
+		GroupAttributeForm groupAttributeForm = null;
+		List<GroupAttributeForm> groupAttributeFormList = null;
+		final XqueryConstants xqueryConstants = new XqueryConstants();
+		try {
+			session = sessionFactory.openSession();
+			// Hibernate provides a createSQLQuery method to let you call your
+			// native SQL statement directly.
+			final Query query = session.createSQLQuery(xqueryConstants.getExistSplitColorDetails());
+
+			query.setParameter("groupidSql", groupId);
+			query.setFetchSize(100);
+			LOGGER.info("Query-->getExistSplitColorDetails-->" + query);
+
+			groupAttributeFormList = new ArrayList<GroupAttributeForm>();
+
+			// execute select SQL statement
+			query.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
+			final List<Object> rows = query.list();
+			if (rows != null) {
+				LOGGER.info("recordsFetched..." + rows.size());
+
+				for (final Object row : rows) {
+					// LOGGER.info("In..." + rows.size());
+					final Map rowMap = (Map) row;
+					groupAttributeForm = new GroupAttributeForm();
+
+					final String mdmid = rowMap.get("MDMID") != null ? rowMap.get("MDMID").toString() : "";
+					final String parentMdmid = rowMap.get("PARENT_MDMID") != null ? rowMap.get("PARENT_MDMID").toString() : "";
+					final String styleNo = rowMap.get("PRIMARYSUPPLIERVPN") != null ? rowMap.get("PRIMARYSUPPLIERVPN").toString() : "";
+					final String productName = rowMap.get("PRODUCT_NAME") != null ? rowMap.get("PRODUCT_NAME").toString() : "";
+					final String colorCode = rowMap.get("COLOR_CODE") != null ? rowMap.get("COLOR_CODE").toString() : "";
+					final String colorDesc = rowMap.get("COLOR_DESC") != null ? rowMap.get("COLOR_DESC").toString() : "";
+					final String entryType = rowMap.get("ENTRY_TYPE") != null ? rowMap.get("ENTRY_TYPE").toString() : "";
+					final String isDefaultColor = rowMap.get("COMPONENT_DEFAULT") != null ? rowMap.get("COMPONENT_DEFAULT").toString() : "";
+
+					groupAttributeForm.setOrinNumber(mdmid);
+					groupAttributeForm.setStyleNumber(styleNo);
+					groupAttributeForm.setProdName(productName);
+					groupAttributeForm.setColorCode(colorCode);
+					groupAttributeForm.setColorName(colorDesc);
+					groupAttributeForm.setIsAlreadyInGroup("");
+					groupAttributeForm.setSize("");
+					groupAttributeForm.setPetStatus("");
+					groupAttributeForm.setEntryType(entryType);
+					groupAttributeForm.setIsDefault(isDefaultColor);
+					groupAttributeForm.setParentMdmid(parentMdmid);
+
+					groupAttributeFormList.add(groupAttributeForm);
+				}
+			}
+		} finally {
+			LOGGER.info("recordsFetched. getExistSplitColorDetails finally block..");
+			if(session!=null){
+				session.flush();
+				session.close();
+			}
+			
+		}
+
+		LOGGER.info("Fetch Split Color Existing Details. getExistSplitColorDetails-->End");
+		return groupAttributeFormList;
+	}
+
+	/**
+	 * This method is used to get the Existing Group Attribute Details for Split
+	 * Sku from Database.
+	 * 
+	 * @param groupId
+	 * @return groupAttributeFormList
+	 */
+	public List<GroupAttributeForm> getExistSplitSkuDetails(final String groupId) throws PEPFetchException {
+		LOGGER.info("Fetch Split Color Existing Details. getExistSplitSkuDetails-->Start");
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("Vendor groupId-->" + groupId);
+		}
+		Session session = null;
+		GroupAttributeForm groupAttributeForm = null;
+		List<GroupAttributeForm> groupAttributeFormList = null;
+		final XqueryConstants xqueryConstants = new XqueryConstants();
+		try {
+			session = sessionFactory.openSession();
+			// Hibernate provides a createSQLQuery method to let you call your
+			// native SQL statement directly.
+			final Query query = session.createSQLQuery(xqueryConstants.getExistSplitSkuDetails());
+
+			query.setParameter("groupidSql", groupId);
+			query.setFetchSize(100);
+			LOGGER.info("Query-->getExistSplitSkuDetails-->" + query);
+
+			groupAttributeFormList = new ArrayList<GroupAttributeForm>();
+
+			// execute select SQL statement
+			query.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
+			final List<Object> rows = query.list();
+			if (rows != null) {
+				LOGGER.info("recordsFetched..." + rows.size());
+
+				for (final Object row : rows) {
+					// LOGGER.info("In..." + rows.size());
+					final Map rowMap = (Map) row;
+					groupAttributeForm = new GroupAttributeForm();
+
+					final String mdmid = rowMap.get("MDMID") != null ? rowMap.get("MDMID").toString() : "";
+					final String parentMdmid = rowMap.get("PARENT_MDMID") != null ? rowMap.get("PARENT_MDMID").toString() : "";
+					final String styleNo = rowMap.get("PRIMARYSUPPLIERVPN") != null ? rowMap.get("PRIMARYSUPPLIERVPN").toString() : "";
+					final String productName = rowMap.get("PRODUCT_NAME") != null ? rowMap.get("PRODUCT_NAME").toString() : "";
+					final String colorCode = rowMap.get("COLOR_CODE") != null ? rowMap.get("COLOR_CODE").toString() : "";
+					final String colorDesc = rowMap.get("COLOR_DESC") != null ? rowMap.get("COLOR_DESC").toString() : "";
+					final String entryType = rowMap.get("ENTRY_TYPE") != null ? rowMap.get("ENTRY_TYPE").toString() : "";
+					final String sizeDesc = rowMap.get("SIZEDESC") != null ? rowMap.get("SIZEDESC").toString() : "";
+					final String isDefaultSize = rowMap.get("COMPONENT_DEFAULT") != null ? rowMap.get("COMPONENT_DEFAULT").toString() : "";
+
+					groupAttributeForm.setOrinNumber(mdmid);
+					groupAttributeForm.setStyleNumber(styleNo);
+					groupAttributeForm.setProdName(productName);
+					groupAttributeForm.setColorCode(colorCode);
+					groupAttributeForm.setColorName(colorDesc);
+					groupAttributeForm.setIsAlreadyInGroup("");
+					groupAttributeForm.setSize("");
+					groupAttributeForm.setPetStatus("");
+					groupAttributeForm.setEntryType(entryType);
+					groupAttributeForm.setSize(sizeDesc);
+					groupAttributeForm.setIsDefault(isDefaultSize);
+					groupAttributeForm.setParentMdmid(parentMdmid);
+
+					groupAttributeFormList.add(groupAttributeForm);
+				}
+			}
+		} finally {
+			LOGGER.info("recordsFetched. getExistSplitSkuDetails finally block..");
+			if(session!=null){
+				session.flush();
+				session.close();
+			}
+			
+		}
+
+		LOGGER.info("Fetch Split Color Existing Details. getExistSplitColorDetails-->End");
+		return groupAttributeFormList;
+	}
+	
+
+	/**
+	 * This method is used to get the Existing Group Attribute Details for Consolidated Product Grouping from Database.
+	 * 
+	 * @param groupId
+	 * @return groupAttributeFormList
+	 */
+	public List<StyleAttributeForm> getExistCPGDetails(final String groupId) throws PEPFetchException {
+		LOGGER.info("Fetch Split Color Existing Details. getExistCPGDetails-->Start");
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("Vendor groupId-->" + groupId);
+		}
+		Session session = null;
+		GroupAttributeForm groupAttributeForm = null;
+		StyleAttributeForm styleAttributeForm = null;
+		List<GroupAttributeForm> groupAttributeFormList = null;
+		List<StyleAttributeForm> styleAttributeFormList = null;
+		final XqueryConstants xqueryConstants = new XqueryConstants();
+		try {
+			session = sessionFactory.openSession();
+			// Hibernate provides a createSQLQuery method to let you call your
+			// native SQL statement directly.
+			final Query query = session.createSQLQuery(xqueryConstants.getExistCPGDetails());
+
+			query.setParameter("groupidSql", groupId);
+			query.setFetchSize(100);
+			LOGGER.info("Query-->getExistCPGDetails-->" + query);
+
+			//groupAttributeFormList = new ArrayList<GroupAttributeForm>();
+			styleAttributeFormList = new ArrayList<StyleAttributeForm>();
+
+			// execute select SQL statement
+			query.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
+			@SuppressWarnings("unchecked")
+			final List<Object> rows = query.list();
+			if (rows != null) {
+				LOGGER.info("recordsFetched..." + rows.size());
+
+				for (final Object row : rows) {
+					// LOGGER.info("In..." + rows.size());
+					final Map rowMap = (Map) row;
+					groupAttributeForm = new GroupAttributeForm();
+					styleAttributeForm = new StyleAttributeForm();
+					
+					final String mdmid = rowMap.get("MDMID") != null ? rowMap.get("MDMID").toString() : "";
+					final String styleNo = rowMap.get("PRIMARYSUPPLIERVPN") != null ? rowMap.get("PRIMARYSUPPLIERVPN").toString() : "";
+					final String productName = rowMap.get("PRODUCT_NAME") != null ? rowMap.get("PRODUCT_NAME").toString() : "";
+					final String colorCode = rowMap.get("COLOR_CODE") != null ? rowMap.get("COLOR_CODE").toString() : "";
+					final String colorDesc = rowMap.get("COLOR_DESC") != null ? rowMap.get("COLOR_DESC").toString() : "";
+					final String entryType = rowMap.get("ENTRY_TYPE") != null ? rowMap.get("ENTRY_TYPE").toString() : "";
+					final String parentMdmid = rowMap.get("PARENT_MDMID") != null ? rowMap.get("PARENT_MDMID").toString() : "";
+					final String componentStyleId = rowMap.get("COMPONENT_STYLE_ID") != null ? rowMap.get("COMPONENT_STYLE_ID").toString() : "";
+					final String isDefaultAttr = rowMap.get("COMPONENT_DEFAULT") != null ? rowMap.get("COMPONENT_DEFAULT").toString() : "";
+					final String classId = rowMap.get("CLASS_ID") != null ? rowMap.get("CLASS_ID").toString() : "";
+					//LOGGER.debug("parentMdmid-->"+parentMdmid+"<componentStyleId-->"+componentStyleId+"<mdmid-->"+mdmid+"<entryType-->"+entryType);
+
+					if(("Style").equals(entryType)) {
+						groupAttributeFormList = new ArrayList<GroupAttributeForm>();
+						styleAttributeForm.setOrinNumber(mdmid);
+						styleAttributeForm.setStyleNumber(styleNo);
+						styleAttributeForm.setProdName(productName);
+						styleAttributeForm.setColorCode(colorCode);
+						styleAttributeForm.setColorName(colorDesc);
+						styleAttributeForm.setIsAlreadyInGroup("");
+						styleAttributeForm.setSize("");
+						styleAttributeForm.setPetStatus("");
+						styleAttributeForm.setEntryType(entryType);
+						styleAttributeForm.setParentMdmid(parentMdmid);
+						styleAttributeForm.setComponentStyleId(componentStyleId);
+						styleAttributeForm.setGroupAttributeFormList(groupAttributeFormList);
+						styleAttributeForm.setIsDefault(isDefaultAttr);
+						styleAttributeForm.setClassId(classId);
+						styleAttributeFormList.add(styleAttributeForm);
+					}else {
+						groupAttributeForm.setOrinNumber(mdmid);
+						groupAttributeForm.setStyleNumber(styleNo);
+						groupAttributeForm.setProdName(productName);
+						groupAttributeForm.setColorCode(colorCode);
+						groupAttributeForm.setColorName(colorDesc);
+						groupAttributeForm.setIsAlreadyInGroup("");
+						groupAttributeForm.setSize("");
+						groupAttributeForm.setPetStatus("");
+						groupAttributeForm.setEntryType(entryType);
+						groupAttributeForm.setParentMdmid(parentMdmid);
+						groupAttributeForm.setComponentStyleId(componentStyleId);
+						groupAttributeForm.setIsDefault(isDefaultAttr);
+						groupAttributeForm.setClassId(classId);
+ 
+						for(int i = 0; i < styleAttributeFormList.size(); i++){
+							StyleAttributeForm styleAttributeFormSub = styleAttributeFormList.get(i);
+						
+							if((styleAttributeFormSub.getOrinNumber()).equals(parentMdmid)){
+
+								groupAttributeForm.setProdName(styleAttributeFormSub.getProdName()); // Replacing Product Name from Style
+								groupAttributeFormList = styleAttributeFormSub.getGroupAttributeFormList();
+								groupAttributeFormList.add(groupAttributeForm);
+								break;
+							}
+						}
+						
+					}
+					
+
+				}
+			}
+		} finally {
+			LOGGER.info("recordsFetched. getExistCPGDetails finally block..");
+			if(session!=null){
+				session.flush();
+				session.close();
+			}
+			
+		}
+
+		LOGGER.info("Fetch Split Color Existing Details. getExistCPGDetails-->End");
+		return styleAttributeFormList;
+	}
 
 }
