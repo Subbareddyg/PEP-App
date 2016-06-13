@@ -25,6 +25,7 @@ import com.belk.pep.exception.checked.PEPFetchException;
 import com.belk.pep.exception.checked.PEPPersistencyException;
 import com.belk.pep.exception.checked.PEPServiceException;
 import com.belk.pep.model.AdvanceSearch;
+import com.belk.pep.model.PetsFound;
 import com.belk.pep.model.StyleColor;
 import com.belk.pep.model.WorkFlow;
 import com.belk.pep.service.WorkListDisplayService;
@@ -846,8 +847,476 @@ public boolean lockPET(  String orin, String pepUserID, String pepfunction)throw
     }
     return false;
     
-}  
+}
+
+/**
+ * @param adSearch AdvanceSearch
+ * @param supplierIdList List<String>
+ * @param vendorEmail String
+ * @param styleOrinList List<String>
+ * @return List<WorkFlow>
+ */
+@Override
+public List<WorkFlow> getAdvWorklistGroupingData(AdvanceSearch adSearch,
+    List<String> supplierIdList, String vendorEmail, List<String> styleOrinList) {
+    LOGGER.info("WorkListDisplayServiceImpl getAdvWorklistGroupingData Start");
+    List<WorkFlow> workFlowList = null;
+    workFlowList = workListDisplayDAO.getAdvWorklistGroupingData(adSearch, supplierIdList, vendorEmail, styleOrinList);
+    LOGGER.info("WorkListDisplayServiceImpl getAdvWorklistGroupingData End");
+    return workFlowList;
+}
+
+    /**
+     * Method to get the groups for search pet.
+     * 
+     * @param groupId String
+     * @return List<WorkFlow>
+     * 
+     *         Method added For PIM Phase 2 - Search Pet Date: 06/02/2016 Added
+     *         By: Cognizant
+     */
+    @Override
+    public List<WorkFlow> groupSearchParent(final String groupId) {
+        LOGGER.info("WorkListDisplayServiceImpl groupSearchParent Start");
+        List<WorkFlow> workFlowList = null;
+        workFlowList = workListDisplayDAO.groupSearchParent(groupId);
+        LOGGER.info("WorkListDisplayServiceImpl groupSearchParent End");
+        return workFlowList;
+    }
+    
+    /**
+     * Method to get the child for group for search pet.
+     * 
+     * @param groupId String
+     * @param advanceSearch AdvanceSearch
+     * @return List<WorkFlow>
+     * 
+     *         Method added For PIM Phase 2 - Search Pet Date: 06/06/2016 Added
+     *         By: Cognizant
+     */
+    @Override
+    public List<WorkFlow> getChildForGroup(final String groupId, final AdvanceSearch advanceSearch) {
+        LOGGER.info("WorkListDisplayServiceImpl getChildForGroup Start");
+        List<WorkFlow> workFlowList = null;
+        workFlowList = workListDisplayDAO.getChildForGroup(groupId, advanceSearch);
+        LOGGER.info("WorkListDisplayServiceImpl getChildForGroup End");
+        return workFlowList;
+    }
     
     
+    /**
+     * Method to get the groups for worklist display.
+     * 
+     * @param departmentNumbers ArrayList
+     * @param pageNumber int
+     * @param sortColumn String
+     * @param sortOrder String
+     * @return List<WorkFlow>
+     * 
+     *         Method added For PIM Phase 2 - Search Pet Date: 06/06/2016 Added
+     *         By: Cognizant
+     */
+    @Override
+    public List<WorkFlow> getGroupWorkListDetails(final ArrayList departmentNumbers, int pageNumber, String sortColumn, String sortOrder) {
+        LOGGER.info("WorkListDisplayServiceImpl getGroupWorkListDetails Start");
+        List<WorkFlow> workFlowList = null;
+        workFlowList = workListDisplayDAO.getWorklistGroupData(departmentNumbers, pageNumber, sortColumn, sortOrder);
+        LOGGER.info("WorkListDisplayServiceImpl getGroupWorkListDetails End");
+        return workFlowList;
+    }
+    
+    /**
+     * Method to get the groups for worklist display count.
+     * 
+     * @param departmentNumbers ArrayList
+     * @return int
+     * 
+     *         Method added For PIM Phase 2 - Search Pet Date: 06/06/2016 Added
+     *         By: Cognizant
+     */
+    @Override
+    public int getGroupWorkListCountDetails(final ArrayList departmentNumbers) {
+        LOGGER.info("WorkListDisplayServiceImpl getGroupWorkListCountDetails Start");
+        int totalRecordsCount = 0;
+        totalRecordsCount = workListDisplayDAO.groupWorklistSearchCount(departmentNumbers);        
+        LOGGER.info("WorkListDisplayServiceImpl getGroupWorkListCountDetails End");
+        return totalRecordsCount;
+    }
+    
+    /**
+     * Method to get the child for group for Worklist.
+     * 
+     * @param groupId String
+     * @return List<WorkFlow>
+     * 
+     *         Method added For PIM Phase 2 - Worklist Group Date: 06/09/2016 Added
+     *         By: Cognizant
+     */
+    @Override
+    public List<WorkFlow> getChildForGroupWorklist(final String groupId){
+        LOGGER.info("WorkListDisplayServiceImpl getChildForGroupWorklist Start");
+        List<WorkFlow> workFlowList = null;
+        workFlowList = workListDisplayDAO.getChildForGroupWorklist(groupId);
+        LOGGER.info("WorkListDisplayServiceImpl getChildForGroupWorklist End");
+        return workFlowList;
+    }
+    
+
+    /**
+     * @param jsonArray JSONArray
+     * @return String
+     * @throws PEPFetchException 
+     */
+    @Override
+    public String callInactivateGroupService(JSONArray jsonArray) throws PEPFetchException {
+        LOGGER
+            .info("WorkListDisplayserviceImpl callInactivateGroupService : Starts");
+        LOGGER.info("jsoArray:---- " + jsonArray);
+
+        String responseMsg = WorkListDisplayConstants.EMPTY_STRING;
+        boolean flag = false;
+        String msgCodeStr = WorkListDisplayConstants.EMPTY_STRING;
+        HttpURLConnection httpConnection = null;
+
+        try {
+            Properties prop =
+                PropertyLoader
+                    .getPropertyLoader(WorkListDisplayConstants.MESS_PROP);
+            String serviceURL =
+                prop.getProperty(WorkListDisplayConstants.ACTIVATE_OR_INACTIVATE_GROUPS_SERVICE_URL);
+            LOGGER.info("Service URL:--- " + serviceURL);
+
+            System.out.println("ServiceURL:---- " + serviceURL);
+
+            URL targetURL = new URL(serviceURL);
+             httpConnection =
+                (HttpURLConnection) targetURL.openConnection();
+            httpConnection.setDoOutput(true);
+            httpConnection
+                .setRequestMethod(WorkListDisplayConstants.METHOD_POST);
+            httpConnection.setRequestProperty(
+                WorkListDisplayConstants.CONTENT_TYPE,
+                WorkListDisplayConstants.APPLICATION_JSON);
+
+            LOGGER.info("callInactivategroupService jsonArray:-- "
+                + jsonArray.toString());
+
+            JSONObject jsonMap = new JSONObject();
+
+            String input = jsonArray.get(0).toString();
+
+            LOGGER.info("final obejct in JSON:-- " + input);
+
+            OutputStream outputStream = httpConnection.getOutputStream();
+            outputStream.write(input.getBytes());
+            outputStream.flush();
+            BufferedReader responseReader =
+                new BufferedReader(new InputStreamReader(
+                    httpConnection.getInputStream()));
+            String output;
+
+            LOGGER.info("response reader line::::::: "
+                + responseReader.readLine());
+            System.out.println("Output:-------- " + responseReader.readLine());
+            while ((output = responseReader.readLine()) != null) {
+                LOGGER.info(output);
+                LOGGER.info("output for deactivating group:::::: " + output);
+                // Handling Single Row Data
+                if (jsonArray != null && jsonArray.length() <= 1) {
+                    LOGGER.info("Single Row");
+
+                    if (output != null
+                        && (output.contains(WorkListDisplayConstants.NOT) || output
+                            .contains(WorkListDisplayConstants.MAY_BE))
+                        && (output.indexOf(WorkListDisplayConstants.NOT) != -1 || output
+                            .indexOf(WorkListDisplayConstants.MAY_BE) != -1)) {
+                        responseMsg =
+                            WorkListDisplayConstants.ACTIVATE_OR_INACTIVATE_SERVICE_FAILURE;
+                        LOGGER.info("responseMsg::failure::::: "
+                            + responseMsg);
+                    }
+                    else {
+                        responseMsg =
+                            WorkListDisplayConstants.ACTIVATE_OR_INACTIVATE_SERVICE_SUCCESS;
+                        LOGGER.info("responseMsg:::Success::::  "
+                            + responseMsg);
+                    }
+                }
+                else {
+                    // Multiple Row Data
+
+                    JsonElement jElement = new JsonParser().parse(output);
+                    JsonObject jObject = jElement.getAsJsonObject();
+                    JsonArray jsonObject =
+                        (JsonArray) jObject
+                            .get(WorkListDisplayConstants.ACTIVATE_OR_INACTIVATE_SERVICE_LIST);
+
+                    for (int i = 0; i < jsonObject.size(); i++) {
+                        if (jsonObject.size() == 1) {
+                            LOGGER.info("Multiple One");
+                            JsonObject individualJson =
+                                jsonObject.getAsJsonObject();
+                            Object msgCode =
+                                individualJson
+                                    .get(WorkListDisplayConstants.MSG_CODE);
+                            LOGGER.info("Messgafe code-->  "
+                                + msgCode.toString());
+                            msgCodeStr = msgCode.toString();
+                            msgCodeStr =
+                                msgCodeStr
+                                    .substring(1, msgCodeStr.length() - 1);
+                        }
+                        else {
+                            LOGGER.info("Multiple Many");
+                            JsonObject individualJson =
+                                jsonObject.get(i).getAsJsonObject();
+                            Object msgCode =
+                                individualJson
+                                    .get(WorkListDisplayConstants.MSG_CODE);
+                            LOGGER.info("Message code--> "
+                                + msgCode.toString());
+                            msgCodeStr = msgCode.toString();
+                            msgCodeStr =
+                                msgCodeStr
+                                    .substring(1, msgCodeStr.length() - 1);
+                        }
+
+                        if (msgCodeStr
+                            .equalsIgnoreCase(WorkListDisplayConstants.SUCCESS_CODE)) {
+                            flag = true;
+                            LOGGER.info("flag:: " + flag
+                                + "msgCodeStr--> " + msgCodeStr);
+                        }
+                        else if (msgCodeStr
+                            .equalsIgnoreCase(WorkListDisplayConstants.FAILURE_CODE)) {
+                            flag = false;
+                            LOGGER.info("flag:: " + flag
+                                + " msgCodeStr--> " + msgCodeStr);
+                        }
+                    }
+                    if (flag) {
+                        responseMsg =
+                            prop.getProperty(WorkListDisplayConstants.ACTIVATE_OR_INACTIVATE_SERVICE_SUCCESS);
+                        responseMsg = responseMsg + "_" + msgCodeStr;
+                        LOGGER.info("response msg--> " + responseMsg);
+                    }
+                    else {
+                        responseMsg =
+                            prop.getProperty(WorkListDisplayConstants.ACTIVATE_OR_INACTIVATE_SERVICE_FAILURE);
+                        responseMsg = responseMsg + "_" + msgCodeStr;
+                        LOGGER.info("responseMsg --> " + responseMsg);
+                    }
+                }
+
+            }
+
+            
+
+        }
+        catch (MalformedURLException e) {
+            LOGGER.error("inside malformedException" + e);
+            throw new PEPFetchException(e);
+        }
+        catch (ClassCastException e) {
+            LOGGER.error("inside ClassCastException" + e);
+            throw new PEPFetchException();
+        }
+        catch (IOException e) {
+            LOGGER.error("inside IOException" + e);
+            throw new PEPFetchException(e);
+        }
+        catch (JSONException e) {
+            LOGGER.error("inside JSOnException" + e);
+            throw new PEPFetchException(e);
+        }
+        catch (Exception e) {
+            LOGGER.info("inside Exception" + e);
+            throw new PEPFetchException(e);
+        }finally{
+            if (httpConnection!=null)
+                httpConnection.disconnect();
+        }
+        LOGGER
+            .info("WorkListDisplayserviceImpl callInactivateGroupService : Ends");
+        return responseMsg;
+    }
+
+    /**
+     * This method will reinitiate group selected
+     */
+    @Override
+    public String callReInitiateGroupService(JSONArray jsonArray)
+        {
+
+        LOGGER
+            .info("WorkListDisplayServiceImpl callReInitiateGroupService : Starts");
+        System.out.println("in service impl for activate group");
+        String responseMsg = WorkListDisplayConstants.EMPTY_STRING;
+        boolean flag = false;
+        String msgCodeStr = WorkListDisplayConstants.EMPTY_STRING;
+        String singleResponseCode = WorkListDisplayConstants.EMPTY_STRING;
+
+        try {
+            Properties prop =
+                PropertyLoader
+                    .getPropertyLoader(WorkListDisplayConstants.MESS_PROP);
+            String serviceUrl =
+                prop.getProperty(WorkListDisplayConstants.ACTIVATE_GROUPS_SERVICE_URL);
+            ;
+
+            LOGGER.info("Reinitiate Service URL:----- " + serviceUrl);
+
+            URL targetUrl = new URL(serviceUrl);
+            HttpURLConnection httpConnection =
+                (HttpURLConnection) targetUrl.openConnection();
+            httpConnection.setDoOutput(true);
+            httpConnection.setRequestMethod(WorkListDisplayConstants.METHOD_POST);
+            httpConnection.setRequestProperty(WorkListDisplayConstants.CONTENT_TYPE,
+                WorkListDisplayConstants.APPLICATION_JSON);
+
+            LOGGER.info("Reinitiate group Service ... JSONArray...... "
+                + jsonArray.toString());
+
+            String input = jsonArray.get(0).toString();
+            LOGGER.info("Final Object:-------- " + input);
+
+            OutputStream outputStream = httpConnection.getOutputStream();
+            outputStream.write(input.getBytes());
+            outputStream.flush();
+
+            BufferedReader responseBuffer =
+                new BufferedReader(new InputStreamReader(
+                    httpConnection.getInputStream()));
+            String output;
+
+            while ((output = responseBuffer.readLine()) != null) {
+                LOGGER.info(output);
+
+                if (jsonArray != null && jsonArray.length() <= 1) {
+                    LOGGER.info("Single Request");
+
+                    if ((output != null)
+                        && (output.contains(WorkListDisplayConstants.NOT)
+                            || output.contains(WorkListDisplayConstants.MAY_BE) || output
+                            .contains(WorkListDisplayConstants.FAILED))
+                        && (output.indexOf(WorkListDisplayConstants.NOT) != -1
+                            || output.indexOf(WorkListDisplayConstants.MAY_BE) != -1 || output
+                            .indexOf(WorkListDisplayConstants.FAILED) != -1)) {
+                        singleResponseCode =
+                            WorkListDisplayConstants.RESPONSE_101;
+                        responseMsg =
+                            prop.getProperty(WorkListDisplayConstants.REINITIATE_SERVICE_FAILURE)
+                                + WorkListDisplayConstants.UNDERSCORE
+                                + singleResponseCode;
+                        LOGGER
+                            .info("responseMsg -- failure:;:: " + responseMsg);
+                    }
+                    else {
+                        singleResponseCode =
+                            WorkListDisplayConstants.RESPONSE_100;
+                        responseMsg =
+                            prop.getProperty(WorkListDisplayConstants.REINITIATE_SERVICE_SUCCESS)
+                                + WorkListDisplayConstants.UNDERSCORE
+                                + singleResponseCode;
+                        LOGGER.info("responseMsg -- success::::: "
+                            + responseMsg);
+                    }
+                }
+                else {
+                    LOGGER.info("Multiple Requests");
+                    JsonElement jElement = new JsonParser().parse(output);
+                    JsonObject jObject = jElement.getAsJsonObject();
+                    JsonArray jsonObject =
+                        (JsonArray) jObject
+                            .get(WorkListDisplayConstants.ACTIVATE_OR_INACTIVATE_SERVICE_LIST);
+
+                    for (int i = 0; i < jsonObject.size(); i++) {
+                        if (jsonObject.size() == 1) {
+                            LOGGER.info("Multiple One");
+                            JsonObject individualJson =
+                                jsonObject.getAsJsonObject();
+                            Object msgCode =
+                                individualJson
+                                    .get(WorkListDisplayConstants.MSG_CODE);
+                            msgCodeStr =
+                                msgCode.toString().substring(1,
+                                    msgCode.toString().length() - 1);
+                            LOGGER
+                                .info("Msg Code String:------- " + msgCodeStr);
+                        }
+                        else {
+                            LOGGER.info("Multiple Many");
+                            JsonObject individualJson =
+                                jsonObject.get(i).getAsJsonObject();
+                            Object msgCode =
+                                individualJson
+                                    .get(WorkListDisplayConstants.MSG_CODE);
+                            msgCodeStr =
+                                msgCode.toString().substring(1,
+                                    msgCode.toString().length() - 1);
+                            LOGGER
+                                .info("Msg code String:------- " + msgCodeStr);
+                        }
+
+                        if (msgCodeStr
+                            .equals(WorkListDisplayConstants.SUCCESS_CODE)) {
+                            flag = true;
+                            if (LOGGER.isDebugEnabled()) {
+                                LOGGER.debug("Flag:--- " + flag
+                                    + " msg code string:----- " + msgCodeStr);
+                            }
+                        }
+                        else if (msgCodeStr
+                            .equals(WorkListDisplayConstants.FAILURE_CODE)) {
+                            flag = false;
+                            if (LOGGER.isDebugEnabled()) {
+                                LOGGER.debug("flag:---- " + flag
+                                    + " message code string:----- "
+                                    + msgCodeStr);
+                            }
+                        }
+                    }
+                    if (flag) {
+                        responseMsg =
+                            prop.getProperty(WorkListDisplayConstants.REINITIATE_SERVICE_SUCCESS)
+                                + WorkListDisplayConstants.UNDERSCORE
+                                + msgCodeStr;
+                    }
+                    else {
+                        responseMsg =
+                            prop.getProperty(WorkListDisplayConstants.REINITIATE_SERVICE_FAILURE)
+                                + WorkListDisplayConstants.UNDERSCORE
+                                + msgCodeStr;
+                    }
+                }
+            }
+            httpConnection.disconnect();
+        }
+        catch (MalformedURLException e) {
+            LOGGER.error("Inside malformedException callReInitiateGroupService"
+                + e);
+        }
+        catch (ClassCastException e) {
+            LOGGER.error("Inside classcastExceotion callReInitiategroupService"
+                +e );
+        }
+        catch (IOException e) {
+            LOGGER.error("Inside IOException callreInitiateGroupService"
+                + e);
+        }
+        catch (JSONException e) {
+            LOGGER.error("Inside JSONException callReInitiareGroupService"
+                + e);
+        }
+        catch (Exception e) {
+            LOGGER.error("Inside Exception callReInitiateGroupService"
+                + e);
+        }
+
+        LOGGER
+            .info("WorkListDisplayServiceImpl callReInitiateGroupService : Ends");
+        return responseMsg;
+    }  
+
     
 }

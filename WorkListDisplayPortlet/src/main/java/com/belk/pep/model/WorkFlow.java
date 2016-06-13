@@ -68,6 +68,22 @@ public class WorkFlow {
 
     String isChildPresent;
     
+    String isGroup;
+    
+    /**
+     * @return the isGroup
+     */
+    public String getIsGroup() {
+        return isGroup;
+    }
+
+    /**
+     * @param isGroup the isGroup to set
+     */
+    public void setIsGroup(String isGroup) {
+        this.isGroup = isGroup;
+    }
+
     public String getIsPCompletionDateNull() {
         return isPCompletionDateNull;
     }
@@ -696,6 +712,60 @@ public class WorkFlow {
     public void setSourceType(String sourceType) {
         this.sourceType = sourceType;
     }
+    /**
+     * Modification end
+     */
+    
+    /**
+     * Modified for PIM PHASE 2 - Search PET
+     * Date: 06/06/2016
+     * Modified by: Cognizant
+     */
+    private List colorList;
+    private String existsInGroup;
+    private String CFAS;
+    /**
+     * @return the cFAS
+     */
+    public String getCFAS() {
+        return CFAS;
+    }
+
+    /**
+     * @param cFAS the cFAS to set
+     */
+    public void setCFAS(String cFAS) {
+        CFAS = cFAS;
+    }
+
+    /**
+     * @return the existsInGroup
+     */
+    public String getExistsInGroup() {
+        return existsInGroup;
+    }
+
+    /**
+     * @param existsInGroup the existsInGroup to set
+     */
+    public void setExistsInGroup(String existsInGroup) {
+        this.existsInGroup = existsInGroup;
+    }
+
+    /**
+     * @return the colorList
+     */
+    public List getColorList() {
+        return colorList;
+    }
+
+    /**
+     * @param colorList the colorList to set
+     */
+    public void setColorList(List colorList) {
+        this.colorList = colorList;
+    }
+
     /**
      * Modification end
      */

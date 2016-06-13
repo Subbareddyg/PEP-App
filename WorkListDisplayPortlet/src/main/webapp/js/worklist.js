@@ -6,6 +6,7 @@
  * global status vars
  */
 var depSearchInProgress = false;
+var currentSortedColumn = '';
 
 
 function repalcePetTable(responseText){
@@ -92,6 +93,8 @@ function columnsorting(selectedColumn)
 				
 				$("#overlay_Image_advSearch").show();
 				$("#overlay_pageLoading").show();
+				
+				currentSortedColumn = selectedColumn;
                  
 				$.get(url,{selectedColumnName:selectedColumn},function(responseText) { 
                         $('#deptTable').dialog( "destroy" );
@@ -148,7 +151,7 @@ function getThePageContent(pageNumber){
 					$("#overlay_Image_advSearch").show();
 					$("#overlay_pageLoading").show();
                  
-				 $.get(url,{pageNo:pageNumber},function(responseText) { 
+				 $.get(url,{selectedColumnName: currentSortedColumn, pageNo:pageNumber, fromPage: 'pagination'},function(responseText) { 
 						
 						$('#deptTable').dialog( "destroy" );
                         
@@ -318,7 +321,16 @@ function depSearch(depOperation) {
 	                 classNumber:classNumber,
 	                 createdToday:createdToday,
 	                 finalTodayDate:finalTodayDate,
-	                 vendorNumber:vendorNumber
+	                 vendorNumber:vendorNumber,
+					 
+					 /** Modified For PIM Phase 2 
+					* - Sending additional attr for grouping search
+					* Date: 06/04/2016
+					* Modified By: Cognizant
+					*/
+					searchResults: $('[name=searchResults]:checked').val() || '' ,
+					groupingID: $('#groupingID').val(),
+					groupingName: $('#groupingName').val(),
                },function(responseText) {
 					$('#deptTable').dialog('close');
 					$('div.dlg-dept').remove();
@@ -538,6 +550,18 @@ function searchClear()
 	  $("#advVenNumber").prop("disabled" , false);
   }
   $("#advVenNumber").val("");
+  $("#groupingID").val("");
+  $("#groupingName").val("");
+  
+  /** Modified For PIM Phase 2 
+	* -clearing search Type, groupname and id
+	* Date: 06/04/2016
+	* Modified By: Cognizant
+	*/
+  
+  $('[name=searchResults]').prop('checked', false);
+  $('#groupingID').prop('disabled', false).val('');
+  $('#groupingName').prop('disabled', false).val('');
 }
 
 
@@ -578,6 +602,16 @@ function searchReset()
 }
 
 
+function checkGroupingIdNamePopulation(advSelectedDepartments,completionDateFrom,completionDateTo,imageStatus,contentStatus,
+		petStatus,requestType,vendorStyle,upc,createdToday,vendorNumber,orinNumber,classNumber,groupingID,groupingName){
+	if((advSelectedDepartments.length > 0 || completionDateFrom.length > 0 || completionDateTo.length > 0 || imageStatus.length > 0 || 
+			contentStatus.length > 0 || petStatus.length > 0 || requestType.length > 0 || vendorStyle.length > 0 || upc.length > 0||
+			createdToday.length > 0 || vendorNumber.length > 0 || orinNumber.length > 0 || classNumber.length > 0) 
+			&& (groupingID.length > 0 || groupingName.length > 0)){
+		alert("Please search Only Grouping ID or Name");
+		return false;
+	}
+}
 
 function searchSearch()
 {	//574
@@ -585,7 +619,11 @@ function searchSearch()
 	
 	document.getElementById("searchClicked").value = 'yes';
 	var searchClicked = document.getElementById("searchClicked").value ;
+	var searchResult = $("input[name='searchResults']:checked").val();
 	var callType = $("#callType").val();
+	var groupingID = $("#groupingID").val().trim();
+	var groupingName = $("#groupingName").val().trim();
+	var searchResults = $("[name=searchResults]").val().trim();
 	
 	var advSelectedDepartments="";
 	if( $("#adDeptNo").val().trim().length>0 ){
@@ -727,185 +765,217 @@ function searchSearch()
 		
    var url = $("#ajaxaction").val();
 
-
-if(advSelectedDepartments.length == 0 && completionDateFrom.length == 0 && completionDateTo.length == 0 && imageStatus.length == 0 && contentStatus.length == 0 && petStatus.length == 0 && requestType.length == 0 && vendorStyle.length == 0 && upc.length == 0 && createdToday.length == 0 && vendorNumber.length == 0 && orinNumber.length == 0 && classNumber.length == 0){
-		alert("Please select atleast one search criteria before search");
-		return false;
-	}else{
-		$("#overlay_pageLoading1").hide();
-		//$("#dialog_ASearch").css("display","none");
+   // Populating call type as groupingSearch when grouping id or name is populated
+   if((searchResult == "includeGrps")){// && (groupingID != "" || groupingName != "")){
+	   callType = "groupingSearch";
+   }
+   if(searchResult !="" && searchResult!= undefined && searchResult != 'undefined'){
+	   if(advSelectedDepartments.length == 0 && completionDateFrom.length == 0 && completionDateTo.length == 0 && imageStatus.length == 0 && contentStatus.length == 0 && petStatus.length == 0 && requestType.length == 0 && vendorStyle.length == 0 && upc.length == 0 && createdToday.length == 0 && vendorNumber.length == 0 && orinNumber.length == 0 && classNumber.length == 0 && groupingID.length == 0 && groupingName.length == 0){
+			alert("Please select atleast one search criteria before search");
+			return false;
+		}else{
+			
+			// Alert if grouping id/name and other search criteria is selected
+			//return checkGroupingIdNamePopulation(advSelectedDepartments,completionDateFrom,completionDateTo,imageStatus,contentStatus,petStatus,requestType,vendorStyle,upc,createdToday,vendorNumber,orinNumber,classNumber,groupingID,groupingName);
+			if((advSelectedDepartments.length > 0 || completionDateFrom.length > 0 || completionDateTo.length > 0 || imageStatus.length > 0 || 
+					contentStatus.length > 0 || petStatus.length > 0 || requestType.length > 0 || vendorStyle.length > 0 || upc.length > 0||
+					createdToday.length > 0 || vendorNumber.length > 0 || orinNumber.length > 0 || classNumber.length > 0) 
+					&& (groupingID.length > 0 || groupingName.length > 0)){
+				alert("Please search either Grouping ID/Name or other Search Criteria");
+				return false;
+			}
+			
+			$("#overlay_pageLoading1").hide();
+			//$("#dialog_ASearch").css("display","none");
+			
+			if($('#advanceSearchDiv').dialog('instance') !== undefined)
+				$('#advanceSearchDiv').dialog('close');		
+			
+			$("#overlay_pageLoading").show();
+	if(upc.length>0){	
+		$.get(url,{advSearchOperation:'searchSearch',
+									 callType:callType,
+									 searchClicked:searchClicked,
+					                 advSelectedDepartments:advSelectedDepartments,
+					                 completionDateFrom:completionDateFrom,
+					                 completionDateTo:completionDateTo,
+					                 imageStatus:imageStatus,
+					                 contentStatus:contentStatus,
+					                 petStatus:petStatus,
+					                 requestType:requestType,
+					                 orinNumber:orinNumber,
+					                 vendorStyle:vendorStyle,
+					                 upc:upc,
+					                 classNumber:classNumber,
+					                 createdToday:createdToday,
+					                 finalTodayDate:finalTodayDate,
+					                 vendorNumber:vendorNumber,
+					                 searchResults:searchResult,
+					                 groupingID:groupingID,
+					                 groupingName:groupingName,
+									 searchResults: searchResults,
+				},function(responseText) { 
+				//$("#overlay_pageLoading").hide();
+	              responseText = repalcePetTable(responseText);
+	              if(responseText.indexOf('No pet found!') !== -1){
+					  $('#advanceSearchDiv').dialog('open');
+	            	  //$("#dialog_ASearch").css("display","block"); 
+					  alert("UPC is not valid - please re-enter.");
+	            	  return false;
+					  
+	              }
+				  else{
+					  
+					  
+					  		$.get(url,{advSearchOperation:'searchSearch',
+									 callType:callType,
+									 searchClicked:searchClicked,
+					                 advSelectedDepartments:advSelectedDepartments,
+					                 completionDateFrom:completionDateFrom,
+					                 completionDateTo:completionDateTo,
+					                 imageStatus:imageStatus,
+					                 contentStatus:contentStatus,
+					                 petStatus:petStatus,
+					                 requestType:requestType,
+					                 orinNumber:orinNumber,
+					                 vendorStyle:vendorStyle,
+					                 upc:upc,
+					                 classNumber:classNumber,
+					                 createdToday:createdToday,
+					                 finalTodayDate:finalTodayDate,
+					                 vendorNumber:vendorNumber,
+					                 searchResults:searchResult,
+					                 groupingID:groupingID,
+					                 groupingName:groupingName},function(responseText) { 
+											if($('#advanceSearchDiv').dialog('instance') !== undefined)
+												$('#advanceSearchDiv').dialog('close');
+											
+											$('div.dlg-dept').remove(); //fix for ui dlg
+											$('div.dlg-advSearch').remove(); //fix for ui dlg
+											
+											responseText = repalcePetTable(responseText);
+					                        $("#petTable").html(responseText);         
+											$('.tree').treegrid();
+											$('.tree2').treegrid({
+												expanderExpandedClass: 'icon-minus-sign',
+												expanderCollapsedClass: 'icon-plus-sign'
+											});
+											//$("#overlay_Dept").css("display","none");
+											//$("#dialog_Dept").css("display","none");
+											
+											$('#selectAllRow').click(function(event) {  //on click 
+											    if(this.checked) { // check select status
+											        $('.checkbox1').each(function() { //loop through each checkbox
+											            this.checked = true;  //select all checkboxes with class "checkbox1"               
+											        });
+											    }else{
+											        $('.checkbox1').each(function() { //loop through each checkbox
+											            this.checked = false; //deselect all checkboxes with class "checkbox1"                       
+											        });         
+											    }
+											});
+											
+											
+											//$("#dialog_ASearch").css("display","none");
+											
+											defaultAdvSearchSettings();   
+											
+											//$("#overlay_pageLoading").hide();
+					                 })
+									.always(function(){
+										$("#overlay_pageLoading").hide();
+										$("#overlay_Image_advSearch").hide();
+									});
+					  
+					  
+					  
+					 
+					  
+				  }
+				  
+	       }).always(function(){
+			$("#overlay_pageLoading").hide();
+			$("#overlay_Image_advSearch").hide();
+		});
+			
 		
-		if($('#advanceSearchDiv').dialog('instance') !== undefined)
-			$('#advanceSearchDiv').dialog('close');		
 		
-		$("#overlay_pageLoading").show();
-if(upc.length>0){	
-	$.get(url,{advSearchOperation:'searchSearch',
-								 callType:callType,
-								 searchClicked:searchClicked,
-				                 advSelectedDepartments:advSelectedDepartments,
-				                 completionDateFrom:completionDateFrom,
-				                 completionDateTo:completionDateTo,
-				                 imageStatus:imageStatus,
-				                 contentStatus:contentStatus,
-				                 petStatus:petStatus,
-				                 requestType:requestType,
-				                 orinNumber:orinNumber,
-				                 vendorStyle:vendorStyle,
-				                 upc:upc,
-				                 classNumber:classNumber,
-				                 createdToday:createdToday,
-				                 finalTodayDate:finalTodayDate,
-				                 vendorNumber:vendorNumber},function(responseText) { 
-			//$("#overlay_pageLoading").hide();
-              responseText = repalcePetTable(responseText);
-              if(responseText.indexOf('No pet found!') !== -1){
-				  $('#advanceSearchDiv').dialog('open');
-            	  //$("#dialog_ASearch").css("display","block"); 
-				  alert("UPC is not valid - please re-enter.");
-            	  return false;
-				  
-              }
-			  else{
-				  
-				  
-				  		$.get(url,{advSearchOperation:'searchSearch',
-								 callType:callType,
-								 searchClicked:searchClicked,
-				                 advSelectedDepartments:advSelectedDepartments,
-				                 completionDateFrom:completionDateFrom,
-				                 completionDateTo:completionDateTo,
-				                 imageStatus:imageStatus,
-				                 contentStatus:contentStatus,
-				                 petStatus:petStatus,
-				                 requestType:requestType,
-				                 orinNumber:orinNumber,
-				                 vendorStyle:vendorStyle,
-				                 upc:upc,
-				                 classNumber:classNumber,
-				                 createdToday:createdToday,
-				                 finalTodayDate:finalTodayDate,
-				                 vendorNumber:vendorNumber},function(responseText) { 
-										if($('#advanceSearchDiv').dialog('instance') !== undefined)
-											$('#advanceSearchDiv').dialog('close');
-										
-										$('div.dlg-dept').remove(); //fix for ui dlg
-										$('div.dlg-advSearch').remove(); //fix for ui dlg
-										
-										responseText = repalcePetTable(responseText);
-				                        $("#petTable").html(responseText);         
-										$('.tree').treegrid();
-										$('.tree2').treegrid({
-											expanderExpandedClass: 'icon-minus-sign',
-											expanderCollapsedClass: 'icon-plus-sign'
-										});
-										//$("#overlay_Dept").css("display","none");
-										//$("#dialog_Dept").css("display","none");
-										
-										$('#selectAllRow').click(function(event) {  //on click 
-										    if(this.checked) { // check select status
-										        $('.checkbox1').each(function() { //loop through each checkbox
-										            this.checked = true;  //select all checkboxes with class "checkbox1"               
-										        });
-										    }else{
-										        $('.checkbox1').each(function() { //loop through each checkbox
-										            this.checked = false; //deselect all checkboxes with class "checkbox1"                       
-										        });         
-										    }
-										});
-										
-										
-										//$("#dialog_ASearch").css("display","none");
-										
-										defaultAdvSearchSettings();   
-										
-										//$("#overlay_pageLoading").hide();
-				                 })
-								.always(function(){
-									$("#overlay_pageLoading").hide();
-									$("#overlay_Image_advSearch").hide();
-								});
-				  
-				  
-				  
-				 
-				  
-			  }
-			  
-       }).always(function(){
-		$("#overlay_pageLoading").hide();
-		$("#overlay_Image_advSearch").hide();
-	});
+	}   
+	else{
 		
-	
-	
-}   
-else{
-	
-	
-	$.get(url,{advSearchOperation:'searchSearch',
-								 callType: callType,	
-								 searchClicked:searchClicked,
-				                 advSelectedDepartments:advSelectedDepartments,
-				                 completionDateFrom:completionDateFrom,
-				                 completionDateTo:completionDateTo,
-				                 imageStatus:imageStatus,
-				                 contentStatus:contentStatus,
-				                 petStatus:petStatus,
-				                 requestType:requestType,
-				                 orinNumber:orinNumber,
-				                 vendorStyle:vendorStyle,
-				                 upc:upc,
-				                 classNumber:classNumber,
-				                 createdToday:createdToday,
-				                 finalTodayDate:finalTodayDate,
-				                 vendorNumber:vendorNumber},function(responseText) {
-										
-										if($('#advanceSearchDiv').dialog('instance') !== undefined)
-											$('#advanceSearchDiv').dialog('close');
-										
-										$('div.dlg-dept').remove(); //fix for ui dlg
-										
-										$('div.dlg-advSearch').remove(); //fix for ui dlg
-				                        
-										responseText = repalcePetTable(responseText);
-				                        $("#petTable").html(responseText);
-										
-										
-										$('.tree').treegrid();
-										$('.tree2').treegrid({
-											expanderExpandedClass: 'icon-minus-sign',
-											expanderCollapsedClass: 'icon-plus-sign'
-										});
-										//$("#overlay_Dept").css("display","none");
-										//$("#dialog_Dept").css("display","none");
-										
-										$('#selectAllRow').click(function(event) {  //on click 
-										    if(this.checked) { // check select status
-										        $('.checkbox1').each(function() { //loop through each checkbox
-										            this.checked = true;  //select all checkboxes with class "checkbox1"               
-										        });
-										    }else{
-										        $('.checkbox1').each(function() { //loop through each checkbox
-										            this.checked = false; //deselect all checkboxes with class "checkbox1"                       
-										        });         
-										    }
-										});
-										//$("#dialog_ASearch").css("display","none");
-										
-										defaultAdvSearchSettings();   
-										
-										//$("#overlay_pageLoading").hide();
-				                 }).always(function(){
-									$("#overlay_pageLoading").hide();
-									$("#overlay_Image_advSearch").hide();
-								});
-	
-	
-}
+		
+		$.get(url,{advSearchOperation:'searchSearch',
+									 callType: callType,	
+									 searchClicked:searchClicked,
+					                 advSelectedDepartments:advSelectedDepartments,
+					                 completionDateFrom:completionDateFrom,
+					                 completionDateTo:completionDateTo,
+					                 imageStatus:imageStatus,
+					                 contentStatus:contentStatus,
+					                 petStatus:petStatus,
+					                 requestType:requestType,
+					                 orinNumber:orinNumber,
+					                 vendorStyle:vendorStyle,
+					                 upc:upc,
+					                 classNumber:classNumber,
+					                 createdToday:createdToday,
+					                 finalTodayDate:finalTodayDate,
+					                 vendorNumber:vendorNumber,
+					                 searchResults:searchResult,
+					                 groupingID:groupingID,
+					                 groupingName:groupingName},function(responseText) {
+											
+											if($('#advanceSearchDiv').dialog('instance') !== undefined)
+												$('#advanceSearchDiv').dialog('close');
+											
+											$('div.dlg-dept').remove(); //fix for ui dlg
+											
+											$('div.dlg-advSearch').remove(); //fix for ui dlg
+					                        
+											responseText = repalcePetTable(responseText);
+					                        $("#petTable").html(responseText);
+											
+											
+											$('.tree').treegrid();
+											$('.tree2').treegrid({
+												expanderExpandedClass: 'icon-minus-sign',
+												expanderCollapsedClass: 'icon-plus-sign'
+											});
+											//$("#overlay_Dept").css("display","none");
+											//$("#dialog_Dept").css("display","none");
+											
+											$('#selectAllRow').click(function(event) {  //on click 
+											    if(this.checked) { // check select status
+											        $('.checkbox1').each(function() { //loop through each checkbox
+											            this.checked = true;  //select all checkboxes with class "checkbox1"               
+											        });
+											    }else{
+											        $('.checkbox1').each(function() { //loop through each checkbox
+											            this.checked = false; //deselect all checkboxes with class "checkbox1"                       
+											        });         
+											    }
+											});
+											//$("#dialog_ASearch").css("display","none");
+											
+											defaultAdvSearchSettings();   
+											
+											//$("#overlay_pageLoading").hide();
+					                 }).always(function(){
+										$("#overlay_pageLoading").hide();
+										$("#overlay_Image_advSearch").hide();
+									});
+		
+		
+	}
+	   
+	}
+   }else{
+	   alert("Please select Search Result Type");
+	   return false;
+   }
    
-} 				               //document.getElementById('searchReturnId').value = '';
-				             	document.getElementById('searchReturnId').value = 'true';
+           //document.getElementById('searchReturnId').value = '';
+         	document.getElementById('searchReturnId').value = 'true';
 				             			
  
 }
@@ -1326,13 +1396,25 @@ function advSearch() {
 	                 classNumber:classNumber,
 	                 createdToday:createdToday,
 	                 finalTodayDate:finalTodayDate,
-	                 vendorNumber:vendorNumber
+	                 vendorNumber:vendorNumber,
+					
+					/** Modified For PIM Phase 2 
+					* - Sending additional attr for grouping search
+					* Date: 06/04/2016
+					* Modified By: Cognizant
+					*/
+					searchResults: $('[name=searchResults]:checked').val() || '' ,
+					groupingID: $('#groupingID').val(),
+					groupingName: $('#groupingName').val(),
+					 
                },function(responseText) {					
 					responseText = repalceAdvPetTable(responseText);
 					  $("#advanceSearchDiv").html(responseText);
 					  //$("#overlay_Image_advSearch").css("display","block");					
 					  $("#dialog_ASearch").css("display","block");
 					  defaultAdvSearchSettings();
+					  
+					  toggleEnability();
 					  
 					  //mapping ui dialog to the searchbox 
 					  $('#advanceSearchDiv').dialog({
@@ -1342,7 +1424,7 @@ function advSearch() {
 							resizable: true,
 							title: 'Search PET',
 							width: 440,
-							height: 565,
+							height: 600,
 							minHeight: 565,
 							minWidth: 440,
 							open: function( event, ui ) {
@@ -1405,33 +1487,42 @@ function createmannualpet(){
 
 	
 //Method to get child data	
-function getChildData(orinNum, showHideFlag){
+function getChildData(orinNum, showHideFlag, isGroup){
 	var url = $("#ajaxaction").val(); 
 	var petLockedStatus = '';
 	var petLockedUser ='';
 	if($('tr[name=child_' + orinNum + ']').length <= 0){
 	$("#overlay_pageLoading").show();
+	
       $.ajax({
 		         url: url ,
 		         type: 'GET',
 		         datatype:'json',
-		         data: { "orinNum" : orinNum,
-				        "callType":'getChildData'
+		         data: {"orinNum" : orinNum,
+				        "callType": isGroup == 'Y' ? 'getChildgroup' : 'getChildData'
 					   },
 			         success: function(data){
-						 var myString = data.substr(data.indexOf("[{") , data.indexOf("}]")+2);
-						 var json = [];
+						 /** Modified For PIM Phase 2 
+						* - parsing response and extracting json from html 
+						* - for group enabled search result and worklist
+						* Date: 06/07/2016
+						* Modified By: Cognizant
+						*/
+						//var myString = data.substr(data.indexOf("[{") , data.indexOf("}]")+2);
+						//var myString = data.substr(data.indexOf("[{") , data.indexOf("}]")+2);
+						var json = [];
 						 try{
-							json = $.parseJSON(myString); 
+							var myString = data.substr(data.indexOf('STARTJSON') + 'STARTJSON'.length , (data.indexOf('ENDJSON') - 'ENDJSON'.length)-2);
+							var json = $.parseJSON(myString);
 						 }catch(ex){
 						 }
 						
-						populateChildData(json,orinNum, showHideFlag);
+						populateChildData(json,orinNum, showHideFlag, isGroup);
 						$("#overlay_pageLoading").hide();
 				}//End of Success				   
         }); //  $.ajax({
 	}else{
-		populateChildData([],orinNum, showHideFlag);
+		populateChildData([],orinNum, showHideFlag, isGroup);
 	}
 }	
 	
@@ -1581,7 +1672,16 @@ function inactivateAjaxCall(){
 			if(flag == 'yes'){
 			//$("#dialog_ASearch").css("display","none");	
 			$("#overlay_pageLoading1").show();
-			$.get(url,{styleItem: inactivateOrinValue,statusParam: 'inactivate'},function(responseText) {
+			
+			var searchResultValue = "";
+			
+			if($("#groupingID").val() == "" && $("#groupingName").val() == ""){
+				searchResultValue = "";
+			}else{
+				searchResultValue = "includeGrps";
+			}
+			
+			$.get(url,{styleItem: inactivateOrinValue,statusParam: 'inactivate', groupSearchResult:searchResultValue},function(responseText) {
 				
 				if('false'== $("#searchReturnId").val()){
 					//alert('not come from search');
@@ -1709,7 +1809,14 @@ function activateAjaxCall(){
 			//$("#dialog_ASearch").css("display","none");	
 			//$("#overlay_pageLoading").show();
 			$("#overlay_pageLoading1").show();
-			$.get(url,{styleItem: activateOrinValue,statusParam: 'activate'},function(responseText) {					
+			var searchResultValue = "";
+			
+			if($("#groupingID").val() == "" && $("#groupingName").val() == ""){
+				searchResultValue = "";
+			}else{
+				searchResultValue = "includeGrps";
+			}
+			$.get(url,{styleItem: activateOrinValue,statusParam: 'activate', groupSearchResult:searchResultValue},function(responseText) {					
 				if('false'== $("#searchReturnId").val()){
 					//alert('not come from search Activate');
 					document.getElementById('workListDisplayForm').submit();//Default Load Page submission
@@ -1738,16 +1845,16 @@ function activateAjaxCall(){
 
 
 /*This method is responsible for passing values of parent child orin selection */
-function childCheckedRows(elem,parentOrinNo,searchClicked){
+function childCheckedRows(elem, parentOrinNo, searchClicked, isGroup){
 	var checkedStyle = $("#mainPetTable").find("[parentorinno ='"+parentOrinNo+"']");
 	
 	if(checkedStyle.length <=0){
 		if($(elem).is(':checked')){
 			$("#callType").val("getChildData");
 			if("yes" == searchClicked){//Call child for Advance search query
-				searchSearchForChild(parentOrinNo, false);
+				searchSearchForChild(parentOrinNo, false, isGroup);
 			}else{
-				getChildData(parentOrinNo, false);
+				getChildData(parentOrinNo, false, isGroup);
 			}
 			
 			$( document ).ajaxStop(function() {
@@ -2000,7 +2107,9 @@ var inputDept = document.getElementById('selectedDeptSearch').value;
 
 
 
-function populateChildData(jsonArray,orinNum, showHideFlag){
+function populateChildData(jsonArray, orinNum, showHideFlag, isGroup){
+	//console.log(isGroup);
+	
 	var mainTb = document.getElementById('mainPetTable');
 	var parentTr = document.getElementById('parent_'+orinNum);
 	var templateTr = document.getElementById('CHILDTR_ID');
@@ -2008,6 +2117,7 @@ function populateChildData(jsonArray,orinNum, showHideFlag){
 	var hidden_roleEditable = $("#hidden_roleEditable").val();
 	var hidden_readOnlyUser = $("#hidden_readOnlyUser").val();
 	var hidden_roleName = $("#hidden_roleName").val();;
+	
 	if($('tr[name=child_' + orinNum + ']').length > 0){
 		$(parentTr).attr('displayChild','Y');
 		$('tr[name=child_' + orinNum + ']').each(function(index){
@@ -2017,166 +2127,184 @@ function populateChildData(jsonArray,orinNum, showHideFlag){
 		return;
 	}
 	
-	$(jsonArray).each(function(i,val){
-		var tempTr = document.createElement('tr');
-		$(tempTr).attr('name','child_'+orinNum);
-		$(tempTr).attr('id','child_'+val.orinNum);
+	if(isGroup !== undefined && isGroup == 'Y'){
+		var template = $('#group_items_template').length ? _.template($('#group_items_template').html(), null,  {
+			interpolate :  /\{\{\=(.+?)\}\}/g,
+			evaluate: /\{\{(.+?)\}\}/g
+		}) : null;
+		
+		var html = template({data: jsonArray, orinNum: orinNum, showHideFlag: showHideFlag});
+		
+		//console.log(html);
 		
 		if(showHideFlag !== undefined && showHideFlag == false){
-			$(tempTr).css({display: 'none'});
 			$(parentTr).attr('displayChild','N');
 		}else
 			$(parentTr).attr('displayChild','Y');
 		
-		var tempHtml = templateTr.innerHTML; 
+		//$(tempTr).html(tempHtml);
+		$(html).insertAfter($(parentTr));
 		
+	}else{
+			$(jsonArray).each(function(i,val){
+			var tempTr = document.createElement('tr');
+			$(tempTr).attr('name','child_'+orinNum);
+			$(tempTr).attr('id','child_'+val.styleOrinNum);
+			
+			if(showHideFlag !== undefined && showHideFlag == false){
+				$(tempTr).css({display: 'none'});
+				$(parentTr).attr('displayChild','N');
+			}else
+				$(parentTr).attr('displayChild','Y');
+			
+			var tempHtml = templateTr.innerHTML; 
+			
+					
+			tempHtml = tempHtml.replace("#CHBOX_PARENTORIN", orinNum);
+			tempHtml = tempHtml.replace("#CH_STYLE_ORIN", val.styleOrinNum);
+			tempHtml = tempHtml.replace("#CH_STYLE_PETSTATUS", val.petStatus);
+			tempHtml = tempHtml.replace("#CHBOXONCLK_PETSTATUS", val.petStatus);
+			
+			tempHtml = tempHtml.replace("#TD_ORIN", val.styleOrinNum); 
+			tempHtml = tempHtml.replace("#TD_DEPT_NUM", val.deptId); 
+			tempHtml = tempHtml.replace("#TD_VENDOR_NAME", val.vendorName); 
+			
+			tempHtml = tempHtml.replace("#STYLE_ORIN_NUMBER", val.styleOrinNum); 
+			var vendorStyle = $("#"+orinNum+"_vendorStyle").val();
+			if(vendorStyle){
+				tempHtml = tempHtml.replace("#TD_VENDOR_STYLE", vendorStyle);
+			}else{
+				tempHtml = tempHtml.replace("#TD_VENDOR_STYLE", "");
+			}
+			
+			var productName = $("#"+orinNum+"_productName").val();
+			if(productName){
+				tempHtml = tempHtml.replace("#TD_PRODUCT_NAME", productName);
+			}else{
+				tempHtml = tempHtml.replace("#TD_PRODUCT_NAME", "");
+			}		
+			
+
+			/*<a href="#" onclick="contentStatus('#CONTENT_STATUS','#CON_PARENT_ORIN')">#TD_CONTENT_STATUS</a>		*/
+			tempHtml = tempHtml.replace("#CONTENT_STATUS", val.contentStatus);
+			tempHtml = tempHtml.replace("#CON_PARENT_ORIN", orinNum);
+			tempHtml = tempHtml.replace("#TD_CONTENT_STATUS", val.contentStatus);
+			
+			if("yes" == hidden_roleEditable || "yes" == hidden_readOnlyUser){
+				tempHtml = tempHtml.replace("#CONTENT_DISPLAY_STATUS", "");
+				tempHtml = tempHtml.replace("#TD_CONTENT_STATUS_NOTEDITABLE", "");
+			}else{
+				tempHtml = tempHtml.replace("#CONTENT_DISPLAY_STATUS", "none");
+				tempHtml = tempHtml.replace("#TD_CONTENT_STATUS_NOTEDITABLE", val.contentStatus);
+			}
+			
+			/*<a href="#" onclick="imageStatus('#IMAGE_STATUS','#PARENT_ORIN','#PET_STATUS')">#TD_IMAGE_STATUS</a>*/
+			
+			tempHtml = tempHtml.replace("#TD_IMAGE_STATUS", val.imageStatus);
+			tempHtml = tempHtml.replace("#IMAGE_STATUS", val.imageStatus);
+			tempHtml = tempHtml.replace("#IMG_PARENT_ORIN", orinNum);
+			tempHtml = tempHtml.replace("#PET_STATUS", val.petStatus);
+			
+			if("yes" == hidden_roleEditable || "yes" == hidden_readOnlyUser){
+				tempHtml = tempHtml.replace("#IMAGE_DISPLAY_STATUS", "");
+				tempHtml = tempHtml.replace("#TD_IMAGE_STATUS_NOTEDITABLE", "");
+			}else{
+				tempHtml = tempHtml.replace("#IMAGE_DISPLAY_STATUS", "none");
+				tempHtml = tempHtml.replace("#TD_IMAGE_STATUS_NOTEDITABLE", val.imageStatus);
+			}
+			
+			tempHtml = tempHtml.replace("#TD_COMPLETION_DATE", val.completionDate);
+			
+			var random_subcount = ""+Math.random();
+			random_subcount = random_subcount.substring(2,10)	;
+			
+			tempHtml = tempHtml.replace("#CMP_TXT_CMP_DT", val.completionDate);
+			tempHtml = tempHtml.replace("#SUBCOUNT_RANDOM", random_subcount);
+			tempHtml = tempHtml.replace("#SUBCOUNT_RANDOM", random_subcount);
+			tempHtml = tempHtml.replace("#SUBCOUNT_RANDOM", random_subcount);
+			tempHtml = tempHtml.replace("#SUBCOUNT_RANDOM", random_subcount);
+			tempHtml = tempHtml.replace("#SUBCOUNT_RANDOM", random_subcount);
+			tempHtml = tempHtml.replace("#SUBCOUNT_RANDOM", random_subcount);
+			tempHtml = tempHtml.replace("#SUBCOUNT_RANDOM", random_subcount);
+			tempHtml = tempHtml.replace("#SUBCOUNT_RANDOM", random_subcount);
+			tempHtml = tempHtml.replace("#SUBCOUNT_RANDOM", random_subcount);		
+			
+			//tempHtml = tempHtml.replace("#CMP_INPUT_HIDDEN_ID_SUBCOUNT", random_subcount);
+			//tempHtml = tempHtml.replace("#CMP_INPUT_HIDDEN_NAME_SUBCOUNT", random_subcount);
+			tempHtml = tempHtml.replace("#CMP_HIDDEN_STYLE_CMP_DT", val.completionDate);
+			tempHtml = tempHtml.replace("#CMP_PARENT_ORIN", orinNum);
+			//tempHtml = tempHtml.replace("#CMP_HIDDEN_ID_SUBCOUNT", random_subcount);
+			//tempHtml = tempHtml.replace("#CMP_HIDDEN_NAME_SUBCOUNT", random_subcount);
+			tempHtml = tempHtml.replace("#CMP_HIDDEN_PARENT_ORIN", orinNum);
+			//tempHtml = tempHtml.replace("#CMP_HIDDENSTYLE_ID_SUBCOUNT", random_subcount);
+			//tempHtml = tempHtml.replace("#CMP_HIDDENSTYLE_NAME_SUBCOUNT", random_subcount);
+			tempHtml = tempHtml.replace("#CMP_HIDDEN_STYLE_ORIN", val.styleOrinNum);
+			
+			
+			//<c:when test="${workflowForm.roleName =='dca' &&  style.petStatus == 'Initiated' && workflowForm.readOnlyUser !='yes' }" >
+			//var chldOrinNo = val.styleOrinNum.replace('/','');
+			var chldOrinNo = val.styleOrinNum.split(' ');
+			chldOrinNo = chldOrinNo.join('');
+			chldOrinNo = chldOrinNo.length >=12 ? chldOrinNo.substring(0, 12) : chldOrinNo;
+			
+			tempHtml = tempHtml.replace("editable-cc-date-#CON_CHILD_ORIN", "editable-cc-date-"+ chldOrinNo);
+			tempHtml = tempHtml.replace("readonly-cc-date-#CON_CHILD_ORIN", "readonly-cc-date-"+ chldOrinNo);
+			
+			if("dca" == hidden_roleName && "Initiated" == val.petStatus && "yes" != hidden_readOnlyUser){
+				setTimeout(function(){
+					$('.editable-cc-date-' + chldOrinNo).css({display: 'inline'});
+					$('.readonly-cc-date-' + chldOrinNo).css({display: 'none'});
+				}, 3);
 				
-		tempHtml = tempHtml.replace("#CHBOX_PARENTORIN", orinNum);
-		tempHtml = tempHtml.replace("#CH_STYLE_ORIN", val.styleOrinNum);
-		tempHtml = tempHtml.replace("#CH_STYLE_PETSTATUS", val.petStatus);
-		tempHtml = tempHtml.replace("#CHBOXONCLK_PETSTATUS", val.petStatus);
-		
-		tempHtml = tempHtml.replace("#TD_ORIN", val.styleOrinNum); 
-		tempHtml = tempHtml.replace("#TD_DEPT_NUM", val.deptId); 
-		tempHtml = tempHtml.replace("#TD_VENDOR_NAME", val.vendorName); 
-		
-		tempHtml = tempHtml.replace("#STYLE_ORIN_NUMBER", val.styleOrinNum); 
-		var vendorStyle = $("#"+orinNum+"_vendorStyle").val();
-		if(vendorStyle){
-			tempHtml = tempHtml.replace("#TD_VENDOR_STYLE", vendorStyle);
-		}else{
-			tempHtml = tempHtml.replace("#TD_VENDOR_STYLE", "");
-		}
-		
-		var productName = $("#"+orinNum+"_productName").val();
-		if(productName){
-			tempHtml = tempHtml.replace("#TD_PRODUCT_NAME", productName);
-		}else{
-			tempHtml = tempHtml.replace("#TD_PRODUCT_NAME", "");
-		}		
-		
-
-		/*<a href="#" onclick="contentStatus('#CONTENT_STATUS','#CON_PARENT_ORIN')">#TD_CONTENT_STATUS</a>		*/
-		tempHtml = tempHtml.replace("#CONTENT_STATUS", val.contentStatus);
-		tempHtml = tempHtml.replace("#CON_PARENT_ORIN", orinNum);
-		tempHtml = tempHtml.replace("#TD_CONTENT_STATUS", val.contentStatus);
-		
-		if("yes" == hidden_roleEditable || "yes" == hidden_readOnlyUser){
-			tempHtml = tempHtml.replace("#CONTENT_DISPLAY_STATUS", "");
-			tempHtml = tempHtml.replace("#TD_CONTENT_STATUS_NOTEDITABLE", "");
-		}else{
-			tempHtml = tempHtml.replace("#CONTENT_DISPLAY_STATUS", "none");
-			tempHtml = tempHtml.replace("#TD_CONTENT_STATUS_NOTEDITABLE", val.contentStatus);
-		}
-		
-		/*<a href="#" onclick="imageStatus('#IMAGE_STATUS','#PARENT_ORIN','#PET_STATUS')">#TD_IMAGE_STATUS</a>*/
-		
-		tempHtml = tempHtml.replace("#TD_IMAGE_STATUS", val.imageStatus);
-		tempHtml = tempHtml.replace("#IMAGE_STATUS", val.imageStatus);
-		tempHtml = tempHtml.replace("#IMG_PARENT_ORIN", orinNum);
-		tempHtml = tempHtml.replace("#PET_STATUS", val.petStatus);
-		
-		if("yes" == hidden_roleEditable || "yes" == hidden_readOnlyUser){
-			tempHtml = tempHtml.replace("#IMAGE_DISPLAY_STATUS", "");
-			tempHtml = tempHtml.replace("#TD_IMAGE_STATUS_NOTEDITABLE", "");
-		}else{
-			tempHtml = tempHtml.replace("#IMAGE_DISPLAY_STATUS", "none");
-			tempHtml = tempHtml.replace("#TD_IMAGE_STATUS_NOTEDITABLE", val.imageStatus);
-		}
-		
-		tempHtml = tempHtml.replace("#TD_COMPLETION_DATE", val.completionDate);
-		
-		var random_subcount = ""+Math.random();
-		random_subcount = random_subcount.substring(2,10)	;
-		
-		tempHtml = tempHtml.replace("#CMP_TXT_CMP_DT", val.completionDate);
-		tempHtml = tempHtml.replace("#SUBCOUNT_RANDOM", random_subcount);
-		tempHtml = tempHtml.replace("#SUBCOUNT_RANDOM", random_subcount);
-		tempHtml = tempHtml.replace("#SUBCOUNT_RANDOM", random_subcount);
-		tempHtml = tempHtml.replace("#SUBCOUNT_RANDOM", random_subcount);
-		tempHtml = tempHtml.replace("#SUBCOUNT_RANDOM", random_subcount);
-		tempHtml = tempHtml.replace("#SUBCOUNT_RANDOM", random_subcount);
-		tempHtml = tempHtml.replace("#SUBCOUNT_RANDOM", random_subcount);
-		tempHtml = tempHtml.replace("#SUBCOUNT_RANDOM", random_subcount);
-		tempHtml = tempHtml.replace("#SUBCOUNT_RANDOM", random_subcount);		
-		
-		//tempHtml = tempHtml.replace("#CMP_INPUT_HIDDEN_ID_SUBCOUNT", random_subcount);
-		//tempHtml = tempHtml.replace("#CMP_INPUT_HIDDEN_NAME_SUBCOUNT", random_subcount);
-		tempHtml = tempHtml.replace("#CMP_HIDDEN_STYLE_CMP_DT", val.completionDate);
-		tempHtml = tempHtml.replace("#CMP_PARENT_ORIN", orinNum);
-		//tempHtml = tempHtml.replace("#CMP_HIDDEN_ID_SUBCOUNT", random_subcount);
-		//tempHtml = tempHtml.replace("#CMP_HIDDEN_NAME_SUBCOUNT", random_subcount);
-		tempHtml = tempHtml.replace("#CMP_HIDDEN_PARENT_ORIN", orinNum);
-		//tempHtml = tempHtml.replace("#CMP_HIDDENSTYLE_ID_SUBCOUNT", random_subcount);
-		//tempHtml = tempHtml.replace("#CMP_HIDDENSTYLE_NAME_SUBCOUNT", random_subcount);
-		tempHtml = tempHtml.replace("#CMP_HIDDEN_STYLE_ORIN", val.styleOrinNum);
-		
-		
-		//<c:when test="${workflowForm.roleName =='dca' &&  style.petStatus == 'Initiated' && workflowForm.readOnlyUser !='yes' }" >
-		//var chldOrinNo = val.styleOrinNum.replace('/','');
-		var chldOrinNo = val.styleOrinNum.split(' ');
-		chldOrinNo = chldOrinNo.join('');
-		chldOrinNo = chldOrinNo.length >=12 ? chldOrinNo.substring(0, 12) : chldOrinNo;
-		
-		tempHtml = tempHtml.replace("editable-cc-date-#CON_CHILD_ORIN", "editable-cc-date-"+ chldOrinNo);
-		tempHtml = tempHtml.replace("readonly-cc-date-#CON_CHILD_ORIN", "readonly-cc-date-"+ chldOrinNo);
-		
-		if("dca" == hidden_roleName && "Initiated" == val.petStatus && "yes" != hidden_readOnlyUser){
-			setTimeout(function(){
-				$('.editable-cc-date-' + chldOrinNo).css({display: 'inline'});
-				$('.readonly-cc-date-' + chldOrinNo).css({display: 'none'});
-			}, 3);
-			
-		}else if("Deactivated" != val.petStatus){
-			setTimeout(function(){
-				$('.editable-cc-date-' + chldOrinNo).css({display: 'none'});
-				$('.readonly-cc-date-' + chldOrinNo).css({display: 'inline'});
-			}, 3);
-		}else{
-			 if("Deactivated" == val.petStatus){
+			}else if("Deactivated" != val.petStatus){
 				setTimeout(function(){
-					$('.readonly-cc-date-' + chldOrinNo).css({display: 'none'});
 					$('.editable-cc-date-' + chldOrinNo).css({display: 'none'});
-				}, 3); 
-			 }else{
-				setTimeout(function(){
-					$('.readonly-cc-date-' + chldOrinNo).css({display: 'none'});
-				}, 3); 
-			 }
+					$('.readonly-cc-date-' + chldOrinNo).css({display: 'inline'});
+				}, 3);
+			}else{
+				 if("Deactivated" == val.petStatus){
+					setTimeout(function(){
+						$('.readonly-cc-date-' + chldOrinNo).css({display: 'none'});
+						$('.editable-cc-date-' + chldOrinNo).css({display: 'none'});
+					}, 3); 
+				 }else{
+					setTimeout(function(){
+						$('.readonly-cc-date-' + chldOrinNo).css({display: 'none'});
+					}, 3); 
+				 }
+				
+			}
+		
+			tempHtml = tempHtml.replace("#TD_SOURCE_TYPE", val.petSourceType);
 			
-		}
-	
-		tempHtml = tempHtml.replace("#TD_SOURCE_TYPE", val.petSourceType);
-		
-		tempHtml = tempHtml.replace("#TD_PET_STATUS", val.petStatus);
-		
-		$(tempTr).html(tempHtml);
-		$(tempTr).insertAfter($(parentTr));
-		
-		setTimeout(function(){
-		//logic to set the child element already selected if the parent is previously selected
-	
-		if($(parentTr).find('input[type=checkbox]').is(':checked')){
-			$('tr[name=child_' + orinNum + ']').find('input[type=checkbox]').attr('checked', 'checked');
-		}else{
+			tempHtml = tempHtml.replace("#TD_PET_STATUS", val.petStatus);
 			
-			//$(templateTr).find('input[type=checkbox]').prop('checked', false);
-			$('tr[name=child_' + orinNum + ']').find('input[type=checkbox]').removeAttr('checked');
-		}
+			$(tempTr).html(tempHtml);
+			$(tempTr).insertAfter($(parentTr));
 			
+			setTimeout(function(){
+			//logic to set the child element already selected if the parent is previously selected
 		
-		}, 20);
+			if($(parentTr).find('input[type=checkbox]').is(':checked')){
+				$('tr[name=child_' + orinNum + ']').find('input[type=checkbox]').attr('checked', 'checked');
+			}else{
+				
+				//$(templateTr).find('input[type=checkbox]').prop('checked', false);
+				$('tr[name=child_' + orinNum + ']').find('input[type=checkbox]').removeAttr('checked');
+			}
+				
+			
+			}, 20);
+			
+		});
 		
-	});
-	
-	//$(parentTr).attr('displayChild','Y');
-	$(parentTr).attr('dataRetrieved','Y');
-	//expandCollapse(orinNum);
-
-	
+		//$(parentTr).attr('displayChild','Y');
+		$(parentTr).attr('dataRetrieved','Y');
+		//expandCollapse(orinNum);
+	}
 }
 
-function expandCollapse(orinNum,searchClicked){
+function expandCollapse(orinNum, searchClicked, isGroup){
 	
 	var parentTr = document.getElementById('parent_'+orinNum);
 	var displayChild = $(parentTr).attr('displayChild');
@@ -2187,25 +2315,53 @@ function expandCollapse(orinNum,searchClicked){
 	//var searchClicked = document.getElementById("searchClicked").value;
 	
 	if('Y' == displayChild){
+		
+		
+		/** Modified For PIM Phase 2 
+		* - change to remove group level children
+		* Date: 06/08/2016
+		* Modified By: Cognizant
+		*/
+		
+		//getting all child orin spawned from this root parent orin
+		var childOrins = [];
+		$("tr[data-tr-root=" + orinNum + "]").each(function(i){
+			childOrins.push($(this).attr('id').split('_')[1]);
+		});
+		
+		//console.log(childOrins);
+		//removing parent item and its direct associated children
+		$("tr[data-tr-root=" + orinNum + "]").remove();
+		
+		//removing all children childre spawned from deferred call
+		childOrins.forEach(function(i){ //asuming latest browsers and specially chrome
+			$('tr[data-tr-root=' + i + ']').remove();
+		});
+		
+		
 		var childElms = $("tr[name='child_"+orinNum+"'] ");
 		
 		$(childElms).each(function(i,elm){
 			$(elm).remove();
 		});
+		
+		
+		
 		$(parentTr).attr('displayChild','N');
 		$(parentTr).find('input[type=checkbox]').prop('checked', false);
 		//$(span_Parent).html('Expand');
 		$(expand).show();
 		$(collapsed).hide();
 	}else{
-		$("#callType").val("getChildData");
+		//$("#callType").val("getChildData");
+		$("#callType").val((isGroup !== undefined && isGroup.trim().length) ? 'getChildgroup' : 'getChildData');
 		
 		if("yes" == searchClicked){//Call child for Advance search query
-			searchSearchForChild(orinNum);
+			searchSearchForChild(orinNum, true, isGroup);
 			$(expand).hide();
 			$(collapsed).show();
 		}else{
-			getChildData(orinNum);
+			getChildData(orinNum, true, isGroup);
 			$(expand).hide();
 			$(collapsed).show();
 		}
@@ -2215,12 +2371,30 @@ function expandCollapse(orinNum,searchClicked){
 	return false;
 }
 
+/** Modified For PIM Phase 2 
+* - new funtion to expand style colors under style when a group is expanded 
+* Date: 06/07/2016
+* Modified By: Cognizant
+*/
+
+function expandStyleColorCollapse(orin){
+	var parentTr = $('#parent_' + orin);
+	//console.log(parentTr);
+	if(parentTr.attr('displayChild') == 'Y'){
+		$('tr[name=child_' + orin + ']').css({display: "none"});
+		$('#parentSpan_' + orin + '_expand').show();
+		$('#parentSpan_' + orin + '_collapsed').hide();
+		parentTr.attr('displayChild', 'N');
+	}else{
+		$('tr[name=child_' + orin + ']').css({display: "table-row"});
+		parentTr.attr('displayChild', 'Y');
+		$('#parentSpan_' + orin + '_expand').hide();
+		$('#parentSpan_' + orin + '_collapsed').show();
+	}
+}
 
 
-
-
-
-function searchSearchForChild(parentOrin, showHideFlag)
+function searchSearchForChild(parentOrin, showHideFlag, isGroup)
 {	
 	
 	document.getElementById("searchClicked").value = 'yes';
@@ -2375,6 +2549,17 @@ function searchSearchForChild(parentOrin, showHideFlag)
 		
 	 var url = $("#ajaxaction").val(); 
 	 
+	  /** Modified For PIM Phase 2 
+		* - getting call type either to include groupings or pets only 
+		* - added additional params for groups if applicable
+		* Date: 06/08/2016
+		* Modified By: Cognizant
+	*/
+	
+	var searchResults = $('[name=searchResults]:checked').val() || '';
+	var groupingID = $('#groupingID').val();
+	var groupingName = $('#groupingName').val();
+	 
 	 if($('tr[name=child_' + parentOrin + ']').length <= 0){
 	
 		$("#overlay_pageLoading").show();
@@ -2383,7 +2568,7 @@ function searchSearchForChild(parentOrin, showHideFlag)
 		         type: 'GET',
 		         datatype:'json',
 		         data: { 		 advSearchOperation:'searchSearch',
-								 orinNum:parentOrin,
+								 orinNum: (isGroup === undefined || isGroup != 'Y') ? parentOrin: '',
 								 callType: callType,	
 								 searchClicked:searchClicked,
 				                 advSelectedDepartments:advSelectedDepartments,
@@ -2399,20 +2584,35 @@ function searchSearchForChild(parentOrin, showHideFlag)
 				                 classNumber:classNumber,
 				                 createdToday:createdToday,
 				                 finalTodayDate:finalTodayDate,
-				                 vendorNumber:vendorNumber
+				                 vendorNumber:vendorNumber,
+								/** Modified For PIM Phase 2 
+								* - parsing response and extracting json from html 
+								* - for group enabled search result and worklist
+								* Date: 06/07/2016
+								* Modified By: Cognizant
+								*/
+								searchResults:searchResults,
+								groupingID: isGroup == 'Y' ? parentOrin: '',
+								groupingName: groupingName,
 					   },
 			         success: function(data){
-						
-						var myString = data.substr(data.indexOf("[{") , data.indexOf("}]")+2);
+						/** Modified For PIM Phase 2 
+						* - parsing response and extracting json from html 
+						* - for group enabled search result and worklist
+						* Date: 06/07/2016
+						* Modified By: Cognizant
+						*/
+						//var myString = data.substr(data.indexOf("[{") , data.indexOf("}]")+2);
+						var myString = data.substr(data.indexOf('STARTJSON') + 'STARTJSON'.length , (data.indexOf('ENDJSON') - 'ENDJSON'.length)-2);
 						var json = $.parseJSON(myString);  
-						populateChildData(json,parentOrin, showHideFlag);
+						populateChildData(json,parentOrin, showHideFlag, isGroup);
 						
 						$("#overlay_pageLoading").hide();
 						
 				}//End of Success				   
         });
 	 }else{
-		populateChildData([],parentOrin, showHideFlag); 
+		populateChildData([],parentOrin, showHideFlag, isGroup); 
 	 }
  
 }

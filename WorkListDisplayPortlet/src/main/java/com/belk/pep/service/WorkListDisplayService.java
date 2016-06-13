@@ -9,6 +9,7 @@ import java.util.List;
 import org.json.JSONArray;
 
 import com.belk.pep.domain.PepDepartment;
+import com.belk.pep.exception.checked.PEPFetchException;
 import com.belk.pep.exception.checked.PEPPersistencyException;
 import com.belk.pep.exception.checked.PEPServiceException;
 import com.belk.pep.model.AdvanceSearch;
@@ -140,7 +141,91 @@ public ArrayList isPETLocked(String pepUserId,String Orin,String searchPetLocked
 public boolean lockPET(  String orin, String pepUserID, String pepfunction)throws PEPPersistencyException ;
 
 
-     
+    /**
+     * This method will populate work like based on grouping id or name
+     * @param adSearch
+     * @param supplierIdList
+     * @param vendorEmail
+     * @return List<WorkFlow>
+     */
+    public List<WorkFlow> getAdvWorklistGroupingData(AdvanceSearch adSearch, List<String> supplierIdList, String vendorEmail, List<String> styleOrinList);
+    
+    /**
+     * Method to get the groups for search pet.
+     * 
+     * @param groupId String
+     * @return List<WorkFlow>
+     * 
+     *         Method added For PIM Phase 2 - Search Pet Date: 06/02/2016 Added
+     *         By: Cognizant
+     */
+    public List<WorkFlow> groupSearchParent(final String groupId);
+
+    /**
+     * Method to get the child for group for search pet.
+     * 
+     * @param groupId String
+     * @param advanceSearch AdvanceSearch
+     * @return List<WorkFlow>
+     * 
+     *         Method added For PIM Phase 2 - Search Pet Date: 06/06/2016 Added
+     *         By: Cognizant
+     */
+    List<WorkFlow> getChildForGroup(String groupId, AdvanceSearch advanceSearch);
+    
+    /**
+     * Method to get the groups for worklist display count.
+     * 
+     * @param departmentNumbers ArrayList
+     * @return int
+     * 
+     *         Method added For PIM Phase 2 - Search Pet Date: 06/06/2016 Added
+     *         By: Cognizant
+     */
+    int getGroupWorkListCountDetails(ArrayList departmentNumbers);
+    
+    /**
+     * Method to get the groups for worklist display.
+     * 
+     * @param departmentNumbers ArrayList
+     * @param pageNumber int
+     * @param sortColumn String
+     * @param sortOrder String
+     * @return List<WorkFlow>
+     * 
+     *         Method added For PIM Phase 2 - Search Pet Date: 06/06/2016 Added
+     *         By: Cognizant
+     */
+    List<WorkFlow> getGroupWorkListDetails(ArrayList departmentNumbers,
+        int pageNumber, String sortColumn, String sortOrder);
+    /**
+     * Method to get the child for group for Worklist.
+     * 
+     * @param groupId String
+     * @return List<WorkFlow>
+     * 
+     *         Method added For PIM Phase 2 - Worklist Group Date: 06/06/2016 Added
+     *         By: Cognizant
+     */
+    List<WorkFlow> getChildForGroupWorklist(String groupId);
+    
+    /**
+     * This method will inactivate the group selected
+     * @param jsonArray
+     * @return
+     * @throws Exception
+     */
+    public String callInactivateGroupService(JSONArray jsonArray) throws Exception,PEPFetchException;
+
+
+    /**
+     * 
+     * @param jsonArray
+     * @return
+     * @throws Exception
+     * @throws PEPFetchException
+     */
+    public String callReInitiateGroupService(JSONArray jsonArray)throws Exception, PEPFetchException;
 
 }
 

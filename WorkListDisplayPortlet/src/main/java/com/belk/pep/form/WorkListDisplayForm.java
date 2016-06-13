@@ -575,7 +575,22 @@ public class WorkListDisplayForm {
         this.fullWorkFlowlist = fullWorkFlowlist;
     }
 
-    
+    private String workListType;
+
+
+    /**
+     * @return the workListType
+     */
+    public String getWorkListType() {
+        return workListType;
+    }
+
+    /**
+     * @param workListType the workListType to set
+     */
+    public void setWorkListType(String workListType) {
+        this.workListType = workListType;
+    }
       
     
     

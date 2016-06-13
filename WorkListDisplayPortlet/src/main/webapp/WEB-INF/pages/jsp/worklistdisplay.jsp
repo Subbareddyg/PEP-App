@@ -10,6 +10,7 @@
 	 
 
 <style type = "text/css">
+tr.children td{#border:1px dashed #ddd;}
 input.btn-new, input.btn-new:hover {
     background: #cedff5;
     border: 1px solid #aaaaaa;
@@ -33,6 +34,7 @@ input.btn-new, input.btn-new:hover {
 
 .dlg-custom #advanceSearchDiv{
 	overflow-x: hidden !important;
+	overflow-y: hidden !important;
 	height: 100%;
 }
 #search_tabs li.text label{
@@ -89,6 +91,7 @@ input.btn-new, input.btn-new:hover {
 <form>
 	<input type="hidden" id="clearLockOnBackPage" name="clearLockOnBackPage" value="0">
 </form>
+
 <script>
 
 var lockClearOnBack=document.getElementById('clearLockOnBackPage');
@@ -100,7 +103,7 @@ lockClearOnBack.value='1';
 </script>
 
 <form:form commandName="workflowForm" method="post" action="${formAction}" name="workListDisplayForm" id="workListDisplayForm" onload="onloaddept()" >
-
+	
 	<input type="hidden" id="username" name="username" value="<c:out value='${workflowForm.pepUserID}'/>" />
 	<input type="hidden" id="imageStatus" name="imageStatus" value=""/>
 	<input type="hidden" id="contentStatus" name="contentStatus" value=""/>
@@ -115,6 +118,7 @@ lockClearOnBack.value='1';
 	<input type="hidden" id="petStatus" name="petStatus" value=""/>    
     
     <input type="hidden" id="searchReturnId" name="searchReturnId" value="false" />	
+    <input type="hidden" id="groupSearchResult" name="groupSearchResult" value="" />
 	
 	<!--Commented Belk Best Plan for displaying DCA afuszr6-->
 	<!--<c:if test="${isInternal =='yes' && workflowForm.readOnlyUser == 'no'}"> 
@@ -144,10 +148,10 @@ lockClearOnBack.value='1';
 					<input type="button"  id=" createPet" value="<fmt:message key="worklist.create.mannual.label"/>" 
 					    onclick=createmannualpet();  class="createpetbutton"/>  
 				 </c:if>  
-				   
+				    
 				<input type="button"  id="createGrouping" value="<fmt:message key="worklist.grouping.label"/>" 
 				    onclick=createGroup();  class="creategroupingbutton"/>  
-				  
+
 				 <c:if test="${workflowForm.readOnlyUser !='yes'}">   
 					
 						<input type="button" name="delete" value="<fmt:message key="worklist.inactivate.pet.label"/>" 
@@ -164,14 +168,22 @@ lockClearOnBack.value='1';
 			<input type="hidden" id="activatePetid" name="activatePetid" value=""></input>
 			
 			<input type="button" onClick=advSearch(); value="<fmt:message key="worklist.search.pet.label"/>" class="searchpetbutton">
-		</div>  
+		</div> 
 				
 				<c:if test="${isPetAvailable =='yes'}">
 				
 				<c:set var="contextpath" value="<%=response.encodeURL(request.getContextPath())%>"></c:set>
 				<c:set var="imagemidpath" value="/img/"></c:set>
 				<c:set var="imagename" value="${workflowForm.sortingImage}"></c:set>
-				<div id="tableStart"></div><div class="x-panel-body" id="petTable" name="petTable">	
+				<div id="tableStart"></div>
+				<div class="x-panel-body" id="petTable" name="petTable">
+				<c:if test="${isInternal =='yes'}">
+					Show:
+						<select name="workListType" id="workListType" onchange="document.getElementById('workListDisplayForm').submit()" style="width: auto; margin-right:10px;margin-bottom:4px;">
+							<option value="Regular PET" <c:if test="${'Groupings'!= workflowForm.workListType}"> selected="selected" </c:if>>Regular PET</option>
+							<option value="Groupings" <c:if test="${'Groupings'== workflowForm.workListType}"> selected="selected" </c:if>>Groupings</option>
+						</select>
+				</c:if>
 				<input type="hidden" id="updateDateMessage" name="updateDateMessage" value="${workflowForm.updateCompletionDateMsg}"/>
 				<c:if test="${workflowForm.totalNumberOfPets ne '0'}">
 				<span class="pagebanner">&nbsp;<c:out value="${workflowForm.totalNumberOfPets}"/>
@@ -239,7 +251,8 @@ lockClearOnBack.value='1';
 							
 				</span>
 				</c:if>
-				</c:if>				
+				</c:if>
+				<hr style="margin:4px; margin-bottom:10px;">
 				<div class="scrollbarset">
 				<!-- Image Loading message starts -->
 					<div id="overlay_pageLoading" style="display:none;">
@@ -278,195 +291,207 @@ lockClearOnBack.value='1';
 		</div>
 	</div>
 </div>
-				
-				<table  cellpadding="0"  class="table tree2 table-bordered table-striped table-condensed" id="mainPetTable" name="mainPetTable"  >
-				<thead >
-				<tr>
-				<th style="width:34px"><input  class="selectAllCheckBox" type="checkbox" name="selectAllRow" id="selectAllRow">
-				</th>
-				<th class="sortable sorted order2" width="10%">
-				<a href="#" onclick="columnsorting('orinGroup')"><fmt:message key="worklist.orin.group.label"/>#</a>
-				<c:if test="${workflowForm.selectedColumn =='orinGroup'}">
-					<img src="${contextpath}${imagemidpath}${imagename}"> </img>
-				</c:if>
-				</th>
-				<th class="sortable">
-				<a href="#" onclick="columnsorting('dept')"><fmt:message key="worklist.column.dept.label"/>#</a>
-				<c:if test="${workflowForm.selectedColumn =='dept'}">
-					<img src="${contextpath}${imagemidpath}${imagename}"> </img>
-				</c:if>
-				</th>
-				<th class="sortable">
-				<a href="#" onclick="columnsorting('vendorName')"><fmt:message key="worklist.column.vendor.name.label"/></a>
-				<c:if test="${workflowForm.selectedColumn =='vendorName'}">
-					<img src="${contextpath}${imagemidpath}${imagename}"> </img>
-				</c:if>
-				</th>
-				<th class="sortable">
-				<a href="#" onclick="columnsorting('vendorStyle')"><fmt:message key="worklist.column.vendor.style.label"/>#</a>
-				<c:if test="${workflowForm.selectedColumn =='vendorStyle'}">
-					<img src="${contextpath}${imagemidpath}${imagename}"> </img>
-				</c:if>
-				</th>
-				<th class="sortable">
-				<a href="#" onclick="columnsorting('productName')"><fmt:message key="worklist.column.product.name.label"/></a>
-				<c:if test="${workflowForm.selectedColumn =='productName'}">
-					<img src="${contextpath}${imagemidpath}${imagename}"> </img>
-				</c:if>
-				</th>
-				<th class="sortable">
-				<a href="#" onclick="columnsorting('contentStatus')"><fmt:message key="worklist.column.content.status.label"/></a>
-				<c:if test="${workflowForm.selectedColumn =='contentStatus'}">
-					<img src="${contextpath}${imagemidpath}${imagename}"> </img>
-				</c:if>
-				</th>
-				<th><a href="#" onclick="columnsorting('imageStatus')"><fmt:message key="worklist.column.img.status.label"/></a>
-				<c:if test="${workflowForm.selectedColumn =='imageStatus'}">
-					<img src="${contextpath}${imagemidpath}${imagename}"> </img>
-				</c:if>
-				</th>		
-				<th><a href="#" onclick="columnsorting('completionDate')"><fmt:message key="worklist.column.icompletion.date.label"/></a>
-				<c:if test="${workflowForm.selectedColumn =='completionDate'}">
-					<img src="${contextpath}${imagemidpath}${imagename}"> </img>
-				</c:if>
-				</th>
-				<th><a href="#" onclick="columnsorting('petSourceType')">PET Source</a>
-				<c:if test="${workflowForm.selectedColumn =='petSourceType'}">
-					<img src="${contextpath}${imagemidpath}${imagename}"> </img>
-				</c:if>					
-				</th>
-				</tr>
-				</thead>
-				<tbody >
-						<input type="hidden" id="hidden_roleEditable" name="hidden_roleEditable" value="${workflowForm.roleEditable}"/>
-						<input type="hidden" id="hidden_readOnlyUser" name="hidden_readOnlyUser" value="${workflowForm.readOnlyUser}"/>
-						<input type="hidden" id="hidden_roleName" name="hidden_roleName" value="${workflowForm.roleName}"/>
-						<input type="hidden" id="callType" name="callType" value=""/>
-						<input type="hidden" id="searchClicked" name="searchClicked" value="${workflowForm.searchClicked}" />
-						
-						
-						
-								
-				<!-- Table Grid logic Start -->
-						<c:set var="subcount" value="260" />
-						<c:set var="countList" value="0" />
-						<c:if test="${workflowForm.petNotFound ne null}"><tr><td colspan="10"><c:out value="${workflowForm.petNotFound}"/></td></tr> </c:if>
-						<c:forEach items="${workflowForm.workFlowlist}" var="workFlow"
-							varStatus="status">
-							
-								<tr id="parent_${workFlow.orinNumber}" name="tablereport" class="treegrid-${countList}" >
-								<td align="center" style="width:34px">
-								
-									<div style="display: inline;margin:-17px 0 0 0px">
-								<c:if test="${workFlow.isChildPresent =='Y'}">
-								<img id="parentSpan_${workFlow.orinNumber}_expand" onclick="expandCollapse('${workFlow.orinNumber}','${workflowForm.searchClicked}')" src="${contextpath}${imagemidpath}expand.png"  
-								style="cursor:pointer;border:0;" width="14" />
-								<img id="parentSpan_${workFlow.orinNumber}_collapsed" onclick="expandCollapse('${workFlow.orinNumber}','${workflowForm.searchClicked}')" src="${contextpath}${imagemidpath}collapsed.png"  
-								style="display:none;cursor:pointer" style="cursor:pointer;border:0;" width="14"/>
-								</c:if>
-																
-								<input type="checkbox" name="styleItem" id="styleItem" class="checkbox1"
-									value="${workFlow.orinNumber}_${workFlow.petStatus}" onclick="childCheckedRows(this,'${workFlow.orinNumber}','${workflowForm.searchClicked}');getPetStatValue('${workFlow.petStatus}')" style="margin:0;"/>
-								</div>
-								
-								</td>
-								<td><c:out value="${workFlow.orinNumber}" />
-								<c:if test="${workFlow.omniChannelVendor =='Y' && workflowForm.roleEditable =='yes'}">*</c:if>
-								</td>
-								<td><c:out value="${workFlow.deptId}" />
-								</td>
-								<td><c:out value="${workFlow.vendorName}" />
-								</td>
-								<td><c:out value="${workFlow.vendorStyle}" />
-								<input type="hidden" id="${workFlow.orinNumber}_vendorStyle" value="${workFlow.vendorStyle}"/>
-								</td>
-								<td><c:out value="${workFlow.productName}" />
-								<input type="hidden" id="${workFlow.orinNumber}_productName" value="${workFlow.productName}"/>
-								</td>
-								<td>
-								   
-									<c:choose>									    
-										<c:when test="${workflowForm.roleEditable =='yes' }" >										
-										  <a href="#" onclick="contentStatus('<c:out value="${workFlow.contentStatus}"/>','<c:out value="${workFlow.orinNumber}"/>')"><c:out value="${workFlow.contentStatus}"/></a>
-										</c:when>
-										<c:when test="${workflowForm.readOnlyUser =='yes' }" >	
-										   <a href="#" onclick="contentStatus('<c:out value="${workFlow.contentStatus}"/>','<c:out value="${workFlow.orinNumber}"/>')"><c:out value="${workFlow.contentStatus}"/></a>
-										</c:when>
-										<c:otherwise>
-										   <c:out value="${workFlow.contentStatus}" />
-										</c:otherwise>
-									</c:choose>
-								</td>
-									<td>
-									<c:choose>
-										<c:when test="${workflowForm.roleEditable =='yes' }" >
-										  <a href="#" onclick="imageStatus('<c:out value="${workFlow.imageStatus}"/>','<c:out value="${workFlow.orinNumber}"/>','${workFlow.petStatus}')"><c:out value="${workFlow.imageStatus}"/></a>										
-										</c:when>
-										
-										<c:when test="${workflowForm.readOnlyUser =='yes' }" >	
-										   <a href="#" onclick="imageStatus('<c:out value="${workFlow.imageStatus}"/>','<c:out value="${workFlow.orinNumber}"/>','${workFlow.petStatus}')"><c:out value="${workFlow.imageStatus}"/></a>
-										</c:when>
-										
-										<c:otherwise>
-										<c:out value="${workFlow.imageStatus}" />
-										</c:otherwise>
-									</c:choose>
-									</td>
-								<td>								
-								<c:if test = "${workFlow.petStatus ne 'Deactivated'}">										
-									<c:out value="${workFlow.completionDate}" />
-								</c:if>							
-								<input type="hidden" id="${workFlow.orinNumber}_CmpDate" name="${workFlow.orinNumber}_CmpDate" value="${workFlow.completionDate}"/>
-								<input type="hidden" id="tbisPCompletionDateNull_${workFlow.orinNumber}" name="tbisPCompletionDateNull_${workFlow.orinNumber}" value="${workFlow.isPCompletionDateNull}" />
-								</td>
-								
-								<td><c:out value="${workFlow.sourceType}" /></td>
-								
-								<td style="display: none;"><c:out value="${workFlow.petStatus}" />
-								</td>
-								
+						<table  cellpadding="0"  class="table tree2 table-bordered table-striped table-condensed" id="mainPetTable" name="mainPetTable"  >
+							<thead >
+							<tr>
+							<th style="width:34px"><input  class="selectAllCheckBox" type="checkbox" name="selectAllRow" id="selectAllRow">
+							</th>
+							<th class="sortable sorted order2" width="10%">
+							<a href="#" onclick="columnsorting('orinGroup')"><fmt:message key="worklist.orin.group.label"/>#</a>
+							<c:if test="${workflowForm.selectedColumn =='orinGroup'}">
+								<img src="${contextpath}${imagemidpath}${imagename}"> </img>
+							</c:if>
+							</th>
+							<th class="sortable">
+							<a href="#" onclick="columnsorting('dept')"><fmt:message key="worklist.column.dept.label"/>#</a>
+							<c:if test="${workflowForm.selectedColumn =='dept'}">
+								<img src="${contextpath}${imagemidpath}${imagename}"> </img>
+							</c:if>
+							</th>
+							<th class="sortable">
+							<a href="#" onclick="columnsorting('vendorName')"><fmt:message key="worklist.column.vendor.name.label"/></a>
+							<c:if test="${workflowForm.selectedColumn =='vendorName'}">
+								<img src="${contextpath}${imagemidpath}${imagename}"> </img>
+							</c:if>
+							</th>
+							<th class="sortable">
+							<a href="#" onclick="columnsorting('vendorStyle')"><fmt:message key="worklist.column.vendor.style.label"/></a>
+							<c:if test="${workflowForm.selectedColumn =='vendorStyle'}">
+								<img src="${contextpath}${imagemidpath}${imagename}"> </img>
+							</c:if>
+							</th>
+							<th class="sortable">
+							<a href="#" onclick="columnsorting('productName')"><fmt:message key="worklist.column.product.name.label"/></a>
+							<c:if test="${workflowForm.selectedColumn =='productName'}">
+								<img src="${contextpath}${imagemidpath}${imagename}"> </img>
+							</c:if>
+							</th>
+							<th class="sortable">
+							<a href="#" onclick="columnsorting('contentStatus')"><fmt:message key="worklist.column.content.status.label"/></a>
+							<c:if test="${workflowForm.selectedColumn =='contentStatus'}">
+								<img src="${contextpath}${imagemidpath}${imagename}"> </img>
+							</c:if>
+							</th>
+							<th><a href="#" onclick="columnsorting('imageStatus')"><fmt:message key="worklist.column.img.status.label"/></a>
+							<c:if test="${workflowForm.selectedColumn =='imageStatus'}">
+								<img src="${contextpath}${imagemidpath}${imagename}"> </img>
+							</c:if>
+							<th><a href="#" onclick="columnsorting('petStatus')"><fmt:message key="worklist.column.pet.status.label"/></a>
+							<c:if test="${workflowForm.selectedColumn =='petStatus'}">
+								<img src="${contextpath}${imagemidpath}${imagename}"> </img>
+							</c:if>
+							</th>		
+							<th><a href="#" onclick="columnsorting('completionDate')"><fmt:message key="worklist.column.icompletion.date.label"/></a>
+							<c:if test="${workflowForm.selectedColumn =='completionDate'}">
+								<img src="${contextpath}${imagemidpath}${imagename}"> </img>
+							</c:if>
+							</th>
+							<th><a href="#" onclick="columnsorting('petSourceType')">PET Source</a>
+							<c:if test="${workflowForm.selectedColumn =='petSourceType'}">
+								<img src="${contextpath}${imagemidpath}${imagename}"> </img>
+							</c:if>					
+							</th>
 							</tr>
-						
-						
-							<c:set var="countList" value="${countList+1}" />
-						</c:forEach> 
-						<tr id="CHILDTR_ID" name="CHILDTR_NAME"
-									class="" style="display:none">
-									<td style="width:34px"><input type="checkbox" parentOrinNo="#CHBOX_PARENTORIN" name="selectedStyles" class="checkbox1"
-										value="#CH_STYLE_ORIN_#CH_STYLE_PETSTATUS" onclick="getStyleColorPetStatValue('#CHBOXONCLK_PETSTATUS')" style="margin:16px 0 0 19px"/></td>
-									<td>#TD_ORIN</td>
-									<td>#TD_DEPT_NUM</td>
-									<td>#TD_VENDOR_NAME</td>
-									<td>#TD_VENDOR_STYLE</td>
-									<td>#TD_PRODUCT_NAME</td>
-									<td>
-									<a href="#" onclick="contentStatus('#CONTENT_STATUS','#CON_PARENT_ORIN')">#TD_CONTENT_STATUS</a>
-									</td>
-									<td>
-									<a href="#" onclick="imageStatus('#IMAGE_STATUS','#IMG_PARENT_ORIN','#PET_STATUS')">#TD_IMAGE_STATUS</a>
-									</td>
-									<td>
-									<div id="#CMP_SEC1" style="display:#SEC1_STYLE_STATUS" class="editable-cc-date-#CON_CHILD_ORIN">
-									<!--<input type="text" id="tCompletionDate" name="tCompletionDate" value=''  
-									onchange="checkcompletiondate(this,'#SUBCOUNT_RANDOM')"/>-->
-									#CMP_TXT_CMP_DT
-										<input type="hidden" id="tbCompletionDate#SUBCOUNT_RANDOM" name="tbCompletionDate#SUBCOUNT_RANDOM" value='#CMP_HIDDEN_STYLE_CMP_DT' class = '#CMP_PARENT_ORIN_child '/>										 
-										<input type="hidden" id="tbOrinNumber#SUBCOUNT_RANDOM" name="tbOrinNumber#SUBCOUNT_RANDOM" value='#CMP_HIDDEN_PARENT_ORIN'/>
-										<input type="hidden" id="tbStyleOrinNumber#SUBCOUNT_RANDOM" name="tbStyleOrinNumber#SUBCOUNT_RANDOM" value='#CMP_HIDDEN_STYLE_ORIN'/>
-									</div>
-									<div id="#CMP_SEC2" style="display: #SEC2_STYLE_STATUS;" class="readonly-cc-date-#CON_CHILD_ORIN">
-									<input type="hidden" id="tbCompletionDate#SUBCOUNT_RANDOM" name="tbCompletionDate#SUBCOUNT_RANDOM"
-									value='#CMP_TXT_CMP_DT' class = '#CMP_PARENT_ORIN_child '/>
-									 #TD_COMPLETION_DATE
-									</div>
-									</td>
-									<td>#TD_SOURCE_TYPE</td>
-									<td style="display: none;">#TD_PET_STATUS</td>
-								</tr>	
-				<!--  Table Grid Login End -->	       
-				</tbody>
-				</table>
-				</div>
+							</thead>
+							<tbody >
+									<input type="hidden" id="hidden_roleEditable" name="hidden_roleEditable" value="${workflowForm.roleEditable}"/>
+									<input type="hidden" id="hidden_readOnlyUser" name="hidden_readOnlyUser" value="${workflowForm.readOnlyUser}"/>
+									<input type="hidden" id="hidden_roleName" name="hidden_roleName" value="${workflowForm.roleName}"/>
+									<input type="hidden" id="callType" name="callType" value=""/>
+									<input type="hidden" id="searchClicked" name="searchClicked" value="${workflowForm.searchClicked}" />
+									
+									
+									
+											
+							<!-- Table Grid logic Start -->
+									<c:set var="subcount" value="260" />
+									<c:set var="countList" value="0" />
+									<c:if test="${workflowForm.petNotFound ne null}"><tr><td colspan="10"><c:out value="${workflowForm.petNotFound}"/></td></tr> </c:if>
+									<c:forEach items="${workflowForm.workFlowlist}" var="workFlow"
+										varStatus="status">
+										
+											<tr id="parent_${workFlow.orinNumber}" name="tablereport" class="treegrid-${countList}" data-group="${workFlow.isGroup}" <c:if test="${isInternal == 'yes' && workFlow.CFAS =='true'}">bgcolor="yellow"</c:if>>
+											<td align="center" style="width:56px">
+											
+												<div style="display: inline;margin:-17px 0 0 0px">
+											<c:if test="${workFlow.isChildPresent =='Y'}">
+											<img id="parentSpan_${workFlow.orinNumber}_expand" onclick="expandCollapse('${workFlow.orinNumber}','${workflowForm.searchClicked}', '${workFlow.isGroup}')" src="${contextpath}${imagemidpath}expand.png"  
+											style="cursor:pointer;border:0;" width="14" />
+											<img id="parentSpan_${workFlow.orinNumber}_collapsed" onclick="expandCollapse('${workFlow.orinNumber}','${workflowForm.searchClicked}', '${workFlow.isGroup}')" src="${contextpath}${imagemidpath}collapsed.png"  
+											style="display:none;cursor:pointer" style="cursor:pointer;border:0;" width="14"/>
+											</c:if>
+																			
+											<input type="checkbox" name="styleItem" id="styleItem" class="checkbox1"
+												value="${workFlow.orinNumber}_${workFlow.petStatus}" onclick="childCheckedRows(this,'${workFlow.orinNumber}','${workflowForm.searchClicked}', '${workFlow.isGroup}' );getPetStatValue('${workFlow.petStatus}')" style="margin:0;"/>
+											</div>
+											
+											</td>
+											<td><c:out value="${workFlow.orinNumber}" />
+											<c:if test="${workFlow.omniChannelVendor =='Y' && workflowForm.roleEditable =='yes'}">*</c:if>
+											<c:if test="${isInternal == 'yes' && workFlow.existsInGroup =='Y'}">
+												<img src="${contextpath}${imagemidpath}grouping_indicator.png" alt="In Grouping" width="12" width="12" style="position: relative; top: -8px;" />
+											</c:if>
+											</td>
+											<td><c:out value="${workFlow.deptId}" />
+											</td>
+											<td><c:out value="${workFlow.vendorName}" />
+											</td>
+											<td><c:out value="${workFlow.vendorStyle}" />
+											<input type="hidden" id="${workFlow.orinNumber}_vendorStyle" value="${workFlow.vendorStyle}"/>
+											</td>
+											<td><c:out value="${workFlow.productName}" />
+											<input type="hidden" id="${workFlow.orinNumber}_productName" value="${workFlow.productName}"/>
+											</td>
+											<td>
+											   
+												<c:choose>									    
+													<c:when test="${workflowForm.roleEditable =='yes' && workFlow.vendorStyle != 'Split SKU Grouping' && workFlow.vendorStyle != 'Split Color Grouping'}" >										
+													  <a href="#" onclick="contentStatus('<c:out value="${workFlow.contentStatus}"/>','<c:out value="${workFlow.orinNumber}"/>')"><c:out value="${workFlow.contentStatus}"/></a>
+													</c:when>
+													<c:when test="${workflowForm.readOnlyUser =='yes' && workFlow.vendorStyle != 'Split SKU Grouping' && workFlow.vendorStyle != 'Split Color Grouping'}" >	
+													   <a href="#" onclick="contentStatus('<c:out value="${workFlow.contentStatus}"/>','<c:out value="${workFlow.orinNumber}"/>')"><c:out value="${workFlow.contentStatus}"/></a>
+													</c:when>
+													<c:otherwise>
+													   <c:out value="${workFlow.contentStatus}" />
+													</c:otherwise>
+												</c:choose>
+											</td>
+												<td>
+												<c:choose>
+													<c:when test="${workflowForm.roleEditable =='yes' && workFlow.vendorStyle != 'Consolidated Product Grouping' && workFlow.vendorStyle != 'Split SKU Grouping' && workFlow.vendorStyle != 'Split Color Grouping'}" >
+													  <a href="#" onclick="imageStatus('<c:out value="${workFlow.imageStatus}"/>','<c:out value="${workFlow.orinNumber}"/>','${workFlow.petStatus}')"><c:out value="${workFlow.imageStatus}"/></a>										
+													</c:when>
+													
+													<c:when test="${workflowForm.readOnlyUser =='yes' && workFlow.vendorStyle != 'Consolidated Product Grouping' && workFlow.vendorStyle != 'Split SKU Grouping' && workFlow.vendorStyle != 'Split Color Grouping'}" >	
+													   <a href="#" onclick="imageStatus('<c:out value="${workFlow.imageStatus}"/>','<c:out value="${workFlow.orinNumber}"/>','${workFlow.petStatus}')"><c:out value="${workFlow.imageStatus}"/></a>
+													</c:when>
+													
+													<c:otherwise>
+													<c:out value="${workFlow.imageStatus}" />
+													</c:otherwise>
+												</c:choose>
+												</td>
+											<td><c:out value="${workFlow.petStatus}" />
+											<input type="hidden" id="${workFlow.orinNumber}_petStatus" value="${workFlow.petStatus}"/>
+											</td>		
+											<td>																
+											<c:if test = "${workFlow.petStatus ne 'Deactivated'}">										
+												<c:out value="${workFlow.completionDate}" />
+											</c:if>							
+											<input type="hidden" id="${workFlow.orinNumber}_CmpDate" name="${workFlow.orinNumber}_CmpDate" value="${workFlow.completionDate}"/>
+											<input type="hidden" id="tbisPCompletionDateNull_${workFlow.orinNumber}" name="tbisPCompletionDateNull_${workFlow.orinNumber}" value="${workFlow.isPCompletionDateNull}" />
+											</td>
+											
+											<td><c:out value="${workFlow.sourceType}" /></td>
+											
+											<td style="display: none;"><c:out value="${workFlow.petStatus}" />
+											</td>
+											
+										</tr>
+									
+									
+										<c:set var="countList" value="${countList+1}" />
+									</c:forEach> 
+									<tr id="CHILDTR_ID" name="CHILDTR_NAME"
+												class="" style="display:none">
+												<td style="width:34px"><input type="checkbox" parentOrinNo="#CHBOX_PARENTORIN" name="selectedStyles" class="checkbox1"
+													value="#CH_STYLE_ORIN_#CH_STYLE_PETSTATUS" onclick="getStyleColorPetStatValue('#CHBOXONCLK_PETSTATUS')" style="margin:16px 0 0 19px"/></td>
+												<td>#TD_ORIN</td>
+												<td>#TD_DEPT_NUM</td>
+												<td>#TD_VENDOR_NAME</td>
+												<td>#TD_VENDOR_STYLE</td>
+												<td>#TD_PRODUCT_NAME</td>
+												<td>
+												<a href="#" onclick="contentStatus('#CONTENT_STATUS','#CON_PARENT_ORIN')">#TD_CONTENT_STATUS</a>
+												</td>
+												<td>
+												<a href="#" onclick="imageStatus('#IMAGE_STATUS','#IMG_PARENT_ORIN','#PET_STATUS')">#TD_IMAGE_STATUS</a>
+												</td>
+												<td>#TD_PET_STATUS
+													<input type="hidden" id="#CON_PARENT_ORIN_petStatus" value="#TD_PET_STATUS"/>
+												</td>
+												<td>
+												<div id="#CMP_SEC1" style="display:#SEC1_STYLE_STATUS" class="editable-cc-date-#CON_CHILD_ORIN">
+												<!--<input type="text" id="tCompletionDate" name="tCompletionDate" value=''  
+												onchange="checkcompletiondate(this,'#SUBCOUNT_RANDOM')"/>-->
+												#CMP_TXT_CMP_DT
+													<input type="hidden" id="tbCompletionDate#SUBCOUNT_RANDOM" name="tbCompletionDate#SUBCOUNT_RANDOM" value='#CMP_HIDDEN_STYLE_CMP_DT' class = '#CMP_PARENT_ORIN_child '/>										 
+													<input type="hidden" id="tbOrinNumber#SUBCOUNT_RANDOM" name="tbOrinNumber#SUBCOUNT_RANDOM" value='#CMP_HIDDEN_PARENT_ORIN'/>
+													<input type="hidden" id="tbStyleOrinNumber#SUBCOUNT_RANDOM" name="tbStyleOrinNumber#SUBCOUNT_RANDOM" value='#CMP_HIDDEN_STYLE_ORIN'/>
+												</div>
+												<div id="#CMP_SEC2" style="display: #SEC2_STYLE_STATUS;" class="readonly-cc-date-#CON_CHILD_ORIN">
+												<input type="hidden" id="tbCompletionDate#SUBCOUNT_RANDOM" name="tbCompletionDate#SUBCOUNT_RANDOM"
+												value='#CMP_TXT_CMP_DT' class = '#CMP_PARENT_ORIN_child '/>
+												 #TD_COMPLETION_DATE
+												</div>
+												</td>
+												<td>#TD_SOURCE_TYPE</td>
+												<!-- <td style="display: none;">#TD_PET_STATUS</td> -->
+											</tr>	
+							<!--  Table Grid Login End -->	       
+							</tbody>
+							</table>
+				
 				<!-- Popup content -->
 					<div id="overlay_Dept" class="web_dialog_overlay_advSearch_popup"></div> 
 					<div id="tableDeptStart"></div>
@@ -636,8 +661,19 @@ lockClearOnBack.value='1';
 							<p>Enter Your Search Criteria below.</p>
 										
 												<ol>
-					
-								
+										<!-- New radio for Search Results starts -->
+										<c:if test="${isInternal =='yes'}">
+										<li class="text">
+											<label for="SearchResults"><fmt:message key="worklist.adv.jsp.main.search.results.body.label"/></label>
+											<input type="radio" id="searchResults" name="searchResults" value="includeGrps" <c:if test="${workflowForm.advanceSearch.searchResults == 'includeGrps'}"> checked="checked" </c:if>onchange="toggleEnability()"/>
+											<label1 for="Include Groupingss"><fmt:message key="worklist.adv.jsp.main.searchResults.includeGrps.body.label"/></label1>
+											<input type="radio" id="searchResults" name="searchResults" value="showItemsOnly" <c:if test="${workflowForm.advanceSearch.searchResults == 'showItemsOnly'}"> checked="checked" </c:if> onchange="toggleEnability()" />
+											<label1 for="Items Only"><fmt:message key="worklist.adv.jsp.main.searchResults.showItemsOnly.body.label"/></label1>
+										</li>
+										</c:if>
+										<c:if test="${isInternal !='yes'}">
+											<input type="radio" id="searchResults" name="searchResults" value="showItemsOnly" checked="checked" style="visibility:hidden" />
+										</c:if>
 										<li class="text" style="width :440px">
 											<label for="DeptNo"><fmt:message key="worklist.adv.jsp.main.deptno.body.label"/></label>
 											<input type="text" id="adDeptNo" name="adDeptNo" value="${workflowForm.advanceSearch.deptNumbers}" />						
@@ -718,7 +754,23 @@ lockClearOnBack.value='1';
 											<label1 for="No"><fmt:message key="worklist.adv.jsp.main.created.today.no.body.label"/></label1>
 											<input type="radio" id="rdCretedToday" name="rdCretedToday" value="no" <c:if test="${workflowForm.advanceSearch.createdToday == 'no'}"> checked="checked" </c:if> />
 										</li>
-					
+										<c:if test="${isInternal =='yes'}">
+										<!-- Grouping ID and name search options Starts-->
+										<li class="text">
+											<label for="Grouping ID"><fmt:message key="worklist.adv.jsp.main.grouping.id.body.label"/></label>
+											<input type="text" id="groupingID" name="groupingID" value="${workflowForm.advanceSearch.groupingID}"/>
+										</li>
+										
+										<li class="text">
+											<label for="Grouping Name"><fmt:message key="worklist.adv.jsp.main.grouping.name.body.label"/></label>
+											<input type="text" id="groupingName" name="groupingName" value="${workflowForm.advanceSearch.groupingName}"/>
+										</li>
+										<!-- Grouping ID and name search options Ends-->
+										</c:if>
+										<c:if test="${isInternal !='yes'}">
+											<input type="hidden" id="groupingID" name="groupingID" value=""/>
+											<input type="hidden" id="groupingName" name="groupingName" value=""/>
+										</c:if>
 					                 </ol>
 							
 							
@@ -1003,7 +1055,116 @@ lockClearOnBack.value='1';
  </div>
 		
 </fmt:bundle>		
-   
+  
+<script type="text/template" id="group_items_template">
+{{ if(data[0].noChildMessage){ }}
+	<tr data-tr-root="{{=data[0].rootOrin}}" id="parent_{{=data[0].rootOrin}}" class="children" name="child_{{=orinNum}}" {{=(showHideFlag !== undefined && showHideFlag == false) ? 'style="display:none"' : '' }}>
+			<td style="width:34px">&nbsp;</td>
+			<td colspan="10" align="center"><strong>{{=data[0].noChildMessage}}</strong></td>
+	</tr>
+{{ }else{ }}
+	{{_.each(data, function(item, key){ }}
+		<tr class="children" name="child_{{=orinNum}}" id="parent_{{=item.styleOrinNum}}" {{=(showHideFlag !== undefined && showHideFlag == false) ? 'style="display:none"' : '' }} data-tr-root="{{=orinNum}}">
+		<td style="width:56px">
+			<div style="padding-left: 13px;">
+			{{ if(item.isGroup == 'Y'){  }}
+				<img id="parentSpan_{{=item.styleOrinNum}}_expand" onclick="expandCollapse('{{=item.styleOrinNum}}', '{{=item.advSearchClicked}}', '{{=item.isGroup}}')" src="${contextpath}${imagemidpath}expand.png"  
+					style="cursor:pointer;border:0;" width="14" />
+				<img id="parentSpan_{{=item.styleOrinNum}}_collapsed" onclick="expandCollapse('{{=item.styleOrinNum}}','{{=item.advSearchClicked}}', '{{=item.isGroup}}')" src="${contextpath}${imagemidpath}collapsed.png"  
+					style="display:none;cursor:pointer" style="cursor:pointer;border:0;" width="14" />
+			{{ }else{  }}
+				<img id="parentSpan_{{=item.styleOrinNum}}_expand" onclick="expandStyleColorCollapse('{{=item.styleOrinNum}}')" src="${contextpath}${imagemidpath}expand.png"  
+					style="cursor:pointer;border:0;" width="14" />
+				<img id="parentSpan_{{=item.styleOrinNum}}_collapsed" onclick="expandStyleColorCollapse('{{=item.styleOrinNum}}')" src="${contextpath}${imagemidpath}collapsed.png"  
+					style="display:none;cursor:pointer" style="cursor:pointer;border:0;" width="14" />
+			{{ } }}
+				<input type="checkbox" parentOrinNo="{{=orinNum}}" name="selectedStyles" class="checkbox1"
+			value="{{=item.styleOrinNum}}_{{=item.petStatus}}" onclick="getStyleColorPetStatValue('{{=item.petStatus}}')"/>
+			</div>
+		</td>
+		<td>
+			{{=item.styleOrinNum}}
+			{{if(item.existsInGroup=='Y'){ }} 
+				<img src="${contextpath}${imagemidpath}grouping_indicator.png" alt="In Grouping" width="9" width="9" style="position: relative; top: -8px;" />
+			{{ } }}
+		</td>
+		<td>{{=item.deptId}}</td>
+		<td>{{=item.vendorName}}</td>
+		<td>{{=item.vendorStyle}}</td>
+		<td>{{=item.productName}}</td>
+		<td>
+		<a href="#" onclick="contentStatus('{{=item.contentStatus}}','{{=orinNum}}')">{{=item.contentStatus}}</a>
+		</td>
+		<td>
+		<a href="#" onclick="imageStatus('{{item.imageStatus}}','{{=orinNum}}','{{=item.petStatus}}')">{{=item.imageStatus}}</a>
+		</td>
+		<td>{{=item.petStatus}}
+			<input type="hidden" id="{{=orinNum}}_petStatus" value="{{=item.petStatus}}"/>
+		</td>
+		<td>
+		<!----- -->
+		{{ var chldOrinNo = item.styleOrinNum.split(' ');chldOrinNo = chldOrinNo.join('');chldOrinNo = chldOrinNo.length >=12 ? chldOrinNo.substring(0, 12) : chldOrinNo; }}
+		<div id="#CMP_SEC1" style="display:#SEC1_STYLE_STATUS" class="editable-cc-date-{{=chldOrinNo}}">
+		<!--<input type="text" id="tCompletionDate" name="tCompletionDate" value=''  
+		onchange="checkcompletiondate(this,'#SUBCOUNT_RANDOM')"/>-->
+		{{=item.completionDate}}
+		{{ var random_subcount = ""+Math.random();random_subcount = random_subcount.substring(2,10); }}
+			<input type="hidden" id="tbCompletionDate{{=random_subcount}}" name="tbCompletionDate{{=random_subcount}}" value='{{=item.completionDate}}' class ='{{=orinNum}}_child'/>										 
+			<input type="hidden" id="tbOrinNumber{{=random_subcount}}" name="tbOrinNumber{{=random_subcount}}" value='{{=orinNum}}'/>
+			<input type="hidden" id="tbStyleOrinNumber{{=random_subcount}}" name="tbStyleOrinNumber{{=random_subcount}}" value='{{=item.styleOrinNum}}'/>
+		</div>
+		
+		
+		<!----- -->
+		<div id="#CMP_SEC2" style="display: #SEC2_STYLE_STATUS;" class="readonly-cc-date-{{=chldOrinNo}}">
+		<input type="hidden" id="tbCompletionDate{{=random_subcount}}" name="tbCompletionDate{{=random_subcount}}"
+		value='{{=item.completionDate}}' class ='{{=orinNum}}_child '/>
+			{{=item.completionDate}}
+		</div>
+		</td>
+		<td>{{=item.petSourceType}}</td>
+		<!-- <td style="display: none;">#TD_PET_STATUS</td> -->
+	</tr>
+		{{ if(item.isGroup != 'Y'){  }}
+			{{ if(item.colorList instanceof Array){ }}
+				{{ _.each(item.colorList, function(childItem, childKey){ }}
+					<tr class="" data-tr-root="{{=orinNum}}" name="child_{{=item.styleOrinNum}}" id="parent_{{=childItem.styleOrinNum}}" style="display:none">
+						<td style="width:56px">
+							<div style="padding-left: 44px;">
+							<input type="checkbox" parentOrinNo="{{=item.styleOrinNum}}" name="selectedStyles" class="checkbox1"
+							value="{{=childItem.styleOrinNum}}_{{=childItem.petStatus}}" onclick="getStyleColorPetStatValue('{{=childItem.petStatus}}')"/></td>
+							</div>
+						<td>{{=childItem.styleOrinNum}}</td>
+						<td>{{=childItem.deptId}}</td>
+						<td>{{=childItem.vendorName}}</td>
+						<td>{{=childItem.vendorStyle}}</td>
+						<td>{{=childItem.productName}}</td>
+						<td>
+						<a href="#" onclick="contentStatus('{{=childItem.contentStatus}}','{{=item.styleOrinNum}}')">{{=childItem.contentStatus}}</a>
+						</td>
+						<td>
+						<a href="#" onclick="imageStatus('{{childItem.imageStatus}}','{{=item.styleOrinNum}}','{{=childItem.petStatus}}')">{{=childItem.imageStatus}}</a>
+						</td>
+						<td>{{=childItem.petStatus}}
+							<input type="hidden" id="{{=item.styleOrinNum}}_petStatus" value="{{=childItem.petStatus}}"/>
+						</td>
+						<td>
+							{{=childItem.completionDate}}
+						</td>
+						<td>{{=childItem.petSourceType}}</td>
+						<!-- <td style="display: none;">#TD_PET_STATUS</td> -->
+					</tr>
+				{{ }) }}
+			{{ }else{ }}
+				<tr class="" data-tr-root="{{=orinNum}}" name="child_{{=item.styleOrinNum}}" style="display:none">
+					<td style="width:34px">&nbsp;</td>
+					<td colspan="10" align="center"><strong>No Child Found!</strong></td>
+				</tr>
+			{{ } }}
+		{{ } }}
+	{{ }) }}
+{{ } }}
+</script>  
 
 <script type="text/javascript"> 
 
@@ -1320,6 +1481,26 @@ if(loggedInUser.indexOf('@') === -1)
   window.location = "/wps/portal/home/InternalLogin";
 } else {
 	window.location = "/wps/portal/home/ExternalVendorLogin";
+	}
+}
+
+/*
+* This function is used for toggeling group id and group name input boxes disability
+* Disable Group ID and Group Name will be disabled if Show Only Items is selected in Search Result
+* Enable Group ID and Group Name will be enabled if Include groupings is selected in Search Result
+*/
+function toggleEnability(){
+	var radioName = $('input:radio[name=searchResults]:checked').val();
+	
+	// Disabling Group ID and name on selecting Show Items Only radio. Enabling if otherwise
+	if(radioName == 'showItemsOnly'){
+		$("#groupingID").attr("disabled",true);
+		$("#groupingName").attr("disabled",true);
+		$("#groupingID").val("");
+		$("#groupingName").val("");
+	}else if(radioName == 'includeGrps'){
+		$("#groupingID").attr("disabled",false);
+		$("#groupingName").attr("disabled",false);
 	}
 }
 

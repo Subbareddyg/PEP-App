@@ -127,7 +127,9 @@ public class PetsFoundHierarchy implements Comparable<PetsFoundHierarchy>{
                 int value3 = this.getDeptId().compareTo(arg1.getDeptId());
                 if(value3 == 0)
                 {
-                    return this.getParentStyleOrin().compareTo(arg1.getParentStyleOrin());
+                    int valueFirst = Integer.parseInt(this.getParentStyleOrin());
+                    int valueLast = Integer.parseInt(arg1.getParentStyleOrin());
+                    return Double.compare(valueFirst, valueLast);
                 }
                 else
                 {
