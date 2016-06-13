@@ -711,7 +711,7 @@ var app = app || {};
 			}, timeoutMS);
 		},
 		
-		handleGroupCreationResponse: function(responseJSON, groupType){
+		handleGroupCreationResponse: function(responseJSON, groupType, redirect){
 			var message = this.buildMessage('Unknown response', 'error');
 			var errorFlag = true;
 			if(responseJSON.groupCreationStatus){
@@ -747,6 +747,16 @@ var app = app || {};
 						message = this.buildMessage(responseJSON.groupCretionMsg, 'error');
 						errorFlag = true;
 						break;
+					case app.Global.constants.groupStatus.GROUP_CREATED_WITH_COMPONENT_CPG:
+						//message = this.buildMessage('Split SKU Group Created and Component Added Successfully', 'success');
+						message = this.buildMessage(responseJSON.groupCretionMsg, 'success');
+						errorFlag = false;
+						break;
+					case app.Global.constants.groupStatus.GROUP_CREATED_WITH_OUT_COMPONENT_CPG:
+						//message = this.buildMessage('Split SKU Group Created but Component Add was Unsuccessful', 'error');
+						message = this.buildMessage(responseJSON.groupCretionMsg, 'error');
+						errorFlag = true;
+						break;
 					default:
 						/* console.log('here');
 						console.log(app.Global.constants.groupStatus.GROUP_NOT_CREATED);
@@ -754,8 +764,10 @@ var app = app || {};
 				}
 			}
 
+			//setting rediretion flag
+			redirect = (redirect === undefined || redirect == true) ? true : false; 
 			
-			if((!errorFlag) && (groupType != 'SCG' && groupType != 'SSG')){
+			if((!errorFlag) && (groupType != 'SCG' && groupType != 'SSG') && redirect){
 				window.location.href = app.GroupLandingApp.urlCollection.addComponentUrl;
 			}else{
 				if($('#groupType').val()=='BCG'){

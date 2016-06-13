@@ -1309,7 +1309,7 @@ public class GroupingController {
 				LOGGER.debug("getExistGrpComponentResource. In SSG");
 			}
 			existComponentDetails = groupingService.getExistSplitSkuDetails(groupId);
-			
+			existComponentDetails = groupingService.prepareListForView(existComponentDetails);
 			
 		} else if (groupType.equals(GroupingConstants.GROUP_TYPE_CONSOLIDATE_PRODUCT)) {
 			if (LOGGER.isDebugEnabled()) {
@@ -1376,8 +1376,6 @@ public class GroupingController {
 		String classNoSearch = "";
 		String supplierSiteIdSearch = "";
 		String upcNoSearch = "";
-		String groupIdSearch = "";
-		String groupNameSearch = "";
 		ModelAndView modelAndView = null;
 
 
@@ -1516,7 +1514,9 @@ public class GroupingController {
 			vendorStyleNo = request.getParameter(GroupingConstants.VENDOR_STYLE_NO);
 			styleOrin = request.getParameter(GroupingConstants.STYLE_ORIN_NO_SEARCH_PARAM);
 			classId = GroupingUtil.checkNull(request.getParameter(GroupingConstants.CLASS_ID)); // TODO need from UI. Available in JSON header
-			
+			if(LOGGER.isDebugEnabled()) {
+				LOGGER.debug("classId-->"+classId);
+			}
 			deptNoSearch = request.getParameter(GroupingConstants.DEPT_SEARCH);
 			classNoSearch = request.getParameter(GroupingConstants.CLASS_SEARCH);
 			supplierSiteIdSearch = request.getParameter(GroupingConstants.SUPPLIER_SEARCH);
@@ -1696,5 +1696,33 @@ public class GroupingController {
 		LOGGER.info("GroupingControlle:getNewGrpComponentResource ResourceRequest:Exit------------>");
 		return modelAndView;
 	}
-
+	
+	/**
+	 * Edit Grouping
+	 * @param request
+	 * @param response
+	 */
+	@ResourceMapping("saveEditedGroup")
+	public void saveEditedGroup(ResourceRequest request,ResourceResponse response){
+		LOGGER.info("Entered saveEditedGroup Method of Grouping Controller");
+		CreateGroupForm createGroupForm=new CreateGroupForm();
+		createGroupForm.setGroupId(request.getParameter(GroupingConstants.GROUP_ID));
+		createGroupForm.setGroupName(request.getParameter(GroupingConstants.GROUP_NAME));
+		createGroupForm.setGroupDesc(request.getParameter(GroupingConstants.GROUP_DESC));
+		createGroupForm.setGroupStatus(request.getParameter(GroupingConstants.GROUP_STATUS));
+		createGroupForm.setGroupLaunchDate(request.getParameter(GroupingConstants.START_DATE));
+		createGroupForm.setEndDate(request.getParameter(GroupingConstants.END_DATE));
+		String modifiedBy=request.getParameter(GroupingConstants.MODIFIED_BY);
+		createGroupForm.setGroupType(request.getParameter(GroupingConstants.GROUP_TYPE));
+		String resp="";
+		try {
+			resp=groupingService.updateGroupHeaderDetails(createGroupForm, modifiedBy);
+			response.getWriter().write(resp);
+		
+		} catch (Exception e) {
+			LOGGER.error("GroupingControlle:saveEditedGroup ResourceRequest:Exception------------>" + e);
+		}
+		
+	}
+	/** edit Grouping **/
 }

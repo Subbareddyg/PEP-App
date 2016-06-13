@@ -181,7 +181,7 @@ public class XqueryConstants {
 		LOGGER.info("Entering getGroupDetailsQuery() in Grouping XQueryConstant class.");
 
 		final StringBuilder getGroupDetailsQuery = new StringBuilder();
-		getGroupDetailsQuery.append(" SELECT GRP.MDMID GROUP_ID, GRP.GROUP_NAME, GRP.ENTRY_TYPE GROUP_TYPE,"
+		getGroupDetailsQuery.append(" SELECT DISTINCT GRP.MDMID GROUP_ID, GRP.GROUP_NAME, GRP.ENTRY_TYPE GROUP_TYPE,"
 				+ " CONTENT_STATE.THEVALUE CONTENT_STATE, GRP.START_DATE START_DATE, "
 				+ "GRP.END_DATE END_DATE, IMAGE_STATE.THEVALUE IMAGE_STATE, EXIST_IN_GROUP CHILD_GROUP "
 				+ "FROM ADSE_GROUP_CATALOG GRP INNER JOIN ");
@@ -290,7 +290,7 @@ public class XqueryConstants {
 		LOGGER.info("Entering getGroupDetailsCountQuery() in Grouping XQueryConstant class.");
 
 		final StringBuilder getGroupDetailsCountQuery = new StringBuilder();
-		getGroupDetailsCountQuery.append(" SELECT COUNT(*) TOTAL_COUNT FROM ADSE_GROUP_CATALOG GRP INNER JOIN ");
+		getGroupDetailsCountQuery.append(" SELECT COUNT(DISTINCT GRP.MDMID) TOTAL_COUNT FROM ADSE_GROUP_CATALOG GRP INNER JOIN ");
 		getGroupDetailsCountQuery.append(" ADSE_REFERENCE_DATA CONTENT_STATE ON GROUP_CONTENT_STATUS_CODE = CONTENT_STATE.MDMID ");
 		getGroupDetailsCountQuery.append(" AND CONTENT_STATE.ENTRY_TYPE = 'ContentState_Lookup' ");
 		getGroupDetailsCountQuery.append(" INNER JOIN ");
@@ -371,7 +371,7 @@ public class XqueryConstants {
 		LOGGER.info("Entering getGroupDetailsQueryParent() in Grouping XQueryConstant class.");
 
 		final StringBuilder getGroupDetailsQueryParent = new StringBuilder();
-		getGroupDetailsQueryParent.append(" SELECT AGC.MDMID GROUP_ID, AGC.GROUP_NAME GROUP_NAME, AGC.ENTRY_TYPE GROUP_TYPE,"
+		getGroupDetailsQueryParent.append(" SELECT DISTINCT AGC.MDMID GROUP_ID, AGC.GROUP_NAME GROUP_NAME, AGC.ENTRY_TYPE GROUP_TYPE,"
 				+ " CONTENT_STATE.THEVALUE CONTENT_STATE, START_DATE START_DATE, END_DATE END_DATE, "
 				+ "GCM.COMPONENT_GROUPING_ID COMPONENT_GROUPING_ID, "
 				+ "IMAGE_STATE.THEVALUE IMAGE_STATE, EXIST_IN_GROUP CHILD_GROUP  ");
@@ -442,7 +442,7 @@ public class XqueryConstants {
 		LOGGER.info("Entering getGroupDetailsCountQueryParent() in Grouping XQueryConstant class.");
 
 		final StringBuilder getGroupDetailsQueryParent = new StringBuilder();
-		getGroupDetailsQueryParent.append(" SELECT COUNT(*) TOTAL_COUNT_PARENT ");
+		getGroupDetailsQueryParent.append(" SELECT COUNT(DISTINCT AGC.MDMID) TOTAL_COUNT_PARENT ");
 		getGroupDetailsQueryParent.append(" FROM ADSE_GROUP_CATALOG AGC INNER JOIN ");
 		getGroupDetailsQueryParent.append(" ADSE_REFERENCE_DATA CONTENT_STATE ON GROUP_CONTENT_STATUS_CODE = CONTENT_STATE.MDMID ");
 		getGroupDetailsQueryParent.append(" AND CONTENT_STATE.ENTRY_TYPE = 'ContentState_Lookup' ");

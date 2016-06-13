@@ -22,7 +22,12 @@
 {{ if(data.length){ }}
 	{{_.each(data, function(row, key){ }}
 		<tr>
-			<td><input type="checkbox" name="selectedItem[]" value="{{=row.size}}" class="item-check" style="margin-left:7px" />
+			<td>
+				{{ if(row.alreadyInGroup != 'Yes'){ }}
+					<input type="checkbox" name="selectedItem[]" value="{{=row.size}}" class="item-check" style="margin-left:7px" />
+				{{ } }}
+				
+			</td>
 			<td class="text-center">{{=row.StyleOrinNo}}</td>
 			<td class="text-center">{{=row.vendorStyleNo}}</td>
 			<td>{{=row.productName}}</td>

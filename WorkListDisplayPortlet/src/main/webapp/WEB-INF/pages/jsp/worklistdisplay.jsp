@@ -144,10 +144,10 @@ lockClearOnBack.value='1';
 					<input type="button"  id=" createPet" value="<fmt:message key="worklist.create.mannual.label"/>" 
 					    onclick=createmannualpet();  class="createpetbutton"/>  
 				 </c:if>  
-				<c:if test="${workflowForm.readOnlyUser !='yes'}">    
-					<input type="button"  id="createGrouping" value="<fmt:message key="worklist.grouping.label"/>" 
-					    onclick=createGroup();  class="creategroupingbutton"/>  
-				</c:if>  
+				   
+				<input type="button"  id="createGrouping" value="<fmt:message key="worklist.grouping.label"/>" 
+				    onclick=createGroup();  class="creategroupingbutton"/>  
+				  
 				 <c:if test="${workflowForm.readOnlyUser !='yes'}">   
 					
 						<input type="button" name="delete" value="<fmt:message key="worklist.inactivate.pet.label"/>" 

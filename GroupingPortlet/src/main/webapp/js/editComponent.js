@@ -13,6 +13,12 @@ var app = app || {} ;
 				var _super = this;
 				app.GroupFactory.fetchExistingComponents({groupType: $('#groupType').val(), groupId: $('#groupId').val()})			
 				.done(function(result){
+						if(!result.length){
+							$('#group-existing-component-area').html(app.GroupLandingApp.buildMessage('Error in fetching existing components', 'error'))
+								.fadeIn('slow');
+								return;
+						}
+							
 					var response = $.parseJSON(result);
 						//console.log(response.componentList);
 						if(response.componentList){
@@ -24,25 +30,18 @@ var app = app || {} ;
 							var componentList = response.componentList;
 							//deleting componentList to pass only header
 							delete response.componentList;
-							
-							
-							
-							/* app.DataTable.dtContainer = '#exisiting-table-dataTable';
-							app.DataTable.dataHeader = _super.searchValue = response;
-							app.DataTable.data = componentList; */
-							
+
 							var dtTable = new app.DataTable({dtContainer: '#exisiting-table-dataTable', rowTemplateId : '#existing-template'});
 							dtTable.setDataHeader(_super.searchValue);
 							dtTable.setData(componentList);
 							
 							$('.paginator').removeData('twbs-pagination'); //reconstructing the paginator
 							
-							//app.DataTable.init();
-							dtTable.init();
-							console.log($('#groupType').val().trim());
+							dtTable.init(); //init data table
+							
+							//sending and asigning few group type specific values
 							if($('#groupType').val().trim() == 'CPG'){
-								
-								console.log(_super.searchValue.classId);
+								//console.log(_super.searchValue.classId);
 								$('#classId').val(_super.searchValue.classId);
 							}
 						}
@@ -56,6 +55,7 @@ var app = app || {} ;
 			},
 			
 			handleEvent : function(){
+				var _super = this;
 				$('#add-components').on('click', function(e){
 					if($('.item-check:checked').length < 1){
 						$('#error-massege').html("Please select atleast one item.");
@@ -88,6 +88,12 @@ var app = app || {} ;
 									var resultJSON = $.parseJSON(result);
 									
 									app.GroupLandingApp.handleGroupCreationResponse(resultJSON, resultJSON.groupType, false);
+									
+									_super.loadExitingData();
+									
+									$('#search-components').trigger('submit');
+									
+									
 								}).error(function(jqXHR, textStatus, errorThrown){
 									$('#group-creation-messages').html(app.GroupLandingApp.buildMessage(jqXHR.status + ' - ' + textStatus + ' - ' + errorThrown, 'error'))
 										.fadeIn('slow');
@@ -110,10 +116,217 @@ var app = app || {} ;
 					}
 				});
 					
+				var editAjaxReq = null;
+				$('#edit-header').on('click', function(e){			
+					if(!$(this).hasClass('save')){
+						$('.editable').each(function(){
+							
+							var required = $(this).data('required') || false; 
+							switch($(this).data('type')){
+								
+								case 'date':
+								
+								var elm = '<input type="text" data-original-value="' + $(this).text() + '" id="' + $(this).data('field-name') 
+										+ '" name="' + $(this).data('field-name') + '" value="' + $(this).text() +'"';
+								
+								if(!!required){
+									elm = required ? elm + ' required="required" ' : '';
+									$('[rel=' + $(this).data('field-name') + ']').after('<span class="red-text">&nbsp;(*)</span>')
+								}
+								
+								elm +=  '/>';
+								
+								$(this).html(elm);		
+								//console.log($(elm));
+								
+								if($(this).data('field-name') == 'startDate'){
+									$('#' + $(this).data('field-name')).datepicker({
+										showOn: "both",
+										buttonImage: app.Global.defaults.contextPath + "/img/iconCalendar.gif",
+										buttonImageOnly: true,
+										buttonText: "",
+										minDate: 0 ,
+										onClose: function( selectedDate ) {
+										 $( "#endDate" ).datepicker( "option", "minDate", selectedDate );
+										},
+										onSelect : function(){
+											$('#startDate').prop('readonly',true);
+										}
+									});
+								}else if($(this).data('field-name') == 'endDate'){
+									$('#' + $(this).data('field-name')).datepicker({
+										showOn: "both",
+										buttonImage: app.Global.defaults.contextPath + "/img/iconCalendar.gif",
+										buttonImageOnly: true,
+										buttonText: "",
+										minDate: 0 ,
+										onClose: function( selectedDate ) {
+										 $( "#endDate" ).datepicker( "option", "minDate", selectedDate );
+										},
+										onSelect : function(){
+											$('#startDate').prop('readonly',true);
+										}
+									});
+								}
+									
+								break;
+						
+								case 'text':
+									var elm ='<input type="text" data-original-value="' + $(this).text() + '" id="' + $(this).data('field-name') 
+										+ '" name="' + $(this).data('field-name') + '" value="' + $(this).text() + '"';
+									
+									if(!!required){
+										elm = required ? elm + ' required="required" ' : '';
+										$('[rel=' + $(this).data('field-name') + ']').after('<span class="red-text">&nbsp;(*)</span>');
+									}
+									
+									elm += ' />';
+									
+									
+									$(this).html(elm);
+									break;
+								case 'textarea':
+									var elm = '<textarea type="text" data-original-value="' + $(this).text() + '" id="' + $(this).data('field-name') 
+										+ '" name="' + $(this).data('field-name') + '"';
+									
+									if(!!required){
+										elm = required ? elm + ' required="required" ' : '';
+										$('[rel=' + $(this).data('field-name') + ']').after('<span class="red-text">&nbsp;(*)</span>');
+									}
+									elm += ' >' + $(this).text() + '</textarea>';
+									$(this).html(elm);
+							}
+							
+							var curChars = $('#groupName').val() || '';
+							
+							$('#nameCurChars').text(curChars.length);
+						});
+						
+						//enabling cancel button
+						$('.maxChars').show();
+						$('#cancel-edit-header').show();
+						$(this).val('Save').addClass('save');
+					}else{
+						if(!$('#fromHeaderEdit')[0].checkValidity()){
+							$(this).attr('type', 'submit');
+							$(this).click();
+						}else{
+							$(this).attr('type', 'button');
+							$(this).val('Saving..').css({opacity: 0.5});
+							editAjaxReq = app.GroupFactory.updateHeader($('#fromHeaderEdit').serialize())
+								.done(function(result){
+									//console.log(result);
+									if(!result.length){
+										$('#group-header-message-area').html(app.GroupLandingApp.buildMessage('Error in updating group header details', 'error'))
+											.fadeIn('slow');
+											return;
+									}
+									var response = result.length ? $.parseJSON(result): {};
+									var message = '';
+									
+									if(response.status){
+										if(response.status == 'SUCCESS'){
+											message = app.GroupLandingApp.buildMessage(response.description ? response.description : 'Update Success', 'success');
+										}else{
+											message= app.GroupLandingApp.buildMessage(response.description ? response.description : 'Update Error', 'success');
+										}
+									}
+									
+									$('#group-header-message-area').html(message);
+									
+									app.GroupLandingApp.cleanupMessage($('#group-header-message-area'));
+									
+									$('#cancel-edit-header').trigger('save.success');
+									
+								}).error(function(jqXHR, textStatus, errorThrown){
+									$('#group-header-message-area').html(
+										app.GroupLandingApp.buildMessage(jqXHR.status + ' - ' +  textStatus + ' -' + errorThrown, 'error')
+									);
+									
+									app.GroupLandingApp.cleanupMessage($('#group-header-message-area'));
+								}).complete(function(){
+									$('#edit-header').val('Edit').css({opacity: 1});
+								});
+						}
+						
+					}
+					
+					
+					
+					
+				});
 				
-
-
+				$('#cancel-edit-header').on('click', function(e){
+					/* console.log(editAjaxReq);
+					if(!editAjaxReq){
+						editAjaxReq.abort();
+					} */
+					$('.editable').each(function(){
+						var data = $(this).find('input, textarea').data('original-value');
+						if(data)
+							$(this).text(data);
+						
+						
+						$('span.red-text').remove();
+						
+					});
+					//enabling cancel button
+					$('#edit-header').val('Edit').removeClass('save').css({opacity: 1});
+					$(this).hide();
+					$('.maxChars').hide();
+				});
 				
+				$('#cancel-edit-header').on('save.success', function(e){
+					/* console.log(editAjaxReq);
+					if(!editAjaxReq){
+						editAjaxReq.abort();
+					} */
+					$('.editable').each(function(){
+						var data = $(this).find('input, textarea').val();
+						if(data)
+							$(this).text(data);
+						
+						
+						$('span.red-text').remove();
+						
+					});
+					//enabling cancel button
+					$('#edit-header').val('Edit').removeClass('save').css({opacity: 1});
+					$(this).hide();
+					$('.maxChars').hide();
+				});
+				
+				//group description char limit and display
+				$('#fromHeaderEdit').on('keyup', '#groupDesc', function(){
+					var curChars = $('#groupDesc').val() || '';
+					if(curChars.length <= app.Global.defaults.maxGroupDescChars){
+						$('#descCurChars').text(curChars.length);
+						return true;
+					}else{
+						$(this).val(curChars.substr(0, app.Global.defaults.maxGroupDescChars));
+						return false;
+					}
+						
+				});
+				
+				//group name char limit and display
+				$('#fromHeaderEdit').on('keyup', '#groupName', function(){
+					var curChars = $('#groupName').val() || '';
+					
+					if(curChars.length <= app.Global.defaults.maxGroupNameChars){
+						$('#nameCurChars').text(curChars.length);
+						return true;
+					}else{
+						$(this).val(curChars.substr(0, app.Global.defaults.maxGroupNameChars));
+						return false;
+					}
+						
+				});
+
+				$(document).on('ready', function(e){
+					$('#nameMaxChars').text(app.Global.defaults.maxGroupNameChars);
+					$('#descMaxChars').text(app.Global.defaults.maxGroupDescChars);
+				});
 			},
 			
 			searchFormValidate : function(groupType){
@@ -150,10 +363,14 @@ var app = app || {} ;
 				
 				}
 				
-				$('#styleOrinNoShowOnly').on('blur',function(e){
+				$('#styleOrinNoShowOnly').on('keyup',function(e){
+					_super.putValue();				
+				});
+				
+				$('#styleOrinNoShowOnly').on('blur',function(){
 					_super.putValue();
 				});
-
+				
 
 
 				

@@ -13,50 +13,75 @@
 	
 	<div class="x-panel-body">
 		<div class="group-create-area">
-			<table cellspacing="5" cellpadding="0" border="0" class="content-table">
-				<tr>
-					<th width="18%"><b><fmt:message key="addcomponent.screen.level.groupingId" /></b></th>
-					<td width="32%"><c:out value="${groupDetailsForm.groupId}" /></td>
-					<th width="13%"><b><fmt:message key="addcomponent.screen.level.status" /></b></b></th>
-					<td width="32%"><c:out value="${groupDetailsForm.groupStatusDesc}" /></td>
-				</tr>
-				<tr>
-					<th><b><fmt:message key="addcomponent.screen.level.groupingName" /></b></th>
-					<td><c:out value="${groupDetailsForm.groupName}" /></td>
-					<td></td>
-					<td></td>
-				</tr>
-				<tr>
-					<th><b><fmt:message key="addcomponent.screen.level.groupingDesc" /></b></th>
-					<td><c:out value="${groupDetailsForm.groupDesc}" /></td>
-					<td></td>
-					<td></td>
-				</tr>
-				<tr>
-					<th><b><fmt:message key="addcomponent.screen.level.groupingType" /></b></th>
-					<td><c:out value="${groupDetailsForm.groupTypeDesc}" /></td>
-					<td></td>
-					<td></td>
-				</tr>
-				
-				<c:if test="${groupDetailsForm.groupType == 'BCG'}">
+			<div id="group-header-message-area"></div>
+			<form name="fromHeaderEdit" id="fromHeaderEdit" class="group-edit-area">
+				<input type="hidden" name="modifiedBy" value="${LAN_ID}" />
+				<table cellspacing="5" cellpadding="0" border="0" class="content-table">
 					<tr>
-						<th><b><fmt:message key="addcomponent.screen.level.startDate" /></b></th>
-						<td><c:out value="${groupDetailsForm.groupLaunchDate}" /></td>
-						<th><b><fmt:message key="addcomponent.screen.level.endDate" /></b></th>
-						<td><c:out value="${groupDetailsForm.endDate}" /></td>
+						<th width="18%"><b><fmt:message key="addcomponent.screen.level.groupingId" /></b></th>
+						<th width="32%">
+							<c:out value="${groupDetailsForm.groupId}" />
+							<input type="hidden" name="groupId" value="${groupDetailsForm.groupId}" />
+						</th>
+						<th width="13%"><b><fmt:message key="addcomponent.screen.level.status" /></b></th>
+						<th width="32%">
+							<c:out value="${groupDetailsForm.groupStatusDesc}" />
+							<input type="hidden" name="status" value="${groupDetailsForm.groupStatusDesc}" />
+						</th>
 					</tr>
-				</c:if>
-				<c:if test="${groupDetailsForm.groupType == 'RCG'}">
 					<tr>
-						<th><b><fmt:message key="addcomponent.screen.level.carsGroupType" /></b></th>
-						<td><c:out value="${groupDetailsForm.carsGroupType}" /></td>
-						<th></th>
+						<td><b rel="groupName"><fmt:message key="addcomponent.screen.level.groupingName" /></b></th>
+						<td>
+							<span class="editable" data-type="text" data-field-name="groupName" data-required="true"><c:out value="${groupDetailsForm.groupName}" /></span>
+							<div class="maxChars hidden"><span id="nameCurChars">0</span> Max Chars: <span id="nameMaxChars">0</span></div>
+						</td>
+						<td></td>
 						<td></td>
 					</tr>
-				</c:if>
-			
-			</table>	
+					<tr>
+						<td><b rel="groupDesc"><fmt:message key="addcomponent.screen.level.groupingDesc" /></b></th>
+						<td>
+							<span class="editable" data-type="textarea" data-field-name="groupDesc" data-required="true"><c:out value="${groupDetailsForm.groupDesc}" /></span>
+							<div class="maxChars hidden"><div class="charlimit">Current Chars: <span id="descCurChars">0</span> Max Chars: <span id="descMaxChars">0</span></div>
+						</td>
+						<td></td>
+						<td></td>
+					</tr>
+					<tr>
+						<td><b><fmt:message key="addcomponent.screen.level.groupingType" /></b></td>
+						<td>
+							<c:out value="${groupDetailsForm.groupTypeDesc}" />
+							<input type="hidden" name="groupType" value="${groupDetailsForm.groupTypeDesc}" />
+						</td>
+						<td></td>
+						<td></td>
+					</tr>
+					
+					<c:if test="${groupDetailsForm.groupType == 'BCG'}">
+						<tr>
+							<th><b rel="startDate"><fmt:message key="addcomponent.screen.level.startDate" /></b></th>
+							<td><span class="editable" data-type="date" data-field-name="startDate" data-required="true"><c:out value="${groupDetailsForm.groupLaunchDate}" /></td>
+							<td><b><fmt:message key="addcomponent.screen.level.endDate" /></b></td>
+							<td><span class="editable" data-type="date" data-field-name="endDate"><c:out value="${groupDetailsForm.endDate}" /></span></td>
+						</tr>
+					</c:if>
+					<c:if test="${groupDetailsForm.groupType == 'RCG'}">
+						<tr>
+							<td><b><fmt:message key="addcomponent.screen.level.carsGroupType" /></b></td>
+							<td><c:out value="${groupDetailsForm.carsGroupType}" /></td>
+							<th></th>
+							<td></td>
+						</tr>
+					</c:if>
+					<tr>
+						<td colspan="3">&nbsp;</td>
+						<td align="right">
+							<input type="button" value="Cancel" class="btn" id="cancel-edit-header"/>
+							<input type="button" value="Edit" class="btn"  id="edit-header"/>
+						</td>
+					</tr>
+				</table>
+			</form>			
 		</div>
 	</div>
 </div>
@@ -203,6 +228,7 @@
 	</div>
 	<div class="x-panel-body">
 		<div class="group-search-area" id="exisiting-table-dataTable">
+			<div id="group-existing-component-area"></div>
 			<div class="pagination-container">
 				<div class="pagination-left">
 					<div class="pagination-left-wrapper">
@@ -233,7 +259,16 @@
 				<div class="pagination-left">
 					<div class="pagination-left-wrapper">
 						<input type="button" class="btn" value="Remove Component" style="width: 140px; opacity:0.5" id="remove-existing-group" disabled="disabled" /> 
-						
+						<!--
+						<br> <br>
+						<label for="page-limit-2">Show: </label>
+						<select name="page-limit-2" id="page-limit-2" class="record-limit">
+							<option value="10">10</option>
+							<option value="50">50</option>
+							<option value="100">100</option>
+						</select>
+						<span class="pagination-text"></span>
+						-->
 					</div>
 				</div>
 				<div class="pagination-right">
@@ -243,7 +278,7 @@
 			</div>
 			<div class="pagination-container" style="text-align:center; margin-top: 15px;">
 				<input type="button" class="btn" value="Save" style="width: 70px;" id="save-existing-group" />
-				<input type="button" class="btn" value="Close" style="width: 80px;" id="close-existing-group" onclick="window.location.href='/wps/portal/home/creategrouping'" />
+				<input type="button" class="btn" value="Close" style="width: 80px;" id="close-existing-group" onclick="window.location.href='/wps/portal/home/Grouping'" />
 			</div>
 		</div>
 	</div>
@@ -261,7 +296,7 @@
 <portlet:resourceURL id="getNewGrpComponent" var="getNewGrpComponentURL" />
 <portlet:resourceURL id="addComponentToGroup" var="addComponentToGroupURL" />
 <portlet:resourceURL var="searchGroupResourceRequest"></portlet:resourceURL>
-
+<portlet:resourceURL id="saveEditedGroup" var="editGroupURL" />
 
 
 <!-- Department Search Result Row Template starts -->
@@ -390,6 +425,8 @@
 	app.URLFactory.urlCollection.splitComponentSearchUrl = "${getNewGrpComponentURL}";
 	app.URLFactory.urlCollection.addComponentToGroup = "${addComponentToGroupURL}";
 	app.GroupLandingApp.urlCollection.groupSearchUrl = "${searchGroupResourceRequest}";
+	
+	app.URLFactory.urlCollection.saveHeader = "${editGroupURL}";
 	//init main SPA
 	
 	app.EditComponentLandingApp.init();

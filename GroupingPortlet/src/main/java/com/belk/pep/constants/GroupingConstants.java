@@ -44,6 +44,8 @@ public class GroupingConstants {
 	public static final String MSG_CODE = "code";
 	public static final String SUCCESS_CODE = "100";
 	public static final String FAILURE_CODE = "101";
+	
+	public static final String UPDATE_GROUP_SERVICE_URL = "update.group.url";
 
 	/** Grouping Type **/
 	public static final String GROUP_TYPE_CONSOLIDATE_PRODUCT = "CPG";
@@ -214,4 +216,6 @@ public class GroupingConstants {
 	public static final String DELETE_GROUP_SERVICE_SUCCESS = "deleteGroup.success.message";
 	public static final String DELETE_STATUS_MESSAGE = "deleteStatusMessage";
 	public static final String DELETE_STATUS = "deleteStatus";
+
+	public static final String EMPTY = "";
 }

@@ -17,6 +17,7 @@
 <script type="text/template" id="existing-template">
 {{ if(data.length){ }}
 	{{_.each(data, function(row, key){ }}
+		{{ key = 'E'+key }}
 		<tr>
 			<td><input type="checkbox" name="selectedItem[]" value="{{=row.StyleOrinNo}}" class="item-check" style="margin-left:12px" />
 			<td>
@@ -47,7 +48,7 @@
 					</td>
 					<td class="text-center">{{=childRow.vendorStyleNo}}</td>
 					<td>{{=childRow.productName}}</td>
-					<td>{{=childRow.colorCode}}</td>
+					<td class="text-center">{{=childRow.colorName}}</td>
 				</tr>
 			{{ }) }}
 		{{ } }}

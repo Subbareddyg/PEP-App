@@ -1,7 +1,10 @@
 var app = app || {};
 
 ;(function($){
+	var XHRPool = {};
+	
 	app.GroupFactory = {
+		
 		searchGroup: function(params){
 			return $.post(app.GroupLandingApp.urlCollection.groupSearchUrl, params)
 				.error(handleException);
@@ -46,6 +49,12 @@ var app = app || {};
 		// Featching Exiting Components
 		addNewSplitComponent: function(params){
 			return $.get(app.URLFactory.getURL('addComponentToGroup'), params)
+					.error(handleException);
+		},
+		
+		// method to update group header
+		updateHeader: function(params){
+			return $.post(app.URLFactory.getURL('saveHeader'), params)
 					.error(handleException);
 		},
 	};
