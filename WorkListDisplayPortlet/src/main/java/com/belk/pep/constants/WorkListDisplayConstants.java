@@ -181,6 +181,12 @@ public static final String ADV_SEARCH_UPC_PARAM = "upc";
 public static final String ADV_SEARCH_CLASS_NUMBER_PARAM = "classNumber";
 public static final String ADV_SEARCH_CREATED_TODAY_PARAM = "createdToday";
 public static final String ADV_SEARCH_VENDOR_NUMBER_PARAM="vendorNumber";
+public static final String ADV_SEARCH_SEARCH_RESULT = "searchResults";
+public static final String ADV_SEARCH_INCLUDE_GROUPINGS = "includeGrps";
+public static final String ADV_SEARCH_SHOW_ITEMS_ONLY = "showItemsOnly"; 
+public static final String ADV_SEARCH_GROUPING_ID = "groupingID" ;
+public static final String ADV_SEARCH_GROUPING_NAME = "groupingName"; 
+public static final String ADV_SEARCH_CALLTYPE_GROUPINGSEARCH = "groupingSearch";
 /** The Constant IMAGE_DETAILS. */
 public static final String IMAGE_DETAILS = "ImageDetailsOBJ";
 
@@ -190,6 +196,8 @@ public static final String CONTENT_PET_DETAILS = "ContentPetDetailsOBJ";
 
 /** Defect 177 **/
 public static final String NO_PET_FOUND_FOR_VENDOR_STYLE = "worklist.pet.not.found.venStyle.search.msg";
+
+public static final String NO_GROUP_FOUND_FOR_GROUP_SEARCH = "No Group found!";
 
 
 /**
@@ -241,5 +249,92 @@ public static final String BELK_BEST_PLAN = "belkbestplanurl";
 public static final String BELK_BEST_PLAN_URL_KEY = "BEBESTPLAN";
 
 public static final String FIRST_TIME_USER_LOGIN_MESSAGE = "message.firstTimeUser";
+
+public static final String GROUP_ID = "groupId";
+public static final String GROUP_OVERALL_STATUS = "status";
+public static final String GROUP_TYPE = "groupType"; 
+public static final String MODIFIED_BY = "modifiedBy";
+public static final String ACTIVATE_OR_INACTIVATE_GROUPS_SERVICE_URL = "activate.inactivate.groups.url";
+public static final String ACTIVATE_GROUPS_SERVICE_URL = "activate.groups.url";
+public static final String INACTIVATE_ACTIVATE_GROUP_SEARCH_FLAG = "groupSearchResult";
+public static final String UNDERSCORE = "_";
+public static final String WILD_CHAR = "\\s+";
+public static final String SESSION_DATA_KEY = "sessionDataKey";
+public static final String RESPONSE_100 = "100";
+public static final String RESPONSE_101 = "101";
+public static final String NOT = "not";
+public static final String MAY_BE = "may be";
+public static final String FAILED = "failed";
+public static final String METHOD_POST = "POST";
+public static final String CONTENT_TYPE = "Content-Type";
+public static final String APPLICATION_JSON = "application/json";
+
+public static final String GROUP_WORKLIST_SESSION = "groupWorklistSession";
+public static final String GROUPINGS = "Groupings";
+public static final String EMPTY_STRING = "";
+public static final String ASCENDING = "ASC";
+public static final String DESCENDING = "DESC";
+public static final String YES = "yes";
+public static final String NO = "no";
+public static final String GET_CHILD_GROUP = "getChildgroup";
+public static final String SELECTED_COLUMN_NAME = "selectedColumnName";
+public static final String FROM_PAGE = "fromPage";
+public static final String PAGINATION = "pagination";
+public static final String GRPUING_ID = "groupingID";
+public static final String STYLE = "Style";
+public static final String STYLECOLOR = "StyleColor";
+public static final String STYLEORINNUM = "styleOrinNum";
+public static final String DEPTID = "deptId";
+public static final String VENDORNAME = "vendorName";
+public static final String VENDORSTYLE = "vendorStyle";
+public static final String PRODUCTNAME = "productName";
+public static final String CONTENTSTATUS = "contentStatus";
+public static final String IMAGESTATUS = "imageStatus";
+public static final String COMPLETIONDATE = "completionDate";
+public static final String PETSTATUS = "petStatus";
+public static final String PETSOURCETYPE = "petSourceType";
+public static final String COLORLIST = "colorList";
+public static final String CHILDAVAILABLE = "childAvailable";
+public static final String ISGROUP = "isGroup";
+public static final String OMNICHANNELVENDOR = "omniChannelVendor";
+public static final String EXISTSINGROUP = "existsInGroup";
+public static final String ROOTORIN = "rootOrin";
+public static final String ADVSEARCHCLICKED = "advSearchClicked";
+public static final String YES_Y = "Y";
+public static final String NO_N = "N";
+public static final String NO_CHILD_MESSAGE = "noChildMessage";
+public static final String NO_CHILD_COLOR_FOUND = "No child color found";
+public static final String NO_CHILD_DATA_FOUND = "No child data found";
+public static final String STARTJSON = "STARTJSON";
+public static final String ENDJSON = "ENDJSON";
+public static final String MDMID = "MDMID";
+public static final String GROUP_NAME = "GROUP_NAME";
+public static final String GROUP_OVERALL_STATUS_CODE = "GROUP_OVERALL_STATUS_CODE";
+public static final String ENTRY_TYPE = "ENTRY_TYPE";
+public static final String DEF_DEPT_ID = "DEF_DEPT_ID";
+public static final String SUPPLIER_NAME = "SUPPLIER_NAME";
+public static final String IMAGE_STATE = "IMAGE_STATE";
+public static final String CONTENT_STATE = "CONTENT_STATE";
+public static final String PET_SOURCE = "PET_SOURCE";
+public static final String EXIST_IN_GROUP = "EXIST_IN_GROUP";
+public static final String CHILD_GROUP = "CHILD_GROUP";
+public static final String COMPLETION_DATE_RESULT_SET = "COMPLETION_DATE";
+public static final String IMAGE = "Image";
+public static final String CONTENT = "Content";
+public static final String GROUP = "Group";
+public static final String GROUP_ID_RESULT_SET = "GROUP_ID";
+public static final String CHILD_GROUP_C = "C";
+public static final String CHILD_GROUP_O = "O";
+public static final String GROUP_ORIN = "groupOrin";
+public static final String COMPONENT_TYPE = "COMPONENT_TYPE";
+public static final String VENDOR_STYLE_RESULT_SET = "VENDOR_STYLE";
+public static final String PARENT_MDMID = "PARENT_MDMID";
+public static final String PRODUCTNAME_RESULT_SET = "PRODUCTNAME";
+public static final String PET_STATE = "PET_STATE";
+public static final String DEPT = "DEPT";
+public static final String OMNICHANNELINDICATOR = "OMNICHANNELINDICATOR";
+public static final String COMMA = ",";
+public static final String TOTAL_COUNT = "TOTAL_COUNT";
+public static final String ORIN_NUM = "orinNum";
 
 }

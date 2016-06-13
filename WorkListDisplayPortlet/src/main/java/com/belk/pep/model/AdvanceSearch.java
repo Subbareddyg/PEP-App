@@ -49,6 +49,16 @@ public class AdvanceSearch {
     //Added by Avik
     private String vendorNumber;
     
+    /* Grouping ID and name attributes for PET search.
+     * Addeed By: Cognizant
+     * Attributes added:- groupingID, groupingName, searchResults (for include groupings and items search)
+     */
+    private String groupingID;
+    
+    private String groupingName;
+    
+    private String searchResults;
+    
 
     public String getVendorNumber() {
         return vendorNumber;
@@ -220,6 +230,30 @@ public class AdvanceSearch {
 
     public void setClassDetails(List<ClassDetails> classDetails) {
         this.classDetails = classDetails;
+    }
+
+    public String getGroupingID() {
+        return groupingID;
+    }
+
+    public void setGroupingID(String groupingID) {
+        this.groupingID = groupingID;
+    }
+
+    public String getGroupingName() {
+        return groupingName;
+    }
+
+    public void setGroupingName(String groupingName) {
+        this.groupingName = groupingName;
+    }
+
+    public String getSearchResults() {
+        return searchResults;
+    }
+
+    public void setSearchResults(String searchResults) {
+        this.searchResults = searchResults;
     }
     
     

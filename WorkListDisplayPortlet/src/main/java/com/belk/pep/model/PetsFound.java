@@ -545,4 +545,39 @@ public class PetsFound implements Comparable<PetsFound>{
         this.earliestComplitionDate = earliestComplitionDate;
     }
     
+    private String existsInGroup;
+    private String CFAS;
+
+    /**
+     * @return the existsInGroup
+     */
+    public String getExistsInGroup() {
+        return existsInGroup;
+    }
+
+
+    /**
+     * @param existsInGroup the existsInGroup to set
+     */
+    public void setExistsInGroup(String existsInGroup) {
+        this.existsInGroup = existsInGroup;
+    }
+
+
+    /**
+     * @return the cFAS
+     */
+    public String getCFAS() {
+        return CFAS;
+    }
+
+
+    /**
+     * @param cFAS the cFAS to set
+     */
+    public void setCFAS(String cFAS) {
+        CFAS = cFAS;
+    }
+    
+    
 }

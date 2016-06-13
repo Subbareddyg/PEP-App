@@ -1,18 +1,19 @@
 package com.belk.pep.constants;
 
 //import java.util.logging.Logger;
-import org.apache.log4j.Logger;
-
-import org.apache.commons.lang.StringUtils;
-
-import com.belk.pep.model.AdvanceSearch;
-import com.belk.pep.util.PropertiesFileLoader;
-
-import java.util.Date;
-import java.util.Properties;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Properties;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+
+import com.belk.pep.model.AdvanceSearch;
+import com.belk.pep.util.PropertiesFileLoader;
 
 
 /**
@@ -2152,7 +2153,7 @@ public String getWorkListDisplayDataParent(String depts, String email, String pe
     workListQuery.append("        p.req_type,                                                                                                   ");
     workListQuery.append("        pet.PET_STYLE_STATE,                                                                                          ");
     workListQuery.append("        pet.PET_STYLE_IMAGE,                                                                                          ");
-    workListQuery.append("        pet.PET_STYLE_CONTENT, pet.PET_EARLIEST_COMP_DATE, p.PRODUCT_NAME_COMPLEX                                     ");
+    workListQuery.append("        pet.PET_STYLE_CONTENT, pet.PET_EARLIEST_COMP_DATE, p.PRODUCT_NAME_COMPLEX, pet.EXIST_IN_GROUP, p.CFAS, p.CONVERSION_FLAG       ");
     workListQuery.append("     from                                                                                                             ");
     workListQuery.append("        /*styleID_DescA*/ entryTypeStyleList sda,                                                          ");
     workListQuery.append("        ADSE_PET_CATALOG pet,                                                                                         ");
@@ -2165,12 +2166,16 @@ public String getWorkListDisplayDataParent(String depts, String email, String pe
     workListQuery.append("          <req_type>{$pets/pim_entry/entry/Pet_Ctg_Spec/SourceSystem}</req_type>                                      ");
     workListQuery.append("          <PRODUCT_NAME>{$pets/pim_entry/entry/Ecomm_Style_Spec/Product_Name}</PRODUCT_NAME>                          ");
     workListQuery.append("          <PRODUCT_NAME_COMPLEX>{$pets/pim_entry/entry/Ecomm_ComplexPack_Spec/Product_Name}</PRODUCT_NAME_COMPLEX>    ");
+    workListQuery.append("          <CFAS>{$pets/pim_entry/entry/Ecomm_Style_Spec/Split_Color_Eligible}</CFAS>    ");
+    workListQuery.append("          <CONVERSION_FLAG>{$pets/pim_entry/entry/Pet_Ctg_Spec/System/Pet_Information/Conversion_Flag}</CONVERSION_FLAG>    ");
     workListQuery.append("        </out>'                                                                                                       ");
     workListQuery.append("        passing pet.xml_data AS \"pets\" Columns                                                                        ");
     workListQuery.append("        completion_date             VARCHAR2(10)  path  '/out/completion_date',                                       ");
     workListQuery.append("        req_type                    VARCHAR2(20)  path '/out/req_type',                                               ");
     workListQuery.append("        PRODUCT_NAME                VARCHAR2(50)  path '/out/PRODUCT_NAME',                                           ");
     workListQuery.append("        PRODUCT_NAME_COMPLEX                VARCHAR2(50)  path '/out/PRODUCT_NAME_COMPLEX'                            ");
+    workListQuery.append("        ,CFAS VARCHAR2(50) path '/out/CFAS'                            ");
+    workListQuery.append("        ,CONVERSION_FLAG VARCHAR2(50) path '/out/CONVERSION_FLAG'                            ");
     workListQuery.append("        ) p                                                                                                           ");
     workListQuery.append("      WHERE                                                                                                           ");
     workListQuery.append("        sda.mdmid     =pet.mdmid                                                                                      ");
@@ -2199,7 +2204,7 @@ public String getWorkListDisplayDataParent(String depts, String email, String pe
     workListQuery.append("        p.req_type,                                                                                                   ");
     workListQuery.append("        pet.PET_STYLE_STATE,                                                                                          ");
     workListQuery.append("        pet.PET_STYLE_IMAGE,                                                                                          ");
-    workListQuery.append("        pet.PET_STYLE_CONTENT, pet.PET_EARLIEST_COMP_DATE, p.PRODUCT_NAME_COMPLEX                                     ");
+    workListQuery.append("        pet.PET_STYLE_CONTENT, pet.PET_EARLIEST_COMP_DATE, p.PRODUCT_NAME_COMPLEX, pet.EXIST_IN_GROUP, p.CFAS, p.CONVERSION_FLAG       ");
     workListQuery.append("     from                                                                                                             ");
     workListQuery.append("        entryTypeStyleList sda,                                                                                            ");
     workListQuery.append("        ADSE_PET_CATALOG pet,                                                                                         ");
@@ -2212,12 +2217,16 @@ public String getWorkListDisplayDataParent(String depts, String email, String pe
     workListQuery.append("          <req_type>{$pets/pim_entry/entry/Pet_Ctg_Spec/SourceSystem}</req_type>                                      ");
     workListQuery.append("          <PRODUCT_NAME>{$pets/pim_entry/entry/Ecomm_Style_Spec/Product_Name}</PRODUCT_NAME>                          ");
     workListQuery.append("          <PRODUCT_NAME_COMPLEX>{$pets/pim_entry/entry/Ecomm_ComplexPack_Spec/Product_Name}</PRODUCT_NAME_COMPLEX>    ");
+    workListQuery.append("          <CFAS>{$pets/pim_entry/entry/Ecomm_Style_Spec/Split_Color_Eligible}</CFAS>    ");
+    workListQuery.append("          <CONVERSION_FLAG>{$pets/pim_entry/entry/Pet_Ctg_Spec/System/Pet_Information/Conversion_Flag}</CONVERSION_FLAG>    ");
     workListQuery.append("        </out>'                                                                                                       ");
     workListQuery.append("        passing pet.xml_data AS \"pets\" Columns                                                                        ");
     workListQuery.append("        completion_date             VARCHAR2(10)  path  '/out/completion_date',                                       ");
     workListQuery.append("        req_type                    VARCHAR2(20)  path '/out/req_type',                                               ");
     workListQuery.append("        PRODUCT_NAME                VARCHAR2(50)  path '/out/PRODUCT_NAME',                                           ");
     workListQuery.append("        PRODUCT_NAME_COMPLEX                VARCHAR2(50)  path '/out/PRODUCT_NAME_COMPLEX'                            ");
+    workListQuery.append("        ,CFAS VARCHAR2(50) path '/out/CFAS'                            ");
+    workListQuery.append("        ,CONVERSION_FLAG VARCHAR2(50) path '/out/CONVERSION_FLAG'                            ");
     workListQuery.append("        ) p                                                                                                           ");
     workListQuery.append("      WHERE                                                                                                           ");
     workListQuery.append("        sda.mdmid     =pet.mdmid                                                                                      ");
@@ -2246,7 +2255,7 @@ public String getWorkListDisplayDataParent(String depts, String email, String pe
     workListQuery.append("        orin.req_type,                                                                                                 ");
     workListQuery.append("        orin.PET_STYLE_STATE,                                                                                          ");
     workListQuery.append("        orin.PET_STYLE_IMAGE,                                                                                          ");
-    workListQuery.append("        orin.PET_STYLE_CONTENT, orin.PET_EARLIEST_COMP_DATE, orin.PRODUCT_NAME_COMPLEX                                 ");
+    workListQuery.append("        orin.PET_STYLE_CONTENT, orin.PET_EARLIEST_COMP_DATE, orin.PRODUCT_NAME_COMPLEX, orin.EXIST_IN_GROUP, orin.CFAS, orin.CONVERSION_FLAG ");
     workListQuery.append("      FROM                                                                                                             ");
     workListQuery.append("        styleID_DescAA orin,                                                                                           ");
     workListQuery.append("        ADSE_SUPPLIER_CATALOG supplier,                                                                                ");
@@ -2285,7 +2294,7 @@ public String getWorkListDisplayDataParent(String depts, String email, String pe
     workListQuery.append("        orin.req_type,                                                                                                 ");
     workListQuery.append("        orin.PET_STYLE_STATE,                                                                                          ");
     workListQuery.append("        orin.PET_STYLE_IMAGE,                                                                                          ");
-    workListQuery.append("        orin.PET_STYLE_CONTENT, orin.PET_EARLIEST_COMP_DATE, orin.PRODUCT_NAME_COMPLEX                                 ");
+    workListQuery.append("        orin.PET_STYLE_CONTENT, orin.PET_EARLIEST_COMP_DATE, orin.PRODUCT_NAME_COMPLEX, orin.EXIST_IN_GROUP, orin.CFAS, orin.CONVERSION_FLAG ");
     workListQuery.append("      FROM                                                                                                             ");
     workListQuery.append("        styleID_DescAB orin,                                                                                           ");
     workListQuery.append("        ADSE_SUPPLIER_CATALOG supplier,                                                                                ");
@@ -2380,7 +2389,7 @@ public String getWorkListDisplayDataChild(boolean vendorLogin) {
     workListQuery.append("        p.completion_date,                                                                                             ");
     workListQuery.append("        p.req_type,                                                                                                    ");
     workListQuery.append("        p.COLO_DESC_COMPLEX,                                                                                           ");
-    workListQuery.append("        p.PRODUCT_NAME_COMPLEX                                                                                         ");
+    workListQuery.append("        p.PRODUCT_NAME_COMPLEX, p.CONVERSION_FLAG                                                                       ");
     workListQuery.append("     from                                                                                                              ");
     workListQuery.append("        /*styleID_DescA*/ styleListA sda,                                                                   ");
     workListQuery.append("        ADSE_PET_CATALOG pet,                                                                                          ");
@@ -2397,6 +2406,7 @@ public String getWorkListDisplayDataChild(boolean vendorLogin) {
     workListQuery.append("          <PRODUCT_NAME_COMPLEX>{$pets/pim_entry/entry/Ecomm_ComplexPack_Spec/Product_Name}</PRODUCT_NAME_COMPLEX>     ");
     workListQuery.append("            <COLO_DESC>{$colordesc}</COLO_DESC>                                                                        ");
     workListQuery.append("            <COLO_DESC_COMPLEX>{$colordescComplex}</COLO_DESC_COMPLEX>                                                 ");
+    workListQuery.append("            <CONVERSION_FLAG>{$pets/pim_entry/entry/Pet_Ctg_Spec/System/Conversion_Flag}</CONVERSION_FLAG>      ");
     workListQuery.append("        </out>'                                                                                                        ");
     workListQuery.append("        passing pet.xml_data AS \"pets\" Columns                                                                         ");
     workListQuery.append("        completion_date             VARCHAR2(10)  path  '/out/completion_date',                                        ");
@@ -2405,6 +2415,7 @@ public String getWorkListDisplayDataChild(boolean vendorLogin) {
     workListQuery.append("          COLO_DESC              VARCHAR2(50)  path '/out/COLO_DESC',                                                  ");
     workListQuery.append("          COLO_DESC_COMPLEX              VARCHAR2(50)  path '/out/COLO_DESC_COMPLEX',                                  ");
     workListQuery.append("        PRODUCT_NAME_COMPLEX                VARCHAR2(50)  path '/out/PRODUCT_NAME_COMPLEX'                             ");
+    workListQuery.append("        ,CONVERSION_FLAG VARCHAR2(50) path '/out/CONVERSION_FLAG'                             ");
     workListQuery.append("        ) p                                                                                                            ");
     workListQuery.append("      WHERE                                                                                                            ");
     workListQuery.append("        sda.mdmid     =pet.mdmid AND pet.WLIST_DISPLAY_FLAG = 'true'                                               ");
@@ -2431,7 +2442,7 @@ public String getWorkListDisplayDataChild(boolean vendorLogin) {
     workListQuery.append("        s.omniChannelIndicator,                                                                                        ");
     workListQuery.append("        orin.req_type,                                                                                                 ");
     workListQuery.append("        orin.COLO_DESC_COMPLEX,                                                                                        ");
-    workListQuery.append("        orin.PRODUCT_NAME_COMPLEX                                                                                      ");
+    workListQuery.append("        orin.PRODUCT_NAME_COMPLEX, orin.CONVERSION_FLAG                                                                 ");
     workListQuery.append("      FROM                                                                                                             ");
     workListQuery.append("        styleID_DescAA orin,                                                                                           ");
     workListQuery.append("        ADSE_SUPPLIER_CATALOG supplier,                                                                                ");
@@ -2627,7 +2638,7 @@ public String getAdvWorkListDisplayDataForChild(AdvanceSearch advSearch, String 
     advQueryFragment.append("         pet.image_status ImageState,                                                                                            ");
     advQueryFragment.append("         pet.content_status CONTENTSTATUS,                                                                                       ");
     advQueryFragment.append("         p.COLO_DESC_COMPLEX,                                                                                                    ");
-    advQueryFragment.append("         p.PRODUCT_NAME_COMPLEX                                                                                                  ");
+    advQueryFragment.append("         p.PRODUCT_NAME_COMPLEX, p.CONVERSION_FLAG                                                                                ");
     advQueryFragment.append("   FROM                                                                                                                          ");
     advQueryFragment.append("     /*styleID_DescA*/ styleListA sda,                                                                                           ");
     advQueryFragment.append("     ADSE_PET_CATALOG pet,                                                                                                       ");
@@ -2644,6 +2655,7 @@ public String getAdvWorkListDisplayDataForChild(AdvanceSearch advSearch, String 
     advQueryFragment.append("         <COLO_DESC>{$colordesc}</COLO_DESC>                                                                                     ");
     advQueryFragment.append("         <COLO_DESC_COMPLEX>{$colordescComplex}</COLO_DESC_COMPLEX>                                                              ");
     advQueryFragment.append("         <PRODUCT_NAME_COMPLEX>{$pets/pim_entry/entry/Ecomm_ComplexPack_Spec/Product_Name}</PRODUCT_NAME_COMPLEX>                ");
+    advQueryFragment.append("         <CONVERSION_FLAG>{$pets/pim_entry/entry/Pet_Ctg_Spec/System/Conversion_Flag}</CONVERSION_FLAG>        ");
     advQueryFragment.append("     </out>'                                                                                                                     ");
     advQueryFragment.append("     passing pet.xml_data AS \"pets\" Columns                                                                                      ");
     advQueryFragment.append("         completion_date      VARCHAR2(10) path  '/out/completion_date',                                                         ");
@@ -2652,6 +2664,7 @@ public String getAdvWorkListDisplayDataForChild(AdvanceSearch advSearch, String 
     advQueryFragment.append("         COLO_DESC_COMPLEX    VARCHAR2(50)  path '/out/COLO_DESC_COMPLEX',                                                       ");
     advQueryFragment.append("         COLO_DESC            VARCHAR2(50)  path '/out/COLO_DESC',                                                               ");
     advQueryFragment.append("         PRODUCT_NAME_COMPLEX         VARCHAR2(40) path '/out/PRODUCT_NAME_COMPLEX'                                              ");
+    advQueryFragment.append("         ,CONVERSION_FLAG VARCHAR2(50) path '/out/CONVERSION_FLAG'                                              ");
     advQueryFragment.append("     )p                                                                                                                          ");
     advQueryFragment.append("   WHERE                                                                                                                         ");
     advQueryFragment.append("     sda.MDMID     =pet.mdmid                                                                                                    ");
@@ -2731,7 +2744,7 @@ public String getAdvWorkListDisplayDataForChild(AdvanceSearch advSearch, String 
     advQueryFragment.append("         s.omniChannelIndicator,                                                                                                 ");
     advQueryFragment.append("         orin.COLO_DESC_COMPLEX,                                                                                                 ");
     advQueryFragment.append("         orin.PARENT_ORIN,                                                                                                       ");
-    advQueryFragment.append("         orin.PRODUCT_NAME_COMPLEX                                                                                               ");
+    advQueryFragment.append("         orin.PRODUCT_NAME_COMPLEX , orin.CONVERSION_FLAG                                                                         ");
     advQueryFragment.append("       FROM                                                                                                                      ");
     advQueryFragment.append("         styleID_DescAA orin,                                                                                                    ");
     advQueryFragment.append("         ADSE_SUPPLIER_CATALOG supplier,                                                                                         ");
@@ -2774,7 +2787,7 @@ public String getAdvWorkListDisplayDataForChild(AdvanceSearch advSearch, String 
     advQueryFragment.append("         sia.ven_name,                                                                                                           ");
     advQueryFragment.append("         sia.omniChannelIndicator,                                                                                               ");
     advQueryFragment.append("         sia.COLO_DESC_COMPLEX,                                                                                                  ");
-    advQueryFragment.append("         sia.PRODUCT_NAME_COMPLEX                                                                                                ");
+    advQueryFragment.append("         sia.PRODUCT_NAME_COMPLEX, sia.CONVERSION_FLAG                                                                            ");
     advQueryFragment.append("       from supplierDetails sia                                                                                                  ");
     advQueryFragment.append("       where                                                                                                                     ");
     advQueryFragment.append("           entry_type IN ('StyleColor', 'PackColor')                                                                             ");
@@ -3077,7 +3090,7 @@ public String getAdvWorkListDisplayDataForParent(AdvanceSearch advSearch) {
         advQueryFragment.append("         pet.pet_state PETSTATUS,                                                                                                 ");
         advQueryFragment.append("         pet.image_status ImageState,                                                                                             ");
         advQueryFragment.append("         pet.content_status CONTENTSTATUS,                                                                                        ");
-        advQueryFragment.append("         pet.PET_EARLIEST_COMP_DATE, p.PRODUCT_NAME_COMPLEX                                                                       ");
+        advQueryFragment.append("         pet.PET_EARLIEST_COMP_DATE, p.PRODUCT_NAME_COMPLEX, pet.EXIST_IN_GROUP, p.CFAS, p.CONVERSION_FLAG                   ");
         advQueryFragment.append("   FROM                                                                                                                           ");
         advQueryFragment.append("     /*styleID_DescA*/ itemGroup sda,                                                                                  ");
         advQueryFragment.append("     ADSE_PET_CATALOG pet,                                                                                                        ");
@@ -3090,12 +3103,16 @@ public String getAdvWorkListDisplayDataForParent(AdvanceSearch advSearch) {
         advQueryFragment.append("         <req_type>{$pets/pim_entry/entry/Pet_Ctg_Spec/SourceSystem}</req_type>                                                   ");
         advQueryFragment.append("         <PRODUCT_NAME>{$pets/pim_entry/entry/Ecomm_Style_Spec/Product_Name}</PRODUCT_NAME>                                       ");
         advQueryFragment.append("         <PRODUCT_NAME_COMPLEX>{$pets/pim_entry/entry/Ecomm_ComplexPack_Spec/Product_Name}</PRODUCT_NAME_COMPLEX>                 ");
+        advQueryFragment.append("          <CFAS>{$pets/pim_entry/entry/Ecomm_Style_Spec/Split_Color_Eligible}</CFAS>                 ");
+        advQueryFragment.append("          <CONVERSION_FLAG>{$pets/pim_entry/entry/Pet_Ctg_Spec/System/Pet_Information/Conversion_Flag}</CONVERSION_FLAG>                 ");
         advQueryFragment.append("     </out>'                                                                                                                      ");
         advQueryFragment.append("     passing pet.xml_data AS \"pets\" Columns                                                                                       ");
         advQueryFragment.append("         completion_date      VARCHAR2(10) path  '/out/completion_date',                                                          ");
         advQueryFragment.append("         req_type             VARCHAR2(20) path '/out/req_type',                                                                  ");
         advQueryFragment.append("         PRODUCT_NAME         VARCHAR2(40) path '/out/PRODUCT_NAME',                                                              ");
         advQueryFragment.append("         PRODUCT_NAME_COMPLEX         VARCHAR2(40) path '/out/PRODUCT_NAME_COMPLEX'                                               ");
+        advQueryFragment.append("         ,CFAS VARCHAR2(50) path '/out/CFAS'                                               ");
+        advQueryFragment.append("         ,CONVERSION_FLAG VARCHAR2(50) path '/out/CONVERSION_FLAG'                                               ");
         advQueryFragment.append("     )p                                                                                                                           ");
         advQueryFragment.append("   WHERE                                                                                                                          ");
         advQueryFragment.append("     sda.MDMID     =pet.mdmid                                                                                                     ");
@@ -3174,7 +3191,7 @@ public String getAdvWorkListDisplayDataForParent(AdvanceSearch advSearch) {
         advQueryFragment.append("         orin.PETSTATUS,                                                                                                          ");
         advQueryFragment.append("         s.ven_name,                                                                                                              ");
         advQueryFragment.append("         s.omniChannelIndicator,                                                                                                  ");
-        advQueryFragment.append("         orin.PET_EARLIEST_COMP_DATE, orin.PRODUCT_NAME_COMPLEX                                                                   ");
+        advQueryFragment.append("         orin.PET_EARLIEST_COMP_DATE, orin.PRODUCT_NAME_COMPLEX, orin.EXIST_IN_GROUP, orin.CFAS, orin.CONVERSION_FLAG              ");
         advQueryFragment.append("       FROM                                                                                                                       ");
         advQueryFragment.append("         styleID_DescAA orin,                                                                                                     ");
         advQueryFragment.append("         ADSE_SUPPLIER_CATALOG supplier,                                                                                          ");
@@ -3215,7 +3232,7 @@ public String getAdvWorkListDisplayDataForParent(AdvanceSearch advSearch) {
         advQueryFragment.append("         sia.PETSTATUS,                                                                                                           ");
         advQueryFragment.append("         sia.ven_name,                                                                                                            ");
         advQueryFragment.append("         sia.omniChannelIndicator,                                                                                                ");
-        advQueryFragment.append("         sia.PET_EARLIEST_COMP_DATE, sia.PRODUCT_NAME_COMPLEX                                                                     ");
+        advQueryFragment.append("         sia.PET_EARLIEST_COMP_DATE, sia.PRODUCT_NAME_COMPLEX , sia.EXIST_IN_GROUP, sia.CFAS, sia.CONVERSION_FLAG                  ");
         advQueryFragment.append("       from supplierDetails sia                                                                                                   ");
         advQueryFragment.append("       where                                                                                                                      ");
         advQueryFragment.append("           (sia.Entry_Type IN ('Style','Complex Pack')                                                                            ");
@@ -3249,7 +3266,7 @@ public String getAdvWorkListDisplayDataForParent(AdvanceSearch advSearch) {
         advQueryFragment.append("         completion_date,                                                                                                         ");
         advQueryFragment.append("         omniChannelIndicator,                                                                                                    ");
         advQueryFragment.append("         req_type,                                                                                                                ");
-        advQueryFragment.append("         PET_EARLIEST_COMP_DATE, PRODUCT_NAME_COMPLEX                                                                             ");
+        advQueryFragment.append("         PET_EARLIEST_COMP_DATE, PRODUCT_NAME_COMPLEX, EXIST_IN_GROUP, CFAS, CONVERSION_FLAG                                       ");
         advQueryFragment.append("     FROM styleID_Desc                                                                                                            ");
         advQueryFragment.append("     WHERE                                                                                                                        ");
         advQueryFragment.append("         (                                                                                                                        ");
@@ -3307,5 +3324,661 @@ public String getAdvWorkListDisplayDataForParent(AdvanceSearch advSearch) {
      * Modification End AFUAXK4
      * Date: 02/09/2016
      */
+    
+    public String getAdvWorkListDetailsUsingGrouping(String groupingId){
+        String getAdvWorkListDetailsUsingGroupingQuery = 
+            "   SELECT                                                                                                  "
+            +"  GROUP_NAME,MDMID FROM VENDORPORTAL.ADSE_GROUP_CATALOG                                                   ";
+        if(groupingId != null){
+            getAdvWorkListDetailsUsingGroupingQuery = getAdvWorkListDetailsUsingGroupingQuery
+                +"  WHERE MDMID = ?";
+        }
+           
+        return getAdvWorkListDetailsUsingGroupingQuery;
+    }
+    
+    /**
+     * This method will build the query for Group Search for Adv Search PET only
+     * 
+     * @param AdvanceSearch request   
+     * @param List<String> strStyleORIN
+     * @return String
+     * 
+     * Method added For PIM Phase 2 - Group Search
+     * Date: 05/18/2016
+     * Added By: Cognizant
+     */
+    public String getGroupSearchQueryForAdvSearch(AdvanceSearch objAdvanceSearch, List<String> lstStyleOrin) {
+            LOGGER.info("Entering getGroupSearchQueryForAdvSearch");
+        LOGGER.info("Entering getGroupSearchQueryForAdvSearch");
+        StringBuffer  strbAdvSearch = new StringBuffer();
+        SimpleDateFormat sdfYearFirst = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat sdfMonthFirst = new SimpleDateFormat("MM-dd-yyyy");
+        Date date = new Date();
+        StringBuffer strbStyleOrinList = new StringBuffer();
+        List<String> lstStyleOrinQueryParam = new ArrayList<String>();
+        int count = 0;
+        if(lstStyleOrin.size() > 0){ 
+            for(String strStyleORIN : lstStyleOrin){
+                strbStyleOrinList.append("'"+strStyleORIN+"',");
+                count++;
+                if(count>999){
+                    lstStyleOrinQueryParam.add(strbStyleOrinList.substring(0, strbStyleOrinList.length() - 1));
+                    count=0;
+                    strbStyleOrinList = new StringBuffer();
+                }
+            }
+        }
+        if(count != 0)
+            lstStyleOrinQueryParam.add(strbStyleOrinList.substring(0, strbStyleOrinList.length() - 1));
+        
+        String strCompletionFrom = null;
+        String strCompletionTo = null;
+        try{
+        if(StringUtils.isNotBlank(objAdvanceSearch.getDateFrom())){
+            strCompletionFrom = objAdvanceSearch.getDateFrom();
+            strCompletionFrom = strCompletionFrom.trim();
+            date = sdfMonthFirst.parse(strCompletionFrom);
+           strCompletionFrom = sdfYearFirst.format(date);
+            strCompletionFrom = "'"+strCompletionFrom+"'";
+            LOGGER.debug("strCompletionFrom--"+strCompletionFrom);
+        }
+        if(StringUtils.isNotBlank(objAdvanceSearch.getDateTo())){
+            strCompletionTo =  objAdvanceSearch.getDateTo();
+            strCompletionTo = strCompletionTo.trim();
+            date = sdfMonthFirst.parse(strCompletionTo);
+            strCompletionTo = sdfYearFirst.format(date);
+            strCompletionTo = "'"+strCompletionTo+"'";
+            LOGGER.debug("strCompletionTo--"+strCompletionTo);
+        }
+        }catch(ParseException parseException){
+            LOGGER.error("Exception while parsing the date : " + parseException.getMessage());
+        }
+        String strImageStatus = null;
+        
+        if(StringUtils.isNotBlank(objAdvanceSearch.getImageStatus())){
+            strImageStatus = getImageStatusCode(objAdvanceSearch.getImageStatus());
+            strImageStatus =  "'"+strImageStatus+"'";
+            LOGGER.debug("strImageStatus--"+strImageStatus);
+        }
+        
+        String strContentStatus = null;
+        
+        if(StringUtils.isNotBlank(objAdvanceSearch.getContentStatus())){
+            strContentStatus = getContentStatusCode(objAdvanceSearch.getContentStatus());
+            strContentStatus =  "'"+strContentStatus+"'";
+            LOGGER.debug("strContentStatus--"+strContentStatus);
+        }
+        
+        String strRequestType = null;
+        
+        if(StringUtils.isNotBlank(objAdvanceSearch.getRequestType())){
+            strRequestType =  "'"+getSourceStatusCode(objAdvanceSearch.getRequestType())+"'";
+            LOGGER.debug("strRequestType--"+strRequestType);
+        }
+        String strGroupID = null;
+        if(StringUtils.isNotBlank(objAdvanceSearch.getGroupingID())){
+            strGroupID =  "'"+objAdvanceSearch.getGroupingID()+"'";
+            LOGGER.debug("strGroupID--"+strGroupID);
+        }
+        String strGroupName = null;
+        if(StringUtils.isNotBlank(objAdvanceSearch.getGroupingName())){
+            strGroupName =  objAdvanceSearch.getGroupingName();
+            LOGGER.debug("strGroupName--"+strGroupName);
+        }
+        
+        String strCreatedToday = null;
+        
+        if(StringUtils.isNotBlank(objAdvanceSearch.getCreatedToday())){
+            strCreatedToday =  "'"+objAdvanceSearch.getCreatedToday()+"'";
+            LOGGER.debug("strCreatedToday--"+strCreatedToday);
+        }
+            
+        LOGGER.info("Preparing Search Query for Group");
+        strbAdvSearch.append("  SELECT  DISTINCT                                                                                        ");
+        strbAdvSearch.append("  GRP.MDMID,                                                                                              ");
+        strbAdvSearch.append("  GRP.DEF_DEPT_ID,                                                                                            ");
+        strbAdvSearch.append("  ASCT.SUPPLIER_NAME SUPPLIER_NAME,                                                                                        ");
+        strbAdvSearch.append("  GRP.GROUP_NAME,                                                                                         ");
+        strbAdvSearch.append("  GRP.ENTRY_TYPE,                                                                                           ");
+        strbAdvSearch.append("  GRP.GROUP_OVERALL_STATUS_CODE,                                                                          ");
+        strbAdvSearch.append("  GRP.GROUP_IMAGE_STATUS_CODE IMAGE_STATE,                ");
+        strbAdvSearch.append("  GRP.GROUP_CONTENT_STATUS_CODE CONTENT_STATE,                                        ");
+        strbAdvSearch.append("  GRP.COMPLETION_DATE,                                                                                    ");
+        strbAdvSearch.append("  GRP.PET_SOURCE,                                                                                         ");
+        strbAdvSearch.append("  GRP.PET_DISPLAY_FLAG CHILD_GROUP, GRP.EXIST_IN_GROUP                                                 ");
+        strbAdvSearch.append("  FROM ADSE_GROUP_CATALOG GRP                                                                             ");
+        strbAdvSearch.append("    LEFT OUTER JOIN                                                                                       ");
+        strbAdvSearch.append("    ADSE_GROUP_CHILD_MAPPING MAPPING                                                                      ");
+        strbAdvSearch.append("    ON GRP.MDMID = MAPPING.MDMID                                                                          "); 
+        strbAdvSearch.append("    LEFT OUTER JOIN ");
+        strbAdvSearch.append("    ADSE_SUPPLIER_CATALOG ASCT ");
+        strbAdvSearch.append("    ON GRP.DEF_PRIMARY_SUPPLIER_ID = ASCT.MDMID ");
+        strbAdvSearch.append("  WHERE GRP.DELETED_FLAG = 'false' ");
+        if(StringUtils.isNotBlank(objAdvanceSearch.getDateFrom()))
+        strbAdvSearch.append("  AND ( COMPLETION_DATE BETWEEN TO_DATE("+strCompletionFrom+", 'YYYY-MM-DD') AND TO_DATE("+strCompletionTo+", 'YYYY-MM-DD') )                  ");
+        if(StringUtils.isNotBlank(objAdvanceSearch.getGroupingID()))
+        strbAdvSearch.append("  AND GRP.MDMID = "+strGroupID+"                                                                                             ");
+        if(StringUtils.isNotBlank(objAdvanceSearch.getGroupingName()))
+        strbAdvSearch.append("  AND UPPER(GROUP_NAME) Like ('%"+strGroupName.toUpperCase()+"%')                                                                                  ");
+        if(lstStyleOrinQueryParam.size() > 0){
+            strbAdvSearch.append("  AND (                                                                          ");
+            for(String strOrinList : lstStyleOrinQueryParam){
+                strbAdvSearch.append(" MAPPING.COMPONENT_STYLE_ID IN ("+strOrinList+") OR ");
+            }
+            strbAdvSearch = new StringBuffer(strbAdvSearch.substring(0, strbAdvSearch.length() - 4));
+            strbAdvSearch.append(" ) ");
+        }        
+        if(StringUtils.isNotBlank(objAdvanceSearch.getContentStatus()))
+        strbAdvSearch.append("  AND GRP.GROUP_CONTENT_STATUS_CODE IN ("+getStatusCode(strContentStatus)+")                     ");
+        if(StringUtils.isNotBlank(objAdvanceSearch.getImageStatus()))
+        strbAdvSearch.append("  AND GRP.GROUP_IMAGE_STATUS_CODE IN ("+getStatusCode(strImageStatus)+")                          ");
+        if(StringUtils.isNotBlank(objAdvanceSearch.getRequestType()))
+        strbAdvSearch.append("  AND GRP.PET_SOURCE IN ("+getStatusCode(strRequestType)+")                                    ");
+        if(StringUtils.isNotBlank(objAdvanceSearch.getCreatedToday()))
+        strbAdvSearch.append("  AND TO_DATE(SUBSTR(GRP.CREATED_DTM, 1, 9), 'YYYY-MM-DD') = to_date(SUBSTR(SYSDATE, 1, 9), 'YYYY-MM-DD') ");
 
+        
+        LOGGER.info("Query -->"+strbAdvSearch.toString());
+        LOGGER.info("Exiting getGroupSearchQueryForAdvSearch");
+        return strbAdvSearch.toString();
+        
+    }    
+
+    
+    /**
+     * Method to get the Search Group Parent query.
+     * 
+     * @param strGroupId String
+     * @return the query string
+     * 
+     *         Method added For PIM Phase 2 - Search Group Date: 05/19/2016
+     *         Added By: Cognizant
+     */
+    public final String getGroupDetailsQueryParent(
+            final String strGroupId) {
+
+        LOGGER.info("Entering getGroupDetailsQueryParent() in Grouping XQueryConstant class.");
+
+        final StringBuffer getGroupDetailsQueryParent = new StringBuffer();
+        getGroupDetailsQueryParent
+                .append(" SELECT AGC.MDMID GROUP_ID, AGC.GROUP_NAME GROUP_NAME, AGC.COMPLETION_DATE COMPLETION_DATE,"
+                        + " CONTENT_STATE.THEVALUE CONTENT_STATE, AGC.GROUP_OVERALL_STATUS_CODE GROUP_OVERALL_STATUS_CODE, " 
+                                + "GCM.COMPONENT_GROUPING_ID COMPONENT_GROUPING_ID, AGC.PET_SOURCE PET_SOURCE, " 
+                        + "IMAGE_STATE.THEVALUE IMAGE_STATE, AGC.PET_DISPLAY_FLAG CHILD_GROUP,  ");
+        getGroupDetailsQueryParent.append("  AGC.DEF_DEPT_ID, AGC.ENTRY_TYPE, ");
+        getGroupDetailsQueryParent.append("  ASCT.SUPPLIER_NAME, AGC.EXIST_IN_GROUP ");
+        getGroupDetailsQueryParent
+                .append(" FROM ADSE_GROUP_CATALOG AGC LEFT OUTER JOIN ADSE_SUPPLIER_CATALOG ASCT ");
+        getGroupDetailsQueryParent
+        .append(" ON AGC.DEF_PRIMARY_SUPPLIER_ID = ASCT.MDMID INNER JOIN ");
+        getGroupDetailsQueryParent
+                .append(" ADSE_REFERENCE_DATA CONTENT_STATE ON GROUP_CONTENT_STATUS_CODE = CONTENT_STATE.MDMID ");
+        getGroupDetailsQueryParent
+                .append(" AND CONTENT_STATE.ENTRY_TYPE = 'ContentState_Lookup' ");
+        getGroupDetailsQueryParent.append(" INNER JOIN ");
+        getGroupDetailsQueryParent
+                .append(" ADSE_REFERENCE_DATA IMAGE_STATE ON GROUP_IMAGE_STATUS_CODE = IMAGE_STATE.MDMID ");
+        getGroupDetailsQueryParent
+                .append(" AND IMAGE_STATE.ENTRY_TYPE = 'ImageState_Lookup' ");
+        getGroupDetailsQueryParent
+                .append(" , ADSE_GROUP_CHILD_MAPPING GCM                                                                                        ");
+        getGroupDetailsQueryParent
+                .append(" WHERE AGC.DELETED_FLAG = 'false'                   ");
+        getGroupDetailsQueryParent
+                .append(" AND AGC.MDMID = GCM.MDMID                                                                                                              ");
+        
+        getGroupDetailsQueryParent
+                .append(" AND GCM.COMPONENT_GROUPING_ID = '"
+                         + strGroupId + "'");
+
+        getGroupDetailsQueryParent
+                .append(" AND COMPONENT_TYPE = 'Group'                       ");
+        
+
+        LOGGER.debug("SEARCH GROUP PARENT QUERY -- \n"
+                + getGroupDetailsQueryParent.toString());
+        LOGGER.info("Exiting getGroupDetailsQueryParent() in Grouping XQueryConstant class.");
+        return getGroupDetailsQueryParent.toString();
+    }
+    
+    /**
+     * Method to get the Group child query.
+     * 
+     * @param strGroupId String
+     * @return the query string
+     * 
+     *         Method added For PIM Phase 2 - Search Group Date: 06/06/2016
+     *         Added By: Cognizant
+     */
+    public final String getChildForGroupQuery(
+            final String strGroupId) {
+
+        LOGGER.info("Entering getChildForGroupQuery() in Grouping XQueryConstant class.");
+
+        final String getChildForGroup = " SELECT PARENT_MDMID, "+
+        "   MDMID,                                                                                 "+
+        "   PRODUCTNAME,                                                                           "+
+        "   COMPLETION_DATE,                                                                       "+
+        "   PET_STATE,                                                                             "+
+        "   CONTENT_STATE,                                                                         "+
+        "   IMAGE_STATE,                                                                           "+
+        "  CHILD,                                                                                  "+
+        "   DEPT,                                                                                  "+
+        "   ENTRY_TYPE,                                                                            "+
+        "   COMPONENT_TYPE,                                                                        "+
+        "   PRIMARY_SUPPLIER_ID SUPPLIER_ID,                                                       "+
+        "    SUPPLIER_NAME,                                                                        "+
+        "   VENDOR_STYLE,                                                                          "+
+        "   PET_SOURCE,                                                                            "+
+        "   OmnichannelIndicator,                                                                  "+
+        "   CREATED_DTM,                                                                           "+
+        "   EXIST_IN_GROUP                                                                         "+
+        " FROM                                                                                     "+
+        "   (SELECT NULL PARENT_MDMID,                                                             "+
+        "     AGC.MDMID,                                                                           "+
+        "     AGC.GROUP_NAME PRODUCTNAME,                                                          "+
+        "     TO_CHAR(AGC.COMPLETION_DATE,'YYYY-MM-DD') COMPLETION_DATE,                           "+
+        "     AGC.GROUP_OVERALL_STATUS_CODE PET_STATE,                                             "+
+        "     AGC.GROUP_CONTENT_STATUS_CODE CONTENT_STATE,                                         "+
+        "     AGC.GROUP_IMAGE_STATUS_CODE IMAGE_STATE,                                             "+
+        "     AGC.PET_DISPLAY_FLAG CHILD,                                                          "+
+        "     AGC.DEF_DEPT_ID DEPT,                                                                "+
+        "     AGC.ENTRY_TYPE,                                                                      "+
+        "     AGCM.COMPONENT_TYPE,                                                                 "+
+        "     SUPPLIER_XML.VENID PRIMARY_SUPPLIER_ID,                                              "+
+        "     SUPPLIER_XML.VenName SUPPLIER_NAME,                                                  "+
+        "     AGC.PET_SOURCE PET_SOURCE,                                                           "+
+        "     AGC.DEF_PRIMARYSUPPLIERVPN VENDOR_STYLE,                                             "+
+        "   SUPPLIER_XML.OmnichannelIndicator,                                                     "+
+        "   AGC.CREATED_DTM,                                                                       "+
+        "   AGC.EXIST_IN_GROUP                                                                     "+
+        "   FROM ADSE_GROUP_CATALOG AGC LEFT OUTER JOIN                                            "+
+        "   ADSE_SUPPLIER_CATALOG ASCT ON ASCT.MDMID = AGC.DEF_PRIMARY_SUPPLIER_ID,                "+
+        "   XMLTABLE('for $i in $XML_DATA/pim_entry/entry  return $i'                              "+
+        "     passing ASCT.xml_data AS \"XML_DATA\"                                                  "+
+        "     COLUMNS                                                                              "+
+        "       Id VARCHAR2(20) path 'Supplier_Ctg_Spec/Id',                                       "+
+        "       VenName VARCHAR2(20) path 'Supplier_Ctg_Spec/Name',                                "+
+        "       VenId VARCHAR2(20) path 'Supplier_Ctg_Spec/VEN_Id',                                "+
+        "       OmnichannelIndicator VARCHAR(2) path 'if (Supplier_Site_Spec/Omni_Channel/Omni_Channel_Indicator eq \"true\") then \"Y\" else \"N\"' ) (+)SUPPLIER_XML,   "+
+        "     ADSE_GROUP_CHILD_MAPPING AGCM                                                          "+
+        "   WHERE AGC.MDMID        = AGCM.COMPONENT_GROUPING_ID                                      "+
+        "   AND AGCM.COMponent_Type='Group'                                                          "+
+        "   AND AGCM.MDMID         = :groupOrin                                                      "+
+        "   UNION                                                                                    "+
+        "  SELECT AIC.PARENT_MDMID,                                                                  "+
+        "     AIC.MDMID,                                                                             "+
+        "     PET_XML.PRODUCT_NAME PRODUCTNAME,                                                      "+
+        "     PET_XML.completion_date,                                                               "+
+        "     APC.PET_STATE PET_STATE,                                                               "+
+        "     APC.CONTENT_STATUS CONTENT_STATE,                                                      "+
+        "     APC.IMAGE_STATUS IMAGE_STATE,                                                          "+
+        "     NULL CHILD,                                                                            "+
+        "     AIC.DEPT_ID DEPT,                                                                      "+
+        "     AIC.ENTRY_TYPE,                                                                        "+
+        "     AGCM.COMponent_Type,                                                                   "+
+        "     SUPPLIER_XML.VENID PRIMARY_SUPPLIER_ID,                                                "+
+        "     SUPPLIER_XML.VenName SUPPLIER_NAME,                                                    "+
+        "     PET_XML.req_type PET_SOURCE,                                                           "+
+        "     AIC.PRIMARYSUPPLIERVPN VENDOR_STYLE,                                                   "+
+        "   SUPPLIER_XML.OmnichannelIndicator,                                                       "+
+        "   APC.CREATED_DTM,                                                                         "+
+        "   APC.EXIST_IN_GROUP                                                                       "+
+        "   FROM ADSE_GROUP_CHILD_MAPPING AGCM,                                                      "+
+        "     ADSE_ITEM_CATALOG AIC                                                                  "+
+        "   INNER JOIN ADSE_PET_CATALOG APC                                                          "+
+        "   ON AIC.MDMID=APC.MDMID LEFT OUTER JOIN                                                   "+
+        "   ADSE_SUPPLIER_CATALOG ASCT ON ASCT.MDMID = AIC.PRIMARY_SUPPLIER_ID,                      "+
+        "     XMLTABLE( 'let                                                                         "+
+        " $completionDate := $pets/pim_entry/entry/Pet_Ctg_Spec/Completion_Date,                     "+
+        " $colordesc:= $pets/pim_entry/entry/Ecomm_StyleColor_Spec/NRF_Color_Description             "+
+        " return                                                                                     "+                                           
+        " <out>                                                                                      "+
+        " <completion_date>{$completionDate}</completion_date>                                       "+
+        " <req_type>{$pets/pim_entry/entry/Pet_Ctg_Spec/SourceSystem}</req_type>                     "+
+        " <PRODUCT_NAME>{$pets/pim_entry/entry/Ecomm_Style_Spec/Product_Name}</PRODUCT_NAME>         "+
+        " <COLO_DESC>{$colordesc}</COLO_DESC>                                                        "+
+        " </out>' passing APC.xml_data AS \"pets\" Columns completion_date VARCHAR2(10) path '/out/completion_date', req_type VARCHAR2(20) path '/out/req_type', PRODUCT_NAME VARCHAR2(100) path '/out/PRODUCT_NAME', COLO_DESC VARCHAR2(50) path '/out/COLO_DESC' ) (+)PET_XML, "+
+        " XMLTABLE('for $i in $XML_DATA/pim_entry/entry  return $i'                                    "+
+        "     passing ASCT.xml_data AS \"XML_DATA\"                                                      "+
+        "     COLUMNS                                                                                  "+
+        "       Id VARCHAR2(20) path 'Supplier_Ctg_Spec/Id',                                           "+
+        "       VenName VARCHAR2(20) path 'Supplier_Ctg_Spec/Name',                                    "+
+        "       VenId VARCHAR2(20) path 'Supplier_Ctg_Spec/VEN_Id',                                    "+
+        "       OmnichannelIndicator VARCHAR(2) path 'if (Supplier_Site_Spec/Omni_Channel/Omni_Channel_Indicator eq \"true\") then \"Y\" else \"N\"' ) (+)SUPPLIER_XML "+
+        "   WHERE NVL(AIC.PARENT_MDMID,AIC.MDMID) = AGCM.COMPONENT_STYLE_ID                            "+
+        "   AND AGCM.COMponent_Type!              ='Group'                                             "+
+        "   AND AIC.ENTRY_TYPE                   IN ('Style','StyleColor')                             "+
+        "   AND  (CASE WHEN AIC.PARENT_MDMID is NOT NULL AND  AIC.MDMID !=AGCM.COMPONENT_STYLECOLOR_ID THEN 0 ELSE 1 END) =1 "+
+        "   AND AGCM.MDMID                        = :groupOrin "+
+        "   )   "+
+        " ORDER BY COMPONENT_TYPE DESC, "+
+        "   MDMID,COMPLETION_DATE ";
+        
+
+        LOGGER.debug("SEARCH GROUP CHILD SEARCH QUERY -- \n"
+                + getChildForGroup);
+        LOGGER.info("Exiting getChildForGroupQuery() in Grouping XQueryConstant class.");
+        return getChildForGroup;
+    }
+
+    /**
+     * Gets the status mapping.
+     *
+     * @param status String
+     * @return String
+     */
+    private String getStatusCode(String status) {
+        LOGGER.info("This is from getStatusCode...status-->"+status);
+        String finalStatus = "";
+        try{
+            status = status.substring(1, status.length() - 1);
+            String[] statusArray = status.split(",");
+            for(int i = 0; i<statusArray.length; i++){
+                finalStatus = finalStatus + "'"+statusArray[i] + "',";
+            }
+            finalStatus = finalStatus.substring(0, finalStatus.length()-1);
+        }catch(Exception ex){
+            ex.printStackTrace();
+        }
+        LOGGER.info("This is from getStatusCode...finalStatus-->"+finalStatus);
+     return finalStatus;
+    }
+    
+    /**
+     * Method to get the Worklist Group query.
+     * 
+     * @param deptIds String
+     * @return the query string
+     * 
+     *         Method added For PIM Phase 2 - Worklist Group Date: 06/08/2016
+     *         Added By: Cognizant
+     */
+    public final String getWorkListGroupQuery(
+            final String deptIds, String sortColumn, String sortingOrder) {
+
+        LOGGER.info("Entering getWorkListGroupQuery() in Grouping XQueryConstant class.");
+        String dept = "";
+        if(deptIds != null)
+        {
+            dept = "'" + deptIds + "'";
+            dept = getStatusCode(dept);
+        }
+        
+        final StringBuffer getGroupDetailsQueryWorkList = new StringBuffer();
+        
+        getGroupDetailsQueryWorkList.append(" SELECT DISTINCT GRP.MDMID, ");
+        getGroupDetailsQueryWorkList.append("   GRP.DEF_DEPT_ID,                                       ");
+        getGroupDetailsQueryWorkList.append("   ASCT.SUPPLIER_NAME SUPPLIER_NAME,                      ");
+        getGroupDetailsQueryWorkList.append("   GRP.GROUP_NAME,                                        ");
+        getGroupDetailsQueryWorkList.append("   GRP.ENTRY_TYPE,                                        ");
+        getGroupDetailsQueryWorkList.append("   PET_STATE.THEVALUE GROUP_OVERALL_STATUS_CODE,      ");
+        getGroupDetailsQueryWorkList.append("   IMAGE_STATE.THEVALUE IMAGE_STATE,               ");
+        getGroupDetailsQueryWorkList.append("   CONTENT_STATE.THEVALUE CONTENT_STATE,           ");
+        getGroupDetailsQueryWorkList.append("   GRP.COMPLETION_DATE,                                   ");
+        getGroupDetailsQueryWorkList.append("   GRP.PET_SOURCE,                                        ");
+        getGroupDetailsQueryWorkList.append("   GRP.PET_DISPLAY_FLAG CHILD_GROUP,                      ");
+        getGroupDetailsQueryWorkList.append("   GRP.EXIST_IN_GROUP                                     ");
+        getGroupDetailsQueryWorkList.append(" FROM ADSE_GROUP_CATALOG GRP                              ");
+        
+        getGroupDetailsQueryWorkList.append(" INNER JOIN ");
+        getGroupDetailsQueryWorkList
+            .append(" ADSE_REFERENCE_DATA CONTENT_STATE ON GRP.GROUP_CONTENT_STATUS_CODE = CONTENT_STATE.MDMID ");
+        getGroupDetailsQueryWorkList
+            .append(" AND CONTENT_STATE.ENTRY_TYPE = 'ContentState_Lookup' ");
+        getGroupDetailsQueryWorkList.append(" INNER JOIN ");
+        getGroupDetailsQueryWorkList
+            .append(" ADSE_REFERENCE_DATA IMAGE_STATE ON GRP.GROUP_IMAGE_STATUS_CODE = IMAGE_STATE.MDMID ");
+        getGroupDetailsQueryWorkList
+            .append(" AND IMAGE_STATE.ENTRY_TYPE = 'ImageState_Lookup' ");
+        getGroupDetailsQueryWorkList.append(" INNER JOIN ");
+        getGroupDetailsQueryWorkList
+            .append(" ADSE_REFERENCE_DATA PET_STATE ON GRP.GROUP_OVERALL_STATUS_CODE = PET_STATE.MDMID ");
+        getGroupDetailsQueryWorkList
+            .append(" AND PET_STATE.ENTRY_TYPE = 'PetState_Lookup' ");
+        
+        getGroupDetailsQueryWorkList.append(" INNER JOIN ADSE_GROUP_CHILD_MAPPING MAPPING              ");
+        getGroupDetailsQueryWorkList.append(" ON GRP.MDMID = MAPPING.MDMID                             ");
+        if(dept != null && dept.trim().length() > 0)
+        {
+            getGroupDetailsQueryWorkList.append(" INNER JOIN ADSE_ITEM_CATALOG AIC                         ");
+            getGroupDetailsQueryWorkList.append(" ON AIC.MDMID = MAPPING.COMPONENT_STYLE_ID                ");
+            getGroupDetailsQueryWorkList.append(" AND AIC.DEPT_ID IN (                                     ");
+            getGroupDetailsQueryWorkList.append(dept);
+            getGroupDetailsQueryWorkList.append(" )                                                        ");
+        }
+        getGroupDetailsQueryWorkList.append(" LEFT OUTER JOIN ADSE_SUPPLIER_CATALOG ASCT               ");
+        getGroupDetailsQueryWorkList.append(" ON GRP.DEF_PRIMARY_SUPPLIER_ID = ASCT.MDMID              ");
+        getGroupDetailsQueryWorkList.append(" WHERE GRP.DELETED_FLAG         = 'false'                 ");
+        getGroupDetailsQueryWorkList.append(" AND ((GRP.GROUP_OVERALL_STATUS_CODE = '01')              ");
+        getGroupDetailsQueryWorkList.append(" OR (GRP.GROUP_OVERALL_STATUS_CODE <> '01'                ");
+        getGroupDetailsQueryWorkList.append(" AND GRP.PET_DISPLAY_FLAG = 'O'))                         ");
+        
+        if (sortColumn == null
+                || sortColumn.trim().equals("")) {
+            getGroupDetailsQueryWorkList
+                    .append(" ORDER BY PET_SOURCE, COMPLETION_DATE DESC, GRP.MDMID ");
+        } else if (sortColumn != null
+                && sortColumn.equals("orinGroup")) {
+            getGroupDetailsQueryWorkList.append(" ORDER BY GRP.MDMID "
+                    + sortingOrder);
+        } else if (sortColumn != null
+                && sortColumn.equals("dept")) {
+            getGroupDetailsQueryWorkList.append(" ORDER BY GRP.DEF_DEPT_ID "
+                    + sortingOrder);
+        } else if (sortColumn != null
+                && sortColumn.equals("vendorName")) {
+            getGroupDetailsQueryWorkList.append(" ORDER BY ASCT.SUPPLIER_NAME "
+                    + sortingOrder);
+        } else if (sortColumn != null
+                && sortColumn.equals("vendorStyle")) {
+            getGroupDetailsQueryWorkList
+                    .append(" ORDER BY GRP.ENTRY_TYPE " + sortingOrder);
+        } else if (sortColumn != null
+                && sortColumn.equals("productName")) {
+            getGroupDetailsQueryWorkList.append(" ORDER BY GRP.GROUP_NAME "
+                    + sortingOrder);
+        } else if (sortColumn != null
+                && sortColumn.equals("contentStatus")) {
+            getGroupDetailsQueryWorkList.append(" ORDER BY CONTENT_STATE.THEVALUE "
+                    + sortingOrder);
+        } else if (sortColumn != null
+                && sortColumn.equals("imageStatus")) {
+            getGroupDetailsQueryWorkList.append(" ORDER BY IMAGE_STATE.THEVALUE "
+                    + sortingOrder);
+        } else if (sortColumn != null
+                && sortColumn.equals("petStatus")) {
+            getGroupDetailsQueryWorkList.append(" ORDER BY PET_STATE.THEVALUE "
+                        + sortingOrder);
+        } else if (sortColumn != null
+                && sortColumn.equals("completionDate")) {
+            getGroupDetailsQueryWorkList
+                    .append(" ORDER BY GRP.COMPLETION_DATE " + sortingOrder);
+        } else if (sortColumn != null
+                && sortColumn.equals("petSourceType")) {
+            getGroupDetailsQueryWorkList
+                    .append(" ORDER BY GRP.PET_SOURCE " + sortingOrder);
+        }
+
+        LOGGER.debug("SEARCH GROUP WORKLIST QUERY -- \n"
+                + getGroupDetailsQueryWorkList.toString());
+        LOGGER.info("Exiting getWorkListGroupQuery() in Grouping XQueryConstant class.");
+        return getGroupDetailsQueryWorkList.toString();
+    }
+    
+    /**
+     * Method to get the Worklist Group count query.
+     * 
+     * @param deptIds String
+     * @return the query string
+     * 
+     *         Method added For PIM Phase 2 - Worklist Group Date: 06/08/2016
+     *         Added By: Cognizant
+     */
+    public final String getWorkListGroupCountQuery(
+            final String deptIds) {
+
+        LOGGER.info("Entering getWorkListGroupCountQuery() in Grouping XQueryConstant class.");
+
+        String dept = "";
+        if(deptIds != null)
+        {
+            dept = "'" + deptIds + "'";
+            dept = getStatusCode(dept);
+        }
+        final StringBuffer getGroupDetailsCountQueryWorkList = new StringBuffer();
+        
+        getGroupDetailsCountQueryWorkList.append(" SELECT COUNT(DISTINCT GRP.MDMID) TOTAL_COUNT ");
+        getGroupDetailsCountQueryWorkList.append(" FROM ADSE_GROUP_CATALOG GRP                            ");
+        getGroupDetailsCountQueryWorkList.append(" INNER JOIN ADSE_GROUP_CHILD_MAPPING MAPPING            ");
+        getGroupDetailsCountQueryWorkList.append(" ON GRP.MDMID = MAPPING.MDMID                           ");
+        if(dept != null && dept.trim().length() > 0)
+        {
+            getGroupDetailsCountQueryWorkList.append(" INNER JOIN ADSE_ITEM_CATALOG AIC                         ");
+            getGroupDetailsCountQueryWorkList.append(" ON AIC.MDMID = MAPPING.COMPONENT_STYLE_ID                ");
+            getGroupDetailsCountQueryWorkList.append(" AND AIC.DEPT_ID IN (                                     ");
+            getGroupDetailsCountQueryWorkList.append(dept);
+            getGroupDetailsCountQueryWorkList.append(" )                                                        ");
+        }
+        getGroupDetailsCountQueryWorkList.append(" LEFT OUTER JOIN ADSE_SUPPLIER_CATALOG ASCT             ");
+        getGroupDetailsCountQueryWorkList.append(" ON GRP.DEF_PRIMARY_SUPPLIER_ID = ASCT.MDMID            ");
+        getGroupDetailsCountQueryWorkList.append(" WHERE GRP.DELETED_FLAG         = 'false'               ");
+        getGroupDetailsCountQueryWorkList.append(" AND ((GRP.GROUP_OVERALL_STATUS_CODE = '01')            ");
+        getGroupDetailsCountQueryWorkList.append(" OR (GRP.GROUP_OVERALL_STATUS_CODE <> '01'              ");
+        getGroupDetailsCountQueryWorkList.append(" AND GRP.PET_DISPLAY_FLAG = 'O'))                       ");
+        getGroupDetailsCountQueryWorkList.append(" ORDER BY PET_SOURCE, COMPLETION_DATE DESC, GRP.MDMID   ");
+
+        LOGGER.debug("SEARCH GROUP WORKLIST QUERY -- \n"
+                + getGroupDetailsCountQueryWorkList.toString());
+        LOGGER.info("Exiting getWorkListGroupCountQuery() in Grouping XQueryConstant class.");
+        return getGroupDetailsCountQueryWorkList.toString();
+    }
+    
+    /**
+     * Method to get the Group child Worklist query.
+     * 
+     * @param strGroupId String
+     * @return the query string
+     * 
+     *         Method added For PIM Phase 2 - Worklist Group Date: 06/09/2016
+     *         Added By: Cognizant
+     */
+    public final String getChildForGroupWorklistQuery(
+            final String strGroupId) {
+
+        LOGGER.info("Entering getChildForGroupWorklistQuery() in Grouping XQueryConstant class.");
+
+        final String getChildForGroup = " SELECT PARENT_MDMID,  "+
+        "   MDMID,                                                                                   "+
+        "   PRODUCTNAME,                                                                             "+
+        "   COMPLETION_DATE,                                                                         "+
+        "   PET_STATE,                                                                               "+
+        "   CONTENT_STATE,                                                                           "+
+        "   IMAGE_STATE,                                                                             "+
+        "  CHILD CHILD_GROUP,                                                                        "+
+        "   DEPT,                                                                                    "+
+        "   ENTRY_TYPE,                                                                              "+
+        "   COMPONENT_TYPE,                                                                          "+
+        "   PRIMARY_SUPPLIER_ID SUPPLIER_ID,                                                         "+
+        "    SUPPLIER_NAME,                                                                          "+
+        "   VENDOR_STYLE,                                                                            "+
+        "   PET_SOURCE,                                                                              "+
+        "   OmnichannelIndicator,                                                                    "+
+        "   CREATED_DTM,                                                                             "+
+        "   EXIST_IN_GROUP                                                                           "+
+        " FROM                                                                                       "+
+        "   (SELECT NULL PARENT_MDMID,                                                               "+
+        "     AGC.MDMID,                                                                             "+
+        "     AGC.GROUP_NAME PRODUCTNAME,                                                            "+
+        "     TO_CHAR(AGC.COMPLETION_DATE,'YYYY-MM-DD') COMPLETION_DATE,                             "+
+        "     AGC.GROUP_OVERALL_STATUS_CODE PET_STATE,                                               "+
+        "     AGC.GROUP_CONTENT_STATUS_CODE CONTENT_STATE,                                           "+
+        "     AGC.GROUP_IMAGE_STATUS_CODE IMAGE_STATE,                                               "+
+        "     AGC.PET_DISPLAY_FLAG CHILD,                                                            "+
+        "     AGC.DEF_DEPT_ID DEPT,                                                                  "+
+        "     AGC.ENTRY_TYPE,                                                                        "+
+        "     AGCM.COMPONENT_TYPE,                                                                   "+
+        "     SUPPLIER_XML.VENID PRIMARY_SUPPLIER_ID,                                                "+
+        "     SUPPLIER_XML.VenName SUPPLIER_NAME,                                                    "+
+        "     AGC.PET_SOURCE PET_SOURCE,                                                             "+
+        "     AGC.DEF_PRIMARYSUPPLIERVPN VENDOR_STYLE,                                               "+
+        "   SUPPLIER_XML.OmnichannelIndicator,                                                       "+
+        "   AGC.CREATED_DTM,                                                                         "+
+        "   AGC.EXIST_IN_GROUP                                                                       "+
+        "   FROM ADSE_GROUP_CATALOG AGC LEFT OUTER JOIN                                              "+
+        "   ADSE_SUPPLIER_CATALOG ASCT ON ASCT.MDMID = AGC.DEF_PRIMARY_SUPPLIER_ID,                  "+
+        "   XMLTABLE('for $i in $XML_DATA/pim_entry/entry  return $i'                                "+
+        "     passing ASCT.xml_data AS \"XML_DATA\"                                                    "+
+        "     COLUMNS                                                                                "+
+        "       Id VARCHAR2(20) path 'Supplier_Ctg_Spec/Id',                                         "+
+        "       VenName VARCHAR2(20) path 'Supplier_Ctg_Spec/Name',                                  "+
+        "       VenId VARCHAR2(20) path 'Supplier_Ctg_Spec/VEN_Id',                                  "+
+        "       OmnichannelIndicator VARCHAR(2) path 'if (Supplier_Site_Spec/Omni_Channel/Omni_Channel_Indicator eq \"true\") then \"Y\" else \"N\"' ) (+)SUPPLIER_XML,   "+
+        "     ADSE_GROUP_CHILD_MAPPING AGCM                                                            "+
+        "   WHERE AGC.MDMID        = AGCM.COMPONENT_GROUPING_ID                                        "+
+        "   AND AGCM.COMponent_Type='Group'                                                            "+
+        "   AND ((AGC.GROUP_OVERALL_STATUS_CODE = '01')                                                "+
+        "   OR (AGC.GROUP_OVERALL_STATUS_CODE <> '01'                                                  "+
+        "   AND AGC.PET_DISPLAY_FLAG = 'O'))                                                           "+
+        "   AND AGCM.MDMID         = :orinNum                                                          "+
+        "   UNION                                                                                      "+
+        "  SELECT AIC.PARENT_MDMID,                                                                    "+
+        "     AIC.MDMID,                                                                               "+
+        "     PET_XML.PRODUCT_NAME PRODUCTNAME,                                                        "+
+        "     PET_XML.completion_date,                                                                 "+
+        "     APC.PET_STATE PET_STATE,                                                                 "+
+        "     APC.CONTENT_STATUS CONTENT_STATE,                                                        "+
+        "     APC.IMAGE_STATUS IMAGE_STATE,                                                            "+
+        "     NULL CHILD_GROUP,                                                                  "+
+        "     AIC.DEPT_ID DEPT,                                                                        "+
+        "     AIC.ENTRY_TYPE,                                                                          "+
+        "     AGCM.COMponent_Type,                                                                     "+
+        "     SUPPLIER_XML.VENID PRIMARY_SUPPLIER_ID,                                                  "+
+        "     SUPPLIER_XML.VenName SUPPLIER_NAME,                                                      "+
+        "     PET_XML.req_type PET_SOURCE,                                                             "+
+        "     AIC.PRIMARYSUPPLIERVPN VENDOR_STYLE,                                                     "+
+        "   SUPPLIER_XML.OmnichannelIndicator,                                                         "+
+        "   APC.CREATED_DTM,                                                                           "+
+        "   APC.EXIST_IN_GROUP                                                                         "+
+        "   FROM ADSE_GROUP_CHILD_MAPPING AGCM,                                                        "+
+        "     ADSE_ITEM_CATALOG AIC                                                                    "+
+        "   INNER JOIN ADSE_PET_CATALOG APC                                                            "+
+        "   ON AIC.MDMID=APC.MDMID LEFT OUTER JOIN                                                     "+
+        "   ADSE_SUPPLIER_CATALOG ASCT ON ASCT.MDMID = AIC.PRIMARY_SUPPLIER_ID,                        "+
+        "     XMLTABLE( 'let                                                                           "+
+        " $completionDate := $pets/pim_entry/entry/Pet_Ctg_Spec/Completion_Date,                       "+
+        " $colordesc:= $pets/pim_entry/entry/Ecomm_StyleColor_Spec/NRF_Color_Description               "+
+        " return                                                                                       "+                                         
+        " <out>                                                                                        "+
+        " <completion_date>{$completionDate}</completion_date>                                         "+
+        " <req_type>{$pets/pim_entry/entry/Pet_Ctg_Spec/SourceSystem}</req_type>                       "+
+        " <PRODUCT_NAME>{$pets/pim_entry/entry/Ecomm_Style_Spec/Product_Name}</PRODUCT_NAME>           "+
+        " <COLO_DESC>{$colordesc}</COLO_DESC>                                                          "+
+        " </out>' passing APC.xml_data AS \"pets\" Columns completion_date VARCHAR2(10) path '/out/completion_date', req_type VARCHAR2(20) path '/out/req_type', PRODUCT_NAME VARCHAR2(100) path '/out/PRODUCT_NAME', COLO_DESC VARCHAR2(50) path '/out/COLO_DESC' ) (+)PET_XML, "+
+        " XMLTABLE('for $i in $XML_DATA/pim_entry/entry  return $i'                                      "+
+        "     passing ASCT.xml_data AS \"XML_DATA\"                                                        "+
+        "     COLUMNS                                                                                    "+
+        "       Id VARCHAR2(20) path 'Supplier_Ctg_Spec/Id',                                             "+
+        "       VenName VARCHAR2(20) path 'Supplier_Ctg_Spec/Name',                                      "+
+        "       VenId VARCHAR2(20) path 'Supplier_Ctg_Spec/VEN_Id',                                      "+
+        "       OmnichannelIndicator VARCHAR(2) path 'if (Supplier_Site_Spec/Omni_Channel/Omni_Channel_Indicator eq \"true\") then \"Y\" else \"N\"' ) (+)SUPPLIER_XML "+
+        "                                                                                               "+
+        "   WHERE NVL(AIC.PARENT_MDMID,AIC.MDMID) = AGCM.COMPONENT_STYLE_ID                             "+
+        "   AND AGCM.COMponent_Type!              ='Group'                                              "+
+        "   AND AIC.ENTRY_TYPE                   IN ('Style','StyleColor')                              "+
+        "   AND  (CASE WHEN AIC.PARENT_MDMID is NOT NULL AND  AIC.MDMID !=AGCM.COMPONENT_STYLECOLOR_ID THEN 0 ELSE 1 END) =1 "+
+        "   AND (APC.WLIST_DISPLAY_FLAG='true' AND PET_STATE = '01' OR (APC.Entry_type='Style' and  APC.PET_STYLE_STATE='Y') ) "+
+        "   AND AGCM.MDMID                        = :orinNum "+
+        "   )  "+
+        " ORDER BY COMPONENT_TYPE DESC, "+
+        "   MDMID,COMPLETION_DATE ";
+        
+
+        LOGGER.debug("SEARCH GROUP CHILD WORKLIST QUERY -- \n"
+                + getChildForGroup);
+        LOGGER.info("Exiting getChildForGroupWorklistQuery() in Grouping XQueryConstant class.");
+        return getChildForGroup;
+    }
+    
 }

@@ -21,5 +21,6 @@
 
 	<link rel="stylesheet" href="<%=response.encodeURL(request.getContextPath()+"/css/jquery-ui.css")%>">   	
 
-	<script type="text/javascript" src="<%=response.encodeURL(request.getContextPath()+"/js/jquery-ui.js")%>"></script> 
+	<script type="text/javascript" src="<%=response.encodeURL(request.getContextPath()+"/js/jquery-ui.js")%>"></script>
+	<script type="text/javascript" src="<%=response.encodeURL(request.getContextPath()+"/js/underscore-min.js")%>"></script>  
 
