@@ -2921,8 +2921,7 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
      */
     @Override
     public List<WorkFlow> getChildForGroup(final String groupId,
-        final AdvanceSearch advanceSearch) throws PEPServiceException,
-        PEPPersistencyException {
+        final AdvanceSearch advanceSearch) {
 
         LOGGER.info("Entering WorkListDAO.getChildForGroup() method.");
         LOGGER.info("Group ID: " + groupId);
@@ -3101,8 +3100,11 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
             }
         }
         finally {
-            session.flush();
-            session.close();
+            if(session != null)
+            {
+                session.flush();
+                session.close();
+            }
         }
         childGroupList = getFormattedChildForGroup(childGroupList);
         LOGGER.info("Exiting WorkListDAO.getChildForGroup() method.");
