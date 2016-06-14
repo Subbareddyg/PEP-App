@@ -1,7 +1,6 @@
 package com.belk.pep.dao.impl;
 
 import java.math.BigDecimal;
-import java.net.MalformedURLException;
 import java.sql.Clob;
 import java.util.ArrayList;
 import java.util.List;
@@ -84,7 +83,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 			session = sessionFactory.openSession();
 			// Hibernate provides a createSQLQuery method to let you call your
 			// native SQL statement directly.
-			String queryStr =xqueryConstants.getGroupHeaderDetails();
+			//String queryStr =xqueryConstants.getGroupHeaderDetails();
 			final Query query = session.createSQLQuery(xqueryConstants.getGroupHeaderDetails());
 			query.setParameter("groupIdSql", groupId);
 			
@@ -93,12 +92,14 @@ public class GroupingDAOImpl implements GroupingDAO {
 			LOGGER.info("Query-->getGroupHeaderDetails-->" + query);
 			// execute select SQL statement
 			query.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
+			@SuppressWarnings("unchecked")
 			final List<Object> rows = query.list();
 
 			if (rows != null) {
 				LOGGER.info("recordsFetched..." + rows.size());
 
 				for (final Object row : rows) {
+					@SuppressWarnings("rawtypes")
 					final Map rowMap = (Map) row;
 					final String groupName = rowMap.get("GROUP_NAME") != null ? rowMap.get("GROUP_NAME").toString() : "";
 					// String groupDesc=rowMap.get("DESCRIPTION") != null ?
@@ -189,12 +190,14 @@ public class GroupingDAOImpl implements GroupingDAO {
 
 			// execute select SQL statement
 			query.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
+			@SuppressWarnings("unchecked")
 			final List<Object> rows = query.list();
 			if (rows != null) {
 				LOGGER.info("recordsFetched..." + rows.size());
 
 				for (final Object row : rows) {
 					// LOGGER.info("In..." + rows.size());
+					@SuppressWarnings("rawtypes")
 					final Map rowMap = (Map) row;
 					groupAttributeForm = new GroupAttributeForm();
 
@@ -277,11 +280,13 @@ public class GroupingDAOImpl implements GroupingDAO {
 
 			// execute select SQL statement
 			query.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
+			@SuppressWarnings("unchecked")
 			final List<Object> rows = query.list();
 			if (rows != null) {
 				LOGGER.info("recordsFetched..." + rows.size());
 
 				for (final Object row : rows) {
+					@SuppressWarnings("rawtypes")
 					final Map rowMap = (Map) row;
 					groupAttributeForm = new GroupAttributeForm();
 
@@ -456,11 +461,11 @@ public class GroupingDAOImpl implements GroupingDAO {
 			}
 		} finally {
 			LOGGER.info("recordsFetched. getNewCPGDetails finally block..");
-						if(session!=null) {
-							session.flush();
-							session.close();
-						}
-			
+			if(session!=null) {
+				session.flush();
+				session.close();
+			}
+
 		}
 
 		LOGGER.info("Fetch New CPG attribute Details. getNewCPGDetails-->End");
@@ -479,6 +484,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 	 * @throws PEPPersistencyException
 	 * @throws PEPServiceException
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<GroupSearchDTO> groupSearch(final GroupSearchForm groupSearchForm) throws PEPServiceException, PEPPersistencyException {
 
@@ -500,6 +506,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 
 			if (rows != null) {
 				for (final Object rowObj : rows) {
+					@SuppressWarnings("rawtypes")
 					final Map row = (Map) rowObj;
 					groupSearchDTO = new GroupSearchDTO();
 					groupSearchDTO.setGroupId(row.get("GROUP_ID") == null ? "" : row.get("GROUP_ID").toString());
@@ -545,6 +552,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 	 * @throws PEPPersistencyException
 	 * @throws PEPServiceException
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public int groupSearchCount(final GroupSearchForm groupSearchForm) throws PEPServiceException, PEPPersistencyException {
 
@@ -561,6 +569,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 
 			if (rows != null) {
 				for (final Object rowObj : rows) {
+					@SuppressWarnings("rawtypes")
 					final Map row = (Map) rowObj;
 					rowCount = (BigDecimal) (row.get("TOTAL_COUNT") == null ? "" : row.get("TOTAL_COUNT"));
 					if (LOGGER.isDebugEnabled()) {
@@ -594,6 +603,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 	 * @throws PEPPersistencyException
 	 * @throws PEPServiceException
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<GroupSearchDTO> groupSearchParent(final List<GroupSearchDTO> groupSearchDTOList, final GroupSearchForm groupSearchForm)
 			throws PEPServiceException, PEPPersistencyException {
@@ -616,6 +626,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 
 			if (rows != null) {
 				for (final Object rowObj : rows) {
+					@SuppressWarnings("rawtypes")
 					final Map row = (Map) rowObj;
 					groupSearchDTO = new GroupSearchDTO();
 					groupSearchDTO.setGroupId(row.get("GROUP_ID") == null ? "" : row.get("GROUP_ID").toString());
@@ -665,6 +676,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 	 * @throws PEPPersistencyException
 	 * @throws PEPServiceException
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public int groupSearchParentCount(final List<GroupSearchDTO> groupSearchDTOList, final GroupSearchForm groupSearchForm)
 			throws PEPServiceException, PEPPersistencyException {
@@ -682,6 +694,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 			rows = query.list();
 			if (rows != null) {
 				for (final Object rowObj : rows) {
+					@SuppressWarnings("rawtypes")
 					final Map row = (Map) rowObj;
 					rowCount = (BigDecimal) (row.get("TOTAL_COUNT_PARENT") == null ? "" : row.get("TOTAL_COUNT_PARENT"));
 					if (LOGGER.isDebugEnabled()) {
@@ -721,9 +734,11 @@ public class GroupingDAOImpl implements GroupingDAO {
 			if (query1 != null) {
 			query1.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
 			
+				@SuppressWarnings("unchecked")
 				final List<Object> rows1 = query1.list();
 				if (rows1 != null && rows1.size() > 0) {
 					for (final Object row : rows1) {
+						@SuppressWarnings("rawtypes")
 						final Map rowObj = (Map) row;
 						final DepartmentDetails departmentDetails = new DepartmentDetails();
 						departmentDetails.setId(rowObj.get("DEPTID") == null ? "" : rowObj.get("DEPTID").toString());
@@ -763,8 +778,10 @@ public class GroupingDAOImpl implements GroupingDAO {
 			session = sessionFactory.openSession();
 			final Query query = session.createSQLQuery(xqueryConstants.getClassDetailsUsingDeptnumbers(departmentNumbers));
 			query.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
+			@SuppressWarnings("unchecked")
 			final List<Object> rows = query.list();
 			for (final Object row : rows) {
+				@SuppressWarnings("rawtypes")
 				final Map rowObj = (Map) row;
 				final ClassDetails classDetails = new ClassDetails();
 				classDetails.setId(rowObj.get("CLASS_ID") == null ? "" : rowObj.get("CLASS_ID").toString());
@@ -813,12 +830,14 @@ public class GroupingDAOImpl implements GroupingDAO {
 
 			// execute select SQL statement
 			query.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
+			@SuppressWarnings("unchecked")
 			final List<Object> rows = query.list();
 			if (rows != null) {
 				LOGGER.info("recordsFetched..." + rows.size());
 
 				for (final Object row : rows) {
 					// LOGGER.info("In..." + rows.size());
+					@SuppressWarnings("rawtypes")
 					final Map rowMap = (Map) row;
 					groupAttributeForm = new GroupAttributeForm();
 
@@ -889,12 +908,14 @@ public class GroupingDAOImpl implements GroupingDAO {
 
 			// execute select SQL statement
 			query.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
+			@SuppressWarnings("unchecked")
 			final List<Object> rows = query.list();
 			if (rows != null) {
 				LOGGER.info("recordsFetched..." + rows.size());
 
 				for (final Object row : rows) {
 					// LOGGER.info("In..." + rows.size());
+					@SuppressWarnings("rawtypes")
 					final Map rowMap = (Map) row;
 					groupAttributeForm = new GroupAttributeForm();
 
@@ -977,6 +998,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 
 				for (final Object row : rows) {
 					// LOGGER.info("In..." + rows.size());
+					@SuppressWarnings("rawtypes")
 					final Map rowMap = (Map) row;
 					groupAttributeForm = new GroupAttributeForm();
 					styleAttributeForm = new StyleAttributeForm();

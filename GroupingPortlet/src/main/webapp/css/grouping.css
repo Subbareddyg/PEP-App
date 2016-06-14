@@ -2,6 +2,8 @@
 .group-create-area select{border: 1px solid #ccc; height:26px; border-radius:4px;}
 .group-search-area fieldset{border: 1px solid #008FD4; padding: 10px;}
 .group-search-area input[type=text]{height:18px; width: 80%}
+.group-edit-area input[type=text]{height:18px; width: 70%}
+.group-edit-area textarea{height:70px; width:70%; margin-top:10px; resize:none;}
 .group-search-area .cell{float: left; width:32%; margin:3px;}
 .clearfix{clear:both; content: ''; display:table;}
 .footer-content{margin: 0 auto; width: 10%;}

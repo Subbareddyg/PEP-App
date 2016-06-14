@@ -248,4 +248,14 @@ public interface GroupingService {
 	 * @return
 	 */
 	List<GroupAttributeForm> prepareListForView(final List<GroupAttributeForm> getSplitColorDetailsList);
+	
+	/**
+	 * This method is used to call the service method for saving the edited group headers
+	 * @param createGroupForm
+	 * @param modifiedBy
+	 * @return
+	 * @throws Exception
+	 * @throws PEPFetchException
+	 */
+	String updateGroupHeaderDetails(CreateGroupForm createGroupForm, String modifiedBy)throws Exception, PEPFetchException;
 }

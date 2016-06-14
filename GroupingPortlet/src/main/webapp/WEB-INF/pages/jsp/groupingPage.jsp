@@ -18,9 +18,7 @@
                         <option value="${groupTypesMap.key}"  [b]selected="true"[/b] ><c:out value="${groupTypesMap.value}"/></option>              
                     </c:forEach>
 				</select>
-				 
-								<input type="button" class="btn" id="btnGroupCreate" <c:if test="${readonly =='yes'}">disabled style="opacity:0.6;" </c:if> value="Create Grouping">
-				
+				<input type="button" class="btn" id="btnGroupCreate" <c:if test="${readonly =='yes'}">disabled style="opacity:0.6;" </c:if> value="Create Grouping">
 		</div>
 	</div>
 </div>
@@ -386,7 +384,7 @@
 				{{ } }}
 				{{=row.groupId}}
 				{{if(row.childGroup == 'Y'){ }} 
-					<img src="<%=response.encodeURL(request.getContextPath())%>/img/grouping_indicator.png" alt="In Grouping" width="12" style="position: relative; top: -8px;" />
+					<img src="<%=response.encodeURL(request.getContextPath())%>/img/grouping_indicator.png" alt="In Grouping" width="9" style="position: relative; top: -8px;" />
 				{{ } }}
 			</td>
 			<td>{{=row.groupName}}</td>

@@ -70,7 +70,9 @@
 			_super.$(this.config.dtContainer).on('click', '.select-all', function(e){
 				
 				if(_super.$(this).is(':checked')){
-										
+					
+					console.log(_super.$(_super.config.dtContainer) + ' .item-check');
+					
 					_super.$(_super.config.dtContainer).find('.item-check').prop('checked', true);
 					_super.$(_super.config.dtContainer).find('input[type="radio"]').prop('disabled', false);
 				}else{

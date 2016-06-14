@@ -98,7 +98,7 @@
 	</div>
 </div>
 <div class="group-search-footer-area">
-	<div class="footer-content"><input type="button" onclick="window.location.href='/wps/portal/home/creategrouping'" class="btn" value="Close"></div>
+	<div class="footer-content"><input type="button" onclick="window.location.href='/wps/portal/home/Grouping'" class="btn" value="Close"></div>
 </div>
 <portlet:resourceURL var="ajaxUrl" id="splitAttributeSearch"></portlet:resourceURL>
 

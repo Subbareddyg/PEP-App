@@ -99,7 +99,7 @@
 	</div>
 </div>
 <div class="group-search-footer-area">
-	<div class="footer-content"><input type="button" onclick="window.location.href='/wps/portal/home/creategrouping'" class="btn" value="Close"></div>
+	<div class="footer-content"><input type="button" onclick="window.location.href='/wps/portal/home/Grouping'" class="btn" value="Close"></div>
 </div>
 <portlet:resourceURL var="ajaxUrl" id="splitAttributeSearch"></portlet:resourceURL>
 <script type="text/javascript" src="<%=response.encodeURL(request.getContextPath()+"/js/jquery.min.js")%>"></script>
@@ -124,14 +124,6 @@
 				<td>
 					<!-- placeholder hidden field for holding selected group type -->
 					<input type="hidden" name="groupType" id="groupType" value="SCG" />
-					<!-- select name="groupTypeDropDown" id="groupTypeDropDown" disabled="disabled">
-						<option value="CPG">Consolidated Product Grouping</option>
-						<option value="SCG" selected="selected">Split Color Grouping</option>
-						<option value="SSG">Split SKU Grouping</option>
-						<option value="RCG">Regular Collection Grouping</option>
-						<option value="BCG">Beauty Collection Grouping</option>
-						<option value="GSG">Group By Size Grouping</option>
-					</select-->
 
 					<select name="groupTypeDropDown" id="groupTypeDropDown" disabled="disabled">
 						<c:forEach var="groupTypesMap" items="${groupTypesMap}">                                                                                                

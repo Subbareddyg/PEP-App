@@ -267,13 +267,14 @@ public class GroupingServiceImpl implements GroupingService {
 		
 		String responseMsg = "";
 		BufferedReader responseBuffer = null;
+		HttpURLConnection httpConnection = null;
 		try {
 			Properties prop = PropertyLoader.getPropertyLoader(GroupingConstants.MESS_PROP);
 			String serviceURL = prop.getProperty(GroupingConstants.CREATE_GROUP_SERVICE_URL);
 			LOGGER.info("Create Group ServiceURL-->" + serviceURL);
 
 			URL targetUrl = new URL(serviceURL);
-			HttpURLConnection httpConnection = (HttpURLConnection) targetUrl.openConnection();
+			httpConnection = (HttpURLConnection) targetUrl.openConnection();
 			httpConnection.setDoOutput(true);
 			httpConnection.setRequestMethod(prop.getProperty(GroupingConstants.SERVICE_REQUEST_METHOD));
 			httpConnection.setRequestProperty(prop.getProperty(GroupingConstants.SERVICE_REQUEST_PROPERTY_CONTENT_TYPE),
@@ -296,7 +297,6 @@ public class GroupingServiceImpl implements GroupingService {
 				responseMsg = output;
 			}
 
-			httpConnection.disconnect();
 		} catch (MalformedURLException e) {
 			LOGGER.error("inside malformedException-->" + e);
 			throw new PEPFetchException(e.getMessage());
@@ -313,6 +313,9 @@ public class GroupingServiceImpl implements GroupingService {
 			LOGGER.error("inside Exception-->" + e);
 			throw new Exception(e.getMessage());
 		} finally {
+			if(null != httpConnection){
+				httpConnection.disconnect();
+			}
 			if(responseBuffer!=null)
 				responseBuffer.close();
 		}
@@ -621,13 +624,14 @@ public class GroupingServiceImpl implements GroupingService {
 		LOGGER.info("Entering callAddComponentSCGService-->");
 		String responseMsg = "";
 		BufferedReader responseBuffer=null;
+		HttpURLConnection httpConnection = null;
 		try {
 			Properties prop = PropertyLoader.getPropertyLoader(GroupingConstants.MESS_PROP);
 			String serviceURL = prop.getProperty(GroupingConstants.ADD_COMPONENT_TO_SCG_SERVICE_URL);
 			LOGGER.info("Add Component to Split Color ServiceURL-->" + serviceURL);
 
 			URL targetUrl = new URL(serviceURL);
-			HttpURLConnection httpConnection = (HttpURLConnection) targetUrl.openConnection();
+			httpConnection = (HttpURLConnection) targetUrl.openConnection();
 			httpConnection.setDoOutput(true);
 			httpConnection.setRequestMethod(prop.getProperty(GroupingConstants.SERVICE_REQUEST_METHOD));
 			httpConnection.setRequestProperty(prop.getProperty(GroupingConstants.SERVICE_REQUEST_PROPERTY_CONTENT_TYPE),
@@ -649,7 +653,6 @@ public class GroupingServiceImpl implements GroupingService {
 
 			}
 
-			httpConnection.disconnect();
 		} catch (MalformedURLException e) {
 			LOGGER.error("inside malformedException-->" + e);
 			throw new PEPFetchException(e.getMessage());
@@ -666,7 +669,9 @@ public class GroupingServiceImpl implements GroupingService {
 			LOGGER.error("inside Exception-->" + e);
 			throw new Exception(e.getMessage());
 		} finally {
-			
+			if(null != httpConnection){
+				httpConnection.disconnect();
+			}
 			if(responseBuffer!=null)
 				responseBuffer.close();
 		}
@@ -723,13 +728,14 @@ public class GroupingServiceImpl implements GroupingService {
  
 		String responseMsg = "";
 		BufferedReader responseBuffer =null;
+		HttpURLConnection httpConnection = null;
 		try {
 			Properties prop = PropertyLoader.getPropertyLoader(GroupingConstants.MESS_PROP);
 			String serviceURL = prop.getProperty(GroupingConstants.ADD_COMPONENT_TO_CPG_SERVICE_URL);
 			LOGGER.info("Add Component to CPG ServiceURL-->" + serviceURL);
 
 			URL targetUrl = new URL(serviceURL);
-			HttpURLConnection httpConnection = (HttpURLConnection) targetUrl.openConnection();
+			httpConnection = (HttpURLConnection) targetUrl.openConnection();
 			httpConnection.setDoOutput(true);
 			httpConnection.setRequestMethod(prop.getProperty(GroupingConstants.SERVICE_REQUEST_METHOD));
 			httpConnection.setRequestProperty(prop.getProperty(GroupingConstants.SERVICE_REQUEST_PROPERTY_CONTENT_TYPE),
@@ -751,7 +757,6 @@ public class GroupingServiceImpl implements GroupingService {
 				responseMsg = output;
 			}
 
-			httpConnection.disconnect();
 		} catch (MalformedURLException e) {
 			LOGGER.error("inside malformedException-->" + e);
 			throw new PEPFetchException(e.getMessage());
@@ -768,6 +773,9 @@ public class GroupingServiceImpl implements GroupingService {
 			LOGGER.error("inside Exception-->" + e);
 			throw new Exception(e.getMessage());
 		} finally {
+			if(null != httpConnection){
+				httpConnection.disconnect();
+			}
 			if (responseBuffer!=null){
 				responseBuffer.close();
 			}
@@ -831,13 +839,14 @@ public class GroupingServiceImpl implements GroupingService {
  
 		String responseMsg = "";
 		BufferedReader responseBuffer = null;
+		HttpURLConnection httpConnection = null;
 		try {
 			Properties prop = PropertyLoader.getPropertyLoader(GroupingConstants.MESS_PROP);
 			String serviceURL = prop.getProperty(GroupingConstants.ADD_COMPONENT_TO_SSG_SERVICE_URL);
 			LOGGER.info("Add Component to Split SKU ServiceURL-->" + serviceURL);
 
 			URL targetUrl = new URL(serviceURL);
-			HttpURLConnection httpConnection = (HttpURLConnection) targetUrl.openConnection();
+			httpConnection = (HttpURLConnection) targetUrl.openConnection();
 			httpConnection.setDoOutput(true);
 			httpConnection.setRequestMethod(prop.getProperty(GroupingConstants.SERVICE_REQUEST_METHOD));
 			httpConnection.setRequestProperty(prop.getProperty(GroupingConstants.SERVICE_REQUEST_PROPERTY_CONTENT_TYPE),
@@ -861,7 +870,6 @@ public class GroupingServiceImpl implements GroupingService {
 
 			}
 
-			httpConnection.disconnect();
 		} catch (MalformedURLException e) {
 			LOGGER.error("inside malformedException-->" + e);
 			throw new PEPFetchException(e.getMessage());
@@ -878,6 +886,9 @@ public class GroupingServiceImpl implements GroupingService {
 			LOGGER.error("inside Exception-->" + e);
 			throw new Exception(e.getMessage());
 		} finally{
+			if(null != httpConnection){
+				httpConnection.disconnect();
+			}
 			if (responseBuffer!=null)
 				responseBuffer.close();
 		}
@@ -1252,13 +1263,14 @@ public class GroupingServiceImpl implements GroupingService {
 
 		String responseMsg = "";
 		BufferedReader responseBuffer =null;
+		HttpURLConnection httpConnection = null;
 		try {
 			Properties prop = PropertyLoader.getPropertyLoader(GroupingConstants.MESS_PROP);
 			String serviceURL = prop.getProperty(GroupingConstants.DELETE_GROUP_SERVICE_URL);
 			LOGGER.info("Delete Group ServiceURL-->" + serviceURL);
 
 			URL targetUrl = new URL(serviceURL);
-			HttpURLConnection httpConnection = (HttpURLConnection) targetUrl.openConnection();
+			httpConnection = (HttpURLConnection) targetUrl.openConnection();
 			httpConnection.setDoOutput(true);
 			httpConnection.setRequestMethod(prop.getProperty(GroupingConstants.SERVICE_REQUEST_METHOD));
 			httpConnection.setRequestProperty(prop.getProperty(GroupingConstants.SERVICE_REQUEST_PROPERTY_CONTENT_TYPE),
@@ -1281,7 +1293,6 @@ public class GroupingServiceImpl implements GroupingService {
 				responseMsg = output;
 			}
 
-			httpConnection.disconnect();
 		} catch (MalformedURLException e) {
 			LOGGER.error("inside malformedException-->" + e);
 			throw new PEPFetchException(e.getMessage());
@@ -1298,6 +1309,9 @@ public class GroupingServiceImpl implements GroupingService {
 			LOGGER.error("inside Exception-->" + e);
 			throw new Exception(e.getMessage());
 		} finally {
+			if(null != httpConnection){
+				httpConnection.disconnect();
+			}
 			if(responseBuffer!=null){
 				responseBuffer.close();
 			}
@@ -1411,16 +1425,16 @@ public class GroupingServiceImpl implements GroupingService {
 	 * @throws PEPPersistencyException
 	 */
 	public final List<StyleAttributeForm> getExistCPGDetails(final String groupId) throws PEPServiceException, PEPPersistencyException {
-		LOGGER.info("Enter-->calling getSplitSkuDetailsList from GroupingServiceImpl.");
+		LOGGER.info("Enter-->calling getExistCPGDetails from GroupingServiceImpl.");
 //		List<GroupAttributeForm> getSplitSkuDetailsList = null;
 		List<StyleAttributeForm> styleAttributeFormList = null;
 		try {
 			styleAttributeFormList = groupingDAO.getExistCPGDetails(groupId);
 		} catch (Exception e) {
-			LOGGER.error("Exception occurred at the getSplitSkuDetailsList().Service Implementation Layer-->" + e);
+			LOGGER.error("Exception occurred at the getExistCPGDetails().Service Implementation Layer-->" + e);
 			throw new PEPServiceException(e.getMessage());
 		}
-		LOGGER.info("Exit-->calling getSplitSkuDetailsList from GroupingServiceImpl.");
+		LOGGER.info("Exit-->calling getExistCPGDetails from GroupingServiceImpl.");
 		return styleAttributeFormList;
 	}
 	
@@ -1652,7 +1666,7 @@ public class GroupingServiceImpl implements GroupingService {
 					if (LOGGER.isDebugEnabled()) {
 						LOGGER.debug("Style ProductName is -->" + productName);
 					}
-				}else if(null != entryType && ("StyleColor").equals(entryType)){
+				}else if(null != entryType && (("StyleColor").equals(entryType) || ("SKU").equals(entryType))){
 					
 					if (LOGGER.isDebugEnabled()) {
 						
@@ -1669,5 +1683,114 @@ public class GroupingServiceImpl implements GroupingService {
 		LOGGER.info("Exit-->calling prepareListForView");
 		return updatedSplitColorDetailsList;
 	}
+	
+	
+	/**
+	 * This method is used to call the service method for saving the edited group headers
+	 * @param createGroupForm
+	 * @param modifiedBy
+	 * @return
+	 * @throws Exception
+	 * @throws PEPFetchException
+	 */
+	@Override
+	public String updateGroupHeaderDetails(CreateGroupForm createGroupForm, String modifiedBy)
+	throws Exception, PEPFetchException {
+		LOGGER.info("Entered saveEditedGroupHeader of Grouping Service Impl");
+		String groupId=createGroupForm.getGroupId();
+		String groupName=createGroupForm.getGroupName();
+		String groupDesc=createGroupForm.getGroupDesc();
+		String status=createGroupForm.getGroupStatus();
+		String startDate=createGroupForm.getGroupLaunchDate();
+		String endDate=createGroupForm.getEndDate();
+		String groupType=createGroupForm.getGroupType();
+		JSONObject requestJSON=new JSONObject();
+		requestJSON.put(GroupingConstants.GROUP_ID, ((groupId!=null)? groupId :GroupingConstants.EMPTY));
+		requestJSON.put(GroupingConstants.GROUP_NAME, ((groupName!=null)? groupName :GroupingConstants.EMPTY));
+		requestJSON.put(GroupingConstants.GROUP_DESC, ((groupDesc!=null)? groupDesc :GroupingConstants.EMPTY));
+		requestJSON.put(GroupingConstants.GROUP_STATUS, ((status!=null)? status :GroupingConstants.EMPTY));
+		requestJSON.put(GroupingConstants.START_DATE, ((startDate!=null)? startDate :GroupingConstants.EMPTY));
+		requestJSON.put(GroupingConstants.END_DATE, ((endDate!=null)? endDate :GroupingConstants.EMPTY));
+		requestJSON.put(GroupingConstants.MODIFIED_BY, ((modifiedBy!=null)? modifiedBy :GroupingConstants.EMPTY));
+		requestJSON.put(GroupingConstants.GROUP_TYPE, ((groupType!=null)? groupType :GroupingConstants.EMPTY));
+		LOGGER.info("Create Group Service Start currentTimeMillis-->" + System.currentTimeMillis());
+		String resMsg = callUpdateGroupService(requestJSON);
+		LOGGER.info("Create Group Service End currentTimeMillis-->" + System.currentTimeMillis());
+		LOGGER.info(resMsg);
+		return resMsg;
+	}
+	
+	/**
+	 * This method is used to call the Edit Group Service.
+	 * @param jsonGroup
+	 * @return
+	 * @throws Exception
+	 * @throws PEPFetchException
+	 */
+	private String callUpdateGroupService(final JSONObject jsonGroup) throws Exception, PEPFetchException {
+		LOGGER.info("Entering callUpdateGroupService-->");
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("jsonArray-->" + jsonGroup);
+		}
+		String responseMsg = "";
+		BufferedReader responseBuffer = null; 
+		HttpURLConnection httpConnection = null;
+		try {
+			Properties prop = PropertyLoader.getPropertyLoader(GroupingConstants.MESS_PROP);
+			String serviceURL = prop.getProperty(GroupingConstants.UPDATE_GROUP_SERVICE_URL);
+			LOGGER.info("Update Group ServiceURL-->" + serviceURL);
 
+			URL targetUrl = new URL(serviceURL);
+			httpConnection = (HttpURLConnection) targetUrl.openConnection();
+			httpConnection.setDoOutput(true);
+			httpConnection.setRequestMethod(prop.getProperty(GroupingConstants.SERVICE_REQUEST_METHOD));
+			httpConnection.setRequestProperty(prop.getProperty(GroupingConstants.SERVICE_REQUEST_PROPERTY_CONTENT_TYPE),
+					prop.getProperty(GroupingConstants.SERVICE_REQUEST_PROPERTY_APPLICATION_TYPE));
+
+			LOGGER.info("callUpdateGroupService Service::Json Array-->" + jsonGroup.toString());
+
+			String input = jsonGroup.toString();
+			if (LOGGER.isDebugEnabled()) {
+				LOGGER.debug("final object in json-->" + jsonGroup.toString());
+			}
+			LOGGER.info("input....json-->" + input);
+			OutputStream outputStream = httpConnection.getOutputStream();
+			outputStream.write(input.getBytes());
+			outputStream.flush();
+
+			responseBuffer = new BufferedReader(new InputStreamReader((httpConnection.getInputStream())));
+			String output;
+			LOGGER.info("Output from Server::: after Calling-->");
+			while ((output = responseBuffer.readLine()) != null) {
+				LOGGER.info("UpdateGroupService Service Output-->" + output);
+				responseMsg = output;
+			}
+
+			httpConnection.disconnect();
+		} catch (MalformedURLException e) {
+			LOGGER.error("inside malformedException" + e);
+			throw new PEPFetchException(e);
+		} catch (ClassCastException e) {
+			LOGGER.error("inside ClassCastException" + e);
+			throw new PEPFetchException(e);
+		} catch (IOException e) {
+			LOGGER.error("inside IOException" + e);
+			throw new IOException(e);
+		} catch (JSONException e) {
+			LOGGER.error("inside JSOnException" + e);
+			throw new JSONException(e);
+		} catch (Exception e) {
+			LOGGER.error("inside Exception" + e);
+			throw new Exception(e);
+		} finally {
+			if(null != httpConnection){
+				httpConnection.disconnect();
+			}
+			if(responseBuffer!=null)
+				responseBuffer.close();
+		}
+		LOGGER.info("Exiting callCreateGroupService-->" + responseMsg);
+		return responseMsg;
+	}
+	/** edit Grouping **/
 }

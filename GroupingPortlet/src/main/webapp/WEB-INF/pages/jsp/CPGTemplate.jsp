@@ -52,7 +52,7 @@
 					</td>
 					<td class="text-center">{{=childRow.vendorStyleNo}}</td>
 					<td>{{=childRow.productName}}</td>
-					<td class="text-center">{{=childRow.colorCode}}</td>
+					<td class="text-center">{{=childRow.colorName}}</td>
 					<td class="text-center">{{=row.alreadyInGroup}}</td>
 				</tr>
 			{{ }) }}
