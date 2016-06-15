@@ -2611,147 +2611,188 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
     @Override
     public List<WorkFlow> getAdvWorklistGroupingData(
         final AdvanceSearch adSearch, final List<String> supplierIdList,
-        final String vendorEmail, final List<String> styleOrinList){
+        final String vendorEmail, final List<String> styleOrinList) {
         LOGGER.info("in DAO getAdvWorklistGroupingData");
-        List<WorkFlow> workFlowList = null;
+        List<WorkFlow> workFlowList = new ArrayList<WorkFlow>();
         Session session = null;
-        
+
         WorkFlow workFlow = null;
         XqueryConstants xqueryConstants = new XqueryConstants();
         Properties prop =
             PropertyLoader
                 .getPropertyLoader(WorkListDisplayConstants.WORK_LIST_DISPLAY_PROPERTIES_FILE_NAME);
-        try {
-            session = sessionFactory.openSession();
-            
-            Query query =
-                session.createSQLQuery(xqueryConstants
-                    .getGroupSearchQueryForAdvSearch(adSearch, styleOrinList));
-            LOGGER.info("Grouping Query:- " + query);
+        if (xqueryConstants.getGroupSearchQueryForAdvSearch(adSearch,
+            styleOrinList).contains("AND")) {
 
-            workFlowList = new ArrayList<WorkFlow>();
-            query.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
-            List<Object> rowList = query.list();
+            try {
+                session = sessionFactory.openSession();
 
-            if (rowList != null) {
-                for (final Object rowObj : rowList) {
-                    final Map row = (Map) rowObj;
-                    workFlow = new WorkFlow();
+                Query query =
+                    session.createSQLQuery(xqueryConstants
+                        .getGroupSearchQueryForAdvSearch(adSearch,
+                            styleOrinList));
+                LOGGER.info("Grouping Query:- " + query);
 
-                    workFlow.setOrinNumber(row
-                        .get(WorkListDisplayConstants.MDMID) == null
-                        ? WorkListDisplayConstants.EMPTY_STRING : row.get(
-                            WorkListDisplayConstants.MDMID).toString());
-                    workFlow.setProductName(row
-                        .get(WorkListDisplayConstants.GROUP_NAME) == null
-                        ? WorkListDisplayConstants.EMPTY_STRING : row.get(
-                            WorkListDisplayConstants.GROUP_NAME).toString());
-                    workFlow
-                        .setPetStatus(prop.getProperty(row
-                            .get(WorkListDisplayConstants.GROUP_OVERALL_STATUS_CODE) == null
-                            ? WorkListDisplayConstants.EMPTY_STRING
-                            : row
-                                .get(
-                                    WorkListDisplayConstants.GROUP_OVERALL_STATUS_CODE)
-                                .toString()));
-                    workFlow.setVendorStyle(prop.getProperty(row
-                        .get(WorkListDisplayConstants.ENTRY_TYPE) == null
-                        ? WorkListDisplayConstants.EMPTY_STRING : row.get(
-                            WorkListDisplayConstants.ENTRY_TYPE).toString()));
-                    workFlow.setDeptId(row
-                        .get(WorkListDisplayConstants.DEF_DEPT_ID) == null
-                        ? WorkListDisplayConstants.EMPTY_STRING : row.get(
-                            WorkListDisplayConstants.DEF_DEPT_ID).toString());
-                    workFlow.setVendorName(row
-                        .get(WorkListDisplayConstants.SUPPLIER_NAME) == null
-                        ? WorkListDisplayConstants.EMPTY_STRING : row.get(
-                            WorkListDisplayConstants.SUPPLIER_NAME).toString());
-                    workFlow
-                        .setImageStatus(prop
-                            .getProperty(WorkListDisplayConstants.IMAGE
+                query.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
+                List<Object> rowList = query.list();
+
+                if (rowList != null) {
+                    for (final Object rowObj : rowList) {
+                        final Map row = (Map) rowObj;
+                        workFlow = new WorkFlow();
+
+                        workFlow.setOrinNumber(row
+                            .get(WorkListDisplayConstants.MDMID) == null
+                            ? WorkListDisplayConstants.EMPTY_STRING : row.get(
+                                WorkListDisplayConstants.MDMID).toString());
+                        workFlow
+                            .setProductName(row
+                                .get(WorkListDisplayConstants.GROUP_NAME) == null
+                                ? WorkListDisplayConstants.EMPTY_STRING : row
+                                    .get(WorkListDisplayConstants.GROUP_NAME)
+                                    .toString());
+                        String overallStatusCode =
+                            prop.getProperty(row
+                                .get(WorkListDisplayConstants.GROUP_OVERALL_STATUS_CODE) == null
+                                ? WorkListDisplayConstants.EMPTY_STRING
+                                : row
+                                    .get(
+                                        WorkListDisplayConstants.GROUP_OVERALL_STATUS_CODE)
+                                    .toString());
+                        if (overallStatusCode != null
+                            && (overallStatusCode
+                                .equalsIgnoreCase(WorkListDisplayConstants.WAITING_TO_BE_CLOSED)
+                                || overallStatusCode
+                                    .equalsIgnoreCase(WorkListDisplayConstants.CLOSED) || overallStatusCode
+                                .equalsIgnoreCase(WorkListDisplayConstants.PUBLISH_TO_WEB))) {
+                            workFlow
+                                .setPetStatus(WorkListDisplayConstants.COMPLETED);
+                        }
+                        else if (overallStatusCode != null
+                            && (overallStatusCode
+                                .equalsIgnoreCase(WorkListDisplayConstants.REACTIVATED))) {
+                            workFlow
+                                .setPetStatus(WorkListDisplayConstants.INITIATED);
+                        }
+                        else {
+                            workFlow.setPetStatus(overallStatusCode);
+                        }
+                        workFlow
+                            .setVendorStyle(prop.getProperty(row
+                                .get(WorkListDisplayConstants.ENTRY_TYPE) == null
+                                ? WorkListDisplayConstants.EMPTY_STRING : row
+                                    .get(WorkListDisplayConstants.ENTRY_TYPE)
+                                    .toString()));
+                        workFlow.setDeptId(row
+                            .get(WorkListDisplayConstants.DEF_DEPT_ID) == null
+                            ? WorkListDisplayConstants.EMPTY_STRING : row.get(
+                                WorkListDisplayConstants.DEF_DEPT_ID)
+                                .toString());
+                        workFlow
+                            .setVendorName(row
+                                .get(WorkListDisplayConstants.SUPPLIER_NAME) == null
+                                ? WorkListDisplayConstants.EMPTY_STRING
+                                : row.get(
+                                    WorkListDisplayConstants.SUPPLIER_NAME)
+                                    .toString());
+                        workFlow
+                            .setImageStatus(prop.getProperty(WorkListDisplayConstants.IMAGE
                                 + row.get(WorkListDisplayConstants.IMAGE_STATE) == null
                                 ? WorkListDisplayConstants.EMPTY_STRING : row
                                     .get(WorkListDisplayConstants.IMAGE_STATE)
                                     .toString()));
-                    workFlow
-                        .setContentStatus(prop.getProperty(WorkListDisplayConstants.CONTENT
-                            + row.get(WorkListDisplayConstants.CONTENT_STATE) == null
-                            ? WorkListDisplayConstants.EMPTY_STRING : row.get(
-                                WorkListDisplayConstants.CONTENT_STATE)
-                                .toString()));
-                    workFlow.setSourceType(row
-                        .get(WorkListDisplayConstants.PET_SOURCE) == null
-                        ? WorkListDisplayConstants.EMPTY_STRING : row.get(
-                            WorkListDisplayConstants.PET_SOURCE).toString());
-                    workFlow
-                        .setExistsInGroup(row
-                            .get(WorkListDisplayConstants.EXIST_IN_GROUP) == null
-                            ? WorkListDisplayConstants.EMPTY_STRING : row.get(
-                                WorkListDisplayConstants.EXIST_IN_GROUP)
-                                .toString());
-                    if ((row.get(WorkListDisplayConstants.CHILD_GROUP) == null
-                        ? WorkListDisplayConstants.EMPTY_STRING : row.get(
-                            WorkListDisplayConstants.CHILD_GROUP).toString())
-                        .equalsIgnoreCase(WorkListDisplayConstants.CHILD_GROUP_C)
-                        || (row.get(WorkListDisplayConstants.CHILD_GROUP) == null
+                        workFlow
+                            .setContentStatus(prop.getProperty(WorkListDisplayConstants.CONTENT
+                                + row
+                                    .get(WorkListDisplayConstants.CONTENT_STATE) == null
+                                ? WorkListDisplayConstants.EMPTY_STRING
+                                : row.get(
+                                    WorkListDisplayConstants.CONTENT_STATE)
+                                    .toString()));
+                        workFlow
+                            .setSourceType(row
+                                .get(WorkListDisplayConstants.PET_SOURCE) == null
+                                ? WorkListDisplayConstants.EMPTY_STRING : row
+                                    .get(WorkListDisplayConstants.PET_SOURCE)
+                                    .toString());
+                        workFlow
+                            .setExistsInGroup(row
+                                .get(WorkListDisplayConstants.EXIST_IN_GROUP) == null
+                                ? WorkListDisplayConstants.EMPTY_STRING
+                                : row.get(
+                                    WorkListDisplayConstants.EXIST_IN_GROUP)
+                                    .toString());
+                        if ((row.get(WorkListDisplayConstants.CHILD_GROUP) == null
                             ? WorkListDisplayConstants.EMPTY_STRING : row.get(
                                 WorkListDisplayConstants.CHILD_GROUP)
-                                .toString()).equalsIgnoreCase(WorkListDisplayConstants.CHILD_GROUP_O)) {
-                        workFlow
-                            .setIsChildPresent(WorkListDisplayConstants.YES_Y);
-                    }
-                    else {
-                        workFlow
-                            .setIsChildPresent(WorkListDisplayConstants.NO_N);
-                    }
+                                .toString())
+                            .equalsIgnoreCase(WorkListDisplayConstants.CHILD_GROUP_C)
+                            || (row.get(WorkListDisplayConstants.CHILD_GROUP) == null
+                                ? WorkListDisplayConstants.EMPTY_STRING : row
+                                    .get(WorkListDisplayConstants.CHILD_GROUP)
+                                    .toString())
+                                .equalsIgnoreCase(WorkListDisplayConstants.CHILD_GROUP_O)) {
+                            workFlow
+                                .setIsChildPresent(WorkListDisplayConstants.YES_Y);
+                        }
+                        else {
+                            workFlow
+                                .setIsChildPresent(WorkListDisplayConstants.NO_N);
+                        }
 
-                    String completionDate =
-                        row.get(WorkListDisplayConstants.COMPLETION_DATE_RESULT_SET) == null
-                            ? WorkListDisplayConstants.EMPTY_STRING
-                            : row
-                                .get(
-                                    WorkListDisplayConstants.COMPLETION_DATE_RESULT_SET)
-                                .toString();
-                    if (completionDate.length() >= 10) {
-                        workFlow.setCompletionDate(completionDate.substring(0,
-                            10));
-                    }
-                    else {
-                        workFlow.setCompletionDate(completionDate);
-                    }
-                    workFlow.setIsGroup(WorkListDisplayConstants.YES_Y);
-                    if (LOGGER.isDebugEnabled()) {
-                        LOGGER
-                            .debug("Grouping Attribute Values -- \nGROUP ID: "
-                                + workFlow.getOrinNumber() + "\nGROUP NAME: "
-                                + workFlow.getProductName()
-                                + "\nGROUP PET STATE: "
-                                + workFlow.getPetStatus()
-                                + "\nGROUP CONTENT STATUS: "
-                                + workFlow.getContentStatus()
-                                + "\nGROUP IMAGE STATUS: "
-                                + workFlow.getImageStatus() + "\nPET_SOURCE: "
-                                + workFlow.getSourceType()
-                                + "\nCOMPLETION_DATE: "
-                                + workFlow.getCompletionDate()
-                                + "\nGROUP TYPE: " + workFlow.getVendorStyle()
-                                + "\nDEPT ID: " + workFlow.getDeptId()
-                                + "\nVENDOR NAME: " + workFlow.getVendorName()
-                                + "\nCHILD GROUP : "
-                                + workFlow.getIsChildPresent());
-                    }
+                        String completionDate =
+                            row.get(WorkListDisplayConstants.COMPLETION_DATE_RESULT_SET) == null
+                                ? WorkListDisplayConstants.EMPTY_STRING
+                                : row
+                                    .get(
+                                        WorkListDisplayConstants.COMPLETION_DATE_RESULT_SET)
+                                    .toString();
+                        if (completionDate.length() >= 10) {
+                            workFlow.setCompletionDate(completionDate
+                                .substring(0, 10));
+                        }
+                        else {
+                            workFlow.setCompletionDate(completionDate);
+                        }
+                        workFlow.setIsGroup(WorkListDisplayConstants.YES_Y);
+                        if (LOGGER.isDebugEnabled()) {
+                            LOGGER
+                                .debug("Grouping Attribute Values -- \nGROUP ID: "
+                                    + workFlow.getOrinNumber()
+                                    + "\nGROUP NAME: "
+                                    + workFlow.getProductName()
+                                    + "\nGROUP PET STATE: "
+                                    + workFlow.getPetStatus()
+                                    + "\nGROUP CONTENT STATUS: "
+                                    + workFlow.getContentStatus()
+                                    + "\nGROUP IMAGE STATUS: "
+                                    + workFlow.getImageStatus()
+                                    + "\nPET_SOURCE: "
+                                    + workFlow.getSourceType()
+                                    + "\nCOMPLETION_DATE: "
+                                    + workFlow.getCompletionDate()
+                                    + "\nGROUP TYPE: "
+                                    + workFlow.getVendorStyle()
+                                    + "\nDEPT ID: "
+                                    + workFlow.getDeptId()
+                                    + "\nVENDOR NAME: "
+                                    + workFlow.getVendorName()
+                                    + "\nCHILD GROUP : "
+                                    + workFlow.getIsChildPresent());
+                        }
 
-                    workFlowList.add(workFlow);
+                        workFlowList.add(workFlow);
 
+                    }
                 }
             }
-        }
-        finally {
-            if(session!=null){
-            session.flush();
-            session.close();
+            finally {
+                if (session != null) {
+                    session.flush();
+                    session.close();
+                }
+
             }
-            
         }
         return workFlowList;
     }
@@ -2802,14 +2843,32 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
                         .get(WorkListDisplayConstants.GROUP_NAME) == null
                         ? WorkListDisplayConstants.EMPTY_STRING : row.get(
                             WorkListDisplayConstants.GROUP_NAME).toString());
-                    workFlow
-                        .setPetStatus(prop.getProperty(row
-                            .get(WorkListDisplayConstants.GROUP_OVERALL_STATUS_CODE) == null
-                            ? WorkListDisplayConstants.EMPTY_STRING
-                            : row
-                                .get(
-                                    WorkListDisplayConstants.GROUP_OVERALL_STATUS_CODE)
-                                .toString()));
+                    String overallStatusCode = prop.getProperty(row
+                        .get(WorkListDisplayConstants.GROUP_OVERALL_STATUS_CODE) == null
+                        ? WorkListDisplayConstants.EMPTY_STRING
+                        : row
+                            .get(
+                                WorkListDisplayConstants.GROUP_OVERALL_STATUS_CODE)
+                            .toString());
+                    if(overallStatusCode != null 
+                            && (overallStatusCode.equalsIgnoreCase(WorkListDisplayConstants.WAITING_TO_BE_CLOSED)
+                            || overallStatusCode.equalsIgnoreCase(WorkListDisplayConstants.CLOSED)
+                            || overallStatusCode.equalsIgnoreCase(WorkListDisplayConstants.PUBLISH_TO_WEB)))
+                    {
+                        workFlow
+                            .setPetStatus(WorkListDisplayConstants.COMPLETED);
+                    }
+                    else if(overallStatusCode != null 
+                            && (overallStatusCode.equalsIgnoreCase(WorkListDisplayConstants.REACTIVATED)))
+                    {
+                        workFlow
+                            .setPetStatus(WorkListDisplayConstants.INITIATED);
+                    }
+                    else
+                    {
+                        workFlow
+                            .setPetStatus(overallStatusCode);
+                    }
                     workFlow.setVendorStyle(prop.getProperty(row
                         .get(WorkListDisplayConstants.ENTRY_TYPE) == null
                         ? WorkListDisplayConstants.EMPTY_STRING : row.get(
@@ -3016,10 +3075,32 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
                                 .get(
                                     WorkListDisplayConstants.PRODUCTNAME_RESULT_SET)
                                 .toString());
-                    workFlow.setPetStatus(prop.getProperty(row
+                    String overallStatusCode = prop.getProperty(row
                         .get(WorkListDisplayConstants.PET_STATE) == null
-                        ? WorkListDisplayConstants.EMPTY_STRING : row.get(
-                            WorkListDisplayConstants.PET_STATE).toString()));
+                        ? WorkListDisplayConstants.EMPTY_STRING
+                        : row
+                            .get(
+                                WorkListDisplayConstants.PET_STATE)
+                            .toString());
+                    if(overallStatusCode != null 
+                            && (overallStatusCode.equalsIgnoreCase(WorkListDisplayConstants.WAITING_TO_BE_CLOSED)
+                            || overallStatusCode.equalsIgnoreCase(WorkListDisplayConstants.CLOSED)
+                            || overallStatusCode.equalsIgnoreCase(WorkListDisplayConstants.PUBLISH_TO_WEB)))
+                    {
+                        workFlow
+                            .setPetStatus(WorkListDisplayConstants.COMPLETED);
+                    }
+                    else if(overallStatusCode != null 
+                            && (overallStatusCode.equalsIgnoreCase(WorkListDisplayConstants.REACTIVATED)))
+                    {
+                        workFlow
+                            .setPetStatus(WorkListDisplayConstants.INITIATED);
+                    }
+                    else
+                    {
+                        workFlow
+                            .setPetStatus(overallStatusCode);
+                    }                    
 
                     workFlow
                         .setDeptId(row.get(WorkListDisplayConstants.DEPT) == null
@@ -3029,12 +3110,12 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
                         .get(WorkListDisplayConstants.SUPPLIER_NAME) == null
                         ? WorkListDisplayConstants.EMPTY_STRING : row.get(
                             WorkListDisplayConstants.SUPPLIER_NAME).toString());
-                    workFlow.setImageStatus(prop.getProperty("Image"
+                    workFlow.setImageStatus(prop.getProperty(WorkListDisplayConstants.IMAGE
                         + row.get(WorkListDisplayConstants.IMAGE_STATE) == null
                         ? WorkListDisplayConstants.EMPTY_STRING : row.get(
                             WorkListDisplayConstants.IMAGE_STATE).toString()));
                     workFlow
-                        .setContentStatus(prop.getProperty("Content"
+                        .setContentStatus(prop.getProperty(WorkListDisplayConstants.CONTENT
                             + row.get(WorkListDisplayConstants.CONTENT_STATE) == null
                             ? WorkListDisplayConstants.EMPTY_STRING : row.get(
                                 WorkListDisplayConstants.CONTENT_STATE)
@@ -3542,10 +3623,32 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
                                 .get(
                                     WorkListDisplayConstants.PRODUCTNAME_RESULT_SET)
                                 .toString());
-                    workFlow.setPetStatus(prop.getProperty(row
+                    String overallStatusCode = prop.getProperty(row
                         .get(WorkListDisplayConstants.PET_STATE) == null
-                        ? WorkListDisplayConstants.EMPTY_STRING : row.get(
-                            WorkListDisplayConstants.PET_STATE).toString()));
+                        ? WorkListDisplayConstants.EMPTY_STRING
+                        : row
+                            .get(
+                                WorkListDisplayConstants.PET_STATE)
+                            .toString());
+                    if(overallStatusCode != null 
+                            && (overallStatusCode.equalsIgnoreCase(WorkListDisplayConstants.WAITING_TO_BE_CLOSED)
+                            || overallStatusCode.equalsIgnoreCase(WorkListDisplayConstants.CLOSED)
+                            || overallStatusCode.equalsIgnoreCase(WorkListDisplayConstants.PUBLISH_TO_WEB)))
+                    {
+                        workFlow
+                            .setPetStatus(WorkListDisplayConstants.COMPLETED);
+                    }
+                    else if(overallStatusCode != null 
+                            && (overallStatusCode.equalsIgnoreCase(WorkListDisplayConstants.REACTIVATED)))
+                    {
+                        workFlow
+                            .setPetStatus(WorkListDisplayConstants.INITIATED);
+                    }
+                    else
+                    {
+                        workFlow
+                            .setPetStatus(overallStatusCode);
+                    }
 
                     workFlow
                         .setDeptId(row.get(WorkListDisplayConstants.DEPT) == null

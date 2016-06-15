@@ -11,6 +11,7 @@
 
 <style type = "text/css">
 tr.children td{#border:1px dashed #ddd;}
+tr.cfas-row td{background-color:yellow !important;}
 input.btn-new, input.btn-new:hover {
     background: #cedff5;
     border: 1px solid #aaaaaa;
@@ -294,7 +295,7 @@ lockClearOnBack.value='1';
 						<table  cellpadding="0"  class="table tree2 table-bordered table-striped table-condensed" id="mainPetTable" name="mainPetTable"  >
 							<thead >
 							<tr>
-							<th style="width:34px"><input  class="selectAllCheckBox" type="checkbox" name="selectAllRow" id="selectAllRow">
+							<th style="width:56px"><input  class="selectAllCheckBox" type="checkbox" name="selectAllRow" id="selectAllRow">
 							</th>
 							<th class="sortable sorted order2" width="10%">
 							<a href="#" onclick="columnsorting('orinGroup')"><fmt:message key="worklist.orin.group.label"/>#</a>
@@ -354,7 +355,6 @@ lockClearOnBack.value='1';
 							</tr>
 							</thead>
 							<tbody >
-							
 									<input type="hidden" id="hidden_roleEditable" name="hidden_roleEditable" value="${workflowForm.roleEditable}"/>
 									<input type="hidden" id="hidden_readOnlyUser" name="hidden_readOnlyUser" value="${workflowForm.readOnlyUser}"/>
 									<input type="hidden" id="hidden_roleName" name="hidden_roleName" value="${workflowForm.roleName}"/>
@@ -367,11 +367,11 @@ lockClearOnBack.value='1';
 							<!-- Table Grid logic Start -->
 									<c:set var="subcount" value="260" />
 									<c:set var="countList" value="0" />
-									<c:if test="${workflowForm.petNotFound ne null}"><tr><td colspan="10"><c:out value="${workflowForm.petNotFound}"/></td></tr> </c:if>
+									<c:if test="${workflowForm.petNotFound ne null}"><tr><td colspan="11"><c:out value="${workflowForm.petNotFound}"/></td></tr> </c:if>
 									<c:forEach items="${workflowForm.workFlowlist}" var="workFlow"
 										varStatus="status">
 										
-											<tr id="parent_${workFlow.orinNumber}" name="tablereport" class="treegrid-${countList}" data-group="${workFlow.isGroup}" <c:if test="${isInternal == 'yes' && workFlow.CFAS =='true'}">bgcolor="yellow"</c:if>>
+											<tr id="parent_${workFlow.orinNumber}" name="tablereport" class="treegrid-${countList} <c:if test="${isInternal == 'yes' && workFlow.CFAS =='true'}">cfas-row</c:if>" data-group="${workFlow.isGroup}">
 											<td align="center" style="width:56px">
 											
 												<div style="display: inline;margin:-17px 0 0 0px">
@@ -383,14 +383,14 @@ lockClearOnBack.value='1';
 											</c:if>
 																			
 											<input type="checkbox" name="styleItem" id="styleItem" class="checkbox1"
-												value="${workFlow.orinNumber}_${workFlow.petStatus}" onclick="childCheckedRows(this,'${workFlow.orinNumber}','${workflowForm.searchClicked}', '${workFlow.isGroup}' );getPetStatValue('${workFlow.petStatus}')" style="margin:0;"/>
+												value="${workFlow.orinNumber}_${workFlow.petStatus}" onclick="childCheckedRows(this,'${workFlow.orinNumber}','${workflowForm.searchClicked}', '${workFlow.isGroup}' );getPetStatValue('${workFlow.petStatus}')" style="margin:0;" data-group="${workFlow.isGroup}"/>
 											</div>
 											
 											</td>
 											<td><c:out value="${workFlow.orinNumber}" />
 											<c:if test="${workFlow.omniChannelVendor =='Y' && workflowForm.roleEditable =='yes'}">*</c:if>
 											<c:if test="${isInternal == 'yes' && workFlow.existsInGroup =='Y'}">
-												<img src="${contextpath}${imagemidpath}grouping_indicator.png" alt="In Grouping" width="12" width="12" style="position: relative; top: -8px;" />
+												<img src="${contextpath}${imagemidpath}grouping_indicator.png" alt="In Grouping" width="9" style="position: relative; top: -8px;" />
 											</c:if>
 											</td>
 											<td><c:out value="${workFlow.deptId}" />
@@ -455,8 +455,12 @@ lockClearOnBack.value='1';
 									</c:forEach> 
 									<tr id="CHILDTR_ID" name="CHILDTR_NAME"
 												class="" style="display:none">
-												<td style="width:34px"><input type="checkbox" parentOrinNo="#CHBOX_PARENTORIN" name="selectedStyles" class="checkbox1"
-													value="#CH_STYLE_ORIN_#CH_STYLE_PETSTATUS" onclick="getStyleColorPetStatValue('#CHBOXONCLK_PETSTATUS')" style="margin:16px 0 0 19px"/></td>
+												<td style="width:56px">
+												<div style="padding-left: 13px;">
+													<input type="checkbox" parentOrinNo="#CHBOX_PARENTORIN" name="selectedStyles" class="checkbox1"
+													value="#CH_STYLE_ORIN_#CH_STYLE_PETSTATUS" onclick="getStyleColorPetStatValue('#CHBOXONCLK_PETSTATUS')" style="margin:16px 0 0 19px" data-group="#GROUP_FLAG"/>
+												</div>
+												</td>
 												<td>#TD_ORIN</td>
 												<td>#TD_DEPT_NUM</td>
 												<td>#TD_VENDOR_NAME</td>
@@ -673,7 +677,7 @@ lockClearOnBack.value='1';
 										</li>
 										</c:if>
 										<c:if test="${isInternal !='yes'}">
-											<input type="radio" id="searchResults" name="searchResults" value="showItemsOnly" checked="checked" style="visibility:hidden" />
+											<input type="radio" id="searchResults" name="searchResults" value="showItemsOnly" checked="checked" style="visibility:hidden" readonly="readonly" />
 										</c:if>
 										<li class="text" style="width :440px">
 											<label for="DeptNo"><fmt:message key="worklist.adv.jsp.main.deptno.body.label"/></label>
@@ -1080,13 +1084,13 @@ lockClearOnBack.value='1';
 					style="display:none;cursor:pointer" style="cursor:pointer;border:0;" width="14" />
 			{{ } }}
 				<input type="checkbox" parentOrinNo="{{=orinNum}}" name="selectedStyles" class="checkbox1"
-			value="{{=item.styleOrinNum}}_{{=item.petStatus}}" onclick="getStyleColorPetStatValue('{{=item.petStatus}}')"/>
+			value="{{=item.styleOrinNum}}_{{=item.petStatus}}" data-group="{{=item.isGroup}}" onclick="getStyleColorPetStatValue('{{=item.petStatus}}')"/>
 			</div>
 		</td>
 		<td>
 			{{=item.styleOrinNum}}
 			{{if(item.existsInGroup=='Y'){ }} 
-				<img src="${contextpath}${imagemidpath}grouping_indicator.png" alt="In Grouping" width="9" width="9" style="position: relative; top: -8px;" />
+				<img src="${contextpath}${imagemidpath}grouping_indicator.png" alt="In Grouping" width="9" style="position: relative; top: -8px;" />
 			{{ } }}
 		</td>
 		<td>{{=item.deptId}}</td>
@@ -1127,13 +1131,13 @@ lockClearOnBack.value='1';
 		<!-- <td style="display: none;">#TD_PET_STATUS</td> -->
 	</tr>
 		{{ if(item.isGroup != 'Y'){  }}
-			{{ if(item.colorList instanceof Array){ }}
+			{{ if(item.colorList[0] !== undefined && item.colorList[0].noChildMessage === undefined){ }}
 				{{ _.each(item.colorList, function(childItem, childKey){ }}
 					<tr class="" data-tr-root="{{=orinNum}}" name="child_{{=item.styleOrinNum}}" id="parent_{{=childItem.styleOrinNum}}" style="display:none">
 						<td style="width:56px">
 							<div style="padding-left: 44px;">
 							<input type="checkbox" parentOrinNo="{{=item.styleOrinNum}}" name="selectedStyles" class="checkbox1"
-							value="{{=childItem.styleOrinNum}}_{{=childItem.petStatus}}" onclick="getStyleColorPetStatValue('{{=childItem.petStatus}}')"/></td>
+							value="{{=childItem.styleOrinNum}}_{{=childItem.petStatus}}" onclick="getStyleColorPetStatValue('{{=childItem.petStatus}}')" data-group="{{=childItem.isGroup}}"/></td>
 							</div>
 						<td>{{=childItem.styleOrinNum}}</td>
 						<td>{{=childItem.deptId}}</td>
@@ -1157,9 +1161,9 @@ lockClearOnBack.value='1';
 					</tr>
 				{{ }) }}
 			{{ }else{ }}
-				<tr class="" data-tr-root="{{=orinNum}}" name="child_{{=item.styleOrinNum}}" style="display:none">
+				<tr class="" data-tr-root="{{=orinNum}}" id="parent_{{=childItem.styleOrinNum}}" name="child_{{=item.styleOrinNum}}" style="display:none">
 					<td style="width:34px">&nbsp;</td>
-					<td colspan="10" align="center"><strong>No Child Found!</strong></td>
+					<td colspan="10" align="center"><strong>{{=item.colorList[0].noChildMessage}}</strong></td>
 				</tr>
 			{{ } }}
 		{{ } }}
@@ -1171,7 +1175,7 @@ lockClearOnBack.value='1';
 
 
 var timeOutvarWLD = null;
-timeOutvarWLD = setTimeout(redirectSessionTimedOut, 3600000);
+timeOutvarWLD = setTimeout(redirectSessionTimedOut, 1800000);
 
 function createmannualpet(){
 document.getElementById("createManualPet").value = 'gotoCreateManualPet';
@@ -1466,7 +1470,7 @@ function bindDeptDialog (){
 	
 function timeOutWLDPage()
 {
-	timeOutvarWLD = setTimeout(redirectSessionTimedOut, 3600000);
+	timeOutvarWLD = setTimeout(redirectSessionTimedOut, 1800000);
 }
 
 document.onclick = clickListenerWLD;

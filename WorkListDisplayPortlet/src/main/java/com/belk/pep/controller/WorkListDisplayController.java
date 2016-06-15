@@ -643,7 +643,7 @@ public class WorkListDisplayController implements Controller,EventAwareControlle
         advanceSearch.setContentStatus(prop.getProperty(WorkListDisplayConstants.ADV_SEARCH_CONTENT_TEXT_VALUE));
         advanceSearch.setRequestType(prop.getProperty(WorkListDisplayConstants.ADV_SEARCH_REQUEST_TEXT_VALUE));
         advanceSearch.setActive("01");
-        
+        advanceSearch.setSearchResults("includeGrps");
         renderForm.setAdvanceSearch(advanceSearch);
             
         }    
@@ -1535,33 +1535,59 @@ private void assignRole(WorkListDisplayForm workListDisplayForm2,
         LOGGER.info("statusParameter:::"+ statusParameter);
         LOGGER.info("Search flag for inactivation::: "+request
                     .getParameter(WorkListDisplayConstants.INACTIVATE_ACTIVATE_GROUP_SEARCH_FLAG));
-        if (WorkListDisplayConstants.INACTIVATE_PET_ACTION
-            .equalsIgnoreCase(statusParameter)) {
-            if (WorkListDisplayConstants.ADV_SEARCH_INCLUDE_GROUPINGS
-                .equals(request
-                    .getParameter(WorkListDisplayConstants.INACTIVATE_ACTIVATE_GROUP_SEARCH_FLAG))) {
-                // Inactivate Groups
-                inActivateGroups(request);
+        if(statusParameter != null && !statusParameter.trim().equals(WorkListDisplayConstants.EMPTY_STRING))
+        {
+            String orinNumbers =            
+                request
+                    .getParameter(WorkListDisplayConstants.SELECTED_ROWS_FOR_ACTIVATE_OR_INACTIVATE);
+            String orinNumbersArray[] = null;
+            StringBuffer styleArray = new StringBuffer();
+            StringBuffer groupArray = new StringBuffer();
+            if (null != orinNumbers) {
+                orinNumbersArray =
+                    orinNumbers.split(WorkListDisplayConstants.COMMA);
             }
-            else {
-                // Inactivate pets call
-                inActivatePets(request);
+            for (String orinDetails : orinNumbersArray)
+            {
+                String orin = orinDetails.split(WorkListDisplayConstants.COLON)[0].toString().trim();
+                String group = orinDetails.split(WorkListDisplayConstants.COLON)[1].toString().trim();
+                if(group != null && group.equalsIgnoreCase(WorkListDisplayConstants.YES_Y))
+                {
+                    groupArray.append(orin + WorkListDisplayConstants.COMMA);
+                }
+                else
+                {
+                    styleArray.append(orin + WorkListDisplayConstants.COMMA); 
+                }
             }
-
-        }
-        else if (WorkListDisplayConstants.ACTIVATE_PET_ACTION
-            .equalsIgnoreCase(statusParameter)) {
-            if (WorkListDisplayConstants.ADV_SEARCH_INCLUDE_GROUPINGS
-                .equals(request
-                    .getParameter(WorkListDisplayConstants.INACTIVATE_ACTIVATE_GROUP_SEARCH_FLAG))) {
-                // Inactivate Groups
-                activateGroups(request);
+            if(groupArray.length() > 0)
+            {
+                LOGGER.info("GROUPS TO INACTIVATE: " + groupArray);
+                if (WorkListDisplayConstants.ACTIVATE_PET_ACTION
+                        .equalsIgnoreCase(statusParameter))
+                {
+                    activateGroups(request, groupArray.toString());
+                }                
+                if (WorkListDisplayConstants.INACTIVATE_PET_ACTION
+                        .equalsIgnoreCase(statusParameter))
+                {
+                    inActivateGroups(request, groupArray.toString());
+                }
             }
-            else {
-                // Activate pets call
-                activatePets(request);
-            }
-
+            if(styleArray.length() > 0)
+            {
+                LOGGER.info("REGULAR ITEMS TO ACTIVATE: " + styleArray);
+                if (WorkListDisplayConstants.ACTIVATE_PET_ACTION
+                        .equalsIgnoreCase(statusParameter))
+                {
+                    activatePets(request, styleArray.toString());
+                }                
+                if (WorkListDisplayConstants.INACTIVATE_PET_ACTION
+                        .equalsIgnoreCase(statusParameter))
+                {
+                    inActivatePets(request, styleArray.toString());
+                }            
+            }  
         }
         
         
@@ -1743,11 +1769,11 @@ private void assignRole(WorkListDisplayForm workListDisplayForm2,
                         }
                         if (WorkListDisplayConstants.GROUPINGS.equalsIgnoreCase(workListType)) {                                
                                 workFlowList =
-                                    workListDisplayDelegate.getGroupWorkListDetails(deptList,
+                                    workListDisplayDelegate.getGroupWorkListDetails(updatedDepartmentFromDB,
                                         Integer.parseInt(pageNoGroup), WorkListDisplayConstants.EMPTY_STRING,
                                         WorkListDisplayConstants.ASCENDING);
                                 totalRecords =
-                                    workListDisplayDelegate.getGroupWorkListCountDetails(deptList);
+                                    workListDisplayDelegate.getGroupWorkListCountDetails(updatedDepartmentFromDB);
                         }
                         else {
                             workFlowList =
@@ -2056,6 +2082,8 @@ private void assignRole(WorkListDisplayForm workListDisplayForm2,
                                 .setPetNotFound(WorkListDisplayConstants.NO_GROUP_FOUND_FOR_GROUP_SEARCH);
                         }
                         resourceForm.setSearchClicked(WorkListDisplayConstants.YES);
+                        request.getPortletSession().setAttribute("groupWorklistSession", "Regular PET");
+                        resourceForm.setWorkListType("Regular PET");
                         resourceForm.setWorkFlowlist(workFlowList);
                     }
                     else {
@@ -2612,13 +2640,13 @@ private void populateClassDetailsInAdvanceSearch(
  * This method is responsible for calling Inactivate Pets onselection 
  * @param request
  */
-private void inActivatePets(ResourceRequest request) {
+private void inActivatePets(ResourceRequest request, String param) {
     LOGGER.info("Entering:: inActivatePets method controller");
     
     String []orinNumbersArray = null;      
     String orinNo = ""; 
     String petStatus ="";
-    String orinNumbers = request.getParameter(WorkListDisplayConstants.SELECTED_ROWS_FOR_ACTIVATE_OR_INACTIVATE);
+    String orinNumbers = param;
     String responseMsg = "";
     String petStatusCode ="";
     JSONArray jsonArray = new JSONArray();
@@ -2679,11 +2707,11 @@ private void inActivatePets(ResourceRequest request) {
  *  This method is responsible for calling Activate Pets onselection
  * @param request
  */
-private void activatePets(ResourceRequest request) {
+private void activatePets(ResourceRequest request, String param) {
     LOGGER.info("Entering:: activatePets method controller");
     
     String []orinNumbersArray = null;       
-    String orinNumbers = request.getParameter(WorkListDisplayConstants.SELECTED_ROWS_FOR_ACTIVATE_OR_INACTIVATE);
+    String orinNumbers = param;
     String orinNo ="";
     String petStatus ="";
     String responseMsg ="";
@@ -3109,7 +3137,8 @@ public String ConvertDate(String completionDate){
                     jsonObj.put("petStatus",styleColor.getPetStatus());
                     
                     jsonObj.put("petSourceType",styleColor.getSourceType());
-                   
+                    jsonObj.put(WorkListDisplayConstants.ISGROUP,
+                        WorkListDisplayConstants.NO_N);
                     
                     jsonArrayPetDtls.put(jsonObj); 
                 }                
@@ -3374,15 +3403,13 @@ public String ConvertDate(String completionDate){
      * This method is responsible for service call to deactivate group
      * @param request
      */
-    private void inActivateGroups(ResourceRequest request) {
+    private void inActivateGroups(ResourceRequest request, String params) {
         LOGGER.info("WorkListDisplayController inActivateGroups : Starts");
         String groupNumbersArray[] = null;
         String groupNo = WorkListDisplayConstants.EMPTY_STRING;
         String groupStatus = WorkListDisplayConstants.EMPTY_STRING;
         String groupType = WorkListDisplayConstants.EMPTY_STRING;
-        String groupNumber =
-            request
-                .getParameter(WorkListDisplayConstants.SELECTED_ROWS_FOR_ACTIVATE_OR_INACTIVATE);
+        String groupNumber = params;
         String responseMsg = WorkListDisplayConstants.EMPTY_STRING;
         String groupStatusCode = WorkListDisplayConstants.EMPTY_STRING;
         JSONArray jsonArray = new JSONArray();
@@ -3472,13 +3499,11 @@ public String ConvertDate(String completionDate){
      * This method will be called to activate groups
      * @param request
      */
-    private void activateGroups(ResourceRequest request) {
+    private void activateGroups(ResourceRequest request, String param) {
         LOGGER.info("WorkListDisplayController activateGroups : Start");
 
         String[] groupsNosArray = null;
-        String groupNumbers =
-            request
-                .getParameter(WorkListDisplayConstants.SELECTED_ROWS_FOR_ACTIVATE_OR_INACTIVATE);
+        String groupNumbers = param;
         String groupNo = WorkListDisplayConstants.EMPTY_STRING;
         String groupStatus = WorkListDisplayConstants.EMPTY_STRING;
         String responseMsg = WorkListDisplayConstants.EMPTY_STRING;
@@ -3523,7 +3548,7 @@ public String ConvertDate(String completionDate){
 
                 try {
                     JSONObject jsonstyle =
-                        populateReInitiateJson(groupNo.trim(), updatedBy);
+                        populateReInitiateGroupJson(groupNo.trim(), updatedBy);
                     jsonArray.put(jsonstyle);
                 }
                 catch (Exception e) {

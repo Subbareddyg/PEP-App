@@ -558,8 +558,9 @@ function searchClear()
 	* Date: 06/04/2016
 	* Modified By: Cognizant
 	*/
+  if(!$('[name=searchResults]').prop('readonly'))
+	$('[name=searchResults]').prop('checked', false);
   
-  $('[name=searchResults]').prop('checked', false);
   $('#groupingID').prop('disabled', false).val('');
   $('#groupingName').prop('disabled', false).val('');
 }
@@ -1602,7 +1603,17 @@ function inactivateAjaxCall(){
 	var parentDeactiveFlag = 'no';
 	var selectedRequest = [];
 	$.each($("input[name='styleItem']:checked,input[name='selectedStyles']:checked"), function(){            
-		selectedRequest.push($(this).val());
+		
+		/** Modified For PIM Phase 2 
+			* - adding group flag for items to be inactivated 
+			* - in format e.g. 123:Y,124:N...
+			* Date: 06/14/2016
+			* Modified By: Cognizant
+		*/
+		var groupFlag = $(this).data('group') || 'N';
+		groupFlag = groupFlag == '' ? 'N': groupFlag;
+		
+		selectedRequest.push($(this).val() + ':' + groupFlag);
 	});
 	$("#inActivateid").val(selectedRequest.join(","));
 	var inactivateOrinValue = $("#inActivateid").val();
@@ -1725,8 +1736,17 @@ function activateAjaxCall(){
 	var selectedActivateRequest = [];
 	var childStyleColor = [];
 	var parentStyle = [];
-	$.each($("input[name='styleItem']:checked,input[name='selectedStyles']:checked"), function(){            
-		selectedActivateRequest.push($(this).val());
+	$.each($("input[name='styleItem']:checked,input[name='selectedStyles']:checked"), function(){
+		/** Modified For PIM Phase 2 
+			* - adding group flag for items to be activated 
+			* - in format e.g. 123:Y,124:N...
+			* Date: 06/14/2016
+			* Modified By: Cognizant
+		*/
+		var groupFlag = $(this).data('group') || 'N';
+		groupFlag = groupFlag == '' ? 'N': groupFlag;
+		
+		selectedActivateRequest.push($(this).val() + ':' + groupFlag);
 	});
 	$("#activatePetid").val(selectedActivateRequest.join(","));
 	var activateOrinValue = $("#activatePetid").val();			
@@ -2278,6 +2298,14 @@ function populateChildData(jsonArray, orinNum, showHideFlag, isGroup){
 			tempHtml = tempHtml.replace("#TD_SOURCE_TYPE", val.petSourceType);
 			
 			tempHtml = tempHtml.replace("#TD_PET_STATUS", val.petStatus);
+			
+			/** Modified For PIM Phase 2 
+				* - adding group flag for child item
+				* Date: 06/14/2016
+				* Modified By: Cognizant
+			*/
+			
+			tempHtml = tempHtml.replace("#GROUP_FLAG", val.isGroup);
 			
 			$(tempTr).html(tempHtml);
 			$(tempTr).insertAfter($(parentTr));
