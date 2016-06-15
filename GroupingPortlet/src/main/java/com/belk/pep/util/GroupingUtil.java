@@ -34,11 +34,12 @@ public class GroupingUtil {
 		try {
 			Reader reader = data.getCharacterStream();
 			BufferedReader br = new BufferedReader(reader);
-
+			//read the line.
 			String line;
 			while (null != (line = br.readLine())) {
 				sb.append(line);
 			}
+			// Close the buffereader.
 			br.close();
 		} catch (SQLException e) {
 			LOGGER.error("Exception in clobToString() method. -- " + e.getMessage());
@@ -60,7 +61,7 @@ public class GroupingUtil {
 	 *         Method added For PIM Phase 2 Date: 05/18/2016 Added By: Cognizant */
 	public static String checkNull(Object objectValue) {
 		String valueStr = "";
-
+		// checkNul of the String.
 		if (objectValue == null) {
 			valueStr = "";
 		} else {
@@ -76,8 +77,9 @@ public class GroupingUtil {
 	 * @return
 	 */
 	public static String getInValForQuery(String inputVal) {
-		//String inputVal = "100,101";
+	
 	    String inOutputval = "";
+	    // get the inputVal.
 		inputVal = checkNull(inputVal);
 	    String[] valArr = inputVal.split(",");
 	    for(int i = 0; i < valArr.length; i++){

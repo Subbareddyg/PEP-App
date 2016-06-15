@@ -4,26 +4,30 @@ package com.belk.pep.form;
 
 
 /**
- * This class is used to save the Group Header data as a Form data
+ * This class is used to save the Group Header data as a Form data.
  * @author AFUPYB3
  *
  */
 public class GroupAttributeForm {
     @SuppressWarnings("unused")
 	private static final long serialVersionUID = 1L;
-    
+    //Form data
     private String orinNumber;
     private String styleNumber;
+    //XML Shredding
     private String prodName;
     private String colorCode;
     private String colorName;
     private String size;
+    private String sizeCode;
+    //Already in Group
     private String isAlreadyInGroup;
     private String isAlreadyInSameGroup;
+    //isDefault
     private String isDefault;
     private String petStatus;
     private String entryType;
-    
+    // parent MDMID
     private String parentMdmid;
     private String componentStyleId;
     private String classId;
@@ -195,6 +199,18 @@ public class GroupAttributeForm {
 	 */
 	public void setIsAlreadyInSameGroup(String isAlreadyInSameGroup) {
 		this.isAlreadyInSameGroup = isAlreadyInSameGroup;
+	}
+	/**
+	 * @return the sizeCode
+	 */
+	public String getSizeCode() {
+		return sizeCode;
+	}
+	/**
+	 * @param sizeCode the sizeCode to set
+	 */
+	public void setSizeCode(String sizeCode) {
+		this.sizeCode = sizeCode;
 	}
     
   }

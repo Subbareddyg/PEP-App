@@ -31,14 +31,14 @@ public interface GroupingDAO {
 	 * 
 	 * @param vendorStyleNo String
 	 * @param styleOrin String
-	 * @return List<GroupAttributeForm> */
+	 * @return List*/
 	List<GroupAttributeForm> getSplitColorDetails(String vendorStyleNo, String styleOrin) throws PEPFetchException;
 
 	/** Method getSplitColorDetails.
 	 * 
 	 * @param vendorStyleNo String
 	 * @param styleOrin String
-	 * @return List<StyleAttributeForm> */
+	 * @return List */
 	List<StyleAttributeForm> getNewCPGDetails(String vendorStyleNo, String styleOrin, String deptNoSearch, 
 			String classNoSearch,	String supplierSiteIdSearch, String upcNoSearch, String groupId) throws PEPFetchException;
 
@@ -46,7 +46,7 @@ public interface GroupingDAO {
 	 * 
 	 * @param vendorStyleNo String
 	 * @param styleOrin String
-	 * @return List<GroupAttributeForm> */
+	 * @return List */
 	List<GroupAttributeForm> getSplitSKUDetails(String vendorStyleNo, String styleOrin) throws PEPFetchException;
 
 	/** This method is used to get the Existing Group Attribute Details for Split
@@ -68,18 +68,17 @@ public interface GroupingDAO {
 	 * 
 	 * @param groupId
 	 * @return */
-	List<StyleAttributeForm> getExistCPGDetails(String groupId) throws PEPFetchException;
+	List<StyleAttributeForm> getExistCPGDetails(String groupId);
 
 	/** Method to get the groups for search group.
 	 * 
 	 * @param groupSearchForm GroupSearchForm
-	 * @return List<GroupSearchDTO>
-	 * @throws PEPServiceException PEPServiceException
-	 * @throws PEPPersistencyException PEPPersistencyException
+	 * @return List
+
 	 * 
 	 *             Method added For PIM Phase 2 - groupSearch Date: 05/19/2016
 	 *             Added By: Cognizant */
-	List<GroupSearchDTO> groupSearch(GroupSearchForm groupSearchForm) throws PEPServiceException, PEPPersistencyException;
+	List<GroupSearchDTO> groupSearch(GroupSearchForm groupSearchForm);
 
 	/** Method to get the groups count for search group.
 	 * 
@@ -96,8 +95,8 @@ public interface GroupingDAO {
 	/** Method to get the groups for search group.
 	 * 
 	 * @param groupSearchForm GroupSearchForm
-	 * @param groupSearchDTOList groupSearchParent(List<GroupSearchDTO>
-	 * @return List<GroupSearchDTO>
+	 * @param groupSearchDTOList groupSearchParent(List)
+	 * @return List
 	 * 
 	 * @throws PEPServiceException PEPServiceException
 	 * @throws PEPPersistencyException PEPPersistencyException
@@ -109,7 +108,7 @@ public interface GroupingDAO {
 
 	/** Method to get the Depts for search group.
 	 * 
-	 * @return ArrayList<DepartmentDetails>
+	 * @return ArrayList
 	 * @throws PEPPersistencyException PEPPersistencyException
 	 * 
 	 *             Method added For PIM Phase 2 - groupSearch Date: 05/25/2016
@@ -119,7 +118,7 @@ public interface GroupingDAO {
 	/** Method to get the classes for search group.
 	 * 
 	 * @param departmentNumbers String
-	 * @return List<ClassDetails>
+	 * @return List
 	 * @throws PEPPersistencyException PEPPersistencyException
 	 * 
 	 *             Method added For PIM Phase 2 - groupSearch Date: 05/26/2016
@@ -129,7 +128,7 @@ public interface GroupingDAO {
 	/** Method to get the parents groups count for search group.
 	 * 
 	 * @param groupSearchForm GroupSearchForm
-	 * @param groupSearchDTOList List<GroupSearchDTO>
+	 * @param groupSearchDTOList List
 	 * @return int
 	 * 
 	 * @throws PEPPersistencyException PEPPersistencyException

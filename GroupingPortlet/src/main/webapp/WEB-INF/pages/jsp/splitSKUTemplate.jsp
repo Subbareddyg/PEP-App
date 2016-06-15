@@ -22,11 +22,10 @@
 {{ if(data.length){ }}
 	{{_.each(data, function(row, key){ }}
 		<tr>
-			<td>
-				{{ if(row.alreadyInGroup != 'Yes'){ }}
-					<input type="checkbox" name="selectedItem[]" value="{{=row.size}}" class="item-check" style="margin-left:7px" />
-				{{ } }}
-				
+			<td>				
+				<input type="checkbox" name="selectedItem[]" value="{{=row.colorCode}}_{{=row.size}}" class="item-check" style="margin-left:7px"
+					{{=row.alreadyInGroup == 'Yes' ? 'disabled="disabled"' : ''}} 
+				/>								
 			</td>
 			<td class="text-center">{{=row.StyleOrinNo}}</td>
 			<td class="text-center">{{=row.vendorStyleNo}}</td>
@@ -34,7 +33,7 @@
 			<td class="text-center">{{=row.colorCode}}</td>
 			<td class="text-center">{{=row.colorName}}</td>
 			<td class="text-center">{{=row.size}}</td>
-			<td class="text-center"><input type="radio" name="defaultColor" value="{{=row.size}}" {{ if(row.defaultColor){ }} checked="checked" class="trueDefult" {{ }else{ }} disabled="disabled" {{ } }} /></td>
+			<td class="text-center"><input type="radio" name="defaultColor" value="{{=row.colorCode}}_{{=row.size}}" {{ if(row.defaultColor){ }} checked="checked" class="trueDefult" {{ }else{ }} disabled="disabled" {{ } }} /></td>
 			<td class="text-center">{{=row.alreadyInGroup}}</td>
 		</tr>
 	{{ }) }}	

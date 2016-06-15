@@ -2,7 +2,7 @@ package com.belk.pep.form;
 
 
 /**
- * This class is used to save the Service Component data
+ * This class is used to save the Service Component data.
  * @author AFUPYB3
  *
  */
@@ -10,9 +10,8 @@ public class Component {
     @SuppressWarnings("unused")
 	private static final long serialVersionUID = 1L;
     
-//    private List <String> pageNumberList;
     
-    
+    // Group detail Component Form.
     private String id;
     private String defaultAttr;
     private String color;

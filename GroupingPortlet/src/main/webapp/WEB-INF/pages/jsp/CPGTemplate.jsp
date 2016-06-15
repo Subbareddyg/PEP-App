@@ -20,9 +20,8 @@
 	{{_.each(data, function(row, key){ }}
 		<tr>
 			<td>
-			{{ if(row.alreadyInSameGroup != 'Yes'){ }}
-				<input type="checkbox" name="selectedItem[]" value="{{=row.StyleOrinNo}}" class="item-check" style="margin-left:17px" />
-			{{ } }}
+				<input type="checkbox" name="selectedItem[]" value="{{=row.StyleOrinNo}}" class="item-check" style="margin-left:17px" 
+					{{=row.alreadyInSameGroup == 'Yes' ? 'disabled="disabled"' : ''}} />
 			<td>
 				{{ if(row.childList && row.childList.length){ }}
 					<div class="icon-tree parent-node-expand" data-node-id="{{=(row.StyleOrinNo + '_' + key)}}">

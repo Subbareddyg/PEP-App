@@ -13,7 +13,7 @@
 	
 	<div class="x-panel-body">
 		<div class="group-search-area">
-			<form name="frmComponentSearch" id="frmComponentSearch" action="">
+			<form name="frmComponentSearch" id="frmComponentSearch" action="" class="SCG-group-validation">
 			<input type="hidden" name="fromPage" value="SearchColor" />
 			<table cellspacing="5" cellpadding="0" border="0" class="content-table">
 				<tr>
@@ -193,7 +193,7 @@
 <script type="text/javascript" src="<%=response.encodeURL(request.getContextPath()+"/js/grouping.js")%>"></script>
 <script type="text/javascript" src="<%=response.encodeURL(request.getContextPath()+"/js/GroupFactory.js")%>"></script>
 <script>
-	app.GroupLandingApp.urlCollection.createGroupUrl = "${createGroupFormSubmitURL}";
+	app.URLFactory.urlCollection.createGroupUrl = "${createGroupFormSubmitURL}";
 	app.URLFactory.urlCollection.splitComponentSearchUrl = "${ajaxUrl}";
 	
 	app.GroupLandingApp.init();

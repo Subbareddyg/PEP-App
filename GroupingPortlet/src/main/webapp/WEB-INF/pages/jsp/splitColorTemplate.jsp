@@ -21,9 +21,11 @@
 	{{_.each(data, function(row, key){ }}
 		<tr>
 			<td>
-				{{ if(row.alreadyInGroup != 'Yes'){ }}
-					<input type="checkbox" name="selectedItem[]" value="{{=row.colorCode}}" class="item-check" style="margin-left:14px" />
-				{{ } }}
+			
+				<input type="checkbox" name="selectedItem[]" value="{{=row.colorCode}}" class="item-check" style="margin-left:14px" 
+					{{=row.alreadyInGroup == 'Yes' ? 'disabled="disabled"' : ''}} 
+				/>
+			
 			</td>
 			<td class="text-center">{{=row.StyleOrinNo}}</td>
 			<td class="text-center">{{=row.vendorStyleNo}}</td>

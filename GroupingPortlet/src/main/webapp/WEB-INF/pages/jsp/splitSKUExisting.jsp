@@ -28,7 +28,7 @@
 			<td class="text-center">{{=row.colorCode}}</td>
 			<td class="text-center">{{=row.colorName}}</td>
 			<td class="text-center">{{=row.size}}</td>
-			<td class="text-center"><input type="radio" name="defaultColor" value="{{=row.size}}" {{ if(row.defaultColor){ }} checked="checked" class="trueDefult" {{ }else{ }} disabled="disabled" {{ } }} /></td>			
+			<td class="text-center"><input type="radio" name="defaultColor" value="{{row.colorCode}}_{{=row.size}}" {{ if(row.defaultColor == 'true'){ }} checked="checked" class="trueDefult" {{ } }} /></td>			
 		</tr>
 	{{ }) }}	
 {{ }else{ }}

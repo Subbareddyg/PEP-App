@@ -3,7 +3,7 @@ package com.belk.pep.form;
 import java.util.List;
 
 /**
- * Class to hold the Group details
+ * Class to hold the Group details.
  * 
  * Class added For PIM Phase 2 - Group Search Date: 05/19/2016 Added By:
  * Cognizant

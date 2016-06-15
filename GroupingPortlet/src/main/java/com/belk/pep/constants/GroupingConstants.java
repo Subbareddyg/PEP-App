@@ -1,7 +1,7 @@
 package com.belk.pep.constants;
 
 /**
- * This class is for handling all the constants for the Grouping Portlet .
+ * This class is for handling all the constants for the Grouping Portlet.
  * 
  * @author AFUPYB3
  */
@@ -47,7 +47,7 @@ public class GroupingConstants {
 	
 	public static final String UPDATE_GROUP_SERVICE_URL = "update.group.url";
 
-	/** Grouping Type **/
+	/** Grouping Type. **/
 	public static final String GROUP_TYPE_CONSOLIDATE_PRODUCT = "CPG";
 	public static final String GROUP_TYPE_REGULAR_COLLECTION = "RCG";
 	public static final String GROUP_TYPE_BEAUTY_COLLECTION = "BCG";
@@ -55,7 +55,7 @@ public class GroupingConstants {
 	public static final String GROUP_TYPE_SPLIT_SKU = "SSG";
 	public static final String GROUP_TYPE_GROUP_BY_SIZE = "GBS";
 
-	/** Create Group Service parameter **/
+	/** Create Group Service parameter. **/
 	public static final String GROUP_ID = "groupId";
 	public static final String GROUP_TYPE = "groupType";
 	public static final String GROUP_NAME = "groupName";
@@ -71,6 +71,7 @@ public class GroupingConstants {
 	public static final String COMPONENT_ATTR = "component";
 	public static final String COMPONENT_IS_DEFAULT_ATTR = "defaultValue";
 	public static final String COMPONENT_ID = "id";
+	public static final String COMPONENT_SKU = "SKU";
 	public static final String COMPONENT_IS_DEFAULT = "default";
 	public static final String COMPONENT_COLOR = "color";
 	public static final String COMPONENT_SIZE = "size";
@@ -97,7 +98,7 @@ public class GroupingConstants {
 	public static final String SPLIT_GROUP_DEFAULT_SORT_COL = "sortedColumn";
 	public static final String SPLIT_GROUP_DEFAULT_SORT_ORDER = "sortedOrder";
 
-	/** Create Group Error Message Code **/
+	/** Create Group Error Message Code. **/
 	public static final String GROUP_CREATED = "200";
 	public static final String GROUP_NOT_CREATED = "201";
 	public static final String GROUP_CREATED_WITH_COMPONENT_SCG = "202";
@@ -110,7 +111,7 @@ public class GroupingConstants {
 	public static final String GROUP_TYPES = "group.types";
 	public static final String GROUP_STATUS_EXT = "group.status.";
 
-	/** PET Status **/
+	/** PET Status. **/
 	public static final String PET_STATUS_INITIATED = "01";
 	public static final String PET_STATUS_COMPLETED = "02";
 	public static final String PET_STATUS_APPROVED = "03";
@@ -120,7 +121,7 @@ public class GroupingConstants {
 	public static final String PET_STATUS_WAITING_TO_BE_CLOSED = "07";
 	public static final String PET_STATUS_READY_FOR_REVIEW = "08";
 
-	/** Sorting Order **/
+	/** Sorting Order. **/
 	public static final String SORT_ASC = "ASC";
 	public static final String SORT_DESC = "DESC";
 
@@ -136,7 +137,7 @@ public class GroupingConstants {
 	
 	public static final int DATE_FIELD_LENGTH = 10;
 	
-	/** CARS TYPE **/
+	/** CARS TYPE. **/
 	public static final String CARS_GROUP_TYPE_GBS="PATTERN-SGBS-VS";
 	public static final String CARS_GROUP_TYPE_CPG="PATTERN-CONS-VS"; 
 	public static final String CARS_GROUP_TYPE_BCG="OUTFIT"; 
@@ -145,7 +146,7 @@ public class GroupingConstants {
 
 
 	/* Need to check below constants - */
-	/** The Constant DCA_ROLE **/
+	/** The Constant DCA_ROLE. **/
 	public static final String DCA_ROLE = "dca";
 
 	/** The Constant VENDOR. */
@@ -181,7 +182,7 @@ public class GroupingConstants {
 	
 
 	/**
-	 * Grouping Search constants
+	 * Grouping Search constants.
 	 */
 	public static final String GROUPING_SERACH_DISPLAY_FORM = "groupingSearchDisplayForm";
 	public static final String CHILD_LIST = "childList";
@@ -209,13 +210,15 @@ public class GroupingConstants {
 	public static final String GROUP_TYPE_CODE = "groupTypeCode";
 
 	/**
-	 * Delete group constants
+	 * Delete group constants.
 	 */
+	//Delete Group Service URl constants.
 	public static final String DELETE_GROUP_SERVICE_URL = "deleteGroup.service.url";
 	public static final String DELETE_GROUP_SERVICE_FAILURE = "deleteGroup.failure.message";
 	public static final String DELETE_GROUP_SERVICE_SUCCESS = "deleteGroup.success.message";
 	public static final String DELETE_STATUS_MESSAGE = "deleteStatusMessage";
 	public static final String DELETE_STATUS = "deleteStatus";
-
+	//Emtpy string marker.
 	public static final String EMPTY = "";
+	public static final String DEFAULT_CHARSET ="UTF-8";
 }

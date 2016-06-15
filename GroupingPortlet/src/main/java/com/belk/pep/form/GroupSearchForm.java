@@ -3,7 +3,7 @@ package com.belk.pep.form;
 import java.util.List;
 
 /**
- * Class to hold the Search group search criteria
+ * Class to hold the Search group search criteria.
  * 
  * Class added For PIM Phase 2 - Group Search 
  * Date: 05/18/2016
@@ -11,6 +11,7 @@ import java.util.List;
  */
 public class GroupSearchForm {
     
+	//Directly mapped to column.
     private String GroupId;
     private String groupName;
     private String vendor;
@@ -18,6 +19,7 @@ public class GroupSearchForm {
     private String classes;
     private String orinNumber;
     private String supplierSiteId;
+    //Total records coming out of Search Result.
     private int totalRecordCount = 0;
     private int recordsPerPage = 0;
     private int pageNumber = 0;

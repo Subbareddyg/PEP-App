@@ -16,12 +16,12 @@ import com.belk.pep.form.GroupAttributeForm;
 import com.belk.pep.form.GroupSearchForm;
 import com.belk.pep.form.StyleAttributeForm;
 
-/** This calss responsible for service delegate
+/** This calss responsible for service delegate.
  * 
  * @author AFUPYB3 */
 public interface GroupingService {
 
-	/** This method is used to create group
+	/** This method is used to create group.
 	 * 
 	 * @param jsonStyle
 	 * @param updatedBy
@@ -32,7 +32,7 @@ public interface GroupingService {
 	CreateGroupForm saveGroupHeaderDetails(JSONObject jsonStyle, String updatedBy, List<GroupAttributeForm> selectedSplitAttributeList)
 			throws Exception, PEPFetchException;
 
-	/** This method is used to call create group service
+	/** This method is used to call create group service.
 	 * 
 	 * @param jsonStyle
 	 * @return String
@@ -40,57 +40,57 @@ public interface GroupingService {
 	 * @throws PEPFetchException */
 	String callCreateGroupService(JSONObject jsonStyle) throws Exception, PEPFetchException;
 
-	/** This method is used to get Component details for Split Color
+	/** This method is used to get Component details for Split Color.
 	 * 
 	 * @param vendorStyleNo
 	 * @param styleOrin
-	 * @return List<GroupAttributeForm>
+	 * @return List
 	 * @throws PEPServiceException
 	 * @throws PEPPersistencyException */
 	List<GroupAttributeForm> getSplitColorDetails(String vendorStyleNo, String styleOrin) throws PEPFetchException, PEPServiceException,
 			PEPPersistencyException;
 
-	/** This method is used to get Component details for CPG
+	/** This method is used to get Component details for CPG.
 	 * 
 	 * @param vendorStyleNo
 	 * @param styleOrin
-	 * @return List<GroupAttributeForm>
+	 * @return List
 	 * @throws PEPServiceException
 	 * @throws PEPPersistencyException */
 	List<StyleAttributeForm> getNewCPGDetails(String vendorStyleNo, String styleOrin, String deptNoSearch, String classNoSearch,
 			String supplierSiteIdSearch, String upcNoSearch, String groupId) throws PEPServiceException,
 			PEPPersistencyException;
 
-	/** This method is used to get Component details for Split SKU
+	/** This method is used to get Component details for Split SKU.
 	 * 
 	 * @param vendorStyleNo
 	 * @param styleOrin
-	 * @return List<GroupAttributeForm>
+	 * @return List
 	 * @throws PEPServiceException
 	 * @throws PEPPersistencyException */
 	List<GroupAttributeForm> getSplitSKUDetails(String vendorStyleNo, String styleOrin) throws PEPServiceException,
 			PEPPersistencyException;
 
-	/** This method is used to validate SCG attribute list before add to group
+	/** This method is used to validate SCG attribute list before add to group.
 	 * 
 	 * @param getSplitColorDetailsList
-	 * @return List<GroupAttributeForm>
+	 * @return List
 	 * @throws PEPServiceException
 	 * @throws PEPPersistencyException */
 	Map<String, List<GroupAttributeForm>> validateSCGAttributeDetails(List<GroupAttributeForm> getSplitColorDetailsList)
 			throws PEPServiceException, PEPPersistencyException;
 
-	/** This method is used to validate SCG attribute list before add to group
+	/** This method is used to validate SCG attribute list before add to group.
 	 * 
 	 * @param getSplitSKUDetailsList
-	 * @return List<GroupAttributeForm>
+	 * @return List
 	 * @throws PEPServiceException
 	 * @throws PEPPersistencyException */
 	Map<String, List<GroupAttributeForm>> validateSSGAttributeDetails(List<GroupAttributeForm> getSplitSKUDetailsList)
 			throws PEPServiceException, PEPPersistencyException;
 	
 	/**
-	 * This method is used to validate CPG attribute list before add to group
+	 * This method is used to validate CPG attribute list before add to group.
 	 * @param existClassId
 	 * @param getCPGSelectedAttrbuteList
 	 * @return
@@ -101,44 +101,44 @@ public interface GroupingService {
 					throws PEPServiceException, PEPPersistencyException;
 	
 
-	/** This method is used to get the attribute list which is selected by user
+	/** This method is used to get the attribute list which is selected by user.
 	 * before to add SCG group
 	 * 
 	 * @param updatedSplitColorDetailsList
 	 * @param selectedItemsArr
 	 * @param defaultSelectedAttr
-	 * @return List<GroupAttributeForm>
+	 * @return List
 	 * @throws PEPServiceException
 	 * @throws PEPPersistencyException */
 	List<GroupAttributeForm> getSelectedColorAttributeList(List<GroupAttributeForm> updatedSplitColorDetailsList,
 			String[] selectedItemsArr, String defaultSelectedAttr) throws PEPServiceException, PEPPersistencyException;
 
-	/** This method is used to get the attribute list which is selected by user
+	/** This method is used to get the attribute list which is selected by user.
 	 * before to add SSG group
 	 * 
 	 * @param updatedSplitSKUDetailsList
 	 * @param selectedItemsArr
 	 * @param defaultSelectedAttr
-	 * @return List<GroupAttributeForm>
+	 * @return List
 	 * @throws PEPServiceException
 	 * @throws PEPPersistencyException */
 	List<GroupAttributeForm> getSelectedSKUAttributeList(List<GroupAttributeForm> updatedSplitSKUDetailsList,
 			String[] selectedItemsArr, String defaultSelectedAttr) throws PEPServiceException, PEPPersistencyException;
 	
 
-	/** This method is used to get the attribute list which is selected by user
+	/** This method is used to get the attribute list which is selected by user.
 	 * before to add CPG group
 	 * 
 	 * @param updatedSplitSKUDetailsList
 	 * @param selectedItemsArr
 	 * @param defaultSelectedAttr
-	 * @return List<GroupAttributeForm>
+	 * @return List
 	 * @throws PEPServiceException
 	 * @throws PEPPersistencyException */
 	List<StyleAttributeForm> getSelectedCPGAttributeList(final List<StyleAttributeForm> getCPGDetailsList,
 			final String[] selectedItemsArr, final String defaultSelectedAttr) throws PEPServiceException, PEPPersistencyException;
 
-	/** This method is used to Existing Group details from DB
+	/** This method is used to Existing Group details from DB.
 	 * 
 	 * @param groupId
 	 * @return CreateGroupForm
@@ -179,7 +179,7 @@ public interface GroupingService {
 	 *         By: Cognizant */
 	GroupSearchForm groupSearch(GroupSearchForm groupSearchForm) throws PEPServiceException, PEPPersistencyException;
 
-	/** Method to get Group search record count
+	/** Method to get Group search record count.
 	 * 
 	 * @param groupSearchForm GroupSearchForm
 	 * @return resordCount int
@@ -203,14 +203,14 @@ public interface GroupingService {
 	/** Method to get the classes for search group.
 	 * 
 	 * @param departmentNumbers String
-	 * @return List<ClassDetails>
+	 * @return List
 	 * 
 	 *         Method added For PIM Phase 2 - groupSearch Date: 05/26/2016 Added
 	 *         By: Cognizant
 	 * @throws PEPPersistencyException */
 	List<ClassDetails> getClassDetailsByDepNos(String departmentNumbers) throws PEPPersistencyException, PEPServiceException;
 
-	/** This method is used to call Group Delete Service
+	/** This method is used to call Group Delete Service.
 	 * 
 	 * @param groupId
 	 * @param updatedBy
@@ -219,8 +219,8 @@ public interface GroupingService {
 	 * @throws PEPFetchException */
 	String deleteGroup(String groupId, String groupType, String updatedBy) throws Exception, PEPFetchException;
 
-	/** This method is used to call add Component Service and fetch data from
-	 * database
+	/** This method is used to call add Component Service and fetch data from.
+	 * database.
 	 * 
 	 * @param updatedBy
 	 * @param groupType
@@ -231,8 +231,8 @@ public interface GroupingService {
 	CreateGroupForm addComponentToGroup(String groupId, String updatedBy, String groupType,
 			List<GroupAttributeForm> selectedSplitAttributeList) throws Exception, PEPFetchException;
 
-	/** This method is used to call add CPG Component Service and fetch data from
-	 * database
+	/** This method is used to call add CPG Component Service and fetch data from..
+	 * database.
 	 * 
 	 * @param updatedBy
 	 * @param groupType
@@ -250,7 +250,7 @@ public interface GroupingService {
 	List<GroupAttributeForm> prepareListForView(final List<GroupAttributeForm> getSplitColorDetailsList);
 	
 	/**
-	 * This method is used to call the service method for saving the edited group headers
+	 * This method is used to call the service method for saving the edited group headers.
 	 * @param createGroupForm
 	 * @param modifiedBy
 	 * @return
