@@ -14,17 +14,7 @@ import com.belk.pep.form.GroupSearchForm;
  * @author AFUSOS3 */
 public class XqueryConstants {
 
-	/** The Constant ORACLE_DRIVER. */
-	public static final String ORACLE_DRIVER = "driver";
 
-	/** The Constant DATABASEURL. */
-	public static final String DATABASE_URL = "databaseUrl";
-
-	/** The Constant DATABASE_USERNAME. */
-	public static final String DATABASE_USERNAME = "databaseUsername";
-
-	/** The Constant DATABASE_PASSWORD. */
-	public static final String DATABASE_PASSWORD = "databasePassword";
 
 	/** The Constant LOGGER. */
 	private static final Logger LOGGER = Logger.getLogger(XqueryConstants.class.getName());
@@ -44,31 +34,23 @@ public class XqueryConstants {
 				+ "      AGC.MDMID GROUP_ID,                                                               "
 				+ "      AGC.GROUP_NAME,                                                                   "
 				+ "      AGCXML.Description,                                                               "
-				+ "      AGCXML.Effective_Start_Date,                                                      "
-				+ "      AGCXML.Effective_End_Date,                                                        "
+				+ "      AGC.START_DATE,                                                      "
+				+ "      AGC.END_DATE,                                                        "
 				+ "      AGCXML.CARS_Group_Type,                                                      "
 				+ "      AGC.ENTRY_TYPE GROUP_TYPE, AGC.GROUP_OVERALL_STATUS_CODE,                          "
 				+ "      AGC.CREATED_BY                                                                    "
-				+ "        /*XML_DATA*/                                                                      "
 				+ "      FROM ADSE_GROUP_CATALOG AGC,                                                      "
 				+ "        XMLTABLE( 'let                                                                  "
 				+ "        $Description:= /pim_entry/entry/Group_Ctg_Spec/Description,                     "
-				+ "        $Effective_Start_Date:= /pim_entry/entry/Group_Ctg_Spec/Effective_Start_Date,   "
-				+ "        $Effective_End_Date:= /pim_entry/entry/Group_Ctg_Spec/Effective_End_Date,        "
 				+ "        $CARS_Group_Type:= /pim_entry/entry/Group_Ctg_Spec/CARS_Group_Type        "
 				+ "        return                                         "
 				+ "      <out>                                                                             "
 				+ "          <Description>{$Description}</Description>                                     "
-				+ "          <Effective_Start_Date>{$Effective_Start_Date}</Effective_Start_Date>          "
-				+ "          <Effective_End_Date>{$Effective_End_Date}</Effective_End_Date>                "
 				+ "          <CARS_Group_Type>{$CARS_Group_Type}</CARS_Group_Type>                "
 				+ "      </out>' passing AGC.XML_DATA                                                      "
 				+ "        Columns                                                                         "
 				+ "        Description CLOB path '/out/Description',                               "
-				+ "        Effective_Start_Date VARCHAR2(50) path '/out/Effective_Start_Date' ,            "
-				+ "        Effective_End_Date VARCHAR2(50) path '/out/Effective_End_Date',                 "
 				+ "        CARS_Group_Type VARCHAR2(50) path '/out/CARS_Group_Type') AGCXML          "
-				+ "                                                                                        "
 				+ "      WHERE                                                                             "
 				+ "      MDMID = :groupIdSql AND DELETED_FLAG = 'false'                                     ";
 
@@ -132,7 +114,7 @@ public class XqueryConstants {
 				+ "  ITEM_XML.NAME,                                                                                      "
 				+ "  ITEM_XML.COLOR_CODE,                                                                                "
 				+ "  ITEM_XML.COLOR_NAME,                                                                                "
-				+ "  ITEM_XML.SIZEDESC,                                                                                  "
+				+ "  ITEM_XML.SIZEDESC, ITEM_XML.SIZE_CODE,                                                              "
 				+ "  PET.EXIST_IN_GROUP ALREADY_IN_GROUP, PET.PET_STATE, PET.ENTRY_TYPE                                  "
 				+ "  FROM                                                                                                "
 				+ "  ADSE_ITEM_CATALOG ITEM,                                                                             "
@@ -141,12 +123,14 @@ public class XqueryConstants {
 				+ "  $colorcode:=/pim_entry/entry/Item_SKU_Spec/Differentiators[Type eq \"COLOR\"]/Code,                   "
 				+ "  $colorname:=/pim_entry/entry/Item_SKU_Spec/Differentiators[Type eq \"COLOR\"]/Vendor_Description,     "
 				+ "  $size:=/pim_entry/entry/Item_SKU_Spec/Differentiators[Type eq \"SIZE\"]/Vendor_Description,           "
+				+ "  $sizeCode:=/pim_entry/entry/Item_SKU_Spec/Differentiators[Type eq \"SIZE\"]/Code,           "
 				+ "  $name:=/pim_entry/entry/Item_Ctg_Spec/Description/Short                                             "
 				+ "  return                                                                                              "
 				+ "      <SPEC>                                                                                          "
 				+ "          <COLOR_CODE>{$colorcode}</COLOR_CODE>                                                       "
 				+ "          <COLOR_NAME>{$colorname}</COLOR_NAME>                                                       "
 				+ "          <SIZE>{$size}</SIZE>                                                                        "
+				+ "          <SIZE_CODE>{$sizeCode}</SIZE_CODE>                                                                        "
 				+ "          <NAME>{$name}</NAME>                                                                        "
 				+ "      </SPEC>'                                                                                        "
 				+ "  passing ITEM.XML_DATA                                                                               "
@@ -154,6 +138,7 @@ public class XqueryConstants {
 				+ "      COLOR_CODE VARCHAR2(5) path '/SPEC/COLOR_CODE',                                                 "
 				+ "      COLOR_NAME VARCHAR2(20) path '/SPEC/COLOR_NAME',                                                "
 				+ "      SIZEDESC VARCHAR2(20) path '/SPEC/SIZE',                                                        "
+				+ "      SIZE_CODE VARCHAR2(20) path '/SPEC/SIZE_CODE',                                                  "
 				+ "      NAME VARCHAR2(50) path '/SPEC/NAME') ITEM_XML                                                   "
 				+ "  WHERE                                                                                               "
 				+ "      ITEM.ENTRY_TYPE in ('Style', 'StyleColor', 'SKU')                                               "
@@ -191,11 +176,11 @@ public class XqueryConstants {
 		getGroupDetailsQuery.append(" ADSE_REFERENCE_DATA IMAGE_STATE ON GROUP_IMAGE_STATUS_CODE = IMAGE_STATE.MDMID ");
 		getGroupDetailsQuery.append(" AND IMAGE_STATE.ENTRY_TYPE = 'ImageState_Lookup' ");
 
-		if ((groupSearchForm.getVendor() != null && !groupSearchForm.getVendor().trim().equals(""))
-				|| (groupSearchForm.getDepts() != null && !groupSearchForm.getDepts().trim().equals(""))
-				|| (groupSearchForm.getClasses() != null && !groupSearchForm.getClasses().trim().equals(""))
-				|| (groupSearchForm.getOrinNumber() != null && !groupSearchForm.getOrinNumber().trim().equals(""))
-				|| (groupSearchForm.getSupplierSiteId() != null && !groupSearchForm.getSupplierSiteId().trim().equals(""))) {
+		if ((groupSearchForm.getVendor() != null && !"".equals(groupSearchForm.getVendor().trim()))
+				|| (groupSearchForm.getDepts() != null && !"".equals(groupSearchForm.getDepts().trim()))
+				|| (groupSearchForm.getClasses() != null && !"".equals(groupSearchForm.getClasses().trim()))
+				|| (groupSearchForm.getOrinNumber() != null && !"".equals(groupSearchForm.getOrinNumber().trim()))
+				|| (groupSearchForm.getSupplierSiteId() != null && !"".equals(groupSearchForm.getSupplierSiteId().trim()))) {
 			getGroupDetailsQuery.append(" ,ADSE_GROUP_CHILD_MAPPING GCM, ADSE_ITEM_CATALOG AIC ");
 		}
 
@@ -203,47 +188,47 @@ public class XqueryConstants {
 				.append(" WHERE                                                                                          ");
 		getGroupDetailsQuery
 				.append(" GRP.DELETED_FLAG = 'false'                                                                       ");
-		if (groupSearchForm.getGroupId() != null && !groupSearchForm.getGroupId().trim().equals("")) {
+		if (groupSearchForm.getGroupId() != null && !"".equals(groupSearchForm.getGroupId().trim())) {
 			getGroupDetailsQuery.append(" AND GRP.MDMID = '");
 			getGroupDetailsQuery.append(groupSearchForm.getGroupId());
 			getGroupDetailsQuery.append("'");
 		}
-		if (groupSearchForm.getGroupName() != null && !groupSearchForm.getGroupName().trim().equals("")) {
+		if (groupSearchForm.getGroupName() != null && !"".equals(groupSearchForm.getGroupName().trim())) {
 			getGroupDetailsQuery.append(" AND UPPER(GROUP_NAME) LIKE '%");
 			getGroupDetailsQuery.append(groupSearchForm.getGroupName().toUpperCase());
 			getGroupDetailsQuery.append("%'");
 		}
-		if ((groupSearchForm.getVendor() != null && !groupSearchForm.getVendor().trim().equals(""))
-				|| (groupSearchForm.getDepts() != null && !groupSearchForm.getDepts().trim().equals(""))
-				|| (groupSearchForm.getClasses() != null && !groupSearchForm.getClasses().trim().equals(""))
-				|| (groupSearchForm.getOrinNumber() != null && !groupSearchForm.getOrinNumber().trim().equals(""))
-				|| (groupSearchForm.getSupplierSiteId() != null && !groupSearchForm.getSupplierSiteId().trim().equals(""))) {
+		if ((groupSearchForm.getVendor() != null && !"".equals(groupSearchForm.getVendor().trim()))
+				|| (groupSearchForm.getDepts() != null && !"".equals(groupSearchForm.getDepts().trim()))
+				|| (groupSearchForm.getClasses() != null && !"".equals(groupSearchForm.getClasses().trim()))
+				|| (groupSearchForm.getOrinNumber() != null && !"".equals(groupSearchForm.getOrinNumber().trim()))
+				|| (groupSearchForm.getSupplierSiteId() != null && !"".equals(groupSearchForm.getSupplierSiteId().trim()))) {
 
 			getGroupDetailsQuery.append(" AND GRP.MDMID = GCM.MDMID ");
 			getGroupDetailsQuery.append(" AND GCM.COMPONENT_STYLE_ID = AIC.MDMID ");
 			getGroupDetailsQuery.append(" AND AIC.DELETED_FLAG = 'false' ");
 			getGroupDetailsQuery.append(" AND AIC.ENTRY_TYPE = 'Style' ");
-			if (groupSearchForm.getDepts() != null && !groupSearchForm.getDepts().trim().equals("")) {
+			if (groupSearchForm.getDepts() != null && !"".equals(groupSearchForm.getDepts().trim())) {
 				getGroupDetailsQuery.append(" AND AIC.DEPT_ID IN (");
 				getGroupDetailsQuery.append(getNumbersInCorrectFormat(groupSearchForm.getDepts()));
 				getGroupDetailsQuery.append(")");
 			}
-			if (groupSearchForm.getClasses() != null && !groupSearchForm.getClasses().trim().equals("")) {
+			if (groupSearchForm.getClasses() != null && !"".equals(groupSearchForm.getClasses().trim())) {
 				getGroupDetailsQuery.append(" AND AIC.CLASS_ID IN (");
 				getGroupDetailsQuery.append(getNumbersInCorrectFormat(groupSearchForm.getClasses()));
 				getGroupDetailsQuery.append(")");
 			}
-			if (groupSearchForm.getOrinNumber() != null && !groupSearchForm.getOrinNumber().trim().equals("")) {
+			if (groupSearchForm.getOrinNumber() != null && !"".equals(groupSearchForm.getOrinNumber().trim())) {
 				getGroupDetailsQuery.append(" AND AIC.MDMID = '");
 				getGroupDetailsQuery.append(groupSearchForm.getOrinNumber());
 				getGroupDetailsQuery.append("'");
 			}
-			if (groupSearchForm.getSupplierSiteId() != null && !groupSearchForm.getSupplierSiteId().trim().equals("")) {
+			if (groupSearchForm.getSupplierSiteId() != null && !"".equals(groupSearchForm.getSupplierSiteId().trim())) {
 				getGroupDetailsQuery.append(" AND AIC.PRIMARY_SUPPLIER_ID = '");
 				getGroupDetailsQuery.append(groupSearchForm.getSupplierSiteId());
 				getGroupDetailsQuery.append("'");
 			}
-			if (groupSearchForm.getVendor() != null && !groupSearchForm.getVendor().trim().equals("")) {
+			if (groupSearchForm.getVendor() != null && !"".equals(groupSearchForm.getVendor().trim())) {
 				getGroupDetailsQuery.append(" AND AIC.PRIMARYSUPPLIERVPN = '");
 				getGroupDetailsQuery.append(groupSearchForm.getVendor());
 				getGroupDetailsQuery.append("'");
@@ -251,24 +236,24 @@ public class XqueryConstants {
 		}
 
 		String sortOrder = "";
-		if (groupSearchForm.getAscDescOrder() != null || !groupSearchForm.getAscDescOrder().trim().equals("")) {
+		if (groupSearchForm.getAscDescOrder() != null || !"".equals(groupSearchForm.getAscDescOrder().trim())) {
 			sortOrder = groupSearchForm.getAscDescOrder();
 		}
-		if (groupSearchForm.getSortColumn() == null || groupSearchForm.getSortColumn().trim().equals("")) {
+		if (groupSearchForm.getSortColumn() == null || "".equals(groupSearchForm.getSortColumn().trim())) {
 			getGroupDetailsQuery.append(" ORDER BY GRP.ENTRY_TYPE, GRP.MDMID " + sortOrder);
-		} else if (groupSearchForm.getSortColumn() != null && groupSearchForm.getSortColumn().equals("groupId")) {
+		} else if (groupSearchForm.getSortColumn() != null && "groupId".equals(groupSearchForm.getSortColumn())) {
 			getGroupDetailsQuery.append(" ORDER BY GRP.MDMID " + sortOrder);
-		} else if (groupSearchForm.getSortColumn() != null && groupSearchForm.getSortColumn().equals("groupName")) {
+		} else if (groupSearchForm.getSortColumn() != null && "groupName".equals(groupSearchForm.getSortColumn())) {
 			getGroupDetailsQuery.append(" ORDER BY GROUP_NAME " + sortOrder);
-		} else if (groupSearchForm.getSortColumn() != null && groupSearchForm.getSortColumn().equals("startDate")) {
+		} else if (groupSearchForm.getSortColumn() != null && "startDate".equals(groupSearchForm.getSortColumn())) {
 			getGroupDetailsQuery.append(" ORDER BY GRP.START_DATE " + sortOrder);
-		} else if (groupSearchForm.getSortColumn() != null && groupSearchForm.getSortColumn().equals("endDate")) {
+		} else if (groupSearchForm.getSortColumn() != null && "endDate".equals(groupSearchForm.getSortColumn())) {
 			getGroupDetailsQuery.append(" ORDER BY GRP.END_DATE " + sortOrder);
-		} else if (groupSearchForm.getSortColumn() != null && groupSearchForm.getSortColumn().equals("groupType")) {
+		} else if (groupSearchForm.getSortColumn() != null && "groupType".equals(groupSearchForm.getSortColumn())) {
 			getGroupDetailsQuery.append(" ORDER BY GRP.ENTRY_TYPE " + sortOrder);
-		} else if (groupSearchForm.getSortColumn() != null && groupSearchForm.getSortColumn().equals("imageStatus")) {
+		} else if (groupSearchForm.getSortColumn() != null && "imageStatus".equals(groupSearchForm.getSortColumn())) {
 			getGroupDetailsQuery.append(" ORDER BY IMAGE_STATE.THEVALUE " + sortOrder);
-		} else if (groupSearchForm.getSortColumn() != null && groupSearchForm.getSortColumn().equals("contentStatus")) {
+		} else if (groupSearchForm.getSortColumn() != null && "contentStatus".equals(groupSearchForm.getSortColumn())) {
 			getGroupDetailsQuery.append(" ORDER BY CONTENT_STATE.THEVALUE " + sortOrder);
 		}
 
@@ -296,58 +281,58 @@ public class XqueryConstants {
 		getGroupDetailsCountQuery.append(" INNER JOIN ");
 		getGroupDetailsCountQuery.append(" ADSE_REFERENCE_DATA IMAGE_STATE ON GROUP_IMAGE_STATUS_CODE = IMAGE_STATE.MDMID ");
 		getGroupDetailsCountQuery.append(" AND IMAGE_STATE.ENTRY_TYPE = 'ImageState_Lookup' ");
-		if ((groupSearchForm.getVendor() != null && !groupSearchForm.getVendor().trim().equals(""))
-				|| (groupSearchForm.getDepts() != null && !groupSearchForm.getDepts().trim().equals(""))
-				|| (groupSearchForm.getClasses() != null && !groupSearchForm.getClasses().trim().equals(""))
-				|| (groupSearchForm.getOrinNumber() != null && !groupSearchForm.getOrinNumber().trim().equals(""))
-				|| (groupSearchForm.getSupplierSiteId() != null && !groupSearchForm.getSupplierSiteId().trim().equals(""))) {
+		if ((groupSearchForm.getVendor() != null && !"".equals(groupSearchForm.getVendor().trim()))
+				|| (groupSearchForm.getDepts() != null && !"".equals(groupSearchForm.getDepts().trim()))
+				|| (groupSearchForm.getClasses() != null && !"".equals(groupSearchForm.getClasses().trim()))
+				|| (groupSearchForm.getOrinNumber() != null && !"".equals(groupSearchForm.getOrinNumber().trim()))
+				|| (groupSearchForm.getSupplierSiteId() != null && !"".equals(groupSearchForm.getSupplierSiteId().trim()))) {
 			getGroupDetailsCountQuery.append(" ,ADSE_GROUP_CHILD_MAPPING GCM, ADSE_ITEM_CATALOG AIC ");
 		}
 		getGroupDetailsCountQuery
 				.append(" WHERE                                                                                          ");
 		getGroupDetailsCountQuery
 				.append(" GRP.DELETED_FLAG = 'false'                                                                       ");
-		if (groupSearchForm.getGroupId() != null && !groupSearchForm.getGroupId().trim().equals("")) {
+		if (groupSearchForm.getGroupId() != null && !"".equals(groupSearchForm.getGroupId().trim())) {
 			getGroupDetailsCountQuery.append(" AND GRP.MDMID = '");
 			getGroupDetailsCountQuery.append(groupSearchForm.getGroupId());
 			getGroupDetailsCountQuery.append("'");
 		}
-		if (groupSearchForm.getGroupName() != null && !groupSearchForm.getGroupName().trim().equals("")) {
+		if (groupSearchForm.getGroupName() != null && !"".equals(groupSearchForm.getGroupName().trim())) {
 			getGroupDetailsCountQuery.append(" AND UPPER(GROUP_NAME) LIKE '%");
 			getGroupDetailsCountQuery.append(groupSearchForm.getGroupName().toUpperCase());
 			getGroupDetailsCountQuery.append("%'");
 		}
-		if ((groupSearchForm.getVendor() != null && !groupSearchForm.getVendor().trim().equals(""))
-				|| (groupSearchForm.getDepts() != null && !groupSearchForm.getDepts().trim().equals(""))
-				|| (groupSearchForm.getClasses() != null && !groupSearchForm.getClasses().trim().equals(""))
-				|| (groupSearchForm.getOrinNumber() != null && !groupSearchForm.getOrinNumber().trim().equals(""))
-				|| (groupSearchForm.getSupplierSiteId() != null && !groupSearchForm.getSupplierSiteId().trim().equals(""))) {
+		if ((groupSearchForm.getVendor() != null && !"".equals(groupSearchForm.getVendor().trim()))
+				|| (groupSearchForm.getDepts() != null && !"".equals(groupSearchForm.getDepts().trim()))
+				|| (groupSearchForm.getClasses() != null && !"".equals(groupSearchForm.getClasses().trim()))
+				|| (groupSearchForm.getOrinNumber() != null && !"".equals(groupSearchForm.getOrinNumber().trim()))
+				|| (groupSearchForm.getSupplierSiteId() != null && !"".equals(groupSearchForm.getSupplierSiteId().trim()))) {
 
 			getGroupDetailsCountQuery.append(" AND GRP.MDMID = GCM.MDMID ");
 			getGroupDetailsCountQuery.append(" AND GCM.COMPONENT_STYLE_ID = AIC.MDMID ");
 			getGroupDetailsCountQuery.append(" AND AIC.DELETED_FLAG = 'false' ");
 			getGroupDetailsCountQuery.append(" AND AIC.ENTRY_TYPE = 'Style' ");
-			if (groupSearchForm.getDepts() != null && !groupSearchForm.getDepts().trim().equals("")) {
+			if (groupSearchForm.getDepts() != null && !"".equals(groupSearchForm.getDepts().trim())) {
 				getGroupDetailsCountQuery.append(" AND AIC.DEPT_ID IN (");
 				getGroupDetailsCountQuery.append(getNumbersInCorrectFormat(groupSearchForm.getDepts()));
 				getGroupDetailsCountQuery.append(")");
 			}
-			if (groupSearchForm.getClasses() != null && !groupSearchForm.getClasses().trim().equals("")) {
+			if (groupSearchForm.getClasses() != null && !"".equals(groupSearchForm.getClasses().trim())) {
 				getGroupDetailsCountQuery.append(" AND AIC.CLASS_ID IN (");
 				getGroupDetailsCountQuery.append(getNumbersInCorrectFormat(groupSearchForm.getClasses()));
 				getGroupDetailsCountQuery.append(")");
 			}
-			if (groupSearchForm.getOrinNumber() != null && !groupSearchForm.getOrinNumber().trim().equals("")) {
+			if (groupSearchForm.getOrinNumber() != null && !"".equals(groupSearchForm.getOrinNumber().trim())) {
 				getGroupDetailsCountQuery.append(" AND AIC.MDMID = '");
 				getGroupDetailsCountQuery.append(groupSearchForm.getOrinNumber());
 				getGroupDetailsCountQuery.append("'");
 			}
-			if (groupSearchForm.getSupplierSiteId() != null && !groupSearchForm.getSupplierSiteId().trim().equals("")) {
+			if (groupSearchForm.getSupplierSiteId() != null && !"".equals(groupSearchForm.getSupplierSiteId().trim())) {
 				getGroupDetailsCountQuery.append(" AND AIC.PRIMARY_SUPPLIER_ID = '");
 				getGroupDetailsCountQuery.append(groupSearchForm.getSupplierSiteId());
 				getGroupDetailsCountQuery.append("'");
 			}
-			if (groupSearchForm.getVendor() != null && !groupSearchForm.getVendor().trim().equals("")) {
+			if (groupSearchForm.getVendor() != null && !"".equals(groupSearchForm.getVendor().trim())) {
 				getGroupDetailsCountQuery.append(" AND AIC.PRIMARYSUPPLIERVPN = '");
 				getGroupDetailsCountQuery.append(groupSearchForm.getVendor());
 				getGroupDetailsCountQuery.append("'");
@@ -403,24 +388,24 @@ public class XqueryConstants {
 
 		getGroupDetailsQueryParent.append(" AND COMPONENT_TYPE = 'Group'                       ");
 		String sortOrder = "";
-		if (groupSearchForm.getAscDescOrder() != null || !groupSearchForm.getAscDescOrder().trim().equals("")) {
+		if (groupSearchForm.getAscDescOrder() != null || !"".equals(groupSearchForm.getAscDescOrder().trim())) {
 			sortOrder = groupSearchForm.getAscDescOrder();
 		}
-		if (groupSearchForm.getSortColumn() == null || groupSearchForm.getSortColumn().trim().equals("")) {
+		if (groupSearchForm.getSortColumn() == null || "".equals(groupSearchForm.getSortColumn().trim())) {
 			getGroupDetailsQueryParent.append(" ORDER BY AGC.ENTRY_TYPE, AGC.MDMID " + sortOrder);
-		} else if (groupSearchForm.getSortColumn() != null && groupSearchForm.getSortColumn().equals("groupId")) {
+		} else if (groupSearchForm.getSortColumn() != null && "groupId".equals(groupSearchForm.getSortColumn())) {
 			getGroupDetailsQueryParent.append(" ORDER BY AGC.MDMID " + sortOrder);
-		} else if (groupSearchForm.getSortColumn() != null && groupSearchForm.getSortColumn().equals("groupName")) {
+		} else if (groupSearchForm.getSortColumn() != null && "groupName".equals(groupSearchForm.getSortColumn())) {
 			getGroupDetailsQueryParent.append(" ORDER BY AGC.GROUP_NAME " + sortOrder);
-		} else if (groupSearchForm.getSortColumn() != null && groupSearchForm.getSortColumn().equals("startDate")) {
+		} else if (groupSearchForm.getSortColumn() != null && "startDate".equals(groupSearchForm.getSortColumn())) {
 			getGroupDetailsQueryParent.append(" ORDER BY START_DATE " + sortOrder);
-		} else if (groupSearchForm.getSortColumn() != null && groupSearchForm.getSortColumn().equals("endDate")) {
+		} else if (groupSearchForm.getSortColumn() != null && "endDate".equals(groupSearchForm.getSortColumn())) {
 			getGroupDetailsQueryParent.append(" ORDER BY END_DATE " + sortOrder);
-		} else if (groupSearchForm.getSortColumn() != null && groupSearchForm.getSortColumn().equals("groupType")) {
+		} else if (groupSearchForm.getSortColumn() != null && "groupType".equals(groupSearchForm.getSortColumn())) {
 			getGroupDetailsQueryParent.append(" ORDER BY AGC.ENTRY_TYPE " + sortOrder);
-		} else if (groupSearchForm.getSortColumn() != null && groupSearchForm.getSortColumn().equals("imageStatus")) {
+		} else if (groupSearchForm.getSortColumn() != null && "imageStatus".equals(groupSearchForm.getSortColumn())) {
 			getGroupDetailsQueryParent.append(" ORDER BY IMAGE_STATE.THEVALUE " + sortOrder);
-		} else if (groupSearchForm.getSortColumn() != null && groupSearchForm.getSortColumn().equals("contentStatus")) {
+		} else if (groupSearchForm.getSortColumn() != null && "contentStatus".equals(groupSearchForm.getSortColumn()) ){
 			getGroupDetailsQueryParent.append(" ORDER BY CONTENT_STATE.THEVALUE " + sortOrder);
 		}
 		if (LOGGER.isDebugEnabled()) {
@@ -479,7 +464,7 @@ public class XqueryConstants {
 
 	/** Method to get the Search Group Parent query Group List.
 	 * 
-	 * @return List<String>
+	 * @return List
 	 * 
 	 *         Method added For PIM Phase 2 - Search Group Date: 05/20/2016
 	 *         Added By: Cognizant */
@@ -687,7 +672,7 @@ public class XqueryConstants {
 				+ "	ITEM_XML.PRODUCT_NAME,                                "
 				+ "	ITEM_XML.COLOR_CODE,                                  "
 				+ "	ITEM_XML.COLOR_DESC,                                  "
-				+ "	ITEM_XML.SIZEDESC                                     "
+				+ "	ITEM_XML.SIZEDESC, ITEM_XML.SIZE_CODE                 "
 				+ "	FROM                                                  "
 				+ "	ADSE_ITEM_CATALOG ITEM,                               "
 				+ "	ADSE_GROUP_CHILD_MAPPING DETAIL,                      "
@@ -697,18 +682,21 @@ public class XqueryConstants {
 				+ "	  $colorcode:=/pim_entry/entry/Item_SKU_Spec/Differentiators[Type eq \"COLOR\"]/Code,               "
 				+ "	  $colorname:=/pim_entry/entry/Item_SKU_Spec/Differentiators[Type eq \"COLOR\"]/Vendor_Description, "
 				+ "	  $size:=/pim_entry/entry/Item_SKU_Spec/Differentiators[Type eq \"SIZE\"]/Vendor_Description,       "
+				+ "	  $sizeCode:=/pim_entry/entry/Item_SKU_Spec/Differentiators[Type eq \"SIZE\"]/Code,       "
 				+ "	  $name:=/pim_entry/entry/Item_Ctg_Spec/Description/Short                                         "
 				+ "	  return                                                                "
 				+ "	  <SPEC>                                                                "
 				+ "	  <COLOR_CODE>{$colorcode}</COLOR_CODE>                                 "
 				+ "	  <COLOR_DESC>{$colorname}</COLOR_DESC>                                 "
 				+ "	  <SIZE>{$size}</SIZE>                                                  "
+				+ "	  <SIZE_CODE>{$sizeCode}</SIZE_CODE>                                                  "
 				+ "	  <PRODUCT_NAME>{$name}</PRODUCT_NAME>                                  "
 				+ "	  </SPEC>'                                                              "
 				+ "	  passing ITEM.XML_DATA Columns                                         "
 				+ "	  COLOR_CODE 			VARCHAR2(5) path '/SPEC/COLOR_CODE',            "
 				+ "	  COLOR_DESC            VARCHAR2(20) path '/SPEC/COLOR_DESC',           "
 				+ "	  SIZEDESC              VARCHAR2(20) path '/SPEC/SIZE',                 "
+				+ "	  SIZE_CODE              VARCHAR2(20) path '/SPEC/SIZE_CODE',                 "
 				+ "	  PRODUCT_NAME          VARCHAR2(50) path '/SPEC/PRODUCT_NAME')         "
 				+ "	  ITEM_XML                                                              "
 				+ "	WHERE                                                                   "
@@ -818,7 +806,7 @@ public class XqueryConstants {
 			getNewCPGDetails = getNewCPGDetails + " AND SEARCH.DEPT_ID IN (" + deptNoForInSearch + ")";
 		}
 		if (null != classNoSearch && !("").equals(classNoSearch.trim())) {
-			getNewCPGDetails = getNewCPGDetails + " SEARCH.CLASS_ID IN (" + classNoForInSearch + ")";
+			getNewCPGDetails = getNewCPGDetails + " AND SEARCH.CLASS_ID IN (" + classNoForInSearch + ")";
 		}
 		if (null != supplierSiteIdSearch && !("").equals(supplierSiteIdSearch.trim())) {
 			getNewCPGDetails = getNewCPGDetails + " AND SEARCH.PRIMARY_SUPPLIER_ID =:supplierIdSql ";

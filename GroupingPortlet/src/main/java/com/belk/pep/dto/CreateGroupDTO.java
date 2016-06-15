@@ -8,7 +8,7 @@ import com.belk.pep.form.GroupAttributeForm;
 
 
 /**
- * This class is used to save the Group Header data as a Form data
+ * This class is used to save the Group Header data as a Form data.
  * @author AFUPYB3
  *
  */
@@ -16,7 +16,7 @@ public class CreateGroupDTO {
     @SuppressWarnings("unused")
 	private static final long serialVersionUID = 1L;
     
-//    private List <String> pageNumberList;
+
     
     
     private String groupId;
@@ -28,7 +28,7 @@ public class CreateGroupDTO {
     private String groupStatus;
     private String carsGroupType;
 
-    /** User role**/
+    /** User role.**/
     private String roleEditable;
     private String readOnlyUser="no";
     private String roleName;

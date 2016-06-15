@@ -58,15 +58,15 @@ public class GroupingServiceImpl implements GroupingService {
 	}
 
 	/**
-	 * Sets the Grouping DAO. GroupingDAO the new Grouping DAO
+	 * Sets the Grouping DAO. GroupingDAO the new Grouping DAO.
 	 */
 	public final void setGroupingDAO(GroupingDAO groupingDAO) {
 		this.groupingDAO = groupingDAO;
 	}
 
 	/**
-	 * This method is used to call Group Creation Service and fetch data from
-	 * database
+	 * This method is used to call Group Creation Service and fetch data from.
+	 * database.
 	 * 
 	 * @param jsonStyle
 	 * @param updatedBy
@@ -103,7 +103,7 @@ public class GroupingServiceImpl implements GroupingService {
 			groupIdRes = jsonObjectRes.getString(GroupingConstants.COMPONENT_ID);
 		}
 
-		// responseMsgCode = responseMsgArray[0].split(":")[1];
+		
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("responseMsgCode-->" + responseMsgCode);
 			LOGGER.debug("groupIdRes-->" + groupIdRes);
@@ -181,13 +181,13 @@ public class GroupingServiceImpl implements GroupingService {
 				LOGGER.debug("json Object Add Component to Split SKU groupId--> " + jsonStyleSpliSku.getString("groupId"));
 			}
 			LOGGER.info("Create Split SKU Group Service Start currentTimeMillis-->" + System.currentTimeMillis());
-			String resMsgSplitSku = ""; // callAddComponentSSGService(jsonStyleSpliSku); // TODO Uncomment
+			String resMsgSplitSku = callAddComponentSSGService(jsonStyleSpliSku);
 			LOGGER.info("Create Split SKU Group Service End currentTimeMillis-->" + System.currentTimeMillis());
 			if (LOGGER.isDebugEnabled()) {
 				LOGGER.debug("Add Component to Split SKU Group Service message-->" + resMsgSplitSku);
 			}
 
-			/** Extract Service message **/
+			/** Extract Service message. **/
 			if(null != resMsgSplitSku && !("").equals(resMsgSplitSku)){
 				jsonObjectRes = new JSONObject(resMsgSplitSku);
 			}
@@ -211,15 +211,13 @@ public class GroupingServiceImpl implements GroupingService {
 				LOGGER.debug("Calling Add component for Split SKU service End");
 			}
 		} }
-		/** End Group Creation for All Type **/
+		/** End Group Creation for All Type. **/
 
 		// Call DAO to fetch Group Details after getting response from service
 		CreateGroupForm createGroupForm = new CreateGroupForm();
 		CreateGroupDTO createGroupDTO = new CreateGroupDTO();
 		if (null != responseMsgCode && (GroupingConstants.SUCCESS_CODE).equals(responseMsgCode)) {
-			if (LOGGER.isDebugEnabled()) {
-				LOGGER.debug("Before Calling database method getGroupHeaderDetails() to retreive Group Header Details-->");
-			}
+			
 			createGroupDTO = groupingDAO.getGroupHeaderDetails(groupIdRes);
 			if (LOGGER.isDebugEnabled()) {
 				LOGGER.debug("After Calling database method getGroupHeaderDetails() to retreive Group Header Details-->"
@@ -228,7 +226,7 @@ public class GroupingServiceImpl implements GroupingService {
 		}
 		createGroupDTO.setGroupCretionMsg(responseMsg);
 
-		/** Transfer object value from DTO to Form Object Start **/
+		/** Transfer object value from DTO to Form Object Start.**/
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("Transfer object value from DTO to Form Object Start");
 		}
@@ -285,10 +283,10 @@ public class GroupingServiceImpl implements GroupingService {
 			String input = jsonStyle.toString();
 
 			OutputStream outputStream = httpConnection.getOutputStream();
-			outputStream.write(input.getBytes());
+			outputStream.write(input.getBytes(GroupingConstants.DEFAULT_CHARSET));
 			outputStream.flush();
 
-			responseBuffer = new BufferedReader(new InputStreamReader(httpConnection.getInputStream()));
+			responseBuffer = new BufferedReader(new InputStreamReader(httpConnection.getInputStream(),GroupingConstants.DEFAULT_CHARSET));
 			String output;
 			LOGGER.info("Output from Server::: after Calling-->");
 			while ((output = responseBuffer.readLine()) != null) {
@@ -311,7 +309,7 @@ public class GroupingServiceImpl implements GroupingService {
 			throw new JSONException(e.getMessage());
 		} catch (Exception e) {
 			LOGGER.error("inside Exception-->" + e);
-			throw new Exception(e.getMessage());
+			throw new PEPFetchException(e.getMessage());
 		} finally {
 			if(null != httpConnection){
 				httpConnection.disconnect();
@@ -545,7 +543,7 @@ public class GroupingServiceImpl implements GroupingService {
 			for (int i = 0; i < getCPGSelectedAttrbuteList.size(); i++) {
 				styleAttributeForm = getCPGSelectedAttrbuteList.get(i);
 				String classIdSelected = GroupingUtil.checkNull(styleAttributeForm.getClassId());
-				if(("").equals(classIdSelectedPrev)){
+				if("".equals(classIdSelectedPrev)){
 					classIdSelectedPrev = classIdSelected;
 				}
 				if(!("").equals(existClassIdSt) && !existClassIdSt.equals(classIdSelected)){
@@ -613,7 +611,7 @@ public class GroupingServiceImpl implements GroupingService {
 	}
 
 	/**
-	 * This method is used to call Add Component to Split Color Service
+	 * This method is used to call Add Component to Split Color Service.
 	 * 
 	 * @param jsonStyleSpliColor
 	 * @return responseMsg
@@ -642,10 +640,10 @@ public class GroupingServiceImpl implements GroupingService {
 			String input = jsonStyleSpliColor.toString();
 
 			OutputStream outputStream = httpConnection.getOutputStream();
-			outputStream.write(input.getBytes());
+			outputStream.write(input.getBytes(GroupingConstants.DEFAULT_CHARSET));
 			outputStream.flush();
 
-			responseBuffer = new BufferedReader(new InputStreamReader(httpConnection.getInputStream()));
+			responseBuffer = new BufferedReader(new InputStreamReader(httpConnection.getInputStream(),GroupingConstants.DEFAULT_CHARSET));
 			String output;
 			while ((output = responseBuffer.readLine()) != null) {
 				LOGGER.info("call callAddComponentSCGService Service Output-->" + output);
@@ -716,7 +714,7 @@ public class GroupingServiceImpl implements GroupingService {
 	}
 
 	/**
-	 * This method is used to call Add Component to CPG Service
+	 * This method is used to call Add Component to CPG Service.
 	 * 
 	 * @param jsonStyleSpliColor
 	 * @return responseMsg
@@ -746,10 +744,10 @@ public class GroupingServiceImpl implements GroupingService {
 			String input = jsonCpgComponent.toString();
 
 			OutputStream outputStream = httpConnection.getOutputStream();
-			outputStream.write(input.getBytes());
+			outputStream.write(input.getBytes(GroupingConstants.DEFAULT_CHARSET));
 			outputStream.flush();
 
-			responseBuffer = new BufferedReader(new InputStreamReader(httpConnection.getInputStream()));
+			responseBuffer = new BufferedReader(new InputStreamReader(httpConnection.getInputStream(),GroupingConstants.DEFAULT_CHARSET));
 			String output;
 			while ((output = responseBuffer.readLine()) != null) {
 				LOGGER.info("call callAddComponentCPGService Service Output-->" + output);
@@ -786,7 +784,7 @@ public class GroupingServiceImpl implements GroupingService {
 
 	/**
 	 * Method to pass JSON Array to call the Add Component service for Split SKU
-	 * Group
+	 * Group.
 	 * 
 	 * @param groupIdRes
 	 * @param groupType
@@ -808,10 +806,11 @@ public class GroupingServiceImpl implements GroupingService {
 			for (int i = 0; i < selectedSplitAttributeList.size(); i++) {
 				jsonObjComponent = new JSONObject();
 				groupAttributeForm = selectedSplitAttributeList.get(i);
-				jsonObjComponent.put(GroupingConstants.COMPONENT_ID, groupAttributeForm.getOrinNumber());
-				jsonObjComponent.put(GroupingConstants.COMPONENT_IS_DEFAULT, groupAttributeForm.getIsDefault());
+				jsonObjComponent.put(GroupingConstants.COMPONENT_ID_ATTR, groupAttributeForm.getParentMdmid());
+				jsonObjComponent.put(GroupingConstants.COMPONENT_IS_DEFAULT_ATTR, groupAttributeForm.getIsDefault());
 				jsonObjComponent.put(GroupingConstants.COMPONENT_COLOR, groupAttributeForm.getColorCode());
-				jsonObjComponent.put(GroupingConstants.COMPONENT_SIZE, groupAttributeForm.getSize());
+				jsonObjComponent.put(GroupingConstants.COMPONENT_SIZE, groupAttributeForm.getSizeCode());
+				jsonObjComponent.put(GroupingConstants.COMPONENT_SKU, groupAttributeForm.getOrinNumber());
 				jsonArray.put(jsonObjComponent);
 			}
 
@@ -827,7 +826,7 @@ public class GroupingServiceImpl implements GroupingService {
 	}
 
 	/**
-	 * This method is used to call Add Component to Split SKU Service
+	 * This method is used to call Add Component to Split SKU Service.
 	 * 
 	 * @param jsonStyleSpliSku
 	 * @return responseMsg
@@ -857,10 +856,10 @@ public class GroupingServiceImpl implements GroupingService {
 			String input = jsonStyleSpliSku.toString();
 
 			OutputStream outputStream = httpConnection.getOutputStream();
-			outputStream.write(input.getBytes());
+			outputStream.write(input.getBytes(GroupingConstants.DEFAULT_CHARSET));
 			outputStream.flush();
 
-			responseBuffer = new BufferedReader(new InputStreamReader(httpConnection.getInputStream()));
+			responseBuffer = new BufferedReader(new InputStreamReader(httpConnection.getInputStream(),GroupingConstants.DEFAULT_CHARSET));
 			String output;
 			LOGGER.info("Output from Server::: after Calling-->");
 			while ((output = responseBuffer.readLine()) != null) {
@@ -953,17 +952,27 @@ public class GroupingServiceImpl implements GroupingService {
 		List<GroupAttributeForm> selectedSplitAttributeList = new ArrayList<GroupAttributeForm>();
 		GroupAttributeForm groupAttributeForm = null;
 		String sizeCode = "";
+		String colorCode = "";
+		String selectedAttr = "";
+		String[] selectedAttrArr = null;
+		String[] defaultSelectedAttrArr = defaultSelectedAttr.split("_");
 		for (int i = 0; i < updatedSplitSKUDetailsList.size(); i++) {
 			groupAttributeForm = updatedSplitSKUDetailsList.get(i);
 			sizeCode = (null == groupAttributeForm.getSize() ? "" : groupAttributeForm.getSize().trim());
-			if (sizeCode.equals(defaultSelectedAttr)) {
+			colorCode = (null == groupAttributeForm.getColorCode() ? "" : groupAttributeForm.getColorCode().trim());
+			
+			if (defaultSelectedAttrArr[0].equals(colorCode) && defaultSelectedAttrArr[1].equals(sizeCode)) {
 				groupAttributeForm.setIsDefault("yes");
 			} else {
 				groupAttributeForm.setIsDefault("no");
 			}
 			for (int j = 0; j < selectedItemsArr.length; j++) {
-
-				if (selectedItemsArr[j].equals(sizeCode)) {
+				selectedAttr = GroupingUtil.checkNull(selectedItemsArr[j]);
+				if(LOGGER.isDebugEnabled()){
+					LOGGER.debug("Split SKU selectedAttr-->"+selectedAttr);
+				}
+				selectedAttrArr = selectedAttr.split("_");
+				if (selectedAttrArr[0].equals(colorCode) && selectedAttrArr[1].equals(sizeCode)) {
 					selectedSplitAttributeList.add(groupAttributeForm);
 					break;
 				}
@@ -1015,7 +1024,7 @@ public class GroupingServiceImpl implements GroupingService {
 	}
 
 	/**
-	 * This method is used to get the Existing Group Details
+	 * This method is used to get the Existing Group Details.
 	 * 
 	 * @param groupId
 	 * @return createGroupForm
@@ -1028,7 +1037,7 @@ public class GroupingServiceImpl implements GroupingService {
 		// Call DAO to fetch Group Details after getting response from service
 		CreateGroupForm createGroupForm = new CreateGroupForm();
 		CreateGroupDTO createGroupDTO = new CreateGroupDTO();
-		List<GroupAttributeForm> groupAttributeDTOList = new ArrayList<GroupAttributeForm>();
+		
 
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("Before Calling database method getGroupHeaderDetails() to retreive Group Header Details-->");
@@ -1037,16 +1046,10 @@ public class GroupingServiceImpl implements GroupingService {
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("After Calling database method getGroupHeaderDetails() to retreive Group Header Details-->"
 					+ createGroupDTO.getGroupId());
-			LOGGER.debug("Before Calling database method getExistingGrpDetails() to retreive Existing Group Attribute Details-->");
+			
 		}
 
-		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug("After Calling database method getExistingGrpDetails() to retreive Existing Group Attribute Details-->"
-					+ createGroupDTO.getGroupId());
-
-			/** Transfer object value from DTO to Form Object Start **/
-			LOGGER.debug("Transfer object value from DTO to Form Object Start");
-		}
+		
 		createGroupForm.setGroupId(createGroupDTO.getGroupId());
 		createGroupForm.setGroupName(createGroupDTO.getGroupName());
 		createGroupForm.setGroupType(createGroupDTO.getGroupType());
@@ -1054,7 +1057,6 @@ public class GroupingServiceImpl implements GroupingService {
 		createGroupForm.setGroupLaunchDate(createGroupDTO.getGroupLaunchDate());
 		createGroupForm.setEndDate(createGroupDTO.getEndDate());
 		createGroupForm.setGroupCretionMsg("");
-		createGroupForm.setGroupAttributeFormList(groupAttributeDTOList);
 		createGroupForm.setGroupCreationStatus("");
 		createGroupForm.setGroupStatus(createGroupDTO.getGroupStatus());
 		createGroupForm.setCarsGroupType(createGroupDTO.getCarsGroupType());
@@ -1118,7 +1120,7 @@ public class GroupingServiceImpl implements GroupingService {
 					groupFormList.add(groupFormParent);
 				}
 			}
-			if (groupSearchForm.getGroupId() != null && !groupSearchForm.getGroupId().trim().equals("")) {
+			if (groupSearchForm.getGroupId() != null && !"".equals(groupSearchForm.getGroupId().trim())) {
 				List<GroupSearchDTO> listTwoGroup = groupingDAO.groupSearchParent(listOneGroup, groupSearchForm);
 				int parentCount = groupingDAO.groupSearchParentCount(listOneGroup, groupSearchForm);
 				groupSearchForm.setParentCount(parentCount);
@@ -1127,7 +1129,7 @@ public class GroupingServiceImpl implements GroupingService {
 				}
 				if (listTwoGroup.size() > 0) {
 					GroupForm groupForm = null;
-					//List<GroupForm> childGroupFormList = null;
+	
 					List<GroupForm> parentGroupFormList = new ArrayList<GroupForm>();
 					for (Iterator<GroupSearchDTO> iterator = listTwoGroup.iterator(); iterator.hasNext();) {
 						GroupSearchDTO groupSearchDTO = (GroupSearchDTO) iterator.next();
@@ -1173,7 +1175,7 @@ public class GroupingServiceImpl implements GroupingService {
 	}
 
 	/**
-	 * Method to get Group search record count
+	 * Method to get Group search record count.
 	 * 
 	 * @param groupSearchForm
 	 *            GroupSearchForm
@@ -1229,7 +1231,7 @@ public class GroupingServiceImpl implements GroupingService {
 	 * 
 	 * @param departmentNumbers
 	 *            String
-	 * @return List<ClassDetails>
+	 * @return List
 	 * 
 	 *         Method added For PIM Phase 2 - groupSearch Date: 05/26/2016 Added
 	 *         By: Cognizant
@@ -1281,10 +1283,10 @@ public class GroupingServiceImpl implements GroupingService {
 			String input = jsonGroup.toString();
 
 			OutputStream outputStream = httpConnection.getOutputStream();
-			outputStream.write(input.getBytes());
+			outputStream.write(input.getBytes(GroupingConstants.DEFAULT_CHARSET));
 			outputStream.flush();
 
-			responseBuffer = new BufferedReader(new InputStreamReader(httpConnection.getInputStream()));
+			responseBuffer = new BufferedReader(new InputStreamReader(httpConnection.getInputStream(),GroupingConstants.DEFAULT_CHARSET));
 			String output;
 			LOGGER.info("Output from Server::: after Calling-->");
 			while ((output = responseBuffer.readLine()) != null) {
@@ -1321,7 +1323,7 @@ public class GroupingServiceImpl implements GroupingService {
 	}
 
 	/**
-	 * This method is used to call Group Delete Service
+	 * This method is used to call Group Delete Service.
 	 * 
 	 * @param groupId
 	 * @param updatedBy
@@ -1426,7 +1428,7 @@ public class GroupingServiceImpl implements GroupingService {
 	 */
 	public final List<StyleAttributeForm> getExistCPGDetails(final String groupId) throws PEPServiceException, PEPPersistencyException {
 		LOGGER.info("Enter-->calling getExistCPGDetails from GroupingServiceImpl.");
-//		List<GroupAttributeForm> getSplitSkuDetailsList = null;
+
 		List<StyleAttributeForm> styleAttributeFormList = null;
 		try {
 			styleAttributeFormList = groupingDAO.getExistCPGDetails(groupId);
@@ -1442,7 +1444,7 @@ public class GroupingServiceImpl implements GroupingService {
 	
 	
 	/**
-	 * This method is used to call add Component Service and fetch data from database
+	 * This method is used to call add Component Service and fetch data from database.
 	 * @param updatedBy
 	 * @param groupType
 	 * @param selectedSplitAttributeList
@@ -1516,7 +1518,7 @@ public class GroupingServiceImpl implements GroupingService {
 				LOGGER.debug("addComponentToGroup.json Object Add Component to Split SKU groupId--> " + jsonStyleSpliSku.getString("groupId"));
 			}
 			LOGGER.info("addComponentToGroup.Create Split SKU Group Service Start currentTimeMillis-->" + System.currentTimeMillis());
-			String resMsgSplitSku = ""; // callAddComponentSSGService(jsonStyleSpliSku); // TODO Uncomment
+			String resMsgSplitSku = callAddComponentSSGService(jsonStyleSpliSku); // TODO Uncomment
 			LOGGER.info("addComponentToGroup.Create Split SKU Group Service End currentTimeMillis-->" + System.currentTimeMillis());
 			if (LOGGER.isDebugEnabled()) {
 				LOGGER.debug("addComponentToGroup.Add Component to Split SKU Group Service message-->" + resMsgSplitSku);
@@ -1568,7 +1570,7 @@ public class GroupingServiceImpl implements GroupingService {
 
 
 	/**
-	 * This method is used to call add CPG Component Service and fetch data from database
+	 * This method is used to call add CPG Component Service and fetch data from database.
 	 * @param updatedBy
 	 * @param groupType
 	 * @param selectedSplitAttributeList
@@ -1647,7 +1649,7 @@ public class GroupingServiceImpl implements GroupingService {
 	}
 	
 	/**
-	 * This method prepare the list for UI
+	 * This method prepare the list for UI.
 	 * 
 	 * @param getSplitColorDetailsList
 	 * @return
@@ -1666,7 +1668,7 @@ public class GroupingServiceImpl implements GroupingService {
 					if (LOGGER.isDebugEnabled()) {
 						LOGGER.debug("Style ProductName is -->" + productName);
 					}
-				}else if(null != entryType && (("StyleColor").equals(entryType) || ("SKU").equals(entryType))){
+				}else if(null != entryType && ("StyleColor".equals(entryType) || ("SKU").equals(entryType))){
 					
 					if (LOGGER.isDebugEnabled()) {
 						
@@ -1686,7 +1688,7 @@ public class GroupingServiceImpl implements GroupingService {
 	
 	
 	/**
-	 * This method is used to call the service method for saving the edited group headers
+	 * This method is used to call the service method for saving the edited group headers.
 	 * @param createGroupForm
 	 * @param modifiedBy
 	 * @return
@@ -1705,14 +1707,14 @@ public class GroupingServiceImpl implements GroupingService {
 		String endDate=createGroupForm.getEndDate();
 		String groupType=createGroupForm.getGroupType();
 		JSONObject requestJSON=new JSONObject();
-		requestJSON.put(GroupingConstants.GROUP_ID, ((groupId!=null)? groupId :GroupingConstants.EMPTY));
-		requestJSON.put(GroupingConstants.GROUP_NAME, ((groupName!=null)? groupName :GroupingConstants.EMPTY));
-		requestJSON.put(GroupingConstants.GROUP_DESC, ((groupDesc!=null)? groupDesc :GroupingConstants.EMPTY));
-		requestJSON.put(GroupingConstants.GROUP_STATUS, ((status!=null)? status :GroupingConstants.EMPTY));
-		requestJSON.put(GroupingConstants.START_DATE, ((startDate!=null)? startDate :GroupingConstants.EMPTY));
-		requestJSON.put(GroupingConstants.END_DATE, ((endDate!=null)? endDate :GroupingConstants.EMPTY));
-		requestJSON.put(GroupingConstants.MODIFIED_BY, ((modifiedBy!=null)? modifiedBy :GroupingConstants.EMPTY));
-		requestJSON.put(GroupingConstants.GROUP_TYPE, ((groupType!=null)? groupType :GroupingConstants.EMPTY));
+		requestJSON.put(GroupingConstants.GROUP_ID, groupId!=null? groupId :GroupingConstants.EMPTY);
+		requestJSON.put(GroupingConstants.GROUP_NAME, groupName!=null? groupName :GroupingConstants.EMPTY);
+		requestJSON.put(GroupingConstants.GROUP_DESC, groupDesc!=null? groupDesc :GroupingConstants.EMPTY);
+		requestJSON.put(GroupingConstants.GROUP_STATUS, status!=null? status :GroupingConstants.EMPTY);
+		requestJSON.put(GroupingConstants.START_DATE, startDate!=null? startDate :GroupingConstants.EMPTY);
+		requestJSON.put(GroupingConstants.END_DATE, endDate!=null? endDate :GroupingConstants.EMPTY);
+		requestJSON.put(GroupingConstants.MODIFIED_BY, modifiedBy!=null? modifiedBy :GroupingConstants.EMPTY);
+		requestJSON.put(GroupingConstants.GROUP_TYPE, groupType!=null? groupType :GroupingConstants.EMPTY);
 		LOGGER.info("Create Group Service Start currentTimeMillis-->" + System.currentTimeMillis());
 		String resMsg = callUpdateGroupService(requestJSON);
 		LOGGER.info("Create Group Service End currentTimeMillis-->" + System.currentTimeMillis());
@@ -1755,10 +1757,10 @@ public class GroupingServiceImpl implements GroupingService {
 			}
 			LOGGER.info("input....json-->" + input);
 			OutputStream outputStream = httpConnection.getOutputStream();
-			outputStream.write(input.getBytes());
+			outputStream.write(input.getBytes(GroupingConstants.DEFAULT_CHARSET));
 			outputStream.flush();
 
-			responseBuffer = new BufferedReader(new InputStreamReader((httpConnection.getInputStream())));
+			responseBuffer = new BufferedReader(new InputStreamReader(httpConnection.getInputStream(),GroupingConstants.DEFAULT_CHARSET));
 			String output;
 			LOGGER.info("Output from Server::: after Calling-->");
 			while ((output = responseBuffer.readLine()) != null) {

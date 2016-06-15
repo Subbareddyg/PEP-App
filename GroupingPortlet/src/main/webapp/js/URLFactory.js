@@ -8,7 +8,8 @@ var app = app || {};
 			if(this.urlCollection[URLKey] !== undefined){
 				return this.urlCollection[URLKey];
 			}else
-				throw new Error('The requested URL not defined');
+				return null;
+				//throw new Error('The requested URL not defined');
 		}
 	}
 })();

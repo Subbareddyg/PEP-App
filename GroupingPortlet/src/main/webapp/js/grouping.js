@@ -15,7 +15,7 @@ var app = app || {};
 ;(function($, _){
 	'use strict';
 	app.GroupLandingApp = {
-		urlCollection: {SCGUrl: '', SSGUrl: '',  searchUrl: '', },
+		//urlCollection: {SCGUrl: '', SSGUrl: '',  searchUrl: '', },
 		
 		regExpCollection: {validDepts: /^[0-9]{1,5}( *, *[0-9]{1,5})*$/, },
 		
@@ -72,6 +72,12 @@ var app = app || {};
 							_super.removeAddlFields();
 							$('.add-RCG-field').hide();
 							$('#group-creation-messages').html('&nbsp;');
+							$('#createGroupForm')[0].reset();
+							$('#endDate').datepicker('option','minDate', 0);
+							$('#endDate').datepicker('option','maxDate', null);
+							$('#startDate').datepicker('option','minDate', 0);
+							$('#startDate').datepicker('option','maxDate', null);
+							
 						},
 					})
 				);
@@ -101,6 +107,17 @@ var app = app || {};
 						},
 					})
 				);
+				//dialog for search validation
+				$('#errorBox').dialog({
+				   autoOpen: false, 
+				   modal: true,
+				   resizable: false,
+				   title : 'Search',
+				   dialogClass: "dlg-custom",
+				   buttons: {
+					  OK: function() {$(this).dialog("close");}
+				   },
+				});
 				
 				//dialog for class search
 				$('#dlgClassSearch').dialog($.extend(dlgCommonAttr, {
@@ -150,7 +167,8 @@ var app = app || {};
 					 showOn: "both",
 					buttonImage: app.Global.defaults.contextPath + "/img/iconCalendar.gif",
 					buttonImageOnly: true,
-					buttonText: "",					
+					buttonText: "",
+					minDate: 0 ,					
 					onClose: function( selectedDate ) {
 					$( "#startDate" ).datepicker( "option", "maxDate", selectedDate );
 					},
@@ -176,11 +194,13 @@ var app = app || {};
 					switch(groupType){
 						case 'SCG':
 							//console.log(_super.SCGUrl);
-							window.location.href = _super.urlCollection.SCGUrl;
+							//window.location.href = _super.urlCollection.SCGUrl;
+							window.location.href = app.URLFactory.getURL('SCGUrl');
 							break;
 						case 'SSG':
 							//console.log(_super.SSGUrl);
-							window.location.href = _super.urlCollection.SSGUrl;
+							//window.location.href = _super.urlCollection.SSGUrl;
+							window.location.href =  app.URLFactory.getURL('SSGUrl');
 							break;
 						case 'BCG':
 							_super.addAddlFields();
@@ -206,8 +226,7 @@ var app = app || {};
 				});
 				
 				//close group creation dlg-custom
-				$('#closeGrpDlg').on('click', function(e){
-					$('#createGroupForm')[0].reset();
+				$('#closeGrpDlg').on('click', function(e){					
 					 $('#dlgGroupCreate').dialog('close');
 					$('#dlgGroupCreate').dialog( "option", "height", 370 );
 					
@@ -261,7 +280,21 @@ var app = app || {};
 				//group search button action
 				$('#search-groups').on('click', function(e){
 					e.preventDefault(); //preventing default form submission
-					
+						
+						var validInputFlag = true;
+						//scanning for atleast one value in one field
+						$('#frmGroupSearch').find('input[type=text]').each(function(){
+							validInputFlag = !!$(this).val().trim().length;
+							
+							return !validInputFlag;
+						});
+						
+						if(!validInputFlag){
+							$('#error-massege').html('Atleast one field is required');
+							$('#errorBox').dialog("open");
+							return false;
+						}
+						
 					var searchFiledsValue = $('#frmGroupSearch').serialize();
 					
 					try{
@@ -340,7 +373,9 @@ var app = app || {};
 				});
 
 				
-				
+				$("#startDate , #endDate").on('keydown',function(e){
+					e.preventDefault();
+				});
 				//group create button action
 				$('#btnCreateGroup').on('click', function(e){
 					$('#startDate').prop('readonly',false);
@@ -369,6 +404,7 @@ var app = app || {};
 									
 									//handling and taking care of the response 
 									_super.handleGroupCreationResponse(resultJSON, $('#groupType').val());
+
 								}).error(function(){
 									$('#btnCreateGroup').prop('disabled', false).css('opacity','1').val('Save');
 									if($('#groupType').val()=='BCG'){
@@ -588,7 +624,7 @@ var app = app || {};
 				
 				//bootstrapping events when DOM is ready State
 				$(document).on('ready', function(e){				
-					if(app.GroupLandingApp.urlCollection.groupSearchUrl){
+					if(app.URLFactory.getURL('groupSearchUrl')){
 						//code to fetch all depts
 						
 						app.GroupFactory.fetchDepts()
@@ -768,7 +804,8 @@ var app = app || {};
 			redirect = (redirect === undefined || redirect == true) ? true : false; 
 			
 			if((!errorFlag) && (groupType != 'SCG' && groupType != 'SSG') && redirect){
-				window.location.href = app.GroupLandingApp.urlCollection.addComponentUrl;
+				//window.location.href = app.GroupLandingApp.urlCollection.addComponentUrl;
+				window.location.href = app.URLFactory.getURL('addComponentUrl');
 			}else{
 				if($('#groupType').val()=='BCG'){
 					$('#dlgGroupCreate').dialog( "option", "minHeight", 500 );
@@ -836,77 +873,125 @@ var app = app || {};
 				$('#frmComponentSearch').on('submit', function(e){
 					e.preventDefault(); //preventing default form submission 
 					
+					var validationClass= $(this).attr('class');
 					//dialog to show error when no field is entered
-					if($('#styleOrinNo').val().trim() == '' && $('#vendorStyleNo').val().trim() == ''){
-						$('#error-massege').html('Atleast one field is required');
-						
-						$('#errorBox').dialog({
-							   autoOpen: true, 
-							   modal: true,
-							   resizable: false,
-							   title : 'Search',
-							   dialogClass: "dlg-custom",
-							   buttons: {
-								  OK: function() {$(this).dialog("close");}
-							   },
-							});
-					//dialog to show error when both fields are entered
-					} else if ($('#styleOrinNo').val().trim() && $('#vendorStyleNo').val().trim()){
-						$('#error-massege').html("You cannot search for both fields at once. Please only fill in one fields before continuing.");
-						$('#errorBox').dialog({
-						   autoOpen: true, 
-						   modal: true,
-						   resizable: false,
-						   title : 'Search',
-						   dialogClass: "dlg-custom",
-						   buttons: {
-							  OK: function() {$(this).dialog("close");}
-						   },
-						});
-					}else{
-						$('.overlay_pageLoading').removeClass('hidden');
-						
-						app.GroupFactory.searchSplitComponents($('#frmComponentSearch').serialize())						
-							.done(function(result){
-								if(!result.length)
-									return;
-								
-								var response = $.parseJSON(result);
-								//console.log(response.componentList);
-								if(response.componentList){
-									//processing data table generation
-									//passing only components
-									var componentList = response.componentList;
-									//deleting componentList to pass only header
-									delete response.componentList;
-									
-									/* app.DataTable.dtContainer = '#dataTable';
-									app.DataTable.dataHeader = response;
-									app.DataTable.data = componentList;
-									
-									$('.paginator').removeData('twbs-pagination'); //reconstructing the paginator
-									
-									app.DataTable.init(); */
-									
-									var dtTable = new app.DataTable();
-									dtTable.setDataHeader(response);
-									dtTable.setData(componentList);
-									
-									$('.paginator').removeData('twbs-pagination'); //reconstructing the paginator
-									
-									dtTable.init();
-								}
-								
-								
-								$("#search-result-panel").removeClass('hidden');
-																
-							}).complete(function(){
-								
-								$('.overlay_pageLoading').addClass('hidden');
-								
-							});
+					if(validationClass.indexOf('CPG') > -1 || validationClass.indexOf('RCG') > -1 
+						|| validationClass.indexOf('BCG') > -1 || validationClass.indexOf('GSS') > -1 )
+					{
+						var validInputFlag = true;
+						//scanning for atleast one value in one field
+						$(this).find('input[type=text]').each(function(){
+							validInputFlag = !!$(this).val().trim().length;
 							
+							return !validInputFlag;
+						});
+						
+						if(!validInputFlag){
+							$('#error-massege').html('Atleast one field is required');
+							$('#errorBox').dialog("open");
+						}else{
+							$('.overlay_pageLoading').removeClass('hidden');
+							
+							app.GroupFactory.searchSplitComponents($('#frmComponentSearch').serialize())						
+								.done(function(result){
+									if(!result.length)
+										return;
+									
+									var response = $.parseJSON(result);
+									//console.log(response.componentList);
+									if(response.componentList){
+										//processing data table generation
+										//passing only components
+										var componentList = response.componentList;
+										//deleting componentList to pass only header
+										delete response.componentList;
+										
+										/* app.DataTable.dtContainer = '#dataTable';
+										app.DataTable.dataHeader = response;
+										app.DataTable.data = componentList;
+										
+										$('.paginator').removeData('twbs-pagination'); //reconstructing the paginator
+										
+										app.DataTable.init(); */
+										
+										var dtTable = new app.DataTable();
+										dtTable.setDataHeader(response);
+										dtTable.setData(componentList);
+										
+										$('.paginator').removeData('twbs-pagination'); //reconstructing the paginator
+										
+										dtTable.init();
+									}
+									
+									
+									$("#search-result-panel").removeClass('hidden');
+																	
+								}).complete(function(){
+									
+									$('.overlay_pageLoading').addClass('hidden');
+									$('.select-all').prop('checked',false);
+									
+								});
+								
+						}
+					}else{
+						
+						if($('#styleOrinNo').val().trim() == '' && $('#vendorStyleNo').val().trim() == ''){
+							$('#error-massege').html('Atleast one field is required');
+							$('#errorBox').dialog("open");
+							
+						//dialog to show error when both fields are entered
+						} else if ($('#styleOrinNo').val().trim() && $('#vendorStyleNo').val().trim()){
+							$('#error-massege').html("You cannot search for both fields at once. Please only fill in one fields before continuing.");
+							$('#errorBox').dialog("open");
+						}else{
+							$('.overlay_pageLoading').removeClass('hidden');
+							
+							app.GroupFactory.searchSplitComponents($('#frmComponentSearch').serialize())						
+								.done(function(result){
+									if(!result.length)
+										return;
+									
+									var response = $.parseJSON(result);
+									//console.log(response.componentList);
+									if(response.componentList){
+										//processing data table generation
+										//passing only components
+										var componentList = response.componentList;
+										//deleting componentList to pass only header
+										delete response.componentList;
+										
+										/* app.DataTable.dtContainer = '#dataTable';
+										app.DataTable.dataHeader = response;
+										app.DataTable.data = componentList;
+										
+										$('.paginator').removeData('twbs-pagination'); //reconstructing the paginator
+										
+										app.DataTable.init(); */
+										
+										var dtTable = new app.DataTable();
+										dtTable.setDataHeader(response);
+										dtTable.setData(componentList);
+										
+										$('.paginator').removeData('twbs-pagination'); //reconstructing the paginator
+										
+										dtTable.init();
+									}
+									
+									
+									$("#search-result-panel").removeClass('hidden');
+																	
+								}).complete(function(){
+									
+									$('.overlay_pageLoading').addClass('hidden');
+									$('.select-all').prop('checked',false);
+								});
+								
+						}
+						
 					}
+					
+					
 				});
 				
 				
@@ -915,24 +1000,15 @@ var app = app || {};
 					
 					if($('.item-check:checked').length < 1){
 						$('#error-massege').html("Please select atleast one item.");
-						$('#errorBox').dialog({
-						   autoOpen: true, 
-						   modal: true,
-						   resizable: false,
-						   title : 'Split Grouping',
-						   dialogClass: "dlg-custom",
-						   buttons: {
-							  OK: function() {$(this).dialog("close");}
-						   },
-						});
+						$('#errorBox').dialog('open');
+					}else if(!$('input[name="defaultColor"]:enabled:checked').length){
+						$('#error-massege').html("Please select default component.");
+						$('#errorBox').dialog('open');					
 					}else{
 						$('#dlgGroupCreate').dialog('open');
 					}
 					
-					/*$('.item-check').each(function(){
-						$(this).val();
-						
-					})*/
+					
 					
 					
 				})

@@ -6,7 +6,6 @@ import java.util.Date;
 
 import org.apache.log4j.Logger;
 
-import com.belk.pep.controller.GroupingController;
 
 /**
  * The Class DateUtil.
@@ -28,7 +27,7 @@ public class DateUtil {
      */
     public static Date stringToDate(final String sDate) throws ParseException {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-       // String dateInString = "07/06/2013";
+       // Date Format is  "07/06/2013".
         Date date = new Date();
         try {
             date = formatter.parse(sDate);
@@ -49,7 +48,7 @@ public class DateUtil {
      */
     public static Date stringToDateMMddyyyy(final String sDate) throws ParseException {
         SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
-       // String dateInString = "07/06/2013";
+       // Date format is "07/06/2013".
         Date date = new Date();
         try {
             date = formatter.parse(sDate);
@@ -71,7 +70,7 @@ public class DateUtil {
     public static String stringToStringMMddyyyy(final String sDate) throws ParseException {
         SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
         SimpleDateFormat formatter1 = new SimpleDateFormat("yyyy-MM-dd");
-       // String dateInString = "07/06/2013";
+       // Date format is "07/06/2013".
         Date date = new Date();
         String dateSt = "";
         try {
@@ -84,5 +83,22 @@ public class DateUtil {
     }
 	
     
+    /**
+     * Date to String date in MM/dd/yyyy format.
+     * @param sDate the s date
+     * @return the date
+     * @throws ParseException the parse exception
+     * @author AFUPYB3
+     */
+    public static String DateToStringMMddyyyy(final Date sDate) {
+        SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
+        String dateSt = "";
+        try {
+            dateSt = formatter.format(sDate);
+        } catch (Exception e) {
+        	LOGGER.error("Error in DateUtil.stringToStringMMddyyyy() -->" + e.getMessage());
+        }
+        return dateSt;
+    }
 
 }

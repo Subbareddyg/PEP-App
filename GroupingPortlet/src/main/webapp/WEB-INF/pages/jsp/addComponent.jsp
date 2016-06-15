@@ -76,7 +76,7 @@
 					<tr>
 						<td colspan="3">&nbsp;</td>
 						<td align="right">
-							<input type="button" value="Cancel" class="btn" id="cancel-edit-header"/>
+							<input type="button" value="Cancel" class="btn" id="cancel-edit-header" style="visibility:hidden" disabled="disabled"/>
 							<input type="button" value="Edit" class="btn"  id="edit-header"/>
 						</td>
 					</tr>
@@ -92,7 +92,7 @@
 	
 	<div class="x-panel-body">
 		<div class="group-search-area">
-			<form name="frmComponentSearch" id="frmComponentSearch" action="">
+			<form name="frmComponentSearch" id="frmComponentSearch" action="" class="<c:out value="${groupDetailsForm.groupType}" />-group-validation">
 			<input type="hidden" name="groupType" value=" <c:out value="${groupDetailsForm.groupType}" /> " id="groupType" >
 			<input type="hidden" name="groupId" value=" <c:out value="${groupDetailsForm.groupId}" /> " id="groupId" >
 			<input type="hidden" name="styleOrinNo" value="" id="styleOrinNo" >
@@ -184,15 +184,17 @@
 				</div>
 			</div>
 			<div class="clearfix"></div>
-			<c:if test="${groupDetailsForm.groupType == 'CPG'}">
-				<%@ include file="/WEB-INF/pages/jsp/CPGTemplate.jsp" %>
-			</c:if>
-			<c:if test="${groupDetailsForm.groupType == 'SCG'}">
-				<%@ include file="/WEB-INF/pages/jsp/splitColorTemplate.jsp" %>
-			</c:if>
-			<c:if test="${groupDetailsForm.groupType == 'SSG'}">
-				<%@ include file="/WEB-INF/pages/jsp/splitSKUTemplate.jsp" %>
-			</c:if>			
+			<c:choose>
+				<c:when test="${groupDetailsForm.groupType == 'CPG'}">
+				  <%@ include file="/WEB-INF/pages/jsp/CPGTemplate.jsp" %>
+				</c:when>
+				<c:when test="${groupDetailsForm.groupType == 'SCG'}">
+				  <%@ include file="/WEB-INF/pages/jsp/splitColorTemplate.jsp" %>
+				</c:when>
+				<c:when test="${groupDetailsForm.groupType == 'SSG'}">
+				  <%@ include file="/WEB-INF/pages/jsp/splitSKUTemplate.jsp" %>
+				</c:when>
+			</c:choose>			
 			<div class="pagination-container">
 				<div class="pagination-left">
 					<div class="pagination-left-wrapper">
@@ -246,29 +248,21 @@
 				</div>
 			</div>
 			<div class="clearfix"></div>
-			<c:if test="${groupDetailsForm.groupType == 'CPG'}">
-				<%@ include file="/WEB-INF/pages/jsp/CPGExisting.jsp" %>
-			</c:if>
-			<c:if test="${groupDetailsForm.groupType == 'SCG'}">
-				<%@ include file="/WEB-INF/pages/jsp/splitColorExisting.jsp" %>
-			</c:if>
-			<c:if test="${groupDetailsForm.groupType == 'SSG'}">
-				<%@ include file="/WEB-INF/pages/jsp/splitSKUExisting.jsp" %>
-			</c:if>
+			<c:choose>
+				<c:when test="${groupDetailsForm.groupType == 'CPG'}">
+				  <%@ include file="/WEB-INF/pages/jsp/CPGExisting.jsp" %>
+				</c:when>
+				<c:when test="${groupDetailsForm.groupType == 'SCG'}">
+				  <%@ include file="/WEB-INF/pages/jsp/splitColorExisting.jsp" %>
+				</c:when>
+				<c:when test="${groupDetailsForm.groupType == 'SSG'}">
+				 <%@ include file="/WEB-INF/pages/jsp/splitSKUExisting.jsp" %>
+				</c:when>
+			</c:choose>
 			<div class="pagination-container">
 				<div class="pagination-left">
 					<div class="pagination-left-wrapper">
 						<input type="button" class="btn" value="Remove Component" style="width: 140px; opacity:0.5" id="remove-existing-group" disabled="disabled" /> 
-						<!--
-						<br> <br>
-						<label for="page-limit-2">Show: </label>
-						<select name="page-limit-2" id="page-limit-2" class="record-limit">
-							<option value="10">10</option>
-							<option value="50">50</option>
-							<option value="100">100</option>
-						</select>
-						<span class="pagination-text"></span>
-						-->
 					</div>
 				</div>
 				<div class="pagination-right">
@@ -277,7 +271,7 @@
 				<div class="clearfix"></div>
 			</div>
 			<div class="pagination-container" style="text-align:center; margin-top: 15px;">
-				<input type="button" class="btn" value="Save" style="width: 70px;" id="save-existing-group" />
+				<input type="button" class="btn" value="Save" style="width: 70px;" id="save-existing-group" disabled="disabled" />
 				<input type="button" class="btn" value="Close" style="width: 80px;" id="close-existing-group" onclick="window.location.href='/wps/portal/home/Grouping'" />
 			</div>
 		</div>
@@ -424,7 +418,7 @@
 	app.URLFactory.urlCollection.existingCompUrl = "${getExistGrpComponentURL}";
 	app.URLFactory.urlCollection.splitComponentSearchUrl = "${getNewGrpComponentURL}";
 	app.URLFactory.urlCollection.addComponentToGroup = "${addComponentToGroupURL}";
-	app.GroupLandingApp.urlCollection.groupSearchUrl = "${searchGroupResourceRequest}";
+	app.URLFactory.urlCollection.groupSearchUrl = "${searchGroupResourceRequest}";
 	
 	app.URLFactory.urlCollection.saveHeader = "${editGroupURL}";
 	//init main SPA

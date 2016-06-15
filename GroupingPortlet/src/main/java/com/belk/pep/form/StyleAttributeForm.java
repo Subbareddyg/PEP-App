@@ -6,21 +6,25 @@ import java.util.List;
 
 
 /**
- * This class is used to save the Group Header data as a Form data
+ * This class is used to save the Group Header data as a Form data.
  * @author AFUPYB3
  *
  */
 public class StyleAttributeForm {
     @SuppressWarnings("unused")
 	private static final long serialVersionUID = 1L;
+    // Style Attribute Form holds the Style level data for displaying in WL Display.
     
-
+    // orinNumber is mapped to MDMID.
     private String orinNumber;
+    //StyleNumber is mapped to PRIMARYSUPPLIERVPN.
     private String styleNumber;
+    // Below parameters are shredded from XML.
     private String prodName;
     private String colorCode;
     private String colorName;
     private String size;
+    //Mapped to EXIST_IN_GROUP in ADSE_PET_CATALOG
     private String isAlreadyInGroup;
     private String isAlreadyInSameGroup;
     private String isDefault;
@@ -31,6 +35,7 @@ public class StyleAttributeForm {
     private String componentStyleId;  
     private String classId;    
     private List <GroupAttributeForm> groupAttributeFormList;
+    
 	/**
 	 * @return the orinNumber
 	 */

@@ -4,7 +4,7 @@ package com.belk.pep.dto;
 
 
 /**
- * This class is used to save the Group Header data as a Form data
+ * This class is used to save the Group Header data as a Form data.
  * @author AFUPYB3
  *
  */
@@ -12,13 +12,18 @@ public class GroupAttributeDTO {
     @SuppressWarnings("unused")
 	private static final long serialVersionUID = 1L;
     
+    // Orin Number
     private String orinNumber;
     private String styleNumber;
+    //XML SHredding
     private String prodName;
+    //Color Code
     private String colorCode;
     private String colorName;
     private String size;
+    // Already In Group
     private String isAlreadyInGroup;
+    // Is default
     private String isDefault;
     /**
      * @return the orinNumber

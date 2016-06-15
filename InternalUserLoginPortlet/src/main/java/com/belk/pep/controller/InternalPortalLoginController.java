@@ -182,7 +182,7 @@ public class InternalPortalLoginController implements Controller {
 		response.setRenderParameter(InternalPortalConstants.ERR_MSG, errorMsg);	
 		response.setRenderParameter(InternalPortalConstants.USER_NAME, userID);					
 		response.setRenderParameter(InternalPortalConstants.PASSWORD, password);
-		LOGGER.info("End of Method :USERID"+userID+" PASSWORD:"+password);	 	        			
+			 	        			
 	}
 
 	/* (non-Javadoc)

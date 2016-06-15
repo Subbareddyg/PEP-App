@@ -5,11 +5,19 @@ var app = app || {} ;
 	
 		app.EditComponentLandingApp = {
 			
-			urlCollection : {existingCompUrl : '', groupType : ''},
+			//urlCollection : {existingCompUrl : '', groupType : ''},
 			
 			searchValue : [],
 			
-			loadExitingData : function(){
+			htmlentitiesEncode: function(str){
+				return str.replace(/&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;").replace(/"/g, "&quot;").replace(/'/g, '&#039');
+			},
+			
+			htmlentitiesDecode: function(str){
+				return str.replace(/&amp;/g, "&;").replace(/&gt;/g, ">").replace(/&lt;/g, "<").replace(/&quot;/g, '"').replace(/&#039/g, "'");
+			},
+			
+			loadExitingData : function(attachHandlers){
 				var _super = this;
 				app.GroupFactory.fetchExistingComponents({groupType: $('#groupType').val(), groupId: $('#groupId').val()})			
 				.done(function(result){
@@ -47,8 +55,12 @@ var app = app || {} ;
 						}
 					}).complete(function(){
 						$('.overlay_pageLoading').addClass('hidden');
-						_super.searchFormValidate($('#groupType').val().trim());
-						_super.handleEvent();
+						
+						if(attachHandlers === undefined || attachHandlers === true){ // params to handle delegates
+							_super.searchFormValidate($('#groupType').val().trim());
+							_super.handleEvent();	
+						}
+							
 					});
 					
 					
@@ -81,15 +93,22 @@ var app = app || {} ;
 						
 						try{
 							// AFUPYB3: added groupId as Param
-							app.GroupFactory.addNewSplitComponent($('#selectedComponentForm').serialize() 
-								+ '&groupType=' + $('#groupType').val()+ '&groupId=' + $('#groupId').val())
-								.done(function(result){
-									
+							var serializedData = $('#selectedComponentForm').serialize() 
+								+ '&groupType=' + $('#groupType').val()+ '&groupId=' + $('#groupId').val();
+							
+							//sending and asigning few group type specific values	
+							if($('#groupType').val().trim() == 'CPG'){
+								//console.log(_super.searchValue.classId);
+								serializedData += '&classId=' + _super.searchValue.classId;
+							}
+								
+							app.GroupFactory.addNewSplitComponent(serializedData) //sending and asigning few group type specific values
+								.done(function(result){									
 									var resultJSON = $.parseJSON(result);
 									
 									app.GroupLandingApp.handleGroupCreationResponse(resultJSON, resultJSON.groupType, false);
 									
-									_super.loadExitingData();
+									_super.loadExitingData(false);
 									
 									$('#search-components').trigger('submit');
 									
@@ -117,8 +136,52 @@ var app = app || {} ;
 				});
 					
 				var editAjaxReq = null;
-				$('#edit-header').on('click', function(e){			
-					if(!$(this).hasClass('save')){
+				
+				$('#edit-header').on('click', function(e){
+					
+					if($(this).hasClass('save')){
+						if(!$('#fromHeaderEdit')[0].checkValidity()){
+							$(this).attr('type', 'submit');
+							$(this).click();
+						}else{
+							$(this).attr('type', 'button');
+							$(this).val('Saving..').css({opacity: 0.5});
+							editAjaxReq = app.GroupFactory.updateHeader($('#fromHeaderEdit').serialize())
+								.done(function(result){
+									//console.log(result);
+									if(!result.length){
+										$('#group-header-message-area').html(app.GroupLandingApp.buildMessage('Error in updating group header details', 'error'))
+											.fadeIn('slow');
+											return;
+									}
+									var response = result.length ? $.parseJSON(result): {};
+									var message = '';
+									
+									if(response.status){
+										if(response.status == 'SUCCESS'){
+											message = app.GroupLandingApp.buildMessage(response.description ? response.description : 'Update Success', 'success');
+										}else{
+											message= app.GroupLandingApp.buildMessage(response.description ? response.description : 'Update Error', 'success');
+										}
+									}
+									
+									$('#group-header-message-area').html(message);
+									
+									app.GroupLandingApp.cleanupMessage($('#group-header-message-area'));
+									
+									$('#cancel-edit-header').trigger('save.success');
+									
+								}).error(function(jqXHR, textStatus, errorThrown){
+									$('#group-header-message-area').html(
+										app.GroupLandingApp.buildMessage(jqXHR.status + ' - ' +  textStatus + ' -' + errorThrown, 'error')
+									);
+									
+									app.GroupLandingApp.cleanupMessage($('#group-header-message-area'));
+								}).complete(function(){
+									$('#edit-header').val('Edit').css({opacity: 1});
+								});
+						}
+					}else{
 						$('.editable').each(function(){
 							
 							var required = $(this).data('required') || false; 
@@ -172,7 +235,9 @@ var app = app || {} ;
 								break;
 						
 								case 'text':
-									var elm ='<input type="text" data-original-value="' + $(this).text() + '" id="' + $(this).data('field-name') 
+									var txt = _super.htmlentitiesEncode($(this).text());
+									
+									var elm ='<input type="text" data-original-value="' + txt + '" id="' + $(this).data('field-name') 
 										+ '" name="' + $(this).data('field-name') + '" value="' + $(this).text() + '"';
 									
 									if(!!required){
@@ -186,7 +251,10 @@ var app = app || {} ;
 									$(this).html(elm);
 									break;
 								case 'textarea':
-									var elm = '<textarea type="text" data-original-value="' + $(this).text() + '" id="' + $(this).data('field-name') 
+									//changing text and sanitizing with replacable html entities
+									var txt = _super.htmlentitiesEncode($(this).text());
+									
+									var elm = '<textarea type="text" data-original-value="' + txt + '" id="' + $(this).data('field-name') 
 										+ '" name="' + $(this).data('field-name') + '"';
 									
 									if(!!required){
@@ -198,62 +266,20 @@ var app = app || {} ;
 							}
 							
 							var curChars = $('#groupName').val() || '';
+							var curCharsText = $('#groupDesc').val() || '';
 							
 							$('#nameCurChars').text(curChars.length);
+							
+							$('#descCurChars').text(curCharsText.length);
+							
+							
 						});
 						
 						//enabling cancel button
 						$('.maxChars').show();
-						$('#cancel-edit-header').show();
+						$('#cancel-edit-header').prop('disabled',false).css('visibility','visible');
 						$(this).val('Save').addClass('save');
-					}else{
-						if(!$('#fromHeaderEdit')[0].checkValidity()){
-							$(this).attr('type', 'submit');
-							$(this).click();
-						}else{
-							$(this).attr('type', 'button');
-							$(this).val('Saving..').css({opacity: 0.5});
-							editAjaxReq = app.GroupFactory.updateHeader($('#fromHeaderEdit').serialize())
-								.done(function(result){
-									//console.log(result);
-									if(!result.length){
-										$('#group-header-message-area').html(app.GroupLandingApp.buildMessage('Error in updating group header details', 'error'))
-											.fadeIn('slow');
-											return;
-									}
-									var response = result.length ? $.parseJSON(result): {};
-									var message = '';
-									
-									if(response.status){
-										if(response.status == 'SUCCESS'){
-											message = app.GroupLandingApp.buildMessage(response.description ? response.description : 'Update Success', 'success');
-										}else{
-											message= app.GroupLandingApp.buildMessage(response.description ? response.description : 'Update Error', 'success');
-										}
-									}
-									
-									$('#group-header-message-area').html(message);
-									
-									app.GroupLandingApp.cleanupMessage($('#group-header-message-area'));
-									
-									$('#cancel-edit-header').trigger('save.success');
-									
-								}).error(function(jqXHR, textStatus, errorThrown){
-									$('#group-header-message-area').html(
-										app.GroupLandingApp.buildMessage(jqXHR.status + ' - ' +  textStatus + ' -' + errorThrown, 'error')
-									);
-									
-									app.GroupLandingApp.cleanupMessage($('#group-header-message-area'));
-								}).complete(function(){
-									$('#edit-header').val('Edit').css({opacity: 1});
-								});
-						}
-						
-					}
-					
-					
-					
-					
+					}	
 				});
 				
 				$('#cancel-edit-header').on('click', function(e){
@@ -263,8 +289,8 @@ var app = app || {} ;
 					} */
 					$('.editable').each(function(){
 						var data = $(this).find('input, textarea').data('original-value');
-						if(data)
-							$(this).text(data);
+						
+						$(this).text(_super.htmlentitiesDecode(data));
 						
 						
 						$('span.red-text').remove();
@@ -272,7 +298,7 @@ var app = app || {} ;
 					});
 					//enabling cancel button
 					$('#edit-header').val('Edit').removeClass('save').css({opacity: 1});
-					$(this).hide();
+					$(this).prop('disabled',true).css('visibility','hidden');
 					$('.maxChars').hide();
 				});
 				
@@ -283,8 +309,7 @@ var app = app || {} ;
 					} */
 					$('.editable').each(function(){
 						var data = $(this).find('input, textarea').val();
-						if(data)
-							$(this).text(data);
+						$(this).text(data);
 						
 						
 						$('span.red-text').remove();
@@ -292,7 +317,7 @@ var app = app || {} ;
 					});
 					//enabling cancel button
 					$('#edit-header').val('Edit').removeClass('save').css({opacity: 1});
-					$(this).hide();
+					$(this).prop('disabled',true).css('visibility','hidden');
 					$('.maxChars').hide();
 				});
 				
@@ -362,14 +387,30 @@ var app = app || {} ;
 				break;
 				
 				}
+				$('#styleOrinNoShowOnly').bind('putIt',function(e){ 
+					_super.putValue(); 
+				})
 				
 				$('#styleOrinNoShowOnly').on('keyup',function(e){
-					_super.putValue();				
+					_super.putValue();
+					
+					if(e.keyCode == 13){
+						$(this).trigger('putIt');
+					}
+				});
+				
+				$('#styleOrinNoShowOnly').on('keydown',function(e){
+					_super.putValue();
+					
+					if(e.keyCode == 13){
+						$(this).trigger('putIt');
+					}
 				});
 				
 				$('#styleOrinNoShowOnly').on('blur',function(){
 					_super.putValue();
 				});
+				
 				
 
 

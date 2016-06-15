@@ -1,7 +1,7 @@
 package com.belk.pep.dto;
 
 /**
- * Class to hold the class details retrieved from database
+ * Class to hold the class details retrieved from database.
  * 
  * Class added For PIM Phase 2 - Group Search 
  * Date: 05/25/2016

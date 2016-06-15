@@ -64,19 +64,14 @@
 					_super.$(this).removeClass('parent-node-collapse').addClass('parent-node-expand');
 			});
 			
-			//handler to select all the items
-			
-			
+			//handler to select all the items						
 			_super.$(this.config.dtContainer).on('click', '.select-all', function(e){
 				
-				if(_super.$(this).is(':checked')){
-					
-					console.log(_super.$(_super.config.dtContainer) + ' .item-check');
-					
-					_super.$(_super.config.dtContainer).find('.item-check').prop('checked', true);
+				if(_super.$(this).is(':checked')){				
+					_super.$(_super.config.dtContainer).find('.item-check:enabled').prop('checked', true);
 					_super.$(_super.config.dtContainer).find('input[type="radio"]').prop('disabled', false);
 				}else{
-					_super.$(_super.config.dtContainer).find('.item-check').prop('checked', false);					
+					_super.$(_super.config.dtContainer).find('.item-check:enabled').prop('checked', false);					
 					if(_super.$(_super.config.dtContainer).find('input[type="radio"]').hasClass('trueDefult')){
 						_super.$(_super.config.dtContainer).find('input[type="radio"]').prop('disabled', false);
 					}else{

@@ -398,7 +398,7 @@
 					<input type="hidden" name="groupId" value="{{=row.groupId}}" />
 					<input type="hidden" name="groupType" value="{{=row.groupTypeCode}}" />
 				</form>
-				<a href="javascript:;" onclick="document.getElementById('form_{{=row.groupId}}_{{=key}}').submit()" class="gs-item-details" data-id="{{=row.groupId}}">Details</a> | <a href="javascript:;" class="delete-item" data-group-type="{{=row.groupTypeCode}}" data-group-id="{{=row.groupId}}">Delete</a></td>
+				<a href="javascript:;" onclick="document.getElementById('form_{{=row.groupId}}_{{=key}}').submit()" class="gs-item-details" data-id="{{=row.groupId}}">Details</a> <c:if test="${readonly !='yes'}"> | <a href="javascript:;" class="delete-item" data-group-type="{{=row.groupTypeCode}}" data-group-id="{{=row.groupId}}">Delete</a></c:if></td>
 		</tr>
 		{{ if(row.childList && row.childList.length){ }}
 			</tr>
@@ -421,7 +421,7 @@
 							<input type="hidden" name="groupId" value="{{=childRow.groupId}}" />
 							<input type="hidden" name="groupType" value="{{=childRow.groupTypeCode}}" />
 						</form>
-						<a href="javascript:;" onclick="document.getElementById('form_{{=childRow.groupId}}_{{=childKey}}').submit()" class="gs-item-details" data-id="{{=row.groupId}}">Details</a> | <a href="javascript:;" class="delete-item" data-group-type="{{=childRow.groupTypeCode}}" data-group-id="{{=childRow.groupId}}">Delete</a>
+						<a href="javascript:;" onclick="document.getElementById('form_{{=childRow.groupId}}_{{=childKey}}').submit()" class="gs-item-details" data-id="{{=row.groupId}}">Details</a> <c:if test="${readonly !='yes'}">| <a href="javascript:;" class="delete-item" data-group-type="{{=childRow.groupTypeCode}}" data-group-id="{{=childRow.groupId}}">Delete</a></c:if>
 					</td>
 				</tr>
 			{{ }) }}
@@ -441,16 +441,17 @@
 </script>
 <script type="text/javascript" src="<%=response.encodeURL(request.getContextPath()+"/js/underscore-min.js")%>"></script>
 <script type="text/javascript" src="<%=response.encodeURL(request.getContextPath()+"/js/jquery.twbsPagination.min.js")%>"></script>
+<script type="text/javascript" src="<%=response.encodeURL(request.getContextPath()+"/js/URLFactory.js")%>"></script>
 <script type="text/javascript" src="<%=response.encodeURL(request.getContextPath()+"/js/DataTableAjax.js")%>"></script>
 <script type="text/javascript" src="<%=response.encodeURL(request.getContextPath()+"/js/grouping.js")%>"></script>
 <script type="text/javascript" src="<%=response.encodeURL(request.getContextPath()+"/js/GroupFactory.js")%>"></script>
 <script>
-	app.GroupLandingApp.urlCollection.SCGUrl = "${splitColorGroupingSubmit}";
-	app.GroupLandingApp.urlCollection.SSGUrl = "${splitSKUGroupingSubmit}";
-	app.GroupLandingApp.urlCollection.groupSearchUrl = "${searchGroupResourceRequest}";
-	app.GroupLandingApp.urlCollection.createGroupUrl = "${createGroupFormSubmitURL}";
-	app.GroupLandingApp.urlCollection.addComponentUrl = "${createGrpRenderUrl}";
-	app.GroupLandingApp.urlCollection.deleteGroupUrl = "${deleteGroupResourceRequest}";
+	app.URLFactory.urlCollection.SCGUrl = "${splitColorGroupingSubmit}";
+	app.URLFactory.urlCollection.SSGUrl = "${splitSKUGroupingSubmit}";
+	app.URLFactory.urlCollection.groupSearchUrl = "${searchGroupResourceRequest}";
+	app.URLFactory.urlCollection.createGroupUrl = "${createGroupFormSubmitURL}";
+	app.URLFactory.urlCollection.addComponentUrl = "${createGrpRenderUrl}";
+	app.URLFactory.urlCollection.deleteGroupUrl = "${deleteGroupResourceRequest}";
 	
 	//init main SPA
 	app.GroupLandingApp.init();

@@ -6,7 +6,7 @@ import java.util.List;
 
 
 /**
- * This class is used to save the Group Header data as a Form data
+ * This class is used to save the Group Header data as a Form data.
  * @author AFUPYB3
  *
  */
@@ -14,9 +14,8 @@ public class CreateGroupForm {
     @SuppressWarnings("unused")
 	private static final long serialVersionUID = 1L;
     
-//    private List <String> pageNumberList;
     
-    
+    //Group ID
     private String groupId;
     private String groupName;
     private String groupType;
@@ -24,17 +23,20 @@ public class CreateGroupForm {
     private String groupLaunchDate;
     private String endDate;
     private String groupStatus;
+    //XML SHredding required
     private String groupTypeDesc;
     private String groupStatusDesc;
     private String carsGroupType;
-    /** User role**/
+    /** User role.**/
     private String roleEditable;
+    // Read only No by default
     private String readOnlyUser="no";
     private String roleName;
-    
+    // Success or Failure Message
     private String groupCretionMsg;
     private String groupCreationStatus;
     
+    // List fo GroupAttribute Form
     private List <GroupAttributeForm> groupAttributeFormList;
     
     /**
