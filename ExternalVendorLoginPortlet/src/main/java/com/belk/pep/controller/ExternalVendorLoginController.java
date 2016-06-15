@@ -30,6 +30,7 @@ import com.belk.pep.common.userdata.UserData;
 import com.belk.pep.constants.ExternalVendorLoginConstants;
 import com.belk.pep.util.AESEncryptDecrypt;
 import com.belk.pep.util.PropertiesFileLoader;
+import com.belk.pep.util.PropertyLoader;
 import com.belk.pep.util.SimpleBase64Encoder;
 
 
@@ -66,7 +67,8 @@ public class ExternalVendorLoginController implements Controller {
             //Redirection to Forgot password page
             handlePasswordresetRedirection(request,response);
             //Handle Password reset Action            
-            Properties prop = PropertiesFileLoader.getExternalLoginProperties();            
+            // Properties prop = PropertiesFileLoader.getExternalLoginProperties();
+            Properties prop = PropertyLoader.getPropertyLoader(ExternalVendorLoginConstants.VENDOR_LOGIN_PROPERTIES_FILE_NAME);
             
             
             handlePasswordResetAction(request,response,userName,password,prop);
