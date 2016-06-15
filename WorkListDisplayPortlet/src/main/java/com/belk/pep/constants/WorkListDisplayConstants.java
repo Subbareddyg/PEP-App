@@ -264,7 +264,7 @@ public static final String RESPONSE_100 = "100";
 public static final String RESPONSE_101 = "101";
 public static final String NOT = "not";
 public static final String MAY_BE = "may be";
-public static final String FAILED = "failed";
+public static final String FAILED = "fail";
 public static final String METHOD_POST = "POST";
 public static final String CONTENT_TYPE = "Content-Type";
 public static final String APPLICATION_JSON = "application/json";
@@ -336,5 +336,11 @@ public static final String OMNICHANNELINDICATOR = "OMNICHANNELINDICATOR";
 public static final String COMMA = ",";
 public static final String TOTAL_COUNT = "TOTAL_COUNT";
 public static final String ORIN_NUM = "orinNum";
-
+public static final String WAITING_TO_BE_CLOSED = "Waiting_To_Be_Closed";
+public static final String CLOSED = "Closed";
+public static final String PUBLISH_TO_WEB = "Publish_To_Web";
+public static final String COMPLETED = "Completed";
+public static final String REACTIVATED = "Reactivated";
+public static final String INITIATED = "Initiated";
+public static final String COLON = ":";
 }

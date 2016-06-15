@@ -3713,7 +3713,12 @@ public String getAdvWorkListDisplayDataForParent(AdvanceSearch advSearch) {
         getGroupDetailsQueryWorkList.append("   ASCT.SUPPLIER_NAME SUPPLIER_NAME,                      ");
         getGroupDetailsQueryWorkList.append("   GRP.GROUP_NAME,                                        ");
         getGroupDetailsQueryWorkList.append("   GRP.ENTRY_TYPE,                                        ");
-        getGroupDetailsQueryWorkList.append("   PET_STATE.THEVALUE GROUP_OVERALL_STATUS_CODE,      ");
+        getGroupDetailsQueryWorkList.append("   CASE PET_STATE.THEVALUE            ");
+        getGroupDetailsQueryWorkList.append("   WHEN 'Waiting_To_Be_Closed' THEN 'Completed'            ");
+        getGroupDetailsQueryWorkList.append("   WHEN 'Reactivated' THEN 'Initiated'                     "); 
+        getGroupDetailsQueryWorkList.append("   WHEN 'Closed' THEN 'Completed'                          ");
+        getGroupDetailsQueryWorkList.append("   WHEN 'Publish_To_Web' THEN 'Completed'                  ");
+        getGroupDetailsQueryWorkList.append("   ELSE PET_STATE.THEVALUE END GROUP_OVERALL_STATUS_CODE,  ");
         getGroupDetailsQueryWorkList.append("   IMAGE_STATE.THEVALUE IMAGE_STATE,               ");
         getGroupDetailsQueryWorkList.append("   CONTENT_STATE.THEVALUE CONTENT_STATE,           ");
         getGroupDetailsQueryWorkList.append("   GRP.COMPLETION_DATE,                                   ");
@@ -3789,7 +3794,7 @@ public String getAdvWorkListDisplayDataForParent(AdvanceSearch advSearch) {
                     + sortingOrder);
         } else if (sortColumn != null
                 && sortColumn.equals("petStatus")) {
-            getGroupDetailsQueryWorkList.append(" ORDER BY PET_STATE.THEVALUE "
+            getGroupDetailsQueryWorkList.append(" ORDER BY GROUP_OVERALL_STATUS_CODE "
                         + sortingOrder);
         } else if (sortColumn != null
                 && sortColumn.equals("completionDate")) {

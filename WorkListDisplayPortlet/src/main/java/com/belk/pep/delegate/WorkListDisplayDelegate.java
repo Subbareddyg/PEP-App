@@ -245,10 +245,8 @@ public class WorkListDisplayDelegate {
                     styleOrinList.add(styleOrin);
                 }
             }
-            if(styleOrinList.size() > 0)
-            {
-                workflowList = workListDisplayService.getAdvWorklistGroupingData(adSearch, supplierIdList, vendorEmail, styleOrinList);
-            }
+            workflowList = workListDisplayService.getAdvWorklistGroupingData(adSearch, supplierIdList, vendorEmail, styleOrinList);
+            
             LOGGER.info("List 2 size: " + workflowList.size());
             styleWorkflowList.addAll(workflowList);
             workflowList = styleWorkflowList;

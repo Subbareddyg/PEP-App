@@ -987,127 +987,128 @@ public List<WorkFlow> getAdvWorklistGroupingData(AdvanceSearch adSearch,
             LOGGER.info("Service URL:--- " + serviceURL);
 
             System.out.println("ServiceURL:---- " + serviceURL);
-
-            URL targetURL = new URL(serviceURL);
-             httpConnection =
-                (HttpURLConnection) targetURL.openConnection();
-            httpConnection.setDoOutput(true);
-            httpConnection
-                .setRequestMethod(WorkListDisplayConstants.METHOD_POST);
-            httpConnection.setRequestProperty(
-                WorkListDisplayConstants.CONTENT_TYPE,
-                WorkListDisplayConstants.APPLICATION_JSON);
-
-            LOGGER.info("callInactivategroupService jsonArray:-- "
-                + jsonArray.toString());
-
-            JSONObject jsonMap = new JSONObject();
-
-            String input = jsonArray.get(0).toString();
-
-            LOGGER.info("final obejct in JSON:-- " + input);
-
-            OutputStream outputStream = httpConnection.getOutputStream();
-            outputStream.write(input.getBytes());
-            outputStream.flush();
-            BufferedReader responseReader =
-                new BufferedReader(new InputStreamReader(
-                    httpConnection.getInputStream()));
-            String output;
-
-            LOGGER.info("response reader line::::::: "
-                + responseReader.readLine());
-            System.out.println("Output:-------- " + responseReader.readLine());
-            while ((output = responseReader.readLine()) != null) {
-                LOGGER.info(output);
-                LOGGER.info("output for deactivating group:::::: " + output);
-                // Handling Single Row Data
-                if (jsonArray != null && jsonArray.length() <= 1) {
-                    LOGGER.info("Single Row");
-
-                    if (output != null
-                        && (output.contains(WorkListDisplayConstants.NOT) || output
-                            .contains(WorkListDisplayConstants.MAY_BE))
-                        && (output.indexOf(WorkListDisplayConstants.NOT) != -1 || output
-                            .indexOf(WorkListDisplayConstants.MAY_BE) != -1)) {
-                        responseMsg =
-                            WorkListDisplayConstants.ACTIVATE_OR_INACTIVATE_SERVICE_FAILURE;
-                        LOGGER.info("responseMsg::failure::::: "
-                            + responseMsg);
-                    }
-                    else {
-                        responseMsg =
-                            WorkListDisplayConstants.ACTIVATE_OR_INACTIVATE_SERVICE_SUCCESS;
-                        LOGGER.info("responseMsg:::Success::::  "
-                            + responseMsg);
-                    }
-                }
-                else {
-                    // Multiple Row Data
-
-                    JsonElement jElement = new JsonParser().parse(output);
-                    JsonObject jObject = jElement.getAsJsonObject();
-                    JsonArray jsonObject =
-                        (JsonArray) jObject
-                            .get(WorkListDisplayConstants.ACTIVATE_OR_INACTIVATE_SERVICE_LIST);
-
-                    for (int i = 0; i < jsonObject.size(); i++) {
-                        if (jsonObject.size() == 1) {
-                            LOGGER.info("Multiple One");
-                            JsonObject individualJson =
-                                jsonObject.getAsJsonObject();
-                            Object msgCode =
-                                individualJson
-                                    .get(WorkListDisplayConstants.MSG_CODE);
-                            LOGGER.info("Messgafe code-->  "
-                                + msgCode.toString());
-                            msgCodeStr = msgCode.toString();
-                            msgCodeStr =
-                                msgCodeStr
-                                    .substring(1, msgCodeStr.length() - 1);
+            for(int count = 0; count<jsonArray.length(); count++)
+            {
+                URL targetURL = new URL(serviceURL);
+                 httpConnection =
+                    (HttpURLConnection) targetURL.openConnection();
+                httpConnection.setDoOutput(true);
+                httpConnection
+                    .setRequestMethod(WorkListDisplayConstants.METHOD_POST);
+                httpConnection.setRequestProperty(
+                    WorkListDisplayConstants.CONTENT_TYPE,
+                    WorkListDisplayConstants.APPLICATION_JSON);
+    
+                LOGGER.info("callInactivategroupService jsonArray:-- "
+                    + jsonArray.toString());
+    
+                JSONObject jsonMap = new JSONObject();
+            
+                String input = jsonArray.get(count).toString();
+    
+                LOGGER.info("final obejct in JSON:-- " + input);
+    
+                OutputStream outputStream = httpConnection.getOutputStream();
+                outputStream.write(input.getBytes());
+                outputStream.flush();
+                BufferedReader responseReader =
+                    new BufferedReader(new InputStreamReader(
+                        httpConnection.getInputStream()));
+                String output;
+    
+                LOGGER.info("response reader line::::::: "
+                    + responseReader.readLine());
+                while ((output = responseReader.readLine()) != null) {
+                    LOGGER.info(output);
+                    LOGGER.info("output for deactivating group:::::: " + output);
+                    // Handling Single Row Data
+                    /*if (jsonArray != null && jsonArray.length() <= 1) {
+                        LOGGER.info("Single Row");*/
+    
+                        if (output != null
+                            && (output.toLowerCase().contains(WorkListDisplayConstants.NOT) || output
+                                    .toLowerCase().contains(WorkListDisplayConstants.MAY_BE))
+                            && (output.toLowerCase().indexOf(WorkListDisplayConstants.NOT) != -1 || output
+                                    .toLowerCase().indexOf(WorkListDisplayConstants.MAY_BE) != -1)) {
+                            responseMsg =
+                                WorkListDisplayConstants.ACTIVATE_OR_INACTIVATE_SERVICE_FAILURE;
+                            LOGGER.info("responseMsg::failure::::: "
+                                + responseMsg);
                         }
                         else {
-                            LOGGER.info("Multiple Many");
-                            JsonObject individualJson =
-                                jsonObject.get(i).getAsJsonObject();
-                            Object msgCode =
-                                individualJson
-                                    .get(WorkListDisplayConstants.MSG_CODE);
-                            LOGGER.info("Message code--> "
-                                + msgCode.toString());
-                            msgCodeStr = msgCode.toString();
-                            msgCodeStr =
-                                msgCodeStr
-                                    .substring(1, msgCodeStr.length() - 1);
+                            responseMsg =
+                                WorkListDisplayConstants.ACTIVATE_OR_INACTIVATE_SERVICE_SUCCESS;
+                            LOGGER.info("responseMsg:::Success::::  "
+                                + responseMsg);
                         }
-
-                        if (msgCodeStr
-                            .equalsIgnoreCase(WorkListDisplayConstants.SUCCESS_CODE)) {
-                            flag = true;
-                            LOGGER.info("flag:: " + flag
-                                + "msgCodeStr--> " + msgCodeStr);
-                        }
-                        else if (msgCodeStr
-                            .equalsIgnoreCase(WorkListDisplayConstants.FAILURE_CODE)) {
-                            flag = false;
-                            LOGGER.info("flag:: " + flag
-                                + " msgCodeStr--> " + msgCodeStr);
-                        }
-                    }
-                    if (flag) {
-                        responseMsg =
-                            prop.getProperty(WorkListDisplayConstants.ACTIVATE_OR_INACTIVATE_SERVICE_SUCCESS);
-                        responseMsg = responseMsg + "_" + msgCodeStr;
-                        LOGGER.info("response msg--> " + responseMsg);
-                    }
+                   /* }
                     else {
-                        responseMsg =
-                            prop.getProperty(WorkListDisplayConstants.ACTIVATE_OR_INACTIVATE_SERVICE_FAILURE);
-                        responseMsg = responseMsg + "_" + msgCodeStr;
-                        LOGGER.info("responseMsg --> " + responseMsg);
-                    }
+                        // Multiple Row Data
+    
+                        JsonElement jElement = new JsonParser().parse(output);
+                        JsonObject jObject = jElement.getAsJsonObject();
+                        JsonArray jsonObject =
+                            (JsonArray) jObject
+                                .get(WorkListDisplayConstants.ACTIVATE_OR_INACTIVATE_SERVICE_LIST);
+    
+                        for (int i = 0; i < jsonObject.size(); i++) {
+                            if (jsonObject.size() == 1) {
+                                LOGGER.info("Multiple One");
+                                JsonObject individualJson =
+                                    jsonObject.getAsJsonObject();
+                                Object msgCode =
+                                    individualJson
+                                        .get(WorkListDisplayConstants.MSG_CODE);
+                                LOGGER.info("Messgafe code-->  "
+                                    + msgCode.toString());
+                                msgCodeStr = msgCode.toString();
+                                msgCodeStr =
+                                    msgCodeStr
+                                        .substring(1, msgCodeStr.length() - 1);
+                            }
+                            else {
+                                LOGGER.info("Multiple Many");
+                                JsonObject individualJson =
+                                    jsonObject.get(i).getAsJsonObject();
+                                Object msgCode =
+                                    individualJson
+                                        .get(WorkListDisplayConstants.MSG_CODE);
+                                LOGGER.info("Message code--> "
+                                    + msgCode.toString());
+                                msgCodeStr = msgCode.toString();
+                                msgCodeStr =
+                                    msgCodeStr
+                                        .substring(1, msgCodeStr.length() - 1);
+                            }
+    
+                            if (msgCodeStr
+                                .equalsIgnoreCase(WorkListDisplayConstants.SUCCESS_CODE)) {
+                                flag = true;
+                                LOGGER.info("flag:: " + flag
+                                    + "msgCodeStr--> " + msgCodeStr);
+                            }
+                            else if (msgCodeStr
+                                .equalsIgnoreCase(WorkListDisplayConstants.FAILURE_CODE)) {
+                                flag = false;
+                                LOGGER.info("flag:: " + flag
+                                    + " msgCodeStr--> " + msgCodeStr);
+                            }
+                        }
+                        if (flag) {
+                            responseMsg =
+                                prop.getProperty(WorkListDisplayConstants.ACTIVATE_OR_INACTIVATE_SERVICE_SUCCESS);
+                            responseMsg = responseMsg + "_" + msgCodeStr;
+                            LOGGER.info("response msg--> " + responseMsg);
+                        }
+                        else {
+                            responseMsg =
+                                prop.getProperty(WorkListDisplayConstants.ACTIVATE_OR_INACTIVATE_SERVICE_FAILURE);
+                            responseMsg = responseMsg + "_" + msgCodeStr;
+                            LOGGER.info("responseMsg --> " + responseMsg);
+                        }
+                    }*/
+    
                 }
-
             }
 
             
@@ -1165,132 +1166,136 @@ public List<WorkFlow> getAdvWorklistGroupingData(AdvanceSearch adSearch,
             ;
 
             LOGGER.info("Reinitiate Service URL:----- " + serviceUrl);
+            for(int count = 0; count<jsonArray.length(); count++)
+            {
+                URL targetUrl = new URL(serviceUrl);
+                HttpURLConnection httpConnection =
+                    (HttpURLConnection) targetUrl.openConnection();
+                httpConnection.setDoOutput(true);
+                httpConnection.setRequestMethod(WorkListDisplayConstants.METHOD_POST);
+                httpConnection.setRequestProperty(WorkListDisplayConstants.CONTENT_TYPE,
+                    WorkListDisplayConstants.APPLICATION_JSON);
+    
+                LOGGER.info("Reinitiate group Service ... JSONArray...... "
+                    + jsonArray.toString());
 
-            URL targetUrl = new URL(serviceUrl);
-            HttpURLConnection httpConnection =
-                (HttpURLConnection) targetUrl.openConnection();
-            httpConnection.setDoOutput(true);
-            httpConnection.setRequestMethod(WorkListDisplayConstants.METHOD_POST);
-            httpConnection.setRequestProperty(WorkListDisplayConstants.CONTENT_TYPE,
-                WorkListDisplayConstants.APPLICATION_JSON);
-
-            LOGGER.info("Reinitiate group Service ... JSONArray...... "
-                + jsonArray.toString());
-
-            String input = jsonArray.get(0).toString();
-            LOGGER.info("Final Object:-------- " + input);
-
-            OutputStream outputStream = httpConnection.getOutputStream();
-            outputStream.write(input.getBytes());
-            outputStream.flush();
-
-            BufferedReader responseBuffer =
-                new BufferedReader(new InputStreamReader(
-                    httpConnection.getInputStream()));
-            String output;
-
-            while ((output = responseBuffer.readLine()) != null) {
-                LOGGER.info(output);
-
-                if (jsonArray != null && jsonArray.length() <= 1) {
-                    LOGGER.info("Single Request");
-
-                    if ((output != null)
-                        && (output.contains(WorkListDisplayConstants.NOT)
-                            || output.contains(WorkListDisplayConstants.MAY_BE) || output
-                            .contains(WorkListDisplayConstants.FAILED))
-                        && (output.indexOf(WorkListDisplayConstants.NOT) != -1
-                            || output.indexOf(WorkListDisplayConstants.MAY_BE) != -1 || output
-                            .indexOf(WorkListDisplayConstants.FAILED) != -1)) {
-                        singleResponseCode =
-                            WorkListDisplayConstants.RESPONSE_101;
-                        responseMsg =
-                            prop.getProperty(WorkListDisplayConstants.REINITIATE_SERVICE_FAILURE)
-                                + WorkListDisplayConstants.UNDERSCORE
-                                + singleResponseCode;
-                        LOGGER
-                            .info("responseMsg -- failure:;:: " + responseMsg);
-                    }
-                    else {
-                        singleResponseCode =
-                            WorkListDisplayConstants.RESPONSE_100;
-                        responseMsg =
-                            prop.getProperty(WorkListDisplayConstants.REINITIATE_SERVICE_SUCCESS)
-                                + WorkListDisplayConstants.UNDERSCORE
-                                + singleResponseCode;
-                        LOGGER.info("responseMsg -- success::::: "
-                            + responseMsg);
-                    }
-                }
-                else {
-                    LOGGER.info("Multiple Requests");
-                    JsonElement jElement = new JsonParser().parse(output);
-                    JsonObject jObject = jElement.getAsJsonObject();
-                    JsonArray jsonObject =
-                        (JsonArray) jObject
-                            .get(WorkListDisplayConstants.ACTIVATE_OR_INACTIVATE_SERVICE_LIST);
-
-                    for (int i = 0; i < jsonObject.size(); i++) {
-                        if (jsonObject.size() == 1) {
-                            LOGGER.info("Multiple One");
-                            JsonObject individualJson =
-                                jsonObject.getAsJsonObject();
-                            Object msgCode =
-                                individualJson
-                                    .get(WorkListDisplayConstants.MSG_CODE);
-                            msgCodeStr =
-                                msgCode.toString().substring(1,
-                                    msgCode.toString().length() - 1);
+            
+                String input = jsonArray.get(count).toString();
+                LOGGER.info("Final Object:-------- " + input);
+    
+                OutputStream outputStream = httpConnection.getOutputStream();
+                outputStream.write(input.getBytes());
+                outputStream.flush();
+    
+                BufferedReader responseBuffer =
+                    new BufferedReader(new InputStreamReader(
+                        httpConnection.getInputStream()));
+                String output;
+    
+                while ((output = responseBuffer.readLine()) != null) {
+                    LOGGER.info(output);
+    
+                   /* if (jsonArray != null && jsonArray.length() <= 1) {
+                        LOGGER.info("Single Request");*/
+    
+                        if ((output != null)
+                            && (output.toLowerCase().contains(WorkListDisplayConstants.NOT)
+                                || output.toLowerCase().contains(WorkListDisplayConstants.MAY_BE) || output
+                                .toLowerCase().contains(WorkListDisplayConstants.FAILED))
+                            && (output.toLowerCase().indexOf(WorkListDisplayConstants.NOT) != -1
+                                || output.toLowerCase().indexOf(WorkListDisplayConstants.MAY_BE) != -1 || output
+                                .toLowerCase().indexOf(WorkListDisplayConstants.FAILED) != -1)) {
+                            singleResponseCode =
+                                WorkListDisplayConstants.RESPONSE_101;
+                            responseMsg =
+                                prop.getProperty(WorkListDisplayConstants.REINITIATE_SERVICE_FAILURE)
+                                    + WorkListDisplayConstants.UNDERSCORE
+                                    + singleResponseCode;
                             LOGGER
-                                .info("Msg Code String:------- " + msgCodeStr);
+                                .info("responseMsg -- failure:;:: " + responseMsg);
                         }
                         else {
-                            LOGGER.info("Multiple Many");
-                            JsonObject individualJson =
-                                jsonObject.get(i).getAsJsonObject();
-                            Object msgCode =
-                                individualJson
-                                    .get(WorkListDisplayConstants.MSG_CODE);
-                            msgCodeStr =
-                                msgCode.toString().substring(1,
-                                    msgCode.toString().length() - 1);
-                            LOGGER
-                                .info("Msg code String:------- " + msgCodeStr);
+                            singleResponseCode =
+                                WorkListDisplayConstants.RESPONSE_100;
+                            responseMsg =
+                                prop.getProperty(WorkListDisplayConstants.REINITIATE_SERVICE_SUCCESS)
+                                    + WorkListDisplayConstants.UNDERSCORE
+                                    + singleResponseCode;
+                            LOGGER.info("responseMsg -- success::::: "
+                                + responseMsg);
                         }
-
-                        if (msgCodeStr
-                            .equals(WorkListDisplayConstants.SUCCESS_CODE)) {
-                            flag = true;
-                            if (LOGGER.isDebugEnabled()) {
-                                LOGGER.debug("Flag:--- " + flag
-                                    + " msg code string:----- " + msgCodeStr);
-                            }
-                        }
-                        else if (msgCodeStr
-                            .equals(WorkListDisplayConstants.FAILURE_CODE)) {
-                            flag = false;
-                            if (LOGGER.isDebugEnabled()) {
-                                LOGGER.debug("flag:---- " + flag
-                                    + " message code string:----- "
-                                    + msgCodeStr);
-                            }
-                        }
-                    }
-                    if (flag) {
-                        responseMsg =
-                            prop.getProperty(WorkListDisplayConstants.REINITIATE_SERVICE_SUCCESS)
-                                + WorkListDisplayConstants.UNDERSCORE
-                                + msgCodeStr;
-                    }
+                    /*}
                     else {
-                        responseMsg =
-                            prop.getProperty(WorkListDisplayConstants.REINITIATE_SERVICE_FAILURE)
-                                + WorkListDisplayConstants.UNDERSCORE
-                                + msgCodeStr;
-                    }
+                        LOGGER.info("Multiple Requests");
+                        JsonElement jElement = new JsonParser().parse(output);
+                        JsonObject jObject = jElement.getAsJsonObject();
+                        JsonArray jsonObject =
+                            (JsonArray) jObject
+                                .get(WorkListDisplayConstants.ACTIVATE_OR_INACTIVATE_SERVICE_LIST);
+    
+                        for (int i = 0; i < jsonObject.size(); i++) {
+                            if (jsonObject.size() == 1) {
+                                LOGGER.info("Multiple One");
+                                JsonObject individualJson =
+                                    jsonObject.getAsJsonObject();
+                                Object msgCode =
+                                    individualJson
+                                        .get(WorkListDisplayConstants.MSG_CODE);
+                                msgCodeStr =
+                                    msgCode.toString().substring(1,
+                                        msgCode.toString().length() - 1);
+                                LOGGER
+                                    .info("Msg Code String:------- " + msgCodeStr);
+                            }
+                            else {
+                                LOGGER.info("Multiple Many");
+                                JsonObject individualJson =
+                                    jsonObject.get(i).getAsJsonObject();
+                                Object msgCode =
+                                    individualJson
+                                        .get(WorkListDisplayConstants.MSG_CODE);
+                                msgCodeStr =
+                                    msgCode.toString().substring(1,
+                                        msgCode.toString().length() - 1);
+                                LOGGER
+                                    .info("Msg code String:------- " + msgCodeStr);
+                            }
+    
+                            if (msgCodeStr
+                                .equals(WorkListDisplayConstants.SUCCESS_CODE)) {
+                                flag = true;
+                                if (LOGGER.isDebugEnabled()) {
+                                    LOGGER.debug("Flag:--- " + flag
+                                        + " msg code string:----- " + msgCodeStr);
+                                }
+                            }
+                            else if (msgCodeStr
+                                .equals(WorkListDisplayConstants.FAILURE_CODE)) {
+                                flag = false;
+                                if (LOGGER.isDebugEnabled()) {
+                                    LOGGER.debug("flag:---- " + flag
+                                        + " message code string:----- "
+                                        + msgCodeStr);
+                                }
+                            }
+                        }
+                        if (flag) {
+                            responseMsg =
+                                prop.getProperty(WorkListDisplayConstants.REINITIATE_SERVICE_SUCCESS)
+                                    + WorkListDisplayConstants.UNDERSCORE
+                                    + msgCodeStr;
+                        }
+                        else {
+                            responseMsg =
+                                prop.getProperty(WorkListDisplayConstants.REINITIATE_SERVICE_FAILURE)
+                                    + WorkListDisplayConstants.UNDERSCORE
+                                    + msgCodeStr;
+                        }
+                    }*/
                 }
+            
+                httpConnection.disconnect();
             }
-            httpConnection.disconnect();
         }
         catch (MalformedURLException e) {
             LOGGER.error("Inside malformedException callReInitiateGroupService"
