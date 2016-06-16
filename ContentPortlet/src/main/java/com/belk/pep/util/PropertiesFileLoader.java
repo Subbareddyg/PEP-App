@@ -7,8 +7,11 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Enumeration;
 import java.util.Properties;
-//import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.apache.log4j.Logger;
 
 public class PropertiesFileLoader {
@@ -19,6 +22,7 @@ public class PropertiesFileLoader {
      * Instance variable to hold the configuration loader instance.
      */
     private volatile static PropertiesFileLoader instance = null; 
+    private final static Pattern pattern = Pattern.compile("\\$\\{([^}]*)\\}");
     
    
         
@@ -77,11 +81,24 @@ public class PropertiesFileLoader {
         InputStream input = null;
         try {
             
-            input =PropertiesFileLoader.class.getClassLoader().getResourceAsStream(fileName);           
-
-           // LOGGER.info("getPropertyLoader");            
-            properties.load(input);
-           // LOGGER.info("properties"+properties);        
+			// Load the file.
+			input = PropertiesFileLoader.class.getClassLoader().getResourceAsStream(fileName);
+			
+			properties.load(input);
+			// Set the property.
+			Enumeration e = properties.propertyNames();
+			while (e.hasMoreElements()) {
+				// Pull; the key value pair.
+				String key = (String) e.nextElement();
+				String value = properties.getProperty(key);
+				//match the pattern.
+				Matcher matchPattern = pattern.matcher(value);
+				if (matchPattern.find()) {
+					properties.setProperty(key, System.getenv(matchPattern.group(1)));
+				}
+			}
+			// Log properties value.
+			LOGGER.info("properties" + properties);
 
         }
         catch (FileNotFoundException e) {

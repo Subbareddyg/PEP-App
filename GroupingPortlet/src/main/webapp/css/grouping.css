@@ -13,7 +13,7 @@
 .content-table a, .content-table a:active, .content-table a:focus, .content-table a:visited{color: #00649d;text-decoration: none;}
 .content-table a:hover{color: #00649d;text-decoration: underline;}
 table.border-simple{border: 1px solid #dddddd}
-.border-simple td, .border-simple th{border: 1px solid #dddddd;}
+.border-simple td, .border-simple th{border: 1px solid #dddddd; word-break:break-all;}
 .border-simple th{text-align:center; font-weight: bold;}
 table.colored-row{width: 95%; margin-top: 10px; margin-bottom: 10px;}
 table.colored-row tr:nth-child(even){#background-color: #B8CFEE}

@@ -4,7 +4,7 @@ package com.belk.pep.exception.checked;
 /**
  * The Class PEPFetchException.
  *
- * @author AFUSOS3
+ * @author AFUSAM1
  */
 public class PEPFetchException extends Exception {
 
@@ -16,7 +16,7 @@ public class PEPFetchException extends Exception {
      * Instantiates a new PEP fetch exception.
      */
     public PEPFetchException() {
-       
+       // To be implemented.
     }
     
   

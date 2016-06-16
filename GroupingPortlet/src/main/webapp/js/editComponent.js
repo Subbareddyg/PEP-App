@@ -19,11 +19,12 @@ var app = app || {} ;
 			
 			loadExitingData : function(attachHandlers){
 				var _super = this;
-				app.GroupFactory.fetchExistingComponents({groupType: $('#groupType').val(), groupId: $('#groupId').val()})			
+				return app.GroupFactory.fetchExistingComponents({groupType: $('#groupType').val(), groupId: $('#groupId').val()})			
 				.done(function(result){
 						if(!result.length){
 							$('#group-existing-component-area').html(app.GroupLandingApp.buildMessage('Error in fetching existing components', 'error'))
 								.fadeIn('slow');
+								$('.hide_after_error').hide();
 								return;
 						}
 							
@@ -108,17 +109,19 @@ var app = app || {} ;
 									
 									app.GroupLandingApp.handleGroupCreationResponse(resultJSON, resultJSON.groupType, false);
 									
-									_super.loadExitingData(false);
-									
-									$('#search-components').trigger('submit');
-									
+									//now refreshing existing component list
+									_super.loadExitingData(false)
+										.complete(function(){
+											//updqating component search result
+											$('#search-components').trigger('submit');
+										});
 									
 								}).error(function(jqXHR, textStatus, errorThrown){
 									$('#group-creation-messages').html(app.GroupLandingApp.buildMessage(jqXHR.status + ' - ' + textStatus + ' - ' + errorThrown, 'error'))
 										.fadeIn('slow');
 								}).complete(function(){
 									//cleaning up message after 4 sec
-									app.GroupLandingApp.cleanupMessage($('#group-creation-messages'), 4000);
+									app.GroupLandingApp.cleanupMessage($('#group-creation-messages'), 8000);
 								});
 						}catch(ex){
 							console.log(ex.message);

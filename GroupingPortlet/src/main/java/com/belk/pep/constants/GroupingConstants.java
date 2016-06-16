@@ -7,8 +7,11 @@ package com.belk.pep.constants;
  */
 public class GroupingConstants {
 
+	/**
+	 * 
+	 */
 	private GroupingConstants(){
-		
+		// To be implemented.
 	}
 	/** The Constant SYSTEM_FAILURE_MSG. */
 	public static final String SYSTEM_FAILURE_MSG = "System Failure.";
@@ -134,6 +137,7 @@ public class GroupingConstants {
 
 	public static final String GROUP_DETAILS_FORM = "groupDetailsForm";
 	public static final String SELECTED_ATTRIBUTE_LIST = "selectedAttributeList";
+	public static final String EXISTING_ATTRIBUTE_LIST = "existingAttributeList";
 	
 	public static final int DATE_FIELD_LENGTH = 10;
 	

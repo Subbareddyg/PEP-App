@@ -2,7 +2,6 @@ package com.belk.pep.dao.impl;
 
 import java.math.BigDecimal;
 import java.sql.Clob;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -43,8 +42,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 
 	/** The session factory. */
 	private SessionFactory sessionFactory;
-	/** The xquery constants. */
-	private XqueryConstants xqueryConstants = new XqueryConstants();
+		
 
 	/**
 	 * 
@@ -74,12 +72,12 @@ public class GroupingDAOImpl implements GroupingDAO {
 	 * @throws PEPFetchException
 	 */
 	public CreateGroupDTO getGroupHeaderDetails(final String groupId) throws PEPFetchException {
-		LOGGER.info("Fetch Group Header Details--> getGroupHeaderDetails-->Start");
+		LOGGER.info("Fetch Group Header Details--> getGroupHeaderDetails-->Start.");
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("Group Id-->" + groupId);
 		}
 
-		final XqueryConstants xqueryConstants = new XqueryConstants();
+		
 		Session session = null;
 		CreateGroupDTO createGroupDTO = null;
 		try {
@@ -88,7 +86,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 			// Hibernate provides a createSQLQuery method to let you call your
 			// native SQL statement directly.
 			
-			final Query query = session.createSQLQuery(xqueryConstants.getGroupHeaderDetails());
+			final Query query = session.createSQLQuery(XqueryConstants.getGroupHeaderDetails());
 			query.setParameter("groupIdSql", groupId);
 			
 			LOGGER.info("Query-->getGroupHeaderDetails-->" + query);
@@ -149,12 +147,12 @@ public class GroupingDAOImpl implements GroupingDAO {
 		} finally {
 			LOGGER.info("recordsFetched. getGroupHeaderDetails finally block..");
 			if(session!=null) {
-				session.flush();
+				
 				session.close();
 			}
 		}
 
-		LOGGER.info("Fetch Group Header Details--> getGroupHeaderDetails-->End");
+		LOGGER.info("Fetch Group Header Details--> getGroupHeaderDetails-->End.");
 		return createGroupDTO;
 	}
 
@@ -171,7 +169,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 	 * @return List
 	 */
 	public List<GroupAttributeForm> getSplitColorDetails(final String vendorStyleNumber, final String styleOrin) throws PEPFetchException {
-		LOGGER.info("Fetch Split Color Details--> getSplitColorDetails-->Start");
+		LOGGER.info("Fetch Split Color Details--> getSplitColorDetails-->Start.");
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("Vendor Style No-->" + vendorStyleNumber);
 			LOGGER.debug("Style Orin No-->" + styleOrin);
@@ -180,13 +178,13 @@ public class GroupingDAOImpl implements GroupingDAO {
 		Session session = null;
 		GroupAttributeForm groupAttributeForm = null;
 		List<GroupAttributeForm> groupAttributeFormList = null;
-		final XqueryConstants xqueryConstants = new XqueryConstants();
+		
 		try {
 			session = sessionFactory.openSession();
 			vendorStyleNo = null == vendorStyleNo ? null : "".equals(vendorStyleNo.trim()) ? null : vendorStyleNo.trim();
 			// Hibernate provides a createSQLQuery method to let you call your
 			// native SQL statement directly.
-			final Query query = session.createSQLQuery(xqueryConstants.getSplitColorDetails(vendorStyleNo));
+			final Query query = session.createSQLQuery(XqueryConstants.getSplitColorDetails(vendorStyleNo));
 
 			if (vendorStyleNo != null) {
 				query.setParameter("styleIdSql", vendorStyleNo);
@@ -195,7 +193,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 			}
 			LOGGER.info("Query-->getSplitColorDetails-->" + query);
 
-			groupAttributeFormList = new ArrayList<GroupAttributeForm>();
+			groupAttributeFormList = new ArrayList<>();
 
 			// execute select SQL statement
 			query.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
@@ -238,13 +236,13 @@ public class GroupingDAOImpl implements GroupingDAO {
 		} finally {
 			LOGGER.info("recordsFetched. getSplitColorDetails finally block..");
 						if(session!=null){
-							session.flush();
+							
 							session.close();
 						}
 			
 		}
 
-		LOGGER.info("Fetch Split Color Details--> getSplitColorDetails-->End");
+		LOGGER.info("Fetch Split Color Details--> getSplitColorDetails-->End.");
 		return groupAttributeFormList;
 	}
 
@@ -260,7 +258,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 	 */
 	public List<GroupAttributeForm> getSplitSKUDetails(final String vendorStyleNumber, final String styleOrin) throws PEPFetchException {
 
-		LOGGER.info("Fetch Split Color Details--> getSplitSKUDetails-->Start");
+		LOGGER.info("Fetch Split Color Details--> getSplitSKUDetails-->Start.");
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("Vendor Style No-->" + vendorStyleNumber);
 			LOGGER.debug("Style Orin No-->" + styleOrin);
@@ -269,13 +267,13 @@ public class GroupingDAOImpl implements GroupingDAO {
 		Session session = null;
 		GroupAttributeForm groupAttributeForm = null;
 		List<GroupAttributeForm> groupAttributeFormList = null;
-		final XqueryConstants xqueryConstants = new XqueryConstants();
+		
 		try {
 			session = sessionFactory.openSession();
 			vendorStyleNo = null == vendorStyleNo ? null : "".equals(vendorStyleNo.trim()) ? null : vendorStyleNo.trim();
 			// Hibernate provides a createSQLQuery method to let you call your
 			// native SQL statement directly.
-			final Query query = session.createSQLQuery(xqueryConstants.getSplitSKUDetails(vendorStyleNo));
+			final Query query = session.createSQLQuery(XqueryConstants.getSplitSKUDetails(vendorStyleNo));
 
 			if (vendorStyleNo != null) {
 				query.setParameter("styleIdSql", vendorStyleNo);
@@ -284,7 +282,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 			}
 			LOGGER.info("Query-->getSplitSKUDetails-->" + query);
 
-			groupAttributeFormList = new ArrayList<GroupAttributeForm>();
+			groupAttributeFormList = new ArrayList<>();
 
 			// execute select SQL statement
 			query.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
@@ -329,13 +327,13 @@ public class GroupingDAOImpl implements GroupingDAO {
 		} finally {
 			LOGGER.info("recordsFetched. getSplitSKUDetails finally block..");
 						if(session!=null){
-							session.flush();
+							
 							session.close();
 						}
 			
 		}
 
-		LOGGER.info("Fetch Split SKU Details--> getSplitSKUDetails-->End");
+		LOGGER.info("Fetch Split SKU Details--> getSplitSKUDetails-->End.");
 		return groupAttributeFormList;
 	}
 	
@@ -348,7 +346,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 	 */
 	public List<StyleAttributeForm> getNewCPGDetails(final String vendorStyleNo, final String styleOrin, final String deptNoSearch, 
 			final String classNoSearch,	final String supplierSiteIdSearch, final String upcNoSearch, final String groupId) throws PEPFetchException {
-		LOGGER.info("Fetch New CPG attribute Details. getNewCPGDetails-->Start");
+		LOGGER.info("Fetch New CPG attribute Details. getNewCPGDetails-->Start.");
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("Vendor vendorStyleNumber-->" + vendorStyleNo);
 			LOGGER.debug("Style Orin No-->" + styleOrin);
@@ -358,7 +356,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 		StyleAttributeForm styleAttributeForm = null;
 		List<GroupAttributeForm> groupAttributeFormList = null;
 		List<StyleAttributeForm> styleAttributeFormList = null;
-		final XqueryConstants xqueryConstants = new XqueryConstants();
+		
 		try {
 			String deptNoForInSearch = GroupingUtil.getInValForQuery(deptNoSearch);
 			String classNoSearchSearch = GroupingUtil.getInValForQuery(classNoSearch);
@@ -369,7 +367,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 			session = sessionFactory.openSession();
 			// Hibernate provides a createSQLQuery method to let you call your
 			// native SQL statement directly.
-			final Query query = session.createSQLQuery(xqueryConstants.getNewCPGDetails(vendorStyleNo, styleOrin, deptNoForInSearch, classNoSearchSearch,
+			final Query query = session.createSQLQuery(XqueryConstants.getNewCPGDetails(vendorStyleNo, styleOrin, deptNoForInSearch, classNoSearchSearch,
 					supplierSiteIdSearch, upcNoSearch, deptNoSearch, classNoSearch));
 
 			query.setParameter("groupIdSql", groupId);
@@ -391,7 +389,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 			LOGGER.info("Query-->getExistCPGDetails-->" + query);
 
 
-			styleAttributeFormList = new ArrayList<StyleAttributeForm>();
+			styleAttributeFormList = new ArrayList<>();
 
 			// execute select SQL statement
 			query.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
@@ -422,7 +420,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 					
 
 					if(("Style").equals(entryType)) {
-						groupAttributeFormList = new ArrayList<GroupAttributeForm>();
+						groupAttributeFormList = new ArrayList<>();
 						styleAttributeForm.setOrinNumber(mdmid);
 						styleAttributeForm.setStyleNumber(styleNo);
 						styleAttributeForm.setProdName(productName);
@@ -472,16 +470,19 @@ public class GroupingDAOImpl implements GroupingDAO {
 					}
 				}
 			}
+		} catch(Exception ex){
+			LOGGER.error("inside PEPFetchException-->" + ex);
+			throw new PEPFetchException(ex.getMessage());
 		} finally {
 			LOGGER.info("recordsFetched. getNewCPGDetails finally block..");
 			if(session!=null) {
-				session.flush();
+				
 				session.close();
 			}
 
 		}
 
-		LOGGER.info("Fetch New CPG attribute Details. getNewCPGDetails-->End");
+		LOGGER.info("Fetch New CPG attribute Details. getNewCPGDetails-->End.");
 		return styleAttributeFormList;
 	}
 
@@ -501,13 +502,13 @@ public class GroupingDAOImpl implements GroupingDAO {
 
 		LOGGER.info("Entering GroupingDAO.groupSearch() method.");
 		Session session = null;
-		final List<GroupSearchDTO> groupList = new ArrayList<GroupSearchDTO>();
+		final List<GroupSearchDTO> groupList = new ArrayList<>();
 		GroupSearchDTO groupSearchDTO = null;
 		List<Object> rows = null;
-		final XqueryConstants xqueryConstants = new XqueryConstants();
+		
 		try {
 			session = sessionFactory.openSession();
-			final Query query = session.createSQLQuery(xqueryConstants.getGroupDetailsQuery(groupSearchForm));
+			final Query query = session.createSQLQuery(XqueryConstants.getGroupDetailsQuery(groupSearchForm));
 			query.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
 			if (groupSearchForm.getGroupId() == null || "".equals(groupSearchForm.getGroupId().trim())) {
 				query.setFirstResult((groupSearchForm.getPageNumber() - 1) * groupSearchForm.getRecordsPerPage());
@@ -540,9 +541,11 @@ public class GroupingDAOImpl implements GroupingDAO {
 					groupList.add(groupSearchDTO);
 				}
 			}
+		} catch(Exception ex){
+			LOGGER.error("inside groupSearch.Exception-->" + ex);
 		} finally {
 						if(session!=null){
-							session.flush();
+							
 							session.close();
 							}
 		}
@@ -571,10 +574,10 @@ public class GroupingDAOImpl implements GroupingDAO {
 		Session session = null;
 		BigDecimal rowCount = new BigDecimal(0);
 		List<Object> rows = null;
-		final XqueryConstants xqueryConstants = new XqueryConstants();
+		
 		try {
 			session = sessionFactory.openSession();
-			final Query query = session.createSQLQuery(xqueryConstants.getGroupDetailsCountQuery(groupSearchForm));
+			final Query query = session.createSQLQuery(XqueryConstants.getGroupDetailsCountQuery(groupSearchForm));
 			query.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
 			rows = query.list();
 
@@ -590,7 +593,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 			}
 		} finally {
 						if(session!=null){
-							session.flush();
+							
 							session.close();
 						}
 			
@@ -621,13 +624,13 @@ public class GroupingDAOImpl implements GroupingDAO {
 
 		LOGGER.info("Entering GroupingDAO.groupSearchParent() method.");
 		Session session = null;
-		final List<GroupSearchDTO> groupList = new ArrayList<GroupSearchDTO>();
+		final List<GroupSearchDTO> groupList = new ArrayList<>();
 		GroupSearchDTO groupSearchDTO = null;
 		List<Object> rows = null;
-		final XqueryConstants xqueryConstants = new XqueryConstants();
+		
 		try {
 			session = sessionFactory.openSession();
-			final Query query = session.createSQLQuery(xqueryConstants.getGroupDetailsQueryParent(groupSearchDTOList, groupSearchForm));
+			final Query query = session.createSQLQuery(XqueryConstants.getGroupDetailsQueryParent(groupSearchDTOList, groupSearchForm));
 			query.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
 
 			query.setFirstResult(((groupSearchForm.getPageNumber() - 1) * groupSearchForm.getRecordsPerPage()) - 1);
@@ -664,7 +667,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 			}
 		} finally {
 						if(session!=null) {
-							session.flush();
+							
 							session.close();
 						}
 			
@@ -696,11 +699,11 @@ public class GroupingDAOImpl implements GroupingDAO {
 		Session session = null;
 		BigDecimal rowCount = new BigDecimal(0);
 		List<Object> rows = null;
-		final XqueryConstants xqueryConstants = new XqueryConstants();
+		
 		try {
 			session = sessionFactory.openSession();
 			final Query query = session
-					.createSQLQuery(xqueryConstants.getGroupDetailsCountQueryParent(groupSearchDTOList, groupSearchForm));
+					.createSQLQuery(XqueryConstants.getGroupDetailsCountQueryParent(groupSearchDTOList));
 			query.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
 			rows = query.list();
 			if (rows != null) {
@@ -715,7 +718,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 			}
 		} finally {
 						if(session!=null){
-							session.flush();
+							
 							session.close();
 						}
 			
@@ -738,10 +741,10 @@ public class GroupingDAOImpl implements GroupingDAO {
 	public ArrayList<DepartmentDetails> getDeptDetailsByDepNoFromADSE() throws PEPPersistencyException {
 		LOGGER.info("Entering getDeptDetailsByDepNoFromADSE() in GroupingDAOImpl class..");
 		Session session = null;
-		final ArrayList<DepartmentDetails> adseDepartmentList = new ArrayList<DepartmentDetails>();
+		final ArrayList<DepartmentDetails> adseDepartmentList = new ArrayList<>();
 		try {
 			session = sessionFactory.openSession();
-			final Query query1 = session.createSQLQuery(xqueryConstants.getLikeDepartmentDetailsForString());
+			final Query query1 = session.createSQLQuery(XqueryConstants.getLikeDepartmentDetailsForString());
 			if (query1 != null) {
 			query1.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
 			
@@ -760,7 +763,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 			}
 		} finally {
 						if(session!=null){
-							session.flush();
+							
 							session.close();
 						}
 			
@@ -784,10 +787,10 @@ public class GroupingDAOImpl implements GroupingDAO {
 	public List<ClassDetails> getClassDetailsByDepNos(final String departmentNumbers) throws PEPPersistencyException {
 		LOGGER.info("Entering getClassDetailsByDepNos() in GroupingDAOImpl class..");
 		Session session = null;
-		final List<ClassDetails> classDetailsList = new ArrayList<ClassDetails>();
+		final List<ClassDetails> classDetailsList = new ArrayList<>();
 		try {
 			session = sessionFactory.openSession();
-			final Query query = session.createSQLQuery(xqueryConstants.getClassDetailsUsingDeptnumbers(departmentNumbers));
+			final Query query = session.createSQLQuery(XqueryConstants.getClassDetailsUsingDeptnumbers(departmentNumbers));
 			query.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
 			@SuppressWarnings("unchecked")
 			final List<Object> rows = query.list();
@@ -801,7 +804,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 			}
 		} finally {
 						if(session!=null) {
-							session.flush();
+							
 							session.close();
 						}
 			
@@ -819,24 +822,24 @@ public class GroupingDAOImpl implements GroupingDAO {
 	 * @return groupAttributeFormList
 	 */
 	public List<GroupAttributeForm> getExistSplitColorDetails(final String groupId) throws PEPFetchException {
-		LOGGER.info("Fetch Split Color Existing Details. getExistSplitColorDetails-->Start");
+		LOGGER.info("Fetch Split Color Existing Details. getExistSplitColorDetails-->Start.");
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("Vendor groupId-->" + groupId);
 		}
 		Session session = null;
 		GroupAttributeForm groupAttributeForm = null;
 		List<GroupAttributeForm> groupAttributeFormList = null;
-		final XqueryConstants xqueryConstants = new XqueryConstants();
+		
 		try {
 			session = sessionFactory.openSession();
 			// Hibernate provides a createSQLQuery method to let you call your
 			// native SQL statement directly.
-			final Query query = session.createSQLQuery(xqueryConstants.getExistSplitColorDetails());
+			final Query query = session.createSQLQuery(XqueryConstants.getExistSplitColorDetails());
 
 			query.setParameter("groupidSql", groupId);
 			LOGGER.info("Query-->getExistSplitColorDetails-->" + query);
 
-			groupAttributeFormList = new ArrayList<GroupAttributeForm>();
+			groupAttributeFormList = new ArrayList<>();
 
 			// execute select SQL statement
 			query.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
@@ -878,13 +881,13 @@ public class GroupingDAOImpl implements GroupingDAO {
 		} finally {
 			LOGGER.info("recordsFetched. getExistSplitColorDetails finally block..");
 			if(session!=null){
-				session.flush();
+				
 				session.close();
 			}
 			
 		}
 
-		LOGGER.info("Fetch Split Color Existing Details. getExistSplitColorDetails-->End");
+		LOGGER.info("Fetch Split Color Existing Details. getExistSplitColorDetails-->End.");
 		return groupAttributeFormList;
 	}
 
@@ -896,24 +899,24 @@ public class GroupingDAOImpl implements GroupingDAO {
 	 * @return groupAttributeFormList
 	 */
 	public List<GroupAttributeForm> getExistSplitSkuDetails(final String groupId) throws PEPFetchException {
-		LOGGER.info("Fetch Split Color Existing Details. getExistSplitSkuDetails-->Start");
+		LOGGER.info("Fetch Split Color Existing Details. getExistSplitSkuDetails-->Start.");
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("Vendor groupId-->" + groupId);
 		}
 		Session session = null;
 		GroupAttributeForm groupAttributeForm = null;
 		List<GroupAttributeForm> groupAttributeFormList = null;
-		final XqueryConstants xqueryConstants = new XqueryConstants();
+		
 		try {
 			session = sessionFactory.openSession();
 			// Hibernate provides a createSQLQuery method to let you call your
 			// native SQL statement directly.
-			final Query query = session.createSQLQuery(xqueryConstants.getExistSplitSkuDetails());
+			final Query query = session.createSQLQuery(XqueryConstants.getExistSplitSkuDetails());
 
 			query.setParameter("groupidSql", groupId);
 			LOGGER.info("Query-->getExistSplitSkuDetails-->" + query);
 
-			groupAttributeFormList = new ArrayList<GroupAttributeForm>();
+			groupAttributeFormList = new ArrayList<>();
 
 			// execute select SQL statement
 			query.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
@@ -959,13 +962,13 @@ public class GroupingDAOImpl implements GroupingDAO {
 		} finally {
 			LOGGER.info("recordsFetched. getExistSplitSkuDetails finally block..");
 			if(session!=null){
-				session.flush();
+				
 				session.close();
 			}
 			
 		}
 
-		LOGGER.info("Fetch Split Color Existing Details. getExistSplitColorDetails-->End");
+		LOGGER.info("Fetch Split Color Existing Details. getExistSplitColorDetails-->End.");
 		return groupAttributeFormList;
 	}
 	
@@ -977,7 +980,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 	 * @return groupAttributeFormList
 	 */
 	public List<StyleAttributeForm> getExistCPGDetails(final String groupId) {
-		LOGGER.info("Fetch Split Color Existing Details. getExistCPGDetails-->Start");
+		LOGGER.info("Fetch Split Color Existing Details. getExistCPGDetails-->Start.");
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("Vendor groupId-->" + groupId);
 		}
@@ -986,18 +989,18 @@ public class GroupingDAOImpl implements GroupingDAO {
 		StyleAttributeForm styleAttributeForm = null;
 		List<GroupAttributeForm> groupAttributeFormList = null;
 		List<StyleAttributeForm> styleAttributeFormList = null;
-		final XqueryConstants xqueryConstants = new XqueryConstants();
+		
 		try {
 			session = sessionFactory.openSession();
 			// Hibernate provides a createSQLQuery method to let you call your
 			// native SQL statement directly.
-			final Query query = session.createSQLQuery(xqueryConstants.getExistCPGDetails());
+			final Query query = session.createSQLQuery(XqueryConstants.getExistCPGDetails());
 
 			query.setParameter("groupidSql", groupId);
 			LOGGER.info("Query-->getExistCPGDetails-->" + query);
 
 
-			styleAttributeFormList = new ArrayList<StyleAttributeForm>();
+			styleAttributeFormList = new ArrayList<>();
 
 			// execute select SQL statement
 			query.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
@@ -1026,7 +1029,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 					
 
 					if(("Style").equals(entryType)) {
-						groupAttributeFormList = new ArrayList<GroupAttributeForm>();
+						groupAttributeFormList = new ArrayList<>();
 						styleAttributeForm.setOrinNumber(mdmid);
 						styleAttributeForm.setStyleNumber(styleNo);
 						styleAttributeForm.setProdName(productName);
@@ -1077,13 +1080,13 @@ public class GroupingDAOImpl implements GroupingDAO {
 		}  finally {
 			LOGGER.info("recordsFetched. getExistCPGDetails finally block..");
 			if(session!=null){
-				session.flush();
+				
 				session.close();
 			}
 			
 		}
 
-		LOGGER.info("Fetch Split Color Existing Details. getExistCPGDetails-->End");
+		LOGGER.info("Fetch Split Color Existing Details. getExistCPGDetails-->End.");
 		return styleAttributeFormList;
 	}
 

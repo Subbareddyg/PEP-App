@@ -11,7 +11,7 @@ import com.belk.pep.form.GroupSearchForm;
 
 /** The Class XqueryConstants.
  * 
- * @author AFUSOS3 */
+ * @author AFUPYB3 */
 public class XqueryConstants {
 
 
@@ -21,14 +21,14 @@ public class XqueryConstants {
 
 	/** Instantiates a new xquery constants. */
 	public XqueryConstants() {
-
+		// To be implemented.
 	}
 
 	/** This method is used to build the Query to retrieve Group Header Details
 	 * from Database against Group Id.
 	 * 
 	 * @return String */
-	public final String getGroupHeaderDetails() {
+	public static  final String getGroupHeaderDetails() {
 		final String getGroupHeaderDetailsQuery = " "
 				+ " SELECT                                                                                "
 				+ "      AGC.MDMID GROUP_ID,                                                               "
@@ -63,7 +63,7 @@ public class XqueryConstants {
 	 * 
 	 * @return String
 	 * @param vendorStyleNo */
-	public final String getSplitColorDetails(final String vendorStyleNo) {
+	public static  final String getSplitColorDetails(final String vendorStyleNo) {
 		String getSplitColorDetailsQuery = " Select                                 "
 				+ "  ITEM.MDMID, ITEM.PARENT_MDMID,                                                                      "
 				+ "  ITEM.PRIMARYSUPPLIERVPN,                                                                            "
@@ -107,7 +107,7 @@ public class XqueryConstants {
 	 * 
 	 * @param vendorStyleNo
 	 * @return String */
-	public final String getSplitSKUDetails(final String vendorStyleNo) {
+	public static  final String getSplitSKUDetails(final String vendorStyleNo) {
 		String getSplitSKUDetailsQuery = "   Select                                                                      "
 				+ "  ITEM.MDMID,  ITEM.PARENT_MDMID,                                                                      "
 				+ "  ITEM.PRIMARYSUPPLIERVPN,                                                                            "
@@ -161,7 +161,7 @@ public class XqueryConstants {
 	 * 
 	 *         Method added For PIM Phase 2 - Search Group Date: 05/19/2016
 	 *         Added By: Cognizant */
-	public final String getGroupDetailsQuery(final GroupSearchForm groupSearchForm) {
+	public static  final String getGroupDetailsQuery(final GroupSearchForm groupSearchForm) {
 
 		LOGGER.info("Entering getGroupDetailsQuery() in Grouping XQueryConstant class.");
 
@@ -270,7 +270,7 @@ public class XqueryConstants {
 	 * 
 	 *         Method added For PIM Phase 2 - Search Group Date: 05/19/2016
 	 *         Added By: Cognizant */
-	public final String getGroupDetailsCountQuery(final GroupSearchForm groupSearchForm) {
+	public static  final String getGroupDetailsCountQuery(final GroupSearchForm groupSearchForm) {
 
 		LOGGER.info("Entering getGroupDetailsCountQuery() in Grouping XQueryConstant class.");
 
@@ -351,7 +351,7 @@ public class XqueryConstants {
 	 * 
 	 *         Method added For PIM Phase 2 - Search Group Date: 05/19/2016
 	 *         Added By: Cognizant */
-	public final String getGroupDetailsQueryParent(final List<GroupSearchDTO> groupSearchDTOList, final GroupSearchForm groupSearchForm) {
+	public static  final String getGroupDetailsQueryParent(final List<GroupSearchDTO> groupSearchDTOList, final GroupSearchForm groupSearchForm) {
 
 		LOGGER.info("Entering getGroupDetailsQueryParent() in Grouping XQueryConstant class.");
 
@@ -421,8 +421,7 @@ public class XqueryConstants {
 	 * 
 	 *         Method added For PIM Phase 2 - Search Group Date: 05/19/2016
 	 *         Added By: Cognizant */
-	public final String getGroupDetailsCountQueryParent(final List<GroupSearchDTO> groupSearchDTOList,
-			final GroupSearchForm groupSearchForm) {
+	public static  final String getGroupDetailsCountQueryParent(final List<GroupSearchDTO> groupSearchDTOList) {
 
 		LOGGER.info("Entering getGroupDetailsCountQueryParent() in Grouping XQueryConstant class.");
 
@@ -468,9 +467,9 @@ public class XqueryConstants {
 	 * 
 	 *         Method added For PIM Phase 2 - Search Group Date: 05/20/2016
 	 *         Added By: Cognizant */
-	public final List<String> getCommaSeparatedValues(final List<GroupSearchDTO> groupSearchDTOList) {
+	public static  final List<String> getCommaSeparatedValues(final List<GroupSearchDTO> groupSearchDTOList) {
 		LOGGER.info("Entering getCommaSeparatedValues() in Grouping XQueryConstant class.");
-		final List<String> listGroupIds = new ArrayList<String>();
+		final List<String> listGroupIds = new ArrayList<>();
 		StringBuilder strGroupIdList = new StringBuilder();
 
 		if (groupSearchDTOList.size() > 0) {
@@ -506,7 +505,7 @@ public class XqueryConstants {
 	 * 
 	 *         Method added For PIM Phase 2 - Search Group Modified by Cognizant
 	 *         Date: 05/24/2016 */
-	public final String getNumbersInCorrectFormat(final String ids) {
+	public static  final String getNumbersInCorrectFormat(final String ids) {
 		LOGGER.info("Entering getNumbersInCorrectFormat() in Grouping XQueryConstant class.");
 		String finalString = "";
 		if (null != ids && ids.trim().length() > 0) {
@@ -537,7 +536,7 @@ public class XqueryConstants {
 	 * 
 	 *         Method added For PIM Phase 2 - Search Group Modified by Cognizant
 	 *         Date: 02/25/2016 */
-	public final String getLikeDepartmentDetailsForString() {
+	public static  final String getLikeDepartmentDetailsForString() {
 		LOGGER.info("Entering getLikeDepartmentDetailsForString() in Grouping XQueryConstant class.");
 
 		final String getAllDepartmentQuery = " select DeptId DEPTID, DeptName DEPTNAME" + " from  ADSE_MERCHANDISE_HIERARCHY dept, "
@@ -561,7 +560,7 @@ public class XqueryConstants {
 	 * 
 	 * @param deptids
 	 * @return String */
-	public final String getClassDetailsUsingDeptnumbers(final String deptids) {
+	public static  final String getClassDetailsUsingDeptnumbers(final String deptids) {
 		LOGGER.info("Entering getClassDetailsUsingDeptnumbers() in Grouping XQueryConstant class.");
 		final StringBuilder queryfragment = new StringBuilder();
 
@@ -618,7 +617,7 @@ public class XqueryConstants {
 	 * Color from Database.
 	 * 
 	 * @return String */
-	public final String getExistSplitColorDetails() {
+	public static  final String getExistSplitColorDetails() {
 		String getExistSplitColorDetails = "	SELECT                                                                           "
 				+ "	DETAIL.COMPONENT_MDMID,                                                          "
 				+ "	DETAIL.COMPONENT_DEFAULT,                                                        "
@@ -661,7 +660,7 @@ public class XqueryConstants {
 	 * SKU from Database.
 	 * 
 	 * @return String */
-	public final String getExistSplitSkuDetails() {
+	public static  final String getExistSplitSkuDetails() {
 		String getExistSplitSkuDetails = "	SELECT                                                "
 				+ "	DETAIL.COMPONENT_MDMID,                               "
 				+ "	DETAIL.COMPONENT_DEFAULT,                             "
@@ -712,7 +711,7 @@ public class XqueryConstants {
 	/** This method is used to get the Existing Group Attribute Details for Consolidate Product Grouping.
 	 * 
 	 * @return String */
-	public final String getExistCPGDetails() {
+	public static  final String getExistCPGDetails() {
 		String getExistCPGDetails = "	SELECT                                                "
 				+"	DETAIL.COMPONENT_STYLE_ID,                               "
 				+"	DETAIL.COMPONENT_DEFAULT,                             "
@@ -747,7 +746,7 @@ public class XqueryConstants {
 				+"	1=1                                                       "
 				+"	AND PET.MDMID=ITEM.MDMID                                  "
 				+"	AND ITEM.MDMID like CONCAT(DETAIL.COMPONENT_MDMID,'%')    "
-				+"	AND DETAIL.MDMID=:groupidSql  ORDER BY ITEM.MDMID         ";
+				+"	AND DETAIL.MDMID=:groupidSql         ";
 
 
 		return getExistCPGDetails;
@@ -756,7 +755,7 @@ public class XqueryConstants {
 	/** This method is used to get the New Search Group Attribute Details for Consolidate Product Grouping.
 	 * @return String 
 	 **/
-	public final String getNewCPGDetails(final String vendorStyleNo, final String styleOrin, final String deptNoForInSearch, 
+	public static  final String getNewCPGDetails(final String vendorStyleNo, final String styleOrin, final String deptNoForInSearch, 
 			final String classNoForInSearch,	final String supplierSiteIdSearch, final String upcNoSearch, 
 			final String deptNoSearch, final String classNoSearch) {
 		String getNewCPGDetails = "	SELECT                                                              "
