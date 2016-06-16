@@ -7,6 +7,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -72,11 +73,15 @@ public class GroupingServiceImpl implements GroupingService {
 	 * @param updatedBy
 	 * @param selectedSplitAttributeList
 	 * @return CreateGroupForm
-	 * @throws Exception
 	 * @throws PEPFetchException
+	 * @throws IOException 
+	 * @throws JSONException 
+	 * @throws ClassCastException 
+	 * @throws MalformedURLException 
 	 */
 	public final CreateGroupForm saveGroupHeaderDetails(final JSONObject jsonStyle, final String updatedBy,
-			final List<GroupAttributeForm> selectedSplitAttributeList) throws Exception, PEPFetchException {
+			final List<GroupAttributeForm> selectedSplitAttributeList) throws PEPFetchException,
+			MalformedURLException, ClassCastException, JSONException, IOException, ParseException {
 		LOGGER.info("Entering saveGroupHeaderDetails-->.");
 
 		String groupIdRes = "";
@@ -260,7 +265,8 @@ public class GroupingServiceImpl implements GroupingService {
 	 * @throws Exception
 	 * @throws PEPFetchException
 	 */
-	public final String callCreateGroupService(final JSONObject jsonStyle) throws Exception, PEPFetchException {
+	public final String callCreateGroupService(final JSONObject jsonStyle) throws MalformedURLException, ClassCastException, 
+	IOException, JSONException {
 		LOGGER.info("Entering callCreateGroupService-->.");
 		
 		String responseMsg = "";
@@ -297,19 +303,16 @@ public class GroupingServiceImpl implements GroupingService {
 
 		} catch (MalformedURLException e) {
 			LOGGER.error("inside malformedException-->" + e);
-			throw new PEPFetchException(e.getMessage());
+			throw new MalformedURLException(e.getMessage());
 		} catch (ClassCastException e) {
 			LOGGER.error("inside ClassCastException-->" + e);
-			throw new PEPFetchException(e.getMessage());
-		} catch (IOException e) {
-			LOGGER.error("inside IOException-->" + e);
-			throw new IOException(e.getMessage());
-		} catch (JSONException e) {
+			throw new ClassCastException(e.getMessage());
+		}catch (JSONException e) {
 			LOGGER.error("inside JSOnException-->" + e);
 			throw new JSONException(e.getMessage());
-		} catch (Exception e) {
-			LOGGER.error("inside Exception-->" + e);
-			throw new PEPFetchException(e.getMessage());
+		}catch (IOException e) {
+			LOGGER.error("inside IOException-->" + e);
+			throw new IOException(e.getMessage());
 		} finally {
 			if(null != httpConnection){
 				httpConnection.disconnect();
@@ -618,7 +621,8 @@ public class GroupingServiceImpl implements GroupingService {
 	 * @throws Exception
 	 * @throws PEPFetchException
 	 */
-	public final String callAddComponentSCGService(final JSONObject jsonStyleSpliColor) throws Exception, PEPFetchException {
+	public final String callAddComponentSCGService(final JSONObject jsonStyleSpliColor) throws MalformedURLException, ClassCastException, 
+	IOException, JSONException {
 		LOGGER.info("Entering callAddComponentSCGService-->.");
 		String responseMsg = "";
 		BufferedReader responseBuffer=null;
@@ -653,20 +657,17 @@ public class GroupingServiceImpl implements GroupingService {
 
 		} catch (MalformedURLException e) {
 			LOGGER.error("inside malformedException-->" + e);
-			throw new PEPFetchException(e.getMessage());
+			throw new MalformedURLException(e.getMessage());
 		} catch (ClassCastException e) {
 			LOGGER.error("inside ClassCastException-->" + e);
-			throw new PEPFetchException(e.getMessage());
-		} catch (IOException e) {
-			LOGGER.error("inside IOException-->" + e);
-			throw new IOException(e.getMessage());
-		} catch (JSONException e) {
+			throw new ClassCastException(e.getMessage());
+		}catch (JSONException e) {
 			LOGGER.error("inside JSOnException-->" + e);
 			throw new JSONException(e.getMessage());
-		} catch (Exception e) {
-			LOGGER.error("inside Exception-->" + e);
-			throw new Exception(e.getMessage());
-		} finally {
+		}catch (IOException e) {
+			LOGGER.error("inside IOException-->" + e);
+			throw new IOException(e.getMessage());
+		}finally {
 			if(null != httpConnection){
 				httpConnection.disconnect();
 			}
@@ -721,7 +722,8 @@ public class GroupingServiceImpl implements GroupingService {
 	 * @throws Exception
 	 * @throws PEPFetchException
 	 */
-	public final String callAddComponentCPGService(final JSONObject jsonCpgComponent) throws Exception, PEPFetchException {
+	public final String callAddComponentCPGService(final JSONObject jsonCpgComponent) throws MalformedURLException, ClassCastException, 
+	IOException, JSONException {
 		LOGGER.info("Entering callAddComponentCPGService-->.");
  
 		String responseMsg = "";
@@ -757,19 +759,16 @@ public class GroupingServiceImpl implements GroupingService {
 
 		} catch (MalformedURLException e) {
 			LOGGER.error("inside malformedException-->" + e);
-			throw new PEPFetchException(e.getMessage());
+			throw new MalformedURLException(e.getMessage());
 		} catch (ClassCastException e) {
 			LOGGER.error("inside ClassCastException-->" + e);
-			throw new PEPFetchException(e.getMessage());
-		} catch (IOException e) {
-			LOGGER.error("inside IOException-->" + e);
-			throw new IOException(e.getMessage());
-		} catch (JSONException e) {
+			throw new ClassCastException(e.getMessage());
+		}catch (JSONException e) {
 			LOGGER.error("inside JSOnException-->" + e);
 			throw new JSONException(e.getMessage());
-		} catch (Exception e) {
-			LOGGER.error("inside Exception-->" + e);
-			throw new Exception(e.getMessage());
+		}catch (IOException e) {
+			LOGGER.error("inside IOException-->" + e);
+			throw new IOException(e.getMessage());
 		} finally {
 			if(null != httpConnection){
 				httpConnection.disconnect();
@@ -833,7 +832,8 @@ public class GroupingServiceImpl implements GroupingService {
 	 * @throws Exception
 	 * @throws PEPFetchException
 	 */
-	public final String callAddComponentSSGService(final JSONObject jsonStyleSpliSku) throws Exception, PEPFetchException {
+	public final String callAddComponentSSGService(final JSONObject jsonStyleSpliSku) throws MalformedURLException, ClassCastException, 
+	IOException, JSONException {
 		LOGGER.info("Entering callAddComponentSSGService-->.");
  
 		String responseMsg = "";
@@ -871,20 +871,17 @@ public class GroupingServiceImpl implements GroupingService {
 
 		} catch (MalformedURLException e) {
 			LOGGER.error("inside malformedException-->" + e);
-			throw new PEPFetchException(e.getMessage());
+			throw new MalformedURLException(e.getMessage());
 		} catch (ClassCastException e) {
 			LOGGER.error("inside ClassCastException-->" + e);
-			throw new PEPFetchException(e.getMessage());
-		} catch (IOException e) {
-			LOGGER.error("inside IOException-->" + e);
-			throw new IOException(e.getMessage());
-		} catch (JSONException e) {
+			throw new ClassCastException(e.getMessage());
+		}catch (JSONException e) {
 			LOGGER.error("inside JSOnException-->" + e);
 			throw new JSONException(e.getMessage());
-		} catch (Exception e) {
-			LOGGER.error("inside Exception-->" + e);
-			throw new Exception(e.getMessage());
-		} finally{
+		}catch (IOException e) {
+			LOGGER.error("inside IOException-->" + e);
+			throw new IOException(e.getMessage());
+		}finally{
 			if(null != httpConnection){
 				httpConnection.disconnect();
 			}
@@ -1031,7 +1028,7 @@ public class GroupingServiceImpl implements GroupingService {
 	 * @throws Exception
 	 * @throws PEPFetchException
 	 */
-	public final CreateGroupForm getExistingGrpDetails(final String groupId) throws Exception, PEPFetchException {
+	public final CreateGroupForm getExistingGrpDetails(final String groupId) throws PEPFetchException, ParseException {
 		LOGGER.info("Entering getExistingGrpDetails-->.");
 
 		// Call DAO to fetch Group Details after getting response from service
@@ -1260,7 +1257,8 @@ public class GroupingServiceImpl implements GroupingService {
 	 * @throws Exception
 	 * @throws PEPFetchException
 	 */
-	private String callDeleteGroupService(final JSONObject jsonGroup) throws Exception, PEPFetchException {
+	private String callDeleteGroupService(final JSONObject jsonGroup) throws MalformedURLException, ClassCastException, 
+	IOException, JSONException {
 		LOGGER.info("Entering callDeletGroupService-->.");
 
 		String responseMsg = "";
@@ -1297,19 +1295,16 @@ public class GroupingServiceImpl implements GroupingService {
 
 		} catch (MalformedURLException e) {
 			LOGGER.error("inside malformedException-->" + e);
-			throw new PEPFetchException(e.getMessage());
+			throw new MalformedURLException(e.getMessage());
 		} catch (ClassCastException e) {
 			LOGGER.error("inside ClassCastException-->" + e);
-			throw new PEPFetchException(e.getMessage());
-		} catch (IOException e) {
-			LOGGER.error("inside IOException-->" + e);
-			throw new IOException(e.getMessage());
-		} catch (JSONException e) {
+			throw new ClassCastException(e.getMessage());
+		}catch (JSONException e) {
 			LOGGER.error("inside JSOnException-->" + e);
 			throw new JSONException(e.getMessage());
-		} catch (Exception e) {
-			LOGGER.error("inside Exception-->" + e);
-			throw new Exception(e.getMessage());
+		}catch (IOException e) {
+			LOGGER.error("inside IOException-->" + e);
+			throw new IOException(e.getMessage());
 		} finally {
 			if(null != httpConnection){
 				httpConnection.disconnect();
@@ -1328,12 +1323,15 @@ public class GroupingServiceImpl implements GroupingService {
 	 * @param groupId
 	 * @param updatedBy
 	 * @return String
-	 * @throws Exception
 	 * @throws PEPFetchException
+	 * @throws IOException 
+	 * @throws JSONException 
+	 * @throws ClassCastException 
+	 * @throws MalformedURLException 
 	 */
 	@Override
-	public final String deleteGroup(final String groupId, final String groupType, final String updatedBy) throws Exception,
-			PEPFetchException {
+	public final String deleteGroup(final String groupId, final String groupType, final String updatedBy) throws 
+			PEPFetchException, MalformedURLException, ClassCastException, JSONException, IOException {
 		LOGGER.info("Entering deleteGroup-->.");
 		String responseMsg = "";
 		String responseMsgCode = "";
@@ -1449,11 +1447,15 @@ public class GroupingServiceImpl implements GroupingService {
 	 * @param groupType
 	 * @param selectedSplitAttributeList
 	 * @return
-	 * @throws Exception
 	 * @throws PEPFetchException
+	 * @throws MalformedURLException
+	 * @throws ClassCastException
+	 * @throws JSONException
+	 * @throws IOException
 	 */
 	public final CreateGroupForm addComponentToGroup(final String groupId, final String updatedBy, final String groupType,
-			final List<GroupAttributeForm> selectedSplitAttributeList) throws Exception, PEPFetchException {
+			final List<GroupAttributeForm> selectedSplitAttributeList) throws PEPFetchException, MalformedURLException, 
+			ClassCastException, JSONException, IOException {
 		LOGGER.info("Entering addComponentToGroup-->.");
 
 		String responseMsg = "";
@@ -1575,11 +1577,15 @@ public class GroupingServiceImpl implements GroupingService {
 	 * @param groupType
 	 * @param selectedSplitAttributeList
 	 * @return
-	 * @throws Exception
 	 * @throws PEPFetchException
+	 * @throws MalformedURLException
+	 * @throws ClassCastException
+	 * @throws JSONException
+	 * @throws IOException
 	 */
 	public final CreateGroupForm addCPGComponentToGroup(String groupId, String updatedBy, String groupType,
-			List<StyleAttributeForm> getCPGSelectedAttrbuteList) throws Exception, PEPFetchException {
+			List<StyleAttributeForm> getCPGSelectedAttrbuteList) throws PEPFetchException, MalformedURLException, 
+			ClassCastException, JSONException, IOException {
 		LOGGER.info("Entering addCPGComponentToGroup-->.");
 
 		String responseMsg = "";
@@ -1692,12 +1698,15 @@ public class GroupingServiceImpl implements GroupingService {
 	 * @param createGroupForm
 	 * @param modifiedBy
 	 * @return
-	 * @throws Exception
 	 * @throws PEPFetchException
+	 * @throws MalformedURLException
+	 * @throws ClassCastException
+	 * @throws JSONException
+	 * @throws IOException 
 	 */
 	@Override
 	public String updateGroupHeaderDetails(CreateGroupForm createGroupForm, String modifiedBy)
-	throws Exception, PEPFetchException {
+	throws PEPFetchException, MalformedURLException, ClassCastException, JSONException, IOException {
 		LOGGER.info("Entered saveEditedGroupHeader of Grouping Service Impl");
 		String groupId=createGroupForm.getGroupId();
 		String groupName=createGroupForm.getGroupName();
@@ -1729,7 +1738,8 @@ public class GroupingServiceImpl implements GroupingService {
 	 * @throws Exception
 	 * @throws PEPFetchException
 	 */
-	private String callUpdateGroupService(final JSONObject jsonGroup) throws Exception, PEPFetchException {
+	private String callUpdateGroupService(final JSONObject jsonGroup) throws MalformedURLException, ClassCastException, 
+	IOException, JSONException {
 		LOGGER.info("Entering callUpdateGroupService-->.");
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("jsonArray-->" + jsonGroup);
@@ -1770,20 +1780,17 @@ public class GroupingServiceImpl implements GroupingService {
 
 			httpConnection.disconnect();
 		} catch (MalformedURLException e) {
-			LOGGER.error("inside malformedException" + e);
-			throw new PEPFetchException(e);
+			LOGGER.error("inside malformedException-->" + e);
+			throw new MalformedURLException(e.getMessage());
 		} catch (ClassCastException e) {
-			LOGGER.error("inside ClassCastException" + e);
-			throw new PEPFetchException(e);
-		} catch (IOException e) {
-			LOGGER.error("inside IOException" + e);
-			throw new IOException(e);
-		} catch (JSONException e) {
-			LOGGER.error("inside JSOnException" + e);
-			throw new JSONException(e);
-		} catch (Exception e) {
-			LOGGER.error("inside Exception" + e);
-			throw new Exception(e);
+			LOGGER.error("inside ClassCastException-->" + e);
+			throw new ClassCastException(e.getMessage());
+		}catch (JSONException e) {
+			LOGGER.error("inside JSOnException-->" + e);
+			throw new JSONException(e.getMessage());
+		}catch (IOException e) {
+			LOGGER.error("inside IOException-->" + e);
+			throw new IOException(e.getMessage());
 		} finally {
 			if(null != httpConnection){
 				httpConnection.disconnect();

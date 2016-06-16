@@ -2,6 +2,7 @@ package com.belk.pep.dao.impl;
 
 import java.math.BigDecimal;
 import java.sql.Clob;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -71,7 +72,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 	 * @author Cognizant
 	 * @throws PEPFetchException
 	 */
-	public CreateGroupDTO getGroupHeaderDetails(final String groupId) throws PEPFetchException {
+	public CreateGroupDTO getGroupHeaderDetails(final String groupId) throws PEPFetchException, ParseException {
 		LOGGER.info("Fetch Group Header Details--> getGroupHeaderDetails-->Start.");
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("Group Id-->" + groupId);
@@ -144,6 +145,9 @@ public class GroupingDAOImpl implements GroupingDAO {
 		} catch (PEPFetchException e) {
 			LOGGER.error("inside PEPFetchException-->" + e);
 			throw new PEPFetchException(e.getMessage());
+		} catch (ParseException e) {
+			LOGGER.error("inside ParseException-->" + e);
+			throw new ParseException(e.getMessage(), 0);
 		} finally {
 			LOGGER.info("recordsFetched. getGroupHeaderDetails finally block..");
 			if(session!=null) {

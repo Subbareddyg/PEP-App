@@ -1,9 +1,13 @@
 package com.belk.pep.service;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.belk.pep.dto.ClassDetails;
@@ -30,7 +34,8 @@ public interface GroupingService {
 	 * @throws Exception
 	 * @throws PEPFetchException */
 	CreateGroupForm saveGroupHeaderDetails(JSONObject jsonStyle, String updatedBy, List<GroupAttributeForm> selectedSplitAttributeList)
-			throws Exception, PEPFetchException;
+			throws PEPFetchException,
+			MalformedURLException, ClassCastException, JSONException, IOException, ParseException;
 
 	/** This method is used to call create group service.
 	 * 
@@ -38,7 +43,8 @@ public interface GroupingService {
 	 * @return String
 	 * @throws Exception
 	 * @throws PEPFetchException */
-	String callCreateGroupService(JSONObject jsonStyle) throws Exception, PEPFetchException;
+	String callCreateGroupService(JSONObject jsonStyle) throws MalformedURLException, ClassCastException, 
+	IOException, JSONException;
 
 	/** This method is used to get Component details for Split Color.
 	 * 
@@ -144,7 +150,7 @@ public interface GroupingService {
 	 * @return CreateGroupForm
 	 * @throws Exception
 	 * @throws PEPFetchException */
-	CreateGroupForm getExistingGrpDetails(String groupId) throws Exception, PEPFetchException;
+	CreateGroupForm getExistingGrpDetails(String groupId) throws PEPFetchException, ParseException;
 
 	/** This method is used to get the Existing Style Color details.
 	 * 
@@ -210,38 +216,56 @@ public interface GroupingService {
 	 * @throws PEPPersistencyException */
 	List<ClassDetails> getClassDetailsByDepNos(String departmentNumbers) throws PEPPersistencyException, PEPServiceException;
 
-	/** This method is used to call Group Delete Service.
-	 * 
+	/**
+	 * This method is used to call Group Delete Service.
+	 * @param groupId
+	 * @param groupType
+	 * @param updatedBy
+	 * @return
+	 * @throws PEPFetchException
+	 * @throws MalformedURLException
+	 * @throws ClassCastException
+	 * @throws JSONException
+	 * @throws IOException
+	 */
+	String deleteGroup(String groupId, String groupType, String updatedBy) throws PEPFetchException, MalformedURLException, 
+	ClassCastException, JSONException, IOException;
+
+	/**
+	 * This method is used to call add Component Service and fetch data from.
+	 * database.
 	 * @param groupId
 	 * @param updatedBy
-	 * @return String
-	 * @throws Exception
-	 * @throws PEPFetchException */
-	String deleteGroup(String groupId, String groupType, String updatedBy) throws Exception, PEPFetchException;
-
-	/** This method is used to call add Component Service and fetch data from.
-	 * database.
-	 * 
-	 * @param updatedBy
 	 * @param groupType
 	 * @param selectedSplitAttributeList
 	 * @return
-	 * @throws Exception
-	 * @throws PEPFetchException */
+	 * @throws PEPFetchException
+	 * @throws MalformedURLException
+	 * @throws ClassCastException
+	 * @throws JSONException
+	 * @throws IOException
+	 */
 	CreateGroupForm addComponentToGroup(String groupId, String updatedBy, String groupType,
-			List<GroupAttributeForm> selectedSplitAttributeList) throws Exception, PEPFetchException;
+			List<GroupAttributeForm> selectedSplitAttributeList) throws PEPFetchException, MalformedURLException, 
+			ClassCastException, JSONException, IOException;
 
-	/** This method is used to call add CPG Component Service and fetch data from..
+	/**
+	 * This method is used to call add CPG Component Service and fetch data from..
 	 * database.
-	 * 
+	 * @param groupId
 	 * @param updatedBy
 	 * @param groupType
-	 * @param selectedSplitAttributeList
+	 * @param getCPGSelectedAttrbuteList
 	 * @return
-	 * @throws Exception
-	 * @throws PEPFetchException */
+	 * @throws PEPFetchException
+	 * @throws MalformedURLException
+	 * @throws ClassCastException
+	 * @throws JSONException
+	 * @throws IOException
+	 */
 	CreateGroupForm addCPGComponentToGroup(String groupId, String updatedBy, String groupType,
-			List<StyleAttributeForm> getCPGSelectedAttrbuteList) throws Exception, PEPFetchException;
+			List<StyleAttributeForm> getCPGSelectedAttrbuteList) throws PEPFetchException, MalformedURLException, 
+			ClassCastException, JSONException, IOException;
 	
 	/**
 	 * @param getSplitColorDetailsList
@@ -254,8 +278,12 @@ public interface GroupingService {
 	 * @param createGroupForm
 	 * @param modifiedBy
 	 * @return
-	 * @throws Exception
 	 * @throws PEPFetchException
+	 * @throws MalformedURLException
+	 * @throws ClassCastException
+	 * @throws JSONException
+	 * @throws IOException
 	 */
-	String updateGroupHeaderDetails(CreateGroupForm createGroupForm, String modifiedBy)throws Exception, PEPFetchException;
+	String updateGroupHeaderDetails(CreateGroupForm createGroupForm, String modifiedBy)throws PEPFetchException, 
+	MalformedURLException, ClassCastException, JSONException, IOException;
 }
