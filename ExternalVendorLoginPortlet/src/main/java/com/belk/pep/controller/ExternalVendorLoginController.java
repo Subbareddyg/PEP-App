@@ -83,7 +83,6 @@ public class ExternalVendorLoginController implements Controller {
     public ModelAndView handleRenderRequest(RenderRequest request,
             RenderResponse response) throws Exception {
         LOGGER.info("****inside the  handle handleRenderRequest method****");           
-        LOGGER.info("VendorPortalLoginController:handleRenderRequest:handleRenderRequest "+request.getParameter(ExternalVendorLoginConstants.ACTION));
         Properties prop = PropertiesFileLoader.getExternalLoginProperties();
         ModelAndView mv = null;
         //Forgot password Normal flow
@@ -169,9 +168,6 @@ public class ExternalVendorLoginController implements Controller {
                      if(null!=listVpUser && listVpUser.size()>0){
                          
                          for(int i=0;i<listVpUser.size();i++){
-                             LOGGER.info("Suppplier Id ID="+listVpUser.get(i).getId().getSupplierId());
-                             LOGGER.info("Supplier Email="+listVpUser.get(i).getId().getSupplierEmail());
-                             LOGGER.info("Password="+listVpUser.get(i).getSupplierPwd());
                              if(null!=listVpUser.get(i).getSupplierPwd() && listVpUser.get(i).getSupplierPwd().length()>0){
                                  LOGGER.info("Found VPUser with Password");
                                  rPvpUser = listVpUser.get(i);
@@ -201,14 +197,12 @@ public class ExternalVendorLoginController implements Controller {
         }catch(PEPServiceException serviceException)
        
         { serviceException.printStackTrace();
-            LOGGER.info("VendorPortalLoginController:handleActionRequest:Service Exception Occured."+serviceException.getMessage());
             response.setRenderParameter(ExternalVendorLoginConstants.ACTION, ExternalVendorLoginConstants.RESET_PASSWORD_EXCEPTION);
             response.setRenderParameter(ExternalVendorLoginConstants.PEPSERVICE_EXCEPTION_PARAMETER, ExternalVendorLoginConstants.SYSTEM_FAILURE_MSG);
           
         }
         catch(PEPPersistencyException persistencyException)
         { persistencyException.printStackTrace();
-            LOGGER.info("VendorPortalLoginController:handleActionRequest:DAO Exception Occured."+persistencyException.getMessage());
             response.setRenderParameter(ExternalVendorLoginConstants.ACTION, ExternalVendorLoginConstants.RESET_PASSWORD_EXCEPTION);
             response.setRenderParameter(ExternalVendorLoginConstants.PEPSISTANCE_EXCEPTION_PARAMETER, ExternalVendorLoginConstants.SYSTEM_FAILURE_MSG);
               
@@ -235,12 +229,9 @@ public class ExternalVendorLoginController implements Controller {
         try
         {
             Properties prop = PropertiesFileLoader.getExternalLoginProperties();
-            LOGGER.info("ExternalVendorLoginController:handleActionRequest:handleActionRequest="+request.getParameter(ExternalVendorLoginConstants.ACTION));
             //Login Flow
             if(ExternalVendorLoginConstants.ACTION_LOGIN_SUBMIT.equalsIgnoreCase(request.getParameter(ExternalVendorLoginConstants.ACTION)))
             {
-                LOGGER.info("VendorPortalLoginController:handleActionRequest:user name ="+request.getParameter(ExternalVendorLoginConstants.J_USERNAME));
-                LOGGER.info("VendorPortalLoginController:handleActionRequest:password="+request.getParameter(ExternalVendorLoginConstants.J_PASSWORD));
                 ExternalUser externalUser = null;
                 String roleName = null;
                 String accessRight = null;
@@ -263,14 +254,10 @@ public class ExternalVendorLoginController implements Controller {
                             if(null!=listVpUser && listVpUser.size()>0){
                                
                                 for(int i=0;i<listVpUser.size();i++){
-                                    LOGGER.info("Suppplier Id ID="+listVpUser.get(i).getId().getSupplierId());
-                                    LOGGER.info("Supplier Email="+listVpUser.get(i).getId().getSupplierEmail());
                                     String email = listVpUser.get(i).getId().getSupplierEmail();
                                     userPwd = listVpUser.get(i).getSupplierPwd();
-                                    LOGGER.info("Password="+userPwd);
                                     
                                     if(null!=email && !email.trim().equalsIgnoreCase("") && email.length()>0){
-                                        LOGGER.info("Found VPUser with Password");
                                         externalUser = listVpUser.get(i);
                                         break;
                                     }
@@ -282,7 +269,6 @@ public class ExternalVendorLoginController implements Controller {
                             {//Converting the Encrypted password to normal password using Decryption.
                             if( userPwd != null && !userPwd.trim().equalsIgnoreCase("") && password.equals(getDecryptedPassword(externalUser.getSupplierPwd())))
                             {
-                                LOGGER.info("ExternalVendorLoginController:handleActionRequest:The password="+externalUser.getSupplierPwd());
                                 if(null!=externalUser.getPepRole() && null!=externalUser.getPepRole().getPepRoleId())
                                 {
                                 
@@ -294,8 +280,6 @@ public class ExternalVendorLoginController implements Controller {
                                             pepRole=externalVendorLoginDelegate.getRoleDetailsFromDataBaseByPepRoleId(roleName);
                                             if(null!=pepRole)
                                             accessRight = pepRole.getAccessType();
-                                            LOGGER.info("ExternalVendorLoginController:handleActionRequest:AccessRight= "+accessRight);
-                                            LOGGER.info("ExternalVendorLoginController:handleActionRequest:UserType= "+pepRole.getUserType());
                                             loginDataReady = true;
                                        
                                     }
@@ -331,9 +315,6 @@ public class ExternalVendorLoginController implements Controller {
                         commonUserdata.setAccessRight(accessRight);
                         Common_Vpuser common_Vpuser = new Common_Vpuser();
                         if(externalUser.getId()!=null){
-                            LOGGER.info("externalUser.getId().."+externalUser.getId());
-                            LOGGER.info("externalUser.getId().getSupplierEmail().."+externalUser.getId().getSupplierEmail());
-                            LOGGER.info("externalUser.getId().getSupplierId().."+externalUser.getId().getSupplierId());
                             ExternalUserPK externalUserPrimaryKey=externalUser.getId();
                             String supplierEmail= externalUserPrimaryKey.getSupplierEmail();
                             String supplierId=externalUserPrimaryKey.getSupplierId();
@@ -356,7 +337,6 @@ public class ExternalVendorLoginController implements Controller {
                             if(null!=listVpUser && listVpUser.size()>0){
                                List<String> supplierIdList = new ArrayList<String>();
                                 for(int i=0;i<listVpUser.size();i++){
-                                    LOGGER.info("Suppplier Id ID="+listVpUser.get(i).getId().getSupplierId());
                                     if(StringUtils.isNotBlank(listVpUser.get(i).getId().getSupplierId())){
                                         supplierIdList.add(listVpUser.get(i).getId().getSupplierId());
                                     }
@@ -437,7 +417,6 @@ public class ExternalVendorLoginController implements Controller {
  */
     private String getDecryptedPassword(String userPassword) throws Exception {
         String decryptedPassword= AESEncryptDecrypt.getDecryptedPassword(SimpleBase64Encoder.decode(userPassword));
-        LOGGER.info("The Decrypted password is=="+decryptedPassword);
         return decryptedPassword;
     }
 
@@ -474,7 +453,6 @@ public class ExternalVendorLoginController implements Controller {
      */
     private void handleForgetPasswordMessages(ModelAndView mv,
         RenderRequest request, Properties prop) {
-        LOGGER.info("VendorPortalLoginController:handleForgetPasswordMessages:The Forgot password message is=="+request.getParameter(ExternalVendorLoginConstants.FORGOT_PASSWORD_MESSAGE));
         if(null!=request.getParameter(ExternalVendorLoginConstants.FORGOT_PASSWORD_MESSAGE) && request.getParameter(ExternalVendorLoginConstants.FORGOT_PASSWORD_MESSAGE).length()>0){
             if(ExternalVendorLoginConstants.FORGOT_PASSWORD_SUCCESS.equalsIgnoreCase(request.getParameter(ExternalVendorLoginConstants.FORGOT_PASSWORD_MESSAGE))){
                 mv.addObject(ExternalVendorLoginConstants.RESET_SUCCESS,prop.getProperty(ExternalVendorLoginConstants.PROPERTIES_KEY_RESET_SUCCESS_MSG)) ;

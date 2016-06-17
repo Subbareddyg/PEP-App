@@ -13,7 +13,7 @@ public class PEPPersistencyException  extends Exception{
      * Instantiates a new PEP persistency exception.
      */
     public PEPPersistencyException() {
-       
+    	// To be implemented.
     }
     
     /**

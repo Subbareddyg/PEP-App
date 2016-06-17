@@ -4,7 +4,7 @@ package com.belk.pep.exception.checked;
 /**
  * The Class PEPUpdateException.
  *
- * @author AFUSOS3
+ * @author AFUSAM1
  */
 public class PEPUpdateException extends Exception {
 
@@ -16,7 +16,7 @@ public class PEPUpdateException extends Exception {
      * Instantiates a new PEP update exception.
      */
     public PEPUpdateException() {
-       
+    	// To be implemented.
     }
     
     

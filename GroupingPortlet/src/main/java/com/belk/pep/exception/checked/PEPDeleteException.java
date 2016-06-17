@@ -6,7 +6,7 @@ package com.belk.pep.exception.checked;
 /**
  * The Class PEPDeleteException.
  *
- * @author AFUSOS3
+ * @author AFUSAM1
  */
 public class PEPDeleteException extends Exception {
 
@@ -19,7 +19,7 @@ public class PEPDeleteException extends Exception {
      * Instantiates a new PEP delete exception.
      */
     public PEPDeleteException() {
-        
+        // To be implemented
     }
     
     

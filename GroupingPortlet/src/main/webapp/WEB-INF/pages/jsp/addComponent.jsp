@@ -231,9 +231,9 @@
 	<div class="x-panel-body">
 		<div class="group-search-area" id="exisiting-table-dataTable">
 			<div id="group-existing-component-area"></div>
-			<div class="pagination-container">
+			<div class="pagination-container hide_after_error">
 				<div class="pagination-left">
-					<div class="pagination-left-wrapper">
+					<div class="pagination-left-wrapper ">
 						<label for="page-limit-1"><fmt:message key="splitgroup.screen.level.show" /> </label>
 						<select name="page-limit-1" id="page-limit-1" class="record-limit">
 							<option value="10">10</option>
@@ -261,7 +261,7 @@
 			</c:choose>
 			<div class="pagination-container">
 				<div class="pagination-left">
-					<div class="pagination-left-wrapper">
+					<div class="pagination-left-wrapper hide_after_error">
 						<input type="button" class="btn" value="Remove Component" style="width: 140px; opacity:0.5" id="remove-existing-group" disabled="disabled" /> 
 					</div>
 				</div>

@@ -90,14 +90,10 @@ public class DateUtil {
      * @throws ParseException the parse exception
      * @author AFUPYB3
      */
-    public static String DateToStringMMddyyyy(final Date sDate) {
+    public static String DateToStringMMddyyyy(final Date sDate) throws ParseException {
         SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
         String dateSt = "";
-        try {
-            dateSt = formatter.format(sDate);
-        } catch (Exception e) {
-        	LOGGER.error("Error in DateUtil.stringToStringMMddyyyy() -->" + e.getMessage());
-        }
+        dateSt = formatter.format(sDate);
         return dateSt;
     }
 

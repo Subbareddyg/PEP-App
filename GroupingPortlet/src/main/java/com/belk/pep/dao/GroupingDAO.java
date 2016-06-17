@@ -1,5 +1,6 @@
 package com.belk.pep.dao;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,7 +26,7 @@ public interface GroupingDAO {
 	 * @param groupId String
 	 * @return CreateGroupDTO
 	 * @throws PEPFetchException PEPFetchException */
-	CreateGroupDTO getGroupHeaderDetails(String groupId) throws PEPFetchException;
+	CreateGroupDTO getGroupHeaderDetails(String groupId) throws PEPFetchException, ParseException;
 
 	/** Method getSplitColorDetails.
 	 * 

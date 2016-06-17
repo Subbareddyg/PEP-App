@@ -1,30 +1,26 @@
 package com.belk.pep.controller;
 
+import java.util.Properties;
+
 import javax.naming.NamingException;
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
-import javax.portlet.PortletSession;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.springframework.web.portlet.ModelAndView;
 import org.springframework.web.portlet.mvc.Controller;
 
-//import java.util.logging.Logger;
-import org.apache.log4j.Logger;
-import com.belk.pep.exception.checked.PEPServiceException;
-import com.belk.pep.model.UserObject;
 import com.belk.pep.common.model.Common_BelkUser;
 import com.belk.pep.common.userdata.UserData;
 import com.belk.pep.constants.InternalPortalConstants;
+import com.belk.pep.delegate.InternalPortalLoginDelegate;
+import com.belk.pep.exception.checked.PEPServiceException;
+import com.belk.pep.model.UserObject;
 import com.belk.pep.util.ActiveDirectoryUtil;
 import com.belk.pep.util.PropertyLoader;
-import com.belk.pep.delegate.InternalPortalLoginDelegate;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
 
 
 /**
@@ -71,13 +67,11 @@ public class InternalPortalLoginController implements Controller {
 		boolean isPasswordNull        =false;
 		UserObject  userObj = null;		
 		Properties prop = PropertyLoader.getPropertyLoader(InternalPortalConstants.MESS_PROP);
-		LOGGER.info("Action -->"+request.getParameter("action"));
 		String userID = request.getParameter(InternalPortalConstants.USER_NAME);	
 		String password = request.getParameter(InternalPortalConstants.PASSWORD);		
 		/* LDAP Verification */	
 						
 		if((null!= userID && !userID.isEmpty())&& (null != password && !password.isEmpty())){		
-			LOGGER.info("USERID"+userID);	
 			try{				
 				flag = ActiveDirectoryUtil.authenticateUser(userID, password);
 			}
@@ -97,7 +91,6 @@ public class InternalPortalLoginController implements Controller {
 			if(null == userID || userID.isEmpty() ){
 				isUserIdNull =  true;
 				try{
-					LOGGER.info("userID"+userID);
 					
 					errorMsg =prop.getProperty(InternalPortalConstants.INVALID_ID);
 				}catch(NullPointerException e){
@@ -112,7 +105,6 @@ public class InternalPortalLoginController implements Controller {
 			if(null == password ||password.isEmpty() ){
 				isPasswordNull = true;
 				try{
-					LOGGER.info("password"+password);
 					errorMsg =prop.getProperty(InternalPortalConstants.INVALID_PWD);
 				}catch(NullPointerException e){
 					errorMsg = prop.getProperty(InternalPortalConstants.INVALID_PWD);
@@ -149,8 +141,6 @@ public class InternalPortalLoginController implements Controller {
 						 userObj= (UserObject)loginDelegate.fetchUserDetails(userID);
 						 if(userObj == null  ){
 							 errorMsg = prop.getProperty(InternalPortalConstants.INVALID_USER_ID);
-						 }else{
-							 LOGGER.info("InternalPortalLoginController:::UserObj ID:::"+userObj.getLanID()+"accessType"+ userObj.getRoleAccessType()+"User type:::"+userObj.getUserType()+"UserObj Role Status:::"+userObj.getPepRoleStatus());
 						 }
 					 }
 					
@@ -196,9 +186,6 @@ public class InternalPortalLoginController implements Controller {
 		String userID =request.getParameter(InternalPortalConstants.USER_NAME);
 		String password =request.getParameter(InternalPortalConstants.PASSWORD);
 		if(null !=  errMsg && errMsg!= ""){				
-			LOGGER.info("InternalPortalLoginController:::ErrMsg"+errMsg);
-			LOGGER.info("InternalPortalLoginController:::userID"+userID);
-			LOGGER.info("InternalPortalLoginController:::password"+password);
 			mv= new ModelAndView(InternalPortalConstants.LOGIN_PAGE);			
 			mv.addObject(InternalPortalConstants.ERROR_MSG,errMsg );
 			
@@ -208,7 +195,6 @@ public class InternalPortalLoginController implements Controller {
 			}
 			//Santanu 03/16/16 
 			if(null !=  password && password!= "" && errMsg.equalsIgnoreCase("Please enter a valid LAN id and password")){
-				LOGGER.info("Lin 211");
 				mv.addObject(InternalPortalConstants.PASSWORD,"" );	
 			}
 			
