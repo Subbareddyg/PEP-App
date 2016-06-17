@@ -199,7 +199,6 @@ public class ExternalUserLoginDAOImpl implements ExternalUserLoginDAO{
         LOGGER.info("From: " + fromAddress); //JIRA VP-6
         LOGGER.info("To: " + recipientAddress);
         LOGGER.info("Subject: " + subject);
-        LOGGER.info("Message: " + message);
         LOGGER.info("vendor login= " + props.getProperty(ExternalVendorLoginConstants.EXTERNAL_VENDOR_LOGIN_URL));
         
         // creates a simple e-mail object
