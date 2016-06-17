@@ -1640,6 +1640,7 @@ public boolean releseLockedPet(  String orin, String pepUserID,String pepFunctio
                     copyAttributeVO.setCountryOfOrigin(checkNull(row[10]));
                     copyAttributeVO.setExclusive(checkNull(row[11]));
                     copyAttributeVO.setCaprop65Compliant(checkNull(row[12]));
+                    copyAttributeVO.setImportDomestic(checkNull(row[13]));
                     
                     LOGGER.debug("Copy Attribute Values -- \nORIN: " + copyAttributeVO.getOrin() +
                         "\nPRODUCT COPY TEXT: " + copyAttributeVO.getProductCopyText() +
@@ -1653,7 +1654,8 @@ public boolean releseLockedPet(  String orin, String pepUserID,String pepFunctio
                         "\nCARE: " + copyAttributeVO.getCare() +
                         "\nCOUNTRY OF ORIGIN: " + copyAttributeVO.getCountryOfOrigin() +
                         "\nEXCLUSIVE: " + copyAttributeVO.getExclusive() +
-                        "\nCAPROP65 COMPLIANT: " + copyAttributeVO.getCaprop65Compliant());
+                        "\nCAPROP65 COMPLIANT: " + copyAttributeVO.getCaprop65Compliant() +
+                        "\nCOPY IMPORT DOMESTIC: " + copyAttributeVO.getImportDomestic());
                 }
             }
         }

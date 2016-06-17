@@ -1,18 +1,18 @@
 package com.belk.pep.controller;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.io.IOException;
 import java.io.Serializable;
 
 import com.belk.pep.util.DateUtil;
-import java.util.*;
-import java.text.*;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
-//import java.util.logging.Logger;
 import org.apache.log4j.Logger;
 import com.belk.pep.model.StyleColor;
 import javax.portlet.ActionRequest;
@@ -701,6 +701,7 @@ public class WorkListDisplayController implements Controller,EventAwareControlle
             }
             //fix for 496 end
             LOGGER.info("Start index is =="+startindex+"endIndex is =="+endIndex);
+            LOGGER.info("workFlowListSri size:" + workFlowListSri.size());
             List currentPageworkFlowList = workFlowListSri.subList(startindex, endIndex);
             renderForm.setSelectedPage(String.valueOf(selectedPageNumber));
             renderForm.setTotalPageno(String.valueOf(numberOfPages));
@@ -1593,9 +1594,11 @@ private void assignRole(WorkListDisplayForm workListDisplayForm2,
         
         //Pagination flow
         String pageNo ="1";
+        int count = 0;
         if(null!=request.getParameter(WorkListDisplayConstants.AJAX_PAGE_NO)&& request.getParameter(WorkListDisplayConstants.AJAX_PAGE_NO).length()>0){
             pageNo = request.getParameter(WorkListDisplayConstants.AJAX_PAGE_NO);
             LOGGER.info("Page Number="+pageNo);
+            count = 1;
             if (WorkListDisplayConstants.GROUPINGS
                 .equalsIgnoreCase(workListType)) {
                 handlingPaginationRenderGroups(Integer.parseInt(pageNo),
@@ -1608,7 +1611,9 @@ private void assignRole(WorkListDisplayForm workListDisplayForm2,
         }
         //Sorting Flow
         String selectedColumn = WorkListDisplayConstants.COMPLETION_DATE;
-        if(null!=request.getParameter(WorkListDisplayConstants.AJAX_SELECTED_COLUMN_NAME) && request.getParameter(WorkListDisplayConstants.AJAX_SELECTED_COLUMN_NAME).length()>0)
+        if(null!=request.getParameter(WorkListDisplayConstants.AJAX_SELECTED_COLUMN_NAME) 
+                && request.getParameter(WorkListDisplayConstants.AJAX_SELECTED_COLUMN_NAME).length()>0
+                && count == 0)
         {
             selectedColumn = request.getParameter(WorkListDisplayConstants.AJAX_SELECTED_COLUMN_NAME);
             LOGGER.info("Selected Column is="+selectedColumn);
@@ -2128,8 +2133,11 @@ private void assignRole(WorkListDisplayForm workListDisplayForm2,
                                 }
                                 
                                 if(!"getChildData".equalsIgnoreCase(callType)){ 
-                                    resourceForm.setFullWorkFlowlist(workFlowList);
-                                    resourceForm.setTotalNumberOfPets(String.valueOf(workFlowList.size()));
+                                    if(!WorkListDisplayConstants.GET_CHILD_GROUP.equals(callType))
+                                    {
+                                        resourceForm.setFullWorkFlowlist(workFlowList);
+                                        resourceForm.setTotalNumberOfPets(String.valueOf(workFlowList.size()));                                        
+                                    }
                                 }
                                 //Fix for 835 Start
                                 if(null != resourceForm.getFullWorkFlowlist()){
@@ -2394,28 +2402,59 @@ private void setAdvanceSearchfieldsFromAjax(ResourceRequest request) {
                 StringUtils.isNotBlank(groupingName))
                {
             adSearch.setAllFieldEmpty(false);
+            if(StringUtils.isNotBlank(departmentDetails)||
+                    StringUtils.isNotBlank(completionDateFrom)||
+                    StringUtils.isNotBlank(completionDateTo)||
+                    StringUtils.isNotBlank(imageStatus)||
+                    StringUtils.isNotBlank(contentStatus)||
+                    StringUtils.isNotBlank(petStatus)||
+                    StringUtils.isNotBlank(requestType)||
+                    StringUtils.isNotBlank(orinNumber)||
+                    StringUtils.isNotBlank(vendorStyle)||
+                    StringUtils.isNotBlank(upc)||
+                    StringUtils.isNotBlank(classNumber)||
+                    StringUtils.isNotBlank(createdToday)||
+                    StringUtils.isNotBlank(vendorNumber))
+            {
+                adSearch = new AdvanceSearch();
+                adSearch.setDeptNumbers(departmentDetails);
+                adSearch.setDateFrom(completionDateFrom);
+                adSearch.setDateTo(completionDateTo);
+                adSearch.setImageStatus(imageStatus);
+                adSearch.setContentStatus(contentStatus);
+                adSearch.setActive(petStatus);
+                adSearch.setInActive(petStatus);
+                adSearch.setClosed(petStatus);
+                adSearch.setRequestType(requestType);
+                adSearch.setOrin(orinNumber);
+                adSearch.setVendorStyle(vendorStyle);
+                adSearch.setUpc(upc);
+                adSearch.setClassNumber(classNumber);
+                adSearch.setCreatedToday(createdToday);
+                adSearch.setVendorNumber(vendorNumber);
+            }
+            else if(StringUtils.isNotBlank(groupingID) ||
+                    StringUtils.isNotBlank(groupingName))
+            {
+                if(StringUtils.isNotBlank(groupingName))
+                {
+                    adSearch = new AdvanceSearch();
+                    adSearch.setGroupingName(groupingName);
+                    if(StringUtils.isNotBlank(groupingID))
+                    {
+                        adSearch.setGroupingID(groupingID);
+                    }
+                }
+                else
+                {
+                    adSearch = new AdvanceSearch();
+                    adSearch.setGroupingID(groupingID);
+                }
+            }
         }else{
             LOGGER.info("All Advance Search Fields are Empty.");
             adSearch.setAllFieldEmpty(true); 
         }
-        adSearch = new AdvanceSearch();
-        adSearch.setDeptNumbers(departmentDetails);
-        adSearch.setDateFrom(completionDateFrom);
-        adSearch.setDateTo(completionDateTo);
-        adSearch.setImageStatus(imageStatus);
-        adSearch.setContentStatus(contentStatus);
-        adSearch.setActive(petStatus);
-        adSearch.setInActive(petStatus);
-        adSearch.setClosed(petStatus);
-        adSearch.setRequestType(requestType);
-        adSearch.setOrin(orinNumber);
-        adSearch.setVendorStyle(vendorStyle);
-        adSearch.setUpc(upc);
-        adSearch.setClassNumber(classNumber);
-        adSearch.setCreatedToday(createdToday);
-        adSearch.setVendorNumber(vendorNumber);
-        adSearch.setGroupingID(groupingID);
-        adSearch.setGroupingName(groupingName);
         
     }else{
         // "Show Only Items" radio is selected in Search Result. IGNORE GROUPING ID AND NAME 
@@ -3069,6 +3108,7 @@ public String ConvertDate(String completionDate){
         UserData custuser = (UserData) request.getPortletSession().getAttribute(sessionDataKey);//TODO
         
         List<WorkFlow> workFlowlist = resourceForm.getWorkFlowlist();
+        LOGGER.info("workFlowlist Size-->"+workFlowlist.size());
         List fullWorkList = resourceForm.getFullWorkFlowlist();
         if (null != custuser.getVpUser()){
             email = custuser.getVpUser().getUserEmailAddress();
@@ -3118,7 +3158,7 @@ public String ConvertDate(String completionDate){
             }
             workFlowlist = resourceForm.getWorkFlowlist();
             fullWorkList = resourceForm.getFullWorkFlowlist();
-            
+            LOGGER.info("workFlowlist size:"+workFlowlist.size());
             LOGGER.info("**************After workListDisplayDelegate.getPetDetailsByDepNosForChil this call in  getChildData() method");
             LOGGER.info("getChildData : orinNum:: "+childPETList);
             //Getchild data based on ORIN NUM and generate the JSON Object array

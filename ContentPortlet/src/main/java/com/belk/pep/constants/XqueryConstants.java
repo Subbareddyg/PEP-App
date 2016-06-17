@@ -2480,8 +2480,8 @@ public class XqueryConstants {
         "   T.COPYCARE,                                                                                                            "+
         "   T.COPYCOUNTRYOFORIGIN,                                                                                                 "+
         "   T.COPYEXCLUSIVE,                                                                                                       "+
-        "   T.COPYCAPROP65COMPLIANT                                                                                                "+
-        " FROM ADSE_PET_CATALOG AIC,                                                                                              "+
+        "   T.COPYCAPROP65COMPLIANT, T.COPYIMPORTDOMESTIC                                                                          "+
+        " FROM ADSE_PET_CATALOG AIC,                                                                                               "+
         "   XMLTABLE(                                                                                                              "+
         "   'let $productCopyText := $XML_DATA/pim_entry/entry/Copy_Sec_Spec/Product_Copy_Text,                                    "+
         " $copyLine1 := $XML_DATA/pim_entry/entry/Copy_Sec_Spec/Copy_Line_1,                                                       "+
@@ -2493,8 +2493,9 @@ public class XqueryConstants {
         " $copyMaterial := $XML_DATA/pim_entry/entry/Copy_Sec_Spec/Copy_Material,                                                  "+
         " $copyCare := $XML_DATA/pim_entry/entry/Copy_Sec_Spec/Copy_Care,                                                          "+
         " $copyCountryOfOrigin := $XML_DATA/pim_entry/entry/Copy_Sec_Spec/Copy_Country_of_Origin,                                  "+
-        " $copyExclusive := $XML_DATA/pim_entry/entry/Copy_Sec_Spec/Copy_Import_Domestic,                                          "+
-        " $copyCAProp65Compliant := $XML_DATA/pim_entry/entry/Copy_Sec_Spec/Copy_CAProp65_Compliant                               "+
+        " $copyImportDomestic := $XML_DATA/pim_entry/entry/Copy_Sec_Spec/Copy_Import_Domestic,                                     "+
+        " $copyExclusive := $XML_DATA/pim_entry/entry/Copy_Sec_Spec/Copy_Exclusive,                                                "+
+        " $copyCAProp65Compliant := $XML_DATA/pim_entry/entry/Copy_Sec_Spec/Copy_CAProp65_Compliant                                "+
         " return                                                                                                                   "+
         " <category>                                                                                                               "+
         " <productCopyText>{$productCopyText}</productCopyText>                                                                    "+
@@ -2507,10 +2508,18 @@ public class XqueryConstants {
         " <copyMaterial>{$copyMaterial}</copyMaterial>                                                                             "+
         " <copyCare>{$copyCare}</copyCare>                                                                                         "+
         " <copyCountryOfOrigin>{$copyCountryOfOrigin}</copyCountryOfOrigin>                                                        "+
+        " <copyImportDomestic>{$copyImportDomestic}</copyImportDomestic>                                                           "+
         " <copyExclusive>{$copyExclusive}</copyExclusive>                                                                          "+
         " <copyCAProp65Compliant>{$copyCAProp65Compliant}</copyCAProp65Compliant>                                                  "+
         " </category>'                                                                                                             "+
-        "   passing AIC.XML_DATA AS \"XML_DATA\" COLUMNS PRODUCTCOPYTEXT CLOB path '/category/productCopyText', COPYLINE1 VARCHAR(3000) path '/category/copyLine1', COPYLINE2 VARCHAR(3000) path '/category/copyLine2', COPYLINE3 VARCHAR(3000) path '/category/copyLine3', COPYLINE4 VARCHAR(3000) path '/category/copyLine4', COPYLINE5 VARCHAR(3000) path '/category/copyLine5', COPYPRODUCTNAME VARCHAR(3000) path '/category/copyProductName', COPYMATERIAL VARCHAR(3000) path '/category/copyMaterial', COPYCARE VARCHAR(3000) path '/category/copyCare', COPYCOUNTRYOFORIGIN VARCHAR(3000) path '/category/copyCountryOfOrigin', COPYEXCLUSIVE VARCHAR(3000) path '/category/copyExclusive', COPYCAPROP65COMPLIANT VARCHAR(3000) path '/category/copyCAProp65Compliant') T "+
+        "   passing AIC.XML_DATA AS \"XML_DATA\" COLUMNS PRODUCTCOPYTEXT CLOB path '/category/productCopyText', " +
+        "  COPYLINE1 VARCHAR(3000) path '/category/copyLine1', COPYLINE2 VARCHAR(3000) path '/category/copyLine2', " +
+        "  COPYLINE3 VARCHAR(3000) path '/category/copyLine3', COPYLINE4 VARCHAR(3000) path '/category/copyLine4', " +
+        "  COPYLINE5 VARCHAR(3000) path '/category/copyLine5', COPYPRODUCTNAME VARCHAR(3000) path '/category/copyProductName', " +
+        "  COPYMATERIAL VARCHAR(3000) path '/category/copyMaterial', COPYCARE VARCHAR(3000) path '/category/copyCare', " +
+        "  COPYCOUNTRYOFORIGIN VARCHAR(3000) path '/category/copyCountryOfOrigin', " +
+        "  COPYIMPORTDOMESTIC VARCHAR(3000) path '/category/copyImportDomestic', COPYEXCLUSIVE VARCHAR(3000) path '/category/copyExclusive', " +
+        "  COPYCAPROP65COMPLIANT VARCHAR(3000) path '/category/copyCAProp65Compliant') T "+
         " WHERE AIC.MDMID = :orinNum   ";
 
         LOGGER.debug("COPY ATTRIBUTE QUERY -- \n" + COPY_ATTRIBUTE_QUERY);

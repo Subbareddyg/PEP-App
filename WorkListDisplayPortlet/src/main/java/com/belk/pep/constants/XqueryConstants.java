@@ -212,7 +212,7 @@ public class XqueryConstants {
          supplierId = "'"+supplierId+"'";  
      }*/
 
-     StringBuffer workListQuery = new StringBuffer();
+     StringBuilder workListQuery = new StringBuilder();
      workListQuery.append("WITH ");
      workListQuery.append("  Input(Depts, EmailId, LANId, SuppIds) AS ");
      workListQuery.append("  ( ");
@@ -494,7 +494,7 @@ public class XqueryConstants {
          supplierId = "'"+supplierId+"'";  
      }*/
 
-     StringBuffer workListQuery = new StringBuffer();
+     StringBuilder workListQuery = new StringBuilder();
      workListQuery.append("WITH ");
      workListQuery.append("  Input(Depts, EmailId, LANId, SuppIds) AS ");
      workListQuery.append("  ( ");
@@ -2070,7 +2070,7 @@ public String getWorkListDisplayDataParent(String depts, String email, String pe
         supplierId = "'"+supplierId+"'";  
     }
     
-     StringBuffer workListQuery = new StringBuffer();
+     StringBuilder workListQuery = new StringBuilder();
      workListQuery.append("WITH ");
      workListQuery.append("  Input(Depts, EmailId, LANId, SuppIds) AS ");
      workListQuery.append("  ( ");
@@ -2333,7 +2333,7 @@ public String getWorkListDisplayDataChild(boolean vendorLogin) {
          parentOrin = "'"+parentOrin+"'";
          } */       
     
-     StringBuffer workListQuery = new StringBuffer();         
+     StringBuilder workListQuery = new StringBuilder();         
      workListQuery.append("WITH ");
      workListQuery.append("  Input(ORIN) AS ");
      workListQuery.append("  ( ");
@@ -3351,11 +3351,11 @@ public String getAdvWorkListDisplayDataForParent(AdvanceSearch advSearch) {
     public String getGroupSearchQueryForAdvSearch(AdvanceSearch objAdvanceSearch, List<String> lstStyleOrin) {
             LOGGER.info("Entering getGroupSearchQueryForAdvSearch");
         LOGGER.info("Entering getGroupSearchQueryForAdvSearch");
-        StringBuffer  strbAdvSearch = new StringBuffer();
+        StringBuilder  strbAdvSearch = new StringBuilder();
         SimpleDateFormat sdfYearFirst = new SimpleDateFormat("yyyy-MM-dd");
         SimpleDateFormat sdfMonthFirst = new SimpleDateFormat("MM-dd-yyyy");
         Date date = new Date();
-        StringBuffer strbStyleOrinList = new StringBuffer();
+        StringBuilder strbStyleOrinList = new StringBuilder();
         List<String> lstStyleOrinQueryParam = new ArrayList<String>();
         int count = 0;
         if(lstStyleOrin.size() > 0){ 
@@ -3365,7 +3365,7 @@ public String getAdvWorkListDisplayDataForParent(AdvanceSearch advSearch) {
                 if(count>999){
                     lstStyleOrinQueryParam.add(strbStyleOrinList.substring(0, strbStyleOrinList.length() - 1));
                     count=0;
-                    strbStyleOrinList = new StringBuffer();
+                    strbStyleOrinList = new StringBuilder();
                 }
             }
         }
@@ -3466,7 +3466,7 @@ public String getAdvWorkListDisplayDataForParent(AdvanceSearch advSearch) {
             for(String strOrinList : lstStyleOrinQueryParam){
                 strbAdvSearch.append(" MAPPING.COMPONENT_STYLE_ID IN ("+strOrinList+") OR ");
             }
-            strbAdvSearch = new StringBuffer(strbAdvSearch.substring(0, strbAdvSearch.length() - 4));
+            strbAdvSearch = new StringBuilder(strbAdvSearch.substring(0, strbAdvSearch.length() - 4));
             strbAdvSearch.append(" ) ");
         }        
         if(StringUtils.isNotBlank(objAdvanceSearch.getContentStatus()))
@@ -3500,7 +3500,7 @@ public String getAdvWorkListDisplayDataForParent(AdvanceSearch advSearch) {
 
         LOGGER.info("Entering getGroupDetailsQueryParent() in Grouping XQueryConstant class.");
 
-        final StringBuffer getGroupDetailsQueryParent = new StringBuffer();
+        final StringBuilder getGroupDetailsQueryParent = new StringBuilder();
         getGroupDetailsQueryParent
                 .append(" SELECT AGC.MDMID GROUP_ID, AGC.GROUP_NAME GROUP_NAME, AGC.COMPLETION_DATE COMPLETION_DATE,"
                         + " CONTENT_STATE.THEVALUE CONTENT_STATE, AGC.GROUP_OVERALL_STATUS_CODE GROUP_OVERALL_STATUS_CODE, " 
@@ -3533,7 +3533,7 @@ public String getAdvWorkListDisplayDataForParent(AdvanceSearch advSearch) {
                          + strGroupId + "'");
 
         getGroupDetailsQueryParent
-                .append(" AND COMPONENT_TYPE = 'Group'                       ");
+                .append(" AND PEP_COMPONENT_TYPE = 'Group'                       ");
         
 
         LOGGER.debug("SEARCH GROUP PARENT QUERY -- \n"
@@ -3585,7 +3585,7 @@ public String getAdvWorkListDisplayDataForParent(AdvanceSearch advSearch) {
         "     AGC.PET_DISPLAY_FLAG CHILD,                                                          "+
         "     AGC.DEF_DEPT_ID DEPT,                                                                "+
         "     AGC.ENTRY_TYPE,                                                                      "+
-        "     AGCM.COMPONENT_TYPE,                                                                 "+
+        "     AGCM.PEP_COMPONENT_TYPE COMPONENT_TYPE,                                                                 "+
         "     SUPPLIER_XML.VENID PRIMARY_SUPPLIER_ID,                                              "+
         "     SUPPLIER_XML.VenName SUPPLIER_NAME,                                                  "+
         "     AGC.PET_SOURCE PET_SOURCE,                                                           "+
@@ -3604,7 +3604,7 @@ public String getAdvWorkListDisplayDataForParent(AdvanceSearch advSearch) {
         "       OmnichannelIndicator VARCHAR(2) path 'if (Supplier_Site_Spec/Omni_Channel/Omni_Channel_Indicator eq \"true\") then \"Y\" else \"N\"' ) (+)SUPPLIER_XML,   "+
         "     ADSE_GROUP_CHILD_MAPPING AGCM                                                          "+
         "   WHERE AGC.MDMID        = AGCM.COMPONENT_GROUPING_ID                                      "+
-        "   AND AGCM.COMponent_Type='Group'                                                          "+
+        "   AND AGCM.PEP_COMPONENT_TYPE='Group'                                                          "+
         "   AND AGCM.MDMID         = :groupOrin                                                      "+
         "   UNION                                                                                    "+
         "  SELECT AIC.PARENT_MDMID,                                                                  "+
@@ -3617,7 +3617,7 @@ public String getAdvWorkListDisplayDataForParent(AdvanceSearch advSearch) {
         "     NULL CHILD,                                                                            "+
         "     AIC.DEPT_ID DEPT,                                                                      "+
         "     AIC.ENTRY_TYPE,                                                                        "+
-        "     AGCM.COMponent_Type,                                                                   "+
+        "     AGCM.PEP_COMPONENT_TYPE COMPONENT_TYPE,                                                "+
         "     SUPPLIER_XML.VENID PRIMARY_SUPPLIER_ID,                                                "+
         "     SUPPLIER_XML.VenName SUPPLIER_NAME,                                                    "+
         "     PET_XML.req_type PET_SOURCE,                                                           "+
@@ -3648,7 +3648,7 @@ public String getAdvWorkListDisplayDataForParent(AdvanceSearch advSearch) {
         "       VenId VARCHAR2(20) path 'Supplier_Ctg_Spec/VEN_Id',                                    "+
         "       OmnichannelIndicator VARCHAR(2) path 'if (Supplier_Site_Spec/Omni_Channel/Omni_Channel_Indicator eq \"true\") then \"Y\" else \"N\"' ) (+)SUPPLIER_XML "+
         "   WHERE NVL(AIC.PARENT_MDMID,AIC.MDMID) = AGCM.COMPONENT_STYLE_ID                            "+
-        "   AND AGCM.COMponent_Type!              ='Group'                                             "+
+        "   AND AGCM.PEP_COMPONENT_TYPE!              ='Group'                                             "+
         "   AND AIC.ENTRY_TYPE                   IN ('Style','StyleColor')                             "+
         "   AND  (CASE WHEN AIC.PARENT_MDMID is NOT NULL AND  AIC.MDMID !=AGCM.COMPONENT_STYLECOLOR_ID THEN 0 ELSE 1 END) =1 "+
         "   AND AGCM.MDMID                        = :groupOrin "+
@@ -3706,7 +3706,7 @@ public String getAdvWorkListDisplayDataForParent(AdvanceSearch advSearch) {
             dept = getStatusCode(dept);
         }
         
-        final StringBuffer getGroupDetailsQueryWorkList = new StringBuffer();
+        final StringBuilder getGroupDetailsQueryWorkList = new StringBuilder();
         
         getGroupDetailsQueryWorkList.append(" SELECT DISTINCT GRP.MDMID, ");
         getGroupDetailsQueryWorkList.append("   GRP.DEF_DEPT_ID,                                       ");
@@ -3832,7 +3832,7 @@ public String getAdvWorkListDisplayDataForParent(AdvanceSearch advSearch) {
             dept = "'" + deptIds + "'";
             dept = getStatusCode(dept);
         }
-        final StringBuffer getGroupDetailsCountQueryWorkList = new StringBuffer();
+        final StringBuilder getGroupDetailsCountQueryWorkList = new StringBuilder();
         
         getGroupDetailsCountQueryWorkList.append(" SELECT COUNT(DISTINCT GRP.MDMID) TOTAL_COUNT ");
         getGroupDetailsCountQueryWorkList.append(" FROM ADSE_GROUP_CATALOG GRP                            ");
@@ -3903,7 +3903,7 @@ public String getAdvWorkListDisplayDataForParent(AdvanceSearch advSearch) {
         "     AGC.PET_DISPLAY_FLAG CHILD,                                                            "+
         "     AGC.DEF_DEPT_ID DEPT,                                                                  "+
         "     AGC.ENTRY_TYPE,                                                                        "+
-        "     AGCM.COMPONENT_TYPE,                                                                   "+
+        "     AGCM.PEP_COMPONENT_TYPE COMPONENT_TYPE,                                                                   "+
         "     SUPPLIER_XML.VENID PRIMARY_SUPPLIER_ID,                                                "+
         "     SUPPLIER_XML.VenName SUPPLIER_NAME,                                                    "+
         "     AGC.PET_SOURCE PET_SOURCE,                                                             "+
@@ -3922,7 +3922,7 @@ public String getAdvWorkListDisplayDataForParent(AdvanceSearch advSearch) {
         "       OmnichannelIndicator VARCHAR(2) path 'if (Supplier_Site_Spec/Omni_Channel/Omni_Channel_Indicator eq \"true\") then \"Y\" else \"N\"' ) (+)SUPPLIER_XML,   "+
         "     ADSE_GROUP_CHILD_MAPPING AGCM                                                            "+
         "   WHERE AGC.MDMID        = AGCM.COMPONENT_GROUPING_ID                                        "+
-        "   AND AGCM.COMponent_Type='Group'                                                            "+
+        "   AND AGCM.PEP_COMPONENT_TYPE ='Group'                                                            "+
         "   AND ((AGC.GROUP_OVERALL_STATUS_CODE = '01')                                                "+
         "   OR (AGC.GROUP_OVERALL_STATUS_CODE <> '01'                                                  "+
         "   AND AGC.PET_DISPLAY_FLAG = 'O'))                                                           "+
@@ -3938,7 +3938,7 @@ public String getAdvWorkListDisplayDataForParent(AdvanceSearch advSearch) {
         "     NULL CHILD_GROUP,                                                                  "+
         "     AIC.DEPT_ID DEPT,                                                                        "+
         "     AIC.ENTRY_TYPE,                                                                          "+
-        "     AGCM.COMponent_Type,                                                                     "+
+        "     AGCM.PEP_COMPONENT_TYPE COMPONENT_TYPE,                                                                     "+
         "     SUPPLIER_XML.VENID PRIMARY_SUPPLIER_ID,                                                  "+
         "     SUPPLIER_XML.VenName SUPPLIER_NAME,                                                      "+
         "     PET_XML.req_type PET_SOURCE,                                                             "+
@@ -3970,7 +3970,7 @@ public String getAdvWorkListDisplayDataForParent(AdvanceSearch advSearch) {
         "       OmnichannelIndicator VARCHAR(2) path 'if (Supplier_Site_Spec/Omni_Channel/Omni_Channel_Indicator eq \"true\") then \"Y\" else \"N\"' ) (+)SUPPLIER_XML "+
         "                                                                                               "+
         "   WHERE NVL(AIC.PARENT_MDMID,AIC.MDMID) = AGCM.COMPONENT_STYLE_ID                             "+
-        "   AND AGCM.COMponent_Type!              ='Group'                                              "+
+        "   AND AGCM.PEP_COMPONENT_TYPE!              ='Group'                                              "+
         "   AND AIC.ENTRY_TYPE                   IN ('Style','StyleColor')                              "+
         "   AND  (CASE WHEN AIC.PARENT_MDMID is NOT NULL AND  AIC.MDMID !=AGCM.COMPONENT_STYLECOLOR_ID THEN 0 ELSE 1 END) =1 "+
         "   AND (APC.WLIST_DISPLAY_FLAG='true' AND PET_STATE = '01' OR (APC.Entry_type='Style' and  APC.PET_STYLE_STATE='Y') ) "+

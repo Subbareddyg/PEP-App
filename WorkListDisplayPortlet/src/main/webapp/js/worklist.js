@@ -1488,7 +1488,7 @@ function createmannualpet(){
 
 	
 //Method to get child data	
-function getChildData(orinNum, showHideFlag, isGroup){
+function getChildData(orinNum, showHideFlag, isGroup, uniqueIdentifier){
 	var url = $("#ajaxaction").val(); 
 	var petLockedStatus = '';
 	var petLockedUser ='';
@@ -1518,12 +1518,12 @@ function getChildData(orinNum, showHideFlag, isGroup){
 						 }catch(ex){
 						 }
 						
-						populateChildData(json,orinNum, showHideFlag, isGroup);
+						populateChildData(json,orinNum, showHideFlag, isGroup, uniqueIdentifier);
 						$("#overlay_pageLoading").hide();
 				}//End of Success				   
         }); //  $.ajax({
 	}else{
-		populateChildData([],orinNum, showHideFlag, isGroup);
+		populateChildData([],orinNum, showHideFlag, isGroup, uniqueIdentifier);
 	}
 }	
 	
@@ -1636,6 +1636,9 @@ function inactivateAjaxCall(){
 				else if(parentStyle[1]=='Closed'){
 					parentActiveFlag='yes';
 				}
+				else if(parentStyle[1]=='Completed'){
+					parentActiveFlag='yes';
+				}
 				
 		
 			});
@@ -1650,6 +1653,9 @@ function inactivateAjaxCall(){
 					deactiveFlag = 'yes';
 				}
 				else if(childStyleColor[1]=='Closed'){
+					activeFlag = 'yes';
+				}
+				else if(childStyleColor[1]=='Completed'){
 					activeFlag = 'yes';
 				}
 			});
@@ -1863,6 +1869,34 @@ function activateAjaxCall(){
 	}
 }
 
+/** Modified For PIM Phase 2 
+	* - new method for styles under a group 
+	* - works to select immeadiate child color orins
+	* Date: 06/16/2016
+	* Modified By: Cognizant
+*/
+		
+function selectChildStylesUnderGroup(elem, parentOrinNo){
+	var checkedStyle = $("#mainPetTable").find("[parentorinno ='"+parentOrinNo+"']");
+	if($(elem).is(':checked')){
+		checkedStyle = $("#mainPetTable").find("[parentorinno ='"+parentOrinNo+"']");
+		$(checkedStyle).each(function() {
+			if(elem.checked){
+				this.checked = true;
+			}else{
+				this.checked = false;
+			}			               
+		});
+	}else{
+		$(checkedStyle).each(function() {
+				if(elem.checked){
+					this.checked = true;
+				}else{
+					this.checked = false;
+				}			               
+		});
+	}
+}
 
 /*This method is responsible for passing values of parent child orin selection */
 function childCheckedRows(elem, parentOrinNo, searchClicked, isGroup){
@@ -2127,7 +2161,7 @@ var inputDept = document.getElementById('selectedDeptSearch').value;
 
 
 
-function populateChildData(jsonArray, orinNum, showHideFlag, isGroup){
+function populateChildData(jsonArray, orinNum, showHideFlag, isGroup, uniqueIdentifier){
 	//console.log(isGroup);
 	
 	var mainTb = document.getElementById('mainPetTable');
@@ -2153,7 +2187,7 @@ function populateChildData(jsonArray, orinNum, showHideFlag, isGroup){
 			evaluate: /\{\{(.+?)\}\}/g
 		}) : null;
 		
-		var html = template({data: jsonArray, orinNum: orinNum, showHideFlag: showHideFlag});
+		var html = template({data: jsonArray, orinNum: orinNum, showHideFlag: showHideFlag, uniqueIdentifier: uniqueIdentifier});
 		
 		//console.log(html);
 		
@@ -2332,15 +2366,32 @@ function populateChildData(jsonArray, orinNum, showHideFlag, isGroup){
 	}
 }
 
-function expandCollapse(orinNum, searchClicked, isGroup){
+function expandCollapse(orinNum, searchClicked, isGroup, uniqueIdentifier){
+	/** Modified For PIM Phase 2 
+	* - change to make multiple parent child unique as 
+	* - it is not valid as same orin can be in many places
+	* Date: 06/16/2016
+	* Modified By: Cognizant
+	*/
 	
-	var parentTr = document.getElementById('parent_'+orinNum);
-	var displayChild = $(parentTr).attr('displayChild');
-	var span_Parent = $("#parentSpan_"+orinNum);
-	var expand = $("#parentSpan_"+orinNum+'_expand');
-	var collapsed = $("#parentSpan_"+orinNum+'_collapsed');
-	//var searchClicked = $("#searchClicked").val();
-	//var searchClicked = document.getElementById("searchClicked").value;
+	var parentTr, displayChild, expand, collapsed;
+	
+	if(uniqueIdentifier !== undefined && uniqueIdentifier != ''){
+		parentTr = $('tr[rel=parent_' + orinNum + '_' + uniqueIdentifier + ']');
+		displayChild = parentTr.attr('displayChild');
+		expand = $('img[rel=parentSpan_' + orinNum + '_' + uniqueIdentifier + '_expand]');
+		collapsed = $('img[rel=parentSpan_' + orinNum + '_' + uniqueIdentifier + '_collapsed]');
+	}else{
+		parentTr = $('#parent_'+orinNum);
+		displayChild = parentTr.attr('displayChild');
+		//var span_Parent = $("#parentSpan_"+orinNum);
+		expand = $("#parentSpan_"+orinNum+'_expand');
+		collapsed = $("#parentSpan_"+orinNum+'_collapsed');
+		//var searchClicked = $("#searchClicked").val();
+		//var searchClicked = document.getElementById("searchClicked").value;
+	}
+	
+	
 	
 	if('Y' == displayChild){
 		
@@ -2367,7 +2418,12 @@ function expandCollapse(orinNum, searchClicked, isGroup){
 		});
 		
 		
-		var childElms = $("tr[name='child_"+orinNum+"'] ");
+		var childElms = null;
+		
+		if(uniqueIdentifier != undefined && uniqueIdentifier != '')
+			childElms = $('tr[rel=parent_' + orinNum + '_' + uniqueIdentifier + ']');
+		else
+			childElms = $("tr[name='child_"+orinNum+"'] ");
 		
 		$(childElms).each(function(i,elm){
 			$(elm).remove();
@@ -2375,8 +2431,10 @@ function expandCollapse(orinNum, searchClicked, isGroup){
 		
 		
 		
-		$(parentTr).attr('displayChild','N');
-		$(parentTr).find('input[type=checkbox]').prop('checked', false);
+		//$(parentTr).attr('displayChild','N');
+		parentTr.attr('displayChild','N');
+		//$(parentTr).find('input[type=checkbox]').prop('checked', false);
+		parentTr.find('input[type=checkbox]').prop('checked', false);
 		//$(span_Parent).html('Expand');
 		$(expand).show();
 		$(collapsed).hide();
@@ -2385,11 +2443,18 @@ function expandCollapse(orinNum, searchClicked, isGroup){
 		$("#callType").val((isGroup !== undefined && isGroup.trim().length) ? 'getChildgroup' : 'getChildData');
 		
 		if("yes" == searchClicked){//Call child for Advance search query
-			searchSearchForChild(orinNum, true, isGroup);
+			if(uniqueIdentifier != undefined && uniqueIdentifier != '')
+				searchSearchForChild(orinNum, true, isGroup, uniqueIdentifier);
+			else
+				searchSearchForChild(orinNum, true, isGroup);
 			$(expand).hide();
 			$(collapsed).show();
 		}else{
-			getChildData(orinNum, true, isGroup);
+			if(uniqueIdentifier != undefined && uniqueIdentifier != '')
+				getChildData(orinNum, true, isGroup, uniqueIdentifier);
+			else
+				getChildData(orinNum, true, isGroup);
+			
 			$(expand).hide();
 			$(collapsed).show();
 		}
@@ -2405,24 +2470,23 @@ function expandCollapse(orinNum, searchClicked, isGroup){
 * Modified By: Cognizant
 */
 
-function expandStyleColorCollapse(orin){
-	var parentTr = $('#parent_' + orin);
-	//console.log(parentTr);
+function expandStyleColorCollapse(orin, uniqueIdentifier){
+	var parentTr = $('tr#parent_' + orin + '_' + uniqueIdentifier);
 	if(parentTr.attr('displayChild') == 'Y'){
-		$('tr[name=child_' + orin + ']').css({display: "none"});
-		$('#parentSpan_' + orin + '_expand').show();
-		$('#parentSpan_' + orin + '_collapsed').hide();
+		$('tr[name=child_' + orin + '_' + uniqueIdentifier + ']').css({display: "none"});
+		$('#parentSpan_' + orin + '_' + uniqueIdentifier + '_expand').show();
+		$('#parentSpan_' + orin + '_' + uniqueIdentifier + '_collapsed').hide();
 		parentTr.attr('displayChild', 'N');
 	}else{
-		$('tr[name=child_' + orin + ']').css({display: "table-row"});
+		$('tr[name=child_' + orin + '_' + uniqueIdentifier + ']').css({display: "table-row"});
 		parentTr.attr('displayChild', 'Y');
-		$('#parentSpan_' + orin + '_expand').hide();
-		$('#parentSpan_' + orin + '_collapsed').show();
+		$('#parentSpan_' + orin + '_' + uniqueIdentifier + '_expand').hide();
+		$('#parentSpan_' + orin + '_' + uniqueIdentifier + '_collapsed').show();
 	}
 }
 
 
-function searchSearchForChild(parentOrin, showHideFlag, isGroup)
+function searchSearchForChild(parentOrin, showHideFlag, isGroup, uniqueIdentifier)
 {	
 	
 	document.getElementById("searchClicked").value = 'yes';
@@ -2620,7 +2684,7 @@ function searchSearchForChild(parentOrin, showHideFlag, isGroup)
 								* Modified By: Cognizant
 								*/
 								searchResults:searchResults,
-								groupingID: isGroup == 'Y' ? parentOrin: '',
+								groupID: isGroup == 'Y' ? parentOrin: '',
 								groupingName: groupingName,
 					   },
 			         success: function(data){
@@ -2633,14 +2697,14 @@ function searchSearchForChild(parentOrin, showHideFlag, isGroup)
 						//var myString = data.substr(data.indexOf("[{") , data.indexOf("}]")+2);
 						var myString = data.substr(data.indexOf('STARTJSON') + 'STARTJSON'.length , (data.indexOf('ENDJSON') - 'ENDJSON'.length)-2);
 						var json = $.parseJSON(myString);  
-						populateChildData(json,parentOrin, showHideFlag, isGroup);
+						populateChildData(json,parentOrin, showHideFlag, isGroup, uniqueIdentifier);
 						
 						$("#overlay_pageLoading").hide();
 						
 				}//End of Success				   
         });
 	 }else{
-		populateChildData([],parentOrin, showHideFlag, isGroup); 
+		populateChildData([],parentOrin, showHideFlag, isGroup, uniqueIdentifier); 
 	 }
  
 }
