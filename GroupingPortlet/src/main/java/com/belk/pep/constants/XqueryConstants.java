@@ -386,7 +386,7 @@ public class XqueryConstants {
 			getGroupDetailsQueryParent.append(" )");
 		}
 
-		getGroupDetailsQueryParent.append(" AND COMPONENT_TYPE = 'Group'                       ");
+		getGroupDetailsQueryParent.append(" AND PEP_COMPONENT_TYPE = 'Group'                       ");
 		String sortOrder = "";
 		if (groupSearchForm.getAscDescOrder() != null || !"".equals(groupSearchForm.getAscDescOrder().trim())) {
 			sortOrder = groupSearchForm.getAscDescOrder();
@@ -453,7 +453,7 @@ public class XqueryConstants {
 			getGroupDetailsQueryParent.append(" )");
 		}
 
-		getGroupDetailsQueryParent.append(" AND COMPONENT_TYPE = 'Group'                   ");
+		getGroupDetailsQueryParent.append(" AND PEP_COMPONENT_TYPE = 'Group'                   ");
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("SEARCH GROUP PARENT COUNT QUERY -- \n" + getGroupDetailsQueryParent.toString());
 		}
