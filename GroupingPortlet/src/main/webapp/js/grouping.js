@@ -17,7 +17,7 @@ var app = app || {};
 	app.GroupLandingApp = {
 		//urlCollection: {SCGUrl: '', SSGUrl: '',  searchUrl: '', },
 		
-		regExpCollection: {validDepts: /^[0-9]{1,5}( *, *[0-9]{1,5})*$/, },
+		regExpCollection: {validDepts: /^[0-9]{1,10}( *, *[0-9]{1,10})*$/, },
 		
 		depts: [],
 		
@@ -588,9 +588,15 @@ var app = app || {};
 				$('#s-grouping-class').on('blur', function(e){
 					if(!$(this).val().trim().length)
 						return;
-					
+
 					if(_super.regExpCollection.validDepts.test($(this).val().trim())){
-						//now looking the selected dept list to determine whether it has been generated or typed
+						
+						if(!_super.selectedDepts.length){
+							alert('Please Select Dept Before Selecting Class');
+							return;
+						}
+						
+//now looking the selected dept list to determine whether it has been generated or typed
 						var classArr = $(this).val().trim().split(',');
 						
 						//looking inside the available list to validate
@@ -610,13 +616,14 @@ var app = app || {};
 								//joining newly typed items
 								_super.selectedClassList = _.union(_super.selectedClassList, matchedItems);
 							}else{
-								alert('Entered Class Ids do not exist');
+								//alert('Entered Class(es) Does/Do Not Belong To The Selected Dept(s)');
+								alert('Invalid Class Entered');
 								$(this).val(_.difference(classArr, diff).join(','));
 							}
 							
 						}
 					}else{
-						alert('Invalid Class IDs Entered');
+						alert('Invalid Class Entered');
 						$(this).val('');
 					}	
 				});
