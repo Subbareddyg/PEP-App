@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.belk.pep.exception.checked.PEPFetchException;
 import com.belk.pep.exception.checked.PEPPersistencyException;
+import com.belk.pep.model.GroupsFound;
 import com.belk.pep.model.PetsFound;
 import com.belk.pep.vo.BlueMartiniAttributesVO;
 import com.belk.pep.vo.CarBrandVO;
@@ -15,6 +16,7 @@ import com.belk.pep.vo.ContentManagementVO;
 import com.belk.pep.vo.CopyAttributeVO;
 import com.belk.pep.vo.CopyAttributesVO;
 import com.belk.pep.vo.GlobalAttributesVO;
+import com.belk.pep.vo.GroupingVO;
 import com.belk.pep.vo.ItemPrimaryHierarchyVO;
 import com.belk.pep.vo.OmniChannelBrandVO;
 import com.belk.pep.vo.PetAttributeVO;
@@ -106,7 +108,7 @@ public  interface ContentDAO {
      * @return the IPH categories
      * @throws PEPFetchException the PEP fetch exception
      */
-    List<ItemPrimaryHierarchyVO> getIPHCategories(String orinNumber)
+    List<ItemPrimaryHierarchyVO> getIPHCategories(String groupId, String groupType)
             throws PEPFetchException;
 
 
@@ -273,4 +275,101 @@ public  interface ContentDAO {
      */
     CopyAttributeVO fetchCopyAttributes(String orin) throws PEPFetchException;  
 
+
+	 /**
+      * Method to retrieve group information
+      * @param groupId
+      * @return
+      * @throws PEPFetchException
+      */
+    public StyleInformationVO getGroupingInformation(String groupId) throws PEPFetchException;
+    
+    /**
+     * This method retrieves Group Details
+     * @param groupId
+     * @return
+     * @throws PEPFetchException
+     */
+    public ProductDetailsVO getGroupingDetails(String groupId)throws PEPFetchException;
+    
+    /**
+     * This method retrieves Group Copy Attributes
+     * @param groupId
+     * @return
+     * @throws PEPFetchException
+     */
+    public CopyAttributeVO getGroupingCopyAttributes(String groupId) throws PEPFetchException;
+    
+    /**
+     * This method retrieves department details for group if department id is not null
+     * @param styleInformationVO
+     * @return
+     * @throws PEPFetchException
+     */
+    public StyleInformationVO getGroupingDepartmentDetails(StyleInformationVO styleInformationVO) throws PEPFetchException;
+    
+    /**
+     * This method retrieves omni-channel brand list for the group
+     */
+    public List<OmniChannelBrandVO> getGroupingOmniChannelBrand(String groupId) throws PEPFetchException;
+    
+    /**
+     * This method populates car brand list for group
+     * @param groupId
+     * @return
+     * @throws PEPFetchException
+     */
+    public List<CarBrandVO> populateGroupCarBrandList(String groupId) throws PEPFetchException;
+    
+    /**
+     * This method retrieves Group Component list
+     * @param groupId
+     * @return
+     * @throws PEPFetchException
+     */
+    public List<GroupsFound> getGroupingComponents(String groupId) throws PEPFetchException;
+    
+    
+    /**
+     * This method populates IPH category drop down list
+     * @param groupId
+     * @return
+     * @throws PEPFetchException
+     * @author AFUSKJ2 6/17/2016
+     */
+    public List<ItemPrimaryHierarchyVO> selectedIPHCategorydropdown(String groupId) throws PEPFetchException;
+    
+    
+    /**
+     * This method populates Grouping Content History list
+     * @param groupId
+     * @return
+     * @throws PEPFetchException
+     * @author AFUSKJ2 6/17/2016
+     */
+    public List<ContentHistoryVO> getGroupContentHistory(String groupId) throws PEPFetchException;
+    
+    
+    /**
+     * This method populates Grouping Specific Attributes section data
+     * @param groupId
+     * @return
+     * @throws PEPFetchException
+     * @author AFUSKJ2 6/17/2016
+     */
+    public GroupingVO getGroupingSpecificAttributes(String groupId) throws PEPFetchException;
+    
+    /**
+     * Method to get the group copy validation from database.
+     *    
+     * @param groupId String  
+     * @param styleId String
+     * @return String
+     * 
+     * Method added For PIM Phase 2 - Regular Item Copy Attribute
+     * Date: 05/16/2016
+     * Added By: Cognizant
+     */
+	String getGroupCopyValidation(String groupId, String styleId)
+			throws PEPFetchException;
 }

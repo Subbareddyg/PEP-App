@@ -187,12 +187,59 @@ public class ContentScreenConstants {
     /**Code for alphabetical order sorting -END*/
 
 
+    /** The Constant PAGE. 
+	* Updated By: AFUSKJ2 - 06/17/2015
+	*/
+    public static final String GROUPING_CONTENT_PAGE= "groupingContent" ;
+
+    /*public static final String GROUP_CONTENT_STATUS_UPDATE_DEV = "update.group.content.status.dev";
+    public static final String GROUP_CONTENT_STATUS_UPDATE_SIT = "update.group.content.status.sit";
+    public static final String GROUP_CONTENT_ITEMS_SAVE_DEV = "update.group.content.items.dev";
+    public static final String GROUP_CONTENT_ITEMS_SAVE_SIT = "update.group.content.items.sit";*/
+    public static final String GROUP_CONTENT_STATUS_UPDATE="update.group.content.status";
+    public static final String GROUP_CONTENT_ITEMS_SAVE="update.group.content.url";
+    
+    public static final String SERVICE_ATTRIBUTE_NAME = "attributeName";
+    public static final String SERVICE_ATTRIBUTE_VALUE = "attributeValue";
+    public static final String SERVICE_ATTRIBUTE_LIST = "list";
+    public static final String SERVICE_ATTRIBUTE_GROUP_ID = "groupId";
+    public static final String SERVICE_ATTRIBUTE_GROUP_TYPE = "groupType";
+    public static final String SERVICE_ATTRIBUTE_MODIFIED_BY = "modifiedBy";
 
 
 
+	public static final String SERVICE_REQUEST_PROPERTY_CONTENT_TYPE = "service.request.property.contentType";
+	public static final String SERVICE_REQUEST_PROPERTY_APPLICATION_TYPE = "service.request.property.applicationType";
+	public static final String SERVICE_REQUEST_METHOD = "service.request.property.request.method";
+	public static final String DEFAULT_CHARSET ="UTF-8";
+	public static final String MSG_CODE = "code";
+	public static final String SUCCESS_CODE = "100";
+	public static final String FAILURE_CODE = "101";
 
-
-
-
+	public static final String SUCCESS = "success";
+    public static final String FAILURE = "failure";
+    public static final String STYLE_ID = "styleId";
+    public static final String GROUP_ID = "groupId";
+    public static final String GROUP_TYPE = "groupType";
+    public static final String COUNT_GROUP = "COUNT_GROUP";
+    public static final String EMPTY = "";
+    public static final String SESSIONDATAKEY = "formSessionKey";
+    public static final String FROM_MDMID = "fromMDMId";
+    public static final String TO_MDMID = "toMDMId";
+    public static final String MODIFIED_BY = "modifiedBy";
+    public static final String COPY_CONTENT_SERVICE_URL = "copy.group.content.items";
+	public static final String COPY_CONTENT_SUCCESS_MESSAGE = "copy.content.success.message";
+	public static final String COPY_CONTENT_FAILURE_MESSAGE = "copy.content.failure.message";
+	public static final String COPY_CONTENT_DB_FAILURE_MESSAGE = "Style Orin does not belong to the Group# ";
+	public static final String COPY_CONTENT_NO_VALUE_FAILURE_MESSAGE = "Group/Style Orin number not available";
+	public static final String CONTENT_COPY_STATUS_MESSAGE = "contentCopyStatusMessage";
+	public static final String CONTENT_STATUS_PARAM = "contentStatus";
+	public static final String OVERALL_STATUS_PARAM = "groupOverallStatus";
+	public static final String CONTENT_STATUS = "02";
+	public static final String UPDATE_CONTENT_STATUS_SERVICE_URL = "update.group.content.status";
+	public static final String UPDATE_CONTENT_STATUS_SUCCESS_MESSAGE = "update.group.content.status.success.message";
+	public static final String UPDATE_CONTENT_STATUS_FAILURE_MESSAGE = "update.group.content.status.failure.message";
+	public static final String CONTENT_STATUS_UPDATE = "ContentStatusUpdate";
+	public static final String GROUP_IPH_MAPPING_WEBSERVICE_URL="groupIphMapping.webservice.url";
 
 }

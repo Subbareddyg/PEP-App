@@ -2,7 +2,11 @@
 package com.belk.pep.constants;
 
 //import java.util.logging.Logger;
+import java.util.Properties;
+
 import org.apache.log4j.Logger;
+
+import com.belk.pep.util.PropertiesFileLoader;
 
 /**
  * The Class XqueryConstants.
@@ -430,26 +434,6 @@ public class XqueryConstants {
 
 
     /**
-     * Gets the iph categories.
-     *
-     * @param orinNumber the orin number
-     * @return the iph categories
-     */
-    public  String getIphCategories( ) {
-
-        final String GET_IPH_CATEGORY_INFORMATION_XQUERY=
-
-                "  select distinct(category) from VENDORPORTAL.ADSE_MERCHANDISE_HIERARCHY, "
-                        + " xmltable('/pim_category/entry/Merchandise_Hier_Spec/IPH_Category_Mappings'"
-                        + "passing XML_DATA " + "   columns  "
-                        + "   category varchar2(200) path '.') "
-                        + "   where category is not null " + "   order by category ";
-
-        return GET_IPH_CATEGORY_INFORMATION_XQUERY;
-
-    }
-
-    /**
      * Gets the iph categories from adse merchandise hierarchy.
      *
      * @param orinNmber the orin nmber
@@ -457,139 +441,6 @@ public class XqueryConstants {
      */
     public  String getIphCategoriesFromAdseMerchandiseHierarchy(String orinNmber ) {
 
-
-      /*  String GET_IPH_CATEGORY_INFORMATION_XQUERY = " WITH "
-                +"  "
-                +" Input(ORIN) as  "
-                +" (Select '"+orinNmber+"' ORIN from dual),  "
-                +"  "
-                +" petcatalog AS "
-                +"   ( "
-                +" select pet.mdmid ORIN, ias.CATEGORY_ID,ias.CATEGORY_DESC, ias.CATEGORY_NAME from Input inp,VENDORPORTAL.ADSE_PET_CATALOG pet, "
-                +" XMLTABLE( "
-                +" 'for $j in $XML_DATA/pim_entry/pet_entry_header/category_paths/category[last()] "
-                +" let  "
-                +"         $categoryid := $j//pk, "
-                +"       $categorydesc := $j//path, "
-                +"       $categoryname := tokenize(tokenize($j//path, \"///\")[last()],\"-\")[last()] "
-                +"       return   "
-                +"      <category> "
-                +"     <pk>{$categoryid}</pk> "
-                +"     <path>{$categorydesc}</path> "
-                +"     <name>{$categoryname}</name> "
-                +"    </category>' "
-                +"       PASSING pet.XML_DATA AS \"XML_DATA\" "
-                +"       COLUMNS  "
-                +"     CATEGORY_ID VARCHAR(100) path '/category/pk', "
-                +"       CATEGORY_DESC VARCHAR(100) path '/category/path', "
-                +"     CATEGORY_NAME VARCHAR(100) path '/category/name') ias "
-                +"     where "
-                +"     pet.mdmid = inp.ORIN) "
-                +"      "
-                +"     , "
-                +" petitemcatalog AS "
-                +" ( "
-                +"   select  "
-                +"   pc.ORIN, "
-                +"   pc.CATEGORY_ID, "
-                +"   pc.CATEGORY_NAME, "
-                +"   ibs.ITEM_CATEGORY_ID "
-                +"   from  "
-                +"   petcatalog pc, VENDORPORTAL.ADSE_ITEM_CATALOG aic, "
-                +"   XMLTABLE( "
-                +" 'for $j in $XML_DATA/pim_entry/item_header/category_paths/category "
-                +" let  "
-                +"         $itemcategoryid := $j//pk, "
-                +"       $itemcategorydesc := $j//path, "
-                +"       $itemcategoryname := tokenize($j//path, \"///\")[1] "
-                +"       return   "
-                +"      <category> "
-                +"       <pk>{$itemcategoryid}</pk> "
-                +"       <path>{$itemcategorydesc}</path> "
-                +"       <name>{$itemcategoryname}</name> "
-                +"      </category>' "
-                +"       PASSING aic.XML_DATA AS \"XML_DATA\" "
-                +"       COLUMNS  "
-                +"     ITEM_CATEGORY_ID VARCHAR(100) path '/category/pk', "
-                +"       ITEM_CATEGORY_DESC VARCHAR(100) path '/category/path', "
-                +"     ITEM_CATEGORY_NAME VARCHAR(100) path '/category/name') ibs "
-                +"   where "
-                +"   pc.ORIN = aic.MDMID "
-                +"   AND "
-                +"   (CATEGORY_ID IS NULL OR CATEGORY_ID IN ('Style','StyleColor','SKU', 'ComplexPack', 'PackColor', '' )) "
-                +"   AND "
-                +"   (CATEGORY_NAME IS NULL OR CATEGORY_NAME IN ('Style','StyleColor','SKU', 'ComplexPack', 'PackColor', '')) "
-                +"   AND "
-                +"   UPPER(ibs.ITEM_CATEGORY_NAME) = UPPER('Merchandise_Hierarchy')) "
-                +"    "
-                +"  "
-                +" ,petitemmerch AS "
-                +" (  "
-                +"   select "
-                +"   pic.ORIN, "
-                +"   pic.CATEGORY_ID, "
-                +"   pic.CATEGORY_NAME, "
-                +"   pic.ITEM_CATEGORY_ID, "
-                +"   ics.SUB_CLASS "
-                +"   FROM "
-                +"   petitemcatalog pic, VENDORPORTAL.ADSE_MERCHANDISE_HIERARCHY amh, "
-                +"   XMLTABLE( "
-                +"     'for $j in $XML_DATA/pim_category/merchandise_category_header "
-                +"     let  "
-                +"         $subclass := tokenize($j//full_path, \"///\")[last()]       "
-                +"       return   "
-                +"        <merchandise_category_header> "
-                +"         <full_path>{$subclass}</full_path> "
-                +"        </merchandise_category_header>' "
-                +"       PASSING amh.XML_DATA AS \"XML_DATA\" "
-                +"       COLUMNS  "
-                +"     SUB_CLASS VARCHAR(100) path '/merchandise_category_header/full_path') ics "
-                +"  "
-                +"   where "
-                +"   pic.ITEM_CATEGORY_ID = amh.MDMID "
-                +"   AND "
-                +"   (CATEGORY_ID IS NULL OR CATEGORY_ID IN ('Style','StyleColor','SKU', 'ComplexPack', 'PackColor', '' )) "
-                +"   AND "
-                +"   (CATEGORY_NAME IS NULL OR CATEGORY_NAME IN ('Style','StyleColor','SKU', 'ComplexPack', 'PackColor', '')) "
-                +"   ) "
-                +"    "
-                +"   select  "
-                +"   pim.ORIN ORIN, "
-                +"   pim.CATEGORY_ID PET_CATEGORY_ID, "
-                +"   pim.CATEGORY_NAME PET_CATEGORY_NAME, "
-                +"   pim.SUB_CLASS SUB_CLASS, "
-                +"   ids.MERCH_CATEGORY_ID MERCH_CATEGORY_ID, "
-                +"   ids.MERCH_CATEGORY_NAME MERCH_CATEGORY_NAME "
-                +"   FROM "
-                +"   petitemmerch pim, VENDORPORTAL.ADSE_MERCHANDISE_HIERARCHY amh1, "
-                +"   XMLTABLE( "
-                +" 'for $j in $XML_DATA/pim_category/entry/Merchandise_Hier_Spec/IPH_Category_Mappings "
-                +" let  "
-                +"       $leafnode7 := $j//Level_7, "
-                +"       $leafnode6 := if(string-length($leafnode7) = 0) then $j//Level_6 else $leafnode7, "
-                +"       $leafnode5 := if(string-length($leafnode6) = 0) then $j//Level_5 else $leafnode6, "
-                +"       $leafnode4 := if(string-length($leafnode5) = 0) then $j//Level_4 else $leafnode5, "
-                +"       $leafnode3 := if(string-length($leafnode4) = 0) then $j//Level_3 else $leafnode4, "
-                +"       $leafnode2 := if(string-length($leafnode3) = 0) then $j//Level_2 else $leafnode3, "
-                +"       $leafnode1 := if(string-length($leafnode2) = 0) then $j//Level_1 else $leafnode2, "
-                +"       $merchcategoryid := tokenize($leafnode1,\"-\")[1], "
-                +"       $merchcategoryname := tokenize($leafnode1,\"-\")[last()] "
-                +"       return   "
-                +"      <IPH_Category_Mappings> "
-                +"     <category_id>{$merchcategoryid}</category_id> "
-                +"     <category_name>{$merchcategoryname}</category_name> "
-                +"    </IPH_Category_Mappings>' "
-                +"       PASSING amh1.XML_DATA AS \"XML_DATA\" "
-                +"       COLUMNS  "
-                +"     MERCH_CATEGORY_ID VARCHAR(100) path '/IPH_Category_Mappings/category_id', "
-                +"     MERCH_CATEGORY_NAME VARCHAR(100) path '/IPH_Category_Mappings/category_name') ids "
-                +"  "
-                +"   where "
-                +"   pim.ITEM_CATEGORY_ID = amh1.MDMID "
-                +"   AND "
-                +"   (CATEGORY_ID IS NULL OR CATEGORY_ID IN ('Style','StyleColor','SKU', 'ComplexPack', 'PackColor', '' )) "
-                +"   AND "
-                +"   (CATEGORY_NAME IS NULL OR CATEGORY_NAME IN ('Style','StyleColor','SKU', 'ComplexPack', 'PackColor', '')) " ;*/
         /**
          * MODICATION START AFUAXK4
          * DATE: 02/05/2016
@@ -907,58 +758,6 @@ public class XqueryConstants {
                  * MODIFIED BY AFUAXK4
                  * DATE: 02/05/2016
                  */
-                /*
-                +"   referencefirst AS " 
-                +"   (SELECT LISTAGG(CODE,'|') WITHIN GROUP ( " 
-                +"   ORDER BY CODE) CODE, " 
-                +"     S.SUPPLIERID, " 
-                +"     ARD.CONTAINER, " 
-                +"     IP.ORIN " 
-                +"   FROM VENDORPORTAL.ADSE_REFERENCE_DATA ARD, " 
-                +"     INPUT IP, " 
-                +"     XMLTABLE('  <category>    <code>{  for $j in $XML_DATA/pim_entry/entry/OmniChannelBrand_Lkp_Spec  return      if (not( ($j) is ($XML_DATA/pim_entry/entry/OmniChannelBrand_Lkp_Spec[last()])[1] ) and not(empty($j//Code)) and not($j//Code = \"\")) then                          concat(concat($j//Code,\"-\"),$j//Description)                      else                         string(concat(concat($j//Code,\"-\"),$j//Description))     }   </code>     <id>{    for $i in $XML_DATA/pim_entry/entry/OmniChannelBrand_Lkp_Spec    return $i//Supplier_Site_ID    }    </id>     </category>' passing ARD.xml_data AS \"XML_DATA\" COLUMNS CODE VARCHAR(100) path '/category/code', SUPPLIERID VARCHAR(100) path '/category/id') S " 
-                +"   WHERE IP.SUPPLIER_ID=S.SUPPLIERID " 
-                +"   AND ARD.CONTAINER  IN ('OmniChannelBrand') " 
-                +"   GROUP BY S.SUPPLIERID, " 
-                +"     ARD.CONTAINER, " 
-                +"     IP.ORIN " 
-                +"   ), " 
-                +"   pettable AS " 
-                +"   (SELECT RF.CODE, " 
-                +"     RF.SUPPLIERID, " 
-                +"     RF.CONTAINER, " 
-                +"     CASE WHEN T.OMNICODE IS NULL " 
-                +"     THEN T.OMNICODECOMPLEX  " 
-                +"     ELSE T.OMNICODE END AS OMNICODE, " 
-                +"     APC.MDMID " 
-                +"   FROM referencefirst RF, " 
-                +"     VENDORPORTAL.ADSE_PET_CATALOG APC, " 
-                +"     XMLTABLE('  for $j in $XML_DATA/pim_entry/entry " 
-                +"     let       " 
-                +"     $code := $j/Ecomm_Style_Spec/OmniChannelBrand   " 
-                +"     return       " 
-                +"     <category>    <code>{$code}</code> <codeComplex>{$j/Ecomm_ComplexPack_Spec/OmniChannelBrand}</codeComplex>     " 
-                +"     </category>' passing APC.xml_data AS \"XML_DATA\" COLUMNS OMNICODE VARCHAR(100) path '/category/code',OMNICODECOMPLEX VARCHAR(100) path '/category/codeComplex') T " 
-                +"   WHERE APC.MDMID = RF.ORIN " 
-                +"   ), " 
-                +"   referencetable AS " 
-                +"   (SELECT V.CODEDESCRIPTION OMNI_BRAND, " 
-                +"     V.SUPPLIERIDS, " 
-                +"     V.IDCHECK " 
-                +"   FROM INPUT I, " 
-                +"     VENDORPORTAL.ADSE_REFERENCE_DATA ARDT, " 
-                +"     XMLTABLE('  <category>    <code>{  for $j in $XML_DATA/pim_entry/entry/OmniChannelBrand_Lkp_Spec  return         string(concat(concat($j//Code,\"-\"),$j//Description))     }   </code>     <id>{    for $i in $XML_DATA/pim_entry/entry/OmniChannelBrand_Lkp_Spec    return $i//Supplier_Site_ID    }    </id>     <check>{  for $j in $XML_DATA/pim_entry/entry/OmniChannelBrand_Lkp_Spec  return         string($j//Code)     }   </check>    </category>' passing ARDT.xml_data AS \"XML_DATA\" COLUMNS CODEDESCRIPTION VARCHAR(100) path '/category/code', SUPPLIERIDS VARCHAR(100) path '/category/id', IDCHECK VARCHAR(100) path '/category/check') V " 
-                +"   WHERE ARDT.CONTAINER IN ('OmniChannelBrand') " 
-                +"   AND I.SUPPLIER_ID     =V.SUPPLIERIDS " 
-                +"   ) " 
-                +" SELECT PT.CODE OMNI_BRANDS, " 
-                +"   RT.OMNI_BRAND, " 
-                +"   PT.SUPPLIERID SUPPLIER, " 
-                +"   PT.CONTAINER CONTAINER_TYPE, " 
-                +"   PT.MDMID ORIN " 
-                +" FROM PETTABLE PT " 
-                +" LEFT OUTER JOIN referencetable rt " 
-                +" ON PT.OMNICODE = RT.IDCHECK " ;*/
                 
                 +"   referencefirst AS                                                                            "
                 +"   (SELECT /*LISTAGG(CODE,'|') WITHIN GROUP (ORDER BY CODE) CODE,*/                             "
@@ -1000,7 +799,6 @@ public class XqueryConstants {
            * DATE: 02/05/2016
            */
 
-      //  System.out.println("Query - >"+GET_OMNI_CHANNEL_BRAND_XQUERY);
         return GET_OMNI_CHANNEL_BRAND_XQUERY;
     }
 
@@ -2526,5 +2324,599 @@ public class XqueryConstants {
         LOGGER.info("***Exiting fetchCopyAttributesQuery() method.");
         return COPY_ATTRIBUTE_QUERY;
     }
+    
+    public String getGroupingInfoAttribute(){
+    	System.out.println("XQueryConstants getGroupingInfoAttribute : Starts");
+    	
+    	StringBuffer queryBuffer = new StringBuffer();
+    	
+    	queryBuffer.append("    SELECT                                                                                                                                  ");
+    	queryBuffer.append("    AGC.MDMID GROUP_ID,                                                                                                                     ");
+    	queryBuffer.append("    AGC.DEF_DEPT_ID DEPT_ID,                                                                                                                ");
+    	queryBuffer.append("    AGC.DEF_PRIMARYSUPPLIERVPN VENDOR_STYLE,                                                                                                ");
+    	queryBuffer.append("    AGC.ENTRY_TYPE GROUP_TYPE,                                                                                                              ");
+    	queryBuffer.append("  s.VenId,                                                                                                                                  ");
+    	queryBuffer.append("    s.VenName,                                                                                                                              ");
+    	queryBuffer.append("    s.OmnichannelIndicator,                                                                                                                 ");
+    	queryBuffer.append("    AIC.CLASS_ID,                                                                                                                           ");
+    	queryBuffer.append("  CASE                                                                                                                                      ");
+    	queryBuffer.append("        WHEN s.OmnichannelIndicator = 'Y'                                                                                                   ");
+    	queryBuffer.append("        AND (Sample_Image           = 'Image'                                                                                               ");
+    	queryBuffer.append("        OR Sample_Image             = 'Both')                                                                                               ");
+    	queryBuffer.append("        AND Image_Indicator         = 'true'                                                                                                ");
+    	queryBuffer.append("        THEN 'Y'                                                                                                                            ");
+    	queryBuffer.append("        ELSE 'N'                                                                                                                            ");
+    	queryBuffer.append("      END Vendor_Image,                                                                                                                     ");
+    	queryBuffer.append("      CASE                                                                                                                                  ");
+    	queryBuffer.append("        WHEN s.OmnichannelIndicator = 'Y'                                                                                                   ");
+    	queryBuffer.append("        AND (Sample_Image           = 'Sample'                                                                                              ");
+    	queryBuffer.append("        OR Sample_Image             = 'Both')                                                                                               ");
+    	queryBuffer.append("        AND Sample_Indicator        = 'true'                                                                                                ");
+    	queryBuffer.append("        THEN 'Y'                                                                                                                            ");
+    	queryBuffer.append("        ELSE 'N'                                                                                                                            ");
+    	queryBuffer.append("      END Vendor_Sample,                                                                                                                    ");
+    	queryBuffer.append("    AGC.COMPLETION_DATE,                                                                                                                     ");
+    	queryBuffer.append("    AGC.GROUP_CONTENT_STATUS_CODE                                                                                                                     ");
+    	queryBuffer.append("    FROM VENDORPORTAL.ADSE_GROUP_CATALOG AGC LEFT OUTER join                                                                                ");
+    	queryBuffer.append("    VENDORPORTAL.ADSE_SUPPLIER_CATALOG sup on SUP.MDMID=AGC.DEF_PRIMARY_SUPPLIER_ID                                                         ");
+    	queryBuffer.append("      LEFT OUTER JOIN                                                                                                                       ");
+    	queryBuffer.append("        VENDORPORTAL.ADSE_GROUP_CHILD_MAPPING AGCM  ON                                                                                      ");
+    	queryBuffer.append("        AGCM.MDMID=AGC.MDMID AND AGCM.COMPONENT_DEFAULT='true'                                                                              ");
+    	queryBuffer.append("      LEFT OUTER JOIN VENDORPORTAL.ADSE_ITEM_CATALOG AIC                                                                                    ");
+    	queryBuffer.append("        on AIC.MDMID = AGCM.COMPONENT_STYLE_ID                                                                                              ");
+    	queryBuffer.append("      LEFT OUTER JOIN VENDORPORTAL.ADSE_PET_CATALOG APC                                                                                     ");
+    	queryBuffer.append("        ON APC.MDMID=AIC.MDMID,                                                                                                             ");
+    	queryBuffer.append("      XMLTABLE('for $i in $pet/pim_entry/entry  return                                                                                      ");
+    	queryBuffer.append("      <out>                                                                                                                                 ");
+    	queryBuffer.append("        <img>{if(count($i/Image_Sec_Spec/Images//*) gt 0) then \"Y\" else \"N\"}</img>                                                          ");
+    	queryBuffer.append("        <sample>{if(count($i/Image_Sec_Spec/Sample//*) gt 0) then \"Y\" else \"N\"}</sample>                                                    ");
+    	queryBuffer.append("      </out>'                                                                                                                               ");
+    	queryBuffer.append("      passing APC.xml_data AS \"pet\"                                                                                                         ");
+    	queryBuffer.append("      columns                                                                                                                               ");
+    	queryBuffer.append("        Vendor_Image VARCHAR2(1) path '/out/img',                                                                                           ");
+    	queryBuffer.append("        Vendor_Sample VARCHAR2(1) path '/out/sample') (+)PET_XML,                                                                           ");
+    	queryBuffer.append("        XMLTABLE('for $i in $XML_DATA/pim_entry/entry   return $i' passing sup.xml_data AS \"XML_DATA\"                                       ");
+    	queryBuffer.append("                    COLUMNS Id VARCHAR2(20) path 'Supplier_Ctg_Spec/Id',                                                                                  ");
+    	queryBuffer.append("                    VenName VARCHAR2(20) path 'Supplier_Ctg_Spec/Name',                                                                                   ");
+    	queryBuffer.append("                    VenId VARCHAR2(20) path 'Supplier_Ctg_Spec/VEN_Id',                                                                                   ");
+    	queryBuffer.append("                    Site_Name VARCHAR2(50) Path 'Supplier_Ctg_Spec/Name',                                                                                 ");
+    	queryBuffer.append("                    Sample_Image VARCHAR2(50) Path 'Supplier_Site_Spec/Omni_Channel/Vendor_Image_or_Sample_Indicator',                                    ");
+    	queryBuffer.append("                    Image_Indicator VARCHAR2(50) Path 'Supplier_Site_Spec/Omni_Channel/Image_Certification',                                              ");
+    	queryBuffer.append("                    Sample_Indicator VARCHAR2(50) Path 'Supplier_Site_Spec/Omni_Channel/Return_Sample_Indicator',                                         ");
+    	queryBuffer.append("                    OmnichannelIndicator VARCHAR(2) path 'if (Supplier_Site_Spec/Omni_Channel/Omni_Channel_Indicator eq \"true\") then \"Y\" else \"N\"' ) (+)s ");
+    	queryBuffer.append("  WHERE AGC.MDMID=:groupId");
 
+    	
+    	String query = queryBuffer.toString();
+    	
+    	return query;
+    }
+    
+    /**
+     * This method retrieves query string for department details for teh group from department id
+     * @param departmentId
+     * @return query
+     */
+    public String getGroupDepartmentDetails(String departmentId, String classId){
+    	StringBuffer buff = new StringBuffer();
+    	
+    	buff.append(" SELECT d.Name DEPT_DESC, c.Name CLASS_DESC FROM	");
+    	buff.append(" Vendorportal.Adse_Merchandise_Hierarchy AmC,	");
+    	buff.append(" Vendorportal.Adse_Merchandise_Hierarchy AmD,	");
+    	buff.append(" Xmltable('$i/pim_category/entry/Merchandise_Hier_Spec' Passing Amc.Xml_Data AS	");
+    	buff.append(" \"i\" Columns RMS_ID VARCHAR(10) path 'Identifiers/RMS_Id',	");
+    	buff.append(" Name VARCHAR(100) Path 'Name')C,	");
+    	buff.append(" Xmltable('$i/pim_category/entry/Merchandise_Hier_Spec' Passing AmD.Xml_Data AS	");
+    	buff.append(" \"i\" Columns RMS_ID VARCHAR(10) path 'Identifiers/RMS_Id',	");
+    	buff.append(" Name VARCHAR(100) Path 'Name')D	");
+    	buff.append(" WHERE AmD.Entry_Type='4'	");
+    	buff.append(" AND AmC.Entry_Type  ='5'	");
+    	buff.append(" AND C.rms_id = '");
+    	buff.append(classId);
+    	buff.append("'");
+    	buff.append(" AND D.rms_id = '");
+    	buff.append(departmentId);
+    	buff.append("'");
+    	
+    	return buff.toString();
+    }
+    
+    /**
+     * This method populates Omni Channel Brand list for group
+     * @return OMNICHANNEL_BRAND_QUERY
+     */
+    public String getGroupingOmniChannelBrand(){
+    	final String OMNICHANNEL_BRAND_QUERY = "	SELECT RF.MDMID OMNI_BRANDS,	"
+			+ "  RF.THEVALUE OMNI_BRANDS_DESCRIPTION,	"
+			+ "  T.OMNICODE OMNI_BRAND,		"
+			+ "  T.OMNIGROUPCODE OMNI_GROUP_BRAND,		"
+			+ "  RF.PARENT_MDMID SUPPLIER,		"
+			+ "  RF.CONTAINER CONTAINER_TYPE,		"
+			+ "  AGC.MDMID ORIN,	"
+			+ "  AGC.ENTRY_TYPE		"
+			+ "		FROM ADSE_REFERENCE_DATA RF,	"
+			+ "  	VENDORPORTAL.ADSE_GROUP_CATALOG AGC LEFT OUTER JOIN ADSE_GROUP_CHILD_MAPPING AGCM		"
+			+ "  	ON AGC.MDMID=AGCM.MDMID AND AGCM.PEP_COMPONENT_TYPE<>'Group'		"
+			+ "  AND AGCM.COMPONENT_DEFAULT ='true' "
+			+ "  	LEFT OUTER JOIN ADSE_ITEM_CATALOG AIC ON AIC.MDMID=AGCM.COMPONENT_STYLE_ID,	"
+			+ " 	 XMLTABLE( '      "
+			+ "  let $code := $XML_DATA/pim_entry/entry/Ecomm_Style_Spec/OmniChannelBrand,    "
+			+ "		$groupcode:=$XML_DATA/pim_entry/entry/Collection_Spec/OmniChannelBrand  "
+			+ "  return       "
+			+ "  <category>     "
+			+ "  <code>{$code}</code>"
+			+ "		<groupcode>{$groupcode}	</groupcode>"
+			+ " 	 </category>' passing AGC.xml_data AS \"XML_DATA\" COLUMNS OMNICODE VARCHAR(100) path '/category/code', OMNIGROUPCODE VARCHAR(100) path '/category/groupcode') (+)T		"
+			+ "		WHERE AGC.MDMID = :groupingNo	"
+			+ "		AND RF.CONTAINER   ='OmniChannelBrand'		"
+			+"	AND RF.PARENT_MDMID = AIC.PRIMARY_SUPPLIER_ID		"
+			+"	ORDER BY RF.MDMID	";
+    	
+    	return OMNICHANNEL_BRAND_QUERY;
+    }
+    /**
+     * This method populates CAR Brand query for group
+     * @return CAR_BRAND_QUERY
+     */
+    public String getGroupingCarBrandQuery(){
+    	final String CAR_BRAND_QUERY = "	SELECT RF.MDMID CAR_BRANDS,		"
+			+ "	  RF.THEVALUE CAR_BRANDS_DESCRIPTION,	"
+			+ "  T.OMNICODE CARS_BRAND,		"
+			+ "  T.OMNIGROUPCODE CARS_GROUP_BRAND,	"
+			+ "  RF.PARENT_MDMID SUPPLIER,	"
+			+ "  RF.CONTAINER CONTAINER_TYPE,	"
+			+ "  AGC.MDMID ORIN,	"
+			+ "  AGC.ENTRY_TYPE	"
+			+ "	FROM ADSE_REFERENCE_DATA RF,	"
+			+ "  VENDORPORTAL.ADSE_GROUP_CATALOG AGC LEFT OUTER JOIN ADSE_GROUP_CHILD_MAPPING AGCM	"
+			+ "  ON AGC.MDMID=AGCM.MDMID AND AGCM.PEP_COMPONENT_TYPE<>'Group'	"
+			+ "  AND AGCM.COMPONENT_DEFAULT ='true' "
+			+ "  LEFT OUTER JOIN ADSE_ITEM_CATALOG AIC ON AIC.MDMID=AGCM.COMPONENT_STYLE_ID,	"
+			+ "  XMLTABLE( '    "
+			+ "  let $code := $XML_DATA/pim_entry/entry/Ecomm_Style_Spec/Cars_Brand,  "
+			+ "	$groupcode:=$XML_DATA/pim_entry/entry/Collection_Spec/Cars_Brand   "
+			+ "  return   "
+			+ "  <category>   "
+			+ "  <code>{$code}</code>	"
+			+ "	<groupcode>{$groupcode}	</groupcode>  "
+			+ "  </category>' passing AGC.xml_data AS \"XML_DATA\" COLUMNS OMNICODE VARCHAR(100) path '/category/code', OMNIGROUPCODE VARCHAR(100) path '/category/groupcode') (+)T		"
+			+ "  "
+			+ "	WHERE AGC.MDMID = :groupingNo	"
+			+ "	AND RF.CONTAINER   ='Cars_Brand_Names'	"
+			+ "	AND RF.PARENT_MDMID = AIC.PRIMARY_SUPPLIER_ID	"
+			+ "	ORDER BY RF.MDMID	";
+    	
+    	return CAR_BRAND_QUERY;
+    }
+    
+    /**
+     * This method populates query for grouping details section
+     * @return 
+     */
+    public String getGroupingDetails(){
+    	
+    	final String GROUPING_DETAILS  = "	SELECT	" +
+    			"  AGC.MDMID GROUP_ID,	" +
+    			"  AGC.GROUP_NAME,	" +
+    			"  AGCXML.Description,	" +
+    			"  AGCXML.Effective_Start_Date,	" +
+    			"  AGCXML.Effective_End_Date,	" +
+    			"  AGCXML.CARS_Group_Type,	" +
+    			"  AGC.ENTRY_TYPE GROUP_TYPE,	" +
+    			"  AGC.GROUP_OVERALL_STATUS_CODE,	" +
+    			"  AGC.CREATED_BY	" +
+    			"  /*XML_DATA*/	" +
+    			"	FROM	" +
+    			"  ADSE_GROUP_CATALOG AGC,	" +
+    			"  XMLTABLE(	" +
+    			"  'let                                                                          $Description:= /pim_entry/entry/Group_Ctg_Spec/Description,                             $Effective_Start_Date:= /pim_entry/entry/Group_Ctg_Spec/Effective_Start_Date,           $Effective_End_Date:= /pim_entry/entry/Group_Ctg_Spec/Effective_End_Date,                $CARS_Group_Type:= /pim_entry/entry/Group_Ctg_Spec/CARS_Group_Type                return                                                                                <out>                                                                                       <Description>{$Description}</Description>                                               <Effective_Start_Date>{$Effective_Start_Date}</Effective_Start_Date>                    <Effective_End_Date>{$Effective_End_Date}</Effective_End_Date>                          <CARS_Group_Type>{$CARS_Group_Type}</CARS_Group_Type>                      </out>'	" +
+    			"  passing AGC.XML_DATA Columns Description CLOB path '/out/Description',	" +
+    			"  Effective_Start_Date VARCHAR2(50) path '/out/Effective_Start_Date' ,	" +
+    			"  Effective_End_Date   VARCHAR2(50) path '/out/Effective_End_Date',	" +
+    			"  CARS_Group_Type      VARCHAR2(50) path '/out/CARS_Group_Type') AGCXML	" +
+    			"	WHERE	" +
+    			"  MDMID = :groupingNo";
+    	
+    	
+    	return GROUPING_DETAILS;
+    }
+    
+    /**
+     * This method populates query for Grouping Copy Attributes
+     * @return COPY_ATTRIBUTES_GROUP_CONTENT
+     */
+    public String getGroupingCopyAttributes(){
+    	final String COPY_ATTRIBUTES_GROUP_CONTENT = "	SELECT AGC.MDMID,                                                          "+
+        "   T.PRODUCTCOPYTEXT,                                                                                                     "+
+        "   T.COPYLINE1,                                                                                                           "+
+        "   T.COPYLINE2,                                                                                                           "+
+        "   T.COPYLINE3,                                                                                                           "+
+        "   T.COPYLINE4,                                                                                                           "+
+        "   T.COPYLINE5,                                                                                                           "+
+        "   T.COPYPRODUCTNAME,                                                                                                     "+
+        "   T.COPYMATERIAL,                                                                                                        "+
+        "   T.COPYCARE,                                                                                                            "+
+        "   T.COPYCOUNTRYOFORIGIN,                                                                                                 "+
+        "   T.COPYEXCLUSIVE,                                                                                                       "+
+        "   T.COPYCAPROP65COMPLIANT, T.COPYIMPORTDOMESTIC                                                                          "+
+        " FROM ADSE_GROUP_CATALOG AGC,                                                                                               "+
+        "   XMLTABLE(                                                                                                              "+
+        "   'let $productCopyText := $XML_DATA/pim_entry/entry/Copy_Sec_Spec/Product_Copy_Text,                                    "+
+        " $copyLine1 := $XML_DATA/pim_entry/entry/Copy_Sec_Spec/Copy_Line_1,                                                       "+
+        " $copyLine2 := $XML_DATA/pim_entry/entry/Copy_Sec_Spec/Copy_Line_2,                                                       "+
+        " $copyLine3 := $XML_DATA/pim_entry/entry/Copy_Sec_Spec/Copy_Line_3,                                                       "+
+        " $copyLine4 := $XML_DATA/pim_entry/entry/Copy_Sec_Spec/Copy_Line_4,                                                       "+
+        " $copyLine5 := $XML_DATA/pim_entry/entry/Copy_Sec_Spec/Copy_Line_5,                                                       "+
+        " $copyProductName := $XML_DATA/pim_entry/entry/Copy_Sec_Spec/Copy_Product_Name,                                           "+
+        " $copyMaterial := $XML_DATA/pim_entry/entry/Copy_Sec_Spec/Copy_Material,                                                  "+
+        " $copyCare := $XML_DATA/pim_entry/entry/Copy_Sec_Spec/Copy_Care,                                                          "+
+        " $copyCountryOfOrigin := $XML_DATA/pim_entry/entry/Copy_Sec_Spec/Copy_Country_of_Origin,                                  "+
+        " $copyImportDomestic := $XML_DATA/pim_entry/entry/Copy_Sec_Spec/Copy_Import_Domestic,                                     "+
+        " $copyExclusive := $XML_DATA/pim_entry/entry/Copy_Sec_Spec/Copy_Exclusive,                                                "+
+        " $copyCAProp65Compliant := $XML_DATA/pim_entry/entry/Copy_Sec_Spec/Copy_CAProp65_Compliant                                "+
+        " return                                                                                                                   "+
+        " <category>                                                                                                               "+
+        " <productCopyText>{$productCopyText}</productCopyText>                                                                    "+
+        " <copyLine1>{$copyLine1}</copyLine1>                                                                                      "+
+        " <copyLine2>{$copyLine2}</copyLine2>                                                                                      "+
+        " <copyLine3>{$copyLine3}</copyLine3>                                                                                      "+
+        " <copyLine4>{$copyLine4}</copyLine4>                                                                                      "+
+        " <copyLine5>{$copyLine5}</copyLine5>                                                                                      "+
+        " <copyProductName>{$copyProductName}</copyProductName>                                                                    "+
+        " <copyMaterial>{$copyMaterial}</copyMaterial>                                                                             "+
+        " <copyCare>{$copyCare}</copyCare>                                                                                         "+
+        " <copyCountryOfOrigin>{$copyCountryOfOrigin}</copyCountryOfOrigin>                                                        "+
+        " <copyImportDomestic>{$copyImportDomestic}</copyImportDomestic>                                                           "+
+        " <copyExclusive>{$copyExclusive}</copyExclusive>                                                                          "+
+        " <copyCAProp65Compliant>{$copyCAProp65Compliant}</copyCAProp65Compliant>                                                  "+
+        " </category>'                                                                                                             "+
+        "   passing AGC.XML_DATA AS \"XML_DATA\" COLUMNS PRODUCTCOPYTEXT CLOB path '/category/productCopyText', " +
+        "  COPYLINE1 VARCHAR(3000) path '/category/copyLine1', COPYLINE2 VARCHAR(3000) path '/category/copyLine2', " +
+        "  COPYLINE3 VARCHAR(3000) path '/category/copyLine3', COPYLINE4 VARCHAR(3000) path '/category/copyLine4', " +
+        "  COPYLINE5 VARCHAR(3000) path '/category/copyLine5', COPYPRODUCTNAME VARCHAR(3000) path '/category/copyProductName', " +
+        "  COPYMATERIAL VARCHAR(3000) path '/category/copyMaterial', COPYCARE VARCHAR(3000) path '/category/copyCare', " +
+        "  COPYCOUNTRYOFORIGIN VARCHAR(3000) path '/category/copyCountryOfOrigin', " +
+        "  COPYIMPORTDOMESTIC VARCHAR(3000) path '/category/copyImportDomestic', COPYEXCLUSIVE VARCHAR(3000) path '/category/copyExclusive', " +
+        "  COPYCAPROP65COMPLIANT VARCHAR(3000) path '/category/copyCAProp65Compliant') T "+
+        " WHERE AGC.MDMID = :groupingNo";
+    	
+    	return COPY_ATTRIBUTES_GROUP_CONTENT;
+    }
+    
+    /**
+     * This method populates query for Grouping Specific Attributes
+     * @return
+     */
+    public String getGroupingSpecificAttributes(){
+    	final String GROUPING_SPECIFIC_ATTRIBUTES = " SELECT	"
+			+ "  AGC.MDMID GROUP_ID,	"
+			+ "  AGCXML.outFit ,	"
+			+ "  AGCXML.omnichannel,	"
+			+ "  AGCXML.carbrand	"
+			+ "	FROM	"
+			+ "  ADSE_GROUP_CATALOG AGC,	"
+			+ "  XMLTABLE(	"
+			+ "  'let   "
+			+ "	$outFit:= /pim_entry/entry/Collection_Spec/Outfit_Navigation,	"
+			+ "	$omniChannel:=/pim_entry/entry/Collection_Spec/OmniChannelBrand, 	"
+			+ "	$carbrand:=/pim_entry/entry/Collection_Spec/Cars_Brand	"
+			+ "	return	"
+			+ "	<out>	"
+			+ "	<outFit>{$outFit}	"
+			+ "	</outFit>	"
+			+ "	<omniChannel>{$omniChannel}</omniChannel>	"
+			+ "	<carbrand>{$carbrand}</carbrand>	"
+			+ ""
+			+ "	</out>'	"
+			+ "	passing AGC.XML_DATA Columns 	"
+			+ "  outFit VARCHAR2(50) path '/out/outFit' ,	"
+			+ "  omniChannel   VARCHAR2(50) path '/out/omniChannel',	"
+			+ "  carbrand      VARCHAR2(50) path '/out/carbrand') AGCXML	"
+			+ "	WHERE	"
+			+ "  MDMID          = :groupingNo";
+    	
+    	return GROUPING_SPECIFIC_ATTRIBUTES;
+    }
+    
+    /**
+     * This method populates query string for group components
+     * @return GROUPING_COMPONENT_QUERY
+     */
+    public String getGroupingComponentQuery(){
+    	final String GROUPING_COMPONENT_QUERY = "	SELECT " +
+    			" GROUPING_ID,	" +
+    			"	PARENT_MDMID STYLE_ID,	" +
+    			"  MDMID COMPONENT_ID,	" +
+    			"  COMPLETION_DATE,	" +
+    			"  PET_STATE,	" +
+    			"  CONTENT_STATE,	" +
+    			"  ENTRY_TYPE,	" +
+    			"  PEP_COMPONENT_TYPE COMPONENT_TYPE,	" +
+    			"      Color_code,	" +
+    			"    Color,	" +
+    			"    Vendor_Size	" +
+    			"	FROM	" +
+    			"  (SELECT AGCM.MDMID GROUPING_ID, NULL PARENT_MDMID, NULL PARENT_STYLECOLOR,	" +
+    			"    AGC.MDMID,	" +
+    			"    TO_CHAR(AGC.COMPLETION_DATE,'YYYY-MM-DD') COMPLETION_DATE,	" +
+    			"    AGC.GROUP_OVERALL_STATUS_CODE PET_STATE,	" +
+    			"    AGC.GROUP_CONTENT_STATUS_CODE CONTENT_STATE,	" +
+    			"    AGC.ENTRY_TYPE,	" +
+    			"    AGCM.PEP_COMPONENT_TYPE,	" +
+    			"    NULL Color_code,	" +
+    			"    NULL Color,	" +
+    			"    NULL Vendor_Size,	" +
+    			"    NULL OmniSize	" +
+    			"  FROM ADSE_GROUP_CATALOG AGC, ADSE_GROUP_CHILD_MAPPING AGCM	" +
+    			"  WHERE AGC.MDMID        = AGCM.COMPONENT_GROUPING_ID	" +
+    			"  AND AGCM.PEP_COMponent_Type='Group'	" +
+    			"  AND AGCM.MDMID  = :groupingNo	" +
+    			"  UNION	" +
+    			"	SELECT AGCM.MDMID, AIC.PARENT_MDMID, AIC.PARENT_STYLECOLOR,	" +
+    			"    AIC.MDMID,    " +
+    			"    PET_XML.completion_date,	" +
+    			"    APC.PET_STATE PET_STATE,	" +
+    			"    APC.CONTENT_STATUS CONTENT_STATE,	" +
+    			"    AIC.ENTRY_TYPE,	" +
+    			"    AGCM.PEP_COMponent_Type,	" +
+    			"    AIC_XML.VENDOR_COLOR_CODE Color_code,	" +
+    			"    AIC_XML.VENDOR_COLOR_CODE || ' ' ||AIC_XML.VENDOR_COLOR_DESC Color,	" +
+    			"    AIC_XML.VENDOR_SIZE_CODE || ' ' ||AIC_XML.VENDOR_SIZE_DESC Vendor_Size,	" +
+    			"    NULL OmniSize	" +
+    			"  FROM ADSE_GROUP_CHILD_MAPPING AGCM,	" +
+    			"    ADSE_ITEM_CATALOG AIC	" +
+    			"  INNER JOIN ADSE_PET_CATALOG APC	" +
+    			"  ON AIC.MDMID=APC.MDMID ,	" +
+    			"    XMLTABLE( 'let     " +
+    			"	$completionDate := $pets/pim_entry/entry/Pet_Ctg_Spec/Completion_Date,     " +
+    			"	$colordesc:= $pets/pim_entry/entry/Ecomm_StyleColor_Spec/NRF_Color_Description  " +
+    			"	return   " +
+    			"	<out>       " +
+    			"	<completion_date>{$completionDate}</completion_date>   " +
+    			"	<COLO_DESC>{$colordesc}</COLO_DESC>    " +
+    			"	</out>' passing APC.xml_data AS \"pets\" Columns completion_date VARCHAR2(10) path '/out/completion_date', COLO_DESC VARCHAR2(50) path '/out/COLO_DESC' ) (+)PET_XML,	" +
+    			"	XMLTABLE('for $i in $XML_DATA/pim_entry/entry         let                     $uda80 := (fn:count($i/Item_UDA_Spec/UDA/Id) gt 0 and $i/Item_UDA_Spec/UDA/Id eq \"80\"),    $non_sellable := 	" +
+    			"	(fn:count($i/Item_Simple_Pack_Spec/Sellable_Flag/text()) gt 0 and  ($i/Item_Simple_Pack_Spec/Sellable_Flag eq \"false\")),                 $non_sellable_pack := 	" +
+    			"	(fn:count($i/Item_Complex_Pack_Spec/Sellable_Flag/text()) gt 0 and  ($i/Item_Complex_Pack_Spec/Sellable_Flag eq \"false\")),          $removal := $i/Item_Ctg_Spec/System/Removal_Flag eq    " +
+    			"	\"true\"        return    <out>   <dept_id>{fn:tokenize($i/../item_header/category_paths/category[fn:starts-" +
+    			"with(path, \"Merchandise_Hierarchy\")]/path,\"\\||///\")[5]}</dept_id>               <class_id>{fn:tokenize($i/../item_header/category_paths/category[fn:starts-with(path, 	" +
+    			"	\"Merchandise_Hierarchy\")]/path,\"\\||///\")[6]}</class_id>             <supplier_id>{$i/Item_Ctg_Spec/Supplier[Primary_Flag eq \"true\"]/Id}</supplier_id>                                                                         <flag>{$uda80 and    " +
+    			"	$non_sellable_pack and $removal}</flag>                                                                                                 <colorCode>{$i/Item_SKU_Spec/Differentiators[Type eq 	" +
+    			"	\"COLOR\"]/Code}</colorCode>                                                                           <colorDesc>{$i/Item_SKU_Spec/Differentiators[Type eq 	" +
+    			"	\"COLOR\"]/Vendor_Description}</colorDesc>                                                             <sizeCode>{$i/Item_SKU_Spec/Differentiators[Type eq 	" +
+    			"	\"SIZE\"]/Code}</sizeCode>                                                                              <sizeDesc>{$i/Item_SKU_Spec/Differentiators[Type eq \"SIZE\"]/Vendor_Description}</sizeDesc>        </out>'	" +
+    			"    passing aic.XML_DATA AS \"XML_DATA\" columns flag VARCHAR(10) path '/out/flag', supplier_id VARCHAR2(20) path '/out/supplier_id', deptid VARCHAR2(20) path '/out/dept_id', classid VARCHAR2(20) path 	" +
+    			"	'/out/class_id', descr VARCHAR2(64) path '/out/desc', VENDOR_COLOR_CODE VARCHAR2(10) path '/out/colorCode', VENDOR_COLOR_DESC VARCHAR2(40) path '/out/colorDesc', VENDOR_SIZE_CODE VARCHAR2(10) 	" +
+    			"	path '/out/sizeCode', VENDOR_SIZE_DESC VARCHAR2(10) path '/out/sizeDesc') AIC_XML	" +
+    			"	WHERE NVL(AIC.PARENT_MDMID,AIC.MDMID) = AGCM.COMPONENT_STYLE_ID	" +
+    			"	AND (  CASE WHEN AGCM.PEP_COMPONENT_TYPE ='SKU' " +
+    			"          AND  AIC.ENTRY_TYPE='Style' AND AIC.MDMID=AGCM.COMPONENT_STYLE_ID " +
+    			"                  OR (AIC.ENTRY_TYPE='StyleColor' AND AIC.MDMID=AGCM.COMPONENT_STYLECOLOR_ID) " +
+    			"                  OR (AIC.ENTRY_TYPE='SKU' AND AIC.MDMID=AGCM.COMPONENT_SKU_ID) THEN 1		" +
+    			"             WHEN  AGCM.PEP_COMPONENT_TYPE ='StyleColor'	" +
+    			"          AND ((AIC.ENTRY_TYPE='Style' AND AIC.MDMID=AGCM.COMPONENT_STYLE_ID) 	" +
+    			"              OR (AIC.ENTRY_TYPE='StyleColor' AND AIC.MDMID=AGCM.COMPONENT_STYLECOLOR_ID)) THEN 1	" +
+    			"              WHEN AGCM.PEP_COMPONENT_TYPE ='Style' THEN 1		" +
+    			"	ELSE 0 END ) =1	" +
+    			"	  AND AGCM.PEP_COMponent_Type!              ='Group'	" +
+    			"	  AND AGCM.MDMID                        = :groupingNo		" +
+    			"	  ) 	" +
+    			"	ORDER BY PEP_COMPONENT_TYPE DESC,	" +
+    			"	  MDMID	";
+    	
+    	return GROUPING_COMPONENT_QUERY;
+    }
+
+    
+    public String populateGroupIPHcategoryPath(){
+    	final String CONTENT_IPH_CATEFGORY_PATH = "	SELECT pet.mdmid ORIN,	"
+			+ "  ias.CATEGORY_DESC PET_CATEGORY_NAME	"
+			+ "	FROM 	"
+			+ "	  VENDORPORTAL.ADSE_GROUP_CATALOG pet,	"
+			+ "  XMLTABLE( 'for $j in $XML_DATA/pim_entry/group_entry_header/category_paths/category    "
+			+ "  let               $categorydesc := $j//path,        $categoryname := tokenize($j//path, \"///\")[1]      "
+			+ "  return          <category>              <path>{$categorydesc}</path>            <name>{$categoryname}</name>         </category>' PASSING pet.XML_DATA AS \"XML_DATA\" COLUMNS CATEGORY_DESC VARCHAR(1000) path '/category/path', CATEGORY_NAME VARCHAR(100) path '/category/name') ias	"
+			+ "	WHERE pet.mdmid = :groupingNo	"
+			+ "	AND ias.CATEGORY_NAME LIKE 'Item_Primary_Hierarchy' ";
+    	
+    	return CONTENT_IPH_CATEFGORY_PATH;
+    }
+    
+    
+    public String populateGroupIPH(){
+    	final String CONTENT_IPH_CATEGORY_OTHERS = "  SELECT pet.mdmid ORIN,	"
+			+ "  ias.CATEGORY_ID PET_CATEGORY_ID,	"
+			+ "  ias.CATEGORY_NAME PET_CATEGORY_NAME,	"
+			+ "  ics.SUB_CLASS SUB_CLASS,	"
+			+ "  ids.leafnode7,	"
+			+ "  ids.leafnode6,	"
+			+ "  ids.leafnode5,	"
+			+ "  ids.leafnode4,	"
+			+ "  ids.leafnode3,	"
+			+ "  ids.leafnode2,	"
+			+ "  ids.leafnode1,	"
+			+ "  ibs.ITEM_CATEGORY_ID	"
+			+ "	FROM VENDORPORTAL.ADSE_PET_CATALOG pet,	"
+			+ "    XMLTABLE( 'for $j in $XML_DATA/pim_entry/pet_entry_header/category_paths/category[last()]  "
+			+ "    let           $categoryid := $j//pk,        "
+			+ "     "
+			+ "                  $categoryname := tokenize(tokenize($j//path, \"///\")[last()],\"-\")[last()]        "
+			+ "        return        "
+			+ "        <category>      "
+			+ "            <pk>{$categoryid}</pk>      "
+			+ "    "
+			+ "            <name>{$categoryname}</name>     "
+			+ "        </category>' PASSING pet.XML_DATA AS \"XML_DATA\" 	"
+			+ "        COLUMNS 	"
+			+ "        CATEGORY_ID VARCHAR(100) path '/category/pk', 	"
+			+ "        CATEGORY_NAME VARCHAR(100) path '/category/name') ias	"
+			+ "  ,	"
+			+ "    VENDORPORTAL.ADSE_ITEM_CATALOG aic,	"
+			+ "    XMLTABLE( 'for $j in $XML_DATA/pim_entry/item_header/category_paths/category  "
+			+ "    let          "
+			+ "    $itemcategoryid := $j//pk,                "
+			+ "    $itemcategoryname := tokenize($j//path, \"///\")[1]        "
+			+ "    return         "
+			+ "    <category>        "
+			+ "      <pk>{$itemcategoryid}</pk>        "
+			+ "             "
+			+ "      <name>{$itemcategoryname}</name>       "
+			+ "    </category>' PASSING aic.XML_DATA AS \"XML_DATA\" 	"
+			+ "    COLUMNS 	"
+			+ "      ITEM_CATEGORY_ID VARCHAR(100) path '/category/pk', 	"
+			+ "      ITEM_CATEGORY_NAME VARCHAR(100) path '/category/name') ibs		"
+			+ "  ,	"
+			+ "    VENDORPORTAL.ADSE_MERCHANDISE_HIERARCHY amh,	"
+			+ "    XMLTABLE( 'for $j in $XML_DATA/pim_category/merchandise_category_header     "
+			+ "    let           $subclass := tokenize($j//full_path, \"///\")[last()]              "
+			+ "    return           "
+			+ "    <merchandise_category_header>         "
+			+ "      <full_path>{$subclass}</full_path>         "
+			+ "    </merchandise_category_header>' PASSING amh.XML_DATA AS \"XML_DATA\"		"
+			+ "    COLUMNS 	"
+			+ "    SUB_CLASS VARCHAR(100) path '/merchandise_category_header/full_path') ics	"
+			+ "  ,	"
+			+ "  VENDORPORTAL.ADSE_MERCHANDISE_HIERARCHY amh1,	"
+			+ "  XMLTABLE(	"
+			+ "  'for $j in $XML_DATA/pim_category/entry/Merchandise_Hier_Spec/IPH_Category_Mappings               let                                                                                                         $leafnode7 := $j//Level_7,                                                                                  $leafnode6 := $j//Level_6,                                                                                  $leafnode5 := $j//Level_5,                                                                                  $leafnode4 := $j//Level_4,                                                                                  $leafnode3 := $j//Level_3,                                                                                  $leafnode2 := $j//Level_2,                                                                                  $leafnode1 := $j//Level_1                                                                                   return                                                                                                      <IPH_Category_Mappings>                                                                                     <leafnode7>{$leafnode7}</leafnode7>                                                                         <leafnode6>{$leafnode6}</leafnode6>                                                                         <leafnode5>{$leafnode5}</leafnode5>                                                                         <leafnode4>{$leafnode4}</leafnode4>                                                                         <leafnode3>{$leafnode3}</leafnode3>                                                                         <leafnode2>{$leafnode2}</leafnode2>                                                                         <leafnode1>{$leafnode1}</leafnode1>                                                                         </IPH_Category_Mappings>'	"
+			+ "PASSING amh1.XML_DATA AS \"XML_DATA\" COLUMNS leafnode7 VARCHAR(100) path '/IPH_Category_Mappings/leafnode7', leafnode6 VARCHAR(100) path '/IPH_Category_Mappings/leafnode6', leafnode5 VARCHAR(100) path '/IPH_Category_Mappings/leafnode5', leafnode4 VARCHAR(100) path '/IPH_Category_Mappings/leafnode4', leafnode3 VARCHAR(100) path '/IPH_Category_Mappings/leafnode3', leafnode2 VARCHAR(100) path '/IPH_Category_Mappings/leafnode2', leafnode1 VARCHAR(100) path '/IPH_Category_Mappings/leafnode1') ids,		"
+			+ "  ADSE_GROUP_CHILD_MAPPING AGCM	"
+			+ "	WHERE ibs.ITEM_CATEGORY_ID = amh1.MDMID	"
+			+ "	AND ibs.ITEM_CATEGORY_ID = amh.MDMID	"
+			+ "  AND UPPER(ibs.ITEM_CATEGORY_NAME) = UPPER('Merchandise_Hierarchy')	"
+			+ "  AND AGCM.COMPONENT_STYLE_ID = AIC.MDMID AND AGCM.COMPONENT_DEFAULT='true'	"
+			+ "  AND AGCM.COMPONENT_STYLE_ID =pet.mdmid	"
+			+ "  AND AGCM.mdmid = :groupingNo	";
+    	
+			return CONTENT_IPH_CATEGORY_OTHERS;
+    }
+    
+    public String getGroupContentHistoryQuery(){
+    	final String GROUP_CONTENT_HISTORY = "	SELECT pet.mdmid,	"
+			+ "  i.createdBy,	"
+			+ "  i.createdOn,	"
+			+ "  i.lastState,	"
+			+ "  i.lastUpdateOn,	"
+			+ "  i.lastUpdateBy,	"
+			+ "  i.currentState		"
+			+ "	FROM VENDORPORTAL.ADSE_GROUP_CATALOG pet,	"
+			+ "  XMLTable(	"
+			+ "  'for $i in $pet/pim_entry/entry/Group_Ctg_Spec/Audit/Content      "
+			+ "  let  $lastState := $i//Last_State,		"
+			+ "  $lastUpdate := $i//Last_State_On,		"
+			+ "  $lastUpdateBy := $i//Last_State_By,	"
+			+ "  $createdBy := $i//..//Created_By,		"
+			+ "  $createdOn := $i//..//Created_On,		"
+			+ "  $currentState := $i//..//..//State                                                                                                                                  return                                                                       <petStatus>                                                                              <lastState>{$lastState}</lastState>                                                     <lastUpdate>{$lastUpdate}</lastUpdate>                                                  <lastUpdateBy>{$lastUpdateBy}</lastUpdateBy>                                            <createdBy>{$createdBy}</createdBy>                                                     <createdOn>{$createdOn}</createdOn>                                                     <currentState>{$currentState}</currentState>                                </petStatus>'	"
+			+ "  passing pet.XML_DATA AS \"pet\" 	"
+			+ "  columns 	"
+			+ "    lastState VARCHAR2(40) path '/petStatus/lastState' , 	"
+			+ "    lastUpdateOn VARCHAR2(40) path '/petStatus/lastUpdate' , 	"
+			+ "    lastUpdateBy VARCHAR2(40) path '/petStatus/lastUpdateBy', 	"
+			+ "    createdBy VARCHAR2(40) path '/petStatus/createdBy', 		"
+			+ "    createdOn VARCHAR2(40) path '/petStatus/createdOn', 	"
+			+ "    currentState VARCHAR2(40) path '/petStatus/currentState' ) i 	"
+			+ "WHERE pet.mdmid=:groupingNo";
+    	
+    	return GROUP_CONTENT_HISTORY;
+    }
+    
+    /**
+     * Method to get the group copy validation query.
+     *    
+     * @return the query string
+     * 
+     * Method added For PIM Phase 2 - Group Content
+     * Date: 06/18/2016
+     * Added By: Cognizant
+     */
+	public String getGroupCopyValidation() {
+		final StringBuffer groupCopyValidationQuery = new StringBuffer();
+		LOGGER.info("***Entering getGroupCopyValidation() method.");
+		groupCopyValidationQuery
+				.append("SELECT COUNT(*) COUNT_GROUP FROM ADSE_GROUP_CHILD_MAPPING WHERE COMPONENT_STYLE_ID = :styleId AND MDMID= :groupId");
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("GROUP COPY VALIDATION QUERY -- \n"
+					+ groupCopyValidationQuery.toString());
+		}
+		LOGGER.info("***Exiting getGroupCopyValidation() method.");
+		return groupCopyValidationQuery.toString();
+    }
+	
+	public String populateGroupIPHForCollections(){
+		
+		final Properties prop =   PropertiesFileLoader.getPropertyLoader(ContentScreenConstants.MESS_PROP);
+		String categoryId = prop.getProperty("DUMMY_CATEGORY_ID_COLLECTION");
+		if(LOGGER.isDebugEnabled())
+			LOGGER.debug("categoryId in  populateGroupIPHForCollections--- >"+categoryId);
+		
+		StringBuilder query = new StringBuilder();
+		
+		query.append(" SELECT pet.mdmid ORIN,                                                                                                                                  " );
+		query.append("   ias.CATEGORY_ID PET_CATEGORY_ID,                                                                                                                      " );
+		query.append("   ias.CATEGORY_NAME PET_CATEGORY_NAME,                                                                                                                  " );
+		query.append("   ics.SUB_CLASS SUB_CLASS,                                                                                                                              " );
+		query.append("   ids.leafnode7,                                                                                                                                        " );
+		query.append("   ids.leafnode6,                                                                                                                                        " );
+		query.append("   ids.leafnode5,                                                                                                                                        " );
+		query.append("   ids.leafnode4,                                                                                                                                        " );
+		query.append("   ids.leafnode3,                                                                                                                                        " );
+		query.append("   ids.leafnode2,                                                                                                                                        " );
+		query.append("   ids.leafnode1                                                                                                                                         " );
+		query.append(" FROM VENDORPORTAL.ADSE_GROUP_CATALOG pet,                                                                                                               " );
+		query.append("   XMLTABLE( 'for $j in $XML_DATA/pim_entry/group_entry_header/category_paths/category[last()]                                                           " );
+		query.append(" let           $categoryid := $j//pk,                                                                                                                    " );
+		query.append("                                                                                                                                                         " );
+		query.append(" $categoryname := tokenize(tokenize($j//path, \"///\")[last()],\"-\")[last()]                                                                                " );
+		query.append(" return                                                                                                                                                  " );
+		query.append(" <category>                                                                                                                                              " );
+		query.append(" <pk>{$categoryid}</pk>                                                                                                                                  " );
+		query.append("                                                                                                                                                         " );
+		query.append(" <name>{$categoryname}</name>                                                                                                                            " );
+		query.append(" </category>' PASSING pet.XML_DATA AS \"XML_DATA\" COLUMNS CATEGORY_ID VARCHAR(100) path '/category/pk',                                                   " );
+		query.append("   --CATEGORY_DESC VARCHAR(100) path '/category/path',                                                                                                   " );
+		query.append("   CATEGORY_NAME VARCHAR(100) path '/category/name') ias ,                                                                                               " );
+		query.append("   VENDORPORTAL.ADSE_MERCHANDISE_HIERARCHY amh,                                                                                                          " );
+		query.append("   XMLTABLE( 'for $j in $XML_DATA/pim_category/merchandise_category_header                                                                               " );
+		query.append(" let           $subclass := tokenize($j//full_path, \"///\")[last()]                                                                                       " );
+		query.append(" return                                                                                                                                                  " );
+		query.append(" <merchandise_category_header>                                                                                                                           " );
+		query.append(" <full_path>{$subclass}</full_path>                                                                                                                      " );
+		query.append(" </merchandise_category_header>' PASSING amh.XML_DATA AS \"XML_DATA\" COLUMNS SUB_CLASS VARCHAR(100) path '/merchandise_category_header/full_path') ics ,  " );
+		query.append("   VENDORPORTAL.ADSE_MERCHANDISE_HIERARCHY amh1,                                                                                                         " );
+		query.append("   XMLTABLE(                                                                                                                                             " );
+		query.append("   'for $j in $XML_DATA/pim_category/entry/Merchandise_Hier_Spec/IPH_Category_Mappings                                                                   " );
+		query.append("   let                                                                                                                                                   " );
+		query.append("   $leafnode7 := $j//Level_7,                                                                                                                            " );
+		query.append("   $leafnode6 := $j//Level_6,                                                                                                                            " );
+		query.append("   $leafnode5 := $j//Level_5,                                                                                                                            " );
+		query.append("   $leafnode4 := $j//Level_4,                                                                                                                            " );
+		query.append("   $leafnode3 := $j//Level_3,                                                                                                                            " );
+		query.append("   $leafnode2 := $j//Level_2,                                                                                                                            " );
+		query.append("   $leafnode1 := $j//Level_1                                                                                                                             " );
+		query.append("   return                                                                                                                                                " );
+		query.append("   <IPH_Category_Mappings>                                                                                                                               " );
+		query.append("   <leafnode7>{$leafnode7}</leafnode7>                                                                                                                   " );
+		query.append("   <leafnode6>{$leafnode6}</leafnode6>                                                                                                                   " );
+		query.append("   <leafnode5>{$leafnode5}</leafnode5>                                                                                                                   " );
+		query.append("   <leafnode4>{$leafnode4}</leafnode4>                                                                                                                   " );
+		query.append("   <leafnode3>{$leafnode3}</leafnode3>                                                                                                                   " );
+		query.append("   <leafnode2>{$leafnode2}</leafnode2>                                                                                                                   " );
+		query.append("   <leafnode1>{$leafnode1}</leafnode1>                                                                                                                   " );
+		query.append("   </IPH_Category_Mappings>'                                                                                                                             " );
+		query.append("   PASSING amh1.XML_DATA AS \"XML_DATA\"                                                                                                                   " );
+		query.append("   COLUMNS leafnode7 VARCHAR(100) path '/IPH_Category_Mappings/leafnode7',                                                                               " );
+		query.append("   leafnode6 VARCHAR(100) path '/IPH_Category_Mappings/leafnode6',                                                                                       " );
+		query.append("   leafnode5 VARCHAR(100) path '/IPH_Category_Mappings/leafnode5',                                                                                       " );
+		query.append("   leafnode4 VARCHAR(100) path '/IPH_Category_Mappings/leafnode4',                                                                                       " );
+		query.append("   leafnode3 VARCHAR(100) path '/IPH_Category_Mappings/leafnode3',                                                                                       " );
+		query.append("   leafnode2 VARCHAR(100) path '/IPH_Category_Mappings/leafnode2',                                                                                       " );
+		query.append("   leafnode1 VARCHAR(100) path '/IPH_Category_Mappings/leafnode1') ids                                                                                   " );
+		query.append(" WHERE amh1.MDMID = ");
+		query.append(categoryId);                                                                                                                              
+		query.append(" AND amh1.MDMID = amh.MDMID                                                                                                                              " );
+		query.append(" AND pet.mdmid  = :groupingNo																										");	
+    	
+			return query.toString();
+    }
 }

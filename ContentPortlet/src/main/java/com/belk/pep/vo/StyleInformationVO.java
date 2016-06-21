@@ -22,6 +22,12 @@ public class StyleInformationVO  implements Serializable{
     /** The grouping. */
     private String grouping;
     
+    /** The Grouping Type **/
+    private String groupingType;
+    
+    /** The IPH Id **/
+    private String IPHId;
+    
     /** The department id. */
     private String departmentId;    
     
@@ -80,6 +86,11 @@ public class StyleInformationVO  implements Serializable{
     
     /** The supplier site id. */
     private String supplierSiteId;
+    
+    /**
+     * 
+     */
+    private String contentStatus;
 
     
     
@@ -463,7 +474,37 @@ public class StyleInformationVO  implements Serializable{
             + completionDateOfStyle + "]";
     }
 
-  
+	public String getGroupingType() {
+		return groupingType;
+	}
+
+	public void setGroupingType(String groupingType) {
+		this.groupingType = groupingType;
+	}
+
+	public String getIPHId() {
+		return IPHId;
+	}
+
+	public void setIPHId(String iPHId) {
+		IPHId = iPHId;
+	}
+
+	/**
+	 * @return the contentStatus
+	 */
+	public String getContentStatus() {
+		return contentStatus;
+	}
+
+	/**
+	 * @param contentStatus the contentStatus to set
+	 */
+	public void setContentStatus(String contentStatus) {
+		this.contentStatus = contentStatus;
+	}
+
+    
    
 
 }

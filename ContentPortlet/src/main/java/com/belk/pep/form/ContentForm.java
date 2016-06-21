@@ -266,8 +266,24 @@ public class ContentForm implements Serializable{
 
     /** The secondary color four map. */
     private Map<String, String>  secondaryColorFourMap = new HashMap<String, String>();
+    
+    /** The grouping Id **/
+    private String groupingId;
+    
+    /** The grouping Type**/
+    private String groupingType;
+    
+    private String copyContentMessage;
 
-    /**
+    public String getCopyContentMessage() {
+		return copyContentMessage;
+	}
+
+	public void setCopyContentMessage(String copyContentMessage) {
+		this.copyContentMessage = copyContentMessage;
+	}
+
+	/**
      * Instantiates a new content form.
      */
     public ContentForm() {
@@ -1751,6 +1767,21 @@ public class ContentForm implements Serializable{
         this.copyAttributeVO = copyAttributeVO;
     }
 
+	public String getGroupingId() {
+		return groupingId;
+	}
+
+	public void setGroupingId(String groupingId) {
+		this.groupingId = groupingId;
+	}
+
+	public String getGroupingType() {
+		return groupingType;
+	}
+
+	public void setGroupingType(String groupingType) {
+		this.groupingType = groupingType;
+	}
 
 
 }
