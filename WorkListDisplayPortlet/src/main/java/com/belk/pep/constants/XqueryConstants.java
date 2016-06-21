@@ -3610,7 +3610,7 @@ public String getAdvWorkListDisplayDataForParent(AdvanceSearch advSearch) {
         "  SELECT AIC.PARENT_MDMID,                                                                  "+
         "     AIC.MDMID,                                                                             "+
         "     PET_XML.PRODUCT_NAME PRODUCTNAME,                                                      "+
-        "     PET_XML.completion_date,                                                               "+
+        "     CASE WHEN AIC.ENTRY_TYPE = 'Style' THEN TO_CHAR(APC.PET_EARLIEST_COMP_DATE, 'YYYY-MM-DD') ELSE PET_XML.completion_date END AS completion_date,        "+
         "     APC.PET_STATE PET_STATE,                                                               "+
         "     APC.CONTENT_STATUS CONTENT_STATE,                                                      "+
         "     APC.IMAGE_STATUS IMAGE_STATE,                                                          "+
@@ -3931,7 +3931,7 @@ public String getAdvWorkListDisplayDataForParent(AdvanceSearch advSearch) {
         "  SELECT AIC.PARENT_MDMID,                                                                    "+
         "     AIC.MDMID,                                                                               "+
         "     PET_XML.PRODUCT_NAME PRODUCTNAME,                                                        "+
-        "     PET_XML.completion_date,                                                                 "+
+        "     CASE WHEN AIC.ENTRY_TYPE = 'Style' THEN TO_CHAR(APC.PET_EARLIEST_COMP_DATE, 'YYYY-MM-DD') ELSE PET_XML.completion_date END AS completion_date,        "+
         "     APC.PET_STATE PET_STATE,                                                                 "+
         "     APC.CONTENT_STATUS CONTENT_STATE,                                                        "+
         "     APC.IMAGE_STATUS IMAGE_STATE,                                                            "+

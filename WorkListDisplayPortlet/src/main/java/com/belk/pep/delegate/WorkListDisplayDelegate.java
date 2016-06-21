@@ -3,7 +3,9 @@ package com.belk.pep.delegate;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 //import java.util.logging.Logger;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -217,6 +219,7 @@ public class WorkListDisplayDelegate {
         List<WorkFlow> styleWorkflowList = new ArrayList<WorkFlow>();
         List<WorkFlow> parentWorkflowList = new ArrayList<WorkFlow>();
         List<String> styleOrinList = new ArrayList<String>();
+        List<WorkFlow> groupSearchList = new ArrayList<WorkFlow>();
         //AFUAXK4
         if(adSearch.getGroupingID() != null && !adSearch.getGroupingID().equals("")
                 || adSearch.getGroupingName() != null && !adSearch.getGroupingName().equals(""))
@@ -245,12 +248,33 @@ public class WorkListDisplayDelegate {
                     styleOrinList.add(styleOrin);
                 }
             }
-            workflowList = workListDisplayService.getAdvWorklistGroupingData(adSearch, supplierIdList, vendorEmail, styleOrinList);
+            if(styleWorkflowList.size() > 0)
+            {
+                workflowList = workListDisplayService.getAdvWorklistGroupingData(new AdvanceSearch(), supplierIdList, vendorEmail, styleOrinList);
+            }
+            groupSearchList = workListDisplayService.getAdvWorklistGroupingData(adSearch, supplierIdList, vendorEmail, new ArrayList<String>());
             
             LOGGER.info("List 2 size: " + workflowList.size());
             styleWorkflowList.addAll(workflowList);
+            LOGGER.info("List 3 size: " + groupSearchList.size());
+            styleWorkflowList.addAll(groupSearchList);
             workflowList = styleWorkflowList;
-            LOGGER.info("List 3 size: " + styleWorkflowList.size());
+            LOGGER.info("List 4 size: " + styleWorkflowList.size());
+            Map<String, WorkFlow> uniqueValues = new HashMap<String, WorkFlow>();
+            for(WorkFlow workFlow: workflowList)
+            {
+                String key = workFlow.getOrinNumber();
+                if(!uniqueValues.containsKey(key))
+                {
+                    uniqueValues.put(key, workFlow);
+                }
+            }
+            if(uniqueValues.size() > 0)
+            {
+            	List<WorkFlow> uniqueList = new ArrayList<WorkFlow>(uniqueValues.values());            
+            	workflowList = uniqueList;
+            }
+            LOGGER.info("List 5 size: " + workflowList.size());
         }
         
         return workflowList;

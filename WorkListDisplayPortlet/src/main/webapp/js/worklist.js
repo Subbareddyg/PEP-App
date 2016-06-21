@@ -1560,37 +1560,59 @@ $("#overlay_pageLoading1").show();
         }); //  $.ajax({					
 }
 	
-function contentStatus(contentStatusValue,orinNumber){
-var url = $("#ajaxaction").val();
-var petLockedStatus = '';
-	var petLockedUser ='';
-$("#overlay_pageLoading1").show();
-      $.ajax({
-		         url: url ,
-		         type: 'GET',
-		         datatype:'json',
-		         data: { "lockedPet" : orinNumber,
-				        "lockedPettype":"Content"
-					   },
-			         success: function(data){
-						var myString = data.substr(data.indexOf("[{") , data.indexOf("}]")+2);
-						var json = $.parseJSON(myString);  
-						$(json).each(function(i,val){
-						    petLockedStatus = 	val.LockStatus;	
-							petLockedUser  = 	val.petLockedUser;
-							if(petLockedStatus){
-								alert('PET is already locked for editing by '+petLockedUser+'. Please try later ');
-								$("#overlay_pageLoading1").hide();
-							}else {
-								document.getElementById("selectedOrin").value =orinNumber;
-								document.getElementById("contentStatus").value =contentStatusValue;
-								$("#workListDisplayForm").submit();
-								}						
-		                        
-					});//$(json).each(function(i,val)			 
-				}//End of Success				   
-        }); //  $.ajax(		
-			
+function contentStatus(contentStatusValue,orinNumber, groupType){
+/*if($("#groupingID").val() != "" || $("#groupingName").val()!=""){
+		groupContentStatus(contentStatusValue, orinNumber, groupType);
+	}else{
+		if($('#workListType :selected').text() == "Groupings"){
+			groupContentStatus(contentStatusValue, orinNumber, groupType);
+		}else{*/
+	
+			var url = $("#ajaxaction").val();
+			var petLockedStatus = '';
+				var petLockedUser ='';
+			$("#overlay_pageLoading1").show();
+			      $.ajax({
+					         url: url ,
+					         type: 'GET',
+					         datatype:'json',
+					         data: { "lockedPet" : orinNumber,
+							        "lockedPettype":"Content"
+								   },
+						         success: function(data){
+									var myString = data.substr(data.indexOf("[{") , data.indexOf("}]")+2);
+									var json = $.parseJSON(myString);  
+									$(json).each(function(i,val){
+									    petLockedStatus = 	val.LockStatus;	
+										petLockedUser  = 	val.petLockedUser;
+										if(petLockedStatus){
+											alert('PET is already locked for editing by '+petLockedUser+'. Please try later ');
+											$("#overlay_pageLoading1").hide();
+										}else {
+											document.getElementById("selectedOrin").value =orinNumber;
+											document.getElementById("contentStatus").value =contentStatusValue;
+											$("#workListDisplayForm").submit();
+											}						
+					                        
+								});//$(json).each(function(i,val)			 
+							}//End of Success				   
+			        }); //  $.ajax(		
+		/*}
+		}*/	
+}
+
+
+function groupContentStatus(contentStatusValue, groupId, groupingType){
+	
+	document.getElementById("selectedGroupId").value = groupId;
+	document.getElementById("contentStatus").value = contentStatusValue;
+	document.getElementById("groupingType").value = groupingType;
+	if($('#workListType :selected').text() == "Groupings" && document.getElementById("searchResultInput").value == ""){
+		document.getElementById("searchResultInput").value = "includeGrps";
+	}
+	
+	
+	$("#workListDisplayForm").submit();
 }
 //Method for inActivate ajax call
 function inactivateAjaxCall(){
