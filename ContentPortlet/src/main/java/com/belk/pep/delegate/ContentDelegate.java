@@ -1,10 +1,13 @@
 package com.belk.pep.delegate;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -16,6 +19,7 @@ import com.belk.pep.exception.checked.PEPDelegateException;
 import com.belk.pep.exception.checked.PEPFetchException;
 import com.belk.pep.exception.checked.PEPPersistencyException;
 import com.belk.pep.exception.checked.PEPServiceException;
+import com.belk.pep.model.GroupsFound;
 import com.belk.pep.model.PetsFound;
 import com.belk.pep.service.ContentService;
 import com.belk.pep.util.PropertiesFileLoader;
@@ -28,6 +32,7 @@ import com.belk.pep.vo.ContentManagementVO;
 import com.belk.pep.vo.CopyAttributeVO;
 import com.belk.pep.vo.CopyAttributesVO;
 import com.belk.pep.vo.GlobalAttributesVO;
+import com.belk.pep.vo.GroupingVO;
 import com.belk.pep.vo.ItemPrimaryHierarchyVO;
 import com.belk.pep.vo.OmniChannelBrandVO;
 import com.belk.pep.vo.PetAttributeVO;
@@ -35,6 +40,8 @@ import com.belk.pep.vo.ProductDetailsVO;
 import com.belk.pep.vo.SkuAttributesVO;
 import com.belk.pep.vo.StyleColorFamilyVO;
 import com.belk.pep.vo.StyleInformationVO;
+
+import org.json.JSONException;
 import org.json.JSONObject; 
 
 
@@ -57,7 +64,7 @@ public class ContentDelegate {
      * @param webserviceRequest the webservice request
      * @return the string
      */
-    public String callIPHMappingWebService(String webserviceRequest)
+    public String callIPHMappingWebService(String webserviceRequest, boolean isGroup)
     {
 
         LOGGER.info("start of createIPHMappingWebServiceMapping ");
@@ -69,8 +76,13 @@ public class ContentDelegate {
         LOGGER.info("callIPHMappingWebService called");
         LOGGER.info("callIPHMappingWebService JSON Request....."+webserviceRequest);
         final Properties prop =   PropertiesFileLoader.getPropertyLoader(ContentScreenConstants.MESS_PROP);
-        final String targetURL =  prop.getProperty(ContentScreenConstants.IPH_MAPPING_WEBSERVICE_URL);
-        //final String targetURL =  ContentScreenConstants.IPH_MAPPING_WEBSERVICE_URL;
+        
+        String targetURL = null;
+        if (!isGroup){
+        	targetURL =prop.getProperty(ContentScreenConstants.IPH_MAPPING_WEBSERVICE_URL);
+        }else{
+        	targetURL =prop.getProperty(ContentScreenConstants.GROUP_IPH_MAPPING_WEBSERVICE_URL);
+        }
 
         LOGGER.info("IPHMappingWebService URL = "+targetURL);
 
@@ -114,30 +126,22 @@ public class ContentDelegate {
                 final JSONObject jsonResponseObject = new JSONObject(webServiceResponse);
 
                 webServiceResponseCode = jsonResponseObject.getString("code");
-                webServiceResponseDescription = jsonResponseObject.getString("message");
+                webServiceResponseDescription = jsonResponseObject.getString("description");
                 webServiceResponseStatus = jsonResponseObject.getString("status");
 
 
-                if(webServiceResponseStatus.equals("SUCCESS") && webServiceResponseDescription.equalsIgnoreCase("Pet successfully mapped to IPH")){
+                if(webServiceResponseCode.equals("100")){
                     LOGGER.info("webServiceResponseCode------"+webServiceResponseCode);
                     LOGGER.info("webServiceResponseStatus------"+webServiceResponseStatus);
                     LOGGER.info("webServiceResponseDescription------"+webServiceResponseDescription);
                     responseMsg ="The IPH mapping has been  updated successfully. ";
                 }
-                else if(webServiceResponseStatus.equalsIgnoreCase("FAIL") && webServiceResponseDescription.equalsIgnoreCase("Category not found in PIM"))
+                else
                 {
                     LOGGER.info("webServiceResponseCode------"+webServiceResponseCode);
                     LOGGER.info("webServiceResponseStatus------"+webServiceResponseStatus);
                     LOGGER.info("webServiceResponseDescription------"+webServiceResponseDescription);
                     responseMsg= "The IPH mapping cannot be updated,contact the system administrator.";
-                }
-
-                else {
-                    LOGGER.info("webServiceResponseCode------"+webServiceResponseCode);
-                    LOGGER.info("webServiceResponseStatus------"+webServiceResponseStatus);
-                    LOGGER.info("webServiceResponseDescription------"+webServiceResponseDescription);
-                    responseMsg ="The IPH mapping cannot be updated , contact the system administrator.";
-                    LOGGER.severe("Error returned from content update web service = " + webServiceResponseDescription);
                 }
             }
             else
@@ -216,7 +220,6 @@ public class ContentDelegate {
      */
     public String createContentWebService(String createContentWebServiceReq) {
         String webServiceResponseDescription = null;
-        String webServiceResponseStatus = null;
         String responseMsg = null;
         String webServiceResponse = null;
         LOGGER.info("createContentWebService called");
@@ -892,4 +895,299 @@ public class ContentDelegate {
         LOGGER.info("***Exiting getCopyAttributeDetails() method.");
         return copyAttributeVO;
     }
+    
+    
+    /**
+     * This method saves the grouping content data
+     * @param createContentWebServiceReq
+     * @return
+     * @author AFUSKJ2 6/17/2016
+     */
+    public String createGroupContentWebService(JSONObject jsonContentUpdateColor)  throws MalformedURLException, ClassCastException, 
+	IOException, JSONException {
+    	return contentService.createGroupContentWebService(jsonContentUpdateColor);
+    	
+    }
+    
+    
+    /**
+     * This method populate group information
+     * @param groupId
+     * @return
+     * @throws PEPDelegateException
+     * @author AFUSKJ2 6/17/2016
+     */
+    public StyleInformationVO getGroupingInformation(String groupId) throws PEPDelegateException {
+    	try{
+    		return contentService.getGroupingInformation(groupId);
+    	}catch (PEPServiceException e) {
+    		LOGGER.log(Level.SEVERE, e.getMessage());
+    		throw new PEPDelegateException(e.getMessage());
+		}
+    	
+    }
+    
+    /**
+     * This method populates Grouping Department details data
+     * @param styleInformationVO
+     * @return
+     * @throws PEPDelegateException
+     * @author AFUSKJ2 6/17/2016
+     */
+    public StyleInformationVO getGroupingDepartmentDetails(StyleInformationVO styleInformationVO) throws PEPDelegateException {
+    	try{
+    		return contentService.getGroupingDepartmentDetails(styleInformationVO);
+    	}catch (PEPServiceException e) {
+    		LOGGER.log(Level.SEVERE, e.getMessage());
+    		throw new PEPDelegateException(e.getMessage());
+		}
+    }
+    
+    /**
+     * This method retrieves group details
+     * @param groupId
+     * @return
+     * @throws PEPDelegateException
+     * @author AFUSKJ2 6/17/2016
+     */
+    public ProductDetailsVO getGroupingDetails(String groupId)throws PEPDelegateException {
+    	try{
+    		return contentService.getGroupingDetails(groupId);
+    	}catch (PEPServiceException e) {
+    		LOGGER.log(Level.SEVERE, e.getMessage());
+    		throw new PEPDelegateException(e.getMessage());
+		}
+    }
+    
+    /**
+     * This method populates grouping copy attributes section data
+     * @param groupId
+     * @return
+     * @throws PEPDelegateException
+     * @author AFUSKJ2 6/17/2016
+     */
+    public CopyAttributeVO getGroupingCopyAttributes(String groupId)throws PEPDelegateException {
+    	try{
+    		return contentService.getGroupingCopyAttributes(groupId);
+    	}catch (PEPServiceException e) {
+			LOGGER.log(Level.SEVERE, e.getMessage());
+			throw new PEPDelegateException();
+		}
+    }
+    
+    /**
+     * This method retrieves omni-channel brand list for group
+     * @param groupingId
+     * @return
+     * @throws PEPDelegateException
+     * @author AFUSKJ2 6/17/2016
+     */
+    public List<OmniChannelBrandVO> getGroupingOmniChannelBrand(String groupingId) throws PEPDelegateException{
+    	try{
+    		return contentService.getGroupingOmniChannelBrand(groupingId);
+    	}catch (PEPServiceException e) {
+			LOGGER.log(Level.SEVERE, e.getMessage());
+			throw new PEPDelegateException();
+		}
+    }
+    
+    /**
+     * This method populates CAR brand list for group
+     * @param groupId
+     * @return
+     * @throws PEPDelegateException
+     * @author AFUSKJ2 6/17/2016
+     * 
+     */
+    public List<CarBrandVO> populateGroupCarBrandList(String groupId) throws PEPDelegateException {
+    	try{
+    		return contentService.populateGroupCarBrandList(groupId);
+    	}catch (PEPServiceException e) {
+			LOGGER.log(Level.SEVERE, e.getMessage());
+			throw new PEPDelegateException();
+		}
+    }
+    
+    /**
+     * This method populates grouping component section data
+     * @param groupId
+     * @return
+     * @throws PEPDelegateException
+     * @author AFUSKJ2 6/17/2016
+     * 
+     */
+    public List<GroupsFound> getGroupingComponents(String groupId) throws PEPDelegateException {
+    	List<GroupsFound> grpList = new ArrayList<GroupsFound>();
+    	try{
+    		grpList = contentService.getGroupingComponents(groupId);
+    	}catch (PEPServiceException e) {
+			e.printStackTrace();
+			throw new PEPDelegateException();
+		}
+    	
+    	return grpList;
+    }
+    
+    /**
+     * This method populates IPH category drop down list for group
+     * @param groupId
+     * @return
+     * @throws PEPDelegateException
+     * @author AFUSKJ2 6/17/2016
+     */
+     public List<ItemPrimaryHierarchyVO> populateIPHCategorydropdown(String groupId, String groupType) throws PEPDelegateException{
+    	 
+    	 try{
+    		 return contentService.populateIPHCategorydropdown(groupId,groupType);
+    	 }catch (PEPServiceException e) {
+			LOGGER.log(Level.SEVERE, e.getMessage());
+			e.printStackTrace();
+			throw new PEPDelegateException();
+		}
+    	 
+    	 
+     }
+     
+     /**
+      * This method populates grouping content history list
+      * @param groupId
+      * @return
+      * @throws PEPDelegateException
+      * @author AFUSKJ2 6/17/2016
+      */
+     public List<ContentHistoryVO> getGroupContentHistory(String groupId) throws PEPDelegateException {
+    	 try{
+    		 return contentService.getGroupContentHistory(groupId);
+    	 }catch (PEPServiceException e) {
+			LOGGER.log(Level.SEVERE, e.getMessage());
+			throw new PEPDelegateException();
+		}
+     }
+     
+     /**
+      * This method populates Grouping specific attributes 
+      * @param groupId
+      * @return
+      * @throws PEPDelegateException
+      * @author AFUSKJ2 6/17/2016
+      */
+     public GroupingVO getGroupingSpecificAttributes(String groupId) throws PEPDelegateException	{
+    	 try{
+    		 return contentService.getGroupingSpecificAttributes(groupId);
+    	 }catch (PEPServiceException e) {
+			LOGGER.log(Level.SEVERE,e.getMessage());
+			throw new PEPDelegateException();
+		}
+     }
+     
+     /**
+      * Method to get the group copy validation from database.
+      *    
+      * @param groupId String  
+      * @param styleId String
+      * @return String
+      * @throws PEPDelegateException
+      * 
+      * Method added For PIM Phase 2 - Group Content
+      * Date: 06/18/2016
+      * Added By: Cognizant
+      */
+ 	public String getGroupCopyValidation(final String groupId,
+ 			final String styleId) throws PEPDelegateException {
+
+ 		LOGGER.info("***Entering getGroupCopyValidation() method.");
+
+ 		String message = ContentScreenConstants.EMPTY;
+ 		try {
+ 			message = contentService.getGroupCopyValidation(groupId, styleId);
+ 		} catch (final PEPServiceException fetchException) {
+ 			throw new PEPDelegateException(fetchException.getMessage());
+ 		}
+ 		LOGGER.info("***Exiting getGroupCopyValidation() method.");
+ 		return message;
+ 	}
+ 	
+ 	/**
+     * Method to get the call copy content web service.
+     *    
+     * @param groupId String  
+     * @param styleId String
+     * @param updatedBy String
+     * @return String
+     * @throws PEPServiceException
+     * 
+     * Method added For PIM Phase 2 - Group Content
+     * Date: 06/18/2016
+     * Added By: Cognizant
+     */
+	public String callCopyContentService(final String groupId,
+			final String styleId, final String updatedBy)
+			throws PEPDelegateException {
+
+		LOGGER.info("***Entering callCopyContentService() method.");
+
+		String message = ContentScreenConstants.EMPTY;
+		try {
+			message = contentService.callCopyOrinContentService(groupId,
+					styleId, updatedBy);
+		} catch (final PEPServiceException fetchException) {
+			throw new PEPDelegateException(fetchException.getMessage());
+		}
+		LOGGER.info("***Exiting callCopyContentService() method.");
+		return message;
+	}
+	
+	/**
+     * Method to get the call update content status web service.
+     *    
+     * @param groupId String  
+     * @param groupType String
+     * @param overallStatus String
+     * @param updatedBy String
+     * @return String
+     * @throws PEPServiceException
+     * 
+     * Method added For PIM Phase 2 - Group Content
+     * Date: 06/18/2016
+     * Added By: Cognizant
+     */
+	public String callUpdateContentStatusService(final String groupId,
+			final String groupType,
+			final String overallStatus, final String updatedBy)
+			throws PEPDelegateException {
+
+		LOGGER.info("***Entering callUpdateContentStatusService() method.");
+
+		String message = ContentScreenConstants.EMPTY;
+		try {
+			message = contentService.callUpdateContentStatusService(groupId,
+					groupType, overallStatus, updatedBy);
+		} catch (final PEPServiceException fetchException) {
+			throw new PEPDelegateException(fetchException.getMessage());
+		}
+		LOGGER.info("***Exiting callUpdateContentStatusService() method.");
+		return message;
+	}
+	
+    /**
+     * This method populates IPH category drop down list for group
+     * @param groupId
+     * @return
+     * @throws PEPDelegateException
+     * @author AFUSKJ2 6/17/2016
+     */
+     public List<ItemPrimaryHierarchyVO> selectedIPHCategorydropdown(String groupId) throws PEPDelegateException{
+    	 
+    	 try{
+    		 return contentService.selectedIPHCategorydropdown(groupId);
+    	 }catch (PEPServiceException e) {
+			LOGGER.log(Level.SEVERE, e.getMessage());
+			e.printStackTrace();
+			throw new PEPDelegateException();
+		}
+    	 
+    	 
+     }
+     
+     
 }

@@ -7,22 +7,27 @@ import java.io.Reader;
 import java.sql.Clob;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 //import java.util.logging.Logger;
 import org.apache.log4j.Logger;
 import org.apache.commons.lang3.StringEscapeUtils;
-
+import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 
+
+
+import com.belk.pep.constants.ContentScreenConstants;
 import com.belk.pep.constants.SqueryConstants;
 import com.belk.pep.constants.XqueryConstants;
 import com.belk.pep.dao.ContentDAO;
 import com.belk.pep.exception.checked.PEPFetchException;
+import com.belk.pep.model.GroupsFound;
 import com.belk.pep.model.PetsFound;
 import com.belk.pep.util.PropertiesFileLoader;
 import com.belk.pep.vo.BlueMartiniAttributesVO;
@@ -34,6 +39,7 @@ import com.belk.pep.vo.ContentManagementVO;
 import com.belk.pep.vo.CopyAttributeVO;
 import com.belk.pep.vo.CopyAttributesVO;
 import com.belk.pep.vo.GlobalAttributesVO;
+import com.belk.pep.vo.GroupingVO;
 import com.belk.pep.vo.ItemPrimaryHierarchyVO;
 import com.belk.pep.vo.OmniChannelBrandVO;
 import com.belk.pep.vo.PetAttributeVO;
@@ -86,14 +92,14 @@ public class ContentDAOImpl implements ContentDAO{
             throws PEPFetchException {
         LOGGER.info("---inside getCardsBrandList---");
         Session session = null;
-        Transaction transaction = null;
+        
         List<CarBrandVO> listCarBrandVO=null;
         CarBrandVO carBrandVO = null;
         List<Object[]> rows=null;
         final XqueryConstants xqueryConstants = new XqueryConstants();
         try {
             session = sessionFactory.openSession();
-            transaction = session.beginTransaction();
+            
             // Hibernate provides a createSQLQuery method to let you call your
             // native SQL statement directly.
             final Query query =session.createSQLQuery(xqueryConstants.getCarsBrandQuery(orinNumber,supplierId));
@@ -110,28 +116,8 @@ public class ContentDAOImpl implements ContentDAO{
              * MODIIFIED BY AFUAXK4
              * DATE: 02/05/2016
              */
-            /*
-            if(rows!=null)
-            {listCarBrandVO = new ArrayList<CarBrandVO>();
-            for (final Object[] row : rows) {
-                String carBrand = checkNull(row[0]);
-                String selectedBrand = checkNull(row[1]);
-                if(carBrand != null){
-                    String temp  = carBrand.replace('|', '~');
-                    String carBrands[] = temp.split("~");
-                    if(carBrands != null){
-                        for(int i=0; i<(carBrands.length); i++){
-                            String carsDes[] = carBrands[i].split("-");
-                            carBrandVO = new CarBrandVO();
-                            carBrandVO.setCarBrandCode(checkNull(carsDes[0]));
-                            carBrandVO.setCarBrandDesc(checkNull(carsDes[1]));
-                            carBrandVO.setSelectedBrand(checkNull(selectedBrand));
-                            listCarBrandVO.add(carBrandVO);
-                        }
-                    }
-                }
-            }
-            }*/
+        
+            
             if(rows!=null)
             {
                 listCarBrandVO = new ArrayList<CarBrandVO>();
@@ -183,7 +169,6 @@ public class ContentDAOImpl implements ContentDAO{
         }
         finally {
             session.flush();
-            transaction.commit();
             session.close();
         }
         return listCarBrandVO;
@@ -196,7 +181,7 @@ public class ContentDAOImpl implements ContentDAO{
     public List<StyleColorFamilyVO> getColorFamilyDataSet()
             throws PEPFetchException {
         Session session = null;
-        Transaction transaction = null;
+        
         StyleColorFamilyVO styleColor = null;
 
         List<StyleColorFamilyVO> styleColorList=new ArrayList<StyleColorFamilyVO>();
@@ -205,7 +190,7 @@ public class ContentDAOImpl implements ContentDAO{
         final XqueryConstants xqueryConstants = new XqueryConstants();
         try {
             session = sessionFactory.openSession();
-            transaction = session.beginTransaction();
+            
             // Hibernate provides a createSQLQuery method to let you call your
             // native SQL statement directly.
             final Query query =session.createSQLQuery(xqueryConstants.getOminiChannleColorFamily());
@@ -236,7 +221,7 @@ public class ContentDAOImpl implements ContentDAO{
         }
         finally {
             session.flush();
-            transaction.commit();
+            
             session.close();
         }
         return styleColorList;
@@ -251,7 +236,7 @@ public class ContentDAOImpl implements ContentDAO{
             throws PEPFetchException {
 
         Session session = null;
-        Transaction transaction = null;
+        
         ContentHistoryVO  contentHistory = null;
         List<Object[]> rows=null;
         List<ContentHistoryVO> contentHistoryList = null;
@@ -259,7 +244,7 @@ public class ContentDAOImpl implements ContentDAO{
         final XqueryConstants xqueryConstants = new XqueryConstants();
         try {
             session = sessionFactory.openSession();
-            transaction= session.beginTransaction();
+            
             // Hibernate provides a createSQLQuery method to let you call your
             // native SQL statement directly.
             final Query query =session.createSQLQuery(xqueryConstants.getContentHistory(orinNumber));
@@ -289,7 +274,7 @@ public class ContentDAOImpl implements ContentDAO{
         }
         finally {
             session.flush();
-            transaction.commit();
+            
             session.close();
         }
         return contentHistoryList;
@@ -303,14 +288,14 @@ public class ContentDAOImpl implements ContentDAO{
             throws PEPFetchException {
 
         Session session = null;
-        Transaction transaction = null;
+        
         ContentManagementVO  contentManagement = null;
         List<Object[]> rows=null;
 
         final XqueryConstants xqueryConstants = new XqueryConstants();
         try {
             session = sessionFactory.openSession();
-            transaction= session.beginTransaction();
+            
             // Hibernate provides a createSQLQuery method to let you call your
             // native SQL statement directly.
             final Query query =session.createSQLQuery(xqueryConstants.getPetContentManagmentDetails(orinNumber));
@@ -339,7 +324,7 @@ public class ContentDAOImpl implements ContentDAO{
         }
         finally {
             session.flush();
-            transaction.commit();
+            
             session.close();
         }
         return contentManagement;
@@ -354,7 +339,7 @@ public class ContentDAOImpl implements ContentDAO{
             throws PEPFetchException {
 
         Session session = null;
-        Transaction transaction = null;
+        
         List<CopyAttributesVO>  copyAttributeList = null;
         List<Object[]> rows=null;
         CopyAttributesVO copyAttributes = new CopyAttributesVO();
@@ -362,7 +347,7 @@ public class ContentDAOImpl implements ContentDAO{
         final XqueryConstants xqueryConstants = new XqueryConstants();
         try {
             session = sessionFactory.openSession();
-            transaction= session.beginTransaction();
+            
             // Hibernate provides a createSQLQuery method to let you call your
             // native SQL statement directly.
             final Query query =session.createSQLQuery(xqueryConstants.getCopyAttributeDetails(orinNumber));
@@ -391,7 +376,7 @@ public class ContentDAOImpl implements ContentDAO{
         }
         finally {
             session.flush();
-            transaction.commit();
+            
             session.close();
         }
         return copyAttributeList;
@@ -410,14 +395,14 @@ public class ContentDAOImpl implements ContentDAO{
             throws PEPFetchException {
         LOGGER.info("****start of  getFamilyCategoriesFromIPH  method****");
         Session session = null;
-        Transaction transaction = null;
+        
         ItemPrimaryHierarchyVO iph = null;
         List<ItemPrimaryHierarchyVO> iphList=new ArrayList<ItemPrimaryHierarchyVO>();
         List<Object[]> rows=null;
         final XqueryConstants xqueryConstants = new XqueryConstants();
         try {
             session = sessionFactory.openSession();
-            transaction = session.beginTransaction();
+            
             // Hibernate provides a createSQLQuery method to let you call your
             // native SQL statement directly.
             final Query query =session.createSQLQuery(xqueryConstants.getFamilyCategoryFromIPH(merchCategoryId));
@@ -446,7 +431,7 @@ public class ContentDAOImpl implements ContentDAO{
         }
         finally {
             session.flush();
-            transaction.commit();
+            
             session.close();
         }
         return iphList;
@@ -464,95 +449,181 @@ public class ContentDAOImpl implements ContentDAO{
 
 
 
-    @Override
-    public List<ItemPrimaryHierarchyVO> getIPHCategories(String orinNumber)
-            throws PEPFetchException {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-
-    /**
-     * Gets the IPH categories from adse.
-     *
-     * @param orinNumber the orin number
-     * @return the IPH categories from adse
-     * @throws PEPFetchException the PEP fetch exception
+    /* (non-Javadoc)
+     * @see com.belk.pep.dao.ContentDAO#getIPHCategories(java.lang.String)
      */
-    public GlobalAttributesVO getIPHCategoriesFromADSE(String orinNumber)
+    @Override
+    public List<ItemPrimaryHierarchyVO> getIPHCategories(String groupId, String groupType)
             throws PEPFetchException {
+    	 LOGGER.info("start of getIPHCategories........"+groupId);
+         Session session = null;
+         
+         List<Object[]> rows=null;
+         ItemPrimaryHierarchyVO itemPrimaryHierarchy = null;
+         List<ItemPrimaryHierarchyVO> iphCategoryList = null;
 
-        Session session = null;
-        Transaction transaction = null;
-        GlobalAttributesVO  styleAttributes = null;
-        List<Object[]> rows=null;
-        final XqueryConstants xqueryConstants = new XqueryConstants();
-        try {
-            session = sessionFactory.openSession();
-            transaction= session.beginTransaction();
-            // Hibernate provides a createSQLQuery method to let you call your
-            // native SQL statement directly.
-            final Query query =session.createSQLQuery(xqueryConstants.getGlobalAttributesQuery(orinNumber));
-            if(query!=null)
-            {
-                query.setParameter("orinNo", orinNumber);
-                query.setFetchSize(20);
-                rows = query.list();
-            }
+         final XqueryConstants xqueryConstants = new XqueryConstants();
+         try {
+             session = sessionFactory.openSession();
+             
+             // Hibernate provides a createSQLQuery method to let you call your
+             // native SQL statement directly.
+             Query query =null;
+             if("CPG".equals(groupType)){
+            	 query =session.createSQLQuery(xqueryConstants.populateGroupIPH());
+             }else{
+            	 query =session.createSQLQuery(xqueryConstants.populateGroupIPHForCollections());
+             }
+             if(query!=null)
+             {
+            	 if(LOGGER.isDebugEnabled())
+            	 LOGGER.debug("Query -->" + query);
+                 query.setParameter("groupingNo", groupId);
+                 query.setFetchSize(20);
+                 rows = query.list();
+             }
 
-            if(rows!=null)
-            {
-                for (final Object[] row : rows) {
-                    styleAttributes = new GlobalAttributesVO ();
+             if((rows!=null) && (rows.size()>0))
+             {
+                 iphCategoryList = new ArrayList<ItemPrimaryHierarchyVO>();
+                 String finalPath = "";
+                 
+                 for (final Object[] row : rows) {
+                     itemPrimaryHierarchy =new ItemPrimaryHierarchyVO();
+                     if(checkNull(row[4]).trim().equals(""))
+                     {
+                         if(checkNull(row[5]).trim().equals(""))
+                         {
+                             if(checkNull(row[6]).trim().equals(""))
+                             {
+                                 if(checkNull(row[7]).trim().equals(""))
+                                 {
+                                     if(checkNull(row[8]).trim().equals(""))
+                                     {
+                                         if(checkNull(row[9]).trim().equals(""))
+                                         {
+                                             if(checkNull(row[10]).trim().equals(""))
+                                             {
+                                                 itemPrimaryHierarchy.setMerchandiseCategoryId(checkNull(row[10]));
+                                                 itemPrimaryHierarchy.setMerchandiseCategoryName(checkNull(row[10]));
+                                             }
+                                             else
+                                             {
+                                                 String[] values = checkNull(row[10]).split("-");
+                                                 itemPrimaryHierarchy.setMerchandiseCategoryId(values[0]);
+                                                 itemPrimaryHierarchy.setMerchandiseCategoryName(values[1]);
+                                                 finalPath =  values[1];
+                                                 if(LOGGER.isDebugEnabled())
+                                                	 LOGGER.debug(finalPath);
+                                                 itemPrimaryHierarchy.setCategoryFullPath(finalPath);
+                                             }
+                                         }
+                                         else
+                                         {
+                                             String[] values = checkNull(row[9]).split("-");
+                                             itemPrimaryHierarchy.setMerchandiseCategoryId(values[0]);
+                                             itemPrimaryHierarchy.setMerchandiseCategoryName(values[1]);
+                                             String[] path10 = checkNull(row[10]).split("-");
+                                             finalPath =  path10[1] +"/"+ values[1];
+                                             if(LOGGER.isDebugEnabled())
+                                            	 LOGGER.debug(finalPath);
+                                             itemPrimaryHierarchy.setCategoryFullPath(finalPath);
+                                         }
+                                     }
+                                     else
+                                     {
+                                         String[] values = checkNull(row[8]).split("-");
+                                         itemPrimaryHierarchy.setMerchandiseCategoryId(values[0]);
+                                         itemPrimaryHierarchy.setMerchandiseCategoryName(values[1]);
+                                         String[] path10 = checkNull(row[10]).split("-");
+                                         String[] path9 = checkNull(row[9]).split("-");
+                                         finalPath =  path10[1] +"/"+ path9[1] + "/" +values[1];
+                                         if(LOGGER.isDebugEnabled())
+                                        	 LOGGER.debug(finalPath);
+                                         itemPrimaryHierarchy.setCategoryFullPath(finalPath);
+                                     }
+                                 }
+                                 else
+                                 {
+                                     String[] values = checkNull(row[7]).split("-");
+                                     itemPrimaryHierarchy.setMerchandiseCategoryId(values[0]);
+                                     itemPrimaryHierarchy.setMerchandiseCategoryName(values[1]);
+                                     String[] path10 = checkNull(row[10]).split("-");
+                                     String[] path9 = checkNull(row[9]).split("-");
+                                     String[] path8 = checkNull(row[8]).split("-");
+                                     finalPath =  path10[1] +"/"+ path9[1] + "/" + path8[1] + "/" + values[1];
+                                     if(LOGGER.isDebugEnabled())
+                                    	 LOGGER.debug(finalPath);
+                                     itemPrimaryHierarchy.setCategoryFullPath(finalPath);
+                                 }
+                             }
+                             else
+                             {
+                                 String[] values = checkNull(row[6]).split("-");
+                                 itemPrimaryHierarchy.setMerchandiseCategoryId(values[0]);
+                                 itemPrimaryHierarchy.setMerchandiseCategoryName(values[1]);
+                                 String[] path10 = checkNull(row[10]).split("-");
+                                 String[] path9 = checkNull(row[9]).split("-");
+                                 String[] path8 = checkNull(row[8]).split("-");
+                                 String[] path7 = checkNull(row[7]).split("-");
+                                 finalPath =  path10[1] +"/"+ path9[1] + "/" + path8[1] + "/" +  path7[1] + "/" +values[1];
+                                 if(LOGGER.isDebugEnabled())
+                                	 LOGGER.debug(finalPath);
+                                 itemPrimaryHierarchy.setCategoryFullPath(finalPath);
+                             }
+                         }
+                         else
+                         {
+                             String[] values = checkNull(row[5]).split("-");
+                             itemPrimaryHierarchy.setMerchandiseCategoryId(values[0]);
+                             itemPrimaryHierarchy.setMerchandiseCategoryName(values[1]);
+                             String[] path10 = checkNull(row[10]).split("-");
+                             String[] path9 = checkNull(row[9]).split("-");
+                             String[] path8 = checkNull(row[8]).split("-");
+                             String[] path7 = checkNull(row[7]).split("-");
+                             String[] path6 = checkNull(row[6]).split("-");
+                             finalPath =  path10[1] +"/"+ path9[1] + "/" + path8[1] + "/" +  path7[1] + "/" +  path6[1] + "/" +values[1];
+                             if(LOGGER.isDebugEnabled())
+                            	 LOGGER.debug(finalPath);
+                             itemPrimaryHierarchy.setCategoryFullPath(finalPath);
+                         }
+                     }
+                     else
+                     {
+                         String[] values = checkNull(row[4]).split("-");
+                         itemPrimaryHierarchy.setMerchandiseCategoryId(values[0]);
+                         itemPrimaryHierarchy.setMerchandiseCategoryName(values[1]);
+                         String[] path10 = checkNull(row[10]).split("-");
+                         String[] path9 = checkNull(row[9]).split("-");
+                         String[] path8 = checkNull(row[8]).split("-");
+                         String[] path7 = checkNull(row[7]).split("-");
+                         String[] path6 = checkNull(row[6]).split("-");
+                         String[] path5 = checkNull(row[5]).split("-");
+                         finalPath =  path10[1] +"/"+ path9[1] + "/" + path8[1] + "/" +  path7[1] + "/" +  path6[1] + "/" +  path5[1] + "/" +values[1];
+                         if(LOGGER.isDebugEnabled())
+                        	 LOGGER.debug(finalPath);
+                         itemPrimaryHierarchy.setCategoryFullPath(finalPath);
+                     }
+                     
+                     /**
+                      * MODIFICATION END BY AFUAXK4
+                      * DATE: 02/05/2016
+                      */
+                     //Add each itemPrimaryHierarchy object to the list
+                     iphCategoryList.add(itemPrimaryHierarchy);
+                     Collections.sort(iphCategoryList);
+                 }}}
 
-
-                    styleAttributes.setMdmid(checkNull(row[0]));
-                    styleAttributes.setOmniChannelBrand(checkNull(row[1]));
-                    styleAttributes.setOmniChannelBrandXpath(checkNull(row[2]));
-                    styleAttributes.setProductDescription(checkNull(row[3]));
-                    styleAttributes.setProductDescriptionXpath(checkNull(row[4]));
-                    styleAttributes.setLaunchDate(checkNull(row[5]));
-                    styleAttributes.setLaunchDateXpath(checkNull(row[6]));
-                    styleAttributes.setBelkExclusive(checkNull(row[7]));
-                    styleAttributes.setBelkExclusiveXpath(checkNull(row[8]));
-                    styleAttributes.setChannelExclusive(checkNull(row[9]));
-                    styleAttributes.setBelkExclusiveXpath(checkNull(row[10]));
-                    styleAttributes.setSdf(checkNull(row[11]));
-                    styleAttributes.setSdfXpath(checkNull(row[12]));
-                    styleAttributes.setProductDimensionUom(checkNull(row[13]));
-                    styleAttributes.setProductDimensionUomXpath(checkNull(row[14]));
-                    styleAttributes.setProductLength(checkNull(row[15]));
-                    styleAttributes.setProductLengthXpath(checkNull(row[16]));
-                    styleAttributes.setProductHeight(checkNull(row[17]));
-                    styleAttributes.setProductHeightXpath(checkNull(row[18]));
-                    styleAttributes.setBopis(checkNull(row[19]));
-                    styleAttributes.setBopisXpath(checkNull(row[20]));
-                    styleAttributes.setGiftBox(checkNull(row[21]));
-                    styleAttributes.setGiftBoxXpath(checkNull(row[22]));
-                    styleAttributes.setImportDomestic(checkNull(row[23]));
-                    styleAttributes.setImportDomesticXpath(checkNull(row[24]));
-                    styleAttributes.setProductWeightUom(checkNull(row[25]));
-                    styleAttributes.setProductWeightUomXpath(checkNull(row[26]));
-                    styleAttributes.setProductWeight(checkNull(row[27]));
-                    styleAttributes.setProductWeightXpath(checkNull(row[28]));
-
-
-
-
-
-                }
-            }
-
-
-        }
-        finally {
-            session.flush();
-            transaction.commit();
-            session.close();
-        }
-        return styleAttributes;
+         finally {
+             if (session!=null)             
+             session.close();
+         }
+         LOGGER.info("End of getIPHCategories...");
+         return iphCategoryList;
     }
 
+
+  
 
     /* (non-Javadoc)
      * @see com.belk.pep.dao.ContentDAO#getIPHCategories()
@@ -569,7 +640,7 @@ public class ContentDAOImpl implements ContentDAO{
             throws PEPFetchException {
         LOGGER.info("start of getIPHCategoriesFromAdseMerchandiseHierarchy........");
         Session session = null;
-        Transaction transaction = null;
+        
         List<Object[]> rows=null;
         ItemPrimaryHierarchyVO itemPrimaryHierarchy = null;
         List<ItemPrimaryHierarchyVO> iphCategoryList = null;
@@ -577,7 +648,7 @@ public class ContentDAOImpl implements ContentDAO{
         final XqueryConstants xqueryConstants = new XqueryConstants();
         try {
             session = sessionFactory.openSession();
-            transaction= session.beginTransaction();
+            
             // Hibernate provides a createSQLQuery method to let you call your
             // native SQL statement directly.
             final Query query =session.createSQLQuery(xqueryConstants.getIphCategoriesFromAdseMerchandiseHierarchy(orinNumber));
@@ -718,7 +789,7 @@ public class ContentDAOImpl implements ContentDAO{
 
         finally {
             session.flush();
-            transaction.commit();
+            
             session.close();
         }
         LOGGER.info("end of getIPHCategoriesFromAdseMerchandiseHierarchy........");
@@ -732,7 +803,7 @@ public class ContentDAOImpl implements ContentDAO{
             throws PEPFetchException {
 
         Session session = null;
-        Transaction transaction = null;
+        
         List<Object[]> rows=null;
         ItemPrimaryHierarchyVO itemPrimaryHierarchy = null;
         List<ItemPrimaryHierarchyVO> iphCategoryList = null;
@@ -740,7 +811,7 @@ public class ContentDAOImpl implements ContentDAO{
         final XqueryConstants xqueryConstants = new XqueryConstants();
         try {
             session = sessionFactory.openSession();
-            transaction= session.beginTransaction();
+            
             // Hibernate provides a createSQLQuery method to let you call your
             // native SQL statement directly.
             final Query query =session.createSQLQuery(xqueryConstants.getIphCategoriesFromAdsePetCatalog(orinNumber));
@@ -792,7 +863,7 @@ public class ContentDAOImpl implements ContentDAO{
 
         finally {
             session.flush();
-            transaction.commit();
+            
             session.close();
         }
         return iphCategoryList;
@@ -805,14 +876,14 @@ public class ContentDAOImpl implements ContentDAO{
     public List<OmniChannelBrandVO> getOmniChannelBrandList(String orinNumber, String supplierId)
             throws PEPFetchException {
         Session session = null;
-        Transaction transaction = null;
+        
         List<OmniChannelBrandVO> listOmniChannelBrandVO=null;
         OmniChannelBrandVO omniChannelBrandVO = null;
         List<Object[]> rows=null;
         final XqueryConstants xqueryConstants = new XqueryConstants();
         try {
             session = sessionFactory.openSession();
-            transaction = session.beginTransaction();
+            
             // Hibernate provides a createSQLQuery method to let you call your
             // native SQL statement directly.
             final Query query =session.createSQLQuery(xqueryConstants.getOmniChannelBrandQuery(orinNumber,supplierId));
@@ -827,28 +898,7 @@ public class ContentDAOImpl implements ContentDAO{
              * MODIFIED BY AFUAXK4
              * DATE: 02/05/2016
              */
-            /*
-            if(rows!=null)
-            {listOmniChannelBrandVO = new ArrayList<OmniChannelBrandVO>();
-            for (final Object[] row : rows) {
-                String omniBrand = checkNull(row[0]);
-                String selectedBrand = checkNull(row[1]);
-                if(omniBrand != null){
-                    String temp  = omniBrand.replace('|', '~');
-                    String omniBrands[] = temp.split("~");
-                    if(omniBrands != null){
-                        for(int i=0; i<(omniBrands.length); i++){
-                            String omniDes[] = omniBrands[i].split("-");
-                            omniChannelBrandVO = new OmniChannelBrandVO();
-                            omniChannelBrandVO.setOmniChannelBrandCode(checkNull(omniDes[0]));
-                            omniChannelBrandVO.setOmniChannelBrandDesc(checkNull(omniDes[1]));
-                            omniChannelBrandVO.setSelectedBrand(checkNull(selectedBrand));
-                            listOmniChannelBrandVO.add(omniChannelBrandVO);
-                        }
-                    }
-                }
-            }
-            }*/
+
             if(rows!=null)
             {
                 listOmniChannelBrandVO = new ArrayList<OmniChannelBrandVO>();
@@ -866,9 +916,7 @@ public class ContentDAOImpl implements ContentDAO{
                     omniChannelBrandVO = new OmniChannelBrandVO();
                     omniChannelBrandVO.setOmniChannelBrandCode(omniBrandCode);
                     omniChannelBrandVO.setOmniChannelBrandDesc(omniBrandDesc);
-                    
-                 //   if(omniBrandCode.equals(selectedBrandStyle) 
-                 //           || omniBrandCode.equals(selectedBrandComplexPack))
+
                     if(i==0){
                         if(entryType.equals("Style"))
                         {
@@ -898,7 +946,7 @@ public class ContentDAOImpl implements ContentDAO{
         }
         finally {
             session.flush();
-            transaction.commit();
+            
             session.close();
         }
         return listOmniChannelBrandVO;
@@ -919,16 +967,21 @@ public class ContentDAOImpl implements ContentDAO{
             throws PEPFetchException {
 
         Session session = null;
-        Transaction transaction = null;
+        
         List<Object[]> rows=null;
         new XqueryConstants();
         List<PetAttributeVO> petAttributeList=null;
         //final String categoryIdDummy ="4630";
         try {
             session = sessionFactory.openSession();
-            transaction= session.beginTransaction();
-
-            final Query query =session.createSQLQuery(SqueryConstants.getProductAttributes(categoryId,orinNumber));
+            
+            Query query  = null;
+            if(orinNumber.length() == 7){
+            	query = session.createSQLQuery(SqueryConstants.getGroupIPHAttributeData(categoryId, orinNumber));
+            }else{
+            	query=session.createSQLQuery(SqueryConstants.getProductAttributes(categoryId,orinNumber));
+            }
+            
             if(query!=null)
             {
                // LOGGER.info("query executed successfully.........for categoryId."+categoryId);
@@ -984,7 +1037,7 @@ public class ContentDAOImpl implements ContentDAO{
         }
         finally {
             session.flush();
-            transaction.commit();
+            
             session.close();
         }
         return petAttributeList;
@@ -1010,15 +1063,23 @@ public class ContentDAOImpl implements ContentDAO{
             throws PEPFetchException {
 
         Session session = null;
-        Transaction transaction = null;
+        
         List<Object[]> rows=null;
         new XqueryConstants();
         List<BlueMartiniAttributesVO> blueMartiniAttributesList=null;
         try {
             session = sessionFactory.openSession();
-            transaction= session.beginTransaction();
-
-            final Query query =session.createSQLQuery(SqueryConstants.getBlueMartiniAttributes(categoryId, orinNumber));
+            
+			Query query = null;
+            if(orinNumber.length() == 7){
+            	query = session.createSQLQuery(SqueryConstants.getGroupBlueMartiniAttributes(categoryId, orinNumber));
+            }else{
+            	query = session.createSQLQuery(SqueryConstants.getBlueMartiniAttributes(categoryId, orinNumber));
+            }
+            
+            
+            
+            LOGGER.info("getPetBlueMartiniAttributesDetails  query  "+query   );
             if(query!=null)
             {
                 LOGGER.info("query executed successfully.........for categoryId."+categoryId);
@@ -1071,7 +1132,7 @@ public class ContentDAOImpl implements ContentDAO{
         }
         finally {
             session.flush();
-            transaction.commit();
+            
             session.close();
         }
         return blueMartiniAttributesList;
@@ -1086,13 +1147,13 @@ public class ContentDAOImpl implements ContentDAO{
             throws PEPFetchException {
 
         Session session = null;
-        Transaction transaction = null;
+        
         ProductDetailsVO  productDetails = null;
         List<Object[]> rows=null;
         final XqueryConstants xqueryConstants = new XqueryConstants();
         try {
             session = sessionFactory.openSession();
-            transaction= session.beginTransaction();
+            
             // Hibernate provides a createSQLQuery method to let you call your
             // native SQL statement directly.
             final Query query =session.createSQLQuery(xqueryConstants.getProductDetails(orinNumber));
@@ -1116,7 +1177,7 @@ public class ContentDAOImpl implements ContentDAO{
         }
         finally {
             session.flush();
-            transaction.commit();
+            
             session.close();
         }
         return productDetails;
@@ -1141,13 +1202,13 @@ public class ContentDAOImpl implements ContentDAO{
     public SkuAttributesVO getSkuAttributesFromADSE(String skuOrinNumber) throws PEPFetchException {
 
         Session session = null;
-        Transaction transaction = null;
+        
         SkuAttributesVO  skuAttributes = null;
         List<Object[]> rows=null;
         final XqueryConstants xqueryConstants = new XqueryConstants();
         try {
             session = sessionFactory.openSession();
-            transaction= session.beginTransaction();
+            
             // Hibernate provides a createSQLQuery method to let you call your
             // native SQL statement directly.
             final Query query =session.createSQLQuery(xqueryConstants.getSkuAttributes(skuOrinNumber));
@@ -1190,7 +1251,7 @@ public class ContentDAOImpl implements ContentDAO{
         }
         finally {
             session.flush();
-            transaction.commit();
+            
             session.close();
         }
         return skuAttributes;
@@ -1201,7 +1262,7 @@ public class ContentDAOImpl implements ContentDAO{
             throws PEPFetchException {
 
         Session session = null;
-        Transaction transaction = null;
+        
         ChildSkuVO  sku = null;
         List<Object[]> rows=null;
         List<ChildSkuVO> skuList=null;
@@ -1209,7 +1270,7 @@ public class ContentDAOImpl implements ContentDAO{
         final XqueryConstants xqueryConstants = new XqueryConstants();
         try {
             session = sessionFactory.openSession();
-            transaction= session.beginTransaction();
+            
             // Hibernate provides a createSQLQuery method to let you call your
             // native SQL statement directly.
             final Query query =session.createSQLQuery(xqueryConstants.getChildSKUDetails(orinNumber));
@@ -1242,7 +1303,7 @@ public class ContentDAOImpl implements ContentDAO{
         }
         finally {
             session.flush();
-            transaction.commit();
+            
             session.close();
         }
         return skuList;
@@ -1269,11 +1330,11 @@ public class ContentDAOImpl implements ContentDAO{
         PetsFound pet=null;
         final XqueryConstants xqueryConstants= new XqueryConstants();
         Session session = null;
-        Transaction transaction =  null;
+        
 
         try{
             session = sessionFactory.openSession();
-            transaction= session.beginTransaction();
+            
             //Hibernate provides a createSQLQuery method to let you call your native SQL statement directly.
             final Query query = session.createSQLQuery(xqueryConstants.getStyleAndStyleColorAndSKU(roleName, orinNumber));
             if(query != null){
@@ -1358,7 +1419,7 @@ public class ContentDAOImpl implements ContentDAO{
         {
           //  LOGGER.info("recordsFetched. getStyleAndItsChildFromADSE finally block.." );
             session.flush();
-            transaction.commit();
+            
             session.close();
 
         }
@@ -1378,13 +1439,13 @@ public class ContentDAOImpl implements ContentDAO{
             throws PEPFetchException {
 
         Session session = null;
-        Transaction transaction = null;
+        
         GlobalAttributesVO  styleAttributes = null;
         List<Object[]> rows=null;
         final XqueryConstants xqueryConstants = new XqueryConstants();
         try {
             session = sessionFactory.openSession();
-            transaction= session.beginTransaction();
+            
             // Hibernate provides a createSQLQuery method to let you call your
             // native SQL statement directly.
             final Query query =session.createSQLQuery(xqueryConstants.getGlobalAttributesQuery(orinNumber));
@@ -1421,7 +1482,7 @@ public class ContentDAOImpl implements ContentDAO{
         }
         finally {
             session.flush();
-            transaction.commit();
+            
             session.close();
         }
         return styleAttributes;
@@ -1436,13 +1497,13 @@ public class ContentDAOImpl implements ContentDAO{
     public ColorAttributesVO getStyleColorAttributesFromADSE(String styleColorOrinNumber) throws PEPFetchException {
 
         Session session = null;
-        Transaction transaction = null;
+        
         ColorAttributesVO  styleColorAttributes = null;
         List<Object[]> rows=null;
         final XqueryConstants xqueryConstants = new XqueryConstants();
         try {
             session = sessionFactory.openSession();
-            transaction= session.beginTransaction();
+            
             // Hibernate provides a createSQLQuery method to let you call your
             // native SQL statement directly.
             final Query query =session.createSQLQuery(xqueryConstants.getStyleColorAttributes(styleColorOrinNumber));
@@ -1477,7 +1538,7 @@ public class ContentDAOImpl implements ContentDAO{
         }
         finally {
             session.flush();
-            transaction.commit();
+            
             session.close();
         }
         return styleColorAttributes;
@@ -1491,13 +1552,13 @@ public class ContentDAOImpl implements ContentDAO{
     public StyleInformationVO getStyleInfoFromADSE(String orinNumber)
             throws PEPFetchException {
         Session session = null;
-        Transaction transaction = null;
+        
         StyleInformationVO style = null;
         List<Object[]> rows=null;
         final XqueryConstants xqueryConstants = new XqueryConstants();
         try {
             session = sessionFactory.openSession();
-            transaction = session.beginTransaction();
+            
             // Hibernate provides a createSQLQuery method to let you call your
             // native SQL statement directly.
             final Query query =session.createSQLQuery(xqueryConstants.getStyleInformation(orinNumber));
@@ -1538,7 +1599,7 @@ public class ContentDAOImpl implements ContentDAO{
         }
         finally {
             session.flush();
-            transaction.commit();
+            
             session.close();
         }
         return style;
@@ -1705,4 +1766,713 @@ public boolean releseLockedPet(  String orin, String pepUserID,String pepFunctio
         LOGGER.info("***Exiting clobToString() method.");
         return sb.toString();
     }
+    
+    /**
+     * This method to retrieve group information
+     * @author AFUSKJ2 6/17/2016
+     * @return StyleInformationVO
+     * @param groupId
+     */
+	@Override
+	public StyleInformationVO getGroupingInformation(String groupId)
+			throws PEPFetchException {
+		LOGGER.info("ContentDAOImpl getGroupingInformation : Starts");
+		StyleInformationVO styleInformation = new StyleInformationVO();
+		
+		Session session = null;
+		
+		List<Object[]> row = null;
+		final XqueryConstants xqueryConstants = new XqueryConstants();
+		
+		try{
+			session = sessionFactory.openSession();
+			
+			// XQuery for retrieving group information 
+			final Query query = session.createSQLQuery(xqueryConstants.getGroupingInfoAttribute());
+			if(LOGGER.isDebugEnabled()){
+				LOGGER.debug("Xquery query in getGroupingInformation:----- "+query);
+			}
+			
+			
+			if(query != null){
+				query.setParameter("groupId", groupId);
+				query.setFetchSize(10);
+				row = query.list();
+			}
+			if(LOGGER.isDebugEnabled()){
+				LOGGER.debug("row size in getGroupingInformation::::: "+row.size());
+			}
+			
+			final Properties prop =   PropertiesFileLoader.getPropertyLoader("contentDisplay.properties");
+			if(null!=row && row.size() > 0){
+				for(Object[] obj : row){
+					// Populate the Group information object here
+					styleInformation.setOrin(checkNull(obj[0]).toString());
+					styleInformation.setDepartmentId(checkNull(obj[1]).toString());
+					styleInformation.setStyle(checkNull(obj[2]).toString());
+					styleInformation.setGroupingType(checkNull(obj[3]).toString());
+					styleInformation.setVendorId(checkNull(obj[4]).toString());
+					styleInformation.setVendorName(checkNull(obj[5]).toString());
+					styleInformation.setOmniChannelVendorIndicator(checkNull(obj[6]).toString());
+					styleInformation.setClassId(checkNull(obj[7]).toString());
+					styleInformation.setVendorProvidedImageIndicator(checkNull(obj[8]).toString());
+					styleInformation.setVendorSampleIndicator(checkNull(obj[9]).toString());
+					String completionDate = checkNull(obj[10]);
+					if(null == obj[10]){
+						completionDate = "";
+					}else{
+						completionDate =  obj[10].toString().substring(0, 10);
+					}
+					styleInformation.setCompletionDateOfStyle(completionDate);
+					styleInformation.setContentStatus(prop.getProperty("Content"+checkNull(obj[11])));
+				}
+			}
+		}
+		finally{
+			if(session!=null)
+			session.close();
+		}
+		return styleInformation;
+	}
+	
+	
+	/**
+	 * This method retrieves department details for the group if department id is not null
+	 * @author AFUSKJ2 6/17/2016
+	 * @return StyleInformationVO
+	 * @param styleInformationVo
+	 */
+	@Override
+	public StyleInformationVO getGroupingDepartmentDetails(StyleInformationVO styleInformationVO) throws PEPFetchException {
+		LOGGER.info("ContentDaoImpl getGroupingDepartmentDetails : starts");
+		Session session = null;
+		List<Object[]> rows = null;
+		
+		final XqueryConstants xqueryConstants = new XqueryConstants();
+		
+		try{
+			session = sessionFactory.openSession();
+			
+			
+			final Query query = session.createSQLQuery(xqueryConstants.getGroupDepartmentDetails(styleInformationVO.getDepartmentId(), styleInformationVO.getClassId()));
+			
+			if(LOGGER.isDebugEnabled()){
+				LOGGER.debug("Quer in getGroupingDepartmentDetails::: "+query);
+			}
+			
+			
+			if(null!= query){
+				rows = query.list();
+			}
+			if(LOGGER.isDebugEnabled()){
+				LOGGER.debug("row size in getGroupingDepartmentDetails:::::: "+rows.size());
+			}
+			
+			if(null!=rows && rows.size()>0){
+				for(Object[] obj : rows){
+					// Populate style information object with the department details
+					styleInformationVO.setDeptDescription(checkNull(obj[0]).toString());
+					
+		            
+					styleInformationVO.setClassDescription(checkNull(obj[1]).toString());
+				}
+			}
+		}catch (Exception e) {
+			e.printStackTrace();
+			throw new PEPFetchException();
+		}
+		finally{
+			
+			session.close();
+		}
+		
+		return styleInformationVO;
+	}
+	
+	
+	/**
+	 * This method retrieves grouping details
+	 * @author AFUSKJ2 6/17/2016
+	 * @return ProductDetailsVO
+	 * @param groupId
+	 */
+	@Override
+	public ProductDetailsVO getGroupingDetails(String groupId) throws PEPFetchException{
+		ProductDetailsVO productDetailsVO = new ProductDetailsVO();
+		
+		Session session = null;
+		
+		List<Object[]> row = null;
+		final XqueryConstants xqueryConstants = new XqueryConstants();
+		
+		try{
+			session = sessionFactory.openSession();
+			
+			
+			//XQuery for retrieving grouping details
+			final Query query = session.createSQLQuery(xqueryConstants.getGroupingDetails());
+			
+			if(null!= query){
+				query.setParameter("groupingNo", groupId);
+				query.setFetchSize(10);
+				row = query.list();
+			}
+			if(LOGGER.isDebugEnabled()){
+				LOGGER.debug("Rows size in  getGroupingDetails DAO:::::: "+row.size());
+			}
+			
+			if(null!= row && row.size() > 0){
+				for(Object[] obj : row){
+					// Populate the product details object from query result
+					
+					productDetailsVO.setProductName(checkNull(obj[1]).toString());
+					
+					final Clob groupDescClob = (Clob)((Clob)obj[2]!=null ? obj[2]:null);
+					String groupDesc = clobToString(groupDescClob);
+
+					if(LOGGER.isDebugEnabled()){
+						LOGGER.debug("Prodcut Description Clob converted to String:::::: "+groupDesc);
+					}
+					
+					productDetailsVO.setProductDescription(groupDesc);
+					productDetailsVO.setStyleId(checkNull(obj[0]).toString());
+				}
+			}
+			
+		}catch (Exception e) {
+			e.printStackTrace();
+			throw new PEPFetchException();
+		}finally{
+			if(session!=null)
+				session.close();
+		}
+		return productDetailsVO;
+	}
+	
+	/**
+	 * This method populates Grouping Copy Attrbites section data
+	 * @author AFUSKJ2 6/17/2016
+	 * @param groupId
+	 * @return
+	 * @throws PEPFetchException
+	 */
+	@Override
+	public CopyAttributeVO getGroupingCopyAttributes(String groupId)throws PEPFetchException {
+		CopyAttributeVO copyAttributeVO = new CopyAttributeVO();
+		
+		Session session = null;
+		
+		List<Object[]> row = null;
+		final XqueryConstants xqueryConstants = new XqueryConstants();
+		
+		try{
+			session = sessionFactory.openSession();
+			//
+			
+			// XQuery to retieve Grouping Copy Attributes
+			final Query query = session.createSQLQuery(xqueryConstants.getGroupingCopyAttributes());
+			
+			if(null!= query){
+				query.setParameter("groupingNo", groupId);
+				row = query.list();
+			}
+			
+			if(LOGGER.isDebugEnabled()){
+				LOGGER.debug("Row size in DAO getGroupingCopyAttributes::::: "+row.size());
+			}
+			
+			
+			if(null!= row && row.size() > 0){
+				for(Object[] obj : row){
+					// Populate Copy Attributes object from row
+					copyAttributeVO.setOrin(checkNull(obj[0]).toString());
+					final Clob groupDescClob = (Clob) ((Clob) obj[1]!=null?obj[1]:null);
+		             
+		            String groupDesc = clobToString(groupDescClob);
+		            if(LOGGER.isDebugEnabled()){
+		            	LOGGER.debug("Clob after converted to string:::: "+groupDesc);
+		            }
+					copyAttributeVO.setProductCopyText(groupDesc != null ? groupDesc : "");
+					copyAttributeVO.setCopyLine1(checkNull(obj[2]).toString());
+					copyAttributeVO.setCopyLine2(checkNull(obj[3]).toString());
+					copyAttributeVO.setCopyLine3(checkNull(obj[4]).toString());
+					copyAttributeVO.setCopyLine4(checkNull(obj[5]).toString());
+					copyAttributeVO.setCopyLine5(checkNull(obj[6]).toString());
+					copyAttributeVO.setCopyProductName(checkNull(obj[7]).toString());
+					copyAttributeVO.setMaterial(checkNull(obj[8]).toString());
+					copyAttributeVO.setCare(checkNull(obj[9]).toString());
+					copyAttributeVO.setCountryOfOrigin(checkNull(obj[10]).toString());
+					copyAttributeVO.setExclusive(checkNull(obj[11]).toString());
+					copyAttributeVO.setCaprop65Compliant(checkNull(obj[12]).toString());
+					copyAttributeVO.setImportDomestic(checkNull(obj[13]).toString());
+				}
+			}
+		}catch (Exception e) {
+			e.printStackTrace();
+			throw new PEPFetchException();
+		}finally{
+			if (session!=null)
+				session.close();
+		}
+		
+		return copyAttributeVO;
+	}
+	
+	
+	/**
+	 * This method retrieves omni-channel brand list for group
+	 * @author AFUSKJ2 6/17/2016
+	 * @return List<OmniChannelBrandVo>
+	 * @param groupId
+	 * @throws PEPFetchException
+	 */
+	@Override
+	public List<OmniChannelBrandVO> getGroupingOmniChannelBrand(String groupId) throws PEPFetchException{
+		List<OmniChannelBrandVO> listOmniChannelBrand = null;
+		Session session = null;
+
+		List<Object[]> rows = null;
+		final XqueryConstants xqueryConstants = new XqueryConstants();
+		OmniChannelBrandVO omniChannelBrandVO = null;
+		
+		
+		try{
+			session = sessionFactory.openSession();
+			//
+			
+			// XQuery constants string
+			final Query query = session.createSQLQuery(xqueryConstants.getGroupingOmniChannelBrand());
+			
+			if(LOGGER.isDebugEnabled()){
+				LOGGER.debug("Query query in getGroupingOmniChannelBrand:::: "+query);
+			}
+			
+			
+			if(null!= query){
+				query.setParameter("groupingNo", groupId);
+				rows = query.list();
+			}
+			if(LOGGER.isDebugEnabled()){
+				LOGGER.debug("row size getGroupingOmniChannelBrand::: "+rows.size());
+			}
+			
+			if(null!= rows){
+				listOmniChannelBrand = new ArrayList<OmniChannelBrandVO>();
+				for(Object[] obj : rows){
+					// Populate the values;
+					omniChannelBrandVO = new OmniChannelBrandVO();
+					omniChannelBrandVO.setOmniChannelBrandCode(checkNull(obj[0]).toString());
+					omniChannelBrandVO.setOmniChannelBrandDesc(checkNull(obj[1]).toString());
+					omniChannelBrandVO.setSelectedBrand(checkNull(checkNull(obj[2]).toString()));
+					listOmniChannelBrand.add(omniChannelBrandVO);
+				}
+				
+				
+			}
+			
+		}catch (Exception e) {
+			LOGGER.info("ERROR in getGroupingOmniChannelBrand DAO::: "+e.getMessage());
+			e.printStackTrace();
+			throw new PEPFetchException(); 
+		}finally{
+			if(session!=null)
+				session.close();
+		}
+		
+		return listOmniChannelBrand;
+	}
+	
+	
+	/**
+	 * This method populates car brand list for group
+	 * @author AFUSKJ2 6/17/2016
+	 * @return List<CarBrandVO>
+	 * @param groupId
+	 * @throws PEPFetchException
+	 */
+	public List<CarBrandVO> populateGroupCarBrandList(String groupId) throws PEPFetchException {
+		List<CarBrandVO> carBrandList = null;
+		Session session = null;
+		CarBrandVO carBrandVO = null;
+		List<Object[]> rows = null;
+		
+		final XqueryConstants xqueryConstants = new XqueryConstants();
+		
+		try{
+			session = sessionFactory.openSession();
+			//
+
+			// Populate Car brand query
+			if(LOGGER.isDebugEnabled()){
+				LOGGER.debug(xqueryConstants.getGroupingCarBrandQuery());
+			}
+			final Query query = session.createSQLQuery(xqueryConstants.getGroupingCarBrandQuery());
+			
+			LOGGER.info("Query in populateGroupCarBrandList DAO::::: "+query);
+			
+			if(null!= query){
+				query.setParameter("groupingNo", groupId);
+				rows = query.list();
+			}
+			
+			if(LOGGER.isDebugEnabled()){
+				LOGGER.debug("Row size in populateGroupCarBrandList DAO::: "+rows.size());
+			}
+			
+			
+			if(null != rows){
+				carBrandList = new ArrayList<CarBrandVO>();
+				for(Object[] obj : rows){
+					carBrandVO = new CarBrandVO();
+					carBrandVO.setCarBrandCode(checkNull(obj[0]));
+					carBrandVO.setCarBrandDesc(checkNull(obj[1]));
+					carBrandVO.setSelectedBrand(StringEscapeUtils.unescapeHtml4(checkNull(obj[2])));
+					carBrandList.add(carBrandVO);
+				}
+			}
+			
+		}catch (Exception e) {
+			e.printStackTrace();
+			throw new PEPFetchException();
+		}finally{
+			if(session!=null)
+				session.close();
+		}
+		
+		return carBrandList;
+	}
+	
+	/**
+	 * This method populates grouping component section data
+	 * @param groupId
+	 * @return List<GroupsFound>
+	 * @throws PEPFetchException
+	 */
+	@Override
+	public List<GroupsFound> getGroupingComponents(String groupId) throws PEPFetchException {
+		List<GroupsFound> groupsList = null;
+		Session session = null;
+		
+		List<Object[]> rows = null;
+		GroupsFound groupsFound = null;
+		final XqueryConstants xqueryConstants = new XqueryConstants();
+		
+		try{
+			session = sessionFactory.openSession();
+			
+			
+			final Query query = session.createSQLQuery(xqueryConstants.getGroupingComponentQuery());
+			
+			if(LOGGER.isDebugEnabled()){
+				LOGGER.debug("Query in DAO getGroupingComponents:::: "+query);
+			}
+			
+			
+			if(null!=query){
+				query.setParameter("groupingNo", groupId);
+				rows = query.list();
+			}
+			final Properties prop =   PropertiesFileLoader.getPropertyLoader("contentDisplay.properties");
+			if(LOGGER.isDebugEnabled()){
+				LOGGER.debug("Rows size in DAO getGroupingComponents::::: "+rows.size());
+			}
+			
+			
+			if(null!= rows){
+				groupsList = new ArrayList<GroupsFound>();
+				for(Object[] obj : rows){
+					groupsFound = new GroupsFound();
+					
+					groupsFound.setGroupId(checkNull(obj[0]).toString());
+					groupsFound.setStyleId(checkNull(obj[1]).toString());
+					groupsFound.setComponentId(checkNull(obj[2]).toString());
+					String completionDate = "";
+					if(null != obj[3]){
+						completionDate = obj[3].toString().substring(0, 10);
+					}else{
+						completionDate = "";
+					}
+					groupsFound.setCompletionDate(completionDate);
+					groupsFound.setPetStatus(checkNull(obj[4]).toString());
+					groupsFound.setContentStatus(prop.getProperty("Content"+checkNull(obj[5])));
+					//groupsFound.setContentStatus("Initiated");
+					groupsFound.setEntryType(checkNull(obj[6]).toString());
+					groupsFound.setComponentType(checkNull(obj[7]).toString());
+					groupsFound.setColorCode(checkNull(obj[8]).toString());
+					groupsFound.setColorDesc(checkNull(obj[9]).toString());
+					groupsFound.setVendorSizeodeDesc(checkNull(obj[10]).toString());
+					groupsList.add(groupsFound);
+				}
+			}
+		}catch (Exception e) {
+			e.printStackTrace();
+			throw new PEPFetchException();
+		}finally{
+			if(session!=null)
+			session.close();
+		}
+		return groupsList;
+	}
+	
+	
+	/**
+	 * This method populates grouping content history section data
+	 * @param groupId
+	 * @return List<ContentHistoryVO>
+	 * @throws PEPFetchException
+	 */
+	@Override
+	public List<ContentHistoryVO> getGroupContentHistory(String groupId) throws PEPFetchException{
+		List<ContentHistoryVO> groupContentHistoryList = null;
+		Session session = null;
+		
+		List<Object[]> rows = null;
+		final XqueryConstants xqueryConstants = new XqueryConstants();
+		
+		try{
+			session = sessionFactory.openSession();
+			//
+			
+			final Query query = session.createSQLQuery(xqueryConstants.getGroupContentHistoryQuery());
+			
+			if(null!=query){
+				query.setParameter("groupingNo", groupId);
+				rows = query.list();
+			}
+			
+			if(LOGGER.isDebugEnabled()){
+				LOGGER.debug("Row size in getGroupContentHistory:::: "+rows.size());
+			}
+			
+			
+			if(null != rows){
+				groupContentHistoryList = new ArrayList<ContentHistoryVO>();
+				for(Object[] obj : rows){
+					ContentHistoryVO historyVO = new ContentHistoryVO();
+					historyVO.setOrinNumber(checkNull(obj[0]).toString());
+					historyVO.setContentCreatedBy(checkNull(obj[1]).toString());
+					String createdDate = "";
+					if(null != obj[2]){
+						createdDate = obj[2].toString().substring(0,10);
+						
+					}else{
+						createdDate = "";
+					}
+					historyVO.setContentCreatedDate(createdDate);
+					historyVO.setContentStatus(checkNull(obj[3]).toString());
+					String lastUpdateddate = "";
+					if(null!=obj[4]){
+						lastUpdateddate = obj[4].toString().substring(0, 10);
+						
+					}else{
+						lastUpdateddate = "";
+					}
+					historyVO.setContentLastUpdatedDate(lastUpdateddate);
+					historyVO.setContentLastUpdatedBy(checkNull(obj[5]).toString());
+					historyVO.setEntryType(checkNull(obj[6]).toString());
+					groupContentHistoryList.add(historyVO);
+				}
+			}
+		}catch (Exception e) {
+			e.printStackTrace();
+			throw new PEPFetchException();
+		}finally{
+			if(session!=null)
+				session.close();
+		}
+		
+		return groupContentHistoryList;
+	}
+	
+	/**
+	 * This method populates grouping specific section data
+	 * @param groupId
+	 * @return GroupingVo
+	 * @throws PEPFetchException
+	 */
+	@Override
+	public GroupingVO getGroupingSpecificAttributes(String groupId) throws PEPFetchException {
+		GroupingVO groupVo = null;
+		Session session = null;
+		
+		List<Object[]> rows = null;
+		final XqueryConstants xqueryConstants = new XqueryConstants();
+		
+		try{
+			session = sessionFactory.openSession();
+			//
+			
+			final Query query = session.createSQLQuery(xqueryConstants.getGroupingSpecificAttributes());
+			
+			if(null!=query){
+				query.setParameter("groupingNo", groupId);
+				rows = query.list();
+			}
+			
+			if(LOGGER.isDebugEnabled()){
+				LOGGER.debug("Rows size in getGroupingSpecificAttributes:::: "+rows.size());
+			}
+			
+			
+			if(null!=rows){
+				groupVo = new GroupingVO();
+				for(Object[] obj : rows){
+					groupVo.setStyleNumber(checkNull(obj[0]));
+					groupVo.setStyleDescription(checkNull(obj[2]));
+					groupVo.setStyleName(checkNull(obj[1]));
+				}
+			}
+		}catch (Exception e) {
+			LOGGER.info("Error in DAO getGroupingSpecificAttributes:::: "+e.getMessage());
+			e.printStackTrace();
+			throw new PEPFetchException();
+		}finally{
+			if(session!=null)
+			session.close();
+		}
+		return groupVo;
+	}
+	
+	/**
+	 * This method populates IPH category drop down list
+	 * @return List<ItemPrimaryHierarchyVO>
+	 * @param groupId
+	 * @throws PEPFetchException
+	 * @author AFUSKJ2 6/17/2016
+	 */
+	@Override //AFUSAM1
+	public List<ItemPrimaryHierarchyVO> selectedIPHCategorydropdown(String groupId) throws PEPFetchException {
+		LOGGER.info("ContentDAOImpl populateIPHCategorydropdown : starts");
+        List<Object[]> rows=null;
+        ItemPrimaryHierarchyVO itemPrimaryHierarchy = null;
+        List<ItemPrimaryHierarchyVO> iphCategoryList = null;
+		Session session = null;
+		final XqueryConstants xqueryConstants = new XqueryConstants();
+		
+		try{
+			session = sessionFactory.openSession();
+			
+			
+			// Query to populate Group IPH Category Paths
+			final Query query = session.createSQLQuery(xqueryConstants.populateGroupIPHcategoryPath());
+			
+			if(null!=query){
+				if(LOGGER.isDebugEnabled()){
+					LOGGER.debug("query -- >"+query);
+				}
+				query.setParameter("groupingNo", groupId);
+				rows = query.list();
+			}
+			
+			if(LOGGER.isDebugEnabled()){
+				LOGGER.debug("Row size in DAO populateIPHCategorydropdown::::: "+rows.size());
+			}
+			
+			
+			 if((rows!=null) && (rows.size()>0))
+	            {
+	                iphCategoryList = new ArrayList<ItemPrimaryHierarchyVO>();
+
+	                for (final Object[] row : rows) {
+	                    itemPrimaryHierarchy =new ItemPrimaryHierarchyVO();
+	                    String categoryName = checkNull(row[1]);
+	                    String finalCategory = "";
+	                    String finalCategoryId = "";
+	                    if(categoryName != null){
+	                        String[] catArr = categoryName.split("///");
+	                        for(int i=1; i<catArr.length; i++){
+	                            String value = catArr[i].split("-")[1];
+	                            if(finalCategory == ""){
+	                                finalCategory = finalCategory +  value;
+	                            }else{
+	                                finalCategory = finalCategory + "/" +  value;
+	                            }
+	                            if(i == (catArr.length-1)){
+	                                finalCategoryId = catArr[i].split("-")[0];
+	                            }
+	                        }
+	                    }
+	                    itemPrimaryHierarchy.setPetCategoryId(finalCategoryId);
+	                    itemPrimaryHierarchy.setPetCategoryName(finalCategory);
+	                    //Add each itemPrimaryHierarchy object to the list
+	                    iphCategoryList.add(itemPrimaryHierarchy);
+
+	                }
+					
+	            }
+						
+		}catch (Exception e) {
+			LOGGER.info("Error in DAO class for populateIPHCategorydropdown:::: "+e.getMessage());
+			e.printStackTrace();
+			throw new PEPFetchException();
+		}finally{
+			if(session!=null)
+				session.close();
+		}
+		
+		return iphCategoryList;
+	}
+	
+	/**
+     * Method to get the group copy validation from database.
+     *    
+     * @param groupId String  
+     * @param styleId String
+     * @return String
+     * @throws PEPServiceException
+     * 
+     * Method added For PIM Phase 2 - Group Content
+     * Date: 06/18/2016
+     * Added By: Cognizant
+     */
+    @Override
+	public String getGroupCopyValidation(String groupId, String styleId)
+			throws PEPFetchException {
+
+		LOGGER.info("***Entering getGroupCopyValidation() method.");
+		Session session = null;
+		String message = ContentScreenConstants.FAILURE;
+		List<Object> rows = null;
+		final XqueryConstants xqueryConstants = new XqueryConstants();
+		try {
+			session = sessionFactory.openSession();
+			final Query query = session.createSQLQuery(xqueryConstants
+					.getGroupCopyValidation());
+			if (query != null) {
+				query.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
+				query.setParameter(ContentScreenConstants.STYLE_ID, styleId);
+				query.setParameter(ContentScreenConstants.GROUP_ID, groupId);
+				rows = query.list();
+			}
+
+			if (rows != null) {
+				for (final Object rowObj : rows) {
+					final Map row = (Map) rowObj;
+
+					int validCount = row
+							.get(ContentScreenConstants.COUNT_GROUP) == null ? 0
+							: Integer.parseInt(row.get(
+									ContentScreenConstants.COUNT_GROUP)
+									.toString());
+					if (validCount > 0) {
+						message = ContentScreenConstants.SUCCESS;
+					}
+					if(LOGGER.isDebugEnabled())
+					{
+						LOGGER.debug("Value -- \nCOUNT_GROUP: " + validCount);
+					}
+				}
+			}
+		} catch (Exception exception) {
+			LOGGER.error("Exception in getGroupCopyValidation() method. -- "
+					+ exception);
+			throw new PEPFetchException(exception.getMessage());
+		} finally {
+			if (session != null) {
+				session.close();
+			}
+		}
+		LOGGER.info("***Exiting getGroupCopyValidation() method.");
+		return message;
+	}
 }

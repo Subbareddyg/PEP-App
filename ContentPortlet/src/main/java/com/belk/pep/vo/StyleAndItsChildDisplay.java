@@ -36,6 +36,9 @@ public class StyleAndItsChildDisplay  implements Serializable{
 
     /** The style list. */
     List<StyleVO>      styleList = new ArrayList<StyleVO>();
+    
+    /** The group List **/
+    List<GroupingVO> groupList = new ArrayList<GroupingVO>();
 
 
     /**
@@ -149,5 +152,17 @@ public class StyleAndItsChildDisplay  implements Serializable{
                 + ", styleList=" + styleList + "]";
     }
 
+	public List<GroupingVO> getGroupList() {
+		if(groupList == null){
+			groupList = new ArrayList<GroupingVO>();
+		}
+		return groupList;
+	}
+
+	public void setGroupList(List<GroupingVO> groupList) {
+		this.groupList = groupList;
+	}
+
+    
 
 }

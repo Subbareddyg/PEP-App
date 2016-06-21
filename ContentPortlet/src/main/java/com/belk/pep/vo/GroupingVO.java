@@ -48,6 +48,34 @@ public class GroupingVO implements Serializable {
     
     /** The group child sku list. */
     List<GroupChildSkuVO>  groupChildSkuList;
+    
+    /** Grouping Type **/
+    private String groupingType;
+    
+    /** Grouping color **/
+    private String color;
+    
+    /** Vendor Size code description **/
+    private String vendorSizeCodeDesc;
+    
+    /** Omni Channel Size Description **/
+    private String omniChannelSizeDescription;
+    
+    /** Group Content Status **/
+    private String contentStatus;
+    
+    /** Group Completion Date **/
+    private String completionDate;
+    
+    /** Style description **/
+    private String styleDescription;
+    
+    
+    /** Style List **/
+    List<StyleVO> groupChildStyleList;
+    
+    /** Child Group List **/
+    List<GroupingVO> childGroupList;
 
     /**
      * Gets the orin.
@@ -204,6 +232,78 @@ public class GroupingVO implements Serializable {
             + ", defaultColor=" + defaultColor + ", groupChildSkuList="
             + groupChildSkuList + "]";
     }
+
+	public String getGroupingType() {
+		return groupingType;
+	}
+
+	public void setGroupingType(String groupingType) {
+		this.groupingType = groupingType;
+	}
+
+	public String getColor() {
+		return color;
+	}
+
+	public void setColor(String color) {
+		this.color = color;
+	}
+
+	public String getVendorSizeCodeDesc() {
+		return vendorSizeCodeDesc;
+	}
+
+	public void setVendorSizeCodeDesc(String vendorSizeCodeDesc) {
+		this.vendorSizeCodeDesc = vendorSizeCodeDesc;
+	}
+
+	public String getOmniChannelSizeDescription() {
+		return omniChannelSizeDescription;
+	}
+
+	public void setOmniChannelSizeDescription(String omniChannelSizeDescription) {
+		this.omniChannelSizeDescription = omniChannelSizeDescription;
+	}
+
+	public String getContentStatus() {
+		return contentStatus;
+	}
+
+	public void setContentStatus(String contentStatus) {
+		this.contentStatus = contentStatus;
+	}
+
+	public String getCompletionDate() {
+		return completionDate;
+	}
+
+	public void setCompletionDate(String completionDate) {
+		this.completionDate = completionDate;
+	}
+
+	public List<StyleVO> getGroupChildStyleList() {
+		return groupChildStyleList;
+	}
+
+	public void setGroupChildStyleList(List<StyleVO> groupChildStyleList) {
+		this.groupChildStyleList = groupChildStyleList;
+	}
+
+	public List<GroupingVO> getChildGroupList() {
+		return childGroupList;
+	}
+
+	public void setChildGroupList(List<GroupingVO> childGroupList) {
+		this.childGroupList = childGroupList;
+	}
+
+	public String getStyleDescription() {
+		return styleDescription;
+	}
+
+	public void setStyleDescription(String styleDescription) {
+		this.styleDescription = styleDescription;
+	}
     
     
 }

@@ -1,11 +1,17 @@
 
 package com.belk.pep.service;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.List;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import com.belk.pep.exception.checked.PEPFetchException;
 import com.belk.pep.exception.checked.PEPPersistencyException;
 import com.belk.pep.exception.checked.PEPServiceException;
+import com.belk.pep.model.GroupsFound;
 import com.belk.pep.model.PetsFound;
 import com.belk.pep.vo.BlueMartiniAttributesVO;
 import com.belk.pep.vo.CarBrandVO;
@@ -16,6 +22,7 @@ import com.belk.pep.vo.ContentManagementVO;
 import com.belk.pep.vo.CopyAttributeVO;
 import com.belk.pep.vo.CopyAttributesVO;
 import com.belk.pep.vo.GlobalAttributesVO;
+import com.belk.pep.vo.GroupingVO;
 import com.belk.pep.vo.ItemPrimaryHierarchyVO;
 import com.belk.pep.vo.OmniChannelBrandVO;
 import com.belk.pep.vo.PetAttributeVO;
@@ -255,4 +262,163 @@ public interface ContentService {
      * Added By: Cognizant
      */
     CopyAttributeVO getCopyAttribute(String orin) throws PEPServiceException;
+    
+    
+    /**
+     * This method retrieve grouping information
+     * @param groupId
+     * @return StyleInformationVO
+     * @throws PEPServiceException
+     * @author AFUSKJ2 6/17/2016
+     */
+    public StyleInformationVO getGroupingInformation(String groupId) throws PEPServiceException;
+    
+    
+    /**
+     * This method retrieves Grouping Details
+     * @param groupId
+     * @return
+     * @throws PEPServiceException
+     * @author AFUSKJ2 6/17/2016
+     */
+    public ProductDetailsVO getGroupingDetails(String groupId)throws PEPServiceException;
+    
+    /**
+     * This method retrieves Grouping Copy Attributes
+     * @param groupId
+     * @return
+     * @throws PEPServiceException
+     * @author AFUSKJ2 6/17/2016
+     */
+    public CopyAttributeVO getGroupingCopyAttributes(String groupId) throws PEPServiceException;
+    
+    
+    /**
+     * This method retrieves department details for group if department is not null
+     * @param styleInformationVO
+     * @return
+     * @throws PEPServiceException
+     * @author AFUSKJ2 6/17/2016
+     */
+    public StyleInformationVO getGroupingDepartmentDetails(StyleInformationVO styleInformationVO) throws PEPServiceException;
+    
+    /**
+     * This method retrieves omni-channel brand list for group
+     * @param groupId
+     * @return
+     * @throws PEPServiceException
+     * @author AFUSKJ2 6/17/2016
+     */
+    public List<OmniChannelBrandVO> getGroupingOmniChannelBrand(String groupId) throws PEPServiceException;
+    
+    /**
+     * This method populates car brand list for group
+     * @param groupId
+     * @return
+     * @throws PEPServiceException
+     * @author AFUSKJ2 6/17/2016
+     */
+    public List<CarBrandVO> populateGroupCarBrandList(String groupId) throws PEPServiceException;
+    
+    /**
+     * This method populates group component list
+     * @param groupId
+     * @return
+     * @throws PEPServiceException
+     * @author AFUSKJ2 6/17/2016
+     * 
+     */
+    public List<GroupsFound> getGroupingComponents(String groupId) throws PEPServiceException;
+    
+    /**
+     * This method populates grouping content history list
+     * @param groupId
+     * @return
+     * @throws PEPServiceException
+     * @author AFUSKJ2 6/17/2016
+     */
+    public List<ContentHistoryVO> getGroupContentHistory(String groupId) throws PEPServiceException;
+    
+    /**
+     * This method populates IPH Category drop down list for group
+     * @param groupId
+     * @return
+     * @throws PEPServiceException
+     * @author AFUSKJ2 6/17/2016s
+     */
+    public List<ItemPrimaryHierarchyVO> populateIPHCategorydropdown(String groupId, String groupType) throws PEPServiceException;
+    
+    /**
+     * This method populates IPH Category drop down list for group
+     * @param groupId
+     * @return
+     * @throws PEPServiceException
+     * @author AFUSKJ2 6/17/2016s
+     */
+    public List<ItemPrimaryHierarchyVO> selectedIPHCategorydropdown(String groupId) throws PEPServiceException;
+  
+    /**
+     * This method populates Grouping Specific attributes
+     * @param groupId
+     * @return
+     * @throws PEPServiceException
+     * @author AFUSKJ2 6/17/2016
+     */
+    public GroupingVO getGroupingSpecificAttributes(String groupId) throws PEPServiceException;
+    
+    /**
+     * This method saves grouping data
+     * @param createContentWebServiceReq
+     * @return
+     */
+    public String createGroupContentWebService(final JSONObject jsonContentUpdateColor) throws MalformedURLException, ClassCastException, 
+	IOException, JSONException;
+    
+    /**
+     * Method to get the group copy validation from database.
+     *    
+     * @param groupId String  
+     * @param styleId String
+     * @return String
+     * 
+     * Method added For PIM Phase 2 - Group Content
+     * Date: 06/18/2016
+     * Added By: Cognizant
+     */
+	String getGroupCopyValidation(String groupId, String styleId)
+			throws PEPServiceException;
+
+
+	/**
+     * Method to get the call copy content web service.
+     *    
+     * @param groupId String  
+     * @param styleId String
+     * @return String
+     * @throws PEPServiceException
+     * 
+     * Method added For PIM Phase 2 - Group Content
+     * Date: 06/18/2016
+     * Added By: Cognizant
+     */
+	String callCopyOrinContentService(String groupId, String styleId,
+			String updatedBy) throws PEPServiceException;
+
+
+	/**
+     * Method to get the call update content status web service.
+     *    
+     * @param groupId String  
+     * @param groupType String
+     * @param overallStatus String
+     * @param updatedBy String
+     * @return String
+     * @throws PEPServiceException
+     * 
+     * Method added For PIM Phase 2 - Group Content
+     * Date: 06/18/2016
+     * Added By: Cognizant
+     */
+	String callUpdateContentStatusService(String groupId, String groupType,
+			String overallStatus, String updatedBy) throws PEPServiceException;
 }

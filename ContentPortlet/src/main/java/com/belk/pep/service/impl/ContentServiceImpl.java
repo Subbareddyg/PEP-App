@@ -1,17 +1,30 @@
 package com.belk.pep.service.impl;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-//import java.util.logging.Level;
-//import java.util.logging.Logger;
-import org.apache.log4j.Logger;
-import org.apache.log4j.Level;
+import java.util.Properties;
 
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.belk.pep.constants.ContentScreenConstants;
 import com.belk.pep.dao.ContentDAO;
 import com.belk.pep.exception.checked.PEPFetchException;
+import com.belk.pep.exception.checked.PEPPersistencyException;
 import com.belk.pep.exception.checked.PEPServiceException;
+import com.belk.pep.model.GroupsFound;
 import com.belk.pep.model.PetsFound;
 import com.belk.pep.service.ContentService;
+import com.belk.pep.util.PropertiesFileLoader;
 import com.belk.pep.vo.BlueMartiniAttributesVO;
 import com.belk.pep.vo.CarBrandVO;
 import com.belk.pep.vo.ChildSkuVO;
@@ -21,6 +34,7 @@ import com.belk.pep.vo.ContentManagementVO;
 import com.belk.pep.vo.CopyAttributeVO;
 import com.belk.pep.vo.CopyAttributesVO;
 import com.belk.pep.vo.GlobalAttributesVO;
+import com.belk.pep.vo.GroupingVO;
 import com.belk.pep.vo.ItemPrimaryHierarchyVO;
 import com.belk.pep.vo.OmniChannelBrandVO;
 import com.belk.pep.vo.PetAttributeVO;
@@ -28,7 +42,6 @@ import com.belk.pep.vo.ProductDetailsVO;
 import com.belk.pep.vo.SkuAttributesVO;
 import com.belk.pep.vo.StyleColorFamilyVO;
 import com.belk.pep.vo.StyleInformationVO;
-import com.belk.pep.exception.checked.PEPPersistencyException;
 
 /**
  * The Class ContentServiceImpl.
@@ -567,6 +580,614 @@ public class ContentServiceImpl implements ContentService {
         LOGGER.info("***Exiting getCopyAttribute() method.");
         return copyAttributeVO;
     }
+    
+    /**
+     * This method retrieves Grouping Information 
+     * @return StyleInformationVO
+     * @param groupId
+     * @author AFUSKJ2 6/17/2016
+     */
+	@Override
+	public StyleInformationVO getGroupingInformation(String groupId)
+			throws PEPServiceException {
+		StyleInformationVO styleinformationVO = null;
+		try{
+			styleinformationVO = contentDAO.getGroupingInformation(groupId);
+		}catch (PEPFetchException e) {
+			LOGGER.error("Error in Service::: "+e.getMessage());
+			throw new PEPServiceException();
+		}
+		
+		return styleinformationVO;
+	}
+	
+	/**
+	 * This method retrieves Group Details
+	 * @return ProductDetailsVO
+	 * @param groupId
+	 * @author AFUSKJ2 6/17/2016
+	 */
+	@Override
+	public ProductDetailsVO getGroupingDetails(String groupId) throws PEPServiceException{
+		ProductDetailsVO productDetailsVO = null;
+		
+		try{
+			productDetailsVO = contentDAO.getGroupingDetails(groupId);
+		}catch (PEPFetchException e) {
+			LOGGER.error("Error in service::: "+e.getMessage());
+			throw new PEPServiceException();
+		}
+		
+		return productDetailsVO;
+	}
+	
+	/**
+	 * This method populates grouping Copy Attributes section data
+	 * @param groupId
+	 * @return
+	 * @throws PEPServiceException
+	 * @author AFUSKJ2 6/17/2016
+	 */
+	@Override
+	public CopyAttributeVO getGroupingCopyAttributes(String groupId)throws PEPServiceException {
+		CopyAttributeVO copyAttributeVO = null;
+		
+		try{
+			copyAttributeVO = contentDAO.getGroupingCopyAttributes(groupId);
+		}catch (PEPFetchException e) {
+			LOGGER.error("Error in service::::: "+e.getMessage());
+			throw new PEPServiceException();
+		}
+		return copyAttributeVO;
+	}
+	
+	/**
+	 * This method retrieves department details for the group
+	 * @return StyleInformationVO
+	 * @param styleInformationVO
+	 * @author AFUSKJ2 6/17/2016
+	 */
+	@Override
+	public StyleInformationVO getGroupingDepartmentDetails(StyleInformationVO styleInformationVO)throws PEPServiceException	{
+		try{
+			return contentDAO.getGroupingDepartmentDetails(styleInformationVO);
+		}catch (PEPFetchException e) {
+			LOGGER.error("Error in Service getGroupingDepartmentDetails:::: "+e.getMessage());
+			throw new PEPServiceException();
+		}
+	}
+
+	/**
+	 * This method retrieves omni-channel brand list for group
+	 * @return List<OmniChannelBrandVo>
+	 * @param groupId
+	 * @author AFUSKJ2 6/17/2016
+	 */
+	@Override
+	public List<OmniChannelBrandVO> getGroupingOmniChannelBrand(String groupId) throws PEPServiceException{
+		try{
+			return contentDAO.getGroupingOmniChannelBrand(groupId);
+		}catch (PEPFetchException e) {
+			LOGGER.error("Erro rin service TODO: handle exception::: "+e.getMessage());
+			e.printStackTrace();
+			throw new PEPServiceException();
+		}
+	}
+	
+	/**
+	 * This method populates CAR Brand list for groups
+	 * @return List<CarBrandVO>
+	 * @param groupId
+	 * @author AFUSKJ2 6/17/2016
+	 */
+	@Override
+	public List<CarBrandVO> populateGroupCarBrandList(String groupId) throws PEPServiceException {
+		try{
+			return contentDAO.populateGroupCarBrandList(groupId);
+		}catch (PEPFetchException e) {
+			LOGGER.error("Error in Service populateGroupCarBrandList:::: "+e.getMessage());
+			e.printStackTrace();
+			throw new PEPServiceException();
+		}
+	}
+	
+	/**
+	 * This method populates group component list
+	 * @return List<GroupsFound>
+	 * @param groupId
+	 * @author AFUSKJ2 6/17/2016
+	 */
+	@Override
+	public List<GroupsFound> getGroupingComponents(String groupId) throws PEPServiceException {
+		List<GroupsFound> grpList = new ArrayList<GroupsFound>();
+		try{
+			grpList = contentDAO.getGroupingComponents(groupId);
+		}catch (PEPFetchException e) {
+			LOGGER.error("Error in service getGroupingComponents::: "+e.getMessage());
+			e.printStackTrace();
+			throw new PEPServiceException();
+		}
+		return grpList;
+	}
+	
+	/**
+	 * This method populates IPH category drop down list for group
+	 * @param groupId
+	 * @return
+	 * @throws PEPServiceException
+	 * @author AFUSKJ2 6/17/2016
+	 */
+	@Override
+	public List<ItemPrimaryHierarchyVO> populateIPHCategorydropdown(String groupId, String groupType) throws PEPServiceException {
+		try{
+			return contentDAO.getIPHCategories(groupId, groupType);
+		}catch (PEPFetchException e) {
+			LOGGER.error("Error in service populateIPHCategorydropdown::: "+e.getMessage());
+			e.printStackTrace();
+			throw new PEPServiceException();
+		}
+	}
+	
+	/**
+	 * This method populates grouping content history list
+	 * @param groupId
+	 * @return
+	 * @throws PEPServiceException
+	 * @author AFUSKJ2 6/17/2016
+	 */
+	@Override
+	public List<ContentHistoryVO> getGroupContentHistory(String groupId) throws PEPServiceException {
+		try{
+			return contentDAO.getGroupContentHistory(groupId);
+		}catch (PEPFetchException e) {
+			LOGGER.error("Error in Service getGroupContentHistory::: "+e.getMessage());
+			e.printStackTrace();
+			throw new PEPServiceException();
+		}
+	}
+	
+	/**
+	 * This method populates Grouping Specific Attributes section data
+	 * @param groupId
+	 * @return
+	 * @throws PEPServiceException
+	 * @author AFUSKJ2 6/17/2016
+	 */
+	@Override
+	public GroupingVO getGroupingSpecificAttributes(String groupId) throws PEPServiceException {
+		try{
+			return contentDAO.getGroupingSpecificAttributes(groupId);
+		}catch (PEPFetchException e) {
+			LOGGER.error("Error oin service getGroupingSpecificAttributes:::: "+e.getMessage());
+			e.printStackTrace();
+			throw new PEPServiceException();
+		}
+	}
+	
+
+
+	/**
+	 * This method is used to call service to update Group Content.
+	 * 
+	 * @param jsonStyleSpliColor
+	 * @return responseMsg
+	 * @throws Exception
+	 * @throws PEPFetchException
+	 */
+	public final String createGroupContentWebService(final JSONObject jsonContentUpdateColor) throws MalformedURLException, ClassCastException, 
+	IOException, JSONException {
+		LOGGER.info("Entering createGroupContentWebService-->.");
+		String responseMsg = "";
+		BufferedReader responseBuffer=null;
+		HttpURLConnection httpConnection = null;
+		try {
+	        final Properties prop =   PropertiesFileLoader.getPropertyLoader(ContentScreenConstants.MESS_PROP);
+			//Properties prop = PropertyLoader.getPropertyLoader(GroupingConstants.MESS_PROP);
+			//String serviceURL = prop.getProperty(GroupingConstants.ADD_COMPONENT_TO_SCG_SERVICE_URL);
+			//final String serviceURL = "http://ralpimwsasit02:7507/JERSYRest_SIT/rest/UpdateItemServices/updateGroupContent";
+			final String serviceURL = prop.getProperty(ContentScreenConstants.GROUP_CONTENT_ITEMS_SAVE);
+			
+			LOGGER.info("Add update content ServiceURL-->" + serviceURL);
+
+			URL targetUrl = new URL(serviceURL);
+			httpConnection = (HttpURLConnection) targetUrl.openConnection();
+			httpConnection.setDoOutput(true);
+			httpConnection.setRequestMethod(prop.getProperty(ContentScreenConstants.SERVICE_REQUEST_METHOD));
+			httpConnection.setRequestProperty(prop.getProperty(ContentScreenConstants.SERVICE_REQUEST_PROPERTY_CONTENT_TYPE),
+					prop.getProperty(ContentScreenConstants.SERVICE_REQUEST_PROPERTY_APPLICATION_TYPE));
+			
+			LOGGER.debug("Method-->"+prop.getProperty(ContentScreenConstants.SERVICE_REQUEST_METHOD));
+
+			LOGGER.info("createGroupContentWebService Service::Json Array-->" + jsonContentUpdateColor.toString());
+
+			String input = jsonContentUpdateColor.toString();
+
+			OutputStream outputStream = httpConnection.getOutputStream();
+			outputStream.write(input.getBytes(ContentScreenConstants.DEFAULT_CHARSET));
+			outputStream.flush();
+
+			responseBuffer = new BufferedReader(new InputStreamReader(httpConnection.getInputStream(),ContentScreenConstants.DEFAULT_CHARSET));
+			String output;
+			while ((output = responseBuffer.readLine()) != null) {
+				LOGGER.info("call createGroupContentWebService Service Output-->" + output);
+				responseMsg = output;
+
+			}
+
+		} catch (MalformedURLException e) {
+			LOGGER.error("inside malformedException-->" + e);
+			throw new MalformedURLException(e.getMessage());
+		} catch (ClassCastException e) {
+			LOGGER.error("inside ClassCastException-->" + e);
+			throw new ClassCastException(e.getMessage());
+		}catch (JSONException e) {
+			LOGGER.error("inside JSOnException-->" + e);
+			throw new JSONException(e.getMessage());
+		}catch (IOException e) {
+			LOGGER.error("inside IOException-->" + e);
+			throw new IOException(e.getMessage());
+		}finally {
+			if(null != httpConnection){
+				httpConnection.disconnect();
+			}
+			if(responseBuffer!=null)
+				responseBuffer.close();
+		}
+		LOGGER.info("Exiting createGroupContentWebService-->" + responseMsg);
+		return responseMsg;
+	}
+	
+	
+	/**
+     * Method to get the group copy validation from database.
+     *    
+     * @param groupId String  
+     * @param styleId String
+     * @return String
+     * @throws PEPServiceException
+     * 
+     * Method added For PIM Phase 2 - Group Content
+     * Date: 06/18/2016
+     * Added By: Cognizant
+     */
+    @Override
+	public String getGroupCopyValidation(final String groupId,
+			final String styleId) throws PEPServiceException {
+
+		LOGGER.info("***Entering getGroupCopyValidation() method.");
+
+		String message = ContentScreenConstants.EMPTY;
+		try {
+			message = contentDAO.getGroupCopyValidation(groupId, styleId);
+		} catch (final PEPFetchException fetchException) {
+			LOGGER.error("Exception in getGroupCopyValidation() method. -- "
+					+ fetchException);
+			throw new PEPServiceException(fetchException.getMessage());
+		}
+		LOGGER.info("***Exiting getGroupCopyValidation() method.");
+		return message;
+	}
+    
+    /**
+     * Method to get the call copy content web service.
+     *    
+     * @param groupId String  
+     * @param styleId String
+     * @param updatedBy String
+     * @return String
+     * @throws PEPServiceException
+     * 
+     * Method added For PIM Phase 2 - Group Content
+     * Date: 06/18/2016
+     * Added By: Cognizant
+     */
+    @Override
+	public final String callCopyOrinContentService(final String groupId,
+			final String styleId, final String updatedBy)
+			throws PEPServiceException {
+		LOGGER.info("Entering callCopyOrinContentService.");
+		String responseMsg = ContentScreenConstants.EMPTY;
+		String responseMsgCode = ContentScreenConstants.EMPTY;
+
+		JSONObject jsonObj = new JSONObject();
+		jsonObj.put(ContentScreenConstants.FROM_MDMID, styleId);
+		jsonObj.put(ContentScreenConstants.TO_MDMID, groupId);
+		jsonObj.put(ContentScreenConstants.MODIFIED_BY, updatedBy);
+
+		/** Calling Web Service **/
+		String resMsg = callContentCopyService(jsonObj);
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("Copy Content Service message-->" + resMsg);
+		}
+		Properties prop = PropertiesFileLoader
+				.getPropertyLoader(ContentScreenConstants.MESS_PROP);
+
+		/** Extract Service message **/
+		JSONObject jsonObjectRes = null;
+		if (null != resMsg && !(ContentScreenConstants.EMPTY).equals(resMsg)) {
+			jsonObjectRes = new JSONObject(resMsg);
+		}
+		if (null != jsonObjectRes) {
+			responseMsgCode = jsonObjectRes
+					.getString(ContentScreenConstants.MSG_CODE);
+		}
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("responseMsgCode-->" + responseMsgCode);
+		}
+
+		if (null != responseMsgCode
+				&& responseMsgCode.equals(ContentScreenConstants.SUCCESS_CODE)) {
+			responseMsg = prop
+					.getProperty(ContentScreenConstants.COPY_CONTENT_SUCCESS_MESSAGE);
+		} else {
+			responseMsg = prop
+					.getProperty(ContentScreenConstants.COPY_CONTENT_FAILURE_MESSAGE);
+		}
+
+		LOGGER.info("Exiting callCopyOrinContentService.");
+		return responseMsg;
+	}
+
+	/**
+	 * Method to get the call copy content web service.
+	 * 
+	 * @param jsonObject
+	 *            JSONObject
+	 * @return String
+	 * @throws PEPServiceException
+	 * 
+	 *             Method added For PIM Phase 2 - Group Content Date: 06/18/2016
+	 *             Added By: Cognizant
+	 */
+	private String callContentCopyService(final JSONObject jsonObject)
+			throws PEPServiceException {
+		LOGGER.info("Entering callContentCopyService.");
+
+		String responseMsg = ContentScreenConstants.EMPTY;
+		BufferedReader responseBuffer = null;
+		HttpURLConnection httpConnection = null;
+		try {
+			final Properties prop = PropertiesFileLoader
+					.getPropertyLoader(ContentScreenConstants.MESS_PROP);
+			final String serviceURL = prop
+					.getProperty(ContentScreenConstants.COPY_CONTENT_SERVICE_URL);
+			LOGGER.info("Copy Content ServiceURL-->" + serviceURL);
+
+			final URL targetUrl = new URL(serviceURL);
+			httpConnection = (HttpURLConnection) targetUrl.openConnection();
+			httpConnection.setDoOutput(true);
+			httpConnection
+					.setRequestMethod(prop
+							.getProperty(ContentScreenConstants.SERVICE_REQUEST_METHOD));
+			httpConnection
+					.setRequestProperty(
+							prop.getProperty(ContentScreenConstants.SERVICE_REQUEST_PROPERTY_CONTENT_TYPE),
+							prop.getProperty(ContentScreenConstants.SERVICE_REQUEST_PROPERTY_APPLICATION_TYPE));
+
+			LOGGER.info("callContentCopyService Service::Json Array-->"
+					+ jsonObject.toString());
+
+			String input = jsonObject.toString();
+
+			OutputStream outputStream = httpConnection.getOutputStream();
+			outputStream.write(input
+					.getBytes(ContentScreenConstants.DEFAULT_CHARSET));
+			outputStream.flush();
+
+			responseBuffer = new BufferedReader(new InputStreamReader(
+					httpConnection.getInputStream(),
+					ContentScreenConstants.DEFAULT_CHARSET));
+			String output;
+			while ((output = responseBuffer.readLine()) != null) {
+				LOGGER.info("Copy Content Service Output-->" + output);
+
+				responseMsg = output;
+			}
+
+		} catch (MalformedURLException e) {
+			LOGGER.error("inside malformedException-->" + e);
+			throw new PEPServiceException(e.getMessage());
+		} catch (ClassCastException e) {
+			LOGGER.error("inside ClassCastException-->" + e);
+			throw new PEPServiceException(e.getMessage());
+		} catch (IOException e) {
+			LOGGER.error("inside IOException-->" + e);
+			throw new PEPServiceException(e.getMessage());
+		} catch (JSONException e) {
+			LOGGER.error("inside JSOnException-->" + e);
+			throw new PEPServiceException(e.getMessage());
+		} catch (Exception e) {
+			LOGGER.error("inside Exception-->" + e);
+			throw new PEPServiceException(e.getMessage());
+		} finally {
+			if (null != httpConnection) {
+				httpConnection.disconnect();
+			}
+			if (responseBuffer != null) {
+				try {
+					responseBuffer.close();
+				} catch (IOException e) {
+					LOGGER.error("inside responseBuffer.close() IOException-->"
+							+ e);
+					throw new PEPServiceException(e.getMessage());
+				}
+			}
+		}
+		LOGGER.info("Exiting callContentCopyService");
+		return responseMsg;
+	}
+	
+	/**
+     * Method to get the call update content status web service.
+     *    
+     * @param groupId String  
+     * @param groupType String
+     * @param overallStatus String
+     * @param updatedBy String
+     * @return String
+     * @throws PEPServiceException
+     * 
+     * Method added For PIM Phase 2 - Group Content
+     * Date: 06/18/2016
+     * Added By: Cognizant
+     */
+    @Override
+	public final String callUpdateContentStatusService(final String groupId,
+			final String groupType,
+			final String overallStatus, final String updatedBy)
+			throws PEPServiceException {
+		LOGGER.info("Entering callCopyOrinContentService.");
+		String responseMsg = ContentScreenConstants.EMPTY;
+		String responseMsgCode = ContentScreenConstants.EMPTY;
+
+		JSONObject jsonObj = new JSONObject();
+		jsonObj.put(ContentScreenConstants.GROUP_ID, groupId);
+		jsonObj.put(ContentScreenConstants.GROUP_TYPE, groupType);
+		jsonObj.put(ContentScreenConstants.CONTENT_STATUS_PARAM, ContentScreenConstants.CONTENT_STATUS);
+		jsonObj.put(ContentScreenConstants.MODIFIED_BY, updatedBy);
+		jsonObj.put(ContentScreenConstants.OVERALL_STATUS_PARAM, overallStatus);
+
+		/** Calling Web Service **/
+		String resMsg = callUpdateContentStatusService(jsonObj);
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("Update Content Status Service message-->" + resMsg);
+		}
+		Properties prop = PropertiesFileLoader
+				.getPropertyLoader(ContentScreenConstants.MESS_PROP);
+
+		/** Extract Service message **/
+		JSONObject jsonObjectRes = null;
+		if (null != resMsg && !(ContentScreenConstants.EMPTY).equals(resMsg)) {
+			jsonObjectRes = new JSONObject(resMsg);
+		}
+		if (null != jsonObjectRes) {
+			responseMsgCode = jsonObjectRes
+					.getString(ContentScreenConstants.MSG_CODE);
+		}
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("responseMsgCode-->" + responseMsgCode);
+		}
+
+		if (null != responseMsgCode
+				&& responseMsgCode.equals(ContentScreenConstants.SUCCESS_CODE)) {
+			responseMsg = prop
+					.getProperty(ContentScreenConstants.UPDATE_CONTENT_STATUS_SUCCESS_MESSAGE);
+		} else {
+			responseMsg = prop
+					.getProperty(ContentScreenConstants.UPDATE_CONTENT_STATUS_FAILURE_MESSAGE);
+		}
+
+		LOGGER.info("Exiting callCopyOrinContentService.");
+		return responseMsg;
+	}
+
+	/**
+	 * Method to get the call update content status web service.
+	 * 
+	 * @param jsonObject
+	 *            JSONObject
+	 * @return String
+	 * @throws PEPServiceException
+	 * 
+	 *             Method added For PIM Phase 2 - Group Content Date: 06/18/2016
+	 *             Added By: Cognizant
+	 */
+	private String callUpdateContentStatusService(final JSONObject jsonObject)
+			throws PEPServiceException {
+		LOGGER.info("Entering callUpdateContentStatusService.");
+
+		String responseMsg = ContentScreenConstants.EMPTY;
+		BufferedReader responseBuffer = null;
+		HttpURLConnection httpConnection = null;
+		try {
+			final Properties prop = PropertiesFileLoader
+					.getPropertyLoader(ContentScreenConstants.MESS_PROP);
+			final String serviceURL = prop
+					.getProperty(ContentScreenConstants.UPDATE_CONTENT_STATUS_SERVICE_URL);
+			LOGGER.info("Update Content Status ServiceURL-->" + serviceURL);
+
+			final URL targetUrl = new URL(serviceURL);
+			httpConnection = (HttpURLConnection) targetUrl.openConnection();
+			httpConnection.setDoOutput(true);
+			httpConnection
+					.setRequestMethod(prop
+							.getProperty(ContentScreenConstants.SERVICE_REQUEST_METHOD));
+			httpConnection
+					.setRequestProperty(
+							prop.getProperty(ContentScreenConstants.SERVICE_REQUEST_PROPERTY_CONTENT_TYPE),
+							prop.getProperty(ContentScreenConstants.SERVICE_REQUEST_PROPERTY_APPLICATION_TYPE));
+
+			LOGGER.info("callUpdateContentStatusService Service::Json Array-->"
+					+ jsonObject.toString());
+
+			String input = jsonObject.toString();
+
+			OutputStream outputStream = httpConnection.getOutputStream();
+			outputStream.write(input
+					.getBytes(ContentScreenConstants.DEFAULT_CHARSET));
+			outputStream.flush();
+
+			responseBuffer = new BufferedReader(new InputStreamReader(
+					httpConnection.getInputStream(),
+					ContentScreenConstants.DEFAULT_CHARSET));
+			String output;
+			while ((output = responseBuffer.readLine()) != null) {
+				LOGGER.info("Update Content Status Service Output-->" + output);
+
+				responseMsg = output;
+			}
+
+		} catch (MalformedURLException e) {
+			LOGGER.error("inside malformedException-->" + e);
+			throw new PEPServiceException(e.getMessage());
+		} catch (ClassCastException e) {
+			LOGGER.error("inside ClassCastException-->" + e);
+			throw new PEPServiceException(e.getMessage());
+		} catch (IOException e) {
+			LOGGER.error("inside IOException-->" + e);
+			throw new PEPServiceException(e.getMessage());
+		} catch (JSONException e) {
+			LOGGER.error("inside JSOnException-->" + e);
+			throw new PEPServiceException(e.getMessage());
+		} catch (Exception e) {
+			LOGGER.error("inside Exception-->" + e);
+			throw new PEPServiceException(e.getMessage());
+		} finally {
+			if (null != httpConnection) {
+				httpConnection.disconnect();
+			}
+			if (responseBuffer != null) {
+				try {
+					responseBuffer.close();
+				} catch (IOException e) {
+					LOGGER.error("inside responseBuffer.close() IOException-->"
+							+ e);
+					throw new PEPServiceException(e.getMessage());
+				}
+			}
+		}
+		LOGGER.info("Exiting callUpdateContentStatusService");
+		return responseMsg;
+	}
+	
+	
+	/**
+	 * This method populates IPH category drop down list for group
+	 * @param groupId
+	 * @return
+	 * @throws PEPServiceException
+	 * @author AFUSKJ2 6/17/2016
+	 */
+	@Override
+	public List<ItemPrimaryHierarchyVO> selectedIPHCategorydropdown(String groupId) throws PEPServiceException {
+		try{
+			return contentDAO.selectedIPHCategorydropdown(groupId);
+		}catch (PEPFetchException e) {
+			LOGGER.error("Error in service populateIPHCategorydropdown::: "+e.getMessage());
+			e.printStackTrace();
+			throw new PEPServiceException();
+		}
+	}
 }
 
 
