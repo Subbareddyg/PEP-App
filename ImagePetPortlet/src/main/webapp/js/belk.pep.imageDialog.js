@@ -42,6 +42,17 @@ $("#btnImageUploadAction").click(function (e)
 	ShowImageUploadPopUp(true);
      e.preventDefault();
  });
+
+
+$("#btnGPImageUploadAction").click(function (e)
+     {
+	  document.getElementById('groupingIdSel').value = $("#groupingId").val();
+  	 document.getElementById('groupType').value = $("#groupingType").val();
+	     
+	ShowGpImageUploadPopUp(false);
+     e.preventDefault();
+ });
+ 
  
  $("#btn_image_sample").click(function (e)
       {
@@ -519,25 +530,13 @@ $(".saveADReceiveRequestCancel").click(function (e)
 	   
  });   
 
-  $("#add_sample_note_btn_close").click(function (e)
-      {
-        
-HideImageNotePopUp();
-         e.preventDefault();
-      });
-	  
-  $(".receiveRequest").click(function(e){	 
-      ShowReceiveRequest(false);
-      e.preventDefault();
-   });
+ 
 	  
   $("#btnCancelReceiveRequest").click(function (e)
 	      {
 	        HideReceiveRequest();
 	         e.preventDefault();
 	      });
-
-
 
 
 

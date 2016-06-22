@@ -477,4 +477,28 @@ function  ShowADReceiveRequestPopUp(modal,imageId)
       $("#overlay_imageADReceiveRequestPopUp").hide();
       $("#dialog_imageADReceiveRequestPopUp").fadeOut(300);
    }   
-	
+
+function  ShowGpImageUploadPopUp(modal)
+   {   
+      $("#grp_overlay_UploadImage").show();
+      $("#grp_dialog_UploadImage").fadeIn(300);
+
+      if (modal)
+      {
+         $("#grp_overlay_UploadImage").unbind("click");
+      }
+      else
+      {
+		  
+         $("#grp_overlay_UploadImage").click(function (e)
+         {
+            HideGPImageUploadPopUp();
+         });
+      }
+   }
+   
+    function HideGPImageUploadPopUp()
+   {
+      $("#grp_overlay_UploadImage").hide();
+      $("#grp_dialog_UploadImage").fadeOut(300);
+   } 

@@ -70,7 +70,7 @@ function trClick(){
 			         var json = $.parseJSON(data);   
 					 $(json).each(function(i,val){					
 					//Logic for approve disbaled on submit image status					
-					if(val.imageStatus == 'Initiated' || val.imageStatus == 'Rejected'){						
+					if(	 == 'Initiated' || val.imageStatus == 'Rejected'){						
 						document.getElementById('image_approve').disabled=true;
 						flag = true;
 						document.getElementById('flagHidden').value = "";

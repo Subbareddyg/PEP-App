@@ -290,3 +290,243 @@ function swatchImageButton(tableID) {
 			
 			   
 }
+
+
+
+function validateGrpImageFields(formId){
+
+	
+	var imageLocation = document.getElementById('imageLocationButton').selectedIndex;
+		
+	//logic to check null shot type ends
+	var errorMessage = '';		
+
+		if(imageLocation ==0){	
+			
+			var fileType = document.getElementById('fileData').value;
+			var fileExtension = fileType.lastIndexOf('.');
+			var ext = fileType.substring(fileExtension+1).toLowerCase();
+					
+			if(fileType.length > 0){
+				if(selectedFileSize > constMaxFileSizeMB){
+					document.getElementById('errorDIV').style.display ="";
+					errorMessage = errorMessage+"<span style='color:red'>Please select a file lesser than " + constMaxFileSizeMB + " MB in size &nbsp;</span>";
+					document.getElementById('errorDIV').innerHTML = errorMessage;
+				}else if(ext == 'jpeg' || ext == 'jpg' || ext =='psd'|| ext =='tiff'|| ext =='eps' || ext =='tif'){
+
+					document.getElementById('errorDIV').innerHTML = "";
+					$("#overlay_Upload").hide();
+					$("#dialog_UploadImage").hide();
+					$("#overlay_imageLoading").show();					
+					setTimeout(function(){document.getElementById(formId).submit();},500);
+				}else{
+					document.getElementById('errorDIV').style.display ="";
+					errorMessage = errorMessage+"<span style='color:red'>Please enter a valid file format &nbsp;</span>";
+					document.getElementById('errorDIV').innerHTML = errorMessage;
+				}
+		}else{//End file Blank check		
+			document.getElementById('errorDIV').style.display ="";
+			errorMessage = errorMessage+"<span style='color:red'>Please browse image file &nbsp;</span>";
+			document.getElementById('errorDIV').innerHTML = errorMessage;
+		}
+	 }
+  
+}
+
+function confirmGRPImageRemovePopUp(imageId,imageName){
+
+	document.getElementById('imgHiddenId').value = imageId;	
+	document.getElementById('imgNameHiddenId').value = imageName;
+	$("#dialog_submitRemove").show();	
+}
+
+function dialogHideonOk(){
+	
+	$("#dialog_submitRemove").hide();
+}
+
+function removeGroupingImage(imageId,imageName,removeImageUrl){    
+var groupingId = $("#groupingId").val();
+   $.ajax({
+			type: 'POST',
+			url : removeImageUrl,
+			datatype:'json',			
+			data: {groupingId:groupingId,imageIDToDel:imageId,imageNameToDel:imageName},			
+			success: function(data){
+			document.getElementById('btnGPImageUploadAction').disabled=false;
+
+
+			var table = document.getElementById("groupImageTable");  
+  			table.deleteRow(1); 
+				var json = $.parseJSON(data);
+				var responseCodeOnRemove = json.responseCodeOnRemove;
+				
+				
+			},
+			error:function (xhr, ajaxOptions, thrownError){            	
+            	var error = $.parseJSON(xhr.responseText);               
+             }
+
+		});	
+	//setTimeout(function(){setUploadVPILink($("#ajaxaction").val(),document.getElementById("selectedColorOrinNum").value,$("#removeImageUrl").val());trClick();scrollToView('vImage','vImage');},2000);	
+}
+
+function dialogGRPApproveHideonOk(){
+	
+	$("#dialog_submitApprove").hide();
+	
+	
+}
+
+function confirmGroupingImageApprove(url){
+
+	$("#overlay_Upload").hide();	
+	$("#dialog_submitApprove").show();
+		
+}
+
+var groupOverallStatus = "";
+
+function groupingImageApproveAction(url){
+var imageId = $("#hidImageId").val().trim();
+
+
+
+
+var groupingId = $("#groupingId").val();
+	
+$("#overlay_imageLoading").show();
+
+var selectedRadioButton = $('input[name=radiobutton]');
+if (typeof selectedRadioButton.filter(':checked').val()  !== "undefined" && selectedRadioButton.filter(':checked').val()){
+   groupOverallStatus = selectedRadioButton.filter(':checked').val();	
+}
+
+
+
+
+
+		
+
+
+
+
+var groupingType = $("#groupingType").val();
+
+ 
+	
+		$.ajax({				
+				type: 'POST',
+				url: url,
+				data: { groupingId:groupingId,groupOverallStatus:groupOverallStatus,groupingType:groupingType,imageId:imageId },
+				success: function(data){					
+					var json = $.parseJSON(data);
+					var responseCode = json.responseCode;				
+					if(responseCode == '100'){				
+
+
+						document.getElementById("imageStatus").innerHTML = 'Completed';	
+						document.getElementById('removeGPImage').disabled = true ;
+				
+						//document.getElementById('image_approve').disabled = true ;
+						$("#overlay_imageLoading").hide();
+						document.getElementById('btnGPImageUploadAction').disabled = true ;
+					
+				  }						
+					
+				},
+				cache: false,                
+				error: function(jqXHR,textStatus, errorThrown){
+					
+				},
+				complete: function(){
+					$("#overlay_imageLoading").hide();
+				}
+			});
+		
+/* setTimeout(function(){setUploadVPILink($("#ajaxaction").val(),document.getElementById("selectedColorOrinNum").value,$("#removeImageUrl").val());trClick();scrollToView('vImage','vImage');},2000); */			
+}
+
+function redirectSessionTimedOutGrpImage(){
+
+	confirmationMessage = false;
+	var loggedInUser= $("#loggedInUser").val();
+	var releseLockedPetURL = $("#releseLockedPet").val();
+	releseLockedPet(loggedInUser,releseLockedPetURL);
+	if(loggedInUser.indexOf('@') === -1) 
+	{
+	                window.location = "/wps/portal/home/InternalLogin";
+	} else {
+	                window.location = "/wps/portal/home/ExternalVendorLogin";
+	   }
+	}
+
+function showGrpImageActionMessage(eventType, imageId){
+
+	imageId = (imageId === undefined || imageId == '') ? '' : imageId;
+	switch (eventType){
+		case 'uploadSuccess':
+			var dlgContent = buildGrpMessage('Image ' + imageId + ' successfully uploaded.', 'success');
+			$('#image-Upload-Message-Area').html(dlgContent).fadeIn('fast');
+			//cleanupMessage($('#image-Upload-Message-Area'));
+			break;
+		case 'uploadError':
+			var dlgContent = buildGrpMessage('Image ' + imageId + ' not uploaded.', 'error');
+			$('#image-Upload-Message-Area').html(dlgContent).fadeIn('fast');
+			//cleanupMessage($('#image-Upload-Message-Area'));
+			break;
+		
+	}
+}
+function buildGrpMessage(msg, dlgType){
+	var highlightClass = dlgType == 'error' ? 'ui-state-error ui-custom-message-styling-error' : 'ui-state-highlight ui-custom-message-styling-info';
+	
+	return '<div class="ui-widget">'
+		+ '<div class="ui-corner-all ' +  highlightClass + '">'
+		+ 	'<p><span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span>'
+		+		'<strong>' + msg + '</strong>'
+		+ 	'</p>'
+		+ '</div>'
+		+ '</div>';
+}
+
+
+function onloadVPILinks(groupVPILinks){
+	
+var table = document.getElementById("groupImageTable");
+var rowCount = table.rows.length;		
+var row = table.insertRow(rowCount);
+var json = JSON.parse(groupVPILinks);
+var imageUrl = document.getElementById('downloadFilePathUrl').value+"?filePath="+json["imagefilepath"]+"&imageName="+json["imageName"];
+
+
+
+
+     var cell1 = row.insertCell(0);
+     cell1.id="hiddenImageId";
+    cell1.name="hiddenImageId";
+    cell1.innerHTML = json["imageID"];
+    var cell2 = row.insertCell(1);
+    var cell3 = row.insertCell(2);
+    var cell4 = row.insertCell(3);
+    var cell5 = row.insertCell(4);
+    cell2.innerHTML = json["originalImageName"];   
+    cell3.innerHTML = "<a href=\"javascript:openGRPImage(\'"+imageUrl+"\')\"> "+json["imageName"]+"</a>";
+    cell4.id="imageStatus";
+    cell4.name="imageStatus";
+   if (typeof json["imageStatus"]  !== "undefined" && json["imageStatus"]){
+   cell4.innerHTML = json["imageStatus"];	
+  }else{ 
+   cell4.innerHTML = "Initiated";
+  }
+   cell5.id="removeGPImage" ;
+   cell5.name="removeGPImage" ;   
+if(json["imageStatus"]  == 'Completed'){
+		cell5.innerHTML = 'Remove';
+	}else{
+		cell5.innerHTML = '<a href="javascript:;" onclick="confirmGRPImageRemovePopUp('+json["imageID"]+',\''+json["imageName"]+'\')">Remove</a>';
+	}
+
+}
+
+

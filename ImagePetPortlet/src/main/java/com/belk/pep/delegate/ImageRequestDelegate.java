@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.json.JSONArray;
+import org.json.JSONObject;
 
 
 import com.belk.pep.exception.checked.PEPFetchException;
@@ -177,34 +178,121 @@ public class ImageRequestDelegate {
 	        LOGGER.info("Image requestdelegate :: releseLockedPet");
 	        boolean  isPetReleased = imageRequestService.releseLockedPet(orin,pepUserID,pepFunction);     
 	        return isPetReleased;
-	 }
-	 
-	 /**
-	 * Method to get the Image attribute details from database.
-	 *    
-	 * @param orin String   
-	 * @return imageLinkVOList List<ImageLinkVO>
-	 * 
-	 * Method added For PIM Phase 2 - Regular Item Image Link Attribute
-	 * Date: 05/13/2016
-	 * Added By: Cognizant
-	*/	
-	public List<ImageLinkVO> getScene7ImageLinks(String orin) throws PEPServiceException, PEPPersistencyException{
-		
-		LOGGER.info("***Entering ImageRequestDelegate.getScene7ImageLinks() method.");
-	    
-		List<ImageLinkVO> imageLinkVOList = null;
-		
-	    try {
-	    	imageLinkVOList = imageRequestService.getScene7ImageLinks(orin);
-	    }		    
-	    catch (Exception exception) {
-	
-	    	LOGGER.error("Exception in getScene7ImageLinks() method, Delegate Layer -- " + exception.getMessage());
-	        throw new PEPServiceException(exception.getMessage());
 	    }
-	    LOGGER.info("***Exiting ImageRequestDelegate.getScene7ImageLinks() method.");
-	    return imageLinkVOList;
+	 /**
+		 * Method to get the Image attribute details from database.
+		 *    
+		 * @param orin String   
+		 * @return imageLinkVOList List<ImageLinkVO>
+		 * 
+		 * Method added For PIM Phase 2 - Regular Item Image Link Attribute
+		 * Date: 05/13/2016
+		 * Added By: Cognizant
+		*/	
+		public List<ImageLinkVO> getScene7ImageLinks(String orinNum) throws PEPServiceException, PEPPersistencyException{
+			
+			LOGGER.info("***Entering ImageRequestDelegate.getScene7ImageLinks() method.");
+		    
+			List<ImageLinkVO> imageLinkVOList = null;
+			
+		    try {
+		    	imageLinkVOList = imageRequestService.getScene7ImageLinks(orinNum);
+		    }		    
+		    catch (Exception exception) {
+		
+		    	LOGGER.error("Exception in getScene7ImageLinks() method, Delegate Layer -- " + exception.getMessage());
+		        throw new PEPServiceException(exception.getMessage());
+		    }
+		    LOGGER.info("***Exiting ImageRequestDelegate.getScene7ImageLinks() method.");
+		    return imageLinkVOList;
+		    
+		}
+		 /**
+	     * 
+	     * 
+	     * 
+	     */
+	    public ArrayList getGroupingInfoDetails(String groupingId) throws PEPServiceException, PEPPersistencyException {
+	        return imageRequestService.getGroupingInfoDetails(groupingId);
+	        
+	    }
+	    /**
+	     * 
+	     * @return
+	     * @throws PEPServiceException
+	     * @throws PEPPersistencyException
+	     */
+	    public ArrayList getGroupingDetails(String groupingId) throws PEPServiceException, PEPPersistencyException {
 	    
-	}
+	        return imageRequestService.getGroupingDetails(groupingId);
+	    }
+	    /**
+	     * 
+	     * @param orinNo
+	     * @return
+	     * @throws PEPServiceException
+	     * @throws PEPPersistencyException
+	     */
+	    public ArrayList getGroupingSampleImageLinks(String groupingId) throws PEPServiceException, PEPPersistencyException {
+	        return imageRequestService.getGroupingSampleImageLinks(groupingId);
+	    }
+	  
+	    public String callGroupingImageUploadService(JSONObject jsonMapObject) throws Exception,PEPFetchException {
+	        LOGGER.info("ImageRequestDelegate:: callUploadVPIService");
+	        return imageRequestService.callGroupingImageUploadService(jsonMapObject);
+	    }
+	    
+	    /**
+	     * 
+	     * @param orinNo
+	     * @return
+	     * @throws PEPServiceException
+	     * @throws PEPPersistencyException
+	     */
+	    public ArrayList getGroupingHistoryDetails(String groupingId) throws PEPServiceException, PEPPersistencyException {
+	        return imageRequestService.getGroupingHistoryDetails(groupingId);
+	    }
+	    /**
+		 * Method to get the Image attribute details from database.
+		 *    
+		 * @param orin String   
+		 * @return imageLinkVOList List<ImageLinkVO>
+		 * 
+		 * Method added For PIM Phase 2 - Regular Item Image Link Attribute
+		 * Date: 05/13/2016
+		 * Added By: Cognizant
+		*/	
+		public List<ImageLinkVO> getGroupingScene7ImageLinks(String groupingId) throws PEPServiceException, PEPPersistencyException{
+			
+			LOGGER.info("***Entering ImageRequestDelegate.getScene7ImageLinks() method.");
+		    
+			List<ImageLinkVO> imageLinkVOList = null;
+			
+		    try {
+		    	imageLinkVOList = imageRequestService.getGroupingScene7ImageLinks(groupingId);
+		    }		    
+		    catch (Exception exception) {
+		
+		    	LOGGER.error("Exception in getScene7ImageLinks() method, Delegate Layer -- " + exception.getMessage());
+		        throw new PEPServiceException(exception.getMessage());
+		    }
+		    LOGGER.info("***Exiting ImageRequestDelegate.getScene7ImageLinks() method.");
+		    return imageLinkVOList;
+		    
+		}
+		  public String callRemoveGroupingImageWebService(JSONObject imageInfo) throws Exception,PEPFetchException {
+		        LOGGER.info("callRemoveImageWebService:--Delegate");
+		        return imageRequestService.callRemoveGroupingImageWebService(imageInfo);
+		    }
+		  
+		//Service call delegate for Approve or Reject
+		    public String callApproveGroupingImageService(JSONObject imageInfo) throws Exception,PEPFetchException {
+		        LOGGER.info("ImageRequestDelegate:: callApproveGroupingImageService");
+		        return imageRequestService.callApproveGroupingImageService(imageInfo);
+		    }
+		  //Service call delegate for Approve or Reject
+		    public String callUpdateGroupImageStatusJsonObj(JSONObject imageInfo) throws Exception,PEPFetchException {
+		        LOGGER.info("ImageRequestDelegate:: callUpdateGroupImageStatusJsonObj");
+		        return imageRequestService.callUpdateGroupImageStatusJsonObj(imageInfo);
+		    }
 }

@@ -77,5 +77,34 @@ public class StyleInfoDetails {
 	public void setVendorProvidedSample(String vendorProvidedSample) {
 		this.vendorProvidedSample = vendorProvidedSample;
 	}
+	
+	
+	private String groupingName;	
+	private String groupingType;
+	/**
+	 * @return the groupingName
+	 */
+	public String getGroupingName() {
+		return groupingName;
+	}
+	/**
+	 * @param groupingName the groupingName to set
+	 */
+	public void setGroupingName(String groupingName) {
+		this.groupingName = groupingName;
+	}
+	/**
+	 * @return the groupingType
+	 */
+	public String getGroupingType() {
+		return groupingType;
+	}
+	/**
+	 * @param groupingType the groupingType to set
+	 */
+	public void setGroupingType(String groupingType) {
+		this.groupingType = groupingType;
+	}
+	
 
 }

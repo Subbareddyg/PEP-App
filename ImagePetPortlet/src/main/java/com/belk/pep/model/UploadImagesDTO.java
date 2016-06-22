@@ -313,6 +313,21 @@ public class UploadImagesDTO implements Serializable {
 		this.shotTypeValue = shotTypeValue;
 	}
 	
+	private String groupingType;
+
+
+	/**
+	 * @return the groupingType
+	 */
+	public String getGroupingType() {
+		return groupingType;
+	}
+	/**
+	 * @param groupingType the groupingType to set
+	 */
+	public void setGroupingType(String groupingType) {
+		this.groupingType = groupingType;
+	}
 	
 	
 }

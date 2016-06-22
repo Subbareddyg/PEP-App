@@ -82,9 +82,7 @@ public  interface ImageRequestDAO {
     
     public List<WorkFlow> getImageMgmtDetailsByOrin(String orinNum)
     throws PEPPersistencyException;
-    public boolean releseLockedPet(String orin, String pepUserID,String pepFunction)throws PEPPersistencyException;  
-
-    
+    public boolean releseLockedPet(String orin, String pepUserID,String pepFunction)throws PEPPersistencyException; 
     /**
      * Method to get the Image attribute details from database.
      *    
@@ -95,5 +93,49 @@ public  interface ImageRequestDAO {
      * Date: 05/13/2016
      * Added By: Cognizant
      */
-    public List<ImageLinkVO> getScene7ImageLinks(String orin) throws PEPPersistencyException;
+    public List<ImageLinkVO> getScene7ImageLinks(String orinNum) throws PEPPersistencyException;
+    
+    /**
+     * 
+     * @param orinNo
+     * @return
+     * @throws SQLException
+     */
+    public ArrayList getGroupingInfoDetails(String groupingId) throws PEPPersistencyException;
+    
+    /**
+     * 
+     * @param orinNo
+     * @return
+     * @throws SQLException
+     */
+    public ArrayList getGroupingDetails(String groupingId) throws PEPPersistencyException;
+    
+    /**
+     * 
+     * @param orinNo
+     * @return
+     * @throws PEPPersistencyException
+     */
+    public ArrayList getGroupingSampleImageLinks(String groupingId) throws PEPPersistencyException;
+    
+    /**
+     * 
+     * @param orinNo
+     * @return
+     * @throws PEPPersistencyException
+     */
+    public ArrayList getGroupingHistoryDetails(String groupingId) throws PEPPersistencyException;
+       
+    /**
+     * Method to get the Image attribute details from database.
+     *    
+     * @param orin String   
+     * @return imageLinkVOList List<ImageLinkVO>
+     * 
+     * Method added For PIM Phase 2 - Regular Item Image Link Attribute
+     * Date: 05/13/2016
+     * Added By: Cognizant
+     */
+    public List<ImageLinkVO> getGroupingScene7ImageLinks(String groupingId) throws PEPPersistencyException;
 }

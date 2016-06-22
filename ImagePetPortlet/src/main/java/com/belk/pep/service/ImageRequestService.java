@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.json.JSONArray;
+import org.json.JSONObject;
 
 
 import com.belk.pep.exception.checked.PEPPersistencyException;
@@ -117,6 +118,55 @@ public interface ImageRequestService {
     
     
     public boolean releseLockedPet(String orin, String pepUserID,String pepFunction)throws PEPPersistencyException;  
+   
+    /**
+     * Method to get the Image attribute details from database.
+     *    
+     * @param orin String   
+     * @return imageLinkVOList List<ImageLinkVO>
+     * 
+     * Method added For PIM Phase 2 - Regular Item Image Link Attribute
+     * Date: 05/13/2016
+     * Added By: Cognizant
+     */
+    public List<ImageLinkVO> getScene7ImageLinks(String orinNum) throws PEPServiceException, PEPPersistencyException;
+   
+    /**
+	 * 
+	 * 
+	 * @return
+	 * @throws PEPServiceException
+	 * @throws PEPPersistencyException
+	 */
+	public ArrayList getGroupingInfoDetails(String groupingId) throws PEPServiceException, PEPPersistencyException;
+	
+	/**
+	 * 
+	 * 
+	 * @return
+	 * @throws PEPServiceException
+	 * @throws PEPPersistencyException
+	 */
+	public ArrayList getGroupingDetails(String groupingId) throws PEPServiceException, PEPPersistencyException;
+	/**
+     * 
+     * @param orinNo
+     * @return
+     * @throws PEPServiceException
+     * @throws PEPPersistencyException
+     */
+    public ArrayList getGroupingSampleImageLinks(String groupingId) throws PEPServiceException, PEPPersistencyException;
+    //Service Call Upload VPI
+    public String callGroupingImageUploadService(JSONObject jsonMapObject) throws Exception;
+    
+    /**
+     * 
+     * @param orinNo
+     * @return
+     * @throws PEPServiceException
+     * @throws PEPPersistencyException
+     */
+    public ArrayList getGroupingHistoryDetails(String groupingId) throws PEPServiceException, PEPPersistencyException;
     
     /**
      * Method to get the Image attribute details from database.
@@ -128,6 +178,14 @@ public interface ImageRequestService {
      * Date: 05/13/2016
      * Added By: Cognizant
      */
-    public List<ImageLinkVO> getScene7ImageLinks(String orin) throws PEPServiceException, PEPPersistencyException;
+    public List<ImageLinkVO> getGroupingScene7ImageLinks(String groupingId) throws PEPServiceException, PEPPersistencyException;
+   
+    public String callRemoveGroupingImageWebService(JSONObject imageInfo) throws Exception;
+
+	//Service Call for Approve or Reject Action
+    public String callApproveGroupingImageService(JSONObject imageInfo) throws Exception;
+  //Service Call for Approve or Reject Action
+    public String callUpdateGroupImageStatusJsonObj(JSONObject imageInfo) throws Exception;
     
 }
+

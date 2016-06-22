@@ -1,0 +1,1014 @@
+<%@ include file="/WEB-INF/pages/jsp/include.jsp"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<link rel="stylesheet" href="<%=response.encodeURL(request.getContextPath()+"/css/worklistDisplay.css")%>">
+<link rel="stylesheet" href="<%=response.encodeURL(request.getContextPath()+"/css/portletBorder.css")%>">
+<link rel="stylesheet"  href="<%=response.encodeURL(request.getContextPath()+ "/css/bootstrap.css")%>"/>
+<link rel="stylesheet" type="text/css" href="<%=response.encodeURL(request.getContextPath()+ "/css/jquery.treegrid.css")%>"/>
+<link rel="stylesheet" type="text/css" href="<%=response.encodeURL(request.getContextPath()+ "/css/default.min.css")%>">
+<link rel="stylesheet" type="text/css" href="<%=response.encodeURL(request.getContextPath()+ "/css/dialogImage.css")%>" />
+<link rel="stylesheet" type="text/css" href="<%=response.encodeURL(request.getContextPath()+ "/css/jquery-ui.css")%>" />
+<script type="text/javascript" src="<%=request.getContextPath()%>/js/jquery.treegrid.js"></script>
+<script type="text/javascript" src="<%=request.getContextPath()%>/js/jquery.min.js"></script>
+<script type="text/javascript" src="<%=request.getContextPath()%>/js/treegridlocal.js"></script>
+<script type="text/javascript" src="<%=request.getContextPath()%>/js/belk.pep.imageDialog.js"></script>
+<script src="<%=request.getContextPath()%>/js/jquery-ui.js"></script>
+<script src="<%=request.getContextPath()%>/js/imageManagment.js"></script>
+<script src="<%=request.getContextPath()%>/js/belk.cars.editcar.js"></script>
+<!-- <script src="jquery.min.js"></script>-->
+<script src="http://yandex.st/highlightjs/7.3/highlight.min.js"></script>
+
+
+<script>
+	hljs.initHighlightingOnLoad();
+</script>
+
+<script type="text/javascript">
+	$(document).ready(function() {
+
+		$('.tree').treegrid();
+		$('.tree2').treegrid({
+			expanderExpandedClass : 'icon-minus-sign',
+			expanderCollapsedClass : 'icon-plus-sign'
+		});
+	});
+  function SelectImageLocation(selectedValue){
+  if(selectedValue=='FTP'){
+  document.getElementById("ftpDiv_1").style.display = 'block';
+  document.getElementById("selectImage").style.display = 'none';  
+  }else{
+  document.getElementById("ftpDiv_1").style.display = 'none';
+  document.getElementById("selectImage").style.display = 'block';
+    
+  }
+ 
+ }
+$(document).ready(function() {
+
+    $("#datepicker1").datepicker({
+        showOn: 'button',
+        buttonText: 'Date',
+        buttonImageOnly: true,
+        buttonImage: '<%=response.encodeURL(request.getContextPath()+ "/img/iconCalendar.gif")%>',
+        dateFormat: 'mm/dd/yy',
+        constrainInput: true
+    });
+
+    $(".ui-datepicker-trigger").mouseover(function() {
+        $(this).css('cursor', 'pointer');
+    });
+
+
+});
+
+/* method for remove sample image */
+function removeSampleImageref(rowId,removeImageUrl){	
+	if(confirm("Are you sure to delete")){		
+		$.ajax({
+			type: 'POST',
+			url : removeImageUrl,			
+			success: function(e,response){				
+				e.preventDefault();
+				
+				$("#rowId").closest('tr').remove();
+			},
+			error:function (xhr, ajaxOptions, thrownError){
+            	//On error, we alert user
+            	var error = $.parseJSON(xhr.responseText);
+               console.log("Severe Service Error::" + thrownError + 
+               "Status Code::" + xhr.status +"error"+ error);
+             }
+
+		});
+		
+	}
+}
+
+
+
+
+function submitApproveOrRejectAction(url){
+
+
+ var approveOrRejectImgId= $("#approveOrRejectImgId").val(); 
+ var approveOrReject= $('input:radio[name=radionSelectedIAction]:checked').val();
+
+
+		
+		if($("#radionSelectedIActionID1").attr("checked")){
+			$("#radionSelectedIActionID2").prop("checked",false);
+		}
+		if($("#radionSelectedIActionID2").attr("checked")){
+			$("#radionSelectedIActionID1").prop("checked",false);
+		}		var formString = $("#imageActionForm").serialize();			
+		$.ajax({				
+				type: 'POST',
+				url: url,
+				data: { approveOrRejectOrinNum:selectedColorOrinNum,approveOrRejectImgId:approveOrRejectImgId,radionSelectedIAction:approveOrReject },
+				success: function(xhr,response,textStatus){
+				alert(response);
+					HideImageUploadPopUp();
+					event.preventDefault();
+					Console.log("ResponseText::" + response);
+					
+				},
+				cache: false,                
+				error: function(){
+					Console.log("Service Error in Approve or Reject");
+				}
+			});
+		
+			$("#imageActionForm")[0].reset();				
+}
+
+
+
+
+function getreceiveRequetValuesfromPopup(imageidVal,orinIdVal){	
+	document.getElementById('imageIdReceive').value=imageidVal;
+	document.getElementById('orinIdReceive').value=orinIdVal;
+	ShowReceiveRequest(false);	
+}
+
+function getImageActionApproveOrRejectValues(imageidValue,orinIdValue){	
+	document.getElementById('approveOrRejectImgId').value=imageidValue;
+	document.getElementById('approveOrRejectOrinNum').value=orinIdValue;
+	ShowImageAction(false);
+	
+}
+
+
+
+function submitVendorLoginSubmitDetails(url){	
+	var selectedImageIds =[];
+	var x;	
+	 var selectedColorOrinNum = $("#selectedColorOrinNum").val(); 	
+
+	 selectedColorOrinNum = selectedColorOrinNum.trim();
+	 var checkboxes = document.getElementsByName('selectCheckBox');
+	 for (var i=0, n=checkboxes.length;i<n;i++) {
+	  if (checkboxes[i].checked) 
+	  {
+	  if(selectedImageIds!=""){ 
+	     selectedImageIds+=","+checkboxes[i].value;
+	  }else{
+	     selectedImageIds=checkboxes[i].value;
+	  } 
+  	}
+	}
+		if(selectedImageIds.length==0){
+		alert("Please check at least one row and then pres submit");			
+		return;
+	}else{	
+	
+		$.ajax({
+			type: 'POST',
+			url : url,
+			data: {'selectedImageIds': selectedImageIds,selectedColorOrinNum:selectedColorOrinNum},
+			cache: true,
+			async: true,
+			success: function(response,data){				
+				$(".chk:checked").each(function(){
+					$(this).attr('checked',false);		
+				});
+			},
+			error:function (xhr, ajaxOptions, thrownError){
+            	//On error, we alert user
+            	var error1 = $.parseJSON(xhr.responseText);
+               console.log("Severe Service Error::" + thrownError + 
+               "Status Code::" + xhr.status +"error"+ error1);
+             }
+
+		});
+		
+	}
+	
+	return false;
+}
+ 
+ 
+
+function saveImageDetailsValue(url){	
+
+		
+		var selectedColorOrinNum = $("#selectedColorOrinNum").val();		
+		var sampleReceived= document.getElementById('sampleReceived').checked;	
+		var silHoutte= document.getElementById('silhouette').checked;
+		var imgStatus= document.getElementById('imageStatus').innerHTML ;
+		var turnInDate = document.getElementById('turnInDate').value ;
+		var formString = $("#vendorImageDetailsFormID").serializeArray();
+		$.ajax({
+			type: 'POST',
+			url : url,
+			data: {selectedOrinVPI:selectedColorOrinNum },
+			success: function(e,response){				
+				alert("Success");            	
+             },
+			 cache: false,
+			 async: true,
+			 error: function(response){
+				 alert("Error");            	
+			 }
+
+		});
+}
+
+
+function getImageDetails(id){
+	//var imagetextboxname="adimage_"+id;
+	//var orintextboxname="orin_"+id;
+	//document.getElementById("currentAdImgId").value = document.getElementById('imagetextboxname').value;
+	//document.getElementById("currrentAdOrinID").value = document.getElementById('orintextboxname').value;
+}
+
+
+function getEDITADImageDetails(id){
+	var imagetextADName="imageAD_"+id;
+	var orintextADname ="orinAD_"+id;
+	document.getElementById("currentAdImgIdHidden").value = document.getElementById('imagetextADName').value;
+	document.getElementById("currrentAdOrinIDHiddend").value = document.getElementById('orintextADname').value;
+}
+//goToWorkListDisplayScreen() function is called on click of the Close  button to navigate back to the  WorkListDisplay Screen
+		function goToWorkListDisplayScreen() {		
+			
+			//window.location = "/wps/portal/home/worklistDisplay";
+			window.location = "/wps/portal/WorkListDisplayPageUrl";
+		}
+
+</script>
+
+</script>
+
+ <%	
+	String userAttr = (String)request.getAttribute("userAttr");
+	System.out.println("User Attrbute.............." +userAttr);
+ %>
+ 
+<portlet:defineObjects />
+
+<portlet:actionURL var="imageUploadAction">
+       <portlet:param name="action" value="imageUploadAction" />
+</portlet:actionURL>
+
+<portlet:resourceURL var="addActionRequest" id="addActionRequest"></portlet:resourceURL>
+
+<portlet:resourceURL var="saveImageDetails" id="saveImageDetails"></portlet:resourceURL>
+
+<input type="hidden" id="saveImageDetails" name="saveImageDetails" value="${saveImageDetails}" />
+
+<input type="hidden" id="addImageId" name="addImageId" value="${uploadedFileAction}" />
+
+<input type="hidden" id="selectedColorOrinNum" name="selectedColorOrinNum" value="" />
+
+
+<portlet:resourceURL var="submitVendorLoginSample" id ="submitVendorLoginSample"></portlet:resourceURL>
+
+<portlet:resourceURL var="editAddReceiveRequest" id ="editAddReceiveRequest"></portlet:resourceURL>
+
+<fmt:setBundle basename="imagePortletResources" />
+
+<div class="container">
+<div id="pg">
+<div id="content">
+<div id="main"><input type="hidden" id="removeImageUrl"
+	name="removeImageUrl" value="${removeUrl}"></input>
+	
+	
+
+<form commandName="imageDetailsForm" id="imageDetail" method="post"
+	action="#"><!--Style Info Starts-->	
+	
+
+<div id="car_info_pnl" class="cars_panel x-hidden">
+<div class="x-panel-header"><fmt:message
+	key="label.styleInfo.header" /></div>
+<div class="x-panel-body">
+
+<ul class="car_info"
+	style="font-size: 11px; padding: 0 0 10px !important;">
+	<c:if test="${not empty imageDetailsForm.styleInfo}">
+		<%-- Style Information code starts here   --%>
+		<c:forEach var="styleInformation" varStatus="status"
+			items="${imageDetailsForm.styleInfo}">
+
+			<li class="txt_attr_name" style="width: 30%;"><b><fmt:message
+				key="label.styleInfo.orionGrouping" /></b>${styleInformation.orinGrouping}</li>
+			<li class="txt_attr_name" style="width: 25%;"><b><fmt:message
+				key="label.styleInfo.deptNumber" /></b> ${styleInformation.deptNo}</li>
+			<li class="txt_attr_name" style="width: 25%;"><b><fmt:message
+				key="label.styleInfo.vendorName" /></b>${styleInformation.vendorName}</li>
+</ul>
+<ul class="car_info"
+	style="font-size: 11px; padding: 0 0 10px !important;">
+	<li class="ctxt_attr_name" style="width: 30%;"><b><fmt:message
+		key="label.styleInfo.styleNumber" /></b>${styleInformation.styleNo}</li>
+	<li class="txt_attr_name" style="width: 25%;"><b><fmt:message
+		key="label.styleInfo.class" /></b>${styleInformation.imageClass}</li>
+	<li class="txt_attr_name"><b><fmt:message
+		key="label.styleInfo.vendorNumber" /></b>${styleInformation.vendorNo}</li>
+</ul>
+
+<ul class="car_info"
+	style="font-size: 11px; padding: 0 0 10px !important;">
+	<li class="ctxt_attr_name" style="width: 30%;"><b><fmt:message
+		key="label.styleInfo.description" /></b>${styleInformation.imageDesc}</li>
+	<li class="txt_attr_name" style="width: 25%;"><b><fmt:message
+		key="label.styleInfo.omniChannelVendor" /></b>${styleInformation.omniChannelVendor}</li>
+	<li class="txt_attr_name"><b><fmt:message
+		key="label.styleInfo.vendorProvidedImage" /></b>${styleInformation.vendorProvidedImage}</li>
+
+</ul>
+<ul class="car_info"
+	style="font-size: 11px; padding: 0 0 10px !important; margin-left: 15cm;>			
+				<li class="txt_attr_name"><b><fmt:message key="label.styleInfo.vendorProvidedSample"/></b>${styleInformation.vendorProvidedSample}</li>
+			</ul>
+			</c:forEach>
+			</c:if>	
+			<input type="button" name="Close" value="Close"   class="closeContentButton"  onclick="javascript:goToWorkListDisplayScreen();" style="width: 100px; height: 30px; margin-left:800px"/>
+					
+</div>
+</div>
+<%--Style Info Ends--%>	
+
+
+<%--Product Details Starts here--%>
+	
+<div id="prod_detail_pnl" class="cars_panel x-hidden">
+	<div class="x-panel-header">
+		<fmt:message key="label.productDetails.header"/>
+	</div>
+	<div class="x-panel-body">
+	<div id="prod_detail">
+	<c:if test="${not empty imageDetailsForm.imageProductInfo}">		
+	<ul class="attrs">
+		<c:forEach var="productInformation" varStatus="status" items="${imageDetailsForm.imageProductInfo}">
+		<li class="prod_name">		
+			<label><b><fmt:message key="label.productDetails.productName"/>:</label>	</b>		
+				<textarea  style="margin-left:30px;"  id ="txt_outfitName"  name="vendorStyle.Name:512224" cols="100" rows="5" onkeyup="textCounter();" onblur="textCounter();"  readonly>${productInformation.productName}</textarea>
+		</li>	
+		<li class="prod_desc">
+			<label><b><fmt:message key="label.productDetails.productDescription"/>:</label></b>			
+			<textarea id="vendorStyle.Descr:512224"	 name="vendorStyle.Descr:512224" onkeyup="textCounter();" cols="100" rows="5 onblur="textCounter();" readonly>${productInformation.productDescription}</textarea>		
+				
+			<div class="chars_rem">
+				<fmt:message key="label.productDetails.productRemaining"/><span class="chars_rem_val">40</span>
+			</div>			
+			<br style="clear:both;" />
+		</li>
+		</c:forEach>		
+	</ul>	
+	</c:if>
+	</div>
+</div></div>
+
+
+
+<%--Product Details Ends here--%>
+
+
+<%--Image Management Screen  starts over here  --%>
+<jsp:include page="/WEB-INF/pages/jsp/imageManagmentDisplay.jsp"/>
+
+<%-- Image management links ends here --%>
+
+
+<%--VPI and Sample Image Links starts--%>
+
+<%--Logic to handle user data--%>
+<c:if test ="${requestScope.userAttr == 'dca'}">
+	<% System.out.println("DCA USer-->>>>");	%>
+
+
+<div id="img_mgmt_pnl" class="cars_panel x-hidden">
+	<div class="x-panel-header">
+		<strong><fmt:message key="label.vpisampleImage.header" /></strong>
+	</div>
+	<div class="x-panel-body">
+<div class="userButtons">
+
+
+
+<form id="vendorImageDetailsFormID" name="vendorImageDetailsFormID">
+
+<input type ="hidden" name="mySelectBox_hidden" id="mySelectBox_hidden" value ="" />
+<input type ="hidden" name="sampleReceivedCheckValue" id="sampleReceivedCheckValue" value ="" />
+<input type ="hidden" name="silhouetteHiddenValue" id="silhouetteHiddenValue" value ="" />
+<input type ="hidden" name="linkStatusHiddenValue" id="linkStatusHiddenValue" value ="" />
+<input type ="hidden" name="imageStatusHiddenValue" id="imageStatusHiddenValue" value ="" />
+<input type ="hidden" name="datePickHidden" id="datePickHidden" value ="" />
+
+
+<input class="btn uploadButton" id="btnImageUploadAction"  align="center" type="button" name="imageUploadSubmit" value="Upload VPI"  style="margin-left:400px;"  />
+<input class="btn Approve"  align="center" id="image_approve"  onclick="getImageActionApproveOrRejectValues();"	type="button" name="imageApprove" value="Approve"  style="margin-left:10px;" />
+		
+<input class="btn Sample"  align="center" id="image_sample"  onclick="sampleImageButton('vImage');"	type="button" name="imageSample" value="Sample"  style="margin-left:10px;" disabled/>
+<input class="btn Swatch" onclick="swatchImageButton('vImage');" align="center" id="btn_image_swatch" type="button" name="imageSilhouett" value="Swatch"  style="margin-left:10px;" disabled/>	
+<input  class="btn Add Request" id="btnImageADRequestAction" type="button" name="btnImageADRequestAction" title="Add Request"  value="ADRequest" style="margin-left:10px;" disabled/>		
+<input  class="btn Save Button" id="saveImage" type="button"  onclick="saveImageDetailsValue('${saveImageDetails}');" name="saveImage" title="Save" width="48" value="  Save  " style="margin-left:48px;" />								
+
+</div>
+		<div class="need_images">							
+		<div id="vendor_images">
+<table id="vImage" cellpadding="0" cellspacing="0">
+<thead>
+<tr>
+<th class="sorted order1"><fmt:message key="label.vpisampleImage.imageID" /></th>
+<th><fmt:message key="label.vpisampleImage.imageName" /></th>
+<th><fmt:message key="label.vpisampleImage.imageLoc" /></th>
+<th><fmt:message key="label.vpisampleImage.imageShotType" /></th>
+<!--<th><fmt:message key="label.vpisampleImage.lnkStatus" /></th>-->
+<th><fmt:message key="label.vpisampleImage.imgrStatus" /></th>
+<th><fmt:message key="label.vpisampleImage.sampleId" /></th>
+<th><fmt:message key="label.vpisampleImage.sampleReceived" /></th>
+<th><fmt:message key="label.vpisampleImage.silo" /></th>
+<!--<th><fmt:message key="label.vpisampleImage.tidate" /></th>-->
+<th><fmt:message key="label.vpisampleImage.scNote" /></th>
+<th></th>
+<th><fmt:message key="label.vpisampleImage.Reject" /></th>
+<%--<th>Art Director</th>--%> 
+<th> </th>
+<tbody>
+<c:set var="countImageList" value="0" />
+<c:if test ="${not empty imageDetailsForm.sampleImageDetailList}">
+	<c:forEach var="imgDetailsInfo" items="${imageDetailsForm.sampleImageDetailList}" varStatus="status">
+	
+<tr name="odd" class="odd_${countImageList}" id="odd_${countImageList}" onclick="getImageDetails('${countImageList}');">
+
+<input type="hidden" name="orin_${countImageList}" id="orin_${countImageList}" value="${imgDetailsInfo.orinNo}" />
+<td style="width:2%;" id="imageID_${countImageList}">${imgDetailsInfo.imageId}</td>
+<td style="width:2%;">${imgDetailsInfo.imageName}</td>
+<td style="width:2%;">
+				<div style="width:60px;overflow:auto;word-wrap:break-word;">
+							${imgDetailsInfo.imageLocation}
+				</div>
+		</td>
+		
+<%--logic for image shot type starts --%>
+<c:choose>
+<c:when test="${empty imgDetailsInfo.imageShotType}">
+<td style="width:9%;"> 
+<select style="width:58%;height: 27px;"  id="shotType" name="shotType" >
+  <option value="A">A</option>
+  <option value="B" selected>B</option>
+  <option value="C">C</option>
+  <option value="D">D</option>
+  <option value="E">E</option>
+  <option value="F">F</option>
+  <option value="G">G</option>
+  <option value="H">H</option>
+  <option value="I">I</option>
+  <option value="SW">SW</option>
+</select></td>
+</c:when>
+<c:otherwise>
+<td style="width:2%;">${imgDetailsInfo.imageShotType}</td>
+</c:otherwise>
+</c:choose>
+<%--logic for image shot type ends --%>
+<td style="width:5%;">${imgDetailsInfo.imageStatus}</td>
+<td style="width:5%;">
+				<div style="width:40px;overflow:auto;word-wrap:break-word;">
+						${imgDetailsInfo.imageSampleId}
+				</div>
+		</td>
+<td style="width:3%;">
+				<div id="lapprove_999401"><input type="checkbox" name="" value="" disabled/></div>
+			</td>
+<td style="width:3%;">
+				<div id="lapprove_999401"><input type="checkbox" name="" value="" disabled/></div>
+</td>
+<%-- Please check the datepicker section we need to write the logic here --%>
+<td style="width:5%;">
+    <div id="ext-gen35" class="x-form-field-wrap x-trigger-wrap-focus" >
+		   
+    </div>
+</td>
+
+<td style="width:9%;">
+<input  id="btnSampleCoordinatorNotePopUp" type="button" name="AddNote"  title="Add Note" 
+	value="Add Note" style="width:63px; font-weight: bold;" disabled/>
+	<input type="hidden" id="imageId" name="currentAdImgIdHidden" value="${imgDetailsInfo.imageId}" />
+	<input type="hidden" id="orinNo" name="currentAdImgIdHidden" value="${imgDetailsInfo.orinNo}" />
+</td>
+<td style="width:6%;">
+		<div>
+		
+				<input id="btnSubmitAction" class="next btnSubmitAction" type="button" name="image" value="Submit" onclick="getImageActionApproveOrRejectValues('${imgDetailsInfo.imageId}','${imgDetailsInfo.orinNo}');" style="width:57px; font-weight: bold;" />					
+		</div>
+		
+</td>
+
+<td style="width:6%;">
+		<div>
+				<input id="btnRejectImageAction" class="next btnRejectImageAction" type="button" name="image" value="Reject" onclick="getImageActionApproveOrRejectValues('${imgDetailsInfo.imageId}','${imgDetailsInfo.orinNo}');" style="width:57px; font-weight: bold;" />					
+		</div>
+		
+</td>
+<td style="width:4%;" class="delete" id="delete_${countImageList}">
+<portlet:resourceURL var="removeUrl" id ="removeSampleImageUrl">	
+	<portlet:param name="imageID" value="${imgDetailsInfo.imageId}" />
+	<portlet:param name="orinID" value="${imgDetailsInfo.orinNo}" />		
+</portlet:resourceURL>
+<a href="#" id="remove_${countImageList}" onclick="javascript:removeSampleImageref('odd_${countImageList}','${removeUrl}');return false; "><fmt:message key="label.vpisampleImage.remove" /></a></td>
+</tr>
+<c:set var="countImageList" value="${countImageList+1}" />
+</c:forEach>
+</c:if>
+
+
+
+</tbody></table>
+</form>
+				</div>
+			</div>	
+		
+	</div>
+</div>
+
+</c:if>
+<c:if test ="${requestScope.userAttr ne 'dca'}">
+<div id="img_mgmt_pnl" class="cars_panel x-hidden">
+	<div class="x-panel-header">
+		<strong><fmt:message key="label.vpisampleImage.header" /></strong>
+	</div>
+	<div class="x-panel-body">
+<div class="userButtons">
+
+<input class="btn uploadButton" id="btnImageUploadAction"  align="center" type="button" name="imageUploadSubmit" value="Upload VPI"  style="margin-left:400px;" />	
+<!--<input class="btn uploadButton" align="center" id="btn_upload_image"  onclick="return submitVendorLoginSubmitDetails('${submitVendorLoginSample}');" type="button" name="imageUploadSubmit" value="Submit"  style="margin-left:10px;"/>-->
+					
+</div>
+
+		
+		<div class="need_images">							
+		<div id="vendor_images">
+<table id="vImage" cellpadding="0" cellspacing="0">
+<thead>
+<tr>
+
+<th><fmt:message key="label.vpisampleImage.imageID" /></th>
+<th><fmt:message key="label.vpisampleImage.imageName" /></th>
+<th><fmt:message key="label.vpisampleImage.imageLoc" /></th>
+<th><fmt:message key="label.vpisampleImage.imageShotType" /></th>
+<th><fmt:message key="label.vpisampleImage.lnkStatus" /></th>
+<th><fmt:message key="label.vpisampleImage.imgrStatus" /></th>
+
+<th></th>
+
+<th> </th>
+<tbody>
+<c:set var="countImageList" value="0" />
+<c:if test ="${not empty imageDetailsForm.sampleImageDetailList}">
+	<c:forEach var="imgDetailsInfo" items="${imageDetailsForm.sampleImageDetailList}" varStatus="status">
+	
+<tr name="odd" class="odd_${countImageList}" id="odd_${countImageList}">
+<input type="hidden" id ="hid_${countImageList}" value="${imgDetailsInfo.orinNo}" />
+
+<td style="width:2%;" id="imageID_${countImageList}">  ${imgDetailsInfo.imageId}</td>
+<td style="width:7%;">${imgDetailsInfo.imageName}</td>
+<td style="width:2%;">
+				<div style="width:60px;overflow:auto;word-wrap:break-word;">
+							${imgDetailsInfo.imageLocation}
+				</div>
+		</td>
+		
+<%--logic for image shot type starts --%>
+<c:choose>
+<c:when test="${empty imgDetailsInfo.imageShotType}">
+<td style="width:5%;"> 
+<select style="width:58%;height: 27px;"  id="shotType" name="shotType" disabled>
+  <option value="A">A</option>
+  <option value="B" selected>B</option>
+  <option value="C">C</option>
+  <option value="D">D</option>
+  <option value="E">E</option>
+  <option value="F">F</option>
+  <option value="G">G</option>
+  <option value="H">H</option>
+ <option value="I">I</option>
+ <option value="SW">SW</option>
+</select></td>
+</c:when>
+<c:otherwise>
+<td style="width:2%;">${imgDetailsInfo.imageShotType}</td>
+</c:otherwise>
+</c:choose>
+<%--logic for image shot type ends --%>
+<td style="width:10%;">
+				<div >
+							${imgDetailsInfo.linkStatus}
+				</div>
+		</td>
+<td style="width:5%;" id="imagStatus_${countImageList}">${imgDetailsInfo.imageStatus}</td>
+
+<%-- Please check the datepicker section we need to write the logic here --%>
+<td style="width:5%;">
+    <div id="ext-gen35" class="x-form-field-wrap x-trigger-wrap-focus" >
+		<input class="btn Sbmit" align="center" id="btn_submit_image"  onclick="return submitVendorLoginSubmitDetails('${submitVendorLoginSample}');" type="button" name="imageUploadSubmit" value="Submit"  style="width:59px; font-weight: bold;" />
+    </div>
+</td>
+
+
+
+<!--  
+<td style="width:9%;">
+<input  id="btnSampleCoordinatorNotePopUp" type="button" name="AddNote" title="Add Note" 
+	value="Add Note" style="width:63px; font-weight: bold;" />
+</td>
+<td style="width:7%;">
+		<div>
+			<input id="btnShowImageAction" class="next" type="button" name="image" value="Action" style="width:57px; font-weight: bold;" disabled/>					
+		</div>
+		
+</td>--> 
+<td style="width:4%;" class="delete" id="delete_${countImageList}">
+<portlet:resourceURL var="removeUrl" id ="removeSampleImageUrl">	
+	<portlet:param name="imageId" value="${imgDetailsInfo.imageId}" />
+	<portlet:param name="orinId" value="${imgDetailsInfo.orinNo}" />		
+</portlet:resourceURL>
+<a href="#" id="remove_${countImageList}" onclick="javascript:removeSampleImageref('odd_${countImageList}','${removeUrl}');return false; "><fmt:message key="label.vpisampleImage.remove" /></a></td>
+</tr>
+<c:set var="countImageList" value="${countImageList+1}" />
+</c:forEach>
+</c:if>
+</tbody></table>
+	</div>
+			</div>	
+		
+	</div>
+</div>
+
+</c:if>
+
+
+
+
+<%--VPI and Sample Image Links ends--%>
+
+
+
+<%--Vendor Information Starts--%>
+
+<div id="vendor_Imformation" class="cars_panel x-hidden collapsed">
+	<div class="x-panel-header">
+		<fmt:message key="label.vendorInformation.header" />
+	</div>
+	<div class="x-panel-body">
+	
+	<c:if test="${not empty imageDetailsForm.vendorInfoList }">
+	
+	<table id="vendor_Imformation" cellpadding="0" cellspacing="0">
+	<c:forEach var="vendDetails" items="${imageDetailsForm.vendorInfoList }" varStatus="status">
+		<tr>
+	 <td>
+	 
+		<li class="car_id">
+			<strong><fmt:message key ="label.vendorInformation.returnSampleIndicator" /></strong> 
+			${vendDetails.vendorsampleIndicator }
+		</li>
+		<li class="dept">
+			<strong><fmt:message key ="label.vendorInformation.carrier" /></strong>	
+			${vendDetails.carrierAcct}
+		</li>		
+		
+		</td>
+		<td>
+		<li class="vendor_name">
+			<strong><fmt:message key ="label.vendorInformation.vendorReturnSample"/></br></strong>
+			 ${vendDetails.vendorsampleAddress}
+		</li>		
+		</td>
+		
+		</tr>
+		</br>	
+		</c:forEach>
+</table>		
+</c:if>
+</div></div>
+
+<%--Vendor Information Ends--%>
+<%--Contact Information Starts--%>
+
+<div id="contact_Information" class="cars_panel x-hidden collapsed">
+	<div class="x-panel-header">
+		<fmt:message key ="label.contactInformation.header" />
+	</div>
+	<div class="x-panel-body">
+	<table id="vendor_Imformation" cellpadding="0" cellspacing="0">
+	<tr>
+	<td>
+	<li class="car_id">
+			<strong><fmt:message key ="label.contactInformation.contact1" /></strong>		
+		</li>
+	</td>
+	<td>
+		<li class="car_id">
+			<strong><fmt:message key ="label.contactInformation.contact2" /></strong>		
+		</li>
+		</td>
+	</tr>
+	<tr>
+	 <td>
+	 <c:if test="${not empty imageDetailsForm.contactInfoList }">
+	 	<c:forEach var="conDetails" items="${imageDetailsForm.contactInfoList}" varStatus="status">
+	 		<c:if test = "${conDetails.contactTitle == 'Contact 1'}">
+		<li class="car_id">
+			<strong><fmt:message key ="label.contactInformation.vendorContactName" /></strong> 
+			${conDetails.vendorContactName} 
+		</li>
+		<li class="dept">
+			<strong><fmt:message key ="label.contactInformation.vendorContactEmail" /></strong>	
+			${conDetails.vendorContactEmail}
+		</li>
+		<li class="dept">
+			<strong><fmt:message key ="label.contactInformation.vendorContactTelephone" /></strong>	
+			${conDetails.vendorContactTelephone}
+		</li>
+			</c:if>		
+		</td>
+	<td>
+			<c:if test = "${conDetails.contactTitle == 'Contact 2'}">
+		<li class="car_id">
+			<strong><fmt:message key ="label.contactInformation.vendorContactName" /></strong> 
+			${conDetails.vendorContactName}
+		</li>
+		<li class="dept">
+			<strong><fmt:message key ="label.contactInformation.vendorContactEmail" /></strong>	
+			${conDetails.vendorContactEmail}
+		</li>
+		<li class="dept">
+			<strong><fmt:message key ="label.contactInformation.vendorContactTelephone" /></strong>	
+			${conDetails.vendorContactTelephone}
+		</li>
+			</c:if>
+		</td>
+		</c:forEach>
+		</c:if>
+		</tr>
+		
+</table>		
+
+</div></div>
+
+<%--Contact Imformation Ends--%>
+
+<div id="car_history_details_pnl" class="cars_panel x-hidden collapsed">
+	<div class="x-panel-header">
+		<fmt:message key ="label.pepHistory.header" />
+	</div>
+	<div class="x-panel-body" style="font-size: 11px;font-family: tahoma,arial,helvetica,sans-serif;">			
+	<table style="width: 400px;">
+	<c:if test="${not empty imageDetailsForm.pepHistoryList}">
+		<c:forEach var="pepHistory" varStatus="status" items="${imageDetailsForm.pepHistoryList}">
+		<tr>
+			<td><strong>Buyer:</strong></td>
+			<td>${pepHistory.historyStatus}</td>
+			<td>${pepHistory.updateDate}</td>			
+		</tr>
+		
+	</table>
+		
+		<br>
+		<Div>
+		<table style="width: 100px;">
+		<tr>
+		</tr>
+		</table>		
+		</Div>
+		
+		<div>
+		<table style="width: 100px;">
+	
+		    <td>
+			</td>
+			</tr>
+			</c:forEach>
+			</c:if>
+			</table>
+				
+		</div>
+	</div>
+</div>
+</form>
+<!--Contact Imformation Ends-->
+
+<%--Upload Image Starts here--%>
+<%--upload image ends here--%>
+</form><!-- Main form ends here -->
+
+
+
+<%--Again Upload VPI POPUP Image Starts--%>
+<div id="overlay_UploadImage" class="web_dialog_overlay"></div>    
+<div id="dialog_UploadImage" class="web_dialog_imageUploadPopUp">
+ <div id="content">          
+
+	<div class="x-panel-header">
+	Upload Image
+	</div>
+	<div class="x-panel-body;border: 0px solid #99bbe8;">
+	<form:form id="imageuploadformid" modelAttribute="fdForm" method="post" action="${imageUploadAction}" enctype="multipart/form-data">
+	        <input type="hidden" name="selectedColorOrin" id="selectedColorOrin" value=""/>	
+	        <input type="hidden" name="supplierIdVPI" id="supplierIdVPI" value=""/>	
+			<input type="hidden" name="vendorStyle#" id="vendorStyle#" value=""/>
+			<input type="hidden" name="colorCode" id="colorCode" value=""/>	
+	              
+	                </br>
+					                </br>
+		<ul>
+			<li>				
+				<label style="margin-left:53px;height: 16px;">Image Location *:</label>
+				
+
+						<select id="imageLocation" name="imageLocation" onchange="SelectImageLocation(this.value);" style="height: 18px;" >														
+							<option value="BML" selected>Browse My Locations</option>      							 			
+							<option value="FTP"  >FTP </option>																											
+						</select>																		
+			</li>
+				</br>
+				<div id="selectImage">			
+			<li>
+				<label style="margin-left:65px;height: 16px;">Select Image *:</label> 
+				<input name="fileData" id="fileData"type="file" accept="Image/jpeg,image/jpg,image/gif,image/png,image/psd" />
+			</li>
+			</div>
+			</br>
+			
+			<div id="ftpDiv_1" style="float:;display:none;" >
+				<li>	 
+						<label class="ftpLabel" >Image Path to FTP (URL) *:</label> 
+						<input type="text" name="ftpUrl1"  align="" path="ftpUrl" id="ftpUrl1"/>
+						<span class="suggestion">Example: ftp.xyz.com </span> 
+				</li>
+				<li>
+						 <label class="ftpLabel" style="margin-left:110px;"  >Folder :</label> 
+						<input type="text" name="ftpPath" id="ftpPath" path="ftpPath" />
+						 <span class="suggestion">Example: /myPictures/belk/ </span>
+				</li>	 
+				<li>
+						 <label class="ftpLabel" style="margin-left:67px;" >Image Name *:</label> 
+						<input type="text" name="ftpFileName" id="ftpFileName" path="ftpFileName"  />
+						 <span class="suggestion" > Example: shirt.jpg </span> 
+				</li>	
+				<li>
+						<label class="ftpLabel" style="margin-left:81px;" >Username *:</label> 
+						<input  type="text" id="ftpUserId" name="ftpUserId" path="ftpUserId" />
+						<span class="suggestion">Example: FTP Username</span>
+				</li>
+				<li>
+						 <label class="ftpLabel" style="margin-left:83px;" >Password *:</label>
+						<input type="text" path="ftpPassword" id="ftpPassword1" name="ftpPassword1"/>
+						 <span class="suggestion">Example: FTP Password</span>
+				</li>	
+			</div>		
+		
+				<li>
+					
+				</li>
+				</br>
+				</br>
+		<li class="buttons" style="float:right;">		
+		<input class="btn"   id="btnImageUploadPopUpClose" type="button" name="Cancel" value="Cancel" style="margin-right: 4px;"/> 		
+		<input class="btn" type="submit" name="imageSave1" id="imageSave1" value="Add Image" style="margin-right: 10px;"/>
+
+				
+			
+
+	</li>
+</ul>
+</form:form>
+</div>
+
+
+</div>
+</div>
+<%--Again Upload VPI Image POPUP Ends--%>
+
+<%--File Upload Render Starts--%>
+
+
+<div id="overlay_Upload" class="web_dialog_overlay"></div>
+<div id="dialog_uploadSuccess" class="web_dialog_imageUploadPopUp" style="height: 140px;">
+ <div id="content">          
+
+	<div class="x-panel-header">
+	Upload Image Status
+	</div>
+	<div class="x-panel-body;border: 0px solid #99bbe8;">
+	
+	                </br>
+					                </br>
+		<ul>
+			<li>				
+				<label style="margin-left:53px;height: 16px;">Image ${imageName} successfully uploaded. </label>
+			</li>
+				
+			</br>
+						
+		<input class="btn"   id="successPopUpClose" type="button"
+		onclick='$("#overlay_Upload").hide();$("#dialog_uploadSuccess").hide();' name="Close" value="Close" style="float: right;" /> 		
+		
+
+	</li>
+</ul>
+
+</div>
+
+<div id="dialog_uploadFailure" class="web_dialog_imageaction">Image not uploaded.
+<br/>
+<br/>
+<input id="button" type="button" value="Close" onclick="dialogHide();"/>
+</div>
+</div>
+</div>
+
+
+<%--File Upload Render Ends--%>
+
+<%--Again Image Action POPUP Starts--%>
+<div id="overlay_ImageAction" class="web_dialog_overlay"></div>
+<div id="dialog_ImageAction" class="web_dialog_imageaction">
+<form id="imageActionForm">
+   <table style="width: 100%; border: 0px;" cellpadding="3" cellspacing="0">
+      <tr>
+         <td class="web_dialog_title">Image Action</td>
+         <td class="web_dialog_title align_right">           
+         </td>
+      </tr>
+      <tr>
+         <td>&nbsp;</td>
+         <td>&nbsp;</td>
+      </tr>
+	  <tr>  
+	 </tr>	 
+      <tr>
+         <td>&nbsp;</td>
+         <td>&nbsp;</td>
+      </tr>	   
+		<tr>
+		
+		<input type="hidden" id="approveOrRejectImgId" name="approveOrRejectImgId" value="" />
+		<input type ="hidden" name="approveOrRejectOrinNum" id="approveOrRejectOrinNum" value="" />
+ 	    <td colspan="2" align="center">    
+            <input id="btnSelectedImageAction" type="button" value="OK" onclick="submitApproveOrRejectAction('${addActionRequest}')"/>  
+            <input id="btnCloseImageAction" type="button" value="Close"/>               
+		 </td>	
+  		 
+       </tr>
+	   <tr>
+          <td>&nbsp;</td>
+         <td>&nbsp;</td>
+      </tr>	  
+<table align="center"  border="1" style="width=60%">  
+  
+<tr>
+    <td  colspan="2" style="padding-left: 15px;">
+	 <input type="radio" name ="radionSelectedIAction" value="Approve" id="radionSelectedIActionID1"/>  
+	</td>
+    <td colspan="2" style="padding-left: 15px;">Approve</td>    
+  </tr>
+<tr>
+    <td  colspan="2" style="padding-left: 15px;">
+	 <input type="radio" name ="radionSelectedIAction" value="Reject" id="radionSelectedIActionID2"/>  
+	</td>
+    <td colspan="2" style="padding-left: 15px;">Reject</td>    
+  </tr>   
+</table>	  
+      <tr>
+         <td>&nbsp;</td>
+         <td>&nbsp;</td>
+      </tr>
+      <tr>
+         
+      </tr>
+   </table> 
+  </form>
+</div>
+<%--Again Image Action POPUP End--%>
+
+
+</div>
+</div>
+</div>
+</div>
+
+
+
+<script>
+//Logic for fileUpload rendering using popup
+var uploadStatus = '${uploadSuccess}';
+  $(function() {
+	  if(uploadStatus=='Y'){	
+		$("#overlay_Upload").show();
+		$("#dialog_uploadSuccess").show();
+	}else if(uploadStatus=='N') {
+		
+		$("#overlay_Upload").show();
+		$("#dialog_uploadFailure").show();
+	}
+    
+});
+function dialogHide(){
+	$("#overlay_Upload").hide();
+	$("#dialog_uploadSuccess").hide();
+}
+</script>

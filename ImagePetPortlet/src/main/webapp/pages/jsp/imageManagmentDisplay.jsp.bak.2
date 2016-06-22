@@ -1,0 +1,545 @@
+<%@ include file="/WEB-INF/pages/jsp/include.jsp" %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<head>
+     <title>WorkFlow Display.</title>
+<script src="<%=request.getContextPath()%>/js/imageManagment.js"></script>
+</head>
+
+<script>
+
+ var pickedup;
+var rowClick;
+ $(document).ready(function() {       
+    $(".tree2 tr").click(function() {  
+	  var selectedOrin = $("#selectedOrinVPI").val(); 
+	   document.getElementById("selectedColorOrinNum").value = selectedOrin;
+
+
+	   selectedOrin = selectedOrin.trim().length;	 
+	  	
+		if(selectedOrin <= 9){
+		return;
+		}else{	
+	       if (pickedup != null) {
+               pickedup.css( "background-color", "" );
+		var tableHeaderRowCount = 1;
+		var table = document.getElementById('vImage');
+		var rowCount = table.rows.length;
+		for (var i = tableHeaderRowCount; i < rowCount; i++) {
+    		table.deleteRow(tableHeaderRowCount);
+		}
+          		     
+            }
+       
+	
+	      $(this).css('background-color','#DCE2EC')
+	      pickedup = $( this );
+	//document.getElementById("btnImageUploadAction").disabled=false;
+	//document.getElementById("image_sample").disabled=false;
+	//document.getElementById("btn_image_swatch").disabled=false;
+	//document.getElementById("btnImageADRequestAction").disabled=false;
+	//document.getElementById("saveImage").disabled=false;
+	
+             var url = $("#ajaxaction").val(); 
+             var selectedOrin = $("#selectedOrinVPI").val();  
+
+
+        
+	         $.ajax({
+		         url: url ,
+		         type: 'GET',
+		         datatype:'json',
+		         data: { selectedColorOrin:selectedOrin },
+			         success: function(data){ 
+
+
+
+			         var json = $.parseJSON(data);  
+
+
+  
+					 $(json).each(function(i,val){  		
+		             if (typeof val.imageID  !== "undefined" && val.imageID){
+
+					 VPISampleImageRows(val.imageID,val.imageName,val.imageLocation,val.shotType ,val.linkStatus,val.imageStatus,
+					 val.sampleId,val.sampleReceived,val.silhouette,val.turnInDate,val.sampleCordinatorNote,val.action,val.role);	
+					}		
+				     });
+
+						     
+				     
+      
+	
+                   }
+        }); 
+ 
+    }
+  });
+})
+
+
+function removeVPISampleImageRows(imageId,rowCount,selectedOrin){
+  var selectedOrin = $("#selectedOrinVPI").val();  
+  var removeImageUrl = $("#removeImageUrl").val();  
+
+
+  var table = document.getElementById("vImage");
+  if(confirm("Are you sure to delete?")){		
+  table.deleteRow(rowCount);
+  
+   $.ajax({
+			type: 'POST',
+			url : removeImageUrl,
+			data: {selectedColorOrin:selectedOrin,imageIDToDel:imageId},			
+			success: function(e,response){				
+				e.preventDefault();				
+				
+			},
+			error:function (xhr, ajaxOptions, thrownError){
+            	//On error, we alert user
+            	var error = $.parseJSON(xhr.responseText);
+               console.log("Severe Service Error::" + thrownError + 
+               "Status Code::" + xhr.status +"error"+ error);
+             }
+
+		}); 
+
+}
+
+
+}
+
+
+
+
+function VPISampleImageRows(imageId,imageName,imageLocation,shotType ,linkStatus,imageStatus,sampleId,sampleReceived,
+silhouette,turnInDate,sampleCordinatorNote,action,role) {
+
+     
+	var table = document.getElementById("vImage");
+	var rowCount = table.rows.length;		
+	var row = table.insertRow(rowCount);
+  	if(role=='vendor'){
+  	//Vendor Login
+	
+	
+   	var cell1 = row.insertCell(0);
+   	cell1.id="imageId";
+   	cell1.name="imageId";	
+	cell1.innerHTML = imageId;
+	
+	var cell2 = row.insertCell(1);
+	cell2.id="imageName";
+   	cell2.name="imageName";
+   	cell2.innerHTML = imageName;
+	
+	var cell3 = row.insertCell(2);
+	cell3.id="imageLocation";
+   	cell3.name="imageLocation";
+   	cell3.innerHTML = imageLocation;
+
+
+	var cell4 = row.insertCell(3);			
+	var selectBox = document.createElement("Select");
+	selectBox.name="shotType ";
+	selectBox.id="shotType ";
+	selectBox.style.width= "43px";	
+	//Creating first Option 
+	if (typeof shotType  !== "undefined" && shotType ){
+	var option1 = document.createElement("OPTION");
+	option1.selected="selected";
+	option1.text=shotType ;
+	option1.value=shotType ;
+	selectBox.options.add(option1);
+	selectBox.options.add(option1);
+	cell4.appendChild(selectBox);	
+	cell4.style.width = 'width:3%;';
+
+	}
+
+	var cell5 = row.insertCell(4);
+	cell5.id="linkStatus";
+    cell5.name="linkStatus";	
+	cell5.innerHTML = linkStatus;
+	
+	var cell6 = row.insertCell(5);
+	cell6.id="imageStatus";
+    cell6.name="imageStatus";
+	cell6.innerHTML = imageStatus;	
+		
+	var cell7 = row.insertCell(6);	
+	var element7 = document.createElement("input");
+	element7.style.fontWeight = 'bold';
+	element7.style.width= "59px";
+
+	element7.type = "button";
+	element7.name="Submit";
+	element7.id="Submit";
+	element7.value="Submit";
+	cell7.appendChild(element7);
+
+		
+	
+	var cell8 = row.insertCell(7);
+	cell8.id="removeVPI";
+	cell8.name="removeVPI";
+	cell8.innerHTML = '<a href="javascript:removeVPISampleImageRows('+imageId+','+rowCount+')">Remove</a>';
+
+	}else{
+	//DCA Login
+ 
+	
+
+   //if(imageStatus !== "Initiated"){
+	
+	var cell1 = row.insertCell(0);
+	cell1.id="imageId";
+   	cell1.name="imageId";	
+	cell1.innerHTML = imageId;	
+	
+	var cell2 = row.insertCell(1);
+	cell2.id="imageName";
+   	cell2.name="imageName";
+   	cell2.innerHTML = imageName;
+	
+	var cell3 = row.insertCell(2);
+	cell3.id="imageLocation";
+   	cell3.name="imageLocation";
+   	cell3.innerHTML = imageLocation;
+	
+
+	var cell4 = row.insertCell(3);			
+	var selectBox = document.createElement("Select")
+	selectBox.name="shotType ";
+	selectBox.id="shotType ";
+	selectBox.style.width= "33px";
+
+	//Creating first Option 
+
+
+	if (typeof shotType  !== "undefined" && shotType ){
+        
+
+	var option1 = document.createElement("OPTION");
+	option1.selected="selected";
+	option1.text=shotType ;
+	option1.value=shotType ;
+	selectBox.options.add(option1);
+	}else{
+	var option1 = document.createElement("OPTION")
+	option1.selected="selected";
+
+	option1.text="A";
+	option1.value="A";
+	selectBox.options.add(option1);
+
+	var option2 =document.createElement("OPTION")
+ 
+	//Creating Second Option
+	option2.text="B";
+	option2.value="B";
+	selectBox.options.add(option2);
+	cell4.appendChild(selectBox);
+	
+	var option3 =document.createElement("OPTION") 
+	//Creating Second Option
+	option3.text="C";
+	option3.value="C";
+	selectBox.options.add(option3);
+	cell4.appendChild(selectBox);	
+	
+	var option4 =document.createElement("OPTION") 
+	//Creating Second Option
+	option4.text="D";
+	option4.value="D";
+	selectBox.options.add(option4);	
+	cell4.appendChild(selectBox);
+	
+	var option5 =document.createElement("OPTION") 
+	//Creating Second Option
+	option5.text="E";
+	option5.value="E";
+	selectBox.options.add(option5);	
+	cell4.appendChild(selectBox);
+	
+	var option6 =document.createElement("OPTION") 
+	//Creating Second Option
+	option6.text="F";
+	option6.value="F";
+	selectBox.options.add(option6);	
+	cell4.appendChild(selectBox);
+	
+	var option7 =document.createElement("OPTION") 
+	//Creating Second Option
+	option7.text="G";
+	option7.value="G";
+	selectBox.options.add(option7);	
+	cell4.appendChild(selectBox);
+	
+	var option8 =document.createElement("OPTION") 
+	//Creating Second Option
+	option8.text="H";
+	option8.value="H";
+	selectBox.options.add(option8);	
+	cell4.appendChild(selectBox);
+
+	var option9 =document.createElement("OPTION") 
+	//Creating Second Option
+	option9.text="I";
+	option9.value="I";
+	selectBox.options.add(option9);	
+
+	
+	var option10 =document.createElement("OPTION") 
+	//Creating Second Option
+	option10.text="SW";
+	option10.value="SW";
+	selectBox.options.add(option10);	
+	cell4.appendChild(selectBox);
+
+
+	}
+		
+
+	
+	var cell5 = row.insertCell(4);
+	cell5.id="imageStatus";
+   	cell5.name="imageStatus";
+	cell5.innerHTML = imageStatus;
+	
+	
+	var cell6 = row.insertCell(5);
+	cell6.id="sampleId";
+   	cell6.name="sampleId";
+   	cell6.innerHTML = sampleId;	
+	
+	var cell7 = row.insertCell(6);
+	var element8 = document.createElement("input");
+	element8 .style.width= "10px";
+
+	element8.type = "checkbox";
+	element8.name="sampleReceived";
+	element8.id="sampleReceived";
+	//cell8.innerHTML = sampleReceived;
+	cell7.appendChild(element8);
+
+	var cell8 = row.insertCell(7);
+	var element9 = document.createElement("input");
+	element9.type = "checkbox";
+	element9.name="silhouette";
+	element9.id="silhouette";
+	//cell9.innerHTML = silhouette;
+	cell8.appendChild(element9);	
+
+
+	var cell9 = row.insertCell(8);	
+	var element10 = document.createElement("input");
+	element10.disabled=true;
+	element10.style.width= "40px";
+	//element10.type = "text";	
+	element10.id="turnInDate";			
+	element10.name = "turnInDate";
+	//cell10.innerHTML = turnInDate;
+	cell9.appendChild(element10);
+	
+	
+	var cell10 = row.insertCell(9);	
+	
+	var element11 = document.createElement("input");
+	element11.disabled=true;
+
+	element11.style.fontWeight = 'bold';
+	element11.style.width= "60px";
+	element11.type = "button";
+	element11.name="sampleCordinatorNote";
+	element11.id="sampleCordinatorNote";
+	element11.value="Add Note";
+	element11.onclick = function(){
+	//SampleCoordinatorNotePopUp(false);
+	//sampleSwatchNote();
+	return false;
+	};			
+	cell10.appendChild(element11);
+
+	var cell11 = row.insertCell(10);	
+	
+	var element12 = document.createElement("input");
+	//element12.disabled=true;
+
+	element12.style.fontWeight = 'bold';
+	element12.style.width= "60px";
+	element12.type = "button";
+	element12.name="Submit";
+	element12.id="Submit";
+	element12.value="Submit";
+	element12.onclick = function(){
+	//SampleCoordinatorNotePopUp(false);
+	//sampleSwatchNote();
+	return false;
+	};
+
+
+	cell11.appendChild(element12);
+
+
+
+	if(imageStatus  === "Approve"){
+	
+	var cell12 = row.insertCell(11);	
+	var element13 = document.createElement("input");
+	element13.disabled=true;
+	element13.style.fontWeight = 'bold';
+	element13.style.width= "59px";
+	element13.type = "button";
+	element13.name="Reject";
+	element13.value="Reject";
+	element13.onclick = function(){
+	 ShowImageAction(false,imageId);
+	return false;
+	};		
+
+	}else{
+	var cell12 = row.insertCell(11);	
+	var element13 = document.createElement("input");	
+	element13.style.fontWeight = 'bold';
+	element13.style.width= "59px";
+	element13.type = "button";
+	element13.name="Reject";
+	element13.value="Reject";
+	element13.onclick = function(){
+	 ShowImageAction(false,imageId);
+	return false;
+	};	
+}
+   cell12.appendChild(element13);	
+		
+	var cell13 = row.insertCell(12);
+	cell13.innerHTML = '<a href="javascript:removeVPISampleImageRows('+imageId+','+rowCount+')">Remove</a>';
+    // }
+
+    }
+			   
+}
+
+
+function setUploadVPILink(url,orin,removeImageUrl,supplierId ){
+
+	document.getElementById("ajaxaction").value=url;
+	document.getElementById("selectedOrinVPI").value=orin;
+	document.getElementById("removeImageUrl").value=removeImageUrl;	
+
+}
+</script>
+<portlet:defineObjects />
+<fmt:setBundle basename="imagePortletResources" />
+
+<input type="hidden" id="ajaxaction" name="ajaxaction" value=""></input>
+<input type="hidden" id="selectedOrinVPI" name="selectedOrinVPI" value=""></input>
+<input type="hidden" id="removeImageUrl" name="removeImageUrl" value=""></input>
+		
+
+<form:form commandName="workflowForm" method="post" action="${formAction}" name="workListDisplayForm" id="workListDisplayForm">
+      
+		<div  class="cars_panel x-hidden" >
+		<div class="x-panel-header">
+		<fmt:message key="label.imageManagement.header"/>				
+		</div> 			
+				<div class="x-panel-body" id="petTable" name="petTable">			
+				<div class="scrollbarset">
+				<table  cellpadding="0"  class="table tree2 table-bordered table-striped table-condensed" id="petTable" name="petTable"  >
+				<thead >
+				<tr>
+			<th></th>
+
+				
+				<th><fmt:message key="label.imageManagement.orionGrouping"/></th>
+									<th><fmt:message key="label.imageManagement.styleNumber"/></th>
+									<th><fmt:message key="label.imageManagement.color"/></th>																
+									<th><fmt:message key="label.imageManagement.imageStatus"/></th>
+									<th><fmt:message key="label.imageManagement.completionDate"/></th>	</tr>
+				</thead>
+				<tbody >
+				<!-- Table Grid logic Start -->
+						<c:set var="subcount" value="260" />
+						<c:set var="countList" value="0" />
+						<c:if test="${workflowForm.petNotFound ne null}"><tr><td colspan="9"><c:out value="${workflowForm.petNotFound}"/></td></tr> </c:if>
+						<c:forEach items="${workflowForm.workFlowlist}" var="workFlow"
+							varStatus="status">
+							<portlet:resourceURL var="getUploadVPIDetails" id ="getUploadVPIDetails">							
+							</portlet:resourceURL>
+							<portlet:resourceURL var="removeSampleImageUrl" id ="removeSampleImageUrl">								
+							</portlet:resourceURL>
+							
+
+							
+								<tr name="tablereport" class="treegrid-${countList}"  onclick="setUploadVPILink('${getUploadVPIDetails}','<c:out value="${workFlow.orinNumber}" />','${removeSampleImageUrl}')">
+								<td align="center"></td>
+								<td><c:out value="${workFlow.orinNumber}" />
+								
+								</td>								
+								<td><c:out value="${workFlow.vendorStyle}" />
+								</td>								
+								<td><c:out value="${workFlow.vendorColorCode}" />
+								<c:out value="${workFlow.colorDes}" />
+								</td>
+								
+							
+									<td>
+									<c:out value="${workFlow.imageStatus}" />
+									</td>
+								<td><c:out value="${workFlow.completionDate}" />
+								</td>
+							</tr>
+						
+						<c:forEach items="${workFlow.styleColor}" var="style"
+								varStatus="Stylestatus">
+								<c:set var="subcount" value="${subcount + Stylestatus.count }" />
+									<portlet:resourceURL var="getUploadVPIDetails" id ="getUploadVPIDetails">							
+							        </portlet:resourceURL>
+							        <portlet:resourceURL var="removeSampleImageUrl" id ="removeSampleImageUrl">								
+									</portlet:resourceURL>
+								
+								<tr name="treegrid2"
+									
+
+									class="treegrid-${subcount} treegrid-parent-${countList}"  onclick="setUploadVPILink('${getUploadVPIDetails}','<c:out value="${style.orinNumber}" />','${removeSampleImageUrl}')">
+
+									<td><input type="hidden" name="supplierId" id="supplierId" value="<c:out value="${style.supplierID}" />"/></td>
+									<td><c:out value="${style.orinNumber}" /></td>
+									<input type="hidden" name="vendorStyle" id="vendorStyle" value="<c:out value="${style.vendorStyle}" />" />
+									<input type="hidden" name="vendorColorCode" id="vendorColorCode" value="<c:out value="${style.vendorColorCode}" />" />
+
+
+
+									
+									<td><c:out value="${style.vendorStyle}" />
+									</td>
+									
+								    <td><c:out value="${style.vendorColorCode}" />
+								     <c:out value="${style.vendorColorDesc}" />
+								   									
+									<td>
+									<c:out value="${style.imageStatus}" />
+									</td>
+									<td><c:out value="${style.completionDate}" />
+
+									</td>
+								</tr>
+						
+			
+							</c:forEach>
+							<c:set var="countList" value="${countList+1}" />
+						</c:forEach>      
+				<!--  Table Grid Login End -->	       
+				</tbody>
+				</table>
+				</div>
+			
+			</div><div id="tableEnd"></div>
+			
+		</div>
+		
+	</form:form>
+
+		
+
