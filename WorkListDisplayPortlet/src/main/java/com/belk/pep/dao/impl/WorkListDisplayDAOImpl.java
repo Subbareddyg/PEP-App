@@ -2059,7 +2059,7 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
                    petContentState = (null == petContentState ? "" : petContentState);
                    
                    style.setIsChildPresent("N");
-                   LOGGER.info("existsInGroup " + existsInGroup);
+                   //LOGGER.info("existsInGroup " + existsInGroup);
                    style.setExistsInGroup(existsInGroup);
                    style.setCFAS(cfas);
                    
@@ -2755,7 +2755,7 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
                             workFlow.setCompletionDate(completionDate);
                         }
                         workFlow.setIsGroup(WorkListDisplayConstants.YES_Y);
-                        if (LOGGER.isDebugEnabled()) {
+                        /*if (LOGGER.isDebugEnabled()) {
                             LOGGER
                                 .debug("Grouping Attribute Values -- \nGROUP ID: "
                                     + workFlow.getOrinNumber()
@@ -2779,7 +2779,7 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
                                     + workFlow.getVendorName()
                                     + "\nCHILD GROUP : "
                                     + workFlow.getIsChildPresent());
-                        }
+                        }*/
 
                         workFlowList.add(workFlow);
 

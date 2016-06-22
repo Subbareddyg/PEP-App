@@ -61,7 +61,7 @@ import com.belk.pep.util.PropertiesFileLoader;
 public class WorkListDisplayController implements Controller,EventAwareController,ResourceAwareController {
     
     /** The Constant LOGGER. */
-    private final static Logger LOGGER = Logger.getLogger(WorkListDisplayDelegate.class.getName());
+    private final static Logger LOGGER = Logger.getLogger(WorkListDisplayController.class.getName());
     
     /** The work list display delegate. */
     private WorkListDisplayDelegate workListDisplayDelegate;
@@ -164,6 +164,23 @@ public class WorkListDisplayController implements Controller,EventAwareControlle
             LOGGER.info(" handleActionRequest sessionDataKey ---------------------------------------------------------------- "+sessionDataKey);
             LOGGER.info(" handleActionRequest custuser ---------------------------------------------------------------- "+custuser);
             
+/** Changes to populate ContentPetDetails object for IPC
+             * @author AFUSKJ2 6/17/2016
+             * **/
+            /** Changes Starts **/
+            /*LOGGER.info("Search result radio:------- "+request.getParameter("groupingType"));
+            LOGGER.info("Grouping ID:------- "+request.getParameter("groupingID"));
+            LOGGER.info("Grouping Name:------- "+request.getParameter("groupingName"));*/
+            //String searchResult = "";
+            //String groupingType = (String)request.getParameter("groupingType");
+            //String groupID = (String)request.getParameter("selectedOrin");
+            /*String groupName = (String)request.getParameter("groupingName");
+            
+            if(StringUtils.isNotBlank(groupingType) &&(StringUtils.isNotBlank(groupID) || StringUtils.isNotBlank(groupName))){
+                searchResult = "groupingContent";
+            }*/
+            /** Changes ends**/
+            
             //IPC from worklist display portlet to image pet portlet
             if((request.getParameter("imageStatus")!=null && !request.getParameter("imageStatus").isEmpty()) &&
                     (request.getParameter("petStatus")!=null && !request.getParameter("petStatus").isEmpty()) && custuser!=null)
@@ -220,7 +237,25 @@ public class WorkListDisplayController implements Controller,EventAwareControlle
                 }
             } 
             LOGGER.info("custuser content  pepUserId  ****************"+pepUserId);
-             workListDisplayDelegate.lockPET(request.getParameter("selectedOrin"), pepUserId,petOrigin);
+           /**
+             * Conditions to lock Group ID/ PET
+             * @author AFUSKJ2 6/17/2016 
+             */
+            /** Change starts */
+            /*if(WorkListDisplayConstants.ADV_SEARCH_INCLUDE_GROUPINGS.equals(request.getParameter("searchResultInput"))
+                    &&(StringUtils.isNotBlank(groupID) || StringUtils.isNotBlank(groupName))){
+            	if(LOGGER.isDebugEnabled()){
+            		LOGGER.debug("groupID-->"+ groupID + "pepUserId-->"+ pepUserId + "petOrigin-->"+ petOrigin );
+            	}
+                workListDisplayDelegate.lockPET(groupID, pepUserId,petOrigin);
+            }else{*/
+            if(LOGGER.isDebugEnabled()){
+         	   LOGGER.debug("selected orin number::: "+request.getParameter("selectedOrin"));
+            }
+                workListDisplayDelegate.lockPET(request.getParameter("selectedOrin"), pepUserId,petOrigin);
+           // }
+            
+            /** Change ends **/
              //code for Inserting PET lock START
              LOGGER.info("selectedOrin image  update  ****************"+request.getParameter("selectedOrin"));
             

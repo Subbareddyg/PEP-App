@@ -108,6 +108,9 @@ lockClearOnBack.value='1';
 	<input type="hidden" id="username" name="username" value="<c:out value='${workflowForm.pepUserID}'/>" />
 	<input type="hidden" id="imageStatus" name="imageStatus" value=""/>
 	<input type="hidden" id="contentStatus" name="contentStatus" value=""/>
+	<input type="hidden" id="selectedGroupId" name="selectedGroupId" value=""/>
+	<input type="hidden" id="groupingType" name="groupingType" value=""/>
+	<input type="hidden" id="searchResultInput" name="searchResultInput" value="${workflowForm.advanceSearch.searchResults}"/>
     <input type="hidden" id="selectedOrin" name="selectedOrin" value=""/>
     
     <input type="hidden" id="stylepetstatid" name="stylepetstatid" value=""/>
@@ -406,10 +409,10 @@ lockClearOnBack.value='1';
 											   
 												<c:choose>									    
 													<c:when test="${workflowForm.roleEditable =='yes' && workFlow.vendorStyle != 'Split SKU Grouping' && workFlow.vendorStyle != 'Split Color Grouping'}" >										
-													  <a href="#" onclick="contentStatus('<c:out value="${workFlow.contentStatus}"/>','<c:out value="${workFlow.orinNumber}"/>')"><c:out value="${workFlow.contentStatus}"/></a>
+													  <a href="#" onclick="contentStatus('<c:out value="${workFlow.contentStatus}"/>','<c:out value="${workFlow.orinNumber}"/>','<c:out value="${workFlow.vendorStyle}"/>')"><c:out value="${workFlow.contentStatus}"/></a>
 													</c:when>
 													<c:when test="${workflowForm.readOnlyUser =='yes' && workFlow.vendorStyle != 'Split SKU Grouping' && workFlow.vendorStyle != 'Split Color Grouping'}" >	
-													   <a href="#" onclick="contentStatus('<c:out value="${workFlow.contentStatus}"/>','<c:out value="${workFlow.orinNumber}"/>')"><c:out value="${workFlow.contentStatus}"/></a>
+													   <a href="#" onclick="contentStatus('<c:out value="${workFlow.contentStatus}"/>','<c:out value="${workFlow.orinNumber}"/>','<c:out value="${workFlow.vendorStyle}"/>')"><c:out value="${workFlow.contentStatus}"/></a>
 													</c:when>
 													<c:otherwise>
 													   <c:out value="${workFlow.contentStatus}" />
@@ -1127,11 +1130,11 @@ lockClearOnBack.value='1';
 		
 		
 		<!----- -->
-		<div id="#CMP_SEC2" style="display: #SEC2_STYLE_STATUS;" class="readonly-cc-date-{{=chldOrinNo}}">
+		<!-- <div id="#CMP_SEC2" style="display: #SEC2_STYLE_STATUS;" class="readonly-cc-date-{{=chldOrinNo}}">
 		<input type="hidden" id="tbCompletionDate{{=random_subcount}}" name="tbCompletionDate{{=random_subcount}}"
 		value='{{=item.completionDate}}' class ='{{=orinNum}}_child '/>
 			{{=item.completionDate}}
-		</div>
+		</div> -->
 		</td>
 		<td>{{=item.petSourceType}}</td>
 		<!-- <td style="display: none;">#TD_PET_STATUS</td> -->
