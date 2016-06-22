@@ -120,12 +120,12 @@
 					<tr>
 						<th width="15%"><a href="javascript:;" class="sortable" data-sort-column="groupId" data-sorted-by=""><b><fmt:message key="group.screen.level.table.header1" /></b></a></th>
 						<th width="20%"><a href="javascript:;" class="sortable" data-sort-column="groupName" data-sorted-by=""><b><fmt:message key="group.screen.level.table.header2" /></b></a></th>
-						<th width="15%"><a href="javascript:;" class="sortable" data-sort-column="groupType" data-sorted-by=""><b><fmt:message key="group.screen.level.table.header3" /></b></a></th>
-						<th width="5%"><a href="javascript:;" class="sortable" data-sort-column="imageStatus" data-sorted-by=""><b><fmt:message key="group.screen.level.table.header4" /></b></a></th>
-						<th width="5%"><a href="javascript:;" class="sortable" data-sort-column="contentStatus" data-sorted-by=""><b><fmt:message key="group.screen.level.table.header5" /></b></a></th>
-						<th width="10%"><a href="javascript:;" class="sortable" data-sort-column="startDate" data-sorted-by=""><b><fmt:message key="group.screen.level.table.header6" /></b></a></th>
-						<th width="10%"><a href="javascript:;" class="sortable" data-sort-column="endDate" data-sorted-by=""><b><fmt:message key="group.screen.level.table.header7" /></b></a></th>
-						<th width="15%">&nbsp;</th>
+						<th width="19%"><a href="javascript:;" class="sortable" data-sort-column="groupType" data-sorted-by=""><b><fmt:message key="group.screen.level.table.header3" /></b></a></th>
+						<th width="7%"><a href="javascript:;" class="sortable" data-sort-column="imageStatus" data-sorted-by=""><b><fmt:message key="group.screen.level.table.header4" /></b></a></th>
+						<th width="7%"><a href="javascript:;" class="sortable" data-sort-column="contentStatus" data-sorted-by=""><b><fmt:message key="group.screen.level.table.header5" /></b></a></th>
+						<th width="9%"><a href="javascript:;" class="sortable" data-sort-column="startDate" data-sorted-by=""><b><fmt:message key="group.screen.level.table.header6" /></b></a></th>
+						<th width="8%"><a href="javascript:;" class="sortable" data-sort-column="endDate" data-sorted-by=""><b><fmt:message key="group.screen.level.table.header7" /></b></a></th>
+						<th width="10%">&nbsp;</th>
 					</tr>
 				</thead>
 				<tbody id="row-container"><tr><td colspan="8" align="center"><strong>No record Found!</strong></td></tr></tbody>

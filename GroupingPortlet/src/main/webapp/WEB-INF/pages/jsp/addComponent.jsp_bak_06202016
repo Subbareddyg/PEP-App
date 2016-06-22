@@ -194,15 +194,6 @@
 				<c:when test="${groupDetailsForm.groupType == 'SSG'}">
 				  <%@ include file="/WEB-INF/pages/jsp/splitSKUTemplate.jsp" %>
 				</c:when>
-				<c:when test="${groupDetailsForm.groupType == 'GSG'}">
-				  <%@ include file="/WEB-INF/pages/jsp/GSGTemplate.jsp" %>
-				</c:when>
-				<c:when test="${groupDetailsForm.groupType == 'RCG'}">
-				  <%@ include file="/WEB-INF/pages/jsp/RCGTemplate.jsp" %>
-				</c:when>
-				<c:when test="${groupDetailsForm.groupType == 'BCG'}">
-				  <%@ include file="/WEB-INF/pages/jsp/BCGTemplate.jsp" %>
-				</c:when>
 			</c:choose>			
 			<div class="pagination-container">
 				<div class="pagination-left">
@@ -267,20 +258,11 @@
 				<c:when test="${groupDetailsForm.groupType == 'SSG'}">
 				 <%@ include file="/WEB-INF/pages/jsp/splitSKUExisting.jsp" %>
 				</c:when>
-				<c:when test="${groupDetailsForm.groupType == 'GSG'}">
-				 <%@ include file="/WEB-INF/pages/jsp/GSGExisting.jsp" %>
-				</c:when>
-				<c:when test="${groupDetailsForm.groupType == 'RCG'}">
-				  <%@ include file="/WEB-INF/pages/jsp/RCGExisting.jsp" %>
-				</c:when>
-				<c:when test="${groupDetailsForm.groupType == 'BCG'}">
-				  <%@ include file="/WEB-INF/pages/jsp/BCGExisting.jsp" %>
-				</c:when>
 			</c:choose>
 			<div class="pagination-container">
 				<div class="pagination-left">
 					<div class="pagination-left-wrapper hide_after_error">
-						<input type="button" class="btn" value="Remove Component" id="remove-existing-component" disabled="disabled" /> 
+						<input type="button" class="btn" value="Remove Component" style="width: 140px; opacity:0.5" id="remove-existing-group" disabled="disabled" /> 
 					</div>
 				</div>
 				<div class="pagination-right">
@@ -309,8 +291,7 @@
 <portlet:resourceURL id="addComponentToGroup" var="addComponentToGroupURL" />
 <portlet:resourceURL var="searchGroupResourceRequest"></portlet:resourceURL>
 <portlet:resourceURL id="saveEditedGroup" var="editGroupURL" />
-<portlet:resourceURL id="setDefaultColor" var="defaultValueResourceRequest" />
-<portlet:resourceURL id="removeComponent" var="removeComponentURL" />
+<portlet:resourceURL var="defaultValueResourceRequest" />
 
 
 <!-- Department Search Result Row Template starts -->
@@ -440,7 +421,6 @@
 	app.URLFactory.urlCollection.addComponentToGroup = "${addComponentToGroupURL}";
 	app.URLFactory.urlCollection.groupSearchUrl = "${searchGroupResourceRequest}";
 	app.URLFactory.urlCollection.editDefaultComponentUrl = "${defaultValueResourceRequest}";
-	app.URLFactory.urlCollection.removeComponentURL = "${removeComponentURL}";
 	
 	app.URLFactory.urlCollection.saveHeader = "${editGroupURL}";
 	//init main SPA

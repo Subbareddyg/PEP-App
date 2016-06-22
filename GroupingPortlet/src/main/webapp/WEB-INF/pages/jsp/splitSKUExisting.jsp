@@ -1,5 +1,5 @@
 <form name="existingComponentForm" id="existingComponentForm">
-			<input type="hidden" name="selectedItems" value="" >
+			<input type="hidden" name="componentList" value="" id="existingSeletedItems" >
 			<table cellpadding="0" cellspacing="0" border="1" class="content-table border-simple colored-row tree-grid">
 				<thead>
 					<tr>
@@ -28,12 +28,12 @@
 			<td class="text-center">{{=row.colorCode}}</td>
 			<td class="text-center">{{=row.colorName}}</td>
 			<td class="text-center">{{=row.size}}</td>
-			<td class="text-center"><input type="radio" name="defaultColor" value="{{row.colorCode}}_{{=row.size}}" {{ if(row.defaultColor == 'true'){ }} checked="checked" class="trueDefult" {{ }else{ }} disabled="disabled" {{ } }} /></td>			
+			<td class="text-center"><input type="radio" name="defaultColor" value="{{row.colorCode}}_{{=row.size}}" {{=row.defaultColor == 'true' ? 'checked="checked"' : ''}} /></td>			
 		</tr>
 	{{ }) }}	
 {{ }else{ }}
 	<tr>
-		<td colspan="10" align="center"><strong>{{=dataHeader.message ? dataHeader.message : 'No record Found!'}}</strong></td>
+		<td colspan="8" align="center"><strong>{{=dataHeader.message ? dataHeader.message : 'No record Found!'}}</strong></td>
 	</tr>
 {{ } }}
 </script>

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.belk.pep.dto.GroupSearchDTO;
@@ -746,10 +747,62 @@ public class XqueryConstants {
 				+"	1=1                                                       "
 				+"	AND PET.MDMID=ITEM.MDMID                                  "
 				+"	AND ITEM.MDMID like CONCAT(DETAIL.COMPONENT_MDMID,'%')    "
-				+"	AND DETAIL.MDMID=:groupidSql         ";
+				+"	AND DETAIL.MDMID=:groupidSql ORDER BY ITEM.ENTRY_TYPE         ";
 
 
 		return getExistCPGDetails;
+	}
+	
+
+
+	/** This method is used to get the Existing Group Attribute Details for Group By Size Grouping.
+	 * 
+	 * @return String */
+	public static  final String getExistGBSDetails() {
+		String getExistGBSDetails = 		"	Select                           "
+				+"		DETAIL.COMPONENT_MDMID, DETAIL.COMPONENT_DEFAULT,        "
+				+"		ITEM.MDMID,  ITEM.PARENT_MDMID, PET.ENTRY_TYPE,          "                                                          
+				+"		ITEM.PRIMARYSUPPLIERVPN,                                 "                                          
+				+"		ITEM_XML.NAME,                                           "                                          
+				+"		ITEM_XML.COLOR_CODE,                                     "                                          
+				+"		ITEM_XML.COLOR_NAME,                                     "                                          
+				+"		ITEM_XML.SIZEDESC, ITEM_XML.SIZE_CODE,                   "                                          
+				+"		PET.EXIST_IN_GROUP ALREADY_IN_GROUP, PET.PET_STATE       "                          
+				+"		FROM                                                     "                                          
+				+"		ADSE_ITEM_CATALOG ITEM,                                  "                                          
+				+"		ADSE_PET_CATALOG PET,                                    "
+				+"	ADSE_GROUP_CHILD_MAPPING DETAIL,                             "
+				+"		XMLTABLE('let                                            "                                          
+				+"		$colorcode:=/pim_entry/entry/Item_SKU_Spec/Differentiators[Type eq \"COLOR\"]/Code,                "  
+				+"		$colorname:=/pim_entry/entry/Item_SKU_Spec/Differentiators[Type eq \"COLOR\"]/Vendor_Description,  "  
+				+"		$size:=/pim_entry/entry/Item_SKU_Spec/Differentiators[Type eq \"SIZE\"]/Vendor_Description,        "  
+				+"		$sizeCode:=/pim_entry/entry/Item_SKU_Spec/Differentiators[Type eq \"SIZE\"]/Code,                  "
+				+"		$name:=/pim_entry/entry/Item_Ctg_Spec/Description/Short    "                                        
+				+"		return                                                     "                                        
+				+"		    <SPEC>                                                 "                                        
+				+"		        <COLOR_CODE>{$colorcode}</COLOR_CODE>              "                                        
+				+"		        <COLOR_NAME>{$colorname}</COLOR_NAME>              "                                        
+				+"		        <SIZE>{$size}</SIZE>                               "                                        
+				+"		        <SIZE_CODE>{$sizeCode}</SIZE_CODE>                 "                                                      
+				+"		        <NAME>{$name}</NAME>                               "                                        
+				+"		    </SPEC>'                                               "                                        
+				+"		passing ITEM.XML_DATA                                      "                                        
+				+"		Columns                                                    "                                        
+				+"		    COLOR_CODE VARCHAR2(5) path '/SPEC/COLOR_CODE',        "                                        
+				+"		    COLOR_NAME VARCHAR2(20) path '/SPEC/COLOR_NAME',       "                                        
+				+"		    SIZEDESC VARCHAR2(20) path '/SPEC/SIZE',               "                                        
+				+"		    SIZE_CODE VARCHAR2(20) path '/SPEC/SIZE_CODE',         "                                        
+				+"		    NAME VARCHAR2(50) path '/SPEC/NAME') ITEM_XML          "                                        
+				+"		WHERE                                                      "
+				+"	  1=1                                                          "           
+				+"	  AND PET.MDMID = ITEM.MDMID                                   "
+				+"	  AND ITEM.ENTRY_TYPE in ('SKU')                               "
+				+"	  AND (NVL(ITEM.PARENT_MDMID,ITEM.MDMID) = DETAIL.COMPONENT_MDMID)                    "           
+				+"	  AND DETAIL.MDMID =:groupidSql     ";
+				//+"	  ORDER BY ITEM.PARENT_MDMID     ";
+
+
+		return getExistGBSDetails;
 	}
 
 	/** This method is used to get the New Search Group Attribute Details for Consolidate Product Grouping.
@@ -818,6 +871,641 @@ public class XqueryConstants {
 
 
 		return getNewCPGDetails;
+	}
+
+	/** This method is used to get the SKU Count for a Style Orin.
+	 * @return String 
+	 **/
+	public static  final String getSKUCount(final String vendorStyleNo, final String styleOrin, final String deptNoForInSearch, 
+			final String classNoForInSearch,	final String supplierSiteIdSearch, final String upcNoSearch, 
+			final String deptNoSearch, final String classNoSearch) {
+		String getNewGBSDetails = "	Select                                                                                 "
+				+"		COUNT(ITEM.PARENT_MDMID) COUNT, ITEM.PARENT_MDMID                                                  "                 
+				+"		FROM ADSE_ITEM_CATALOG ITEM,                                                                       " 
+				+"		ADSE_PET_CATALOG PET                                                                               " 
+				+"		WHERE                                                                                              " 
+				+"		    ITEM.ENTRY_TYPE in ('SKU')                                                                     "
+				+"		    AND ITEM.DELETED_FLAG= 'false'                                                                 " 
+				+"		    AND PET.MDMID=ITEM.MDMID                                                                       ";
+		
+				if (null != vendorStyleNo && !("").equals(vendorStyleNo.trim())) {
+					getNewGBSDetails = getNewGBSDetails + " AND ITEM.PRIMARYSUPPLIERVPN =:styleIdSql ";
+				} 
+				if (null != styleOrin && !("").equals(styleOrin.trim())) {
+					getNewGBSDetails = getNewGBSDetails + " AND NVL(ITEM.PARENT_MDMID,ITEM.MDMID) =:mdmidSql ";
+				}
+				if (null != deptNoSearch && !("").equals(deptNoSearch.trim())) {
+					getNewGBSDetails = getNewGBSDetails + " AND ITEM.DEPT_ID IN (" + deptNoForInSearch + ")";
+				}
+				if (null != classNoSearch && !("").equals(classNoSearch.trim())) {
+					getNewGBSDetails = getNewGBSDetails + " AND ITEM.CLASS_ID IN (" + classNoForInSearch + ")";
+				}
+				if (null != supplierSiteIdSearch && !("").equals(supplierSiteIdSearch.trim())) {
+					getNewGBSDetails = getNewGBSDetails + " AND ITEM.PRIMARY_SUPPLIER_ID =:supplierIdSql ";
+				}
+				if (null != upcNoSearch && !("").equals(upcNoSearch.trim())) {
+					getNewGBSDetails = getNewGBSDetails + " AND NVL(ITEM.PARENT_MDMID,ITEM.MDMID)  = " +
+							"(SELECT PARENT_MDMID FROM ADSE_ITEM_CATALOG WHERE NUMBER_04 =:upcNoSql)";
+				}
+				getNewGBSDetails = getNewGBSDetails + " group by ITEM.PARENT_MDMID having COUNT(ITEM.PARENT_MDMID) > 1";
+				//getNewGBSDetails = getNewGBSDetails + " ORDER BY ITEM.PARENT_MDMID";
+
+		return getNewGBSDetails;
+	}
+
+	/** This method is used to get the New Search Group Attribute Details for GBS Grouping.
+	 * @return String 
+	 **/
+	public static  final String getNewGBSDetails(final String vendorStyleNo, final String styleOrin, final String deptNoForInSearch, 
+			final String classNoForInSearch,	final String supplierSiteIdSearch, final String upcNoSearch, 
+			final String deptNoSearch, final String classNoSearch) {
+		String getNewGBSDetails = "	Select                                                                                 "
+				+"		ITEM.MDMID,  ITEM.PARENT_MDMID, PET.ENTRY_TYPE,                                                    "                 
+				+"		ITEM.PRIMARYSUPPLIERVPN,                                                                           " 
+				+"		ITEM_XML.NAME,                                                                                     " 
+				+"		ITEM_XML.COLOR_CODE,                                                                               " 
+				+"		ITEM_XML.COLOR_NAME,                                                                               " 
+				+"		ITEM_XML.SIZEDESC, ITEM_XML.SIZE_CODE,                                                             " 
+				+"		PET.EXIST_IN_GROUP ALREADY_IN_GROUP, PET.PET_STATE,                                                 "
+				+"		CASE WHEN AGCM.MDMID is NULL THEN 'N'                                                 "
+				+"		ELSE 'Y' END EXIST_IN_SAME_GROUP                                                 "
+				+"		FROM                                                                                               " 
+				+"		ADSE_ITEM_CATALOG ITEM                                                                            " 
+				+"		LEFT  OUTER JOIN ADSE_GROUP_CHILD_MAPPING AGCM                                                     "
+				+"		ON ITEM.PARENT_MDMID =AGCM.COMPONENT_STYLE_ID                                                                    "
+				+"		AND AGCM.MDMID = :groupIdSql ,                                                                            "
+				+"		ADSE_PET_CATALOG PET,                                                                              "  
+				+"		XMLTABLE('let                                                                                      " 
+				+"		$colorcode:=/pim_entry/entry/Item_SKU_Spec/Differentiators[Type eq \"COLOR\"]/Code,                  " 
+				+"		$colorname:=/pim_entry/entry/Item_SKU_Spec/Differentiators[Type eq \"COLOR\"]/Vendor_Description,    " 
+				+"		$size:=/pim_entry/entry/Item_SKU_Spec/Differentiators[Type eq \"SIZE\"]/Vendor_Description,          " 
+				+"		$sizeCode:=/pim_entry/entry/Item_SKU_Spec/Differentiators[Type eq \"SIZE\"]/Code,                    "
+				+"		$name:=/pim_entry/entry/Item_Ctg_Spec/Description/Short                                            " 
+				+"		return                                                                                             " 
+				+"		    <SPEC>                                                                                         " 
+				+"		        <COLOR_CODE>{$colorcode}</COLOR_CODE>                                                      " 
+				+"		        <COLOR_NAME>{$colorname}</COLOR_NAME>                                                      " 
+				+"		        <SIZE>{$size}</SIZE>                                                                       " 
+				+"		        <SIZE_CODE>{$sizeCode}</SIZE_CODE>                                                         "               
+				+"		        <NAME>{$name}</NAME>                                                                       " 
+				+"		    </SPEC>'                                                                                       " 
+				+"		passing ITEM.XML_DATA                                                                              " 
+				+"		Columns                                                                                            " 
+				+"		    COLOR_CODE VARCHAR2(5) path '/SPEC/COLOR_CODE',                                                " 
+				+"		    COLOR_NAME VARCHAR2(20) path '/SPEC/COLOR_NAME',                                               " 
+				+"		    SIZEDESC VARCHAR2(20) path '/SPEC/SIZE',                                                       " 
+				+"		    SIZE_CODE VARCHAR2(20) path '/SPEC/SIZE_CODE',                                                 " 
+				+"		    NAME VARCHAR2(50) path '/SPEC/NAME') ITEM_XML                                                  " 
+				+"		WHERE                                                                                              " 
+				+"		    ITEM.ENTRY_TYPE in ('SKU')                                                                     "
+				+"		    AND ITEM.DELETED_FLAG= 'false'                                                                 " 
+				+"		    AND PET.MDMID=ITEM.MDMID                                                                       ";
+		
+				if (null != vendorStyleNo && !("").equals(vendorStyleNo.trim())) {
+					getNewGBSDetails = getNewGBSDetails + " AND ITEM.PRIMARYSUPPLIERVPN =:styleIdSql ";
+				} 
+				if (null != styleOrin && !("").equals(styleOrin.trim())) {
+					getNewGBSDetails = getNewGBSDetails + " AND NVL(ITEM.PARENT_MDMID,ITEM.MDMID) =:mdmidSql ";
+				}
+				if (null != deptNoSearch && !("").equals(deptNoSearch.trim())) {
+					getNewGBSDetails = getNewGBSDetails + " AND ITEM.DEPT_ID IN (" + deptNoForInSearch + ")";
+				}
+				if (null != classNoSearch && !("").equals(classNoSearch.trim())) {
+					getNewGBSDetails = getNewGBSDetails + " AND ITEM.CLASS_ID IN (" + classNoForInSearch + ")";
+				}
+				if (null != supplierSiteIdSearch && !("").equals(supplierSiteIdSearch.trim())) {
+					getNewGBSDetails = getNewGBSDetails + " AND ITEM.PRIMARY_SUPPLIER_ID =:supplierIdSql ";
+				}
+				if (null != upcNoSearch && !("").equals(upcNoSearch.trim())) {
+					getNewGBSDetails = getNewGBSDetails + " AND NVL(ITEM.PARENT_MDMID,ITEM.MDMID)  = " +
+							"(SELECT PARENT_MDMID FROM ADSE_ITEM_CATALOG WHERE NUMBER_04 =:upcNoSql)";
+				}
+				//getNewGBSDetails = getNewGBSDetails + " ORDER BY ITEM.PARENT_MDMID";
+
+
+		return getNewGBSDetails;
+	}
+	
+	/**
+	 *  This method is used to get the search result Details query for Regular/Beauty Collection Grouping.
+	 * @param vendorStyleNo
+	 * @param styleOrin
+	 * @param deptNoSearch
+	 * @param classNoSearch
+	 * @param supplierSiteIdSearch
+	 * @param upcNoSearch
+	 * @param groupId
+	 * @param groupIdSearch
+	 * @param groupNameSearch
+	 * @param sortedColumn
+	 * @param sortingOrder
+	 * @return String
+	 */
+	public static final String getRegularBeautySearchResult(final String vendorStyleNo, final String styleOrin, final String deptNoForInSearch, 
+			final String classNoForInSearch,	final String supplierSiteIdSearch, final String upcNoSearch, 
+			final String deptNoSearch, final String classNoSearch, final String groupIdSearch, final String groupNameSearch,
+			final String orderByColumn, final String sortingOrder) {
+		
+		LOGGER.info("Entering getRegularBeautySearchResult() in Grouping XQueryConstant class.");
+		int count = 0;
+		StringBuilder getRegularBeautySearchResult = new StringBuilder();
+		getRegularBeautySearchResult.append(" SELECT DISTINCT SEARCH.PARENT_MDMID, ");
+		getRegularBeautySearchResult.append("   SEARCH.MDMID,                                                                   ");
+		getRegularBeautySearchResult.append("   SEARCH.ENTRY_TYPE,                                                              ");
+		getRegularBeautySearchResult.append("   SEARCH.CLASS_ID,                                                                ");
+		getRegularBeautySearchResult.append("   SEARCH.PRIMARYSUPPLIERVPN,                                                      ");
+		getRegularBeautySearchResult.append("   PET_XML.PRODUCT_NAME,                                                           ");
+		getRegularBeautySearchResult.append("   PET_XML.COLOR_CODE,                                                             ");
+		getRegularBeautySearchResult.append("   PET.EXIST_IN_GROUP ALREADY_IN_GROUP,                                            ");
+		getRegularBeautySearchResult.append("   PET_XML.COLOR_DESC,                                                             ");
+		getRegularBeautySearchResult.append("   CASE                                                                            ");
+		getRegularBeautySearchResult.append("     WHEN AGCM.MDMID IS NULL                                                       ");
+		getRegularBeautySearchResult.append("     THEN 'N'                                                                      ");
+		getRegularBeautySearchResult.append("     ELSE 'Y'                                                                      ");
+		getRegularBeautySearchResult.append("   END EXIST_IN_SAME_GROUP,                                                        ");
+		getRegularBeautySearchResult.append("   NULL GROUP_ID                                                                   ");
+		getRegularBeautySearchResult.append(" FROM ADSE_PET_CATALOG PET,                                                        ");
+		getRegularBeautySearchResult.append("   XMLTABLE( 'let                                                                  ");                    
+		getRegularBeautySearchResult.append(" $colordesc:= /pim_entry/entry/Ecomm_StyleColor_Spec/NRF_Color_Description,        ");        
+		getRegularBeautySearchResult.append(" $colorCode:= /pim_entry/entry/Ecomm_StyleColor_Spec/NRF_Color_Code                ");        
+		getRegularBeautySearchResult.append(" return                                                                            ");        
+		getRegularBeautySearchResult.append(" <COLOR>                                                                           ");        
+		getRegularBeautySearchResult.append(" <COLOR_CODE>{$colorCode}</COLOR_CODE>                                             ");        
+		getRegularBeautySearchResult.append(" <COLOR_DESC>{$colordesc}</COLOR_DESC>                                             ");        
+		getRegularBeautySearchResult.append(" <PRODUCT_NAME>{/pim_entry/entry/Ecomm_Style_Spec/Product_Name}</PRODUCT_NAME>     ");        
+		getRegularBeautySearchResult.append(" </COLOR>' passing Pet.XML_DATA Columns COLOR_CODE VARCHAR2(5) path '/COLOR/COLOR_CODE', COLOR_DESC VARCHAR2(20) path '/COLOR/COLOR_DESC', PRODUCT_NAME VARCHAR2(20) path '/COLOR/PRODUCT_NAME' ) PET_XML, ");
+		getRegularBeautySearchResult.append("   ADSE_ITEM_CATALOG SEARCH                                                   ");
+		getRegularBeautySearchResult.append(" LEFT OUTER JOIN ADSE_GROUP_CHILD_MAPPING AGCM                                ");
+		getRegularBeautySearchResult.append(" ON SEARCH.MDMID                           =AGCM.COMPONENT_STYLE_ID           ");
+		getRegularBeautySearchResult.append(" AND AGCM.MDMID                            = :groupIdSql                      ");
+		getRegularBeautySearchResult.append(" AND ROWNUM                                =1                                 ");
+		getRegularBeautySearchResult.append(" WHERE 1                                   =1                                 ");
+		getRegularBeautySearchResult.append(" AND PET.MDMID                             =SEARCH.MDMID                      ");
+		getRegularBeautySearchResult.append(" AND SEARCH.DELETED_FLAG                   ='false'                           ");
+		getRegularBeautySearchResult.append(" AND SEARCH.ENTRY_TYPE                    IN ('Style','StyleColor')           ");
+		if (!StringUtils.isEmpty(vendorStyleNo)) {
+			getRegularBeautySearchResult.append("   AND SEARCH.PRIMARYSUPPLIERVPN =:styleIdSql ");
+			count = 1;
+		}
+		if (!StringUtils.isEmpty(styleOrin)) {
+			getRegularBeautySearchResult.append("   AND NVL(SEARCH.PARENT_MDMID,SEARCH.MDMID) =:mdmidSql ");
+			count = 1;
+		}	
+		if (!StringUtils.isEmpty(deptNoSearch)) {
+			getRegularBeautySearchResult.append("   AND SEARCH.DEPT_ID IN (" + deptNoForInSearch + ") ");
+			count = 1;
+		}	
+		if (!StringUtils.isEmpty(classNoSearch)) {
+			getRegularBeautySearchResult.append("   AND SEARCH.CLASS_ID IN (" + classNoForInSearch + ") ");
+			count = 1;
+		}	
+		if (!StringUtils.isEmpty(supplierSiteIdSearch)) {
+			getRegularBeautySearchResult.append("   AND SEARCH.PRIMARY_SUPPLIER_ID =:supplierIdSql ");
+			count = 1;
+		}	
+		if (!StringUtils.isEmpty(upcNoSearch)) {
+			getRegularBeautySearchResult.append("   AND NVL(SEARCH.PARENT_MDMID,SEARCH.MDMID)  = (SELECT PARENT_MDMID FROM ADSE_ITEM_CATALOG WHERE NUMBER_04 =:upcNoSql) ");
+			count = 1;
+		}	
+		if(count == 0 || !groupIdSearch.isEmpty() || !groupNameSearch.isEmpty())
+		{
+			getRegularBeautySearchResult.append("   AND 1 = 0 ");
+		}
+		getRegularBeautySearchResult.append(" UNION                                                                        ");
+		getRegularBeautySearchResult.append(" SELECT DISTINCT NULL PARENT_MDMID,                                           ");
+		getRegularBeautySearchResult.append("   SEARCH.MDMID,                                                              ");
+		getRegularBeautySearchResult.append("   SEARCH.ENTRY_TYPE,                                                         ");
+		getRegularBeautySearchResult.append("   NULL CLASS_ID,                                                             ");
+		getRegularBeautySearchResult.append("   SEARCH.DEF_PRIMARYSUPPLIERVPN,                                             ");
+		getRegularBeautySearchResult.append("   SEARCH.GROUP_NAME,                                                         ");
+		getRegularBeautySearchResult.append("   NULL COLOR_CODE,                                                           ");
+		getRegularBeautySearchResult.append("   SEARCH.EXIST_IN_GROUP ALREADY_IN_GROUP,                                    ");
+		getRegularBeautySearchResult.append("   NULL COLOR_DESC,                                                           ");
+		getRegularBeautySearchResult.append("   CASE                                                                       ");
+		getRegularBeautySearchResult.append("     WHEN SEARCH.MDMID = :groupIdSql                                          ");
+		getRegularBeautySearchResult.append("     THEN 'Y'                                                                 ");
+		getRegularBeautySearchResult.append("     WHEN AGCM.MDMID IS NULL                                                  ");
+		getRegularBeautySearchResult.append("     THEN 'N'                                                                 ");
+		getRegularBeautySearchResult.append("     ELSE 'Y'                                                                 ");
+		getRegularBeautySearchResult.append("   END EXIST_IN_SAME_GROUP,                                                   ");
+		getRegularBeautySearchResult.append("   CASE WHEN CHILD_GROUP.COMPONENT_GROUPING_ID is NOT NULL THEN 'Y' ELSE 'N' END        ");
+		getRegularBeautySearchResult.append(" FROM ADSE_GROUP_CATALOG SEARCH                                               ");
+		getRegularBeautySearchResult.append(" LEFT OUTER JOIN ADSE_GROUP_CHILD_MAPPING AGCM                                ");
+		getRegularBeautySearchResult.append(" ON SEARCH.MDMID =AGCM.COMPONENT_GROUPING_ID                                  ");
+		getRegularBeautySearchResult.append(" AND AGCM.MDMID  = :groupIdSql                                                ");
+		getRegularBeautySearchResult.append(" AND ROWNUM      =1                                                           ");
+		getRegularBeautySearchResult.append(" LEFT OUTER JOIN ADSE_GROUP_CHILD_MAPPING CHILD_GROUP                         ");
+		getRegularBeautySearchResult.append(" ON SEARCH.MDMID                        =CHILD_GROUP.MDMID                    ");
+		getRegularBeautySearchResult.append(" AND CHILD_GROUP.COMPONENT_GROUPING_ID IS NOT NULL                            ");
+		getRegularBeautySearchResult.append(" AND ROWNUM                             =1                                    ");
+		getRegularBeautySearchResult.append(" LEFT OUTER JOIN ADSE_GROUP_CHILD_MAPPING SEARCH_CHILD                        ");
+		getRegularBeautySearchResult.append(" ON SEARCH_CHILD.MDMID=SEARCH.MDMID                                           ");
+		getRegularBeautySearchResult.append(" WHERE 1              =1                                                      ");
+		if(!StringUtils.isEmpty(groupIdSearch))
+		{
+			getRegularBeautySearchResult.append(" AND SEARCH.MDMID     = ");
+			getRegularBeautySearchResult.append(groupIdSearch);
+		}
+		if(!StringUtils.isEmpty(groupNameSearch))
+		{
+			getRegularBeautySearchResult.append(" AND SEARCH.GROUP_NAME LIKE '%");
+			getRegularBeautySearchResult.append(groupNameSearch);
+			getRegularBeautySearchResult.append("%'");
+		}
+		
+		
+		getRegularBeautySearchResult.append(" AND SEARCH.DELETED_FLAG           = 'false'                                  ");
+		if(count == 1)
+		{
+			getRegularBeautySearchResult.append(" AND SEARCH_CHILD.COMPONENT_MDMID IN                                          ");
+			getRegularBeautySearchResult.append("   (SELECT SEARCH.MDMID                                                       ");
+			getRegularBeautySearchResult.append("   FROM ADSE_ITEM_CATALOG SEARCH                                              ");
+			getRegularBeautySearchResult.append("   WHERE 1                                   =1                               ");
+			getRegularBeautySearchResult.append("   AND SEARCH.DELETED_FLAG                   ='false'                         ");
+			getRegularBeautySearchResult.append("   AND SEARCH.ENTRY_TYPE                    IN ('Style','StyleColor')         ");
+			if (!StringUtils.isEmpty(vendorStyleNo)) {
+				getRegularBeautySearchResult.append("   AND SEARCH.PRIMARYSUPPLIERVPN =:styleIdSql ");
+			}		
+			if (!StringUtils.isEmpty(styleOrin)) {
+				getRegularBeautySearchResult.append("   AND NVL(SEARCH.PARENT_MDMID,SEARCH.MDMID) =:mdmidSql ");;
+			}		
+			if (!StringUtils.isEmpty(deptNoSearch)) {
+				getRegularBeautySearchResult.append("   AND SEARCH.DEPT_ID IN (" + deptNoForInSearch + ") ");
+			}	
+			if (!StringUtils.isEmpty(classNoSearch)) {
+				getRegularBeautySearchResult.append("   AND SEARCH.CLASS_ID IN (" + classNoForInSearch + ") ");
+			}
+			if (!StringUtils.isEmpty(supplierSiteIdSearch)) {
+				getRegularBeautySearchResult.append("   AND SEARCH.PRIMARY_SUPPLIER_ID =:supplierIdSql ");
+			}		
+			if (!StringUtils.isEmpty(upcNoSearch)) {
+				getRegularBeautySearchResult.append("   AND NVL(SEARCH.PARENT_MDMID,SEARCH.MDMID)  = (SELECT PARENT_MDMID FROM ADSE_ITEM_CATALOG WHERE NUMBER_04 =:upcNoSql) ");
+			}
+			getRegularBeautySearchResult.append("     )                                                                        ");	
+		}
+		 
+		if(StringUtils.isEmpty(orderByColumn) || orderByColumn.equals("orinNumber"))
+		{
+			getRegularBeautySearchResult.append("  ORDER BY MDMID ");
+			if(StringUtils.isEmpty(sortingOrder))
+			{
+				getRegularBeautySearchResult.append(" ASC");
+			}
+			else
+			{
+				getRegularBeautySearchResult.append(sortingOrder);
+			}
+				
+		}
+		else if(orderByColumn.equals("vendorStyle"))
+		{
+			getRegularBeautySearchResult.append(" ORDER BY PRIMARYSUPPLIERVPN ");
+			getRegularBeautySearchResult.append(sortingOrder);
+		}
+		else if(orderByColumn.equals("productName"))
+		{
+			getRegularBeautySearchResult.append(" ORDER BY PRODUCT_NAME ");
+			getRegularBeautySearchResult.append(sortingOrder);			
+		}
+		else if(orderByColumn.equals("colorCode"))
+		{
+			getRegularBeautySearchResult.append(" ORDER BY COLOR_CODE ");
+			getRegularBeautySearchResult.append(sortingOrder);
+		}
+		else if(orderByColumn.equals("colorName"))
+		{
+			getRegularBeautySearchResult.append(" ORDER BY COLOR_DESC ");
+			getRegularBeautySearchResult.append(sortingOrder);
+		}
+
+		LOGGER.info("Exiting getRegularBeautySearchResult() in Grouping XQueryConstant class.");
+		return getRegularBeautySearchResult.toString();
+	}
+	
+	/**
+	 *  This method is used to get the search result Details count query for Regular/Beauty Collection Grouping.
+	 * @param vendorStyleNo
+	 * @param styleOrin
+	 * @param deptNoSearch
+	 * @param classNoSearch
+	 * @param deptNoForInSearch
+	 * @param classNoForInSearch
+	 * @param supplierSiteIdSearch
+	 * @param upcNoSearch
+	 * @param groupId
+	 * @param groupIdSearch
+	 * @param groupNameSearch
+	 * @return String
+	 */
+	public static final String getRegularBeautySearchResultCountQuery(final String vendorStyleNo, final String styleOrin, final String deptNoForInSearch, 
+			final String classNoForInSearch, final String supplierSiteIdSearch, final String upcNoSearch, final String deptNoSearch,
+			final String classNoSearch, final String groupIdSearch, final String groupNameSearch) {
+
+		LOGGER.info("Entering getRegularBeautySearchResultCountQuery() in Grouping XQueryConstant class.");
+		int count = 0;
+		final StringBuilder getRegularBeautySearchResultCountQuery = new StringBuilder();
+		StringBuilder getRegularBeautySearchResult = new StringBuilder();
+		getRegularBeautySearchResult.append(" SELECT COUNT(MDMID) TOTAL_COUNT FROM ");
+		getRegularBeautySearchResult.append(" (SELECT DISTINCT SEARCH.PARENT_MDMID, ");
+		getRegularBeautySearchResult.append("   SEARCH.MDMID,                                                                   ");
+		getRegularBeautySearchResult.append("   SEARCH.ENTRY_TYPE,                                                              ");
+		getRegularBeautySearchResult.append("   SEARCH.CLASS_ID,                                                                ");
+		getRegularBeautySearchResult.append("   SEARCH.PRIMARYSUPPLIERVPN,                                                      ");
+		getRegularBeautySearchResult.append("   PET_XML.PRODUCT_NAME,                                                           ");
+		getRegularBeautySearchResult.append("   PET_XML.COLOR_CODE,                                                             ");
+		getRegularBeautySearchResult.append("   PET.EXIST_IN_GROUP ALREADY_IN_GROUP,                                            ");
+		getRegularBeautySearchResult.append("   PET_XML.COLOR_DESC,                                                             ");
+		getRegularBeautySearchResult.append("   CASE                                                                            ");
+		getRegularBeautySearchResult.append("     WHEN AGCM.MDMID IS NULL                                                       ");
+		getRegularBeautySearchResult.append("     THEN 'N'                                                                      ");
+		getRegularBeautySearchResult.append("     ELSE 'Y'                                                                      ");
+		getRegularBeautySearchResult.append("   END EXIST_IN_SAME_GROUP,                                                        ");
+		getRegularBeautySearchResult.append("   NULL GROUP_ID                                                                   ");
+		getRegularBeautySearchResult.append(" FROM ADSE_PET_CATALOG PET,                                                        ");
+		getRegularBeautySearchResult.append("   XMLTABLE( 'let                                                                  ");                    
+		getRegularBeautySearchResult.append(" $colordesc:= /pim_entry/entry/Ecomm_StyleColor_Spec/NRF_Color_Description,        ");        
+		getRegularBeautySearchResult.append(" $colorCode:= /pim_entry/entry/Ecomm_StyleColor_Spec/NRF_Color_Code                ");        
+		getRegularBeautySearchResult.append(" return                                                                            ");        
+		getRegularBeautySearchResult.append(" <COLOR>                                                                           ");        
+		getRegularBeautySearchResult.append(" <COLOR_CODE>{$colorCode}</COLOR_CODE>                                             ");        
+		getRegularBeautySearchResult.append(" <COLOR_DESC>{$colordesc}</COLOR_DESC>                                             ");        
+		getRegularBeautySearchResult.append(" <PRODUCT_NAME>{/pim_entry/entry/Ecomm_Style_Spec/Product_Name}</PRODUCT_NAME>     ");        
+		getRegularBeautySearchResult.append(" </COLOR>' passing Pet.XML_DATA Columns COLOR_CODE VARCHAR2(5) path '/COLOR/COLOR_CODE', COLOR_DESC VARCHAR2(20) path '/COLOR/COLOR_DESC', PRODUCT_NAME VARCHAR2(20) path '/COLOR/PRODUCT_NAME' ) PET_XML, ");
+		getRegularBeautySearchResult.append("   ADSE_ITEM_CATALOG SEARCH                                                   ");
+		getRegularBeautySearchResult.append(" LEFT OUTER JOIN ADSE_GROUP_CHILD_MAPPING AGCM                                ");
+		getRegularBeautySearchResult.append(" ON SEARCH.MDMID                           =AGCM.COMPONENT_STYLE_ID           ");
+		getRegularBeautySearchResult.append(" AND AGCM.MDMID                            = :groupIdSql                      ");
+		getRegularBeautySearchResult.append(" AND ROWNUM                                =1                                 ");
+		getRegularBeautySearchResult.append(" WHERE 1                                   =1                                 ");
+		getRegularBeautySearchResult.append(" AND PET.MDMID                             =SEARCH.MDMID                      ");
+		getRegularBeautySearchResult.append(" AND SEARCH.DELETED_FLAG                   ='false'                           ");
+		getRegularBeautySearchResult.append(" AND SEARCH.ENTRY_TYPE                    IN ('Style','StyleColor')           ");
+		if (!StringUtils.isEmpty(vendorStyleNo)) {
+			getRegularBeautySearchResult.append("   AND SEARCH.PRIMARYSUPPLIERVPN =:styleIdSql ");
+			count = 1;
+		}
+		if (!StringUtils.isEmpty(styleOrin)) {
+			getRegularBeautySearchResult.append("   AND NVL(SEARCH.PARENT_MDMID,SEARCH.MDMID) =:mdmidSql ");
+			count = 1;
+		}	
+		if (!StringUtils.isEmpty(deptNoForInSearch)) {
+			getRegularBeautySearchResult.append("   AND SEARCH.DEPT_ID IN (" + deptNoSearch + ") ");
+			count = 1;
+		}	
+		if (!StringUtils.isEmpty(classNoForInSearch)) {
+			getRegularBeautySearchResult.append("   AND SEARCH.CLASS_ID IN (" + classNoSearch + ") ");
+			count = 1;
+		}	
+		if (!StringUtils.isEmpty(supplierSiteIdSearch)) {
+			getRegularBeautySearchResult.append("   AND SEARCH.PRIMARY_SUPPLIER_ID =:supplierIdSql ");
+			count = 1;
+		}	
+		if (!StringUtils.isEmpty(upcNoSearch)) {
+			getRegularBeautySearchResult.append("   AND NVL(SEARCH.PARENT_MDMID,SEARCH.MDMID)  = (SELECT PARENT_MDMID FROM ADSE_ITEM_CATALOG WHERE NUMBER_04 =:upcNoSql) ");
+			count = 1;
+		}	
+		if(count == 0 || !groupIdSearch.isEmpty() || !groupNameSearch.isEmpty())
+		{
+			getRegularBeautySearchResult.append("   AND 1 = 0 ");
+		}
+		getRegularBeautySearchResult.append(" UNION                                                                        ");
+		getRegularBeautySearchResult.append(" SELECT DISTINCT NULL PARENT_MDMID,                                           ");
+		getRegularBeautySearchResult.append("   SEARCH.MDMID,                                                              ");
+		getRegularBeautySearchResult.append("   SEARCH.ENTRY_TYPE,                                                         ");
+		getRegularBeautySearchResult.append("   NULL CLASS_ID,                                                             ");
+		getRegularBeautySearchResult.append("   SEARCH.DEF_PRIMARYSUPPLIERVPN,                                             ");
+		getRegularBeautySearchResult.append("   SEARCH.GROUP_NAME,                                                         ");
+		getRegularBeautySearchResult.append("   NULL COLOR_CODE,                                                           ");
+		getRegularBeautySearchResult.append("   SEARCH.EXIST_IN_GROUP ALREADY_IN_GROUP,                                    ");
+		getRegularBeautySearchResult.append("   NULL COLOR_DESC,                                                           ");
+		getRegularBeautySearchResult.append("   CASE                                                                       ");
+		getRegularBeautySearchResult.append("     WHEN SEARCH.MDMID = :groupIdSql                                          ");
+		getRegularBeautySearchResult.append("     THEN 'Y'                                                                 ");
+		getRegularBeautySearchResult.append("     WHEN AGCM.MDMID IS NULL                                                  ");
+		getRegularBeautySearchResult.append("     THEN 'N'                                                                 ");
+		getRegularBeautySearchResult.append("     ELSE 'Y'                                                                 ");
+		getRegularBeautySearchResult.append("   END EXIST_IN_SAME_GROUP,                                                   ");
+		getRegularBeautySearchResult.append("   CASE WHEN CHILD_GROUP.COMPONENT_GROUPING_ID is NOT NULL THEN 'Y' ELSE 'N' END        ");
+		getRegularBeautySearchResult.append(" FROM ADSE_GROUP_CATALOG SEARCH                                               ");
+		getRegularBeautySearchResult.append(" LEFT OUTER JOIN ADSE_GROUP_CHILD_MAPPING AGCM                                ");
+		getRegularBeautySearchResult.append(" ON SEARCH.MDMID =AGCM.COMPONENT_GROUPING_ID                                  ");
+		getRegularBeautySearchResult.append(" AND AGCM.MDMID  = :groupIdSql                                                ");
+		getRegularBeautySearchResult.append(" AND ROWNUM      =1                                                           ");
+		getRegularBeautySearchResult.append(" LEFT OUTER JOIN ADSE_GROUP_CHILD_MAPPING CHILD_GROUP                         ");
+		getRegularBeautySearchResult.append(" ON SEARCH.MDMID                        =CHILD_GROUP.MDMID                    ");
+		getRegularBeautySearchResult.append(" AND CHILD_GROUP.COMPONENT_GROUPING_ID IS NOT NULL                            ");
+		getRegularBeautySearchResult.append(" AND ROWNUM                             =1                                    ");
+		getRegularBeautySearchResult.append(" LEFT OUTER JOIN ADSE_GROUP_CHILD_MAPPING SEARCH_CHILD                        ");
+		getRegularBeautySearchResult.append(" ON SEARCH_CHILD.MDMID=SEARCH.MDMID                                           ");
+		getRegularBeautySearchResult.append(" WHERE 1              =1                                                      ");
+		if(!StringUtils.isEmpty(groupIdSearch))
+		{
+			getRegularBeautySearchResult.append(" AND SEARCH.MDMID     = ");
+			getRegularBeautySearchResult.append(groupIdSearch);
+		}
+		if(!StringUtils.isEmpty(groupNameSearch))
+		{
+			getRegularBeautySearchResult.append(" AND SEARCH.GROUP_NAME LIKE '%");
+			getRegularBeautySearchResult.append(groupNameSearch);
+			getRegularBeautySearchResult.append("%'");
+		}
+		
+		
+		getRegularBeautySearchResult.append(" AND SEARCH.DELETED_FLAG           = 'false'                                  ");
+		if(count == 1)
+		{
+			getRegularBeautySearchResult.append(" AND SEARCH_CHILD.COMPONENT_MDMID IN                                          ");
+			getRegularBeautySearchResult.append("   (SELECT SEARCH.MDMID                                                       ");
+			getRegularBeautySearchResult.append("   FROM ADSE_ITEM_CATALOG SEARCH                                              ");
+			getRegularBeautySearchResult.append("   WHERE 1                                   =1                               ");
+			getRegularBeautySearchResult.append("   AND SEARCH.DELETED_FLAG                   ='false'                         ");
+			getRegularBeautySearchResult.append("   AND SEARCH.ENTRY_TYPE                    IN ('Style','StyleColor')         ");
+			if (!StringUtils.isEmpty(vendorStyleNo)) {
+				getRegularBeautySearchResult.append("   AND SEARCH.PRIMARYSUPPLIERVPN =:styleIdSql ");
+			}		
+			if (!StringUtils.isEmpty(styleOrin)) {
+				getRegularBeautySearchResult.append("   AND NVL(SEARCH.PARENT_MDMID,SEARCH.MDMID) =:mdmidSql ");;
+			}		
+			if (!StringUtils.isEmpty(deptNoForInSearch)) {
+				getRegularBeautySearchResult.append("   AND SEARCH.DEPT_ID IN (" + deptNoSearch + ") ");
+			}	
+			if (!StringUtils.isEmpty(classNoForInSearch)) {
+				getRegularBeautySearchResult.append("   AND SEARCH.CLASS_ID IN (" + classNoSearch + ") ");
+			}
+			if (!StringUtils.isEmpty(supplierSiteIdSearch)) {
+				getRegularBeautySearchResult.append("   AND SEARCH.PRIMARY_SUPPLIER_ID =:supplierIdSql ");
+			}		
+			if (!StringUtils.isEmpty(upcNoSearch)) {
+				getRegularBeautySearchResult.append("   AND NVL(SEARCH.PARENT_MDMID,SEARCH.MDMID)  = (SELECT PARENT_MDMID FROM ADSE_ITEM_CATALOG WHERE NUMBER_04 =:upcNoSql) ");
+			}
+			getRegularBeautySearchResult.append("     )                                                                        ");
+		}
+		getRegularBeautySearchResult.append("   )                                                                          ");
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("getRegularBeautySearchResultCountQuery -- \n" + getRegularBeautySearchResultCountQuery.toString());
+		}
+		LOGGER.info("Exiting getRegularBeautySearchResultCountQuery() in Grouping XQueryConstant class.");
+		return getRegularBeautySearchResultCountQuery.toString();
+	}
+
+	
+	/**
+	 *  This method is used to get the existing components query for Regular/Beauty Collection Grouping.
+	 * @return String
+	 */
+	public static  final String getExistRegularBeautyDetailsQuery() {
+		LOGGER.info("Entering getExistRegularBeautyDetailsQuery() in Grouping XQueryConstant class.");
+		StringBuilder getExistRegularBeautyDetailsQuery = new StringBuilder();
+		getExistRegularBeautyDetailsQuery.append(" SELECT DISTINCT ");
+		getExistRegularBeautyDetailsQuery.append(" COMPONENT_DEFAULT,                    ");
+		getExistRegularBeautyDetailsQuery.append(" PARENT_MDMID,                         ");
+		getExistRegularBeautyDetailsQuery.append(" MDMID,                                ");
+		getExistRegularBeautyDetailsQuery.append(" ENTRY_TYPE,                           ");
+		getExistRegularBeautyDetailsQuery.append(" PRIMARYSUPPLIERVPN,                   ");
+		getExistRegularBeautyDetailsQuery.append(" PRODUCT_NAME,                         ");
+		getExistRegularBeautyDetailsQuery.append(" COLOR_CODE,                           ");
+		getExistRegularBeautyDetailsQuery.append(" COLOR_DESC,                           ");
+		getExistRegularBeautyDetailsQuery.append(" CLASS_ID,                             ");
+		getExistRegularBeautyDetailsQuery.append(" DISPLAY_SEQUENCE FROM                 ");
+		getExistRegularBeautyDetailsQuery.append(" (SELECT                               ");
+		getExistRegularBeautyDetailsQuery.append("   DETAIL.COMPONENT_DEFAULT,           ");
+		getExistRegularBeautyDetailsQuery.append("   ITEM.PARENT_MDMID,                  ");
+		getExistRegularBeautyDetailsQuery.append("   ITEM.MDMID,                         ");
+		getExistRegularBeautyDetailsQuery.append("   ITEM.ENTRY_TYPE,                    ");
+		getExistRegularBeautyDetailsQuery.append("   ITEM.PRIMARYSUPPLIERVPN,            ");
+		getExistRegularBeautyDetailsQuery.append("   PET_XML.PRODUCT_NAME,               ");
+		getExistRegularBeautyDetailsQuery.append("   PET_XML.COLOR_CODE,                 ");
+		getExistRegularBeautyDetailsQuery.append("   PET_XML.COLOR_DESC,                 ");
+		getExistRegularBeautyDetailsQuery.append("   ITEM.CLASS_ID,                      ");
+		getExistRegularBeautyDetailsQuery.append("   DETAIL.PEP_COMPONENT_TYPE,          ");
+		getExistRegularBeautyDetailsQuery.append("   DETAIL.DISPLAY_SEQUENCE             ");
+		getExistRegularBeautyDetailsQuery.append(" FROM ADSE_ITEM_CATALOG ITEM,          ");
+		getExistRegularBeautyDetailsQuery.append("   ADSE_GROUP_CHILD_MAPPING DETAIL,    ");
+		getExistRegularBeautyDetailsQuery.append("   ADSE_PET_CATALOG PET,               ");
+		getExistRegularBeautyDetailsQuery.append("   XMLTABLE( 'let                      ");                                                                              
+		getExistRegularBeautyDetailsQuery.append(" $colordesc:= /pim_entry/entry/Ecomm_StyleColor_Spec/NRF_Color_Description,   ");                              
+		getExistRegularBeautyDetailsQuery.append(" $colorCode:= /pim_entry/entry/Ecomm_StyleColor_Spec/NRF_Color_Code           ");                          
+		getExistRegularBeautyDetailsQuery.append(" return                                  ");                                                                   
+		getExistRegularBeautyDetailsQuery.append(" <COLOR>                                 ");                                                                       
+		getExistRegularBeautyDetailsQuery.append(" <COLOR_CODE>{$colorCode}</COLOR_CODE>   ");                                                                   
+		getExistRegularBeautyDetailsQuery.append(" <COLOR_DESC>{$colordesc}</COLOR_DESC>   ");                                                                   
+		getExistRegularBeautyDetailsQuery.append(" <PRODUCT_NAME>{/pim_entry/entry/Ecomm_Style_Spec/Product_Name}</PRODUCT_NAME>    ");                      
+		getExistRegularBeautyDetailsQuery.append(" </COLOR>' passing Pet.XML_DATA Columns COLOR_CODE VARCHAR2(5) path '/COLOR/COLOR_CODE', COLOR_DESC VARCHAR2(20) path '/COLOR/COLOR_DESC', ");
+		getExistRegularBeautyDetailsQuery.append("   PRODUCT_NAME    VARCHAR2(20) path '/COLOR/PRODUCT_NAME' ) PET_XML "); 
+		getExistRegularBeautyDetailsQuery.append(" WHERE 1      =1                                            ");
+		getExistRegularBeautyDetailsQuery.append(" AND PET.MDMID=ITEM.MDMID                                   ");
+		getExistRegularBeautyDetailsQuery.append(" AND ITEM.MDMID LIKE CONCAT(DETAIL.COMPONENT_MDMID,'%')     ");
+		getExistRegularBeautyDetailsQuery.append(" AND DETAIL.PEP_COMPONENT_TYPE = 'Style' ");
+		getExistRegularBeautyDetailsQuery.append(" AND CASE WHEN (ITEM.ENTRY_TYPE = 'StyleColor' ");
+		getExistRegularBeautyDetailsQuery.append(" AND ITEM.MDMID = DETAIL.COMPONENT_STYLECOLOR_ID OR DETAIL.COMPONENT_STYLECOLOR_ID is NULL) THEN 1 ");
+		getExistRegularBeautyDetailsQuery.append(" WHEN ITEM.ENTRY_TYPE = 'Style' THEN 1 ");
+		getExistRegularBeautyDetailsQuery.append(" ELSE 0 END = 1 ");
+		getExistRegularBeautyDetailsQuery.append(" AND DETAIL.MDMID= :groupId                                ");
+		getExistRegularBeautyDetailsQuery.append(" UNION                                                      ");
+		getExistRegularBeautyDetailsQuery.append(" SELECT                                                     ");
+		getExistRegularBeautyDetailsQuery.append("   DETAIL.COMPONENT_DEFAULT,                                ");
+		getExistRegularBeautyDetailsQuery.append("   NULL PARENT_MDMID,                                       ");
+		getExistRegularBeautyDetailsQuery.append("   GRP.MDMID,                                               ");
+		getExistRegularBeautyDetailsQuery.append("   GRP.ENTRY_TYPE,                                          ");
+		getExistRegularBeautyDetailsQuery.append("   GRP.DEF_PRIMARYSUPPLIERVPN,                              ");
+		getExistRegularBeautyDetailsQuery.append("   GRP.GROUP_NAME PRODUCT_NAME,                             ");
+		getExistRegularBeautyDetailsQuery.append("   NULL COLOR_CODE,                                         ");
+		getExistRegularBeautyDetailsQuery.append("   NULL COLOR_DESC,                                         ");
+		getExistRegularBeautyDetailsQuery.append("   NULL CLASS_ID,                                           ");
+		getExistRegularBeautyDetailsQuery.append("   DETAIL.PEP_COMPONENT_TYPE,                               ");
+		getExistRegularBeautyDetailsQuery.append("   DETAIL.DISPLAY_SEQUENCE                                  ");
+		getExistRegularBeautyDetailsQuery.append(" FROM ADSE_GROUP_CATALOG GRP,                               ");
+		getExistRegularBeautyDetailsQuery.append("   ADSE_GROUP_CHILD_MAPPING DETAIL                          ");
+		getExistRegularBeautyDetailsQuery.append(" WHERE 1      =1                                            ");
+		getExistRegularBeautyDetailsQuery.append(" AND DETAIL.COMPONENT_MDMID = GRP.MDMID                     ");
+		getExistRegularBeautyDetailsQuery.append(" AND DETAIL.PEP_COMPONENT_TYPE = 'Group' ");
+		getExistRegularBeautyDetailsQuery.append(" AND DETAIL.MDMID= :groupId)                               ");
+		getExistRegularBeautyDetailsQuery.append(" ORDER BY MDMID                                       ");
+
+		LOGGER.info("Entering getExistRegularBeautyDetailsQuery() in Grouping XQueryConstant class.");
+		return getExistRegularBeautyDetailsQuery.toString();
+	}
+	
+	/**
+	 *  This method is used to get the group child query for Regular/Beauty Collection Grouping.
+	 * @return String
+	 */
+	public static  final String getRegularBeautyDetailsChildQuery() {
+		LOGGER.info("Entering getRegularBeautyDetailsChildQuery() in Grouping XQueryConstant class.");
+		StringBuilder getExistRegularBeautyDetailsChildQuery = new StringBuilder();
+		getExistRegularBeautyDetailsChildQuery.append(" SELECT DISTINCT PARENT_MDMID,  ");
+		getExistRegularBeautyDetailsChildQuery.append("   MDMID,                                                                 ");
+		getExistRegularBeautyDetailsChildQuery.append("   PRODUCTNAME,                                                           ");
+		getExistRegularBeautyDetailsChildQuery.append("   COMPLETION_DATE,                                                       ");
+		getExistRegularBeautyDetailsChildQuery.append("   ENTRY_TYPE,                                                            ");
+		//getExistRegularBeautyDetailsChildQuery.append("   COMPONENT_TYPE,                                                        ");
+		getExistRegularBeautyDetailsChildQuery.append("   VENDOR_STYLE,                                                          ");
+		getExistRegularBeautyDetailsChildQuery.append("   EXIST_IN_GROUP ,                                                       ");
+		getExistRegularBeautyDetailsChildQuery.append("   COLOR_CODE, COLO_DESC                                                  ");
+		getExistRegularBeautyDetailsChildQuery.append(" FROM                                                                     ");
+		getExistRegularBeautyDetailsChildQuery.append("   (SELECT NULL PARENT_MDMID,                                             ");
+		getExistRegularBeautyDetailsChildQuery.append("     AGC.MDMID,                                                           ");
+		getExistRegularBeautyDetailsChildQuery.append("     AGC.GROUP_NAME PRODUCTNAME,                                          ");
+		getExistRegularBeautyDetailsChildQuery.append("     TO_CHAR(AGC.COMPLETION_DATE,'YYYY-MM-DD') COMPLETION_DATE,           ");
+		getExistRegularBeautyDetailsChildQuery.append("     AGC.ENTRY_TYPE,                                                      ");
+		getExistRegularBeautyDetailsChildQuery.append("     AGCM.PEP_COMPONENT_TYPE COMPONENT_TYPE,                              ");
+		getExistRegularBeautyDetailsChildQuery.append("     AGC.DEF_PRIMARYSUPPLIERVPN VENDOR_STYLE,                             ");
+		getExistRegularBeautyDetailsChildQuery.append("     AGC.EXIST_IN_GROUP ,                                                 ");
+		getExistRegularBeautyDetailsChildQuery.append("     NULL color_code , NULL COLO_DESC                                     ");
+		getExistRegularBeautyDetailsChildQuery.append("   FROM ADSE_GROUP_CATALOG AGC ,                                          ");
+		getExistRegularBeautyDetailsChildQuery.append("     ADSE_GROUP_CHILD_MAPPING AGCM                                        ");
+		getExistRegularBeautyDetailsChildQuery.append("   WHERE AGC.MDMID             = AGCM.COMPONENT_GROUPING_ID               ");
+		getExistRegularBeautyDetailsChildQuery.append("   AND AGCM.PEP_COMPONENT_TYPE ='Group'                                   ");
+		getExistRegularBeautyDetailsChildQuery.append("   AND AGCM.MDMID              = :groupId                                 ");
+		getExistRegularBeautyDetailsChildQuery.append("   UNION                                                                  ");
+		getExistRegularBeautyDetailsChildQuery.append("   SELECT AIC.PARENT_MDMID,                                               ");
+		getExistRegularBeautyDetailsChildQuery.append("     AIC.MDMID,                                                           ");
+		getExistRegularBeautyDetailsChildQuery.append("     PET_XML.PRODUCT_NAME PRODUCTNAME,                                    ");
+		getExistRegularBeautyDetailsChildQuery.append("     CASE                                                                 ");
+		getExistRegularBeautyDetailsChildQuery.append("       WHEN AIC.ENTRY_TYPE = 'Style'                                      ");
+		getExistRegularBeautyDetailsChildQuery.append("       THEN TO_CHAR(APC.PET_EARLIEST_COMP_DATE, 'YYYY-MM-DD')             ");
+		getExistRegularBeautyDetailsChildQuery.append("       ELSE PET_XML.completion_date                                       ");
+		getExistRegularBeautyDetailsChildQuery.append("     END AS completion_date,                                              ");
+		getExistRegularBeautyDetailsChildQuery.append("     AIC.ENTRY_TYPE,                                                      ");
+		getExistRegularBeautyDetailsChildQuery.append("     AGCM.PEP_COMPONENT_TYPE COMPONENT_TYPE,                              ");
+		getExistRegularBeautyDetailsChildQuery.append("     AIC.PRIMARYSUPPLIERVPN VENDOR_STYLE,                                 ");
+		getExistRegularBeautyDetailsChildQuery.append("     APC.EXIST_IN_GROUP,                                                  ");
+		getExistRegularBeautyDetailsChildQuery.append("     PET_XML.color_code, PET_XML.COLO_DESC                                ");
+		getExistRegularBeautyDetailsChildQuery.append("   FROM ADSE_GROUP_CHILD_MAPPING AGCM,                                    ");
+		getExistRegularBeautyDetailsChildQuery.append("     ADSE_ITEM_CATALOG AIC                                                ");
+		getExistRegularBeautyDetailsChildQuery.append("   INNER JOIN ADSE_PET_CATALOG APC                                        ");
+		getExistRegularBeautyDetailsChildQuery.append("   ON AIC.MDMID=APC.MDMID                                                 ");
+		getExistRegularBeautyDetailsChildQuery.append("   LEFT OUTER JOIN ADSE_SUPPLIER_CATALOG ASCT                             ");
+		getExistRegularBeautyDetailsChildQuery.append("   ON ASCT.MDMID = AIC.PRIMARY_SUPPLIER_ID,                               ");
+		getExistRegularBeautyDetailsChildQuery.append("     XMLTABLE(                                                            ");
+		getExistRegularBeautyDetailsChildQuery.append("     'let                                                                 ");                   
+		getExistRegularBeautyDetailsChildQuery.append(" $completionDate := $pets/pim_entry/entry/Pet_Ctg_Spec/Completion_Date,   ");                             
+		getExistRegularBeautyDetailsChildQuery.append(" $colordesc:= $pets/pim_entry/entry/Ecomm_StyleColor_Spec/NRF_Color_Description             ");           
+		getExistRegularBeautyDetailsChildQuery.append(" return                                                                                     ");                                                   
+		getExistRegularBeautyDetailsChildQuery.append(" <out>                                                                                      ");           
+		getExistRegularBeautyDetailsChildQuery.append(" <completion_date>{$completionDate}</completion_date>                                       ");           
+		getExistRegularBeautyDetailsChildQuery.append(" <req_type>{$pets/pim_entry/entry/Pet_Ctg_Spec/SourceSystem}</req_type>                     ");           
+		getExistRegularBeautyDetailsChildQuery.append(" <color_code>{$pets/pim_entry/entry/Ecomm_StyleColor_Spec/NRF_Color_Code}</color_code>      ");     
+		getExistRegularBeautyDetailsChildQuery.append(" <PRODUCT_NAME>{$pets/pim_entry/entry/Ecomm_Style_Spec/Product_Name}</PRODUCT_NAME>         ");  
+		getExistRegularBeautyDetailsChildQuery.append(" <COLO_DESC>{$colordesc}</COLO_DESC>                                                        ");           
+		getExistRegularBeautyDetailsChildQuery.append(" </out>'                                                                                    ");
+		getExistRegularBeautyDetailsChildQuery.append("     passing APC.xml_data AS \"pets\" Columns completion_date VARCHAR2(10) path '/out/completion_date',PRODUCT_NAME VARCHAR2(100) path '/out/PRODUCT_NAME', req_type VARCHAR2(20) path '/out/req_type', color_code VARCHAR2(100) path '/out/color_code', COLO_DESC VARCHAR2(50) path '/out/COLO_DESC' ) (+)PET_XML ");
+		getExistRegularBeautyDetailsChildQuery.append("   WHERE NVL(AIC.PARENT_MDMID,AIC.MDMID) = AGCM.COMPONENT_STYLE_ID    ");
+		getExistRegularBeautyDetailsChildQuery.append("   AND AGCM.PEP_COMPONENT_TYPE!          ='Group'                     ");
+		getExistRegularBeautyDetailsChildQuery.append("   AND AIC.ENTRY_TYPE                   IN ('Style','StyleColor')     ");
+		getExistRegularBeautyDetailsChildQuery.append("   AND (                                                              ");
+		getExistRegularBeautyDetailsChildQuery.append("     CASE                                                             ");
+		getExistRegularBeautyDetailsChildQuery.append("       WHEN AIC.PARENT_MDMID IS NOT NULL                              ");
+		getExistRegularBeautyDetailsChildQuery.append("       AND AIC.MDMID         !=AGCM.COMPONENT_STYLECOLOR_ID           ");
+		getExistRegularBeautyDetailsChildQuery.append("       THEN 0                                                         ");
+		getExistRegularBeautyDetailsChildQuery.append("       ELSE 1                                                         ");
+		getExistRegularBeautyDetailsChildQuery.append("     END)         =1                                                  ");
+		getExistRegularBeautyDetailsChildQuery.append("   AND AGCM.MDMID = :groupId                                          ");
+		getExistRegularBeautyDetailsChildQuery.append("   )                                                                  ");
+		getExistRegularBeautyDetailsChildQuery.append(" ORDER BY MDMID                                                  ");
+
+		LOGGER.info("Entering getRegularBeautyDetailsChildQuery() in Grouping XQueryConstant class.");
+		return getExistRegularBeautyDetailsChildQuery.toString();
 	}
 
 }

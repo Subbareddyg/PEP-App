@@ -30,6 +30,7 @@ public class GroupingConstants {
 	public static final String ADD_COMPONENT_TO_SCG_SERVICE_URL = "add.componet.to.scg.url";
 	public static final String ADD_COMPONENT_TO_SSG_SERVICE_URL = "add.componet.to.ssg.url";
 	public static final String ADD_COMPONENT_TO_CPG_SERVICE_URL = "add.componet.to.cpg.url";
+	public static final String ADD_COMPONENT_TO_COLLECTION_SERVICE_URL = "add.componet.to.collection.url";
 	public static final String CREATE_GROUP_SERVICE_LIST = "list";
 	public static final String CREATE_GROUP_SERVICE_SUCCESS = "createGroup.success.message";
 	public static final String CREATE_GROUP_SERVICE_FAILURE = "createGroup.failure.message";
@@ -56,7 +57,7 @@ public class GroupingConstants {
 	public static final String GROUP_TYPE_BEAUTY_COLLECTION = "BCG";
 	public static final String GROUP_TYPE_SPLIT_COLOR = "SCG";
 	public static final String GROUP_TYPE_SPLIT_SKU = "SSG";
-	public static final String GROUP_TYPE_GROUP_BY_SIZE = "GBS";
+	public static final String GROUP_TYPE_GROUP_BY_SIZE = "GSG";
 
 	/** Create Group Service parameter. **/
 	public static final String GROUP_ID = "groupId";
@@ -76,7 +77,9 @@ public class GroupingConstants {
 	public static final String COMPONENT_ID = "id";
 	public static final String COMPONENT_SKU = "SKU";
 	public static final String COMPONENT_IS_DEFAULT = "default";
+	public static final String COMPONENT_TYPE = "type";
 	public static final String COMPONENT_COLOR = "color";
+	public static final String COMPONENT_COLOR_LIST = "ColorList";
 	public static final String COMPONENT_SIZE = "size";
 	public static final String GROUP_CREATION_MSG = "groupCretionMsg";
 	public static final String GROUP_CREATION_STATUS_CODE = "groupCreationStatus";
@@ -90,6 +93,9 @@ public class GroupingConstants {
 	public static final String CARS_GROUPING_TYPE = "carsGroupType";
 	public static final String MESSAGE = "message";
 	public static final String CHILD_GROUP = "childGroup";
+	public static final String COMPONENT_TYPE_STYLE = "Style";
+	public static final String COMPONENT_TYPE_STYLE_COLOR = "StyleColor";
+	public static final String COMPONENT_TYPE_SKU = "SKU";
 	
 	public static final String VENDOR_STYLE_NO = "vendorStyleNo";
 	public static final String STYLE_ORIN_NO_SEARCH_PARAM = "styleOrinNo";
@@ -134,6 +140,7 @@ public class GroupingConstants {
 	public static final String MESSAGE_CPG_VALIDATION_DIFF_CLASS_ID_TWO = "message.cpg.validation.diff.classid.two";
 	public static final String MESSAGE_CPG_VALIDATION_DIFF_CLASS_ID_THREE = "message.cpg.validation.diff.classid.three";
 	public static final String MESSAGE_CPG_VALIDATION_DIFF_CLASS_ID_FOUR = "message.cpg.validation.diff.classid.four";
+	public static final String MESSAGE_GBS_VALIDATION_NOT_ELIGIBLE = "message.gbs.validation.not.eligible";
 
 	public static final String GROUP_DETAILS_FORM = "groupDetailsForm";
 	public static final String SELECTED_ATTRIBUTE_LIST = "selectedAttributeList";
@@ -225,4 +232,29 @@ public class GroupingConstants {
 	//Emtpy string marker.
 	public static final String EMPTY = "";
 	public static final String DEFAULT_CHARSET ="UTF-8";
+	public static final String REMOVE_COMPNT_GROUP_SERVICE_URL = "remove.componet.cpg.url";
+	public static final String SET_COMPONENT_PRIORITY_SERVICE_URL = "set.component.prioroty.url";
+	public static final String ORDER="order";
+
+	public static final String DEFAULT_VALUE_STATUS_MESSAGE = "defaultValueStatusMessage";
+
+	public static final String SET_DEFAULT_COLOR_SERVICE_URL = "set.default.color.url";
+	public static final String DELETE_COMPNT_SUCCESS="component.success.message";
+	public static final String DELETE_COMPNT_FAILURE="component.failure.message";
+	
+	public static final String DEFAULT_COMPNT_SUCCESS="default.color.success.message";
+	public static final String DEFAULT_COMPNT_FAILURE="default.color.failure.message";
+	
+	public static final String PRIORITY_COMPNT_SUCCESS="priority.success.messag";
+	public static final String PRIORITY_COMPNT_FAILURE="priority.failure.messag";
+
+	public static final String DESCRIPTION_ATTR = "description";
+	
+	public static final String IS_GROUP ="isGroup";
+	public static final String PRIORITY ="priority";
+	public static final String HAVE_CHILD_GROUP ="haveChildGroup";
+
+	public static final String SUCCESS ="SUCCESS";
+	public static final String FAIL ="FAIL";
+	public static final String STATUS ="status";
 }

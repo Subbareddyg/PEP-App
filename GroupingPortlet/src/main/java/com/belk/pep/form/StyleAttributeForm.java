@@ -35,6 +35,47 @@ public class StyleAttributeForm {
     private String componentStyleId;  
     private String classId;    
     private List <GroupAttributeForm> groupAttributeFormList;
+    private String isGroup;
+    private String priority;
+    private String haveChildGroup;
+    
+	/**
+	 * @return the haveChildGroup
+	 */
+	public String getHaveChildGroup() {
+		return haveChildGroup;
+	}
+	/**
+	 * @param haveChildGroup the haveChildGroup to set
+	 */
+	public void setHaveChildGroup(String haveChildGroup) {
+		this.haveChildGroup = haveChildGroup;
+	}
+    
+	/**
+	 * @return the priority
+	 */
+	public String getPriority() {
+		return priority;
+	}
+	/**
+	 * @param priority the priority to set
+	 */
+	public void setPriority(String priority) {
+		this.priority = priority;
+	}
+	/**
+	 * @return the isGroup
+	 */
+	public String getIsGroup() {
+		return isGroup;
+	}
+	/**
+	 * @param isGroup the isGroup to set
+	 */
+	public void setIsGroup(String isGroup) {
+		this.isGroup = isGroup;
+	}
     
 	/**
 	 * @return the orinNumber

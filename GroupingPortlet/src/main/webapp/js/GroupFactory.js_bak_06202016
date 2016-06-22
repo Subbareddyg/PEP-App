@@ -63,12 +63,6 @@ var app = app || {};
 			return $.post(app.URLFactory.getURL('saveHeader'), params)
 					.error(handleException);
 		},
-		
-		//Remove Exiting component 
-		removeComponents: function(params){
-			return $.post(app.URLFactory.getURL('removeComponentURL'), params)
-					.error(handleException);
-		},
 	};
 	
 	function handleException(jqXHR, textStatus, errorThrown){
