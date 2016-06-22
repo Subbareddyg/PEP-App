@@ -69,7 +69,7 @@ public class ContentDelegate {
 
         LOGGER.info("start of createIPHMappingWebServiceMapping ");
         String webServiceResponseCode = null;
-        String webServiceResponseDescription = null;
+        //String webServiceResponseDescription = null;
         String webServiceResponseStatus = null;
         String responseMsg = null;
         String webServiceResponse = null;
@@ -126,21 +126,21 @@ public class ContentDelegate {
                 final JSONObject jsonResponseObject = new JSONObject(webServiceResponse);
 
                 webServiceResponseCode = jsonResponseObject.getString("code");
-                webServiceResponseDescription = jsonResponseObject.getString("description");
+                //webServiceResponseDescription = jsonResponseObject.getString("description");
                 webServiceResponseStatus = jsonResponseObject.getString("status");
 
 
                 if(webServiceResponseCode.equals("100")){
                     LOGGER.info("webServiceResponseCode------"+webServiceResponseCode);
                     LOGGER.info("webServiceResponseStatus------"+webServiceResponseStatus);
-                    LOGGER.info("webServiceResponseDescription------"+webServiceResponseDescription);
+                    //LOGGER.info("webServiceResponseDescription------"+webServiceResponseDescription);
                     responseMsg ="The IPH mapping has been  updated successfully. ";
                 }
                 else
                 {
                     LOGGER.info("webServiceResponseCode------"+webServiceResponseCode);
                     LOGGER.info("webServiceResponseStatus------"+webServiceResponseStatus);
-                    LOGGER.info("webServiceResponseDescription------"+webServiceResponseDescription);
+                   // LOGGER.info("webServiceResponseDescription------"+webServiceResponseDescription);
                     responseMsg= "The IPH mapping cannot be updated,contact the system administrator.";
                 }
             }
@@ -150,7 +150,7 @@ public class ContentDelegate {
                 System.out.println("HTTP call response code and response message =  "+con.getResponseCode()+" , "+ con.getResponseMessage());
                 LOGGER.info("webServiceResponseCode------"+webServiceResponseCode);
                 LOGGER.info("webServiceResponseStatus------"+webServiceResponseStatus);
-                LOGGER.info("webServiceResponseDescription------"+webServiceResponseDescription);
+                //LOGGER.info("webServiceResponseDescription------"+webServiceResponseDescription);
                 responseMsg ="The IPH mapping cannot  be updated HTTP Error, contact  the System Administrator.";
             }
 

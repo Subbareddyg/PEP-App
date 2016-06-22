@@ -469,7 +469,7 @@ public class ContentDAOImpl implements ContentDAO{
              // Hibernate provides a createSQLQuery method to let you call your
              // native SQL statement directly.
              Query query =null;
-             if("CPG".equals(groupType)){
+             if(ContentScreenConstants.CONSOLIDATED_PRODUCT_GROUP_TYPE.equals(groupType)){
             	 query =session.createSQLQuery(xqueryConstants.populateGroupIPH());
              }else{
             	 query =session.createSQLQuery(xqueryConstants.populateGroupIPHForCollections());
@@ -2064,6 +2064,12 @@ public boolean releseLockedPet(  String orin, String pepUserID,String pepFunctio
 					omniChannelBrandVO.setOmniChannelBrandCode(checkNull(obj[0]).toString());
 					omniChannelBrandVO.setOmniChannelBrandDesc(checkNull(obj[1]).toString());
 					omniChannelBrandVO.setSelectedBrand(checkNull(checkNull(obj[2]).toString()));
+					if("CPG".equals(checkNull(checkNull(obj[7]).toString()))){
+						omniChannelBrandVO.setSelectedBrand(checkNull(checkNull(obj[2]).toString()));
+					}
+					else{
+						omniChannelBrandVO.setSelectedBrand(checkNull(checkNull(obj[3]).toString()));
+					}
 					listOmniChannelBrand.add(omniChannelBrandVO);
 				}
 				
@@ -2126,7 +2132,13 @@ public boolean releseLockedPet(  String orin, String pepUserID,String pepFunctio
 					carBrandVO = new CarBrandVO();
 					carBrandVO.setCarBrandCode(checkNull(obj[0]));
 					carBrandVO.setCarBrandDesc(checkNull(obj[1]));
-					carBrandVO.setSelectedBrand(StringEscapeUtils.unescapeHtml4(checkNull(obj[2])));
+					
+					if("CPG".equals(checkNull(checkNull(obj[7]).toString()))){
+						carBrandVO.setSelectedBrand(StringEscapeUtils.unescapeHtml4(checkNull(obj[2])));
+					}
+					else{
+						carBrandVO.setSelectedBrand(StringEscapeUtils.unescapeHtml4(checkNull(obj[3])));
+					}
 					carBrandList.add(carBrandVO);
 				}
 			}

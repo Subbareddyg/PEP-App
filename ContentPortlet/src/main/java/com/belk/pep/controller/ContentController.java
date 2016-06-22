@@ -3522,22 +3522,35 @@ public class ContentController implements ResourceAwareController, EventAwareCon
 
 				final String omniChannelBrandXpath = ContentScreenConstants.OMNICHANNEL_BRAND_XPATH;
 				final String carsBrandXpath = ContentScreenConstants.CARS_BRAND_XPATH;
+				final String omniGroupChannelBrandXpath = ContentScreenConstants.OMNICHANNEL_BRAND_XPATH_GROUP;
+				final String carsGroupBrandXpath = ContentScreenConstants.CARS_BRAND_XPATH_GROUP;
 
 				
-					final AttributesBean attributesBeanProductNameStyle = new AttributesBean("Group_Ctg_Spec/Name", productName);
-					final AttributesBean attributesBeanProductDescriptionStyle = new AttributesBean("Group_Ctg_Spec/Description",
+					final AttributesBean attributesBeanProductNameStyle = new AttributesBean(ContentScreenConstants.GROUP_NAME_XPATH, productName);
+					final AttributesBean attributesBeanProductDescriptionStyle = new AttributesBean(ContentScreenConstants.GROUP_DESC_XPATH,
 							productDescription);
 					beanList.add(attributesBeanProductNameStyle);
 					beanList.add(attributesBeanProductDescriptionStyle);
-					
+				
+					AttributesBean attributesOmniBrand =null;
+					AttributesBean attributeCarsBrandCode =null;
 				if ((omniBrandCode != null) && StringUtils.isNotBlank(omniBrandCode) && !omniBrandCode.equalsIgnoreCase("-1")) {
-					final AttributesBean attributesOmniBrand = new AttributesBean(omniChannelBrandXpath, (omniBrandCode));
+					if(contentDisplayForm!=null && !ContentScreenConstants.CONSOLIDATED_PRODUCT_GROUP_TYPE.equals(contentDisplayForm.getGroupingType())){
+						attributesOmniBrand = new AttributesBean(omniGroupChannelBrandXpath, (omniBrandCode));
+					}else{
+						attributesOmniBrand = new AttributesBean(omniChannelBrandXpath, (omniBrandCode));
+					}
 					beanList.add(attributesOmniBrand);
 				}
 				if ((carsBrandCodeEncoded != null) && StringUtils.isNotBlank(carsBrandCodeEncoded)
 						&& !carsBrandCodeEncoded.equalsIgnoreCase("-1")) { 
-					final AttributesBean attributeCarsBrandCode = new AttributesBean(carsBrandXpath, (carsBrandCodeEncoded)); // JIRA
-																																// VP9
+					if(contentDisplayForm!=null && !ContentScreenConstants.CONSOLIDATED_PRODUCT_GROUP_TYPE.equals(contentDisplayForm.getGroupingType())){
+						
+						attributeCarsBrandCode = new AttributesBean(carsGroupBrandXpath, (carsBrandCodeEncoded));
+					}else{
+						attributeCarsBrandCode = new AttributesBean(carsBrandXpath, (carsBrandCodeEncoded));
+					}
+					
 					beanList.add(attributeCarsBrandCode);
 				}
 			}

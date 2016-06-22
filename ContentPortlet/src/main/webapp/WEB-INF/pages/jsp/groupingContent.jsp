@@ -1625,7 +1625,7 @@
                     	                                       
                     	                                          success: function(data){
                     	                                                    $("#ajaxResponseUpdateStylePetContentStatus").html("");
-                    	                                                    $("#ajaxResponseUpdateStylePetContentStatus").append("<b><font size='2'>Style Pet Status updated successfully !</font></b>" );      
+                    	                                                    $("#ajaxResponseUpdateStylePetContentStatus").append("<b><font size='2'>Group Status updated successfully !</font></b>" );      
                     	                                                    $("#saveButtonId").attr("disabled", "disabled");
                     	                                                    $("#styleSubmit").attr("disabled", "disabled"); 
                     	                                                    $("#btnSubmit").attr("disabled", "disabled"); 
@@ -2334,7 +2334,7 @@ function toggleRows(currentRow, styleId, styleColorId){
 									 </c:if>
 								   </div>
 								   <div><table><tr><td><b><font size='2'><c:out value="${contentCopyStatusMessage}" /></font></b></td></tr></table></div>
-
+									
 								    <div class="orin-popup-container">
 										<input type="button" class="btn chevron-down" id="btnCopyORIN" value="Copy ORIN" style="width: 150px; padding: 6px;"/>
 										<div class="clearfix"></div>

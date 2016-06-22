@@ -2846,7 +2846,7 @@ public class XqueryConstants {
 	public String populateGroupIPHForCollections(){
 		
 		final Properties prop =   PropertiesFileLoader.getPropertyLoader(ContentScreenConstants.MESS_PROP);
-		String categoryId = prop.getProperty("DUMMY_CATEGORY_ID_COLLECTION");
+		String categoryId = prop.getProperty(ContentScreenConstants.DUMMY_CATEGORY_ID_COLLECTION);
 		if(LOGGER.isDebugEnabled())
 			LOGGER.debug("categoryId in  populateGroupIPHForCollections--- >"+categoryId);
 		
@@ -2874,7 +2874,7 @@ public class XqueryConstants {
 		query.append("                                                                                                                                                         " );
 		query.append(" <name>{$categoryname}</name>                                                                                                                            " );
 		query.append(" </category>' PASSING pet.XML_DATA AS \"XML_DATA\" COLUMNS CATEGORY_ID VARCHAR(100) path '/category/pk',                                                   " );
-		query.append("   --CATEGORY_DESC VARCHAR(100) path '/category/path',                                                                                                   " );
+		//query.append("   --CATEGORY_DESC VARCHAR(100) path '/category/path',                                                                                                   " );
 		query.append("   CATEGORY_NAME VARCHAR(100) path '/category/name') ias ,                                                                                               " );
 		query.append("   VENDORPORTAL.ADSE_MERCHANDISE_HIERARCHY amh,                                                                                                          " );
 		query.append("   XMLTABLE( 'for $j in $XML_DATA/pim_category/merchandise_category_header                                                                               " );
@@ -2912,10 +2912,10 @@ public class XqueryConstants {
 		query.append("   leafnode3 VARCHAR(100) path '/IPH_Category_Mappings/leafnode3',                                                                                       " );
 		query.append("   leafnode2 VARCHAR(100) path '/IPH_Category_Mappings/leafnode2',                                                                                       " );
 		query.append("   leafnode1 VARCHAR(100) path '/IPH_Category_Mappings/leafnode1') ids                                                                                   " );
-		query.append(" WHERE amh1.MDMID = ");
+		query.append(" WHERE amh1.MDMID = '");
 		query.append(categoryId);                                                                                                                              
-		query.append(" AND amh1.MDMID = amh.MDMID                                                                                                                              " );
-		query.append(" AND pet.mdmid  = :groupingNo																										");	
+		query.append("' AND amh1.MDMID = amh.MDMID                                                                                                                              " );
+		query.append(" AND pet.mdmid  = :groupingNo																				");	
     	
 			return query.toString();
     }

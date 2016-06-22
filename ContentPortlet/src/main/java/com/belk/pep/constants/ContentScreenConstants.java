@@ -241,5 +241,13 @@ public class ContentScreenConstants {
 	public static final String UPDATE_CONTENT_STATUS_FAILURE_MESSAGE = "update.group.content.status.failure.message";
 	public static final String CONTENT_STATUS_UPDATE = "ContentStatusUpdate";
 	public static final String GROUP_IPH_MAPPING_WEBSERVICE_URL="groupIphMapping.webservice.url";
+	
+	public static final String CONSOLIDATED_PRODUCT_GROUP_TYPE = "CPG";
+	public static final String DUMMY_CATEGORY_ID_COLLECTION = "DUMMY_CATEGORY_ID_COLLECTION";
+	public static final String OMNICHANNEL_BRAND_XPATH_GROUP = "Collection_Spec/OmniChannelBrand";
+	public static final String CARS_BRAND_XPATH_GROUP = "Collection_Spec/CarBrand";
+	public static final String GROUP_NAME_XPATH = "Group_Ctg_Spec/Name";
+	public static final String GROUP_DESC_XPATH = "Group_Ctg_Spec/Description";
+	
 
 }
