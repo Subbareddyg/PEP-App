@@ -1460,7 +1460,7 @@ public class ImageRequestController {
 			 try {
 	    		String loggedInUser = "";
 	    		LOGGER.info(" GroupingId  in getGroupingImageDetails method  -" + imageDetailsFromIPC.getOrinNumber());	
-	    		 loggedInUser = groupingImageHelper.getLoggedInUserName(imageDetailsFromIPC);			  
+	    		loggedInUser = groupingImageHelper.getLoggedInUserName(imageDetailsFromIPC);			  
 	    		LOGGER.info("loggedInUser:::::::::" +loggedInUser);
 	    		if(imageDetailsFromIPC.getOrinNumber()!=null){
 	    			groupingId = imageDetailsFromIPC.getOrinNumber();
