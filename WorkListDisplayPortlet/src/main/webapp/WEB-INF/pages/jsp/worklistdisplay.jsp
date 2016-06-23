@@ -1110,7 +1110,7 @@ lockClearOnBack.value='1';
 		<a href="#" onclick="contentStatus('{{=item.contentStatus}}','{{=item.styleOrinNum}}')">{{=item.contentStatus}}</a>
 		</td>
 		<td>
-		<a href="#" onclick="imageStatus('{{item.imageStatus}}','{{=item.styleOrinNum}}','{{=item.petStatus}}')">{{=item.imageStatus}}</a>
+		<a href="#" onclick="imageStatus('{{=item.imageStatus}}','{{=item.styleOrinNum}}','{{=item.petStatus}}')">{{=item.imageStatus}}</a>
 		</td>
 		<td>{{=item.petStatus}}
 			<input type="hidden" id="{{=orinNum}}_petStatus" value="{{=item.petStatus}}"/>
@@ -1158,7 +1158,7 @@ lockClearOnBack.value='1';
 						<a href="#" onclick="contentStatus('{{=childItem.contentStatus}}','{{=item.styleOrinNum}}')">{{=childItem.contentStatus}}</a>
 						</td>
 						<td>
-						<a href="#" onclick="imageStatus('{{childItem.imageStatus}}','{{=item.styleOrinNum}}','{{=childItem.petStatus}}')">{{=childItem.imageStatus}}</a>
+						<a href="#" onclick="imageStatus('{{=childItem.imageStatus}}','{{=item.styleOrinNum}}','{{=childItem.petStatus}}')">{{=childItem.imageStatus}}</a>
 						</td>
 						<td>{{=childItem.petStatus}}
 							<input type="hidden" id="{{=item.styleOrinNum}}_petStatus" value="{{=childItem.petStatus}}"/>

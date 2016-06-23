@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.ProtocolException;
 import java.net.URL;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -2663,5 +2664,41 @@ public class GroupingServiceImpl implements GroupingService {
 		}
 		LOGGER.info("Exit-->calling getRegularBeautyChildDetails from GroupingServiceImpl.");
 		return styleAttributeFormList;
+	}
+	
+	
+	
+	/**
+	 * This method is used to get the WebService Connection.
+	 * @param serviceURL
+	 * @return
+	 * @throws PEPServiceException
+	 */
+	public final HttpURLConnection getServiceConnection(final String serviceURL) throws ProtocolException, MalformedURLException, IOException {
+
+		HttpURLConnection httpConnection = null;
+		Properties prop = PropertyLoader.getPropertyLoader(GroupingConstants.MESS_PROP);
+		URL targetUrl;
+		try {
+			targetUrl = new URL(serviceURL);
+
+			httpConnection = (HttpURLConnection) targetUrl.openConnection();
+
+			httpConnection.setDoOutput(true);
+			httpConnection.setRequestMethod(prop.getProperty(GroupingConstants.SERVICE_REQUEST_METHOD));
+			httpConnection.setRequestProperty(prop.getProperty(GroupingConstants.SERVICE_REQUEST_PROPERTY_CONTENT_TYPE),
+					prop.getProperty(GroupingConstants.SERVICE_REQUEST_PROPERTY_APPLICATION_TYPE));
+		} catch (ProtocolException e) {
+			LOGGER.error("getServiceConnection.ProtocolException-->"+e);
+			throw new ProtocolException(e.getMessage());
+		} catch (MalformedURLException e) {
+			LOGGER.error("getServiceConnection.MalformedURLException-->"+e);
+			throw new ProtocolException(e.getMessage());
+		} catch (IOException e) {
+			LOGGER.error("getServiceConnection.IOException-->"+e);
+			throw new ProtocolException(e.getMessage());
+		}
+
+		return httpConnection;
 	}
 }
