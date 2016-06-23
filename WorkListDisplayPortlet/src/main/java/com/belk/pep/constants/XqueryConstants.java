@@ -3608,7 +3608,7 @@ public String getAdvWorkListDisplayDataForParent(AdvanceSearch advSearch) {
         "   AND AGCM.MDMID         = :groupOrin                                                      "+
         "   UNION                                                                                    "+
         "  SELECT AIC.PARENT_MDMID,                                                                  "+
-        "     AIC.MDMID,                                                                             "+
+        "     CASE WHEN AIC.ENTRY_TYPE = 'StyleColor' THEN SUBSTR(AIC.MDMID,1,9) || ' ' || SUBSTR(AIC.MDMID,10,12) || ' ' || PET_XML.COLO_DESC ELSE AIC.MDMID END MDMID,   "+
         "     PET_XML.PRODUCT_NAME PRODUCTNAME,                                                      "+
         "     CASE WHEN AIC.ENTRY_TYPE = 'Style' THEN TO_CHAR(APC.PET_EARLIEST_COMP_DATE, 'YYYY-MM-DD') ELSE PET_XML.completion_date END AS completion_date,        "+
         "     APC.PET_STATE PET_STATE,                                                               "+
@@ -3929,7 +3929,7 @@ public String getAdvWorkListDisplayDataForParent(AdvanceSearch advSearch) {
         "   AND AGCM.MDMID         = :orinNum                                                          "+
         "   UNION                                                                                      "+
         "  SELECT AIC.PARENT_MDMID,                                                                    "+
-        "     AIC.MDMID,                                                                               "+
+        "     CASE WHEN AIC.ENTRY_TYPE = 'StyleColor' THEN SUBSTR(AIC.MDMID,1,9) || ' ' || SUBSTR(AIC.MDMID,10,12) || ' ' || PET_XML.COLO_DESC ELSE AIC.MDMID END MDMID,   "+
         "     PET_XML.PRODUCT_NAME PRODUCTNAME,                                                        "+
         "     CASE WHEN AIC.ENTRY_TYPE = 'Style' THEN TO_CHAR(APC.PET_EARLIEST_COMP_DATE, 'YYYY-MM-DD') ELSE PET_XML.completion_date END AS completion_date,        "+
         "     APC.PET_STATE PET_STATE,                                                                 "+
