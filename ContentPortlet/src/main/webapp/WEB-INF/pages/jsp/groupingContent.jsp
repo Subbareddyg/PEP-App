@@ -1534,7 +1534,7 @@
 		     
 		     var selectedCategory = document.getElementById("iphCategoryDropDownId");
 		 
-		     if(from == 'Approve'){
+		     if(from == 'Submit'){
 				  	$('#overlay_pageLoadingapprove').show();
 				  }else{
 					$('#overlay_pageLoadingsave').show();
@@ -1598,16 +1598,29 @@
                     	  						 if(val.UpdateStatus == 'Success'){
 													 if(val.ContentStatusUpdate !== undefined && val.ContentStatusUpdate != ''){
 															$("#ajaxResponseSaveContentPetAttribute").html("");
-														  $("#ajaxResponseSaveContentPetAttribute").append("<b><font size='2'>" + val.ContentStatusUpdate +"</font></b>"); 
-														  $("#ajaxResponseSaveContentPetAttribute").focus();
+														  $("#ajaxResponseSaveContentPetAttribute").append("<b><font size='2'>" + val.ContentStatusUpdate +"</font></b>"); 															
+															window.location.reload(true)
+																	
+																	
+                    	                                                    $("#saveButtonId").attr("disabled", "disabled");
+                    	                                                    $("#styleSubmit").attr("disabled", "disabled"); 
+                    	                                                    $("#btnSubmit").attr("disabled", "disabled"); 
+                    	                                                    $("#btnCopyORIN").attr("disabled", "disabled"); 
+                    	                                                    $("#publisStatusCodeReadyForCopy").attr("disabled", "disabled"); 
+                    	                                                    $("#publisStatusCodePublishToWeb").attr("disabled", "disabled"); 
+                    	                                                    $('.contentStatusId').html('Completed');	
+																	$("#ajaxResponseSaveContentPetAttribute").focus();																			
+                    	                                                   
 														}else{
 														 $("#ajaxResponseSaveContentPetAttribute").html("");
 														  $("#ajaxResponseSaveContentPetAttribute").append("<b><font size='3'>Pet Content saved successfully!</font></b>"); 
 														  $("#ajaxResponseSaveContentPetAttribute").focus();
 														}
+														
                     	                              if(from == 'Approve'){
                     	                              if(roleName=='dca')
                     	                  			{
+														console.log('dca submit');
                     	                  				stylePetContentStatus='02' // Set Style Content Pet status to Completed when  dca approves the Pet
                     	                  				 
                     	                  				 var ajaxCall=  $.ajax({
@@ -1624,6 +1637,7 @@
                     	                                           
                     	                                       
                     	                                          success: function(data){
+																	  console.log('Success');
                     	                                                    $("#ajaxResponseUpdateStylePetContentStatus").html("");
                     	                                                    $("#ajaxResponseUpdateStylePetContentStatus").append("<b><font size='2'>Group Status updated successfully !</font></b>" );      
                     	                                                    $("#saveButtonId").attr("disabled", "disabled");
@@ -1640,7 +1654,7 @@
                     	                                          },
                     	                                          
                     	                                          error: function(XMLHttpRequest, textStatus, errorThrown){
-                    	                      	                	
+                    	                      	                	console.log('Error' + XMLHttpRequest.status);
                     	                      	                	$("#ajaxResponseUpdateStylePetContentStatus").html("");
                     	                      	                	$("#ajaxResponseUpdateStylePetContentStatus").append("<b><font size='2'>Style Pet Status could not be updated, please contact Belk helpdesk.</font></b> <br>"); 
                     	                      	                    $("#ajaxResponseUpdateStylePetContentStatus").append("<br>");
@@ -1697,7 +1711,7 @@
                     	                               });
 
                     	                  			}
-                    	                              $("#overlay_pageLoadingapprove").hide();
+                    	                              //$("#overlay_pageLoadingapprove").hide();
                     	                              } //
                     	                              
                     	  						 }else{
@@ -1710,6 +1724,7 @@
 	       	                      	                	$("#ajaxResponseUpdateStylePetContentStatus").append("<b><font size='2'>Style Pet Status could not be updated as Pet Content save failed. Please contact Belk helpdesk.</font></b> <br>"); 
 	       	                      	                    $("#ajaxResponseUpdateStylePetContentStatus").append("<br>");
 	                 	                              }
+													  $('#overlay_pageLoadingapprove').hide();
                     	  						 }
                     	  					});			 
                     	  				} 
@@ -2334,7 +2349,7 @@ function toggleRows(currentRow, styleId, styleColorId){
 									 </c:if>
 								   </div>
 								   <div><table><tr><td><b><font size='2'><c:out value="${contentCopyStatusMessage}" /></font></b></td></tr></table></div>
-									
+									<c:if test="${contentDisplayForm.styleInformationVO.groupingType == 'CPG'}">
 								    <div class="orin-popup-container">
 										<input type="button" class="btn chevron-down" id="btnCopyORIN" value="Copy ORIN" style="width: 150px; padding: 6px;"/>
 										<div class="clearfix"></div>
@@ -2345,7 +2360,7 @@ function toggleRows(currentRow, styleId, styleColorId){
 												<div class="form-conatiner">
 													<div class="input-area">
 														<label for="styleId">ORIN#</label>
-														<input type="text" name="styleId" id="copyORINstyleIdTmp" value="" required />
+														<input type="text" name="styleId" id="copyORINstyleIdTmp" value="" required maxlength="9" />
 													</div>
 													<div class="submit-area">
 														<input type="button" id="doCopyOrin" value="Submit" class="action-button" />
@@ -2354,7 +2369,7 @@ function toggleRows(currentRow, styleId, styleColorId){
 											</div>
 										</div>
 									</div>
-									
+									</c:if>
 								   	<ul class="pep_info" style="font-size: 11px; padding: 0 0 10px !important;">								   	    
 										<li class="txt_attr_name" style="width: 30%;">
 											
@@ -2435,7 +2450,7 @@ function toggleRows(currentRow, styleId, styleColorId){
 									<c:if test="${contentDisplayForm.roleName == 'readonly'}">
 										disabled="disabled"
 									</c:if>
-									onclick="javascript:saveContentPetAttributesWebserviceResponse('${saveContentPetAttributes}','<c:out value="${contentDisplayForm.styleInformationVO.orin}"/>','<c:out value="${contentDisplayForm.pepUserId}"/>', '<c:out value="${contentDisplayForm.productAttributesDisplay.dropDownList.size()}"/>','<c:out value="${contentDisplayForm.legacyAttributesDisplay.dropDownList.size()}"/>', '<c:out value="${contentDisplayForm.productAttributesDisplay.radiobuttonList.size()}"/>', '<c:out value="${contentDisplayForm.legacyAttributesDisplay.radiobuttonList.size()}"/>', '', '', 'Submit','', true)" />
+									onclick="javascript:saveContentPetAttributesWebserviceResponse('${saveContentPetAttributes}','<c:out value="${contentDisplayForm.styleInformationVO.orin}"/>','<c:out value="${contentDisplayForm.pepUserId}"/>', '<c:out value="${contentDisplayForm.productAttributesDisplay.dropDownList.size()}"/>','<c:out value="${contentDisplayForm.legacyAttributesDisplay.dropDownList.size()}"/>', '<c:out value="${contentDisplayForm.productAttributesDisplay.radiobuttonList.size()}"/>', '<c:out value="${contentDisplayForm.legacyAttributesDisplay.radiobuttonList.size()}"/>', '', '<c:out value="${contentDisplayForm.roleName}"/>', 'Submit','', true)" />
 									
 									<c:if test="${contentDisplayForm.roleName == 'readonly'}">									
 									   
