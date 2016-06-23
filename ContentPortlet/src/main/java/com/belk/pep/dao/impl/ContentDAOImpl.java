@@ -2448,7 +2448,7 @@ public boolean releseLockedPet(  String orin, String pepUserID,String pepFunctio
 		final XqueryConstants xqueryConstants = new XqueryConstants();
 		try {
 			session = sessionFactory.openSession();
-			final Query query = session.createSQLQuery(xqueryConstants
+			Query query = session.createSQLQuery(xqueryConstants
 					.getGroupCopyValidation());
 			if (query != null) {
 				query.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
@@ -2456,24 +2456,56 @@ public boolean releseLockedPet(  String orin, String pepUserID,String pepFunctio
 				query.setParameter(ContentScreenConstants.GROUP_ID, groupId);
 				rows = query.list();
 			}
-
+			int validCount =0;
 			if (rows != null) {
 				for (final Object rowObj : rows) {
 					final Map row = (Map) rowObj;
 
-					int validCount = row
+				validCount = row
 							.get(ContentScreenConstants.COUNT_GROUP) == null ? 0
 							: Integer.parseInt(row.get(
 									ContentScreenConstants.COUNT_GROUP)
 									.toString());
-					if (validCount > 0) {
-						message = ContentScreenConstants.SUCCESS;
-					}
 					if(LOGGER.isDebugEnabled())
 					{
-						LOGGER.debug("Value -- \nCOUNT_GROUP: " + validCount);
+						LOGGER.debug("Value --COUNT_GROUP: " + validCount);
 					}
+					
+					
 				}
+			}
+			
+			if (validCount > 0) {
+				
+				query = session.createSQLQuery(xqueryConstants
+						.getPETStateCopyValidation());
+				if (query != null) {
+					query.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
+					query.setParameter(ContentScreenConstants.STYLE_ID, styleId);
+					rows = query.list();
+				}
+				
+				if (rows != null) {
+					for (final Object rowObjPET : rows) {
+						final Map rowPET = (Map) rowObjPET;
+
+						String PETState = (rowPET.get(ContentScreenConstants.PET_STATE)==null?"00":rowPET.get(ContentScreenConstants.PET_STATE)).toString();
+
+						if(LOGGER.isDebugEnabled())
+						{
+							LOGGER.debug("Value -- PETState:" + PETState);
+						}
+						//02- Completed
+						//06-Closed
+						//07-Waiting to be Closed
+						//09-Published to Web
+						if("02".equals(PETState) || "06".equals(PETState) || "07".equals(PETState) || "09".equals(PETState)) {
+							message = ContentScreenConstants.SUCCESS;
+						}else{
+							message = ContentScreenConstants.ORIN_NOT_COMPLETED;
+						}
+					}
+			}
 			}
 		} catch (Exception exception) {
 			LOGGER.error("Exception in getGroupCopyValidation() method. -- "
