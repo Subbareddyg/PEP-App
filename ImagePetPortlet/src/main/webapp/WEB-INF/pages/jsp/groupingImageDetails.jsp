@@ -11,22 +11,11 @@
 
 
 
-
-
-
 <script>
 	hljs.initHighlightingOnLoad();
 </script>
 
 <style type = "text/css">
-#overlay_imageLoading
-{   
-   position: fixed;
-   width: 550px;
-   height: 250px;
-   top: 40%;
-   left: 40%;	
-}
 </style>
 
 <script type="text/javascript">
@@ -153,6 +142,7 @@ function releseLockedPet(loggedInUser,releseLockedPetURL){
 
 
 
+
 </script>
 
  <%	
@@ -162,9 +152,13 @@ function releseLockedPet(loggedInUser,releseLockedPetURL){
  
 <portlet:defineObjects />
 <portlet:actionURL var="groupingImgUploadAction"><portlet:param name="action" value="groupingImgUploadAction" /></portlet:actionURL>
+<portlet:actionURL var="formAction">  <portlet:param name="action" value="imageRemoveFormSubmit"/>
+</portlet:actionURL>
 <portlet:resourceURL var="groupingImgApproveAction" id="groupingImgApproveAction"></portlet:resourceURL>
 
 <portlet:resourceURL var="removeGroupingImage" id ="removeGroupingImage">	</portlet:resourceURL>
+
+
 
 <portlet:resourceURL var="downloadImageFile" id="downloadImageFile"></portlet:resourceURL>
 <input type="hidden" id="downloadFilePathUrl" name="downloadFilePathUrl" value="${downloadImageFile}" />
@@ -182,7 +176,8 @@ function releseLockedPet(loggedInUser,releseLockedPetURL){
 <div id="content">
 <div id="main">
 
-<form commandName="imageDetailsForm" id="imageDetail" method="post" 	action="#"><!--Style Info Starts-->
+<form commandName="imageDetailsForm" id="imageDetail" method="post"  name="imageDetail" 	 action="#" >
+<!--Style Info Starts-->
 	
 <input type ="hidden" name="loginUserHidden" id="loginUserHidden" value ="${imageDetailsForm.username}" />
 <portlet:resourceURL var="releseLockedPet" id ="releseLockedPet">  </portlet:resourceURL>
@@ -208,11 +203,15 @@ function releseLockedPet(loggedInUser,releseLockedPetURL){
 	<div class="x-panel-header">
 		<fmt:message 	key="label.groupingInfo.header" />
 	</div>	
-	<div id="GroupingInfoId" class="x-panel-body" style="width:906px;">												
+	<div id="GroupingInfoId" class="x-panel-body" >
+	<div id="image-Upload-Message-Area" class="message-area">
+		
+	</div>												
 	<ul class="car_info" 	style="font-size: 11px; padding: 0 0 10px !important;">
 	<c:if test="${not empty imageDetailsForm.styleInfo}">
 		<%-- Style Information code starts here   --%>
-		<c:forEach var="styleInformation" varStatus="status" items="${imageDetailsForm.styleInfo}">         
+		<c:forEach var="styleInformation" varStatus="status" items="${imageDetailsForm.styleInfo}">  
+		<input type="hidden" name="lockedPet" id="lockedPet" value="<c:out value="${styleInformation.orinGrouping}" />" />       
 		<input type="hidden" name="groupingId" id="groupingId" value="<c:out value="${styleInformation.orinGrouping}" />" />
 		<input type="hidden" name="groupingType" id="groupingType" value="<c:out value="${styleInformation.groupingType}" />" />
 		<input type="hidden" name="loggedInUser" id="loggedInUser" value="<c:out value="${imageDetailsForm.username}" />" />
@@ -296,12 +295,10 @@ function releseLockedPet(loggedInUser,releseLockedPetURL){
 	</div>
 	<div class="x-panel-body" style="width:906px;">	
 	
-	<div id="image-Upload-Message-Area" class="message-area">
-		
-	</div>
+	
 <div class="userButtons" style="margin-bottom:10px">
 
-<form id="vendorImageDetailsFormID" name="vendorImageDetailsFormID">
+<form id="vendorImageDetailsFormID" name="vendorImageDetailsFormID" action="${formAction}">
 
 
 
@@ -317,8 +314,14 @@ function releseLockedPet(loggedInUser,releseLockedPetURL){
 
 </div>
 		<div class="need_images">							
-		<div id="vendor_images">	
-	<table  cellpadding="0" >
+		<div id="vendor_images">
+
+
+
+	
+	
+<table id="groupImageTable" cellpadding="0" cellspacing="0">
+<input type="hidden" name="hidImageId" id="hidImageId" value=""/>
 				<thead >
 				<tr>								
 					<th><fmt:message key="label.vpisampleImage.imageID"/></th>
@@ -328,27 +331,8 @@ function releseLockedPet(loggedInUser,releseLockedPetURL){
 					<th>Remove</th>
 				</tr>
 				 </thead>
-				 <tbody >
-					
-					<c:if test="${not empty imageDetailsForm.sampleImageDetailList}">
-					
-					<c:forEach items="${imageDetailsForm.sampleImageDetailList}" var="vpiSampleImageLinks" varStatus="status">
-								
-							<input type="hidden" name="imageId" id="imageId" value="<c:out value="${vpiSampleImageLinks.imageId}" />" />
-
-								<tr>							
-								<td><c:out value="${vpiSampleImageLinks.imageId}" />						
-								</td>								
-								<td><c:out value="${vpiSampleImageLinks.originalImageName}" />
-								</td>								
-								<td><a href="javascript:openGRPImage('${downloadFilePathUrl}','<c:out value="${vpiSampleImageLinks.imageUrl}" />')"/><c:out value="${vpiSampleImageLinks.imageName}" /></a>								</td>
-								<td id="imagStatus"><c:out value="${vpiSampleImageLinks.imageStatus}" /></td>								
-								<td> <a href="#"  id="removeImage"  onclick="confirmGRPImageRemovePopUp('<c:out value="${vpiSampleImageLinks.imageId}" />','<c:out value="${vpiSampleImageLinks.imageName}" />')">Remove</a></td></td>
-							</tr>							
-					</c:forEach> 
-					</c:if> 		  
-				</tbody>
-				</table>
+				
+	</table>
 
  </form>
 				</div>
@@ -375,17 +359,20 @@ function releseLockedPet(loggedInUser,releseLockedPetURL){
 </div>		
 		<div class="need_images">							
 		<div id="vendor_images">
-<table id="vImage" cellpadding="0" cellspacing="0">
-<thead>
-<tr>
+<table id="groupImageTable" cellpadding="0" cellspacing="0">
+<input type="hidden" name="hidImageId" id="hidImageId" value=""/>
 
-<th><fmt:message key="label.vpisampleImage.imageID" /></th>
-<th><fmt:message key="label.vpisampleImage.imageName" /></th>
-<th><fmt:message key="label.vpisampleImage.imageLoc" /></th>
-<th><fmt:message key="label.vpisampleImage.imageShotType" /></th>
-<th><fmt:message key="label.vpisampleImage.imgrStatus" /></th>
-
-</table>
+				<thead >
+				<tr>								
+					<th><fmt:message key="label.vpisampleImage.imageID"/></th>
+					<th><fmt:message key="label.originalImageName.header"/></th>
+					<th><fmt:message key="label.vpisampleImage.imageName"/></th>																
+					<th><fmt:message key="label.imageManagement.imageStatus"/></th>
+					<th>Remove</th>
+				</tr>
+				 </thead>
+				
+	</table>
 	</div>
 			</div>	
 		
@@ -589,6 +576,8 @@ function releseLockedPet(loggedInUser,releseLockedPetURL){
 			<input type="hidden" id="imgNameHiddenId" name="imgNameHiddenId" value=""></input>			
 		</div>
 		<div class="x-panel-body;border: 0px solid #99bbe8;">
+
+
 			</br>
 			</br>
 			<ul>
@@ -603,6 +592,7 @@ function releseLockedPet(loggedInUser,releseLockedPetURL){
 					
 				</li>				
 			</ul>
+
 
 		</div>
 	</div>
@@ -625,6 +615,10 @@ var uploadStatus = '${uploadSuccess}';
 var imageCount = '${imageCount}';
 var imageStatus= '${imageStatus}';
 var imageFilePath= '${imageFilePath}';
+var uploadImgeId= '${uploadImgeId}';
+
+
+var groupVPILinks= '${groupVPILinks}';
 
 
 
@@ -632,12 +626,21 @@ var imageFilePath= '${imageFilePath}';
 
 $(function() {
 
+if (typeof groupVPILinks !== "undefined" ) 
+         { 
+
+
+	  document.getElementById('hidImageId').value = uploadImgeId;
+  	  onloadVPILinks(groupVPILinks);
+
+	 }
+
 
 
 	  if(uploadStatus=='Y'){	
 		//$("#overlay_Upload").show();
 		//$("#dialog_uploadSuccess").show();
-		document.getElementById("imagStatus").innerHTML = 'Intiated';
+		
 		showGrpImageActionMessage('uploadSuccess', '${imageName}');
 		document.getElementById('btnGPImageUploadAction').disabled=true;
 		
@@ -653,6 +656,7 @@ $(function() {
          {
 	      document.getElementById('btnGPImageUploadAction').disabled=true;
 	 }
+
 
 	if (typeof imageStatus !== "undefined" && (imageStatus=='Completed')) 
          { 

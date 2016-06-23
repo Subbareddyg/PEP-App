@@ -406,9 +406,6 @@ if (typeof selectedRadioButton.filter(':checked').val()  !== "undefined" && sele
 
 
 
-		
-
-
 
 
 var groupingType = $("#groupingType").val();
@@ -428,7 +425,7 @@ var groupingType = $("#groupingType").val();
 						document.getElementById("imageStatus").innerHTML = 'Completed';	
 						document.getElementById('removeGPImage').disabled = true ;
 				
-						//document.getElementById('image_approve').disabled = true ;
+						document.getElementById('image_approve').disabled = true ;
 						$("#overlay_imageLoading").hide();
 						document.getElementById('btnGPImageUploadAction').disabled = true ;
 					
@@ -490,6 +487,12 @@ function buildGrpMessage(msg, dlgType){
 		+ '</div>';
 }
 
+function openGRPImage(url){
+
+	var win = window.open(url, '', "toolbar=no,resizable=no,width=640,height=480,scrollbars=yes");
+}
+
+
 
 function onloadVPILinks(groupVPILinks){
 	
@@ -498,9 +501,6 @@ var rowCount = table.rows.length;
 var row = table.insertRow(rowCount);
 var json = JSON.parse(groupVPILinks);
 var imageUrl = document.getElementById('downloadFilePathUrl').value+"?filePath="+json["imagefilepath"]+"&imageName="+json["imageName"];
-
-
-
 
      var cell1 = row.insertCell(0);
      cell1.id="hiddenImageId";

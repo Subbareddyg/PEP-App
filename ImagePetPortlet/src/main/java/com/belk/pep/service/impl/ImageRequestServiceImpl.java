@@ -427,37 +427,16 @@ public String callUploadVPIService(JSONArray jsonArray) throws Exception,PEPFetc
         while ((output = responseBuffer.readLine()) != null) {
             LOGGER.info("Upload VPI webservice response *****"+output);
                 // This block is for handling multiple row data.
+            
+             if(null!=output && output.contains("SUCCESS")){
+            	 LOGGER.info("Upload VPI webservice response  FLAG*****"+output);
+            	  flag = true;
+                }else{
+            	 flag =false ;
+                }
                 JsonElement jelement = new JsonParser().parse(output);
                 JsonObject jobject = jelement.getAsJsonObject();
-                JsonArray jsonObject =(JsonArray) jobject.get(ImageConstants.SERVICE_IMAGE_UPLOAD_LIST);
-                for (int i = 0; i < jsonObject.size(); i++) {
-                    LOGGER.info("ImageRequestServiceImpl::Id value size" + jsonObject.size() + "i value" + i);
-                    if (jsonObject.size() == 1) {
-                        JsonObject individualjson = jsonObject.getAsJsonObject();
-                        Object msgCode =individualjson.get(ImageConstants.MSG_CODE);
-
-                        LOGGER.info("ImageRequestServiceImpl::MsgCode with one json" + msgCode.toString());
-                        msgCodeStr = msgCode.toString();
-                        msgCodeStr =msgCodeStr.substring(1, msgCodeStr.length() - 1);
-                        LOGGER.info("aa" + msgCodeStr);
-                    } else {
-                        JsonObject individualjson = jsonObject.get(i).getAsJsonObject();
-                        Object msgCode =individualjson.get(ImageConstants.MSG_CODE);
-
-                        LOGGER.info("ImageRequestServiceImpl::MsgCode callUploadImageservice" + msgCode.toString());
-
-                        msgCodeStr = msgCode.toString();
-                        msgCodeStr =msgCodeStr.substring(1, msgCodeStr.length() - 1);
-                        LOGGER.info("msgCodeStr" + msgCodeStr);
-                    }
-
-                    if (msgCodeStr.equalsIgnoreCase(ImageConstants.SUCCESS_CODE)) {
-                        flag = true;
-                        LOGGER.info("ImageRequestServiceImpl:::callUploadImageservice:::flag" + flag);
-                    } else if (msgCodeStr.equalsIgnoreCase(ImageConstants.FAILURE_CODE)) {
-                        flag = false;
-                    }
-                }
+                JsonArray jsonObject =(JsonArray) jobject.get(ImageConstants.SERVICE_IMAGE_UPLOAD_LIST);            
                 if (flag) {
                     responseMsg = prop.getProperty(ImageConstants.DEV_SERVICE_UPLOADVPI_SUCCESS_IMAGE_MESSAGE);
                     LOGGER.info("ImageRequestServiceImpl:::callUploadImageservice:::responseMsg" + responseMsg);
@@ -471,7 +450,7 @@ public String callUploadVPIService(JSONArray jsonArray) throws Exception,PEPFetc
 
         httpConnection.disconnect();
     } catch (MalformedURLException e) {
-        LOGGER.info("inside malformedException callUploadImageservice");
+        LOGGER.info("inside malformedException callUploadImageservice",e);
         throw new PEPFetchException();
        // e.printStackTrace();
 
@@ -498,7 +477,7 @@ public String callUploadVPIService(JSONArray jsonArray) throws Exception,PEPFetc
         throw new Exception();
 
     }
-
+    LOGGER.info("responseMsg Response message in upload image ***********" + responseMsg);
     return responseMsg;
 }
 

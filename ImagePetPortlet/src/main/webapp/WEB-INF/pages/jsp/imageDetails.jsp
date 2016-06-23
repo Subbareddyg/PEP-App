@@ -124,7 +124,7 @@ function clickListener(e){
 function timeOutPage(){
 	if(timeOutConfirm=='N')
 	{	
-		timeOutvar = setTimeout(redirectSessionTimedOut, 600000);
+		timeOutvar = setTimeout(redirectSessionTimedOut, 3600000);
 	}
 }
 
@@ -1564,10 +1564,10 @@ function expandCollapse(tableId,selectedColorOrin1){
 $(document).keydown(function(e) { if (e.keyCode == 8) e.preventDefault(); });
 
 var timeOutvarImage = null;
-timeOutvarImage = setTimeout(redirectSessionTimedOutImage, 1800000);
+timeOutvarImage = setTimeout(redirectSessionTimedOutImage, 3600000);
 function timeOutImagePage()
 {
-                timeOutvarImage = setTimeout(redirectSessionTimedOutImage, 1800000);
+                timeOutvarImage = setTimeout(redirectSessionTimedOutImage, 3600000);
 }
 
 document.onclick = clickListenerImage;

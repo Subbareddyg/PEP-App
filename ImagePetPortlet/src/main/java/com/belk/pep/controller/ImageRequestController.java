@@ -626,7 +626,9 @@ public class ImageRequestController {
     			  String imageLocation = request.getParameter("imageLocation");    			
     			  
     			  Properties prop =PropertyLoader.getPropertyLoader(ImageConstants.LOAD_IMAGE_PROPERTY_FILE);
-    			  String fileDir = prop.getProperty(ImageConstants.FILE_UPLOAD_PATH);    			 
+    			  String fileDir = prop.getProperty(ImageConstants.FILE_UPLOAD_PATH);  
+    			  
+    			  
     				String ftpResult="";
     				String uploadedSucess="";
     				String imageNameRender="";
@@ -1498,7 +1500,7 @@ public class ImageRequestController {
 	    				CommonsMultipartFile multipartfile = fdForm.getFileData();    						
 	    					LOGGER.info(" multipartfile.getOriginalFilename() "+multipartfile.getOriginalFilename());
 	        				uploadImagesDTO.setUserUploadedFileName(multipartfile.getOriginalFilename());	        				        			
-	        				groupingImageHelper.setImageDetails(uploadImagesDTO);	        			
+	        				setGroupingImageDetails(uploadImagesDTO);	        			
 	        				InputStream is = null;
 	        				OutputStream os = null;        				
 	        				try {
@@ -1565,6 +1567,32 @@ public class ImageRequestController {
   			  session.setAttribute("imageName", imageNameRender, PortletSession.PORTLET_SCOPE);
     		}
 
+
+/**
+ * @param uploadImagesDTO
+ */
+public void setGroupingImageDetails(UploadImagesDTO uploadImagesDTO) {
+	String vendorImageUploadDir = "";
+	String RRDImageUploadedDir = "";
+	try {
+		
+		 Random randomGenerator = new Random();
+		 int randomInt = randomGenerator.nextInt(10000);					
+		 String imageName = uploadImagesDTO.getPetId() + "_"+ randomInt + "_" + uploadImagesDTO.getUserUploadedFileName();
+		 LOGGER.info("imageName :"+imageName);
+		 uploadImagesDTO.setImageName(imageName.toUpperCase());
+		
+				vendorImageUploadDir = imageRequestDelegate.getVendorImageUploadDir();
+				uploadImagesDTO.setVendorImageUploadDir(vendorImageUploadDir);
+				RRDImageUploadedDir = imageRequestDelegate.getRRDImageUploadedDir();
+				uploadImagesDTO.setRRDImageUploadedDir(RRDImageUploadedDir);
+
+			
+	} catch (Exception e) {
+		LOGGER.info("VendorImageUploadFormController.setImageDetails() error occured while setting the values" ,e);
+	}
+	
+}
 /**
 	 * Call for approveAction Image
 	 * @param request
