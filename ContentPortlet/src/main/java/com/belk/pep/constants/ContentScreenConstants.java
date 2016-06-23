@@ -217,11 +217,13 @@ public class ContentScreenConstants {
 	public static final String FAILURE_CODE = "101";
 
 	public static final String SUCCESS = "success";
+	public static final String ORIN_NOT_COMPLETED = "ORIN_NOT_COMPLETED";
     public static final String FAILURE = "failure";
     public static final String STYLE_ID = "styleId";
     public static final String GROUP_ID = "groupId";
     public static final String GROUP_TYPE = "groupType";
     public static final String COUNT_GROUP = "COUNT_GROUP";
+    public static final String PET_STATE = "PET_STATE";
     public static final String EMPTY = "";
     public static final String SESSIONDATAKEY = "formSessionKey";
     public static final String FROM_MDMID = "fromMDMId";
@@ -248,6 +250,6 @@ public class ContentScreenConstants {
 	public static final String CARS_BRAND_XPATH_GROUP = "Collection_Spec/CarBrand";
 	public static final String GROUP_NAME_XPATH = "Group_Ctg_Spec/Name";
 	public static final String GROUP_DESC_XPATH = "Group_Ctg_Spec/Description";
-	
+	public static final String COPY_CONTENT_ORIN_FAILURE_MESSAGE = "Please complete the Style Orin before copying ";
 
 }

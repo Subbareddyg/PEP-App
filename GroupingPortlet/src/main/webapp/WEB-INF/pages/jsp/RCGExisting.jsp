@@ -3,11 +3,10 @@
 			<table cellpadding="0" cellspacing="0" border="1" class="content-table border-simple colored-row tree-grid">
 				<thead>
 					<tr>
-						<th width="6%"><label><input type="checkbox" class="select-all" /> Select All</label></th>
+						<th width="6%"><label><input type="checkbox" class="select-all" <c:if test="${readonly =='yes'}"> disabled="disabled" </c:if> /> Select All</label></th>
 						<th width="10%"><a href="javascript:;" class="sortable" data-sort-column="StyleOrinNo" data-sorted-by="">ORIN/Grouping#</a></th>
 						<th width="10%"><a href="javascript:;" class="sortable" data-sort-column="vendorStyleNo" data-sorted-by="">Style Number</a></th>
 						<th width="15%"><a href="javascript:;" class="sortable" data-sort-column="productName" data-sorted-by="">Name</a></th>
-						<th width="10%"><a href="javascript:;" class="sortable" data-sort-column="priority" data-sorted-by="">Priority</a></th>
 					</tr>
 				</thead>
 				<tbody class="row-container"></tbody>
@@ -19,7 +18,14 @@
 	{{_.each(data, function(row, key){ }}
 		{{ key = 'E'+key }}
 		<tr>
-			<td><input type="checkbox" name="selectedItem[]" value="{{=row.StyleOrinNo}}" class="item-check" style="margin-left:12px" /></td>
+			<td>
+				<c:if test="${readonly !='yes'}"> 
+					<input type="checkbox" name="selectedItem[]" value="{{=row.StyleOrinNo}}" class="item-check" style="margin-left:12px" />
+				</c:if>
+				<c:if test="${readonly =='yes'}"> 
+					<input type="checkbox" name="selectedItem[]" value="{{=row.StyleOrinNo}}" class="item-check" style="margin-left:12px" disabled="disabled"/>
+				</c:if>
+			</td>
 			<td>
 				{{ if(row.isGroup == 'Y'){ }}
 					<div class="icon-tree parent-node-expand-ajax" data-level="1" data-parentnode-id="{{=row.StyleOrinNo}}" data-node-id="{{=(row.StyleOrinNo + '_' + key)}}">
@@ -37,8 +43,7 @@
 				{{=row.StyleOrinNo}}
 			</td>
 			<td class="text-center">{{=row.vendorStyleNo}}</td>
-			<td>{{=row.productName}}</td>
-			<td class="text-center"><input type="number" class="tree" value="{{=row.priority}}" name="priority_{{=key}}" /></td>			
+			<td>{{=row.productName}}</td>			
 		</tr>
 		{{ if(row.childList && row.childList.length){ }}
 			{{ _.each(row.childList, function(childRow, childKey){ }}
@@ -51,7 +56,6 @@
 					</td>
 					<td class="text-center">{{=childRow.vendorStyleNo}}</td>
 					<td>{{=childRow.productName}}</td>
-					<td class="text-center">&nbsp;</td>
 				</tr>
 			{{ }) }}
 		{{ } }}
@@ -82,8 +86,7 @@
 				{{=row.StyleOrinNo}}
 			</td>
 			<td class="text-center">{{=row.vendorStyleNo}}</td>
-			<td>{{=row.productName}}</td>
-			<td class="text-center">&nbsp;</td>			
+			<td>{{=row.productName}}</td>		
 		</tr>
 		{{ if(row.childList && row.childList.length){ }}
 			{{ _.each(row.childList, function(childRow, childKey){ }}
@@ -98,14 +101,13 @@
 					</td>
 					<td class="text-center">{{=childRow.vendorStyleNo}}</td>
 					<td>{{=childRow.productName}}</td>
-					<td class="text-center">&nbsp;</td>
 				</tr>
 			{{ }) }}
 		{{ } }}
 	{{ }) }}	
 {{ }else{ }}
 	<tr class="dfd-children">
-		<td colspan="5" align="center"><strong>{{=dataHeader.message ? dataHeader.message : 'No record Found!'}}</strong></td>
+		<td colspan="4" align="center"><strong>{{=dataHeader.message ? dataHeader.message : 'No record Found!'}}</strong></td>
 	</tr>
 {{ } }}
 </script>

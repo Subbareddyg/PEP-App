@@ -255,11 +255,9 @@ public class WorkListDisplayDelegate {
             groupSearchList = workListDisplayService.getAdvWorklistGroupingData(adSearch, supplierIdList, vendorEmail, new ArrayList<String>());
             
             LOGGER.info("List 2 size: " + workflowList.size());
-            styleWorkflowList.addAll(workflowList);
+            workflowList.addAll(groupSearchList);
             LOGGER.info("List 3 size: " + groupSearchList.size());
-            styleWorkflowList.addAll(groupSearchList);
-            workflowList = styleWorkflowList;
-            LOGGER.info("List 4 size: " + styleWorkflowList.size());
+            LOGGER.info("List 4 size: " + workflowList.size());
             Map<String, WorkFlow> uniqueValues = new HashMap<String, WorkFlow>();
             for(WorkFlow workFlow: workflowList)
             {
@@ -275,6 +273,9 @@ public class WorkListDisplayDelegate {
             	workflowList = uniqueList;
             }
             LOGGER.info("List 5 size: " + workflowList.size());
+            styleWorkflowList.addAll(workflowList);
+            workflowList = styleWorkflowList;   
+            LOGGER.info("List 6 size: " + workflowList.size());
         }
         
         return workflowList;

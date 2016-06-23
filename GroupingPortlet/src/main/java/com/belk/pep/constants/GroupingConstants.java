@@ -70,6 +70,7 @@ public class GroupingConstants {
 	public static final String MODIFIED_BY = "modifiedBy";
 	public static final String GROUP_STATUS = "status";
 	public static final String COMPONENT_LIST = "componentList";
+	public static final String PRIORITY_LIST = "priorities";
 	public static final String COMPONENT_LIST_SUB = "childList";
 	public static final String COMPONENT_ID_ATTR = "componentId";
 	public static final String COMPONENT_ATTR = "component";
@@ -79,7 +80,7 @@ public class GroupingConstants {
 	public static final String COMPONENT_IS_DEFAULT = "default";
 	public static final String COMPONENT_TYPE = "type";
 	public static final String COMPONENT_COLOR = "color";
-	public static final String COMPONENT_COLOR_LIST = "ColorList";
+	public static final String COMPONENT_COLOR_LIST = "colorList";
 	public static final String COMPONENT_SIZE = "size";
 	public static final String GROUP_CREATION_MSG = "groupCretionMsg";
 	public static final String GROUP_CREATION_STATUS_CODE = "groupCreationStatus";
@@ -129,6 +130,8 @@ public class GroupingConstants {
 	public static final String PET_STATUS_CLOSED = "06";
 	public static final String PET_STATUS_WAITING_TO_BE_CLOSED = "07";
 	public static final String PET_STATUS_READY_FOR_REVIEW = "08";
+	public static final String PET_STATUS_PUBLISH_TO_WEB = "09";
+	public static final String PET_STATUS_PRE_CUT_INITIATED = "10";
 
 	/** Sorting Order. **/
 	public static final String SORT_ASC = "ASC";
@@ -245,8 +248,8 @@ public class GroupingConstants {
 	public static final String DEFAULT_COMPNT_SUCCESS="default.color.success.message";
 	public static final String DEFAULT_COMPNT_FAILURE="default.color.failure.message";
 	
-	public static final String PRIORITY_COMPNT_SUCCESS="priority.success.messag";
-	public static final String PRIORITY_COMPNT_FAILURE="priority.failure.messag";
+	public static final String PRIORITY_COMPNT_SUCCESS="priority.success.message";
+	public static final String PRIORITY_COMPNT_FAILURE="priority.failure.message";
 
 	public static final String DESCRIPTION_ATTR = "description";
 	
@@ -257,4 +260,8 @@ public class GroupingConstants {
 	public static final String SUCCESS ="SUCCESS";
 	public static final String FAIL ="FAIL";
 	public static final String STATUS ="status";
+	
+	public static final String RESOURCE_TYPE = "resourceType";
+	public static final String RESOURCE_TYPE_FOR_SET_PRIORITY = "priorityValueSave";
+	public static final String RESOURCE_TYPE_FOR_SET_DEFAULT = "defaultValueSave";
 }

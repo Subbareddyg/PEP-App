@@ -73,7 +73,7 @@
 						console.log(jqXHR.status + " : " + testStatus  + " : " + errorThrown);
 					});
 			}else
-				throw new Exception('Required configuration is missing to fetch children from remote server');
+				throw new Error('Required configuration is missing to fetch children from remote server');
 		},
 		
 		//central method to attach all necessary delegate or handlers for various events
@@ -174,12 +174,23 @@
 				if(_super.$(this).is(':checked')){
 					_super.$(this).parent().parent().find('input[type=radio]').prop('disabled', false);
 					
-					if(_super.$(_super.config.dtContainer).find('.item-check').length == 
-						_super.$(_super.config.dtContainer).find('.item-check:checked').length){
+					/**
+					  -- special kind of logic for dfd or direct hierarchical children. 
+					  -- when any child is checked parent will be automatically checked
+					*/
+					
+					if(_super.$(this).data('item-type') == 'SC'){
+						//checking parent checkbox
+						$('input.item-check[data-chknode-id=' + _super.$(this).data('chkparent-id') + ']').prop('checked', true);
+					}else if(_super.$(this).data('item-type') == 'S'){
+						$('input.item-check[data-chkparent-id=' + _super.$(this).data('chknode-id') + ']').prop('checked', true);
+					}
+
+					if(_super.$(_super.config.dtContainer).find('.item-check:enabled').length == 
+						_super.$(_super.config.dtContainer).find('.item-check:enabled:checked').length){
 						
 						_super.$(_super.config.dtContainer).find('.select-all').prop('checked', true);	
 					}
-									
 				}else{
 					if(_super.$(_super.config.dtContainer).find('input[type="radio"]').hasClass('trueDefult')){
 						_super.$(this).parent().parent().find('input[type=radio]').prop('disabled', false);
@@ -187,8 +198,21 @@
 						_super.$(this).parent().parent().find('input[type=radio]').prop('disabled', true);
 					}
 					
+					/**
+					  -- special kind of logic for dfd or direct hierarchical children. 
+					  -- when any child is checked parent will be automatically checked
+					*/
+					
+					if(_super.$(this).data('item-type') == 'SC'){
+						//checking parent checkbox
+						if(!$('input.item-check[data-chkparent-id=' + _super.$(this).data('chkparent-id') + ']:checked').length)
+							$('input.item-check[data-chknode-id=' + _super.$(this).data('chkparent-id') + ']').prop('checked', false);
+					}else if(_super.$(this).data('item-type') == 'S'){
+						$('input.item-check[data-chkparent-id=' + _super.$(this).data('chknode-id') + ']').prop('checked', false);
+					}
+					
 					_super.$(_super.config.dtContainer).find('.select-all').prop('checked', false);
-				}	
+				}
 			});
 			
 			//delegate to handle sorting by attrubutes
@@ -252,7 +276,11 @@
 			//delegate to handle priority number validation
 			_super.$(this.config.dtContainer).on('blur', '.tree', function(){
 				if(_super.$(this).val().trim() == 0 || _super.$(this).val().trim() > _super.totalRecords){
-					alert('Priority should have to be between 1 to ' + _super.totalRecords);
+					if(_super.totalRecords == 1)
+						alert('Priority should be only 1');
+					else
+						alert('Priority should have to be between 1 to ' + _super.totalRecords);
+					
 					_super.$(this).val('');
 				}
 			});
@@ -325,6 +353,7 @@
 			this.$(this.config.dtContainer).off('click', '.sortable');  //clearing previously set delegation for safety
 			this.$(this.config.dtContainer).off('click', '.parent-node-expand-ajax');  //clearing previously set delegation for safety
 			this.$(this.config.dtContainer).off('click', '.parent-node-collapse-ajax');  //clearing previously set delegation for safety
+			this.$(this.config.dtContainer).off('blur', '.tree');  //clearing previously set delegation for safety
 			this.$(this.config.dtContainer).find('a.sortable').removeClass('sort-up sort-down');
 			this.$(this.config.dtContainer).find('a.sortable').data('sorted-by', null);
 		},

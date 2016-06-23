@@ -1959,59 +1959,8 @@ try{
 			LOGGER.error("GroupingControlle:removedSelectedComponents ResourceRequest:Exception------------>" + e);
 		}
 	}
-	/**
-	 * This method will handle the set Component priority feature
-	 * @param request
-	 * @param response
-	 */
-	@ResourceMapping("setComponentPriority")
-	public void setComponentPriority(ResourceRequest request, ResourceResponse response){
-		LOGGER.info("Entered setComponentPriority Method of Grouping Controller");
-		JSONArray componentList=new JSONArray();
-		JSONArray arrayPair=new JSONArray();
-		String userID="";
-		String sessionDataKey = (String) request.getPortletSession().getAttribute("sessionDataKey");
-		if (null != sessionDataKey) {
-			userID = sessionDataKey.split(GroupingConstants.USER_DATA + request.getPortletSession().getId())[1];
-			LOGGER.info("display user ID" + userID);
-		}
-		String groupId=(request.getParameter(GroupingConstants.GROUP_ID)!=null)? (request.getParameter(GroupingConstants.GROUP_ID)): "";
-		String groupType=(request.getParameter(GroupingConstants.GROUP_TYPE)!=null)? (request.getParameter(GroupingConstants.GROUP_TYPE)): "";
-		String componentStr=request.getParameter(GroupingConstants.COMPONENT_LIST); //make null check
-		if(null!=componentStr){
-			String[] compPair=componentStr.split(",");
-			LOGGER.info("number of cmpt-prioroty pair"+compPair.length);
-			for (String compo_prio : compPair) {
-				String[] arr=compo_prio.split("#");
-				arrayPair=new JSONArray();
-				arrayPair.put(new JSONObject().put(GroupingConstants.COMPONENT_ATTR,arr[0]));
-				arrayPair.put(new JSONObject().put(GroupingConstants.ORDER,arr[1]));
-				componentList.put(arrayPair);
-			}
-		}
-		JSONObject jsonObject=new JSONObject();
-		jsonObject.put(GroupingConstants.MODIFIED_BY, userID);
-		jsonObject.put(GroupingConstants.GROUP_TYPE, groupType);
-		jsonObject.put(GroupingConstants.GROUP_ID, groupId);
-		jsonObject.put(GroupingConstants.COMPONENT_LIST, componentList);
-		String resp="";
-		try {
-			resp=groupingService.setComponentPriority(jsonObject);
-			LOGGER.info(resp);
-			Properties prop = PropertyLoader.getPropertyLoader(GroupingConstants.MESS_PROP);
-			String message=prop.getProperty(GroupingConstants.PRIORITY_COMPNT_FAILURE);
-			JSONObject responseObj=new JSONObject(resp);
-			String code=responseObj.getString(GroupingConstants.MSG_CODE);
-			if(code.equalsIgnoreCase(GroupingConstants.SUCCESS_CODE)){
-				 message=prop.getProperty(GroupingConstants.PRIORITY_COMPNT_SUCCESS);
-			}
-			responseObj.put(GroupingConstants.DESCRIPTION_ATTR,message);
-			response.getWriter().write(responseObj.toString());
-		}catch(Exception e){
-			LOGGER.error("GroupingControlle:setComponentPriority ResourceRequest:Exception------------>" + e);
-		}
-	}
-/** edit Grouping **/
+	
+	/** edit Grouping **/
 	
 	/**
 	 * This method is used to save default value.
@@ -2023,8 +1972,7 @@ try{
 	 * @return ModelAndView
 	 */
 	@ResourceMapping("setDefaultColor")
-	public final ModelAndView handleDefaultValueRequest(
-final ResourceRequest request, final ResourceResponse response) {
+	public final ModelAndView handleDefaultValueRequest(final ResourceRequest request, final ResourceResponse response) {
 		LOGGER.info("handleDefaultValueRequest ResourceRequest:Enter------------>.");
 		String formSessionKey = (String) request.getPortletSession().getAttribute("formSessionKey");
 		LOGGER.info("handleDefaultValueRequest formSessionKey  ----------------------------->" + formSessionKey);
@@ -2034,69 +1982,121 @@ final ResourceRequest request, final ResourceResponse response) {
 		LOGGER.info(" handleDefaultValueRequest custuser -----------------------------------> " + custuser);
 		String pepUserId = custuser.getBelkUser().getLanId();
 		LOGGER.info("This is from Reneder Internal User--------------------->" + pepUserId);
-		@SuppressWarnings("unchecked")
-		List<GroupAttributeForm> attributeList = (List<GroupAttributeForm>) request.getPortletSession().getAttribute(
-				GroupingConstants.EXISTING_ATTRIBUTE_LIST);
-
+		String message = "";
 		ModelAndView modelAndView = null;
-		try {
-			String groupId = GroupingUtil.checkNull(request.getParameter(GroupingConstants.GROUP_ID));
-			String groupType = GroupingUtil.checkNull(request.getParameter(GroupingConstants.GROUP_TYPE));
-			String colorSize = GroupingUtil.checkNull(request.getParameter(GroupingConstants.COMPONENT_DEFAULT_COLOR));
-			String color = GroupingConstants.EMPTY;
-			String size = GroupingConstants.EMPTY;
-			String childOrinId = GroupingConstants.EMPTY;
-			String colorId = GroupingConstants.EMPTY;
-			if (GroupingUtil.checkNull(colorSize).contains("_")) {
-				String colorSizeArray[] = colorSize.split("_");
-				color = colorSizeArray[0];
-				size = colorSizeArray[1];
-			} else {
-				color = colorSize;
-			}
 
-			for (GroupAttributeForm groupAttributeForm : attributeList) {
-				if (groupAttributeForm.getColorCode().equals(color)) {
-					colorId = color;
-					if (!groupAttributeForm.getSize().equals(GroupingConstants.EMPTY) && groupAttributeForm.getSize().equals(size)) {
-						childOrinId = groupAttributeForm.getOrinNumber();
-					} else if (groupAttributeForm.getSize().equals(GroupingConstants.EMPTY)) {
-						childOrinId = groupAttributeForm.getOrinNumber();
+		String resourceType = GroupingUtil.checkNull(request.getParameter(GroupingConstants.RESOURCE_TYPE));
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.info("handleDefaultValueRequest.resourceType--------------------->" + resourceType);
+		}
+		String groupId = GroupingUtil.checkNull(request.getParameter(GroupingConstants.GROUP_ID));
+		String groupType = GroupingUtil.checkNull(request.getParameter(GroupingConstants.GROUP_TYPE));
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.info("handleDefaultValueRequest.resourceType.groupId-->" + groupId + " groupType-->" + groupType);
+		}
+		try {
+			/** Start to set Priority **/
+			if (GroupingConstants.RESOURCE_TYPE_FOR_SET_PRIORITY.equals(resourceType)) {
+				LOGGER.info("set Priority of the existing component from Grouping Controller");
+				JSONObject jsonObjectComponent = null;
+				JSONArray componentList = new JSONArray();
+				String componentStr = GroupingUtil.checkNull(request.getParameter(GroupingConstants.PRIORITY_LIST));
+				// priorities:100000520:1,100035983:2,100036166:3,1002005:4
+				// {"groupType":"BCG","groupId":"1026237","modifiedBy":"afupyb3","componentList":[{"order":"1","component":"100000520"},{"order":"2","component":"1002005"}]}
+				if (null != componentStr) {
+					String[] compPair = componentStr.split(",");
+					LOGGER.info("number of cmpt-prioroty pair" + compPair.length);
+					for (String compo_prio : compPair) {
+						jsonObjectComponent = new JSONObject();
+						String[] arr = compo_prio.split(":");
+						jsonObjectComponent.put(GroupingConstants.COMPONENT_ATTR, GroupingUtil.checkNull(arr[0]));
+						jsonObjectComponent.put(GroupingConstants.ORDER, GroupingUtil.checkNull(arr[1]));
+						componentList.put(jsonObjectComponent);
 					}
 				}
-			}
-
-			if (LOGGER.isDebugEnabled()) {
-				LOGGER.debug("groupId----------------->" + groupId);
-				LOGGER.debug("groupType----------------->" + groupType);
-				LOGGER.debug("colorId----------------->" + colorId);
-				LOGGER.debug("childOrinId----------------->" + childOrinId);
-			}
-
-			String responseMesage = GroupingConstants.EMPTY;
-			if (null != groupId) {
-				responseMesage = groupingService.setDefaultColorSize(groupId, groupType, colorId, childOrinId, pepUserId);
-				if(LOGGER.isDebugEnabled()){
-					LOGGER.debug("setDefaultColorSize.responseMesage-->"+responseMesage);
+				JSONObject jsonObject = new JSONObject();
+				jsonObject.put(GroupingConstants.GROUP_ID, groupId);
+				jsonObject.put(GroupingConstants.GROUP_TYPE, groupType);
+				jsonObject.put(GroupingConstants.MODIFIED_BY, pepUserId);
+				jsonObject.put(GroupingConstants.COMPONENT_LIST, componentList);
+				String resp = groupingService.setComponentPriority(jsonObject);
+				Properties prop = PropertyLoader.getPropertyLoader(GroupingConstants.MESS_PROP);
+				
+				JSONObject responseObj = new JSONObject(resp);
+				String code = responseObj.getString(GroupingConstants.MSG_CODE);
+				if (code.equalsIgnoreCase(GroupingConstants.SUCCESS_CODE)) {
+					message = prop.getProperty(GroupingConstants.PRIORITY_COMPNT_SUCCESS);
+				}else{
+					message = prop.getProperty(GroupingConstants.PRIORITY_COMPNT_FAILURE);	
 				}
+				if(LOGGER.isDebugEnabled()){
+					LOGGER.debug("set Priority Message-->"+message);
+				}
+//				responseObj.put(GroupingConstants.DESCRIPTION_ATTR, message);
+				responseObj.put(GroupingConstants.DEFAULT_VALUE_STATUS_MESSAGE, message);
+				response.getWriter().write(responseObj.toString());
 			}
-			String responseMsg = GroupingConstants.EMPTY;
-			String status = GroupingConstants.EMPTY;
-			Properties prop = PropertyLoader
-				.getPropertyLoader(GroupingConstants.MESS_PROP);
-			if (null != responseMesage
-					&& responseMesage.equals(GroupingConstants.SUCCESS_CODE)) {
-				responseMsg = prop.getProperty(GroupingConstants.DEFAULT_COMPNT_SUCCESS);
-				status = GroupingConstants.SUCCESS;
-			} else {
-				responseMsg = prop.getProperty(GroupingConstants.DEFAULT_COMPNT_FAILURE);
-				status = GroupingConstants.FAIL;
-			}
-			JSONObject json = new JSONObject();
-			json.put(GroupingConstants.STATUS, status);
-			json.put(GroupingConstants.DEFAULT_VALUE_STATUS_MESSAGE, responseMsg);
-			response.getWriter().write(json.toString());
+			/** End to set Priority **/
+			/** Start to set Default **/
+			else if (GroupingConstants.RESOURCE_TYPE_FOR_SET_DEFAULT.equals(resourceType)) {
+				LOGGER.info("Change Default Component of the Existing COmponent from Grouping Controller");
+				/* try { */
+				@SuppressWarnings("unchecked")
+				List<GroupAttributeForm> attributeList = (List<GroupAttributeForm>) request.getPortletSession().getAttribute(
+						GroupingConstants.EXISTING_ATTRIBUTE_LIST);
 
+				String colorSize = GroupingUtil.checkNull(request.getParameter(GroupingConstants.COMPONENT_DEFAULT_COLOR));
+				String color = GroupingConstants.EMPTY;
+				String size = GroupingConstants.EMPTY;
+				String childOrinId = GroupingConstants.EMPTY;
+				String colorId = GroupingConstants.EMPTY;
+				if (GroupingUtil.checkNull(colorSize).contains("_")) {
+					String colorSizeArray[] = colorSize.split("_");
+					color = colorSizeArray[0];
+					size = colorSizeArray[1];
+				} else {
+					color = colorSize;
+				}
+
+				for (GroupAttributeForm groupAttributeForm : attributeList) {
+					if (groupAttributeForm.getColorCode().equals(color)) {
+						colorId = color;
+						if (!groupAttributeForm.getSize().equals(GroupingConstants.EMPTY) && groupAttributeForm.getSize().equals(size)) {
+							childOrinId = groupAttributeForm.getOrinNumber();
+						} else if (groupAttributeForm.getSize().equals(GroupingConstants.EMPTY)) {
+							childOrinId = groupAttributeForm.getOrinNumber();
+						}
+					}
+				}
+
+				if (LOGGER.isDebugEnabled()) {
+					LOGGER.debug("colorId----------------->" + colorId);
+					LOGGER.debug("childOrinId----------------->" + childOrinId);
+				}
+
+				String responseMesage = GroupingConstants.EMPTY;
+				if (null != groupId) {
+					responseMesage = groupingService.setDefaultColorSize(groupId, groupType, colorId, childOrinId, pepUserId);
+					if (LOGGER.isDebugEnabled()) {
+						LOGGER.debug("setDefaultColorSize.responseMesage-->" + responseMesage);
+					}
+				}
+				String responseMsg = GroupingConstants.EMPTY;
+				String status = GroupingConstants.EMPTY;
+				Properties prop = PropertyLoader.getPropertyLoader(GroupingConstants.MESS_PROP);
+				if (null != responseMesage && responseMesage.equals(GroupingConstants.SUCCESS_CODE)) {
+					responseMsg = prop.getProperty(GroupingConstants.DEFAULT_COMPNT_SUCCESS);
+					status = GroupingConstants.SUCCESS;
+				} else {
+					responseMsg = prop.getProperty(GroupingConstants.DEFAULT_COMPNT_FAILURE);
+					status = GroupingConstants.FAIL;
+				}
+				JSONObject json = new JSONObject();
+				json.put(GroupingConstants.STATUS, status);
+				json.put(GroupingConstants.DEFAULT_VALUE_STATUS_MESSAGE, responseMsg);
+				response.getWriter().write(json.toString());
+			}
+			/** End to set Default **/
 		} catch (Exception e) {
 			LOGGER.error("handleDefaultValueRequest ResourceRequest:Exception------------>" + e);
 		}

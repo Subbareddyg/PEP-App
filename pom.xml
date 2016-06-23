@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.belk.pep</groupId>
 	<artifactId>pep</artifactId>
-	<version>1.0.0.41-SNAPSHOT</version>
+	<version>1.0.0.45-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>Belk PEP</name>
 	<description>Belk Product Enrichment Portal Applications</description>

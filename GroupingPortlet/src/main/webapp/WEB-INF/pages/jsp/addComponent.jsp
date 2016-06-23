@@ -15,6 +15,10 @@
 		<div class="group-create-area">
 			<div id="group-header-message-area"></div>
 			<form name="fromHeaderEdit" id="fromHeaderEdit" class="group-edit-area">
+				<c:if test="${readonly =='yes'}">
+					<input type="hidden" name="groupType" value=" <c:out value="${groupDetailsForm.groupType}" /> " id="groupType" >
+					<input type="hidden" name="groupId" value=" <c:out value="${groupDetailsForm.groupId}" /> " id="groupId" >
+				</c:if>
 				<input type="hidden" name="modifiedBy" value="${LAN_ID}" />
 				<table cellspacing="5" cellpadding="0" border="0" class="content-table">
 					<tr>
@@ -75,16 +79,19 @@
 					</c:if>
 					<tr>
 						<td colspan="3">&nbsp;</td>
+						<c:if test="${readonly !='yes'}">
 						<td align="right">
 							<input type="button" value="Cancel" class="btn" id="cancel-edit-header" style="visibility:hidden" disabled="disabled"/>
 							<input type="button" value="Edit" class="btn"  id="edit-header"/>
 						</td>
+						</c:if>
 					</tr>
 				</table>
 			</form>			
 		</div>
 	</div>
 </div>
+<c:if test="${readonly !='yes'}">
 <div  class="cars_panel x-hidden">
 	<div class="x-panel-header">
 		<b><fmt:message key="addcomponent.screen.level.header" /></b>
@@ -233,6 +240,7 @@
 		</div>
 	</div>
 </div>
+</c:if>
 <div class="cars_panel x-hidden">
 	<div class="x-panel-header">
 		<b><fmt:message key="addcomponent.screen.level.existingComponents" /></b>
@@ -280,7 +288,9 @@
 			<div class="pagination-container">
 				<div class="pagination-left">
 					<div class="pagination-left-wrapper hide_after_error">
-						<input type="button" class="btn" value="Remove Component" id="remove-existing-component" disabled="disabled" /> 
+						<c:if test="${readonly !='yes'}">
+							<input type="button" class="btn" value="Remove Component" id="remove-existing-component" disabled="disabled" /> 
+						</c:if>
 					</div>
 				</div>
 				<div class="pagination-right">
@@ -289,7 +299,13 @@
 				<div class="clearfix"></div>
 			</div>
 			<div class="pagination-container" style="text-align:center; margin-top: 15px;">
-				<input type="button" class="btn" value="Save" style="width: 70px;" id="save-existing-group"/>
+				<c:if test="${readonly !='yes'}"> 
+					<c:choose>
+						<c:when test="${groupDetailsForm.groupType != 'RCG' && groupDetailsForm.groupType != 'CPG'}">
+							<input type="button" class="btn" value="Save" style="width: 70px;" id="save-existing-group"/>
+						</c:when>
+					</c:choose>
+				</c:if>
 				<input type="button" class="btn" value="Close" style="width: 80px;" id="close-existing-group" onclick="window.location.href='/wps/portal/home/Grouping'" />
 			</div>
 		</div>

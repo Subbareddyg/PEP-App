@@ -13,7 +13,7 @@
 	
 	<div class="x-panel-body">
 		<div class="group-create-area">
-				<select id="groupTypeSelector">
+				<select id="groupTypeSelector" <c:if test="${readonly =='yes'}">disabled style="opacity:0.6;" </c:if>>
 					<c:forEach var="groupTypesMap" items="${groupTypesMap}">                                                                                                
                         <option value="${groupTypesMap.key}"  [b]selected="true"[/b] ><c:out value="${groupTypesMap.value}"/></option>              
                     </c:forEach>

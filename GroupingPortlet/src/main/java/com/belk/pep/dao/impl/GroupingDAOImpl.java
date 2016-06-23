@@ -8,7 +8,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
@@ -1576,6 +1575,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 	 * @return List<StyleAttributeForm>
 	 * @throws PEPServiceException
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public int getRegularBeautySearchResultCount(final String vendorStyleNo, final String styleOrin, final String deptNoForInSearch, 
 			final String classNoForInSearch, final String supplierSiteIdSearch, final String upcNoSearch,

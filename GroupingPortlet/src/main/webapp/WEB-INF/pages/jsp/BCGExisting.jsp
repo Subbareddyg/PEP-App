@@ -3,9 +3,9 @@
 			<table cellpadding="0" cellspacing="0" border="1" class="content-table border-simple colored-row tree-grid">
 				<thead>
 					<tr>
-						<th width="6%"><label><input type="checkbox" class="select-all" /> Select All </label></th>
-						<th width="10%"><a href="javascript:;" class="sortable" data-sort-column="StyleOrinNo" data-sorted-by="">ORIN/Grouping#</a></th>
-						<th width="10%"><a href="javascript:;" class="sortable" data-sort-column="vendorStyleNo" data-sorted-by="">Style Number</a></th>
+						<th width="8%"><label><input type="checkbox" class="select-all" <c:if test="${readonly =='yes'}"> disabled="disabled" </c:if> /> Select All </label></th>
+						<th width="13%"><a href="javascript:;" class="sortable" data-sort-column="StyleOrinNo" data-sorted-by="">ORIN/Grouping#</a></th>
+						<th width="12%"><a href="javascript:;" class="sortable" data-sort-column="vendorStyleNo" data-sorted-by="">Style Number</a></th>
 						<th width="15%"><a href="javascript:;" class="sortable" data-sort-column="productName" data-sorted-by="">Name</a></th>
 						<th width="10%"><a href="javascript:;" class="sortable" data-sort-column="colorCode" data-sorted-by="">Color Code</a></th>
 						<th width="10%"><a href="javascript:;" class="sortable" data-sort-column="colorName" data-sorted-by="">Color Name</a></th>
@@ -21,7 +21,14 @@
 	{{_.each(data, function(row, key){ }}
 		{{ key = 'E'+key }}
 		<tr>
-			<td><input type="checkbox" name="selectedItem[]" value="{{=row.StyleOrinNo}}" class="item-check" style="margin-left:12px" /></td>
+			<td>
+				<c:if test="${readonly !='yes'}">
+					<input type="checkbox" name="selectedItem[]" value="{{=row.StyleOrinNo}}" class="item-check" style="margin-left:12px" />
+				</c:if>
+				<c:if test="${readonly =='yes'}">
+					<input type="checkbox" name="selectedItem[]" value="{{=row.StyleOrinNo}}" class="item-check" style="margin-left:12px" disabled="disabed" />
+				</c:if>
+			</td>
 			<td>
 				{{ if(row.isGroup == 'Y'){ }}
 					<div class="icon-tree parent-node-expand-ajax" data-level="1" data-parentnode-id="{{=row.StyleOrinNo}}" data-node-id="{{=(row.StyleOrinNo + '_' + key)}}">
@@ -42,12 +49,21 @@
 			<td>{{=row.productName}}</td>
 			<td class="text-center">{{=row.colorCode}}</td>
 			<td class="text-center">{{=row.colorName}}</td>
-			<td class="text-center"><input type="number" class="tree" value="{{=row.priority}}" name="priority_{{=key}}" /></td>			
+			<td class="text-center">
+				<c:if test="${readonly !='yes'}">
+					<input type="number" class="tree" value="{{=row.priority}}" name="{{=row.StyleOrinNo}}_{{=key}}" min="1" />
+				</c:if>
+				<c:if test="${readonly =='yes'}">
+					<input type="number" class="tree" value="{{=row.priority}}" name="{{=row.StyleOrinNo}}_{{=key}}" min="1" disabled="disabled"/>
+				</c:if>
+			</td>			
 		</tr>
 		{{ if(row.childList && row.childList.length){ }}
 			{{ _.each(row.childList, function(childRow, childKey){ }}
 				<tr class="hidden-child" data-parent-id="{{=(row.StyleOrinNo + '_' + key) }}">
-					<td><input type="checkbox" name="selectedChildItem_{{=key}}" value="{{=childRow.StyleOrinNo}}" class="item-check" style="margin-left:24px" disabled="disabled" /></td>
+					<td>
+						<input type="checkbox" name="selectedChildItem_{{=key}}" value="{{=childRow.StyleOrinNo}}" class="item-check" style="margin-left:24px" disabled="disabled" />
+					</td>
 					<td>
 						<div class="icon-tree leaf-node" data-node-id="{{=(childRow.StyleOrinNo + '_' + childKey)}}">
 						&nbsp;
@@ -57,7 +73,7 @@
 					<td>{{=childRow.productName}}</td>
 					<td class="text-center">{{=childRow.colorCode}}</td>
 					<td class="text-center">{{=childRow.colorName}}</td>
-					<td class="text-center"><input type="number" class="tree" value="{{=childRow.priority}}" name="priority_{{=key}}" /></td>
+					<td class="text-center">&nbsp;</td>
 				</tr>
 			{{ }) }}
 		{{ } }}
@@ -91,7 +107,7 @@
 			<td>{{=row.productName}}</td>
 			<td class="text-center">{{=row.colorCode}}</td>
 			<td class="text-center">{{=row.colorName}}</td>
-			<td class="text-center"><input type="number" class="tree" value="{{=row.priority}}" name="priority_{{=key}}" /></td>			
+			<td class="text-center">&nbsp;</td>			
 		</tr>
 		{{ if(row.childList && row.childList.length){ }}
 			{{ _.each(row.childList, function(childRow, childKey){ }}
@@ -108,7 +124,7 @@
 					<td>{{=childRow.productName}}</td>
 					<td class="text-center">{{=childRow.colorCode}}</td>
 					<td class="text-center">{{=childRow.colorName}}</td>
-					<td class="text-center"><input type="number" class="tree" value="{{=childRow.priority}}" name="priority_{{=key}}" /></td>
+					<td class="text-center">&nbsp;</td>
 				</tr>
 			{{ }) }}
 		{{ } }}

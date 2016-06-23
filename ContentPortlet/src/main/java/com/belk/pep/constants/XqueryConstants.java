@@ -2843,6 +2843,28 @@ public class XqueryConstants {
 		return groupCopyValidationQuery.toString();
     }
 	
+	/**
+     * Method to get the group copy validation query.
+     *    
+     * @return the query string
+     * 
+     * Method added For PIM Phase 2 - Group Content
+     * Date: 06/23/2016
+     * Added By: Cognizant
+     */
+	public String getPETStateCopyValidation() {
+		final StringBuffer groupCopyValidationQuery = new StringBuffer();
+		LOGGER.info("***Entering getPETStateCopyValidation() method.");
+		groupCopyValidationQuery
+				.append("SELECT PET_STATE FROM ADSE_PET_CATALOG WHERE MDMID = :styleId ");
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("GROUP COPY VALIDATION QUERY -- \n"
+					+ groupCopyValidationQuery.toString());
+		}
+		LOGGER.info("***Exiting getGroupCopyValidation() method.");
+		return groupCopyValidationQuery.toString();
+    }
+	
 	public String populateGroupIPHForCollections(){
 		
 		final Properties prop =   PropertiesFileLoader.getPropertyLoader(ContentScreenConstants.MESS_PROP);

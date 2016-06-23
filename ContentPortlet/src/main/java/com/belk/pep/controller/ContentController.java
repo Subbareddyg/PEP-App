@@ -4438,10 +4438,13 @@ public class ContentController implements ResourceAwareController, EventAwareCon
 				// call web service
 				finalStatus = contentDelegate.callCopyContentService(groupID,
 						styleId, user);
-			} else {
-				// send error message
+			} else if(message.equals(ContentScreenConstants.ORIN_NOT_COMPLETED)){
+				// send error message for ORIN not completed
+				finalStatus = ContentScreenConstants.COPY_CONTENT_ORIN_FAILURE_MESSAGE;
+			}else{
+				// send error message 
 				finalStatus = ContentScreenConstants.COPY_CONTENT_DB_FAILURE_MESSAGE
-						+ groupID;
+				+ groupID;
 			}
 		} else {
 			finalStatus = ContentScreenConstants.COPY_CONTENT_NO_VALUE_FAILURE_MESSAGE;
