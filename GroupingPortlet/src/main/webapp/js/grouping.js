@@ -285,7 +285,6 @@ var app = app || {};
 						//scanning for atleast one value in one field
 						$('#frmGroupSearch').find('input[type=text]').each(function(){
 							validInputFlag = !!$(this).val().trim().length;
-							
 							return !validInputFlag;
 						});
 						
@@ -883,7 +882,7 @@ var app = app || {};
 					var validationClass= $(this).attr('class');
 					//dialog to show error when no field is entered
 					if(validationClass.indexOf('CPG') > -1 || validationClass.indexOf('RCG') > -1 
-						|| validationClass.indexOf('BCG') > -1 || validationClass.indexOf('GSS') > -1 )
+						|| validationClass.indexOf('BCG') > -1 || validationClass.indexOf('GSG') > -1 )
 					{
 						var validInputFlag = true;
 						//scanning for atleast one value in one field
@@ -921,7 +920,16 @@ var app = app || {};
 										
 										app.DataTable.init(); */
 										
-										var dtTable = new app.DataTable();
+										var config = {};
+										
+										if($('#groupType').val().trim() == 'RCG' || $('#groupType').val().trim() == 'BCG'){
+											config = {
+												dfdChildrenUrl: app.URLFactory.getURL('groupSearchUrl'), 
+												dfdChildrenParams: {resourceType: 'getChildRCGBCG'},
+											};
+										}
+										
+										var dtTable = new app.DataTable(config);
 										dtTable.setDataHeader(response);
 										dtTable.setData(componentList);
 										

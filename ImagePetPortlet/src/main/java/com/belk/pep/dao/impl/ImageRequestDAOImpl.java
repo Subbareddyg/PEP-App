@@ -1,5 +1,6 @@
 package com.belk.pep.dao.impl;
 
+import java.sql.Clob;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -32,6 +33,7 @@ import com.belk.pep.model.PetsFound;
 import com.belk.pep.model.StyleColor;
 import com.belk.pep.model.WorkFlow;
 import com.belk.pep.model.WorkListDisplay;
+import com.belk.pep.util.ImageUtils;
 import com.belk.pep.util.PropertyLoader;
 
 /**
@@ -68,7 +70,7 @@ public class ImageRequestDAOImpl implements ImageRequestDAO {
         LOGGER.info("inside getStyleInfoDetails() method");
         List<StyleInfoDetails> styleInfolist = new ArrayList<StyleInfoDetails>();
         Session session = this.sessionFactory.openSession();
-        Transaction tx = session.beginTransaction();
+      
         Query query = session.createSQLQuery(xqueryConstants.getStyleInfoDetails());
         query.setParameter("orinNo", orinNo); 
         query.setFetchSize(10);
@@ -95,7 +97,7 @@ public class ImageRequestDAOImpl implements ImageRequestDAO {
         }catch(Exception e){
         	e.printStackTrace();
         }
-        tx.commit();
+     
         session.close();       
         LOGGER.info("Exiting getStyleInfoDetails");
         return (ArrayList<StyleInfoDetails>) styleInfolist;
@@ -232,8 +234,7 @@ public class ImageRequestDAOImpl implements ImageRequestDAO {
                 contact2obj.setVendorContactName(row[3]!=null?row[3].toString():null);
                 if(row[5] != null){
                     contact2obj.setVendorContactEmail(row[5]!=null?row[5].toString():null);
-                }else{
-                   
+                }else{                   
                     contact2obj.setVendorContactEmail("");
                 }
                 contact2obj.setVendorContactTelephone(row[4]!=null?row[4].toString():null);
@@ -476,10 +477,6 @@ public class ImageRequestDAOImpl implements ImageRequestDAO {
         		LOGGER.info("imageStatus as----null in DAO ");
         		sampleImage.setImageStatus("Initiated");
         	}
-        	
-        	
-        	
-        	
         	
         	if(row[7] !=null){
         		sampleImage.setImageSampleId(row[7]!=null?row[7].toString():null);
@@ -866,7 +863,7 @@ public class ImageRequestDAOImpl implements ImageRequestDAO {
         	pet.setReturnCarsFlag("No");
         }
         
-        //LOGGER.info("This is from mapAdseDbPetsToPortal..Exit" );
+      
       
   
     }catch(Exception e){
@@ -901,7 +898,6 @@ public class ImageRequestDAOImpl implements ImageRequestDAO {
         return isPetReleased;
         
     }
-
     /**
      * Method to get the Image attribute details from database.
      *    
@@ -913,7 +909,7 @@ public class ImageRequestDAOImpl implements ImageRequestDAO {
      * Added By: Cognizant
      */
     @Override
-    public List<ImageLinkVO> getScene7ImageLinks(String orin) throws PEPPersistencyException {
+    public List<ImageLinkVO> getScene7ImageLinks(String orinNum) throws PEPPersistencyException {
 
         LOGGER.info("***Entering getScene7ImageLinks() method.");
         Session session = null;        
@@ -926,10 +922,9 @@ public class ImageRequestDAOImpl implements ImageRequestDAO {
             final Query query =session.createSQLQuery(xqueryConstants.getScene7ImageLinks());
             if(query!=null)
             {
-                query.setParameter("orinNum", orin);                
+                query.setParameter(0, orinNum);                
                 rows = query.list();
             }
-
             if(rows!=null)
             {
                 for (final Object[] row : rows) {
@@ -938,7 +933,7 @@ public class ImageRequestDAOImpl implements ImageRequestDAO {
                 	imageLinkVO.setShotType(row[4] == null? "" : row[4].toString());
                 	imageLinkVO.setImageURL(row[1] == null? "" : row[1].toString());
                 	imageLinkVO.setSwatchURL(row[2] == null? "" : row[2].toString());
-                	imageLinkVO.setViewURL(row[3] == null? "" : row[3].toString());                    
+                	imageLinkVO.setViewURL(row[3] == null? "" : row[3].toString());              
                     
                     LOGGER.debug("Image Link Attribute Values -- \nORIN: " + imageLinkVO.getOrin() +
                         "\nSHOT TYPE: " + imageLinkVO.getShotType() +
@@ -950,13 +945,275 @@ public class ImageRequestDAOImpl implements ImageRequestDAO {
                 }
             }
         }
-        catch(final Exception exception)
-        {
+        catch(final Exception exception){
             LOGGER.error("Exception in getScene7ImageLinks() method DAO layer. -- " + exception.getMessage());
             throw new PEPPersistencyException(exception);
         }
         finally {
             session.flush();            
+            session.close();
+        }
+        LOGGER.info("***Exiting ImageRequestDAO.getScene7ImageLinks() method.");
+        return imageLinkVOList;
+    }
+    
+    @Override
+    public ArrayList<StyleInfoDetails> getGroupingInfoDetails(String groupingId) throws PEPPersistencyException{
+        LOGGER.info("inside getGroupingInfoDetails() method "+groupingId);
+        List<StyleInfoDetails> styleInfolist = new ArrayList<StyleInfoDetails>();
+        Session session = this.sessionFactory.openSession();
+        Transaction tx = session.beginTransaction();
+        Query query = session.createSQLQuery(xqueryConstants.getGroupingInfoDetails());
+        query.setParameter(0, groupingId); 
+        query.setFetchSize(10);
+        List<Object[]> rows = query.list();
+        try{
+        StyleInfoDetails styleInfo  =  null ;
+        for(Object[] row : rows){            
+            styleInfo = new StyleInfoDetails();
+            styleInfo.setOrinGrouping(row[0]!=null?row[0].toString():null);
+            styleInfo.setDeptNo(row[1]!=null?row[1].toString():null);
+            styleInfo.setStyleNo(row[2]!=null?row[2].toString():null); 
+            styleInfo.setGroupingType(row[3]!=null?row[3].toString():null); 
+            styleInfo.setVendorNo(row[4]!=null?row[4].toString():null);
+            styleInfo.setVendorName(row[5]!=null?row[5].toString():null);
+            styleInfo.setOmniChannelVendor(row[6]!=null?row[6].toString():null);
+            styleInfo.setImageClass(row[7]!=null?row[7].toString():null);
+            styleInfo.setVendorProvidedImage(row[8]!=null?row[8].toString():null);
+            styleInfo.setVendorProvidedSample(row[9]!=null?row[9].toString():null);           
+            styleInfolist.add(styleInfo);
+        }
+        }catch(Exception e){
+        	e.printStackTrace();
+        }finally{
+        	  session.close();      
+        }       
+       
+        LOGGER.info("Exiting getStyleInfoDetails");
+        return (ArrayList<StyleInfoDetails>) styleInfolist;
+
+    }
+    @Override
+    public ArrayList<ImageProductDetails> getGroupingDetails(String groupingId) throws PEPPersistencyException {        
+        LOGGER.info("inside getGroupingDetails() method"); 
+        List<ImageProductDetails> imageProdlist = new ArrayList<ImageProductDetails>();
+        Session session = this.sessionFactory.openSession();
+        Transaction tx = session.beginTransaction();      
+        Query query = session.createSQLQuery(xqueryConstants.getGroupingDetails());
+        query.setParameter(0, groupingId); 
+        query.setFetchSize(1);
+        List<Object[]> rows = query.list();
+        try{
+        for(Object[] row : rows){
+            ImageProductDetails imgProdDetails = new ImageProductDetails();
+            if(row[1] != null){
+                imgProdDetails.setProductName(row[1]!=null?row[1].toString():null);
+            }else{
+                imgProdDetails.setProductName("");
+            }  
+            final Clob groupDescClob = (Clob) ((Clob) row[2]!=null?row[2]:null);
+            LOGGER.info("groupDescClob  "+groupDescClob); 
+			String groupDesc = ImageUtils.clobToString(groupDescClob);
+            imgProdDetails.setProductDescription(groupDesc != null ? groupDesc : "");
+            imageProdlist.add(imgProdDetails);           
+        }  
+        }catch(Exception e){
+        	e.printStackTrace();
+        }finally{
+        	  session.close();      
+        }      
+        LOGGER.info("Exiting getImageInfoDetails() method");
+        return (ArrayList<ImageProductDetails>)imageProdlist;
+    } 
+    
+    /**
+     * this dao method invokes sampleImagelinks
+     * @param orinNo
+     * @return
+     */
+    @Override
+    public ArrayList<SamleImageDetails> getGroupingSampleImageLinks(String groupingId) throws PEPPersistencyException{
+    	LOGGER.info("inside getSampleImageLinksDetails()dao impl");
+    	List<SamleImageDetails> sampleImgList = new ArrayList<SamleImageDetails>();
+    	Session session = this.sessionFactory.openSession();
+        Query query = null;      
+        query = session.createSQLQuery(xqueryConstants.getGroupingSampleImageLinks());
+        query.setParameter(0, groupingId); 
+        query.setFetchSize(1);
+        List<Object[]> rows = query.list();
+        try{
+        for(Object[] row : rows){        	
+        	SamleImageDetails sampleImage = new SamleImageDetails();        	
+        	sampleImage.setOrinNo(row[0]!=null?row[0].toString():null);
+        	sampleImage.setImageId(row[1]!=null?row[1].toString():null);
+        	if(row[2]!=null){
+        		sampleImage.setImageName(row[2]!=null?row[2].toString():null);
+        	}else {
+        		sampleImage.setImageName("");
+        	}
+        	if(row[3] !=null){
+        		sampleImage.setOriginalImageName(row[3]!=null?row[3].toString():null);
+        	}else{
+        		sampleImage.setOriginalImageName("");
+        	}        	
+        	sampleImage.setImageShotType(row[4]!=null?row[4].toString():null);
+        	if(row[5] !=null){
+        			sampleImage.setLinkStatus(row[5]!=null?row[5].toString():null);
+        		     		
+        	}
+        	if(row[7] !=null){        			
+        			sampleImage.setImageStatus(row[7]!=null?row[7].toString():null);
+        	}   
+        	
+        	sampleImgList.add(sampleImage);
+        }
+        }catch(Exception e){
+        	LOGGER.error("inside getGroupingSampleImageLinks ",e);
+        	e.printStackTrace();
+        }
+        finally{    
+    	  session.close();
+        }
+    	return (ArrayList<SamleImageDetails>) sampleImgList; 
+    	
+    }
+    
+    /**
+     * this is dao method to invoke pep history
+     */
+    @Override
+    public ArrayList<PepDetailsHistory> getGroupingHistoryDetails(String groupingId) throws PEPPersistencyException{
+        LOGGER.info("inside getGroupingHistoryDetails()");
+        List<PepDetailsHistory> pepList = new ArrayList<PepDetailsHistory>();
+        Session session = this.sessionFactory.openSession();
+        Query query = null;      
+        query = session.createSQLQuery(xqueryConstants.getGroupingHistoryDetails());
+        query.setParameter(0,groupingId); 
+        query.setFetchSize(100);
+        List<Object[]> rows = query.list();
+        SimpleDateFormat formatter1 = new SimpleDateFormat("MM/dd/yyyy HH:mm");
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZZZ");
+        Date date = null;
+        Date date1 = null;
+        String createdOn = "";
+        String updatedDate = "";     
+        try{
+        	Properties prop =PropertyLoader.getPropertyLoader(ImageConstants.LOAD_IMAGE_PROPERTY_FILE);
+         for(Object[] row: rows){           
+            PepDetailsHistory pepHist = new PepDetailsHistory();
+            pepHist.setPepOrinNumber(row[0]!=null?row[0].toString():null);            
+            if(null != row[6]){
+            	if("01".equalsIgnoreCase(row[6].toString())){
+            		pepHist.setHistoryStatus("Was Initiated");
+            	}
+            	if("02".equalsIgnoreCase(row[6].toString())){
+            		pepHist.setHistoryStatus("Was Completed");
+            	}
+				if("03".equalsIgnoreCase(row[6].toString())){
+					pepHist.setHistoryStatus("Was Approved");
+				}
+				if("04".equalsIgnoreCase(row[6].toString())){
+					pepHist.setHistoryStatus("Was Failed RRD Check");
+				}
+				if("05".equalsIgnoreCase(row[6].toString())){
+					pepHist.setHistoryStatus("Was Deactivated");
+				}
+				if("06".equalsIgnoreCase(row[6].toString())){
+					pepHist.setHistoryStatus("Was Closed");
+				}
+				if("07".equalsIgnoreCase(row[6].toString())){
+					pepHist.setHistoryStatus("Was Rejected By DCA");
+				}
+				if("08".equalsIgnoreCase(row[6].toString())){
+					pepHist.setHistoryStatus("Was Ready For Review");
+				}
+            	
+            }else{
+            	pepHist.setHistoryStatus("");
+            }
+            pepHist.setPepUpdatedBy(row[5]!=null?row[5].toString():null);            
+            if(row[2]!=null){            	
+            	date = formatter.parse(row[2].toString());
+            	createdOn = formatter1.format(date);
+            	pepHist.setCreatedOn(createdOn!=null?createdOn.toString():null);
+            }
+            if(row[4]!=null){
+            	date1 = formatter.parse(row[4].toString());
+            	updatedDate = formatter1.format(date1);
+            	pepHist.setUpdateDate(updatedDate!=null?updatedDate.toString():null);
+            }            
+            pepHist.setCreatedBy(row[1]!=null?row[1].toString():null);            
+            if(null != row[3]){
+            	String imageStateCode=row[3] == null? "" : row[3].toString();
+                String imageStateDesc = prop.getProperty("Image"+imageStateCode);
+                
+                String imageState = imageStateDesc == null ? "": imageStateDesc.toString();
+                pepHist.setUpdatedStatus(imageState);
+            }else{
+            	pepHist.setUpdatedStatus("");
+            }
+            pepList.add(pepHist);            
+        }
+        }catch(Exception e){
+        	LOGGER.error("inside getGroupingHistoryDetails ",e);
+        }finally{     
+          session.close();
+        }
+       
+        return (ArrayList<PepDetailsHistory>) pepList;       
+    }
+    /**
+     * Method to get the Image attribute details from database.
+     *    
+     * @param orin String   
+     * @return imageLinkVOList List<ImageLinkVO>
+     * 
+     * Method added For PIM Phase 2 - Regular Item Image Link Attribute
+     * Date: 05/13/2016
+     * Added By: Cognizant
+     */
+    @Override
+    public List<ImageLinkVO> getGroupingScene7ImageLinks(String groupingId) throws PEPPersistencyException {
+
+        LOGGER.info("***Entering getScene7ImageLinks() method.");
+        Session session = null;        
+        List<ImageLinkVO> imageLinkVOList = new ArrayList<ImageLinkVO>();
+        ImageLinkVO imageLinkVO = null;
+        List<Object[]> rows=null;
+        final XqueryConstants xqueryConstants = new XqueryConstants();
+        try {
+            session = sessionFactory.openSession();            
+            final Query query =session.createSQLQuery(xqueryConstants.getGroupingScene7ImageLinks());
+            if(query!=null)
+            {
+                query.setParameter(0, groupingId);                
+                rows = query.list();
+            }
+            if(rows!=null)
+            {
+                for (final Object[] row : rows) {
+                	imageLinkVO = new ImageLinkVO();
+                	imageLinkVO.setOrin(row[0] == null? "" : row[0].toString());
+                	imageLinkVO.setShotType(row[4] == null? "" : row[4].toString());
+                	imageLinkVO.setImageURL(row[1] == null? "" : row[1].toString());
+                	imageLinkVO.setSwatchURL(row[2] == null? "" : row[2].toString());
+                	imageLinkVO.setViewURL(row[3] == null? "" : row[3].toString());              
+                    
+                    LOGGER.debug("Image Link Attribute Values -- \nORIN: " + imageLinkVO.getOrin() +
+                        "\nSHOT TYPE: " + imageLinkVO.getShotType() +
+                        "\nIMAGE URL: " + imageLinkVO.getImageURL() + 
+                        "\nSWATCH URL: " + imageLinkVO.getSwatchURL() + 
+                        "\nVIEW URL: " + imageLinkVO.getViewURL());
+                    
+                    imageLinkVOList.add(imageLinkVO);
+                }
+            }
+        }
+        catch(final Exception e){
+            LOGGER.error("Exception in getGroupingScene7ImageLinks() method DAO layer. -- ",e);
+            throw new PEPPersistencyException(e);
+        }
+        finally {                 
             session.close();
         }
         LOGGER.info("***Exiting ImageRequestDAO.getScene7ImageLinks() method.");

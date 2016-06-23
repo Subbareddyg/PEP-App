@@ -178,7 +178,6 @@ public class ImageForm {
         ArrayList<ImageProductDetails> imageProductInfo) {
         this.imageProductInfo = imageProductInfo;
     }
-
     /**
      * Attribute added to show the Image link attribute details in screen.
      * 
@@ -201,5 +200,6 @@ public class ImageForm {
 	public void setImageLinkVOList(List<ImageLinkVO> imageLinkVOList) {
 		this.imageLinkVOList = imageLinkVOList;
 	}
+
 
 }

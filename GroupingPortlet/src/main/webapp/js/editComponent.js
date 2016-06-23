@@ -34,25 +34,49 @@ var app = app || {} ;
 							
 							_super.searchValue = response;
 							
-							//processing data table generation
-							//passing only components
-							var componentList = response.componentList;
-							//deleting componentList to pass only header
-							delete response.componentList;
-
-							var dtTable = new app.DataTable({dtContainer: '#exisiting-table-dataTable', rowTemplateId : '#existing-template'});
-							dtTable.setDataHeader(_super.searchValue);
-							dtTable.setData(componentList);
-							
-							$('.paginator').removeData('twbs-pagination'); //reconstructing the paginator
-							
-							dtTable.init(); //init data table
+							var dtTableConfig = {
+								dtContainer: '#exisiting-table-dataTable', 
+								rowTemplateId : '#existing-template', 
+								dfdRowTemplateId: '#existing-template-group-children'
+							};
 							
 							//sending and asigning few group type specific values
 							if($('#groupType').val().trim() == 'CPG'){
 								//console.log(_super.searchValue.classId);
 								$('#classId').val(_super.searchValue.classId);
+							}else if($('#groupType').val().trim() == 'RCG' || $('#groupType').val().trim() == 'BCG'){
+								dtTableConfig = $.extend(
+									dtTableConfig, {
+										dfdChildrenUrl: app.URLFactory.getURL('groupSearchUrl'), 
+										dfdChildrenParams: {resourceType: 'getChildRCGBCG'}
+									}
+								);
 							}
+							
+							//processing data table generation
+							//passing only components
+							var componentList = response.componentList;
+							//deleting componentList to pass only header
+							delete response.componentList;
+							
+
+							var dtTable = new app.DataTable(dtTableConfig);
+							//console.log(response);
+							
+							dtTable.setDataHeader(response);
+							dtTable.setData(componentList);
+							
+							//if no component found disable save button at the bottom of the page
+							if(componentList.length>=1){
+								$('#save-existing-group').prop('disabled', false);
+							}else{
+								$('#save-existing-group').prop('disabled', true);
+							}
+								
+							
+							$('.paginator').removeData('twbs-pagination'); //reconstructing the paginator
+							
+							dtTable.init(); //init data table
 						}
 					}).complete(function(){
 						$('.overlay_pageLoading').addClass('hidden');
@@ -69,6 +93,7 @@ var app = app || {} ;
 			
 			handleEvent : function(){
 				var _super = this;
+				
 				$('#add-components').on('click', function(e){
 					if($('.item-check:checked').length < 1){
 						$('#error-massege').html("Please select atleast one item.");
@@ -84,18 +109,39 @@ var app = app || {} ;
 						});
 					}else{
 						var checkString = [];
-						 
-						//serializing All checkbox value in one hidden field  
-						$('.item-check:checked').each(function(){
-							checkString.push($(this).val());
-						});
 						
+						//logic for concatening different types components for various group types	
+						if($('#groupType').val().trim() == 'RCG' || $('#groupType').val().trim() == 'BCG'){
+							//iterating through all selected checkboxes
+							$('.item-check:checked').each(function(){
+								if($(this).data('item-type') == 'G'){ //case when group is found
+									checkString.push($(this).val());
+								}else if($(this).data('item-type') == 'S'){
+									//getting its all selected children color
+									var nodeChkId = $(this).data('chknode-id');
+									var slctdStyleColors = [];
+									
+									$('[data-chkparent-id=' + nodeChkId +']:checked').each(function(){
+										slctdStyleColors.push($(this).val());
+									});
+									
+									checkString.push($(this).val() + ':' + slctdStyleColors.join('-'));
+								}
+							});
+						}else{							
+							//serializing All checkbox value in one hidden field  
+							$('.item-check:checked').each(function(){
+								checkString.push($(this).val());
+							});
+						}
+						
+						//setting selected and processed component data
 						$('#splitCheckboxValue').val(checkString.toString());
 						
 						try{
 							// AFUPYB3: added groupId as Param
 							var serializedData = $('#selectedComponentForm').serialize() 
-								+ '&groupType=' + $('#groupType').val()+ '&groupId=' + $('#groupId').val();
+								+ '&groupType=' + $('#groupType').val().trim() + '&groupId=' + $('#groupId').val().trim();
 							
 							//sending and asigning few group type specific values	
 							if($('#groupType').val().trim() == 'CPG'){
@@ -104,7 +150,14 @@ var app = app || {} ;
 							}
 								
 							app.GroupFactory.addNewSplitComponent(serializedData) //sending and asigning few group type specific values
-								.done(function(result){									
+								.done(function(result){
+									if(!result.length){
+										$('#group-existing-component-area').html(app.GroupLandingApp.buildMessage('Error in adding components', 'error'))
+											.fadeIn('slow');
+											$('.hide_after_error').hide();
+											return;
+									}
+									
 									var resultJSON = $.parseJSON(result);
 									
 									app.GroupLandingApp.handleGroupCreationResponse(resultJSON, resultJSON.groupType, false);
@@ -129,13 +182,90 @@ var app = app || {} ;
 					}
 				});
 				
-				$('.item-check , #select-all').on('click',function(){
-					
+				//code to handle enabling or disabling remove component button
+				$('#existingComponentForm').on('click', '.item-check, #select-all', function(){
+					//console.log($(this).is(':checked'));
 					if($(this).is(':checked')){
-						$('#remove-existing-group').prop('disabled',false).css('opacity',1);
+						$('#remove-existing-component').prop('disabled', false);
 					}else{
-						$('#remove-existing-group').prop('disabled',true).css('opacity',0.5);
+						if(!$('.item-check:checked').length)
+							$('#remove-existing-component').prop('disabled', true);
+						else
+							$('#remove-existing-component').prop('disabled', false);
 					}
+				});
+				
+				//code to handle remove component 
+				$('#remove-existing-component').on('click',function(){
+					var _that = $(this);
+					$('#error-massege').html("Are you sure you want to remove the(se) component(s)?");
+					$('#errorBox').dialog({
+					   autoOpen: true, 
+					   modal: true,
+					   resizable: false,
+					   dialogClass: "dlg-custom",
+					   title: 'Delete Component',
+					   buttons: {
+						"Cancel": function() {$(this).dialog("close");},
+						"Delete": function() {
+							$(this).dialog("close"); //closing dialog
+							
+							var checkString = [];
+						 
+							//serializing All checkbox value in one hidden field  
+							$('.item-check:checked').each(function(){
+								checkString.push($(this).val());
+							});
+							
+							$('#existingSeletedItems').val(checkString.toString());
+							
+							$('#overlay_pageLoading').removeClass('hidden'); //showing as working
+							
+							//requesting factorty to validate and delete
+							app.GroupFactory.removeComponents($('#existingComponentForm').serialize() 
+								+ '&groupType='+ $('#groupType').val().trim() + '&groupId=' + $('#groupId').val().trim()
+							)
+							.done(function(result){
+								//console.log(result);
+								if(!result.length){
+									$('#group-existing-component-area').html(app.GroupLandingApp.buildMessage('Error deleting components', 'error'))
+										.fadeIn('slow');
+										return;
+								}
+								
+								var responseJSON = $.parseJSON(result);
+								
+								if(responseJSON.status == 'SUCCESS'){
+									$('#group-existing-component-area').html(
+										app.GroupLandingApp.buildMessage(
+											responseJSON.description ? responseJSON.description : 'Component Deleted Successfully!', 
+										'success')
+									).fadeIn('slow');
+									
+									_super.loadExitingData(false); // on success reloading existing component
+									
+									//checking if already component search fired befre removeing component(s)
+									//if yes then refreshing the same search result
+									if(!$("#search-result-panel").hasClass('hidden')){
+										$('#frmComponentSearch').trigger('submit');
+									}
+								}else if(responseJSON.status == 'FAIL'){
+									$('#group-existing-component-area').html(
+										app.GroupLandingApp.buildMessage(
+											responseJSON.description ? responseJSON.description : 'Component deletion was unsuccessful!', 
+										'error')
+									).fadeIn('slow');
+								}
+								
+							})
+							.complete(function(){
+								$('#overlay_pageLoading').addClass('hidden'); //hiding loader icon
+								//cleaning up message after 4 sec
+								app.GroupLandingApp.cleanupMessage($('#group-existing-component-area'), 8000);
+							});	
+						},
+					   },
+					});
 				});
 					
 				var editAjaxReq = null;
@@ -143,6 +273,11 @@ var app = app || {} ;
 				$('#edit-header').on('click', function(e){
 					
 					if($(this).hasClass('save')){
+						//triming all whitespaces
+						$('#fromHeaderEdit').find('input[type=text], textarea').each(function(){
+							$(this).val($(this).val().trim());
+						});
+						
 						if(!$('#fromHeaderEdit')[0].checkValidity()){
 							$(this).attr('type', 'submit');
 							$(this).click();
@@ -351,6 +486,77 @@ var app = app || {} ;
 						
 				});
 
+				//handler to save component selection
+				$('#save-existing-group').on('click', function(){
+					var params = $('#existingComponentForm').serialize();
+					
+					//grouping specific params
+					if($('#groupType').val().trim() == 'BCG'){
+						params += '&resourceType=priorityValueSave';
+						/**
+						* code to check all priorities have valid values before saving
+						*/
+						var validpriorities = false;
+						$('input.tree[type=number]').each(function(){
+							if($(this).val().trim().length > 0)
+								validpriorities = true;
+							else
+								validpriorities = false;
+						});
+						
+						if(!validpriorities){
+							alert('Please enter valid priorities before saving');
+							return;
+						}
+						
+						//making prority list
+						var priorityList = [];
+						$('input.tree[type=number]').each(function(){
+							priorityList.push($(this).attr('name').split('_')[0] + ':' + $(this).val());
+						});
+						
+						params += '&priorities=' + priorityList.toString();
+					}else if($('#groupType').val().trim() == 'SSG' || $('#groupType').val().trim() == 'SCG'){
+						params += '&resourceType=defaultValueSave';
+					}
+					
+					params += '&groupType=' + $('#groupType').val() + '&groupId=' + $('#groupId').val();
+					
+					app.GroupFactory.editDefaultComponent(params)
+						.done(function(result){
+								//console.log(result);
+								if(!result.length){
+									$('#group-existing-component-area').html(app.GroupLandingApp.buildMessage('Error Saving components', 'error'))
+										.fadeIn('slow');
+										return;
+								}
+								
+								var responseJSON = $.parseJSON(result);
+								
+								if(responseJSON.status == 'SUCCESS'){
+									$('#group-existing-component-area').html(
+										app.GroupLandingApp.buildMessage(
+											responseJSON.defaultValueStatusMessage ? responseJSON.defaultValueStatusMessage : 'Default Component Set Successfully!', 
+										'success')
+									).fadeIn('slow');
+									
+									_super.loadExitingData(false); // on success reloading existing component
+								}else if(responseJSON.status == 'FAIL'){
+									$('#group-existing-component-area').html(
+										app.GroupLandingApp.buildMessage(
+											responseJSON.defaultValueStatusMessage ? responseJSON.defaultValueStatusMessage : 'Default Component set was unsuccessful!', 
+										'error')
+									).fadeIn('slow');
+								}
+								
+							})
+							.complete(function(){
+								$('#overlay_pageLoading').addClass('hidden'); //hiding loader icon
+								//cleaning up message after 4 sec
+								app.GroupLandingApp.cleanupMessage($('#group-existing-component-area'), 8000);
+							});
+				});
+				
 				$(document).on('ready', function(e){
 					$('#nameMaxChars').text(app.Global.defaults.maxGroupNameChars);
 					$('#descMaxChars').text(app.Global.defaults.maxGroupDescChars);
@@ -379,15 +585,12 @@ var app = app || {} ;
 						_super.putValue();
 					});
 					break;
+				
 				case 'CPG' :
+				case 'GSG':
 					$('#groupId-search , #groupName-search').prop('disabled',true);
 					_super.putValue();
 					break;
-					
-					
-				default : 
-				
-				break;
 				
 				}
 				$('#styleOrinNoShowOnly').bind('putIt',function(e){ 
@@ -419,6 +622,7 @@ var app = app || {} ;
 
 				
 			},
+			
 			putValue : function(){
 				 $('#styleOrinNo').val($('#styleOrinNoShowOnly').val());
 			},

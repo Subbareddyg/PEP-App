@@ -10,6 +10,7 @@ public class ImageConstants {
     public static final String ACTION = "action";
 
     public static final String MODELVIEW_SUCCESS = "imageDetails";
+    public static final String MODELVIEW_SUCCESS_GROUPING = "groupingImageDetails";
     public static final String MODELVIEW_WORKLISDISPLAY = "worklistDisplay";
 
     public static final String PROPERTIES_FILE_NAME =
@@ -35,7 +36,6 @@ public class ImageConstants {
     
     public static final String MESS_PROP = "message.properties";
     public static final String DEV_SERVICE_URL = "dev.service.url";
-    //public static final String DEV_SERVICE_URL =System.getenv("IMAGE_SERVICE_URL"); // AFUPYB3
     public static final String SERVICE_REMOVE_IMAGE_LIST = "list";
     public static final String IMAGE_NOT_REMOVED = "image.remove.service.response.message";
     public static final String RESPONSE_MSG = "imageremove.success.msg";
@@ -57,7 +57,6 @@ public class ImageConstants {
     
     //For Approve or Reject Service Parameter    
     public static final String IMAGE_APPROVE_WEBSERVICE_URL = "image.approve.webservice.url";
-    //public static final String IMAGE_APPROVE_WEBSERVICE_URL =System.getenv("IMAGE_APPROVE_WEBSERVICE_URL"); // AFUPYB3
    
     public static final String SERVICE_APPROVEORREJECT_ACTION_VALUE_LIST = "list";
     
@@ -69,7 +68,6 @@ public class ImageConstants {
     
     //For Submit VPI Service
     public static final String DEV_SERVICE_SUBMIT_VPI_URL = "dev.service.url.submitVPI";
-    //public static final String DEV_SERVICE_SUBMIT_VPI_URL =System.getenv("SERVICE_URL_SUBMIT_VPI"); // AFUPYB3
     public static final String SERVICE_SUBMIT_VPI_LIST = "list";
     public static final String SERVICE_SUBMIT_IMAGE_STATUS_NOTUPATED = "service.message.submit.imageStatus.notUpdated";
     public static final String SERVICE_SUBMIT_IMAGE_STATUS_UPATED = "service.message.submit.imageStatus.Updated";
@@ -83,7 +81,6 @@ public class ImageConstants {
     
     //For Upload VPI Service Call
     public static final String DEV_SERVICE_UPLOADVPI_IMAGE_URL = "dev.service.url.uploadVPI";
-    //public static final String DEV_SERVICE_UPLOADVPI_IMAGE_URL = System.getenv("SERVICE_URL_UPLOAD_VPI"); // AFUPYB3
     public static final String DEV_SERVICE_UPLOADVPI_IMAGE_LIST = "listUploadVPI";
     public static final String DEV_SERVICE_UPLOADVPI_ERROR_IMAGE_MESSAGE = "message.error.imageupload";
     public static final String DEV_SERVICE_UPLOADVPI_SUCCESS_IMAGE_MESSAGE = "message.success.imageupload";
@@ -119,21 +116,39 @@ public class ImageConstants {
     public static final String IMAGE_STATUS_COMPLETED = "02";
     public static final String DEV_SERVICE_APPROVE_URL = "dev.service.url.approveImage";
     public static final String FILE_UPLOAD_PATH = "vendor.uploadfile.path";
-    //public static final String FILE_UPLOAD_PATH = System.getenv("VENDOR_UPLOAD_FILE_PATH"); // AFUPYB3
     public static final String LOAD_IMAGE_PROPERTY_FILE = "imagePortletResources.properties";
     public static final String IMAGE_SUBMITOREJECT_URL = "image.submitORReject.webservice.url";
-    //public static final String IMAGE_SUBMITOREJECT_URL = System.getenv("IMAGE_SUBMIT_TO_REJECT_WEBSERVICE_URL"); // AFUPYB3
     public static final String IMAGE_SAVESHOTTYPE_URL = "image.saveImageShotType.webservice.url";
-    //public static final String IMAGE_SAVESHOTTYPE_URL = System.getenv("IMAGE_SAVEIMAGE_SHOT_TYPE_WEBSERVICE_URL"); // AFUPYB3
     public static final String IMAGE_REJECTSTATUS = "04";
     public static final String IMAGE_READYFORREVIEWSTATUS = "08";
     public static final String IMAGE_INITIATEDSTATUS = "01";
     public static final String IMAGE_COMPLETEDSTATUS = "02";
-    
+    public static final String LOAD_GROUPING_IMAGE_PROPERTY_FILE = "groupingImagePortletResources.properties";
+    public static final String GRP_SERVICE_UPLOADVPI_IMAGE_URL = "grp.service.url.uploadVPI";
+    public static final String GRP_SERVICE_REMOVEIMG_IMAGE_URL = "grp.service.url.removeImage";
+    public static final String GRP_SERVICE_APPROVE_IMAGE_URL = "grp.image.approve.webservice.url";
+    public static final String GRP_SERVICE_UPDATE_STATUS_URL = "grp.image.statusupdate.webservice.url";
   
-    
-    
-    
+    public static final String GROUPING_IMAGE_UPLOAD_LIST = "imageList";
+    public static final String RESPONSE_MESSAGE_STATUS = "status";
+    public static final String RESPONSE_SUCCESS_MESSAGE = "SUCCESS";
+    public static final String RESPONSE_FAILURE_MESSAGE = "FAIL";
+    public static final String GROUP_ID = "groupId";
+    public static final String GROUP_TYPE = "groupType";
+    public static final String IMAGE_LIST = "imageIdList";
+    public static final String IMAGE_NAME = "imageName";
+    public static final String IMAGE_OVERALL_STATUS = "imageOverallStatus";
+    public static final String GROUP_OVERALL_STATUS = "groupOverallStatus";
+    public static final String GROUP_IMAGE_STATUS = "imageStatus";
+    public static final String IMAGE_URL = "imageUrl";
+    public static final String IMAGE_UPLOADURL = "uploadedUrl";
+    public static final String IMAGE_LOCATION = "imageLocation";
+    public static final String IMAGE_FILENAME = "fileName";
+    public static final String CREATEDBY = "createdBy";
+    public static final String GROUP_IMAGE_ID_LIST = "imageIdList";
+    public static final String GROUP_IMG_STATUS_COMPLETED = "Completed";
+    public static final String PUBLISH_TO_WEB = "09";
+    public static final String READY_FOR_COPY = "06";
     
     
     

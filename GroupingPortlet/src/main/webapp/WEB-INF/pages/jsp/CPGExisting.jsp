@@ -1,5 +1,5 @@
 <form name="existingComponentForm" id="existingComponentForm">
-			<input type="hidden" name="selectedItems" value="" >
+			<input type="hidden" name="componentList" value="" id="existingSeletedItems" >
 			<table cellpadding="0" cellspacing="0" border="1" class="content-table border-simple colored-row tree-grid">
 				<thead>
 					<tr>
@@ -19,7 +19,7 @@
 	{{_.each(data, function(row, key){ }}
 		{{ key = 'E'+key }}
 		<tr>
-			<td><input type="checkbox" name="selectedItem[]" value="{{=row.StyleOrinNo}}" class="item-check" style="margin-left:12px" />
+			<td><input type="checkbox" name="selectedItem[]" value="{{=row.StyleOrinNo}}" class="item-check" style="margin-left:12px" /></td>
 			<td>
 				{{ if(row.childList && row.childList.length){ }}
 					<div class="icon-tree parent-node-expand" data-node-id="{{=(row.StyleOrinNo + '_' + key)}}">
@@ -37,7 +37,6 @@
 			<td class="text-center">{{=row.colorCode}}</td>			
 		</tr>
 		{{ if(row.childList && row.childList.length){ }}
-			</tr>
 			{{ _.each(row.childList, function(childRow, childKey){ }}
 				<tr class="hidden-child" data-parent-id="{{=(row.StyleOrinNo + '_' + key) }}">
 					<td>&nbsp;</td>
@@ -55,7 +54,7 @@
 	{{ }) }}	
 {{ }else{ }}
 	<tr>
-		<td colspan="10" align="center"><strong>{{=dataHeader.message ? dataHeader.message : 'No record Found!'}}</strong></td>
+		<td colspan="5" align="center"><strong>{{=dataHeader.message ? dataHeader.message : 'No record Found!'}}</strong></td>
 	</tr>
 {{ } }}
 </script>

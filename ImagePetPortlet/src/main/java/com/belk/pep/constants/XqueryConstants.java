@@ -154,6 +154,9 @@ public class XqueryConstants {
         return STYLE_INFO_QUERY;    
         
     }
+    
+    
+    
         
          
     public String getImageManagementDetails() {
@@ -814,7 +817,7 @@ public class XqueryConstants {
 			"  pet.MOD_DTM = '01-JAN-00 12.00.00.000000000 PM'";*/
 		return ARD_REQUEST ;
 	}
-      
+    
     /**
      * Method to get the Image attribute details query.
      *    
@@ -835,11 +838,206 @@ public class XqueryConstants {
         "   T.SHOTTYPE                     "+
         " FROM ADSE_PET_CATALOG AIC,       "+
         "   XMLTABLE( 'for $image in $XML_DATA/pim_entry/entry/Image_Sec_Spec/Scene7_Images/Id return $image' passing AIC.XML_DATA AS \"XML_DATA\" COLUMNS IMAGEURL VARCHAR(1000) path 'ImageURL', SWATCHURL VARCHAR(1000) path 'SwatchURL', VIEWERURL VARCHAR(1000) path 'ViewerURL', SHOTTYPE VARCHAR(100) path 'ViewerURL/Shot_Type') T "+
-        " WHERE AIC.MDMID = :orinNum   ";
+        " WHERE AIC.MDMID = ?   ";
 
         LOGGER.debug("IMAGE LINKS QUERY -- \n" + IMAGE_LINKS_QUERY);
         LOGGER.info("***Exiting getScene7ImageLinks() method.");
         return IMAGE_LINKS_QUERY;
     }
+    
+      
+    /**
+     * This query is to get the getGroupingInfoDetails
+     * @param orinNo
+     * @return
+     */
+    public String getGroupingInfoDetails(){
+        final String GROUPING_INFO_QUERY = " SELECT  "+
+        	" AGC.MDMID GROUP_ID, "+
+        	" AGC.DEF_DEPT_ID DEPT_ID, "+
+        	" AGC.DEF_PRIMARYSUPPLIERVPN VENDOR_STYLE, "+
+        	" AGC.ENTRY_TYPE GROUP_TYPE,  "+
+        	" s.VenId, "+
+        	" s.VenName, "+
+        	" s.OmnichannelIndicator, "+
+        	" AIC.CLASS_ID, "+
+        	" Vendor_Image, "+
+        	" Vendor_Sample   "+
+        	" FROM VENDORPORTAL.ADSE_GROUP_CATALOG AGC LEFT OUTER join  "+
+        	" VENDORPORTAL.ADSE_SUPPLIER_CATALOG sup on SUP.MDMID=AGC.DEF_PRIMARY_SUPPLIER_ID "+
+        	" LEFT OUTER JOIN  "+
+        	" VENDORPORTAL.ADSE_GROUP_CHILD_MAPPING AGCM  ON "+
+        	" AGCM.MDMID=AGC.MDMID AND AGCM.COMPONENT_DEFAULT='true' "+
+        	" LEFT OUTER JOIN VENDORPORTAL.ADSE_ITEM_CATALOG AIC "+
+        	" on AIC.MDMID = AGCM.COMPONENT_STYLE_ID "+
+        	" LEFT OUTER JOIN VENDORPORTAL.ADSE_PET_CATALOG APC "+ 
+        	" ON APC.MDMID=AIC.MDMID, "+
+        	" XMLTABLE('for $i in $pet/pim_entry/entry  return   "+       
+        	" <out>    "+                                            
+        	" <img>{if(count($i/Image_Sec_Spec/Images//*) gt 0) then \"Y\" else \"N\"}</img>   "+ 
+        	" <sample>{if(count($i/Image_Sec_Spec/Sample//*) gt 0) then \"Y\" else \"N\"}</sample>  "+   
+        	" </out>'  "+
+        	" passing APC.xml_data AS \"pet\" "+ 
+        	" columns  "+
+        	" Vendor_Image VARCHAR2(1) path '/out/img',  "+
+        	" Vendor_Sample VARCHAR2(1) path '/out/sample') (+)PET_XML, "+
+        	" XMLTABLE('for $i in $XML_DATA/pim_entry/entry  return $i'  "+
+        	" passing sup.xml_data AS \"XML_DATA\"  "+
+        	" COLUMNS "+ 
+        	" Id VARCHAR2(20) path 'Supplier_Ctg_Spec/Id',  "+
+        	" VenName VARCHAR2(20) path 'Supplier_Ctg_Spec/Name',  "+
+        	" VenId VARCHAR2(20) path 'Supplier_Ctg_Spec/VEN_Id', "+ 
+        	" OmnichannelIndicator VARCHAR(2) path 'if (Supplier_Site_Spec/Omni_Channel/Omni_Channel_Indicator eq \"true\") then \"Y\" else \"N\"' ) (+)s "+
+        	" WHERE AGC.MDMID=?";
+        
+        return GROUPING_INFO_QUERY;    
+        
+    } 
+    
+    /**
+     * This query is responsible for getting the grouping info details 
+     * @param orinNo
+     * @return
+     */
+    
+    
+    public String getGroupingDetails(){    	
+    	
+    	  final String GROUPING_DTLS_QUERY= " SELECT "+
+    		  " AGC.MDMID GROUP_ID, "+ 
+    		  " AGC.GROUP_NAME, "+
+    		  " AGCXML.Description, "+
+    		  " AGCXML.Effective_Start_Date, "+
+    		  " AGCXML.Effective_End_Date, "+
+    		  " AGCXML.CARS_Group_Type, "+
+    		  " AGC.ENTRY_TYPE GROUP_TYPE, "+
+    		  " AGC.GROUP_OVERALL_STATUS_CODE, "+
+    		  " AGC.CREATED_BY "+    		
+    		  " FROM "+
+    		  " ADSE_GROUP_CATALOG AGC, "+
+    		  " XMLTABLE( "+
+    		  " 'let  $Description:= /pim_entry/entry/Group_Ctg_Spec/Description," +
+    		  "  $Effective_Start_Date:= /pim_entry/entry/Group_Ctg_Spec/Effective_Start_Date,   " +
+    		  "  $Effective_End_Date:= /pim_entry/entry/Group_Ctg_Spec/Effective_End_Date, " +
+    		  " $CARS_Group_Type:= /pim_entry/entry/Group_Ctg_Spec/CARS_Group_Type " +
+    		  "  return <out>  <Description>{$Description}</Description>  " +
+    		  "  <Effective_Start_Date>{$Effective_Start_Date}</Effective_Start_Date>  " +
+    		  " <Effective_End_Date>{$Effective_End_Date}</Effective_End_Date> " +
+    		  " <CARS_Group_Type>{$CARS_Group_Type}</CARS_Group_Type>   " +
+    		  "  </out>' "+
+    		  " passing AGC.XML_DATA Columns Description CLOB path '/out/Description', " +
+    		  " Effective_Start_Date VARCHAR2(50) path '/out/Effective_Start_Date' , " +
+    		  " Effective_End_Date   VARCHAR2(50) path '/out/Effective_End_Date', " +
+    		  " CARS_Group_Type      VARCHAR2(50) path '/out/CARS_Group_Type') AGCXML " +
+    		  " WHERE "+
+    		  " MDMID = ? ";    	  
+    	  
+    	  return GROUPING_DTLS_QUERY;
+    	        
+    }
+    
+    
+    public static String getGroupingSampleImageLinks() {
+		final String SAMPLE_IMAGE_LINKS=" SELECT pet.mdmid ORIN_NUM, " +
+			" Image_ID, " +
+			" Image_Name, " +
+			" Original_Image_Name, " +
+			" NVL(Image_Location, Image_URL) Image_Location, "+
+			" Image_Shot_Type, " +
+			" Link_Status, " +
+			" pet_XML.Image_Status, " +
+			" Sample_Id, " +
+			" Sample_Recieved, " +
+			" Silhouette, " +
+			" Turn_In_Date, " +
+			" Sample_Coordinator_Note, " +
+			" pet.entry_type " +
+			" FROM VENDORPORTAL.ADSE_GROUP_CATALOG pet, " +
+			" XMLTABLE('for $i in $pet/pim_entry/entry/Image_Sec_Spec/Images  return  $i'  " +
+			" passing pet.xml_data AS \"pet\"  " +
+			" columns " + 
+			" Image_ID VARCHAR2(10) path 'Id',  " +
+			" Image_Name VARCHAR2(50) path 'FileName',  " +
+			" Original_Image_Name VARCHAR2(50) path 'OriginalFileName',  " +
+			" Image_URL VARCHAR2(256) path 'Image_URL',  " +
+			" Image_Location VARCHAR2(50) path 'Image_Location',  " +
+			" Image_Shot_Type VARCHAR2(10) path 'Shot_Type',  " +
+			" Link_Status VARCHAR2(10) path 'status_cd',  " +
+			" Image_Status VARCHAR2(16) path 'Status',  " +
+			" Sample_Id VARCHAR2(20) path './../Sample/Id', " + 
+			" Sample_Recieved VARCHAR2(20) path 'if(./../Sample/SampleReceived eq \"true\") then \"Y\" else \"N\"',  "+
+			" Silhouette VARCHAR2(30) path 'if (Silhouette eq \"true\") then \"Y\" else \"N\"',  " +
+			" Turn_In_Date VARCHAR2(80) path './../Sample/TurnInDate',  " +
+			" Sample_Coordinator_Note VARCHAR2(200) path './../Sample/SampleSwatchNotes') PET_XML " +
+			" WHERE mdmid = ? " +
+			" AND (Image_URL    IS NOT NULL OR Image_Location IS NOT NULL) " +
+			" AND Image_Name    IS NOT NULL " +
+			" AND image_id      IS NOT NULL ";
+
+		return SAMPLE_IMAGE_LINKS ;
+	}
+    
+    
+    /**
+     * This query is responsible for getting the pep history details
+     * @param orinNo
+     * @return
+     */
+    public static String getGroupingHistoryDetails() {
+        final String PEP_HISTORY=  " SELECT pet.mdmid,  i.createdBy, i.createdOn, i.lastState, " +
+        	" i.lastUpdateOn, i.lastUpdateBy, i.currentState " +
+        	" FROM VENDORPORTAL.ADSE_GROUP_CATALOG pet, XMLTable( " +
+        	" 'for $i in $pet/pim_entry/entry/Group_Ctg_Spec/Audit/Image   " +    
+        	"  let  $lastState := $i//Last_State, " +
+        	" $lastUpdate := $i//Last_State_On, " +
+        	" $lastUpdateBy := $i//..//Last_Modified_By, " +
+        	" $createdBy := $i//..//Created_By, " +
+        	" $createdOn := $i//..//Created_On, " +
+        	" $currentState := $i//..//..//State  " +
+        	" return   <petStatus>  <lastState>{$lastState}</lastState> " +
+        	" <lastUpdate>{$lastUpdate}</lastUpdate>  " +
+        	" <lastUpdateBy>{$lastUpdateBy}</lastUpdateBy> " +
+        	" <createdBy>{$createdBy}</createdBy> " +
+        	"<createdOn>{$createdOn}</createdOn> " +
+        	"<currentState>{$currentState}</currentState> </petStatus>' "+
+        	" passing pet.XML_DATA AS \"pet\"  "+
+        	" columns "+
+        	" lastState VARCHAR2(40) path '/petStatus/lastState' , " + 
+        	" lastUpdateOn VARCHAR2(40) path '/petStatus/lastUpdate' ,  " +
+        	" lastUpdateBy VARCHAR2(40) path '/petStatus/lastUpdateBy',  " +
+        	" createdBy VARCHAR2(40) path '/petStatus/createdBy',  " +
+        	" createdOn VARCHAR2(40) path '/petStatus/createdOn',  " +
+        	" currentState VARCHAR2(40) path '/petStatus/currentState' ) i  " +
+        	" WHERE pet.mdmid=? " ;
+
+          return PEP_HISTORY ;
+  }
+    /**
+     * Method to get the Image attribute details query.
+     *    
+     * @return the query string
+     * 
+     * Method added For PIM Phase 2 - Regular Item Image Link Attribute
+     * Date: 05/13/2016
+     * Added By: Cognizant
+     */
+    public  String getGroupingScene7ImageLinks() {
+        
+        LOGGER.info("***Entering getScene7ImageLinks() method.");
+        
+        String IMAGE_LINKS_QUERY = " SELECT AGC.MDMID, "+
+        	" T.IMAGEURL, T.SWATCHURL, T.VIEWERURL, "+
+        	" T.SHOTTYPE FROM ADSE_GROUP_CATALOG AGC, "+
+        	" XMLTABLE( 'for $image in $XML_DATA/pim_entry/entry/Image_Sec_Spec/Scene7_Images/Id return $image'  "+
+        	" passing AGC.XML_DATA AS \"XML_DATA\"  "+
+        	" COLUMNS  IMAGEURL VARCHAR(1000) path 'ImageURL',  "+
+        	" SWATCHURL VARCHAR(1000) path 'SwatchURL',  "+
+        	" VIEWERURL VARCHAR(1000) path 'ViewerURL',  "+
+        	" SHOTTYPE VARCHAR(100) path 'Shot_Type') T "+
+        	" WHERE AGC.MDMID = ? "; 
+        LOGGER.info("***Exiting getScene7ImageLinks() method.");
+        return IMAGE_LINKS_QUERY;
+    }
+      
 
 }

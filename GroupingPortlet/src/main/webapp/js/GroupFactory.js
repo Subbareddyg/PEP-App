@@ -46,15 +46,27 @@ var app = app || {};
 					.error(handleException);
 		},
 		
-		// Featching Exiting Components
+		// adds new component to a split group
 		addNewSplitComponent: function(params){
 			return $.get(app.URLFactory.getURL('addComponentToGroup'), params)
+					.error(handleException);
+		},
+		
+		// updates default component for a  split group
+		editDefaultComponent: function(params){
+			return $.post(app.URLFactory.getURL('editDefaultComponentUrl'), params)
 					.error(handleException);
 		},
 		
 		// method to update group header
 		updateHeader: function(params){
 			return $.post(app.URLFactory.getURL('saveHeader'), params)
+					.error(handleException);
+		},
+		
+		//Remove Exiting component 
+		removeComponents: function(params){
+			return $.post(app.URLFactory.getURL('removeComponentURL'), params)
 					.error(handleException);
 		},
 	};

@@ -8,6 +8,7 @@
 .clearfix{clear:both; content: ''; display:table;}
 .footer-content{margin: 0 auto; width: 10%;}
 .btn{display: inline !important; padding:3px !important; margin:2px !important; cursor: pointer !important; float: none !important; font-size:13px !important;}
+.btn:disabled{opacity: 0.5 !important;}
 .content-table{margin: 0 auto; padding: 5px; width: 95%}
 .content-table td, .content-table th{padding: 5px;}
 .content-table a, .content-table a:active, .content-table a:focus, .content-table a:visited{color: #00649d;text-decoration: none;}
@@ -69,10 +70,18 @@ ul.paginator li.active a, ul.paginator li.disabled a{color: #23527c; background-
 
 /* css rules specific to tre table */
 .icon-tree{display: inline-block; cursor: pointer;}
-.parent-node-expand{padding-right: 4px; width: 16px; background: url('images/expand.png') no-repeat 50% 50%;}
-.parent-node-collapse{padding-right: 4px; width: 16px; background: url('images/collapsed.png') no-repeat 50% 50%;}
+.parent-node-expand, .parent-node-expand-ajax{padding-right: 4px; width: 16px; background: url('images/expand.png') no-repeat 50% 50%;}
+.parent-node-expanding, .parent-node-expanding-ajax{padding-right: 4px; width: 16px; background: url('images/ajax-loader.gif') no-repeat 50% 50%;}
+.parent-node-collapse, .parent-node-collapse-ajax {padding-right: 4px; width: 16px; background: url('images/collapsed.png') no-repeat 50% 50%;}
 .parent-leaf{padding-left:17px;}
 .leaf-node{padding-right: 30px;}
 .icon-tree i{ font-size: 17px;font-weight: bold;}
 .hidden-child{display:none;}
-#save-existing-group{opacity:0.5;}
+.chk-level1{margin-left:24px;}
+.chk-level2{margin-left:36px;}
+.chk-level3{margin-left:44px;}
+.mar-level1{margin-left:15px;}
+.mar-level2{margin-left:27px;}
+.pad-level1{padding-left:13px;}
+.pad-level2{padding-left:20px;}
+input.tree[type=number]{width: 65px;}

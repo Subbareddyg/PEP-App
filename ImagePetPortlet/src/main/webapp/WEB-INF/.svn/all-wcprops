@@ -1,0 +1,35 @@
+K 25
+svn:wc:ra_dav:version-url
+V 126
+/ij/!svn/ver/500553/PistolPermitRecertification/trunk/PistolPermitReCertification/PPRecertPortalClient/src/main/webapp/WEB-INF
+END
+ibm-web-ext.xml
+K 25
+svn:wc:ra_dav:version-url
+V 142
+/ij/!svn/ver/347378/PistolPermitRecertification/trunk/PistolPermitReCertification/PPRecertPortalClient/src/main/webapp/WEB-INF/ibm-web-ext.xml
+END
+ibm-web-bnd.xml
+K 25
+svn:wc:ra_dav:version-url
+V 142
+/ij/!svn/ver/347378/PistolPermitRecertification/trunk/PistolPermitReCertification/PPRecertPortalClient/src/main/webapp/WEB-INF/ibm-web-bnd.xml
+END
+faces-config.xml
+K 25
+svn:wc:ra_dav:version-url
+V 143
+/ij/!svn/ver/500553/PistolPermitRecertification/trunk/PistolPermitReCertification/PPRecertPortalClient/src/main/webapp/WEB-INF/faces-config.xml
+END
+portlet.xml
+K 25
+svn:wc:ra_dav:version-url
+V 138
+/ij/!svn/ver/360195/PistolPermitRecertification/trunk/PistolPermitReCertification/PPRecertPortalClient/src/main/webapp/WEB-INF/portlet.xml
+END
+web.xml
+K 25
+svn:wc:ra_dav:version-url
+V 134
+/ij/!svn/ver/500273/PistolPermitRecertification/trunk/PistolPermitReCertification/PPRecertPortalClient/src/main/webapp/WEB-INF/web.xml
+END

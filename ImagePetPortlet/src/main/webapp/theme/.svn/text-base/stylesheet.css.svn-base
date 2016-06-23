@@ -1,0 +1,520 @@
+.portlet-form-button{
+  cursor: pointer;	
+}
+
+.regInfoLink{
+text-decoration:underline;
+color:blue;
+}
+
+img.button{
+ cursor: pointer;
+ }
+ 
+ .contentHeader{
+ font-weight:bold;
+ font-size:14px
+ 
+ }
+ 
+.bold {
+	font-weight: bold;
+}
+.divide {
+		CLEAR: both;
+		MARGIN: 3x 0px;
+		BORDER-BOTTOM: gray 1px dashed;
+		height: 2px;
+	}
+.allHeaderPanel {
+	margin-bottom: 10px;
+	border-style: solid;
+	border-color: #8E9EB4;
+}
+
+.allContentPanel {
+	border: 0.5px;
+	border-style : solid;
+	border-color: #A9A9A9;
+	margin-bottom: 25px;
+	margin-left: 5px;
+	margin-right: 5px;		
+	
+}
+
+.leftBorderPadding{
+	margin-left: 20px;
+}
+
+.allRedText {
+	color: #FF0000;
+	font-style: normal
+	font-size: small
+}
+
+.generalInfoLeftPanel{
+	Width:85%;
+	float: left;
+}
+
+.generalInfoRightPanel{
+	Width:15%;
+	float: left;
+}
+.smallRedText{
+	color:red;
+	font-size:10px;
+}
+
+.panelSection-header {
+    background-color: #D3DBE5;
+    border: 1px solid #637A9E;
+    clear: both;
+    font-weight: bold;
+    min-height: 20px;
+}
+
+
+.panelSubSection-header {
+    background-color: #3E4B72;
+    border: 1px solid #637A9E;
+    clear: both;
+    color: white;
+    font-weight: bold;
+    min-height: 16px;
+}
+
+div.paddedFloatLeft{
+float: left; 
+padding-right:10px;
+padding-left:10px;
+}
+
+div.wrapper{
+float: left; 
+width:33%;
+text-align: center;
+}
+
+div.innerDivLeft{
+float: left; 
+width:45%;
+text-align: right;
+vertical-align:bottom;
+}
+
+div.innerDivRight{
+
+float:left;
+text-align: left;
+vertical-align:top;
+
+}
+
+table.highlightRows>tbody tr.over {
+	background-color: #bcd4ec;
+}
+
+.link{
+text-decoration:underline;
+color:blue;
+cursor: pointer;
+}
+
+.hide {
+	display: none;
+}
+
+.alignCenter{
+width:100%;
+text-align:center;
+}
+
+.panelDialog{
+	background-color:#EBF0F4;
+	border:1px solid #637A9E;
+	position:absolute;
+}
+
+.headerClass1 {
+	background-color: ThreeDFace;
+	color: WindowText;
+	border-width: 1px;
+	border-style: solid;
+	border-color: ThreeDShadow;
+	margin:2px;
+	padding:0px;
+	padding-left:4pt;
+	padding-right:4pt;
+	padding-bottom:2px;
+	font-weight: 400;
+	overflow: -moz-scrollbars-none;
+	width: 1000px;
+}
+
+.{
+	color:rgba(155, 10, 71, 0.64);
+}
+
+.leftPadding{
+	padding-left:15px;
+}
+.leftPadding50{
+	padding-left:50px;
+}
+
+.rightPadding{
+padding-right:15px;
+}
+
+.boldLink{
+font-weight: 700; 
+color:blue;
+}
+
+textarea.disabled, span.disabled{
+	color:#999;
+}
+
+.sectionColumnClass1{
+	text-align:left;
+}
+
+.sectionColumnClass2{
+	text-align:center;
+}
+
+.sectionColumnClass3{
+	text-align:right;
+}
+
+.pdfFrame{
+	width:99%;
+	height:800px;
+} 
+
+.marginTop10{
+	margin-top: 10px;
+}
+.footerlink{
+	padding-left:15px;
+	padding-right:15px;
+}
+
+.center
+{
+margin-left:auto;
+margin-right:auto;
+}
+
+.form {
+	
+}
+
+.commandLink {
+	
+}
+
+.outputLink {
+	
+}
+
+.graphicImage {
+	
+}
+
+.outputLabel {
+	
+}
+
+.inputText {
+	
+}
+
+.inputText_Error {
+	border-style: solid;
+	border-color: #DE5C5C
+}
+
+.inputTextarea {
+	
+}
+
+.inputSecret {
+	
+}
+
+.inputHidden {
+	
+}
+
+.outputText {
+	
+}
+
+.outputFormat {
+	
+}
+
+.commandButton {
+	
+}
+
+.button {
+	
+}
+
+.message {
+	
+}
+
+.messages {
+	
+}
+
+.selectBooleanCheckbox {
+	
+}
+
+.selectBooleanCheckbox_Error {
+	
+}
+
+.selectOneRadio {
+	
+}
+
+.selectOneRadio_Error {
+	
+}
+
+.selectOneRadio_Disabled {
+	color: GrayText
+}
+
+.selectManyCheckbox {
+	
+}
+
+.selectManyCheckbox_Error {
+	
+}
+
+.selectManyCheckbox_Disabled {
+	color: GrayText
+}
+
+.selectOneListbox {
+	
+}
+
+.selectOneListbox_Error {
+	
+}
+
+.selectManyListbox {
+	
+}
+
+.selectManyListbox_Error {
+	
+}
+
+.selectOneMenu {
+	
+}
+
+.selectOneMenu_Error {
+	
+}
+
+.selectManyMenu {
+	
+}
+
+.selectManyMenu_Error {
+	
+}
+
+.panelGroup {
+	
+}
+
+.panelGrid {
+	
+}
+
+.dataTable {
+	empty-cells: show;
+}
+
+/* .dataTable td{
+	border-bottom-style: solid;
+	border-top-style: solid;
+} */
+
+.headerClass {
+	background-color: ThreeDFace;
+	color: WindowText;
+	border-width: 1px;
+	border-style: solid;
+	border-color: ThreeDShadow;
+	margin: 2px;
+	padding: 0px;
+	padding-left: 4pt;
+	padding-right: 4pt;
+	padding-bottom: 2px;
+	font-weight: 400;
+	overflow: -moz-scrollbars-none
+}
+
+.footerClass {
+	background-color: ThreeDFace;
+	color: WindowText;
+	border-width: 0px;
+	border-style: none;
+	padding: 0px;
+	padding-left: 4pt;
+	padding-right: 4pt;
+	font-weight: 400;
+	overflow: -moz-scrollbars-none
+}
+
+.rowClass1 {
+	background-color: window
+}
+
+.rowClass2 {
+	background-color: ThreeDFace
+}
+.rowClassSelected{
+	background-color: #bcd4ec;
+}
+
+.columnClass1 {
+	background-color: window;
+	margin: 2px;
+	padding: 0px;
+	padding-left: 4pt;
+	padding-right: 4pt;
+	padding-bottom: 2px;
+	overflow: -moz-scrollbars-none
+}
+
+.columnClass2 {
+	background-color: ThreeDFace;
+	margin: 2px;
+	padding: 0px;
+	padding-left: 4pt;
+	padding-right: 4pt;
+	padding-bottom: 2px
+}
+
+span.reviewButton {
+		border:1px solid #809DB9;
+	color:#FFF;
+	font-weight:700;
+	background:#2A3D72;
+	padding:1px 4px;
+}
+
+span.reviewButtonDisabled{
+background-color:#999;
+}
+.documentViewLeftSection{
+	Width:30%;
+	height:100%;
+	float: left;	
+	padding-top:10px;
+}
+.documentViewRightSection{
+	Width:69%;
+	float: left;
+	padding-top:10px;
+}
+.documentViewRightSection #prevButton{
+	float: left;	
+	padding-top: 37%;
+}
+.documentViewRightSection #slideshow{
+	width:720px;
+	height:800px;
+	float: left;	
+	position:relative;
+	overflow:hidden;
+	display:block;
+}
+
+.documentViewRightSection #nextButton{
+	float: left;
+	padding-top: 37%;
+}
+
+#slideIframe{
+	width:719px;
+	height:800px;
+	overflow:auto;
+}
+
+.documentViewRightSection .next{	
+	opacity:0.2;
+	filter:alpha(opacity=40);
+	width:30px;
+}
+.documentViewRightSection .next:hover{	
+	opacity:1.0;
+	filter:alpha(opacity=100);
+}
+.documentViewRightSection .prev{
+	opacity:0.2;
+	filter:alpha(opacity=40);
+	width:30px;
+}
+
+.documentViewRightSection .prev:hover{	
+	opacity:1.0;
+	filter:alpha(opacity=100);
+}
+.verticalSeparatorDiv{
+	width: 5px;
+	height: 810px;
+	background-color: white;
+	float: left;
+}
+.noDocumentMessageDiv{
+	width: auto;
+	height: 100px;
+	text-align: center;
+	padding-top: 50px;
+	font-weight: bold;
+}
+.viewDocumentTable{
+	table-layout:fixed;
+	width: 95%;
+}
+.documentDescriptionDiv{
+	word-wrap:break-word;
+	width:100%;
+}
+.documentCreatedByDiv{
+	word-wrap:break-word;
+	width:100%;
+}
+
+.dataTable1 td{
+	border-bottom-style: none;
+	border-top-style: none;
+	border-width: 0px;
+	padding: 0.5px;
+}
+a[disabled="disabled"] {
+   pointer-events: none;
+   cursor: default;
+   color:grey;
+}
+.upperCase{
+  text-transform: uppercase;
+}
+td.highlight{
+	background-color: #6598D2;
+}

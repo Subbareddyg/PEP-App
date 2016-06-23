@@ -15,6 +15,10 @@
 		<div class="group-create-area">
 			<div id="group-header-message-area"></div>
 			<form name="fromHeaderEdit" id="fromHeaderEdit" class="group-edit-area">
+				<c:if test="${readonly =='yes'}">
+					<input type="hidden" name="groupType" value=" <c:out value="${groupDetailsForm.groupType}" /> " id="groupType" >
+					<input type="hidden" name="groupId" value=" <c:out value="${groupDetailsForm.groupId}" /> " id="groupId" >
+				</c:if>
 				<input type="hidden" name="modifiedBy" value="${LAN_ID}" />
 				<table cellspacing="5" cellpadding="0" border="0" class="content-table">
 					<tr>
@@ -75,16 +79,19 @@
 					</c:if>
 					<tr>
 						<td colspan="3">&nbsp;</td>
+						<c:if test="${readonly !='yes'}">
 						<td align="right">
 							<input type="button" value="Cancel" class="btn" id="cancel-edit-header" style="visibility:hidden" disabled="disabled"/>
 							<input type="button" value="Edit" class="btn"  id="edit-header"/>
 						</td>
+						</c:if>
 					</tr>
 				</table>
 			</form>			
 		</div>
 	</div>
 </div>
+<c:if test="${readonly !='yes'}">
 <div  class="cars_panel x-hidden">
 	<div class="x-panel-header">
 		<b><fmt:message key="addcomponent.screen.level.header" /></b>
@@ -194,6 +201,15 @@
 				<c:when test="${groupDetailsForm.groupType == 'SSG'}">
 				  <%@ include file="/WEB-INF/pages/jsp/splitSKUTemplate.jsp" %>
 				</c:when>
+				<c:when test="${groupDetailsForm.groupType == 'GSG'}">
+				  <%@ include file="/WEB-INF/pages/jsp/GSGTemplate.jsp" %>
+				</c:when>
+				<c:when test="${groupDetailsForm.groupType == 'RCG'}">
+				  <%@ include file="/WEB-INF/pages/jsp/RCGTemplate.jsp" %>
+				</c:when>
+				<c:when test="${groupDetailsForm.groupType == 'BCG'}">
+				  <%@ include file="/WEB-INF/pages/jsp/BCGTemplate.jsp" %>
+				</c:when>
 			</c:choose>			
 			<div class="pagination-container">
 				<div class="pagination-left">
@@ -224,6 +240,7 @@
 		</div>
 	</div>
 </div>
+</c:if>
 <div class="cars_panel x-hidden">
 	<div class="x-panel-header">
 		<b><fmt:message key="addcomponent.screen.level.existingComponents" /></b>
@@ -258,11 +275,22 @@
 				<c:when test="${groupDetailsForm.groupType == 'SSG'}">
 				 <%@ include file="/WEB-INF/pages/jsp/splitSKUExisting.jsp" %>
 				</c:when>
+				<c:when test="${groupDetailsForm.groupType == 'GSG'}">
+				 <%@ include file="/WEB-INF/pages/jsp/GSGExisting.jsp" %>
+				</c:when>
+				<c:when test="${groupDetailsForm.groupType == 'RCG'}">
+				  <%@ include file="/WEB-INF/pages/jsp/RCGExisting.jsp" %>
+				</c:when>
+				<c:when test="${groupDetailsForm.groupType == 'BCG'}">
+				  <%@ include file="/WEB-INF/pages/jsp/BCGExisting.jsp" %>
+				</c:when>
 			</c:choose>
 			<div class="pagination-container">
 				<div class="pagination-left">
 					<div class="pagination-left-wrapper hide_after_error">
-						<input type="button" class="btn" value="Remove Component" style="width: 140px; opacity:0.5" id="remove-existing-group" disabled="disabled" /> 
+						<c:if test="${readonly !='yes'}">
+							<input type="button" class="btn" value="Remove Component" id="remove-existing-component" disabled="disabled" /> 
+						</c:if>
 					</div>
 				</div>
 				<div class="pagination-right">
@@ -271,7 +299,13 @@
 				<div class="clearfix"></div>
 			</div>
 			<div class="pagination-container" style="text-align:center; margin-top: 15px;">
-				<input type="button" class="btn" value="Save" style="width: 70px;" id="save-existing-group" disabled="disabled" />
+				<c:if test="${readonly !='yes'}"> 
+					<c:choose>
+						<c:when test="${groupDetailsForm.groupType != 'RCG' && groupDetailsForm.groupType != 'CPG'}">
+							<input type="button" class="btn" value="Save" style="width: 70px;" id="save-existing-group"/>
+						</c:when>
+					</c:choose>
+				</c:if>
 				<input type="button" class="btn" value="Close" style="width: 80px;" id="close-existing-group" onclick="window.location.href='/wps/portal/home/Grouping'" />
 			</div>
 		</div>
@@ -291,6 +325,8 @@
 <portlet:resourceURL id="addComponentToGroup" var="addComponentToGroupURL" />
 <portlet:resourceURL var="searchGroupResourceRequest"></portlet:resourceURL>
 <portlet:resourceURL id="saveEditedGroup" var="editGroupURL" />
+<portlet:resourceURL id="setDefaultColor" var="defaultValueResourceRequest" />
+<portlet:resourceURL id="removeComponent" var="removeComponentURL" />
 
 
 <!-- Department Search Result Row Template starts -->
@@ -419,6 +455,8 @@
 	app.URLFactory.urlCollection.splitComponentSearchUrl = "${getNewGrpComponentURL}";
 	app.URLFactory.urlCollection.addComponentToGroup = "${addComponentToGroupURL}";
 	app.URLFactory.urlCollection.groupSearchUrl = "${searchGroupResourceRequest}";
+	app.URLFactory.urlCollection.editDefaultComponentUrl = "${defaultValueResourceRequest}";
+	app.URLFactory.urlCollection.removeComponentURL = "${removeComponentURL}";
 	
 	app.URLFactory.urlCollection.saveHeader = "${editGroupURL}";
 	//init main SPA

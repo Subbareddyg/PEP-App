@@ -35,13 +35,49 @@ public interface GroupingDAO {
 	 * @return List*/
 	List<GroupAttributeForm> getSplitColorDetails(String vendorStyleNo, String styleOrin) throws PEPFetchException;
 
-	/** Method getSplitColorDetails.
-	 * 
-	 * @param vendorStyleNo String
-	 * @param styleOrin String
-	 * @return List */
+	/**
+	 * This method is used to get the Existing Group Attribute Details for Consolidated Product Grouping from Database.
+	 * @param vendorStyleNo
+	 * @param styleOrin
+	 * @param deptNoSearch
+	 * @param classNoSearch
+	 * @param supplierSiteIdSearch
+	 * @param upcNoSearch
+	 * @param groupId
+	 * @return
+	 * @throws PEPFetchException
+	 */
 	List<StyleAttributeForm> getNewCPGDetails(String vendorStyleNo, String styleOrin, String deptNoSearch, 
 			String classNoSearch,	String supplierSiteIdSearch, String upcNoSearch, String groupId) throws PEPFetchException;
+	/**
+	 * This method is used to get the SKU Count for a Style Orin.
+	 * @param vendorStyleNo
+	 * @param styleOrin
+	 * @param deptNoSearch
+	 * @param classNoSearch
+	 * @param supplierSiteIdSearch
+	 * @param upcNoSearch
+	 * @param groupId
+	 * @return
+	 * @throws PEPFetchException
+	 */
+	List<String> getSKUCount(String vendorStyleNo, String styleOrin, String deptNoSearch, 
+			String classNoSearch,	String supplierSiteIdSearch, String upcNoSearch, String groupId) throws PEPFetchException;
+
+	/**
+	 * This method is used to get the Existing Group Attribute Details for GBS Grouping from Database.
+	 * @param vendorStyleNo
+	 * @param styleOrin
+	 * @param deptNoSearch
+	 * @param classNoSearch
+	 * @param supplierSiteIdSearch
+	 * @param upcNoSearch
+	 * @param groupId
+	 * @return
+	 * @throws PEPFetchException
+	 */
+	List<GroupAttributeForm> getNewGBSDetails(String vendorStyleNo, String styleOrin, String deptNoSearch, 
+			String classNoSearch, String supplierSiteIdSearch, String upcNoSearch, String groupId, List<String> orinList) throws PEPFetchException;
 
 	/** Method getSplitSKUDetails.
 	 * 
@@ -69,7 +105,13 @@ public interface GroupingDAO {
 	 * 
 	 * @param groupId
 	 * @return */
-	List<StyleAttributeForm> getExistCPGDetails(String groupId);
+	List<StyleAttributeForm> getExistCPGDetails(String groupId) throws PEPFetchException;
+
+	/** This method is used to get the Existing Group Attribute Details for GSS from Database.
+	 * 
+	 * @param groupId
+	 * @return */
+	List<GroupAttributeForm> getExistGBSDetails(String groupId) throws PEPFetchException;
 
 	/** Method to get the groups for search group.
 	 * 
@@ -139,5 +181,60 @@ public interface GroupingDAO {
 	 *             Added By: Cognizant */
 	int groupSearchParentCount(List<GroupSearchDTO> groupSearchDTOList, GroupSearchForm groupSearchForm) throws PEPServiceException,
 			PEPPersistencyException;
+	
+	/**
+	 *  This method is used to get the search result Details for Regular/Beauty Collection Grouping.
+	 * @param vendorStyleNo
+	 * @param styleOrin
+	 * @param deptNoSearch
+	 * @param classNoSearch
+	 * @param supplierSiteIdSearch
+	 * @param upcNoSearch
+	 * @param groupId
+	 * @param groupIdSearch
+	 * @param groupNameSearch
+	 * @param sortedColumn
+	 * @param sortingOrder
+	 * @param pageNumber
+	 * @param recordsPerPage
+	 * @return List<StyleAttributeForm>
+	 * @throws PEPServiceException
+	 */
+	public List<StyleAttributeForm> getRegularBeautySearchResult(final String vendorStyleNo, final String styleOrin, final String deptNoSearch, 
+			final String classNoSearch,	final String supplierSiteIdSearch, final String upcNoSearch, final String groupId,
+			final String groupIdSearch, final String groupNameSearch, final String sortedColumn, final String sortingOrder,
+			final int pageNumber, final int recordsPerPage) throws PEPFetchException;
+	
+	/**
+	 *  This method is used to get the search result Details count for Regular/Beauty Collection Grouping.
+	 * @param vendorStyleNo
+	 * @param styleOrin
+	 * @param deptNoForInSearch
+	 * @param classNoForInSearch
+	 * @param supplierSiteIdSearch
+	 * @param upcNoSearch
+	 * @param groupId
+	 * @param groupIdSearch
+	 * @param groupNameSearch
+	 * @return List<StyleAttributeForm>
+	 * @throws PEPServiceException
+	 */
+	public int getRegularBeautySearchResultCount(final String vendorStyleNo, final String styleOrin, final String deptNoForInSearch, 
+			final String classNoForInSearch, final String supplierSiteIdSearch, final String upcNoSearch,
+			final String groupId, final String groupIdSearch, final String groupNameSearch);
+
+	/**
+	 *  This method is used to get the existing components query for Regular/Beauty Collection Grouping.
+	 * @return String
+	 */
+	List<StyleAttributeForm> getExistRegularBeautyDetails(String groupId)
+			throws PEPFetchException;
+
+	/**
+	 *  This method is used to get the group child query for Regular/Beauty Collection Grouping.
+	 * @return String
+	 */
+	List<StyleAttributeForm> getRegularBeautyChildDetails(String groupId)
+			throws PEPFetchException;
 
 }

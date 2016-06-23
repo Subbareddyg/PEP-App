@@ -45,7 +45,7 @@ public class PropertyLoader {
 	public static Properties getPropertyLoader(String fileName) {
 		Properties properties = new Properties();
 		InputStream input = null;
-		LOGGER.info(" Entering getPropertyLoader");
+		LOGGER.info(" Entering getPropertyLoader. File Name-->"+fileName);
 		try {
 
 			// Load the file.

@@ -267,13 +267,8 @@ public String callRemoveImageWebService(JSONArray jsonArray) throws Exception,PE
        String msgCodeStr = "";
        String responseMSGCode = "";
        try {
-    	   String envVariable = System.getProperty("envVariable");
-    	   System.out.println("envVariable **********"+envVariable);
-    	   LOGGER.info("envVariable **********"+envVariable);
            Properties prop =PropertyLoader.getPropertyLoader(ImageConstants.MESS_PROP);
-           String targetURLs = prop.getProperty(ImageConstants.DEV_SERVICE_URL);
-           //String targetURLs = ImageConstants.DEV_SERVICE_URL;
-           //String targetURLs = "http://ralpimwsasit02:7507/JERSYRest/rest/UpdateItemServices/deleteImage";
+           String targetURLs = prop.getProperty(ImageConstants.DEV_SERVICE_URL);          
            LOGGER.info("targetURLs **********"+targetURLs);
            URL targetUrl = new URL(targetURLs);
            HttpURLConnection httpConnection =(HttpURLConnection) targetUrl.openConnection();
@@ -307,7 +302,7 @@ public String callRemoveImageWebService(JSONArray jsonArray) throws Exception,PE
                if ((jsonArray != null) && (jsonArray.length() <= 1)) {
                    if ((output != null)
                        && (output.contains("not") && (output.indexOf("not") != -1))) {
-                       responseMsg = prop.getProperty(ImageConstants.IMAGE_NOT_REMOVED);
+                       responseMsg = ImageConstants.IMAGE_NOT_REMOVED;
                        responseMSGCode = "101";
                        responseMsg = responseMsg+"_"+responseMSGCode;
                        LOGGER.info("responseMsg---Failed**" + responseMsg);
@@ -359,7 +354,7 @@ public String callRemoveImageWebService(JSONArray jsonArray) throws Exception,PE
                        LOGGER.info("ImageRequestServiceImpl:::callRemoveImageWebService:::responseMsg" + responseMsg);
 
                    } else {
-                       responseMsg = prop.getProperty(ImageConstants.IMAGE_NOT_REMOVED);
+                       responseMsg = ImageConstants.IMAGE_NOT_REMOVED;
                        LOGGER.info("ImageRequestServiceImpl:::callRemoveImageWebService:::responseMsg"+ responseMsg);
 
                    }
@@ -409,9 +404,7 @@ public String callUploadVPIService(JSONArray jsonArray) throws Exception,PEPFetc
     String msgCodeStr = "";
     try {
         Properties prop =PropertyLoader.getPropertyLoader(ImageConstants.MESS_PROP);
-        String targetURLs = prop.getProperty(ImageConstants.DEV_SERVICE_UPLOADVPI_IMAGE_URL);        
-        //String targetURLs = ImageConstants.DEV_SERVICE_UPLOADVPI_IMAGE_URL;
-        //String targetURLs = "http://ralpimwsasit02:7507/JERSYRest/rest/UpdateItemServices/uploadImage";
+        String targetURLs = prop.getProperty(ImageConstants.DEV_SERVICE_UPLOADVPI_IMAGE_URL);      
         URL targetUrl = new URL(targetURLs);
         LOGGER.info("ImageRequestServiceImpl::targetURLs callUploadVPIService  " + targetURLs);
         HttpURLConnection httpConnection =(HttpURLConnection) targetUrl.openConnection();
@@ -433,75 +426,31 @@ public String callUploadVPIService(JSONArray jsonArray) throws Exception,PEPFetc
         LOGGER.info("Output from Server:callUploadVPIService::\n ");
         while ((output = responseBuffer.readLine()) != null) {
             LOGGER.info("Upload VPI webservice response *****"+output);
-        // This block is for handling Single Request
-		if ((jsonArray != null) && (jsonArray.length() <= 1)) {
-            LOGGER.info("Single Request file upload:");            
-            JsonElement jelement1 = new JsonParser().parse(output);
-            JsonObject jobject1 = jelement1.getAsJsonObject();
-            JsonArray jsonObject1 =(JsonArray) jobject1.get("list");            
-            if ((output != null)
-                    && (output.contains("not")||output.contains("may be") || output.contains("Failed".trim())) && (output.indexOf("Failed".trim()) != -1 ||output.indexOf("may be") != -1||output.indexOf("not") != -1)) {
-                
-				responseMsg = prop.getProperty(ImageConstants.DEV_SERVICE_UPLOADVPI_ERROR_IMAGE_MESSAGE);                
-                LOGGER.info("Failure File Upload::" + responseMsg);
-            }
-            else {
-				responseMsg = prop.getProperty(ImageConstants.DEV_SERVICE_UPLOADVPI_SUCCESS_IMAGE_MESSAGE);
-                LOGGER.info("Success File Upload::" + responseMsg);
-            }
-        }else{
-				// This block is for handling Multiple Request
-				LOGGER.info("Multiple Request File Upload");
+                // This block is for handling multiple row data.
+            
+             if(null!=output && output.contains("SUCCESS")){
+            	 LOGGER.info("Upload VPI webservice response  FLAG*****"+output);
+            	  flag = true;
+                }else{
+            	 flag =false ;
+                }
                 JsonElement jelement = new JsonParser().parse(output);
                 JsonObject jobject = jelement.getAsJsonObject();
-                JsonArray jsonObject =(JsonArray) jobject.get(ImageConstants.SERVICE_IMAGE_UPLOAD_LIST);
-                for (int i = 0; i < jsonObject.size(); i++) {
-                    LOGGER.info("ImageRequestServiceImpl::Id value size" + jsonObject.size() + "i value" + i);
-                    if (jsonObject.size() == 1) {
-                    	LOGGER.info("Line 436");
-                        JsonObject individualjson = jsonObject.getAsJsonObject();
-                        Object msgCode =individualjson.get(ImageConstants.MSG_CODE);
-
-                        LOGGER.info("ImageRequestServiceImpl::MsgCode with one json" + msgCode.toString());
-                        msgCodeStr = msgCode.toString();
-                        msgCodeStr =msgCodeStr.substring(1, msgCodeStr.length() - 1);
-                        LOGGER.info("aa" + msgCodeStr);
-                    } else {
-                    	LOGGER.info("Line 445");
-                        JsonObject individualjson = jsonObject.get(i).getAsJsonObject();
-                        Object msgCode =individualjson.get(ImageConstants.MSG_CODE);
-
-                        LOGGER.info("ImageRequestServiceImpl::MsgCode callUploadImageservice" + msgCode.toString());
-
-                        msgCodeStr = msgCode.toString();
-                        msgCodeStr =msgCodeStr.substring(1, msgCodeStr.length() - 1);
-                        LOGGER.info("msgCodeStr" + msgCodeStr);
-                    }
-                    if (msgCodeStr.equalsIgnoreCase(ImageConstants.SUCCESS_CODE)) {
-                        flag = true;
-                        LOGGER.info("ImageRequestServiceImpl:::callUploadImageservice:::flag" + flag);
-                    } else if (msgCodeStr.equalsIgnoreCase(ImageConstants.FAILURE_CODE)) {
-                    	LOGGER.info("Line 460");
-                        flag = false;
-                    }
-                }
+                JsonArray jsonObject =(JsonArray) jobject.get(ImageConstants.SERVICE_IMAGE_UPLOAD_LIST);            
                 if (flag) {
-                	LOGGER.info("Line 465");
                     responseMsg = prop.getProperty(ImageConstants.DEV_SERVICE_UPLOADVPI_SUCCESS_IMAGE_MESSAGE);
                     LOGGER.info("ImageRequestServiceImpl:::callUploadImageservice:::responseMsg" + responseMsg);
 
                 } else {
-                	LOGGER.info("Line 470");
-                    responseMsg = prop.getProperty(ImageConstants.DEV_SERVICE_UPLOADVPI_ERROR_IMAGE_MESSAGE);
+                    responseMsg = ImageConstants.DEV_SERVICE_UPLOADVPI_ERROR_IMAGE_MESSAGE;
                     LOGGER.info("ImageRequestServiceImpl:::callUploadImageservice:::responseMsg"+ responseMsg);
 
                 }
         }
-}
 
         httpConnection.disconnect();
     } catch (MalformedURLException e) {
-        LOGGER.info("inside malformedException callUploadImageservice");
+        LOGGER.info("inside malformedException callUploadImageservice",e);
         throw new PEPFetchException();
        // e.printStackTrace();
 
@@ -528,7 +477,7 @@ public String callUploadVPIService(JSONArray jsonArray) throws Exception,PEPFetc
         throw new Exception();
 
     }
-
+    LOGGER.info("responseMsg Response message in upload image ***********" + responseMsg);
     return responseMsg;
 }
 
@@ -554,8 +503,7 @@ public List<WorkFlow> getImageMgmtDetailsByOrin(String orinNum)
         throw e;
     }
     
-    catch (Exception e) {
-          
+    catch (Exception e) {          
             LOGGER.info("Exception occurred at the Service Implementation Layer");
             throw new PEPServiceException(e.getMessage());
         }
@@ -570,8 +518,6 @@ public List<WorkFlow> getImageMgmtDetailsByOrin(String orinNum)
 public String getVendorImageUploadDir() throws Exception {
 	Properties properties = PropertyLoader.getPropertyLoader("ftp.properties");
 	return properties.getProperty("vendorImageUploadDir");
-	/*String url = System.getenv("vendorImageUploadDir"); // AFUPYB3
-	return url;*/
 }
 
 /**
@@ -582,9 +528,6 @@ public String getVendorImageUploadDir() throws Exception {
 public String getRRDImageUploadedDir() throws Exception {
 	Properties properties = PropertyLoader.getPropertyLoader("ftp.properties");
 	return properties.getProperty("RRDImageUploadedDir");
-	/*String url = System.getenv("RRDImageUploadedDir"); // AFUPYB3
-	return url;*/
-	
 }
 
 
@@ -601,7 +544,6 @@ public String callApproveorRejectActionService(JSONArray jsonArray) throws Excep
     try {
         Properties prop =PropertyLoader.getPropertyLoader(ImageConstants.MESS_PROP);
         String targetURLs = prop.getProperty(ImageConstants.IMAGE_APPROVE_WEBSERVICE_URL);
-        //String targetURLs = ImageConstants.IMAGE_APPROVE_WEBSERVICE_URL;
         //String targetURLs = "http://cltpimwsaspt01.belkinc.com:7507/JERSYRest/rest/UpdateItemServices/imageStatusUpdateService";
         LOGGER.info("targetURLs-----SIT#####" +targetURLs);
         URL targetUrl = new URL(targetURLs);
@@ -731,7 +673,6 @@ public String callApproveorRejectActionService(JSONArray jsonArray) throws Excep
 		 	Properties prop = PropertyLoader.getPropertyLoader(ImageConstants.MESS_PROP);
 		 	LOGGER.info("prop ::" + prop);
 		 	String targetURLs = prop.getProperty(ImageConstants.IMAGE_SUBMITOREJECT_URL);
-		 	//String targetURLs = ImageConstants.IMAGE_SUBMITOREJECT_URL;
 		 	//String targetURLs = "http://ralpimwsasit02:7507/JERSYRest/rest/UpdateItemServices/imageSubStatusService";
 	        LOGGER.info("targetURLs ::" + targetURLs);
 	        URL targetUrl = new URL(targetURLs);			
@@ -881,7 +822,6 @@ public String callSaveImageShotTypeService(JSONArray jsonArray)
     try {
     	Properties prop =PropertyLoader.getPropertyLoader(ImageConstants.MESS_PROP);
         String targetURLs = prop.getProperty(ImageConstants.IMAGE_SAVESHOTTYPE_URL);
-        //String targetURLs = ImageConstants.IMAGE_SAVESHOTTYPE_URL;
     	//String targetURLs = "http://ralpimwsasit02:7507/JERSYRest/rest/UpdateItemServices/updateImageShotType";
         LOGGER.info("callSaveImageShotTypeService serviceURL::" + targetURLs);
         URL targetUrl = new URL(targetURLs);
@@ -1031,41 +971,425 @@ public boolean releseLockedPet(  String orin, String pepUserID,String pepFunctio
         
     return isPetReleased;
     
-}   
+}  
+/**
+ * Method to get the Image attribute details from database.
+ *    
+ * @param orin String   
+ * @return imageLinkVOList List<ImageLinkVO>
+ * 
+ * Method added For PIM Phase 2 - Regular Item Image Link Attribute
+ * Date: 05/13/2016
+ * Added By: Cognizant
+ */	
+@Override
+public List<ImageLinkVO> getScene7ImageLinks(String orinNum) throws PEPServiceException, PEPPersistencyException{   
+	List<ImageLinkVO> imageLinkVOList = null;	
+    try {
+    	imageLinkVOList = imageRequestDAO.getScene7ImageLinks(orinNum);
+    }
+    catch (PEPPersistencyException persistencyException) {
+    	LOGGER.error("PEPPersistencyException in getScene7ImageLinks() method, Service Layer -- " + persistencyException.getMessage());
+        throw persistencyException;
+    }
+    catch (Exception exception) {
+    	LOGGER.error("Exception in getScene7ImageLinks() method, Service Layer -- " + exception.getMessage());
+        throw new PEPServiceException(exception.getMessage());
+    }
+    LOGGER.error("***Exiting ImageRequestService.getScene7ImageLinks() method.");
+    return imageLinkVOList;
+    
+}
+/**
+ * 
+ */
+@Override
+public ArrayList getGroupingInfoDetails(String groupingNo) throws PEPServiceException, PEPPersistencyException{    
+    ArrayList imageStyleList=null;
+    try {
+        imageStyleList = imageRequestDAO.getGroupingInfoDetails(groupingNo);
+    }
+    catch (PEPPersistencyException e) {
+    	LOGGER.error("Exception occurred at the Service DAO Layer",e);
+        throw e;
+    }
+    catch (Exception e) {
+    	LOGGER.error("Exception occurred at the Service Implementation Layer",e);
+        throw new PEPServiceException(e.getMessage());
+    }
+    return imageStyleList;
+    
+}
+/**
+ * 
+ * 
+ */
+@Override
+public ArrayList getGroupingDetails(String groupingId) throws PEPServiceException, PEPPersistencyException{     
+     ArrayList imageProductList = null;
+     try {    		
+         imageProductList = imageRequestDAO.getGroupingDetails(groupingId);        
+     }
+     catch (PEPPersistencyException e) {
+    	 LOGGER.error("Exception occurred at the getGroupingDetails Service  Layer",e);
+         throw e;
+     }
+     catch (Exception e) {
+    	 LOGGER.error("Exception occurred at the Service Implementation Layer",e);
+         throw new PEPServiceException(e.getMessage());
+     }
+     return imageProductList;
+ }
+/**
+ * This is a service impl method for getting SampleImageLinks
+ */
+@Override
+public ArrayList getGroupingSampleImageLinks(String groupingId) throws PEPServiceException, PEPPersistencyException{   
+    ArrayList sampleImageLinkList=null;
+    try {
+ 	    sampleImageLinkList = imageRequestDAO.getGroupingSampleImageLinks(groupingId);       
+    }
+    catch (PEPPersistencyException e) {
+        LOGGER.error("Exception occurred at the Service  Layer getGroupingSampleImageLinks",e);
+        throw e;
+    }
+    catch (Exception e) {
+    	LOGGER.error("Exception occurred at the Service Implementation Layer getGroupingSampleImageLinks",e);
+        throw new PEPServiceException(e.getMessage());
+    }
+    return sampleImageLinkList;
+    
+}
 
-	/**
-	 * Method to get the Image attribute details from database.
-	 *    
-	 * @param orin String   
-	 * @return imageLinkVOList List<ImageLinkVO>
-	 * 
-	 * Method added For PIM Phase 2 - Regular Item Image Link Attribute
-	 * Date: 05/13/2016
-	 * Added By: Cognizant
-	 */	
-	@Override
-	public List<ImageLinkVO> getScene7ImageLinks(String orin) throws PEPServiceException, PEPPersistencyException{
-		
-		LOGGER.info("***Entering ImageRequestService.getScene7ImageLinks() method.");
-	    
-		List<ImageLinkVO> imageLinkVOList = null;
-		
-	    try {
-	    	imageLinkVOList = imageRequestDAO.getScene7ImageLinks(orin);
-	    }
-	    catch (PEPPersistencyException persistencyException) {
-	
-	    	LOGGER.error("PEPPersistencyException in getScene7ImageLinks() method, Service Layer -- " + persistencyException.getMessage());
-	        throw persistencyException;
-	    }
-	    catch (Exception exception) {
-	
-	    	LOGGER.error("Exception in getScene7ImageLinks() method, Service Layer -- " + exception.getMessage());
-	        throw new PEPServiceException(exception.getMessage());
-	    }
-	    LOGGER.info("***Exiting ImageRequestService.getScene7ImageLinks() method.");
-	    return imageLinkVOList;
-	    
-	}
+//Service Call for Upload VPI Image
+public String callGroupingImageUploadService(JSONObject jsonMapObject) throws Exception,PEPFetchException {
+    String responseMsgStatus = "" ;  
+    HttpURLConnection httpConnection = null;
+    try {
+        Properties prop =PropertyLoader.getPropertyLoader(ImageConstants.MESS_PROP);
+        String targetURLs = prop.getProperty(ImageConstants.GRP_SERVICE_UPLOADVPI_IMAGE_URL);       
+        URL targetUrl = new URL(targetURLs);
+        LOGGER.info("ImageRequestServiceImpl::targetURLs callUploadVPIService  " + targetURLs);
+        httpConnection =(HttpURLConnection) targetUrl.openConnection();
+        httpConnection.setDoOutput(true);
+        httpConnection.setRequestMethod("POST");
+        httpConnection.setRequestProperty("Content-Type","application/json");       
+        String input = jsonMapObject.toString();
+        LOGGER.info("final object in json callUploadVPIService::" + jsonMapObject.toString());
+        OutputStream outputStream = httpConnection.getOutputStream();
+        outputStream.write(input.getBytes());
+        outputStream.flush();
+        BufferedReader responseBuffer = new BufferedReader(new InputStreamReader(
+     		   (httpConnection.getInputStream())));
+        String output;
+        LOGGER.info("Output from Server:callUploadVPIService::\n ");
+        while ((output = responseBuffer.readLine()) != null) {
+        LOGGER.info("Upload VPI webservice response *****"+output);
+         String responseMsgCode = "" ;  
+    		JSONObject jsonObjectRes = null;
+    		if(null != output && !("").equals(output)){
+    			jsonObjectRes = new JSONObject(output);
+    			if(null != jsonObjectRes){
+    				responseMsgCode = jsonObjectRes.getString(ImageConstants.MSG_CODE);       			
+        		}    			
+    			if (null!= responseMsgCode && responseMsgCode.equalsIgnoreCase(ImageConstants.SUCCESS_CODE)) {    			   
+    				responseMsgStatus = ImageConstants.RESPONSE_SUCCESS_MESSAGE;                
+              } else if (null!= responseMsgCode && responseMsgCode.equalsIgnoreCase(ImageConstants.FAILURE_CODE)) {
+            	   responseMsgStatus = ImageConstants.RESPONSE_FAILURE_MESSAGE;
+              }    
+    		}    			
+    		 LOGGER.info("  image upload webservice responseMsg  ************ "+  responseMsgStatus);
+         }       
+    } catch (MalformedURLException e) {
+        LOGGER.error("inside malformedException call callGroupingImageUploadService ",e);
+        throw new PEPFetchException();
+    } catch (ClassCastException e) {    	
+        e.printStackTrace();
+        throw new PEPFetchException();
+    } catch (JSONException e) {
+        LOGGER.error("inside JSOnException callGroupingImageUploadService",e); 
+        e.printStackTrace();
+        throw new PEPFetchException();
+    } catch (Exception e) {
+        LOGGER.error("inside Exception callUploadImageservice" + e);
+        e.printStackTrace();
+        throw new Exception();
+     }    finally {
+    	 httpConnection.disconnect();
+     }
+    return responseMsgStatus;
+}
+
+@Override
+public ArrayList getGroupingHistoryDetails(String groupingId) throws PEPServiceException, PEPPersistencyException{
+    ArrayList pepHistoryList=null;
+    try {
+        pepHistoryList = imageRequestDAO.getGroupingHistoryDetails(groupingId);        
+    }catch (PEPPersistencyException e) {
+        LOGGER.error("Exception occurred at the getGroupingHistoryDetails Service  Layer",e);
+        throw e;
+    }catch (Exception e) {
+        LOGGER.error("Exception occurred at the  getGroupingHistoryDetailsService Implementation Layer",e);
+        throw new PEPServiceException(e.getMessage());
+    }
+    return pepHistoryList;    
+}
+
+/**
+ * Method to get the Image attribute details from database.
+ *    
+ * @param orin String   
+ * @return imageLinkVOList List<ImageLinkVO>
+ * 
+ * Method added For PIM Phase 2 - Regular Item Image Link Attribute
+ * Date: 05/13/2016
+ * Added By: Cognizant
+ */	
+@Override
+public List<ImageLinkVO> getGroupingScene7ImageLinks(String groupingId) throws PEPServiceException, PEPPersistencyException{   
+	List<ImageLinkVO> imageLinkVOList = null;	
+    try {
+    	imageLinkVOList = imageRequestDAO.getGroupingScene7ImageLinks(groupingId);
+    }
+    catch (PEPPersistencyException persistencyException) {
+    	LOGGER.error("PEPPersistencyException in getScene7ImageLinks() method, Service Layer -- " + persistencyException.getMessage());
+        throw persistencyException;
+    }
+    catch (Exception exception) {
+    	LOGGER.error("Exception in getScene7ImageLinks() method, Service Layer -- " + exception.getMessage());
+        throw new PEPServiceException(exception.getMessage());
+    }
+    LOGGER.error("***Exiting ImageRequestService.getScene7ImageLinks() method.");
+    return imageLinkVOList;
+    
+}
+
+/**
+ * Method call for remove image 
+ */
+public String callRemoveGroupingImageWebService(JSONObject jsonObj) throws Exception,PEPFetchException {
+       LOGGER.info("ImageRequestServiceImpl:::callRemoveImageWebService");
+      
+       String responseMsgStatus = "" ;  
+       HttpURLConnection httpConnection = null;
+       try {
+           Properties prop =PropertyLoader.getPropertyLoader(ImageConstants.MESS_PROP);
+           String targetURLs = prop.getProperty(ImageConstants.GRP_SERVICE_REMOVEIMG_IMAGE_URL);          
+           LOGGER.info("targetURLs **********"+targetURLs);
+           URL targetUrl = new URL(targetURLs);
+           httpConnection =(HttpURLConnection) targetUrl.openConnection();
+           httpConnection.setDoOutput(true);
+           httpConnection.setRequestMethod("POST");
+           httpConnection.setRequestProperty("Content-Type","application/json");
+           LOGGER.info("ImageRequestServiceImpl::Json Array" + jsonObj.toString());         
+           String input = jsonObj.toString();
+           LOGGER.info("final object in json in callRemoveGroupingImageWebService method " + jsonObj.toString());
+           OutputStream outputStream = httpConnection.getOutputStream();
+           outputStream.write(input.getBytes());
+           outputStream.flush();
+           if (200 == httpConnection.getResponseCode()) {
+           }
+           if (httpConnection.getResponseCode() != 200) {
+               throw new Exception("Failed : HTTP error code : "+ httpConnection.getResponseCode());
+           }
+           BufferedReader responseBuffer = new BufferedReader(new InputStreamReader(
+        		   (httpConnection.getInputStream())));
+           String output;       
+           while ((output = responseBuffer.readLine()) != null) {
+               LOGGER.info("Grouping remove webservice response -- "+output);               
+            String responseMsgCode = "" ;  
+       		JSONObject jsonObjectRes = null;
+       		if(null != output && !("").equals(output)){
+       			jsonObjectRes = new JSONObject(output);
+       			if(null != jsonObjectRes){
+       				responseMsgCode = jsonObjectRes.getString(ImageConstants.MSG_CODE);       			
+           		}    			
+       			if (null!= responseMsgCode && responseMsgCode.equalsIgnoreCase(ImageConstants.SUCCESS_CODE)) {    			   
+       				responseMsgStatus = ImageConstants.RESPONSE_SUCCESS_MESSAGE;                
+                 } else if (null!= responseMsgCode && responseMsgCode.equalsIgnoreCase(ImageConstants.FAILURE_CODE)) {
+               	   responseMsgStatus = ImageConstants.RESPONSE_FAILURE_MESSAGE;
+                 }    
+       		}              
+
+           }
+           
+       } catch (MalformedURLException e) {
+           LOGGER.error("inside  callRemoveGroupingImageWebService malformedException",e);
+           throw new PEPFetchException();        
+
+       } catch (ClassCastException e) {
+       	
+           e.printStackTrace();
+           throw new PEPFetchException();
+       } catch (IOException e) {
+           LOGGER.error("inside IOException",e);
+
+           e.printStackTrace();
+           throw new Exception();
+
+       } catch (JSONException e) {
+           LOGGER.error("inside JSOnException in callRemoveGroupingImageWebService  ",e);
+           
+
+           e.printStackTrace();
+           throw new PEPFetchException();
+       } catch (Exception e) {
+           LOGGER.info("inside Exception",e);
+
+           e.printStackTrace();
+           throw new Exception();
+
+       }finally {
+      	 httpConnection.disconnect();
+       }
+       LOGGER.info("responseMsgStatus  in callRemoveGroupingImageWebService in service impl "+responseMsgStatus);
+       return responseMsgStatus;
+   }
+
+/**
+ * Service Call Impl for Approve or Reject Action
+ * 
+ */
+public String callApproveGroupingImageService(JSONObject jsonObj) throws Exception,PEPFetchException{
+    LOGGER.info("ImageRequestServiceImpl:::callApproveGroupingImageService");
+ 
+    String responseMsgStatus = "" ;  
+    HttpURLConnection httpConnection = null;
+    try {
+        Properties prop =PropertyLoader.getPropertyLoader(ImageConstants.MESS_PROP);
+        String targetURLs = prop.getProperty(ImageConstants.GRP_SERVICE_APPROVE_IMAGE_URL);        
+        LOGGER.info("targetURLs-----SIT#####" +targetURLs);
+        URL targetUrl = new URL(targetURLs);
+        httpConnection =(HttpURLConnection) targetUrl.openConnection();
+        httpConnection.setDoOutput(true);
+        httpConnection.setRequestMethod("POST");
+        httpConnection.setRequestProperty("Content-Type","application/json");
+        LOGGER.info("ImageRequestServiceImpl::Json Array" + jsonObj.toString());   
+        String input = jsonObj.toString();
+        LOGGER.info("final object in json" + jsonObj.toString());
+        OutputStream outputStream = httpConnection.getOutputStream();
+        outputStream.write(input.getBytes());
+        outputStream.flush();
+		//100 is the response code handled here
+        if (200 == httpConnection.getResponseCode()) {
+				LOGGER.info("HTTP Service Response code : " + httpConnection.getResponseCode());
+        }
+        BufferedReader responseBuffer = new BufferedReader(new InputStreamReader(
+     		   (httpConnection.getInputStream())));
+        String output;
+        LOGGER.info("Output from Server:\n");
+        while ((output = responseBuffer.readLine()) != null) {
+            LOGGER.info(output);
+            String responseMsgCode = "" ;  
+       		JSONObject jsonObjectRes = null;
+       		if(null != output && !("").equals(output)){
+       			jsonObjectRes = new JSONObject(output);
+       			if(null != jsonObjectRes){
+       				responseMsgCode = jsonObjectRes.getString(ImageConstants.MSG_CODE);       			
+           		}    			
+       			if (null!= responseMsgCode && responseMsgCode.equalsIgnoreCase(ImageConstants.SUCCESS_CODE)) {    			   
+       				responseMsgStatus = ImageConstants.RESPONSE_SUCCESS_MESSAGE;                
+                 } else if (null!= responseMsgCode && responseMsgCode.equalsIgnoreCase(ImageConstants.FAILURE_CODE)) {
+               	   responseMsgStatus = ImageConstants.RESPONSE_FAILURE_MESSAGE;
+                 }    
+       		} 
+        }
+
+      
+    } catch (MalformedURLException e) {
+        LOGGER.info("inside malformedException",e);
+        throw new PEPFetchException();
+    } catch (ClassCastException e) {  
+    	  LOGGER.info("ClassCastException ",e);
+        e.printStackTrace();
+        throw new PEPFetchException();
+    } catch (IOException e) {
+        LOGGER.info("inside IOException",e);
+        e.printStackTrace();
+        throw new Exception();
+    } catch (JSONException e) {
+        LOGGER.info("JSONException ",e);
+        e.printStackTrace();
+        throw new PEPFetchException();
+    } catch (Exception e) {
+        LOGGER.info("inside Exception" + e);     
+        throw new Exception();
+    }finally{
+    	  httpConnection.disconnect();
+    }
+    return responseMsgStatus;
+}
+
+
+/**
+ * Service Call Impl for Approve or Reject Action
+ * 
+ */
+public String callUpdateGroupImageStatusJsonObj(JSONObject jsonObj) throws Exception,PEPFetchException{
+    LOGGER.info("ImageRequestServiceImpl:::callUpdateGroupImageStatusJsonObj");
+ 
+    String responseMsgStatus = "" ;  
+    HttpURLConnection httpConnection = null;
+    try {
+        Properties prop =PropertyLoader.getPropertyLoader(ImageConstants.MESS_PROP);
+        String targetURLs = prop.getProperty(ImageConstants.GRP_SERVICE_UPDATE_STATUS_URL);        
+        LOGGER.info("targetURLs-----SIT#####" +targetURLs);
+        URL targetUrl = new URL(targetURLs);
+        httpConnection =(HttpURLConnection) targetUrl.openConnection();
+        httpConnection.setDoOutput(true);
+        httpConnection.setRequestMethod("POST");
+        httpConnection.setRequestProperty("Content-Type","application/json");
+        LOGGER.info("ImageRequestServiceImpl::Json Array" + jsonObj.toString());   
+        String input = jsonObj.toString();
+        LOGGER.info("final object in json" + jsonObj.toString());
+        OutputStream outputStream = httpConnection.getOutputStream();
+        outputStream.write(input.getBytes());
+        outputStream.flush();
+		//100 is the response code handled here
+        if (200 == httpConnection.getResponseCode()) {
+				LOGGER.info("HTTP Service Response code : " + httpConnection.getResponseCode());
+        }
+        BufferedReader responseBuffer = new BufferedReader(new InputStreamReader(
+     		   (httpConnection.getInputStream())));
+        String output;
+        LOGGER.info("Output from Server:\n");
+        while ((output = responseBuffer.readLine()) != null) {
+            LOGGER.info(output);
+            String responseMsgCode = "" ;  
+       		JSONObject jsonObjectRes = null;
+       		if(null != output && !("").equals(output)){
+       			jsonObjectRes = new JSONObject(output);
+       			if(null != jsonObjectRes){
+       				responseMsgCode = jsonObjectRes.getString(ImageConstants.MSG_CODE);       			
+           		}    			
+       			if (null!= responseMsgCode && responseMsgCode.equalsIgnoreCase(ImageConstants.SUCCESS_CODE)) {    			   
+       				responseMsgStatus = ImageConstants.RESPONSE_SUCCESS_MESSAGE;                
+                 } else if (null!= responseMsgCode && responseMsgCode.equalsIgnoreCase(ImageConstants.FAILURE_CODE)) {
+               	   responseMsgStatus = ImageConstants.RESPONSE_FAILURE_MESSAGE;
+                 }    
+       		} 
+        }
+
+      
+    } catch (MalformedURLException e) {
+        LOGGER.info("inside malformedException",e);
+        throw new PEPFetchException();
+    } catch (ClassCastException e) {  
+    	  LOGGER.info("ClassCastException ",e);      
+        throw new PEPFetchException();
+    } catch (IOException e) {
+        LOGGER.info("inside IOException",e);      
+        throw new Exception();
+    } catch (JSONException e) {
+        LOGGER.info("JSONException ",e);     
+        throw new PEPFetchException();
+    } catch (Exception e) {
+        LOGGER.info("inside Exception" + e);     
+        throw new Exception();
+    }finally{
+    	  httpConnection.disconnect();
+    }
+    return responseMsgStatus;
+}
     
 }

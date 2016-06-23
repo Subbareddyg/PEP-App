@@ -39,7 +39,7 @@
 	{{ }) }}	
 {{ }else{ }}
 	<tr>
-		<td colspan="10" align="center"><strong>{{=dataHeader.message ? dataHeader.message : 'No record Found!'}}</strong></td>
+		<td colspan="9" align="center"><strong>{{=dataHeader.message ? dataHeader.message : 'No record Found!'}}</strong></td>
 	</tr>
 {{ } }}
 </script>

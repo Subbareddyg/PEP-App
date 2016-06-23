@@ -22,6 +22,7 @@ public class SamleImageDetails {
 	private String tiDate;
 	private String sampleCoordinatorNote;
 	
+	
 	/**
 	 * @return the imageId
 	 */
@@ -168,5 +169,33 @@ public class SamleImageDetails {
 		this.sampleCoordinatorNote = sampleCoordinatorNote;
 	}
 	
+	private String originalImageName;
+	/**
+	 * @return the originalImageName
+	 */
+	public String getOriginalImageName() {
+		return originalImageName;
+	}
+	/**
+	 * @param originalImageName the originalImageName to set
+	 */
+	public void setOriginalImageName(String originalImageName) {
+		this.originalImageName = originalImageName;
+	}
+
+	/**
+	 * @return the imageUrl
+	 */
+	public String getImageUrl() {
+		return imageUrl;
+	}
+	/**
+	 * @param imageUrl the imageUrl to set
+	 */
+	public void setImageUrl(String imageUrl) {
+		this.imageUrl = imageUrl;
+	}
+
+	private String imageUrl;
 
 }
