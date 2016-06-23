@@ -509,9 +509,11 @@ public class GroupingServiceImpl implements GroupingService {
 							+ groupAttributeForm.getColorCode());
 				}
 				if (null != petStatus && !(GroupingConstants.PET_STATUS_COMPLETED).equals(petStatus.trim()) 
-						&& !(GroupingConstants.PET_STATUS_CLOSED).equals(petStatus.trim())) {
+						&& !(GroupingConstants.PET_STATUS_CLOSED).equals(petStatus.trim())
+						&& !(GroupingConstants.PET_STATUS_WAITING_TO_BE_CLOSED).equals(petStatus.trim())
+						&& !(GroupingConstants.PET_STATUS_PUBLISH_TO_WEB).equals(petStatus.trim())) {
 					if (LOGGER.isDebugEnabled()) {
-						LOGGER.debug("Pet Status not Completed. Orin No: " + groupAttributeForm.getOrinNumber() + ", PetStatus: "
+						LOGGER.debug("SCG. Not Completed Pet Status not Completed. Orin No: " + groupAttributeForm.getOrinNumber() + ", PetStatus: "
 								+ petStatus);
 					}
 					updatedSplitColorDetailsList = new ArrayList<>();
@@ -569,9 +571,11 @@ public class GroupingServiceImpl implements GroupingService {
 				String entryType = groupAttributeForm.getEntryType();
 				String petStatus = groupAttributeForm.getPetStatus();
 				if (null != petStatus && !(GroupingConstants.PET_STATUS_COMPLETED).equals(petStatus.trim()) 
-						&& !(GroupingConstants.PET_STATUS_CLOSED).equals(petStatus.trim())) {
+						&& !(GroupingConstants.PET_STATUS_CLOSED).equals(petStatus.trim())
+						&& !(GroupingConstants.PET_STATUS_WAITING_TO_BE_CLOSED).equals(petStatus.trim())
+						&& !(GroupingConstants.PET_STATUS_PUBLISH_TO_WEB).equals(petStatus.trim())) {
 					if (LOGGER.isDebugEnabled()) {
-						LOGGER.debug("Pet Status not Completed. Orin No: " + groupAttributeForm.getOrinNumber() + ", PetStatus: "
+						LOGGER.debug("SSG. Not Completed Pet Status not Completed. Orin No: " + groupAttributeForm.getOrinNumber() + ", PetStatus: "
 								+ petStatus);
 					}
 					updatedgetSplitSKUDetailsList = new ArrayList<>();
@@ -735,70 +739,6 @@ public class GroupingServiceImpl implements GroupingService {
 		return jsonObj;
 	}
 
-	/**
-	 * This method is used to call Add Component to Split Color Service.
-	 * 
-	 * @param jsonStyleSpliColor
-	 * @return responseMsg
-	 * @throws Exception
-	 * @throws PEPFetchException
-	 */
-	/*public final String callAddComponentSCGService(final JSONObject jsonStyleSpliColor) throws MalformedURLException, ClassCastException, 
-	IOException, JSONException {
-		LOGGER.info("Entering callAddComponentSCGService-->.");
-		String responseMsg = "";
-		BufferedReader responseBuffer=null;
-		HttpURLConnection httpConnection = null;
-		try {
-			Properties prop = PropertyLoader.getPropertyLoader(GroupingConstants.MESS_PROP);
-			String serviceURL = prop.getProperty(GroupingConstants.ADD_COMPONENT_TO_SCG_SERVICE_URL);
-			LOGGER.info("Add Component to Split Color ServiceURL-->" + serviceURL);
-
-			URL targetUrl = new URL(serviceURL);
-			httpConnection = (HttpURLConnection) targetUrl.openConnection();
-			httpConnection.setDoOutput(true);
-			httpConnection.setRequestMethod(prop.getProperty(GroupingConstants.SERVICE_REQUEST_METHOD));
-			httpConnection.setRequestProperty(prop.getProperty(GroupingConstants.SERVICE_REQUEST_PROPERTY_CONTENT_TYPE),
-					prop.getProperty(GroupingConstants.SERVICE_REQUEST_PROPERTY_APPLICATION_TYPE));
-
-			LOGGER.info("callAddComponentSCGService Service::Json Array-->" + jsonStyleSpliColor.toString());
-
-			String input = jsonStyleSpliColor.toString();
-
-			OutputStream outputStream = httpConnection.getOutputStream();
-			outputStream.write(input.getBytes(GroupingConstants.DEFAULT_CHARSET));
-			outputStream.flush();
-
-			responseBuffer = new BufferedReader(new InputStreamReader(httpConnection.getInputStream(),GroupingConstants.DEFAULT_CHARSET));
-			String output;
-			while ((output = responseBuffer.readLine()) != null) {
-				LOGGER.info("call callAddComponentSCGService Service Output-->" + output);
-				responseMsg = output;
-
-			}
-
-		} catch (MalformedURLException e) {
-			LOGGER.error("inside malformedException-->" + e);
-			throw new MalformedURLException(e.getMessage());
-		} catch (ClassCastException e) {
-			LOGGER.error("inside ClassCastException-->" + e);
-			throw new ClassCastException(e.getMessage());
-		}catch (JSONException e) {
-			LOGGER.error("inside JSOnException-->" + e);
-			throw new JSONException(e.getMessage());
-		}catch (IOException e) {
-			LOGGER.error("inside IOException-->" + e);
-			throw new IOException(e.getMessage());
-		}finally {
-			if(null != httpConnection){
-				httpConnection.disconnect();
-			}
-			if(responseBuffer!=null)
-				responseBuffer.close();
-		}
-		LOGGER.info("Exiting callAddComponentSCGService-->" + responseMsg);
-		return responseMsg;
-	}*/
 
 	/**
 	 * Method to pass JSON Array to call the Add Component service for CPG Group.
@@ -947,7 +887,7 @@ public class GroupingServiceImpl implements GroupingService {
 						for(int j = 0; j < groupAttributeFormList.size(); j++){
 							groupAttributeForm = groupAttributeFormList.get(j);
 							jsonObjColor = new JSONObject();
-							jsonObjColor.put(GroupingConstants.COMPONENT_COLOR, groupAttributeForm.getOrinNumber());
+							jsonObjColor.put(GroupingConstants.COMPONENT_COLOR, groupAttributeForm.getColorCode());
 							jsonArrayColorList.put(jsonObjColor);
 						}
 						jsonObjStyleGrp.put(GroupingConstants.COMPONENT_COLOR_LIST, jsonArrayColorList);
@@ -1090,73 +1030,6 @@ public class GroupingServiceImpl implements GroupingService {
 		return jsonObj;
 	}
 
-	/**
-	 * This method is used to call Add Component to Split SKU Service.
-	 * 
-	 * @param jsonStyleSpliSku
-	 * @return responseMsg
-	 * @throws Exception
-	 * @throws PEPFetchException
-	 */
-	/*public final String callAddComponentSSGService(final JSONObject jsonStyleSpliSku) throws MalformedURLException, ClassCastException, 
-	IOException, JSONException {
-		LOGGER.info("Entering callAddComponentSSGService-->.");
- 
-		String responseMsg = "";
-		BufferedReader responseBuffer = null;
-		HttpURLConnection httpConnection = null;
-		try {
-			Properties prop = PropertyLoader.getPropertyLoader(GroupingConstants.MESS_PROP);
-			String serviceURL = prop.getProperty(GroupingConstants.ADD_COMPONENT_TO_SSG_SERVICE_URL);
-			LOGGER.info("Add Component to Split SKU ServiceURL-->" + serviceURL);
-
-			URL targetUrl = new URL(serviceURL);
-			httpConnection = (HttpURLConnection) targetUrl.openConnection();
-			httpConnection.setDoOutput(true);
-			httpConnection.setRequestMethod(prop.getProperty(GroupingConstants.SERVICE_REQUEST_METHOD));
-			httpConnection.setRequestProperty(prop.getProperty(GroupingConstants.SERVICE_REQUEST_PROPERTY_CONTENT_TYPE),
-					prop.getProperty(GroupingConstants.SERVICE_REQUEST_PROPERTY_APPLICATION_TYPE));
-
-			LOGGER.info("callAddComponentSSGService Service::Json Array-->" + jsonStyleSpliSku.toString());
-
-			String input = jsonStyleSpliSku.toString();
-
-			OutputStream outputStream = httpConnection.getOutputStream();
-			outputStream.write(input.getBytes(GroupingConstants.DEFAULT_CHARSET));
-			outputStream.flush();
-
-			responseBuffer = new BufferedReader(new InputStreamReader(httpConnection.getInputStream(),GroupingConstants.DEFAULT_CHARSET));
-			String output;
-			LOGGER.info("Output from Server::: after Calling-->.");
-			while ((output = responseBuffer.readLine()) != null) {
-				LOGGER.info("call callAddComponentSSGService Service Output-->" + output);
-
-				responseMsg = output;
-
-			}
-
-		} catch (MalformedURLException e) {
-			LOGGER.error("inside malformedException-->" + e);
-			throw new MalformedURLException(e.getMessage());
-		} catch (ClassCastException e) {
-			LOGGER.error("inside ClassCastException-->" + e);
-			throw new ClassCastException(e.getMessage());
-		}catch (JSONException e) {
-			LOGGER.error("inside JSOnException-->" + e);
-			throw new JSONException(e.getMessage());
-		}catch (IOException e) {
-			LOGGER.error("inside IOException-->" + e);
-			throw new IOException(e.getMessage());
-		}finally{
-			if(null != httpConnection){
-				httpConnection.disconnect();
-			}
-			if (responseBuffer!=null)
-				responseBuffer.close();
-		}
-		LOGGER.info("Exiting callAddComponentSSGService-->" + responseMsg);
-		return responseMsg;
-	}*/
 
 	/**
 	 * This method is used to get the selected Attribute List for SCG.
@@ -1388,18 +1261,18 @@ public class GroupingServiceImpl implements GroupingService {
 				if(selectedOrinGrpNo.indexOf(":") != -1){
 					//isColorSelected = true;
 					String selectedOrinGrp = selectedOrinGrpNo.substring(0, selectedOrinGrpNo.indexOf(":"));
-					LOGGER.debug("selectedOrinGrpNo-->"+selectedOrinGrp);
+					// LOGGER.debug("selectedOrinGrpNo-->"+selectedOrinGrp);
 					String colorList = GroupingUtil.checkNull(selectedOrinGrpNo.substring(selectedOrinGrpNo.indexOf(":") + 1));
-					LOGGER.debug("colorList-->"+colorList);
+					// LOGGER.debug("colorList-->"+colorList);
 					selectedItemsColorArr = colorList.split("-");
-					LOGGER.debug("selectedItemsColorArr.length-->"+selectedItemsColorArr.length);
+					// LOGGER.debug("selectedItemsColorArr.length-->"+selectedItemsColorArr.length);
 					groupAttributeFormListNew = new ArrayList<>();
 					if(selectedOrinGrp.equals(styleOrinGrpNo)) {
 						for(int k = 0; k < groupAttributeFormList.size(); k++){
 							groupAttributeForm = groupAttributeFormList.get(k);
 							
 							for (int l = 0; l < selectedItemsColorArr.length; l++) {
-								LOGGER.debug("selectedItemsColorArr[l]-->"+selectedItemsColorArr[l]);
+								// LOGGER.debug("selectedItemsColorArr[l]-->"+selectedItemsColorArr[l]);
 								if (selectedItemsColorArr[l].equals(groupAttributeForm.getOrinNumber())) {
 									groupAttributeFormListNew.add(groupAttributeForm);
 									break;

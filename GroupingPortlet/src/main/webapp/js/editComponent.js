@@ -44,7 +44,7 @@ var app = app || {} ;
 							if($('#groupType').val().trim() == 'CPG'){
 								//console.log(_super.searchValue.classId);
 								$('#classId').val(_super.searchValue.classId);
-							}else if($('#groupType').val().trim() == 'RCG'){
+							}else if($('#groupType').val().trim() == 'RCG' || $('#groupType').val().trim() == 'BCG'){
 								dtTableConfig = $.extend(
 									dtTableConfig, {
 										dfdChildrenUrl: app.URLFactory.getURL('groupSearchUrl'), 
@@ -243,6 +243,12 @@ var app = app || {} ;
 									).fadeIn('slow');
 									
 									_super.loadExitingData(false); // on success reloading existing component
+									
+									//checking if already component search fired befre removeing component(s)
+									//if yes then refreshing the same search result
+									if(!$("#search-result-panel").hasClass('hidden')){
+										$('#frmComponentSearch').trigger('submit');
+									}
 								}else if(responseJSON.status == 'FAIL'){
 									$('#group-existing-component-area').html(
 										app.GroupLandingApp.buildMessage(
@@ -483,13 +489,44 @@ var app = app || {} ;
 				//handler to save component selection
 				$('#save-existing-group').on('click', function(){
 					var params = $('#existingComponentForm').serialize();
-					params += '&resourceType=defaultValueSave&groupType=' + $('#groupType').val() + '&groupId=' + $('#groupId').val();
+					
+					//grouping specific params
+					if($('#groupType').val().trim() == 'BCG'){
+						params += '&resourceType=priorityValueSave';
+						/**
+						* code to check all priorities have valid values before saving
+						*/
+						var validpriorities = false;
+						$('input.tree[type=number]').each(function(){
+							if($(this).val().trim().length > 0)
+								validpriorities = true;
+							else
+								validpriorities = false;
+						});
+						
+						if(!validpriorities){
+							alert('Please enter valid priorities before saving');
+							return;
+						}
+						
+						//making prority list
+						var priorityList = [];
+						$('input.tree[type=number]').each(function(){
+							priorityList.push($(this).attr('name').split('_')[0] + ':' + $(this).val());
+						});
+						
+						params += '&priorities=' + priorityList.toString();
+					}else if($('#groupType').val().trim() == 'SSG' || $('#groupType').val().trim() == 'SCG'){
+						params += '&resourceType=defaultValueSave';
+					}
+					
+					params += '&groupType=' + $('#groupType').val() + '&groupId=' + $('#groupId').val();
 					
 					app.GroupFactory.editDefaultComponent(params)
 						.done(function(result){
 								//console.log(result);
 								if(!result.length){
-									$('#group-existing-component-area').html(app.GroupLandingApp.buildMessage('Error deleting components', 'error'))
+									$('#group-existing-component-area').html(app.GroupLandingApp.buildMessage('Error Saving components', 'error'))
 										.fadeIn('slow');
 										return;
 								}
@@ -585,6 +622,7 @@ var app = app || {} ;
 
 				
 			},
+			
 			putValue : function(){
 				 $('#styleOrinNo').val($('#styleOrinNoShowOnly').val());
 			},

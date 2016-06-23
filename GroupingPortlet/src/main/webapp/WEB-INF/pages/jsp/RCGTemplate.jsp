@@ -43,7 +43,7 @@
 		{{ if(row.childList && row.childList.length){ }}
 			{{ _.each(row.childList, function(childRow, childKey){ }}
 				<tr class="hidden-child" data-parent-id="{{=(row.StyleOrinNo + '_' + key) }}">
-					<td><input type="checkbox" name="selectedChildItem_{{=key}}" value="{{=childRow.StyleOrinNo}}" class="item-check" style="margin-left:24px"  disabled="disabled" data-chkparent-id="{{=(row.StyleOrinNo + '_' + key) }}" data-item-type="SC" /></td>
+					<td><input type="checkbox" name="selectedChildItem_{{=key}}" value="{{=childRow.StyleOrinNo}}" class="item-check" style="margin-left:24px"   {{=(row.alreadyInSameGroup == 'Yes' || row.haveChildGroup == 'Y') ? 'disabled="disabled"' : ''}} data-chkparent-id="{{=(row.StyleOrinNo + '_' + key) }}" data-item-type="SC" /></td>
 					<td>
 						<div class="icon-tree leaf-node" data-node-id="{{=(childRow.StyleOrinNo + '_' + childKey)}}">
 						&nbsp;
