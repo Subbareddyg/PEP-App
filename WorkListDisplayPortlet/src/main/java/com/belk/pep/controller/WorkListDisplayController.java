@@ -3214,6 +3214,8 @@ public String ConvertDate(String completionDate){
                     jsonObj.put("petSourceType",styleColor.getSourceType());
                     jsonObj.put(WorkListDisplayConstants.ISGROUP,
                         WorkListDisplayConstants.NO_N);
+                    jsonObj.put(WorkListDisplayConstants.EXISTSINGROUP,
+                    		styleColor.getExistsInGroup());
                     
                     jsonArrayPetDtls.put(jsonObj); 
                 }                
@@ -3260,6 +3262,8 @@ public String ConvertDate(String completionDate){
                         jsonObj.put(WorkListDisplayConstants.ROOTORIN, orinNum);
                         jsonObj.put(WorkListDisplayConstants.ADVSEARCHCLICKED,
                             advSearchClick);
+                        jsonObj.put(WorkListDisplayConstants.ENTRY_TYPE,
+                        		workFlow.getEntryType());
                         jsonArrayPetDtls.put(jsonObj);
                     }
                     else if (workFlow.getEntryType().equalsIgnoreCase(
@@ -3525,9 +3529,13 @@ public String ConvertDate(String completionDate){
                 groupStatus =
                     grpNosAndStatus.split(WorkListDisplayConstants.UNDERSCORE)[1]
                         .toString().trim();
+                groupType =
+                	grpNosAndStatus.split(WorkListDisplayConstants.UNDERSCORE)[2]
+                        .toString().trim();
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("Group Number:--- " + groupNo
-                        + "  Group Status:--- " + groupStatus);
+                        + "  Group Status:--- " + groupStatus + 
+                        "  Group Type:--- " + groupType);
                 }
 
                 try {
@@ -3581,6 +3589,7 @@ public String ConvertDate(String completionDate){
         String groupNumbers = param;
         String groupNo = WorkListDisplayConstants.EMPTY_STRING;
         String groupStatus = WorkListDisplayConstants.EMPTY_STRING;
+        String groupType = WorkListDisplayConstants.EMPTY_STRING;
         String responseMsg = WorkListDisplayConstants.EMPTY_STRING;
         String groupStatusCode = WorkListDisplayConstants.EMPTY_STRING;
 
@@ -3614,16 +3623,25 @@ public String ConvertDate(String completionDate){
                         WorkListDisplayConstants.WILD_CHAR,
                         WorkListDisplayConstants.EMPTY_STRING);
 
-                groupNo =
+                /*groupNo =
                     groupNosAndStatus.substring(0, groupNosAndStatus
                         .indexOf(WorkListDisplayConstants.UNDERSCORE));
-                groupNo = groupNo.trim();
+                groupNo = groupNo.trim();*/
+                groupNo =
+                	groupNosAndStatus.split(WorkListDisplayConstants.UNDERSCORE)[0]
+                        .toString().trim();
+                groupStatus =
+                	groupNosAndStatus.split(WorkListDisplayConstants.UNDERSCORE)[1]
+                        .toString().trim();
+                groupType =
+                	groupNosAndStatus.split(WorkListDisplayConstants.UNDERSCORE)[2]
+                        .toString().trim();
 
-                LOGGER.info("group reinitialise:--- " + groupNo);
+                LOGGER.info("group reinitialise:--- " + groupNo + "\nGroup Type -- " + groupType);
 
                 try {
                     JSONObject jsonstyle =
-                        populateReInitiateGroupJson(groupNo.trim(), updatedBy);
+                        populateReInitiateGroupJson(groupNo.trim(), updatedBy, groupType);
                     jsonArray.put(jsonstyle);
                 }
                 catch (Exception e) {
@@ -3714,11 +3732,12 @@ public String ConvertDate(String completionDate){
      * @return JSONObject
      */
     public JSONObject populateReInitiateGroupJson(String groupId,
-        String updatedBy) {
+        String updatedBy, String groupType) {
         LOGGER.info("populateReInitiateGroupJson:: start");
         JSONObject jsonObj = new JSONObject();
         try {
             jsonObj.put(WorkListDisplayConstants.GROUP_ID, groupId);
+            jsonObj.put(WorkListDisplayConstants.GROUP_TYPE, groupType);
             jsonObj.put(WorkListDisplayConstants.MODIFIED_BY, updatedBy);
         }
         catch (JSONException e) {

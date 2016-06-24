@@ -516,4 +516,19 @@ public class StyleColor {
      */
     
 
+    private String existsInGroup;
+
+	/**
+	 * @return the existsInGroup
+	 */
+	public String getExistsInGroup() {
+		return existsInGroup;
+	}
+
+	/**
+	 * @param existsInGroup the existsInGroup to set
+	 */
+	public void setExistsInGroup(String existsInGroup) {
+		this.existsInGroup = existsInGroup;
+	}
 }

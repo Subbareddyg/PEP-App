@@ -1728,6 +1728,7 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
                        String colorDescPackColor=row[16]!=null?row[16].toString():null;
                        String productNamePackColor=row[17]!=null?row[17].toString():null;
                        String conversionFlag =row[18]!=null?row[18].toString():"";
+                       String existInGroup =row[19]!=null?row[19].toString():"";
                        if(conversionFlag.equalsIgnoreCase("true"))
                        {
                            sourceSystem = sourceSystem + ":C";
@@ -1740,7 +1741,7 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
                        pet  = mapAdseDbPetsToPortal(parentStyleORIN,orinNumber,deptId,productName,
                            entryType,vendorName,vendorStyle,imageState,contentState,completionDate,
                            pet,omniChannelIndicator, primaryUPC,colorDesc, petStatus, sourceSystem,
-                           "", "", "", "", "", "");                                    
+                           "", "", "", "", existInGroup, "");                                    
                        petList.add(pet);
                    }
                    petList = petStatusMapping(petList);
@@ -2144,7 +2145,7 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
                            }
                            newOrinNumber = orin + " " + code + " " + color;
                    }
-                   
+                   String existInGroup = pet.getExistsInGroup();
                    StyleColor styleColor = new StyleColor();
                    styleColor.setEntryType(entryType);
                    styleColor.setParentStyleOrinNumber(childsParentOrinNumber);
@@ -2170,7 +2171,7 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
                    String sourceType = pet.getReq_Type();
                    //LOGGER.info("sourceType ="+sourceType);
                    styleColor.setSourceType(sourceType);
-                  
+                   styleColor.setExistsInGroup(existInGroup);
                    /**
                     * Modification end
                     */
@@ -2329,6 +2330,7 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
                        String colorDescComplexPack=row[17]!=null?row[17].toString():null;
                        String productNamePackColor = row[18]!=null?row[18].toString():null;
                        String conversionFlag =row[19]!=null?row[19].toString():"";
+                       String existInGroup =row[20]!=null?row[20].toString():"";
                        if(conversionFlag.equalsIgnoreCase("true"))
                        {
                            req_Type = req_Type + ":C";
@@ -2340,7 +2342,7 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
                            deptId, supplierId, productName, entryType, primaryUPC, 
                            classId, vendorName, vendorStyle, imageState, contentState, 
                            petStatus, completionDate, pet, omniChannelIndicator, 
-                           req_Type, origincalColorDesc, "", "", "");  
+                           req_Type, origincalColorDesc, "", existInGroup, "");  
                        
                        petList.add(pet);
                    }
@@ -2683,6 +2685,12 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
                                 ? WorkListDisplayConstants.EMPTY_STRING : row
                                     .get(WorkListDisplayConstants.ENTRY_TYPE)
                                     .toString()));
+                        workFlow
+                        .setEntryType(row
+                            .get(WorkListDisplayConstants.ENTRY_TYPE) == null
+                            ? WorkListDisplayConstants.EMPTY_STRING : row
+                                .get(WorkListDisplayConstants.ENTRY_TYPE)
+                                .toString());
                         workFlow.setDeptId(row
                             .get(WorkListDisplayConstants.DEF_DEPT_ID) == null
                             ? WorkListDisplayConstants.EMPTY_STRING : row.get(
@@ -2873,6 +2881,10 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
                         .get(WorkListDisplayConstants.ENTRY_TYPE) == null
                         ? WorkListDisplayConstants.EMPTY_STRING : row.get(
                             WorkListDisplayConstants.ENTRY_TYPE).toString()));
+                    workFlow.setEntryType(row
+                            .get(WorkListDisplayConstants.ENTRY_TYPE) == null
+                            ? WorkListDisplayConstants.EMPTY_STRING : row.get(
+                                WorkListDisplayConstants.ENTRY_TYPE).toString());
                     workFlow.setDeptId(row
                         .get(WorkListDisplayConstants.DEF_DEPT_ID) == null
                         ? WorkListDisplayConstants.EMPTY_STRING : row.get(
@@ -3173,7 +3185,9 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
                                 + "\nDEPT ID: " + workFlow.getDeptId()
                                 + "\nVENDOR NAME: " + workFlow.getVendorName()
                                 + "\nCHILD GROUP : "
-                                + workFlow.getIsChildPresent());
+                                + workFlow.getIsChildPresent()
+                                + "\nEXISTS IN GROUP : "
+                                + workFlow.getExistsInGroup());
                     }
 
                     childGroupList.add(workFlow);
@@ -3720,7 +3734,9 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
                                 + "\nDEPT ID: " + workFlow.getDeptId()
                                 + "\nVENDOR NAME: " + workFlow.getVendorName()
                                 + "\nCHILD GROUP : "
-                                + workFlow.getIsChildPresent());
+                                + workFlow.getIsChildPresent()
+                                + "\nEXIST IN GROUP : "
+                                + workFlow.getExistsInGroup());
                     }
 
                     childGroupList.add(workFlow);
