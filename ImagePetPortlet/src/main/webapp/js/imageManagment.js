@@ -295,7 +295,8 @@ function swatchImageButton(tableID) {
 
 function validateGrpImageFields(formId){
 
-	
+
+
 	var imageLocation = document.getElementById('imageLocationButton').selectedIndex;
 		
 	//logic to check null shot type ends
@@ -315,9 +316,9 @@ function validateGrpImageFields(formId){
 				}else if(ext == 'jpeg' || ext == 'jpg' || ext =='psd'|| ext =='tiff'|| ext =='eps' || ext =='tif'){
 
 					document.getElementById('errorDIV').innerHTML = "";
-					$("#overlay_Upload").hide();
-					$("#dialog_UploadImage").hide();
-					$("#overlay_imageLoading").show();					
+									
+
+					$("#overlay_groupimageLoading").show();									
 					setTimeout(function(){document.getElementById(formId).submit();},500);
 				}else{
 					document.getElementById('errorDIV').style.display ="";
@@ -335,8 +336,11 @@ function validateGrpImageFields(formId){
 
 function confirmGRPImageRemovePopUp(imageId,imageName){
 
+    
 	document.getElementById('imgHiddenId').value = imageId;	
 	document.getElementById('imgNameHiddenId').value = imageName;
+
+
 	$("#dialog_submitRemove").show();	
 }
 
@@ -345,8 +349,10 @@ function dialogHideonOk(){
 	$("#dialog_submitRemove").hide();
 }
 
-function removeGroupingImage(imageId,imageName,removeImageUrl){    
+function removeGroupingImage(imageId,imageName,removeImageUrl){  
+
 var groupingId = $("#groupingId").val();
+
    $.ajax({
 			type: 'POST',
 			url : removeImageUrl,
@@ -368,7 +374,7 @@ var groupingId = $("#groupingId").val();
              }
 
 		});	
-	//setTimeout(function(){setUploadVPILink($("#ajaxaction").val(),document.getElementById("selectedColorOrinNum").value,$("#removeImageUrl").val());trClick();scrollToView('vImage','vImage');},2000);	
+	
 }
 
 function dialogGRPApproveHideonOk(){
@@ -389,47 +395,38 @@ var groupOverallStatus = "";
 
 function groupingImageApproveAction(url){
 var imageId = $("#hidImageId").val().trim();
-
-
-
-
-var groupingId = $("#groupingId").val();
-	
-$("#overlay_imageLoading").show();
-
+var groupingId = $("#groupingId").val();	
+$("#overlay_groupimageLoading").show();	
 var selectedRadioButton = $('input[name=radiobutton]');
 if (typeof selectedRadioButton.filter(':checked').val()  !== "undefined" && selectedRadioButton.filter(':checked').val()){
    groupOverallStatus = selectedRadioButton.filter(':checked').val();	
 }
 
 
+var groupingType = $("#groupingType").val();	
 
-
-
-
-
-var groupingType = $("#groupingType").val();
-
- 
-	
 		$.ajax({				
 				type: 'POST',
 				url: url,
 				data: { groupingId:groupingId,groupOverallStatus:groupOverallStatus,groupingType:groupingType,imageId:imageId },
 				success: function(data){					
 					var json = $.parseJSON(data);
-					var responseCode = json.responseCode;				
-					if(responseCode == '100'){				
-
-
-						document.getElementById("imageStatus").innerHTML = 'Completed';	
-						document.getElementById('removeGPImage').disabled = true ;
-				
+					var responseCode = json.responseCode;								
+					if(responseCode == 'SUCCESS'){	
+ 						if (imageId !== '' && imageId !== null ){
+						document.getElementById("imageStatus").innerHTML = 'Completed';						
+						var table = document.getElementById("groupImageTable");							
+						var Cells = table.getElementsByTagName("td");
+						Cells[4].innerHTML = "Remove";	
+						}
+									
 						document.getElementById('image_approve').disabled = true ;
-						$("#overlay_imageLoading").hide();
+						$("#overlay_groupimageLoading").hide();
 						document.getElementById('btnGPImageUploadAction').disabled = true ;
 					
-				  }						
+				     }else{
+                                        alert('Image not approved.');
+				     }						
 					
 				},
 				cache: false,                
@@ -489,9 +486,15 @@ function buildGrpMessage(msg, dlgType){
 
 function openGRPImage(url){
 
+
 	var win = window.open(url, '', "toolbar=no,resizable=no,width=640,height=480,scrollbars=yes");
 }
 
+function openGRPScen7Image(url){
+
+
+	var win = window.open(url, '', "toolbar=no,resizable=no,width=300,height=410,scrollbars=yes");
+}
 
 
 function onloadVPILinks(groupVPILinks){
@@ -522,10 +525,15 @@ var imageUrl = document.getElementById('downloadFilePathUrl').value+"?filePath="
    cell5.id="removeGPImage" ;
    cell5.name="removeGPImage" ;   
 if(json["imageStatus"]  == 'Completed'){
+ cell5.id="removeGPImage" ;
+
 		cell5.innerHTML = 'Remove';
 	}else{
-		cell5.innerHTML = '<a href="javascript:;" onclick="confirmGRPImageRemovePopUp('+json["imageID"]+',\''+json["imageName"]+'\')">Remove</a>';
+		cell5.innerHTML = '<a href="javascript:;" id="test" onclick="confirmGRPImageRemovePopUp('+json["imageID"]+',\''+json["imageName"]+'\')">Remove</a>';
 	}
+
+return;
+
 
 }
 

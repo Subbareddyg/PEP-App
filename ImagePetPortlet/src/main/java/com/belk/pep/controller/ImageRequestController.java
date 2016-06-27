@@ -830,8 +830,6 @@ public class ImageRequestController {
    @ResourceMapping("getUploadVPIDetails")
    public ModelAndView getUploadVPIDetails(ResourceRequest request, ResourceResponse response){
    	LOGGER.info("getVendorVPIDetails ************.." );  
-   	 ArrayList al = new ArrayList();
-   	 
    	 
    	 ModelAndView  mv = null;
    	 try {
@@ -841,8 +839,8 @@ public class ImageRequestController {
 					   jsonImageDtls = populateJsonVPI(request.getParameter(ImageConstants.SELECTED_COLOR_ORIN),(String)request.getPortletSession().getAttribute("userAttr"));
 					   LOGGER.info("jsonImageDtls *************"+jsonImageDtls);					 				  
 					   response.getWriter().write(jsonImageDtls.toString());
-	                  LOGGER.info("inside sampleImageLinkList controller FFFFFFFFF");	                 
-	                  //return null; 
+	                            
+	                 
 	             
    	        }
    		
@@ -970,10 +968,6 @@ public class ImageRequestController {
 		JSONArray jsonArray = new JSONArray();
 		JSONArray jsonArray1 = new JSONArray();
 		JSONArray shotTypeJsonArray = new JSONArray();
-		
-		JSONObject jsonObjShotType = new JSONObject();
-		JSONObject jObj = new JSONObject();
-		
 		
 		LOGGER.info("orinNumbersss::" + orinNumber +"\t"+"::imageIdss::" + imageId +"\t"+ 
 				"::imageStatusss::" + imageStatus+"\t"+ "::statusParam::" +statusParam+"\t"+ "::shotTypeOnSubmit::" +shotTypeOnSubmit);
@@ -1502,6 +1496,9 @@ public class ImageRequestController {
 	            if (pepHistoryList !=null && pepHistoryList.size() > 0){                   
 	                imageForm.setPepHistoryList(pepHistoryList);                   
 	            }
+	            if (imageLinkVOList !=null && imageLinkVOList.size() > 0){                   
+	                imageForm.setImageLinkVOList(imageLinkVOList);                   
+	            }
 	            mv = new ModelAndView(ImageConstants.MODELVIEW_SUCCESS_GROUPING);            
 	            Properties prop =PropertyLoader.getPropertyLoader(ImageConstants.LOAD_IMAGE_PROPERTY_FILE);
 	  		    String fileDir = prop.getProperty(ImageConstants.FILE_UPLOAD_PATH);         
@@ -1621,13 +1618,15 @@ public class ImageRequestController {
 			        					uploadedSucess = "N";	        					
 			        				}
 		  			  	  }
+		  			      LOGGER.info("uploadedSucess:::" + uploadedSucess);
+			  			  LOGGER.info("imageNameRender:::" + imageNameRender);
+			  			  PortletSession session = request.getPortletSession();
+			  			  session.setAttribute("uploadedSucess", uploadedSucess, PortletSession.PORTLET_SCOPE);
+			  			  session.setAttribute("imageName", imageNameRender, PortletSession.PORTLET_SCOPE);
 			  			} catch (Exception e) {                  
 							LOGGER.info("Exception in groupingImgUploadAction:::",e );
 						}
-		  			   LOGGER.info("uploadedSucess:::" + uploadedSucess);
-		  			  PortletSession session = request.getPortletSession();
-		  			  session.setAttribute("uploadedSucess", uploadedSucess, PortletSession.PORTLET_SCOPE);
-		  			  session.setAttribute("imageName", imageNameRender, PortletSession.PORTLET_SCOPE);
+		  			  
 		    		}
 		/**
 		 * @param uploadImagesDTO
@@ -1671,25 +1670,30 @@ public class ImageRequestController {
 		String groupingId = request.getParameter("groupingId");	
 		String groupingType = request.getParameter("groupingType");
 	    String groupOverallStatus = request.getParameter("groupOverallStatus");
-	    String imageId = request.getParameter("imageId");	
-		try {
-			
-			JSONObject updateGRPImageStatusJsonObj = groupingImageHelper.updateGroupImageStatusJsonObj(groupingId,updatedBy,groupingType,imageId);
-			
-			LOGGER.info(" final object in groupingImgApproveAction -->"+updateGRPImageStatusJsonObj);
-			
-			responseMsg = callUpdateGroupImageStatusJsonObj(updateGRPImageStatusJsonObj);	
-			LOGGER.info("---Service Response on Approve---" + responseMsg);		
-			   if(ImageConstants.RESPONSE_SUCCESS_MESSAGE.equalsIgnoreCase(responseMsg)){			   
-				 JSONObject approveGRPImgJsonObj = groupingImageHelper.populateGroupingImgAproveJsonObj(groupingId,updatedBy,groupingType,groupOverallStatus);			   
+	    String imageId = request.getParameter("imageId");
+		LOGGER.info("--imageId *******---" + imageId);	
+		
+	    try {			
+	    	if(null!= imageId && !imageId.isEmpty()){	    		
+	    		JSONObject updateGRPImageStatusJsonObj = groupingImageHelper.updateGroupImageStatusJsonObj(groupingId,updatedBy,groupingType,imageId);			
+				LOGGER.info(" final object in groupingImgApproveAction -->"+updateGRPImageStatusJsonObj);			
+				responseMsg = callUpdateGroupImageStatusJsonObj(updateGRPImageStatusJsonObj);	
+				LOGGER.info("---Service Response on Approve---" + responseMsg);		
+				   if(ImageConstants.RESPONSE_SUCCESS_MESSAGE.equalsIgnoreCase(responseMsg)){			   
+					JSONObject approveGRPImgJsonObj = groupingImageHelper.populateGroupingImgAproveJsonObj(groupingId,updatedBy,groupingType,groupOverallStatus);			   
+					responseMsg = callApproveGroupingImageService(approveGRPImgJsonObj);								
+				   }					
+	    	}else if(imageId.isEmpty()){
+	    		JSONObject approveGRPImgJsonObj = groupingImageHelper.populateGroupingImgAproveJsonObj(groupingId,updatedBy,groupingType,groupOverallStatus);			   
 				responseMsg = callApproveGroupingImageService(approveGRPImgJsonObj);
-				LOGGER.info(" ---Service Response is Success on Approve--- ");
-				responseCode = "100";
-				jObj.put("responseCode", responseCode);
-				response.getWriter().write(jObj.toString());
-				response.getWriter().flush();
-				response.getWriter().close();
-			}
+				
+	    	}
+	    	LOGGER.info(" ---Service Response is Success on image Approve--- "+responseMsg);
+	    	jObj.put("responseCode", responseMsg);
+			response.getWriter().write(jObj.toString());
+			response.getWriter().flush();
+			response.getWriter().close();
+			
 		} catch (Exception e) {
 			LOGGER.info("inside catch for groupingImgApproveAction() method ",e);
 			e.printStackTrace();
