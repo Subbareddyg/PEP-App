@@ -306,6 +306,7 @@
 			
 			//constructing pagination
 			try{
+				console.log('Generating totalpages: ' + _super.totalPages);
 				jqArea.twbsPagination({
 					totalPages: _super.totalPages ? _super.totalPages : 1,
 					visiblePages: 10,
@@ -318,7 +319,7 @@
 					}
 				});
 			}catch(ex){
-				throw new Exception(ex.message);
+				throw new Error(ex.message);
 			}
 			
 		},
@@ -348,22 +349,29 @@
 			}	
 		},
 		
-		//housekeeper to release and destroy delegation when the regenrating or destroying data table
-		clearSorting: function(){
+		//housekeeper to release and destroy delegation when regenrating or destroying data table
+		destroyDelegates: function(){
 			this.$(this.config.dtContainer).off('click', '.sortable');  //clearing previously set delegation for safety
 			this.$(this.config.dtContainer).off('click', '.parent-node-expand-ajax');  //clearing previously set delegation for safety
 			this.$(this.config.dtContainer).off('click', '.parent-node-collapse-ajax');  //clearing previously set delegation for safety
 			this.$(this.config.dtContainer).off('blur', '.tree');  //clearing previously set delegation for safety
+			this.$(this.config.dtContainer).off('blur', '.tree');
+			this.$(this.config.dtContainer).find('.paginator').removeData('twbs-pagination'); //reconstructing the paginator
+			this.$(this.config.dtContainer).find('.paginator').find('li').off('click'); //clearing all pagination handlers
+			this.$(this.config.dtContainer).find('.paginator').off('page'); //clearing all pagination handlers
 			this.$(this.config.dtContainer).find('a.sortable').removeClass('sort-up sort-down');
 			this.$(this.config.dtContainer).find('a.sortable').data('sorted-by', null);
+			
 		},
 		
 		//bootstrapper method
 		init: function(){
 			this.totalRecords = this._.size(this.data); //counting total records
+			console.log(this.totalRecords);
+			console.log(this);
 			
 			//housekeeping if any required for previous instance
-			this.clearSorting();
+			this.destroyDelegates();
 			
 			this.generateDataTable();
 

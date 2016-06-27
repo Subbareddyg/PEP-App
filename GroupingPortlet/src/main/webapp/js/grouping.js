@@ -233,8 +233,8 @@ var app = app || {};
 					
 					
 					if($('#closeGrpDlg').hasClass('refresh')){
-						$('.overlay_pageLoading').removeClass('hidden'); 
-						$('#frmComponentSearch').trigger('submit'); //trigerring search internally																				
+						//$('.overlay_pageLoading').removeClass('hidden'); 
+						$('#frmComponentSearch').trigger('submit');  //trigerring search internally																				
 						$('#closeGrpDlg').val('Cancel');
 						$('#closeGrpDlg').removeClass('refresh');
 						$('#select-all').prop('checked', false);
@@ -334,7 +334,7 @@ var app = app || {};
 							var groupId = _that.data('group-id');
 							var groupType = _that.data('group-type');
 							
-							$('#overlay_pageLoading').removeClass('hidden'); //showing as working
+							$('.overlay_pageLoading').removeClass('hidden'); //showing as working
 							
 							//requesting factorty to validate and delete
 							app.GroupFactory.deleteGroup({groupId: groupId, groupType: groupType})
@@ -355,14 +355,14 @@ var app = app || {};
 											messageHtml = _super.buildMessage(responseJSON.deleteStatusMessage, 'error');
 									}
 									
-									$('#group-deletion-messages').html(messageHtml).fadeIn('slow');
+									$('#group-deletion-messages').html(messageHtml).fadeIn('fast');
 									
 									//cleaning up message after 4 sec
-									_super.cleanupMessage($('#group-deletion-messages'), 4000);
+									_super.cleanupMessage($('#group-deletion-messages'), 8000);
 									
 								})
 								.complete(function(){
-									$('#overlay_pageLoading').addClass('hidden'); //hiding loader icon
+									$('.overlay_pageLoading').addClass('hidden'); //hiding loader icon
 								});
 						},
 					   },
@@ -894,6 +894,7 @@ var app = app || {};
 					e.preventDefault(); //preventing default form submission 
 					
 					var validationClass= $(this).attr('class');
+					
 					//dialog to show error when no field is entered
 					if(validationClass.indexOf('CPG') > -1 || validationClass.indexOf('RCG') > -1 
 						|| validationClass.indexOf('BCG') > -1 || validationClass.indexOf('GSG') > -1 )
@@ -925,14 +926,6 @@ var app = app || {};
 										var componentList = response.componentList;
 										//deleting componentList to pass only header
 										delete response.componentList;
-										
-										/* app.DataTable.dtContainer = '#dataTable';
-										app.DataTable.dataHeader = response;
-										app.DataTable.data = componentList;
-										
-										$('.paginator').removeData('twbs-pagination'); //reconstructing the paginator
-										
-										app.DataTable.init(); */
 										
 										var config = {};
 										
@@ -990,14 +983,6 @@ var app = app || {};
 										//deleting componentList to pass only header
 										delete response.componentList;
 										
-										/* app.DataTable.dtContainer = '#dataTable';
-										app.DataTable.dataHeader = response;
-										app.DataTable.data = componentList;
-										
-										$('.paginator').removeData('twbs-pagination'); //reconstructing the paginator
-										
-										app.DataTable.init(); */
-										
 										var dtTable = new app.DataTable();
 										dtTable.setDataHeader(response);
 										dtTable.setData(componentList);
@@ -1007,11 +992,10 @@ var app = app || {};
 										dtTable.init();
 									}
 									
-									
+									//displaying search page
 									$("#search-result-panel").removeClass('hidden');
 																	
 								}).complete(function(){
-									
 									$('.overlay_pageLoading').addClass('hidden');
 									$('.select-all').prop('checked',false);
 								});

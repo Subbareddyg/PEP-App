@@ -865,7 +865,6 @@ public class XqueryConstants {
 		}
 		if (null != upcNoSearch && !("").equals(upcNoSearch.trim())) {
 			getNewCPGDetails = getNewCPGDetails + " AND NVL(SEARCH.PARENT_MDMID,SEARCH.MDMID)  = " +
-					//"(SELECT PARENT_MDMID FROM ADSE_ITEM_CATALOG WHERE NUMBER_04 =:upcNoSql)";
 			"(SELECT " +
 			"CASE                                " +
 	        "when PRIMARY_UPC is null then MDMID          " +    
@@ -911,7 +910,6 @@ public class XqueryConstants {
 				}
 				if (null != upcNoSearch && !("").equals(upcNoSearch.trim())) {
 					getNewGBSDetails = getNewGBSDetails + " AND NVL(ITEM.PARENT_MDMID,ITEM.MDMID)  = " +
-							//"(SELECT PARENT_MDMID FROM ADSE_ITEM_CATALOG WHERE NUMBER_04 =:upcNoSql)";
 							"(SELECT " +
 							"CASE                                " +
 					        "when PRIMARY_UPC is null then MDMID          " +    
@@ -990,7 +988,6 @@ public class XqueryConstants {
 				}
 				if (null != upcNoSearch && !("").equals(upcNoSearch.trim())) {
 					getNewGBSDetails = getNewGBSDetails + " AND NVL(ITEM.PARENT_MDMID,ITEM.MDMID)  = " +
-							//"(SELECT PARENT_MDMID FROM ADSE_ITEM_CATALOG WHERE NUMBER_04 =:upcNoSql)";
 							"(SELECT " +
 							"CASE                                " +
 					        "when PRIMARY_UPC is null then MDMID          " +    
@@ -1083,7 +1080,6 @@ public class XqueryConstants {
 		}	
 		if (!StringUtils.isEmpty(upcNoSearch)) {
 			getRegularBeautySearchResult.append("   AND NVL(SEARCH.PARENT_MDMID,SEARCH.MDMID)  = " +
-					//"(SELECT PARENT_MDMID FROM ADSE_ITEM_CATALOG WHERE NUMBER_04 =:upcNoSql) ");
 					"(SELECT " +
 					"CASE                                " +
 			        "when PRIMARY_UPC is null then MDMID          " +    
@@ -1165,7 +1161,6 @@ public class XqueryConstants {
 			}		
 			if (!StringUtils.isEmpty(upcNoSearch)) {
 				getRegularBeautySearchResult.append("   AND NVL(SEARCH.PARENT_MDMID,SEARCH.MDMID)  = " +
-						//"(SELECT PARENT_MDMID FROM ADSE_ITEM_CATALOG WHERE NUMBER_04 =:upcNoSql) ");
 						"(SELECT " +
 						"CASE                                " +
 				        "when PRIMARY_UPC is null then MDMID          " +    
@@ -1294,7 +1289,6 @@ public class XqueryConstants {
 		}	
 		if (!StringUtils.isEmpty(upcNoSearch)) {
 			getRegularBeautySearchResult.append("   AND NVL(SEARCH.PARENT_MDMID,SEARCH.MDMID)  = " +
-					//"(SELECT PARENT_MDMID FROM ADSE_ITEM_CATALOG WHERE NUMBER_04 =:upcNoSql) ");
 					"(SELECT " +
 					"CASE                                " +
 			        "when PRIMARY_UPC is null then MDMID          " +    
@@ -1376,7 +1370,6 @@ public class XqueryConstants {
 			}		
 			if (!StringUtils.isEmpty(upcNoSearch)) {
 				getRegularBeautySearchResult.append("   AND NVL(SEARCH.PARENT_MDMID,SEARCH.MDMID)  = " +
-						//"(SELECT PARENT_MDMID FROM ADSE_ITEM_CATALOG WHERE NUMBER_04 =:upcNoSql) ");
 						"(SELECT " +
 						"CASE                                " +
 				        "when PRIMARY_UPC is null then MDMID          " +    

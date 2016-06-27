@@ -148,7 +148,8 @@ var app = app || {} ;
 								//console.log(_super.searchValue.classId);
 								serializedData += '&classId=' + _super.searchValue.classId;
 							}
-								
+							
+							$('.overlay_pageLoading').removeClass('hidden');							
 							app.GroupFactory.addNewSplitComponent(serializedData) //sending and asigning few group type specific values
 								.done(function(result){
 									if(!result.length){
@@ -162,6 +163,7 @@ var app = app || {} ;
 									
 									app.GroupLandingApp.handleGroupCreationResponse(resultJSON, resultJSON.groupType, false);
 									
+									$('.overlay_pageLoading').removeClass('hidden');
 									//now refreshing existing component list
 									_super.loadExitingData(false)
 										.complete(function(){

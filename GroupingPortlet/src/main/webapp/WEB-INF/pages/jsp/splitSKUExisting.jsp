@@ -23,10 +23,10 @@
 		<tr>
 			<td>
 				<c:if test="${readonly =='yes'}">  
-				<input type="checkbox" name="selectedItem[]" value="{{=row.size}}" class="item-check" style="margin-left:12px" disabled="disabled" />
+				<input type="checkbox" name="selectedItem[]" value="{{=row.mdmid}}" class="item-check" style="margin-left:12px" disabled="disabled" />
 				</c:if>
 				<c:if test="${readonly !='yes'}">  
-				<input type="checkbox" name="selectedItem[]" value="{{=row.size}}" class="item-check" style="margin-left:12px"/>
+				<input type="checkbox" name="selectedItem[]" value="{{=row.mdmid}}" class="item-check" style="margin-left:12px"/>
 				</c:if>
 			</td>
 			<td class="text-center">{{=row.StyleOrinNo}}</td>
