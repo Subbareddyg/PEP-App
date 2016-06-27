@@ -837,7 +837,7 @@ public class XqueryConstants {
         "   T.VIEWERURL,                   "+
         "   T.SHOTTYPE                     "+
         " FROM ADSE_PET_CATALOG AIC,       "+
-        "   XMLTABLE( 'for $image in $XML_DATA/pim_entry/entry/Image_Sec_Spec/Scene7_Images/Id return $image' passing AIC.XML_DATA AS \"XML_DATA\" COLUMNS IMAGEURL VARCHAR(1000) path 'ImageURL', SWATCHURL VARCHAR(1000) path 'SwatchURL', VIEWERURL VARCHAR(1000) path 'ViewerURL', SHOTTYPE VARCHAR(100) path 'ViewerURL/Shot_Type') T "+
+        "   XMLTABLE( 'for $image in $XML_DATA/pim_entry/entry/Image_Sec_Spec/Scene7_Images return $image'  passing AIC.XML_DATA AS \"XML_DATA\" COLUMNS IMAGEURL VARCHAR(1000) path 'ImageURL', SWATCHURL VARCHAR(1000) path 'SwatchURL', VIEWERURL VARCHAR(1000) path 'ViewerURL', SHOTTYPE VARCHAR(100) path 'ViewerURL/Shot_Type') T "+
         " WHERE AIC.MDMID = ?   ";
 
         LOGGER.debug("IMAGE LINKS QUERY -- \n" + IMAGE_LINKS_QUERY);
@@ -852,43 +852,38 @@ public class XqueryConstants {
      * @return
      */
     public String getGroupingInfoDetails(){
-        final String GROUPING_INFO_QUERY = " SELECT  "+
-        	" AGC.MDMID GROUP_ID, "+
+        final String GROUPING_INFO_QUERY = " SELECT AGC.MDMID GROUP_ID, "+
         	" AGC.DEF_DEPT_ID DEPT_ID, "+
         	" AGC.DEF_PRIMARYSUPPLIERVPN VENDOR_STYLE, "+
-        	" AGC.ENTRY_TYPE GROUP_TYPE,  "+
-        	" s.VenId, "+
-        	" s.VenName, "+
-        	" s.OmnichannelIndicator, "+
-        	" AIC.CLASS_ID, "+
-        	" Vendor_Image, "+
-        	" Vendor_Sample   "+
-        	" FROM VENDORPORTAL.ADSE_GROUP_CATALOG AGC LEFT OUTER join  "+
-        	" VENDORPORTAL.ADSE_SUPPLIER_CATALOG sup on SUP.MDMID=AGC.DEF_PRIMARY_SUPPLIER_ID "+
-        	" LEFT OUTER JOIN  "+
-        	" VENDORPORTAL.ADSE_GROUP_CHILD_MAPPING AGCM  ON "+
-        	" AGCM.MDMID=AGC.MDMID AND AGCM.COMPONENT_DEFAULT='true' "+
+        	" AGC.ENTRY_TYPE GROUP_TYPE, s.VenId, s.VenName, s.OmnichannelIndicator, "+
+        	" AIC.CLASS_ID,  Vendor_Image,  Vendor_Sample,  AGC.GROUP_OVERALL_STATUS_CODE, "+
+        	" AGC.GROUP_IMAGE_STATUS_CODE, "+
+        	" AGC.GROUP_CONTENT_STATUS_CODE, "+
+        	" GROUP_XML.DESCRIPTION "+
+        	" FROM VENDORPORTAL.ADSE_GROUP_CATALOG AGC "+
+        	" LEFT OUTER JOIN VENDORPORTAL.ADSE_SUPPLIER_CATALOG sup "+
+        	" ON SUP.MDMID=AGC.DEF_PRIMARY_SUPPLIER_ID "+
+        	" LEFT OUTER JOIN VENDORPORTAL.ADSE_GROUP_CHILD_MAPPING AGCM "+
+        	" ON AGCM.MDMID   =AGC.MDMID "+
+        	" AND AGCM.COMPONENT_DEFAULT='true' "+
         	" LEFT OUTER JOIN VENDORPORTAL.ADSE_ITEM_CATALOG AIC "+
-        	" on AIC.MDMID = AGCM.COMPONENT_STYLE_ID "+
-        	" LEFT OUTER JOIN VENDORPORTAL.ADSE_PET_CATALOG APC "+ 
+        	" ON AIC.MDMID = AGCM.COMPONENT_STYLE_ID "+
+        	" LEFT OUTER JOIN VENDORPORTAL.ADSE_PET_CATALOG APC "+
         	" ON APC.MDMID=AIC.MDMID, "+
-        	" XMLTABLE('for $i in $pet/pim_entry/entry  return   "+       
-        	" <out>    "+                                            
-        	" <img>{if(count($i/Image_Sec_Spec/Images//*) gt 0) then \"Y\" else \"N\"}</img>   "+ 
-        	" <sample>{if(count($i/Image_Sec_Spec/Sample//*) gt 0) then \"Y\" else \"N\"}</sample>  "+   
-        	" </out>'  "+
-        	" passing APC.xml_data AS \"pet\" "+ 
-        	" columns  "+
-        	" Vendor_Image VARCHAR2(1) path '/out/img',  "+
-        	" Vendor_Sample VARCHAR2(1) path '/out/sample') (+)PET_XML, "+
-        	" XMLTABLE('for $i in $XML_DATA/pim_entry/entry  return $i'  "+
-        	" passing sup.xml_data AS \"XML_DATA\"  "+
-        	" COLUMNS "+ 
-        	" Id VARCHAR2(20) path 'Supplier_Ctg_Spec/Id',  "+
-        	" VenName VARCHAR2(20) path 'Supplier_Ctg_Spec/Name',  "+
-        	" VenId VARCHAR2(20) path 'Supplier_Ctg_Spec/VEN_Id', "+ 
-        	" OmnichannelIndicator VARCHAR(2) path 'if (Supplier_Site_Spec/Omni_Channel/Omni_Channel_Indicator eq \"true\") then \"Y\" else \"N\"' ) (+)s "+
-        	" WHERE AGC.MDMID=?";
+        	" XMLTABLE('for $i in $pet/pim_entry/entry  return    <out>    " +
+        	" <img>{if(count($i/Image_Sec_Spec/Images//*) gt 0) then \"Y\" else \"N\"}</img>   "+
+        	" <sample>{if(count($i/Image_Sec_Spec/Sample//*) gt 0) then \"Y\" else \"N\"}</sample>  " +
+        	" </out>' passing APC.xml_data AS \"pet\" columns Vendor_Image VARCHAR2(1) " +
+        	" path '/out/img', Vendor_Sample VARCHAR2(1) path '/out/sample') " +
+        	" (+)PET_XML, " +        	
+        	" XMLTABLE('for $i in $XML_DATA/pim_entry/entry  return $i' passing sup.xml_data   " +   
+        	" AS \"XML_DATA\" COLUMNS Id      VARCHAR2(20) path 'Supplier_Ctg_Spec/Id', VenName VARCHAR2(20) " +
+        	" path 'Supplier_Ctg_Spec/Name', VenId VARCHAR2(20) path 'Supplier_Ctg_Spec/VEN_Id', OmnichannelIndicator VARCHAR(2) path 'if "+
+        	" (Supplier_Site_Spec/Omni_Channel/Omni_Channel_Indicator eq \"true\") then \"Y\" else \"N\"' ) (+)s, " +
+        	" XMLTABLE('for $i in $group/pim_entry/entry/Group_Ctg_Spec return <out><desc>{$i/Description}</desc></out>' Passing AGC.XML_DATA AS \"group\"  " +
+        	" Columns Description CLOB path '/out/desc') (+)GROUP_XML "+ 
+        	" WHERE AGC.MDMID=? ";
+
         
         return GROUPING_INFO_QUERY;    
         
