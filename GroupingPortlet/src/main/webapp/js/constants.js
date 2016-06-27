@@ -5,6 +5,7 @@ var app = app || {};
 		defaults: {
 			contextPath: '',
 			maxGroupNameChars: 150,
+			minGroupDescChars: 40,
 			maxGroupDescChars: 7000,
 		},
 		

@@ -865,7 +865,13 @@ public class XqueryConstants {
 		}
 		if (null != upcNoSearch && !("").equals(upcNoSearch.trim())) {
 			getNewCPGDetails = getNewCPGDetails + " AND NVL(SEARCH.PARENT_MDMID,SEARCH.MDMID)  = " +
-					"(SELECT PARENT_MDMID FROM ADSE_ITEM_CATALOG WHERE NUMBER_04 =:upcNoSql)";
+					//"(SELECT PARENT_MDMID FROM ADSE_ITEM_CATALOG WHERE NUMBER_04 =:upcNoSql)";
+			"(SELECT " +
+			"CASE                                " +
+	        "when PRIMARY_UPC is null then MDMID          " +    
+	        "when PRIMARY_UPC = ' '  then MDMID         " +   
+	        "else     PARENT_MDMID   end PARENT_MDMID " +
+	        "FROM ADSE_ITEM_CATALOG WHERE NUMBER_04 =:upcNoSql) ";
 		}
 		getNewCPGDetails = getNewCPGDetails + " ORDER BY SEARCH.MDMID";
 
@@ -905,7 +911,13 @@ public class XqueryConstants {
 				}
 				if (null != upcNoSearch && !("").equals(upcNoSearch.trim())) {
 					getNewGBSDetails = getNewGBSDetails + " AND NVL(ITEM.PARENT_MDMID,ITEM.MDMID)  = " +
-							"(SELECT PARENT_MDMID FROM ADSE_ITEM_CATALOG WHERE NUMBER_04 =:upcNoSql)";
+							//"(SELECT PARENT_MDMID FROM ADSE_ITEM_CATALOG WHERE NUMBER_04 =:upcNoSql)";
+							"(SELECT " +
+							"CASE                                " +
+					        "when PRIMARY_UPC is null then MDMID          " +    
+					        "when PRIMARY_UPC = ' '  then MDMID         " +   
+					        "else     PARENT_MDMID   end PARENT_MDMID " +
+					        "FROM ADSE_ITEM_CATALOG WHERE NUMBER_04 =:upcNoSql) ";
 				}
 				getNewGBSDetails = getNewGBSDetails + " group by ITEM.PARENT_MDMID having COUNT(ITEM.PARENT_MDMID) > 1";
 				//getNewGBSDetails = getNewGBSDetails + " ORDER BY ITEM.PARENT_MDMID";
@@ -978,7 +990,13 @@ public class XqueryConstants {
 				}
 				if (null != upcNoSearch && !("").equals(upcNoSearch.trim())) {
 					getNewGBSDetails = getNewGBSDetails + " AND NVL(ITEM.PARENT_MDMID,ITEM.MDMID)  = " +
-							"(SELECT PARENT_MDMID FROM ADSE_ITEM_CATALOG WHERE NUMBER_04 =:upcNoSql)";
+							//"(SELECT PARENT_MDMID FROM ADSE_ITEM_CATALOG WHERE NUMBER_04 =:upcNoSql)";
+							"(SELECT " +
+							"CASE                                " +
+					        "when PRIMARY_UPC is null then MDMID          " +    
+					        "when PRIMARY_UPC = ' '  then MDMID         " +   
+					        "else     PARENT_MDMID   end PARENT_MDMID " +
+					        "FROM ADSE_ITEM_CATALOG WHERE NUMBER_04 =:upcNoSql) ";
 				}
 				//getNewGBSDetails = getNewGBSDetails + " ORDER BY ITEM.PARENT_MDMID";
 
@@ -1064,7 +1082,14 @@ public class XqueryConstants {
 			count = 1;
 		}	
 		if (!StringUtils.isEmpty(upcNoSearch)) {
-			getRegularBeautySearchResult.append("   AND NVL(SEARCH.PARENT_MDMID,SEARCH.MDMID)  = (SELECT PARENT_MDMID FROM ADSE_ITEM_CATALOG WHERE NUMBER_04 =:upcNoSql) ");
+			getRegularBeautySearchResult.append("   AND NVL(SEARCH.PARENT_MDMID,SEARCH.MDMID)  = " +
+					//"(SELECT PARENT_MDMID FROM ADSE_ITEM_CATALOG WHERE NUMBER_04 =:upcNoSql) ");
+					"(SELECT " +
+					"CASE                                " +
+			        "when PRIMARY_UPC is null then MDMID          " +    
+			        "when PRIMARY_UPC = ' '  then MDMID         " +   
+			        "else     PARENT_MDMID   end PARENT_MDMID " +
+			        "FROM ADSE_ITEM_CATALOG WHERE NUMBER_04 =:upcNoSql) ");
 			count = 1;
 		}	
 		if(count == 0 || !groupIdSearch.isEmpty() || !groupNameSearch.isEmpty())
@@ -1108,8 +1133,8 @@ public class XqueryConstants {
 		}
 		if(!StringUtils.isEmpty(groupNameSearch))
 		{
-			getRegularBeautySearchResult.append(" AND SEARCH.GROUP_NAME LIKE '%");
-			getRegularBeautySearchResult.append(groupNameSearch);
+			getRegularBeautySearchResult.append(" AND UPPER(SEARCH.GROUP_NAME) LIKE '%");
+			getRegularBeautySearchResult.append(groupNameSearch.toUpperCase());
 			getRegularBeautySearchResult.append("%'");
 		}
 		
@@ -1139,7 +1164,14 @@ public class XqueryConstants {
 				getRegularBeautySearchResult.append("   AND SEARCH.PRIMARY_SUPPLIER_ID =:supplierIdSql ");
 			}		
 			if (!StringUtils.isEmpty(upcNoSearch)) {
-				getRegularBeautySearchResult.append("   AND NVL(SEARCH.PARENT_MDMID,SEARCH.MDMID)  = (SELECT PARENT_MDMID FROM ADSE_ITEM_CATALOG WHERE NUMBER_04 =:upcNoSql) ");
+				getRegularBeautySearchResult.append("   AND NVL(SEARCH.PARENT_MDMID,SEARCH.MDMID)  = " +
+						//"(SELECT PARENT_MDMID FROM ADSE_ITEM_CATALOG WHERE NUMBER_04 =:upcNoSql) ");
+						"(SELECT " +
+						"CASE                                " +
+				        "when PRIMARY_UPC is null then MDMID          " +    
+				        "when PRIMARY_UPC = ' '  then MDMID         " +   
+				        "else     PARENT_MDMID   end PARENT_MDMID " +
+				        "FROM ADSE_ITEM_CATALOG WHERE NUMBER_04 =:upcNoSql) ");
 			}
 			getRegularBeautySearchResult.append("     )                                                                        ");	
 		}
@@ -1261,7 +1293,14 @@ public class XqueryConstants {
 			count = 1;
 		}	
 		if (!StringUtils.isEmpty(upcNoSearch)) {
-			getRegularBeautySearchResult.append("   AND NVL(SEARCH.PARENT_MDMID,SEARCH.MDMID)  = (SELECT PARENT_MDMID FROM ADSE_ITEM_CATALOG WHERE NUMBER_04 =:upcNoSql) ");
+			getRegularBeautySearchResult.append("   AND NVL(SEARCH.PARENT_MDMID,SEARCH.MDMID)  = " +
+					//"(SELECT PARENT_MDMID FROM ADSE_ITEM_CATALOG WHERE NUMBER_04 =:upcNoSql) ");
+					"(SELECT " +
+					"CASE                                " +
+			        "when PRIMARY_UPC is null then MDMID          " +    
+			        "when PRIMARY_UPC = ' '  then MDMID         " +   
+			        "else     PARENT_MDMID   end PARENT_MDMID " +
+			        "FROM ADSE_ITEM_CATALOG WHERE NUMBER_04 =:upcNoSql) ");
 			count = 1;
 		}	
 		if(count == 0 || !groupIdSearch.isEmpty() || !groupNameSearch.isEmpty())
@@ -1305,8 +1344,8 @@ public class XqueryConstants {
 		}
 		if(!StringUtils.isEmpty(groupNameSearch))
 		{
-			getRegularBeautySearchResult.append(" AND SEARCH.GROUP_NAME LIKE '%");
-			getRegularBeautySearchResult.append(groupNameSearch);
+			getRegularBeautySearchResult.append(" AND UPPER(SEARCH.GROUP_NAME) LIKE '%");
+			getRegularBeautySearchResult.append(groupNameSearch.toUpperCase());
 			getRegularBeautySearchResult.append("%'");
 		}
 		
@@ -1336,7 +1375,14 @@ public class XqueryConstants {
 				getRegularBeautySearchResult.append("   AND SEARCH.PRIMARY_SUPPLIER_ID =:supplierIdSql ");
 			}		
 			if (!StringUtils.isEmpty(upcNoSearch)) {
-				getRegularBeautySearchResult.append("   AND NVL(SEARCH.PARENT_MDMID,SEARCH.MDMID)  = (SELECT PARENT_MDMID FROM ADSE_ITEM_CATALOG WHERE NUMBER_04 =:upcNoSql) ");
+				getRegularBeautySearchResult.append("   AND NVL(SEARCH.PARENT_MDMID,SEARCH.MDMID)  = " +
+						//"(SELECT PARENT_MDMID FROM ADSE_ITEM_CATALOG WHERE NUMBER_04 =:upcNoSql) ");
+						"(SELECT " +
+						"CASE                                " +
+				        "when PRIMARY_UPC is null then MDMID          " +    
+				        "when PRIMARY_UPC = ' '  then MDMID         " +   
+				        "else     PARENT_MDMID   end PARENT_MDMID " +
+				        "FROM ADSE_ITEM_CATALOG WHERE NUMBER_04 =:upcNoSql) ");
 			}
 			getRegularBeautySearchResult.append("     )                                                                        ");
 		}

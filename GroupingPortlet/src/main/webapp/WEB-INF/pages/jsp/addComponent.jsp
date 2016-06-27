@@ -46,7 +46,7 @@
 						<td><b rel="groupDesc"><fmt:message key="addcomponent.screen.level.groupingDesc" /></b></th>
 						<td>
 							<span class="editable" data-type="textarea" data-field-name="groupDesc" data-required="true"><c:out value="${groupDetailsForm.groupDesc}" /></span>
-							<div class="maxChars hidden"><div class="charlimit">Current Chars: <span id="descCurChars">0</span> Max Chars: <span id="descMaxChars">0</span></div>
+							<div class="maxChars hidden"><div class="charlimit">Current Chars: <span id="descCurChars">0</span> Min Chars:<span id="descMinChars">0</span> Max Chars: <span id="descMaxChars">0</span></div>
 						</td>
 						<td></td>
 						<td></td>
@@ -301,7 +301,7 @@
 			<div class="pagination-container" style="text-align:center; margin-top: 15px;">
 				<c:if test="${readonly !='yes'}"> 
 					<c:choose>
-						<c:when test="${groupDetailsForm.groupType != 'RCG' && groupDetailsForm.groupType != 'CPG'}">
+						<c:when test="${groupDetailsForm.groupType != 'RCG' && groupDetailsForm.groupType != 'CPG' && groupDetailsForm.groupType != 'GSG'}">
 							<input type="button" class="btn" value="Save" style="width: 70px;" id="save-existing-group"/>
 						</c:when>
 					</c:choose>

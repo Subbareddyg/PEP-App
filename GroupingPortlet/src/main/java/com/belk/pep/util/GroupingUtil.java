@@ -35,9 +35,9 @@ public class GroupingUtil {
 			Reader reader = data.getCharacterStream();
 			BufferedReader br = new BufferedReader(reader);
 			//read the line.
-			String line;
-			while (null != (line = br.readLine())) {
-				sb.append(line);
+			int b;
+			while (-1 != (b = br.read())) {
+				sb.append((char)b);
 			}
 			// Close the buffereader.
 			br.close();

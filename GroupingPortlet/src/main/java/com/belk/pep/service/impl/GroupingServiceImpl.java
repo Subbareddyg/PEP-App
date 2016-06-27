@@ -165,7 +165,7 @@ public class GroupingServiceImpl implements GroupingService {
 			}
 
 			if (null != responseMsgCode && responseMsgCode.equals(GroupingConstants.SUCCESS_CODE)) {
-				responseMsg = "#" + groupIdRes + " - " + prop.getProperty(GroupingConstants.ADD_COMPONENT_SCG_SERVICE_SUCCESS);
+				responseMsg = "Grouping #" + groupIdRes + " - " + prop.getProperty(GroupingConstants.ADD_COMPONENT_SCG_SERVICE_SUCCESS);
 				groupCreationStatus = GroupingConstants.GROUP_CREATED_WITH_COMPONENT_SCG;
 				LOGGER.info("Add Component to Split Color Group. ResponseMsg100::Success-->" + responseMsg);
 			} else {
@@ -207,7 +207,7 @@ public class GroupingServiceImpl implements GroupingService {
 			}
 
 			if (null != responseMsgCode && responseMsgCode.equals(GroupingConstants.SUCCESS_CODE)) {
-				responseMsg = "#" + groupIdRes + " - " + prop.getProperty(GroupingConstants.ADD_COMPONENT_SSG_SERVICE_SUCCESS);
+				responseMsg = "Grouping #" + groupIdRes + " - " + prop.getProperty(GroupingConstants.ADD_COMPONENT_SSG_SERVICE_SUCCESS);
 				groupCreationStatus = GroupingConstants.GROUP_CREATED_WITH_COMPONENT_SSG;
 				LOGGER.info("Add Component to Split SKU Group. ResponseMsg100::Success-->" + responseMsg);
 			} else {
@@ -2138,7 +2138,7 @@ public class GroupingServiceImpl implements GroupingService {
 				groupAttributeForm = getSplitColorDetailsList.get(i);
 				String entryType = groupAttributeForm.getEntryType();
 				if (null != entryType && ("Style").equals(entryType)) {
-					productName = groupAttributeForm.getProdName();
+					productName = GroupingUtil.checkNull(groupAttributeForm.getProdName());
 					if (LOGGER.isDebugEnabled()) {
 						LOGGER.debug("Style ProductName is -->" + productName);
 					}
@@ -2146,6 +2146,12 @@ public class GroupingServiceImpl implements GroupingService {
 					
 					if (LOGGER.isDebugEnabled()) {
 						LOGGER.debug("ColorCode------------added------------->"	+ groupAttributeForm.getColorCode());
+					}
+					if("".equals(productName)){
+						productName = groupAttributeForm.getProdName();
+						if(productName.indexOf(":") != -1){
+							productName = productName.substring(0, productName.indexOf(":"));
+						}
 					}
 					groupAttributeForm.setProdName(productName);
 					updatedSplitColorDetailsList.add(groupAttributeForm);

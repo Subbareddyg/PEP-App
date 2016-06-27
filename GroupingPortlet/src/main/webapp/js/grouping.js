@@ -66,6 +66,7 @@ var app = app || {};
 						minHeight: 370,
 						create: function(event, ui){
 							$('#nameMaxChars').text(app.Global.defaults.maxGroupNameChars);
+							$('#descMinChars').text(app.Global.defaults.minGroupDescChars);
 							$('#descMaxChars').text(app.Global.defaults.maxGroupDescChars);
 						},
 						beforeClose: function(event, ui){
@@ -375,6 +376,7 @@ var app = app || {};
 				$("#startDate , #endDate").on('keydown',function(e){
 					e.preventDefault();
 				});
+				
 				//group create button action
 				$('#btnCreateGroup').on('click', function(e){
 					//triming all whitespaces
@@ -386,6 +388,12 @@ var app = app || {};
 					
 					if($('#createGroupForm')[0].checkValidity()){
 						e.preventDefault();  //preventing default form submission
+						
+						if($('#groupDesc').val().trim().length < app.Global.defaults.minGroupDescChars){
+							$('#error-massege').html("Please enter at least " + app.Global.defaults.minGroupDescChars + " characters in description field.");
+							$('#errorBox').dialog('open');
+							return;
+						}
 						
 						var checkString = [];
 						 
@@ -601,7 +609,7 @@ var app = app || {};
 							return;
 						}
 						
-//now looking the selected dept list to determine whether it has been generated or typed
+						//now looking the selected dept list to determine whether it has been generated or typed
 						var classArr = $(this).val().trim().split(',');
 						
 						//looking inside the available list to validate
@@ -635,7 +643,7 @@ var app = app || {};
 				
 				
 				//bootstrapping events when DOM is ready State
-				$(document).on('ready', function(e){				
+				$(document).on('ready', function(e){
 					if(app.URLFactory.getURL('groupSearchUrl')){
 						//code to fetch all depts
 						
@@ -1018,6 +1026,15 @@ var app = app || {};
 				
 				
 				$('#split-components').on('click',function(){
+					/**
+					* new rule updated on 06272016
+					* if selected item is only one then the its corresponding radio will be checked
+					* in other ways first selcted item will have default radio selected
+					*/
+					
+					if($('.item-check:checked').length == 1){
+						$('.item-check:checked').parent().parent().find('input[type=radio]').prop('checked', true);
+					}
 					
 					if($('.item-check:checked').length < 1){
 						$('#error-massege').html("Please select atleast one item.");
@@ -1028,10 +1045,6 @@ var app = app || {};
 					}else{
 						$('#dlgGroupCreate').dialog('open');
 					}
-					
-					
-					
-					
 				})
 				
 			}catch(ex){

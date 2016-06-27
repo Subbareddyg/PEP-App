@@ -164,7 +164,7 @@
 					if(_super.$(_super.config.dtContainer).find('input[type="radio"]').hasClass('trueDefult')){
 						_super.$(_super.config.dtContainer).find('input[type="radio"]').prop('disabled', false);
 					}else{
-						_super.$(_super.config.dtContainer).find('input[type="radio"]').prop('disabled', true);
+						_super.$(_super.config.dtContainer).find('input[type="radio"]').prop('checked', false).prop('disabled', true);
 					}
 				}
 			});
@@ -195,7 +195,7 @@
 					if(_super.$(_super.config.dtContainer).find('input[type="radio"]').hasClass('trueDefult')){
 						_super.$(this).parent().parent().find('input[type=radio]').prop('disabled', false);
 					}else{
-						_super.$(this).parent().parent().find('input[type=radio]').prop('disabled', true);
+						_super.$(this).parent().parent().find('input[type=radio]').prop('checked', false).prop('disabled', true);
 					}
 					
 					/**

@@ -2152,6 +2152,15 @@ try{
 						: "No";
 				
 				jsonObjComponent.put(GroupingConstants.ALREADY_IN_SAME_GROUP, isAlreadyInSameGroup);
+				
+				// Start modification for Defect#3037
+				String isAlreadyInGroup = styleAttributeForm.getIsAlreadyInGroup();
+				isAlreadyInGroup = null == isAlreadyInGroup ? "No" : ("").equalsIgnoreCase(isAlreadyInGroup.trim()) ? "No" : ("N")
+						.equalsIgnoreCase(isAlreadyInGroup.trim()) ? "No" : ("Y").equalsIgnoreCase(isAlreadyInGroup.trim()) ? "Yes"
+						: "No";
+				jsonObjComponent.put(GroupingConstants.ALREADY_IN_GROUP, isAlreadyInGroup);
+				// End modification for Defect#3037
+				
 				jsonObjComponent.put(GroupingConstants.IS_GROUP, styleAttributeForm.getIsGroup());
 				jsonObjComponent.put(GroupingConstants.PRIORITY, styleAttributeForm.getPriority());
 				jsonObjComponent.put(GroupingConstants.HAVE_CHILD_GROUP, styleAttributeForm.getHaveChildGroup());
