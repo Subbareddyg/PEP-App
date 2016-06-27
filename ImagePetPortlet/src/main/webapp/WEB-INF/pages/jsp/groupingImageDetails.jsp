@@ -199,7 +199,10 @@ function releseLockedPet(loggedInUser,releseLockedPetURL){
 <%--Style Info Starts here--%>	
 
 
-<div class="cars_panel x-hidden" id="GroupingInfoSection">								
+
+
+<div class="cars_panel x-hidden" id="GroupingInfoSection">
+							
 	<div class="x-panel-header">
 		<fmt:message 	key="label.groupingInfo.header" />
 	</div>	
@@ -290,10 +293,12 @@ function releseLockedPet(loggedInUser,releseLockedPetURL){
 <c:if test ="${requestScope.userAttr == 'dca'}">
 <div id="img_mgmt_pnl" class="cars_panel x-hidden" style="margin-top: 0px;">
 
+
 	<div class="x-panel-header">
 		<strong><fmt:message key="label.vpisampleImage.header" /></strong>
 	</div>
 	<div class="x-panel-body" style="width:906px;">	
+
 	
 	
 <div class="userButtons" style="margin-bottom:10px">
@@ -407,14 +412,19 @@ function releseLockedPet(loggedInUser,releseLockedPetURL){
 				<th><fmt:message key="image.scene7.viewurl" /></th>
 				</tr>
 				</thead>
+
+				<c:if test="${not empty imageDetailsForm.imageLinkVOList}">	
 				<c:forEach items= "${imageDetailsForm.imageLinkVOList}"  var="imageLinkVOList">
-				<tr>
-					<td><c:out value="${imageLinkVOList.shotType}"/></td>
-					<td><a href="${imageLinkVOList.imageURL}" target="_blank">URL</a></td>
-					<td><a href="${imageLinkVOList.swatchURL}" target="_blank">URL</a></td>
-					<td><a href="${imageLinkVOList.viewURL}" target="_blank">URL</a></td>										
+				<tr>  
+				<c:if test="${not empty imageLinkVOList.imageURL}">
+					<td><c:out value="${imageLinkVOList.shotType}"/></td>					
+					<td><a href="#" onclick="openGRPScen7Image('<c:out value="${imageLinkVOList.imageURL}"/>');">ImageURL</a></td>
+					<td><a href="#" onclick="openGRPScen7Image('<c:out value="${imageLinkVOList.swatchURL}"/>');">SwatchURL</a></td>
+					<td><a href="#" onclick="openGRPScen7Image('<c:out value="${imageLinkVOList.viewURL}"/>');">ViewURL</a></td>
+					</c:if>					
 				</tr>
 				</c:forEach>
+				</c:if>
 				</table>
 				</form>
 			</div>
@@ -460,6 +470,7 @@ function releseLockedPet(loggedInUser,releseLockedPetURL){
 				
 		</div>
 	</div>
+
 </div>
 </form>
 <%--PEP History Block ends Here--%>
@@ -501,6 +512,12 @@ function releseLockedPet(loggedInUser,releseLockedPetURL){
 		<input class="btn" type="button" name="imageSave1" id="imageSave1" value="Add Image" style="margin-right: 10px;" onclick="validateGrpImageFields('imageuploadformid');"/>
 	</li>
 </ul>
+<!--Image Loading message starts-->
+	<div id="overlay_groupimageLoading" style="display:none;">
+		<img src="<%=request.getContextPath()%>/img/loading.gif" height="100px;" />
+	</div>	
+
+<!--Image Loading message ends -->
 </form:form>
 </div>
 </div>
@@ -597,11 +614,8 @@ function releseLockedPet(loggedInUser,releseLockedPetURL){
 		</div>
 	</div>
 </div>
-<!--Image Loading message starts-->
-	<div id="overlay_imageLoading" style="display:none;">
-		<img src="<%=request.getContextPath()%>/img/loading.gif" height="100px;"height="100px;" />
-	</div>
-<!--Image Loading message ends -->
+
+
 <%--File Upload Render Ends--%>
 </div>
 </div>
@@ -620,15 +634,14 @@ var uploadImgeId= '${uploadImgeId}';
 
 var groupVPILinks= '${groupVPILinks}';
 
-
+	
 
 
 
 $(function() {
-
-if (typeof groupVPILinks !== "undefined" ) 
+ 
+if ((typeof groupVPILinks !== "undefined" && groupVPILinks !== null) && (uploadImgeId !=="" &&  uploadImgeId !==null) ) 
          { 
-
 
 	  document.getElementById('hidImageId').value = uploadImgeId;
   	  onloadVPILinks(groupVPILinks);
@@ -636,18 +649,16 @@ if (typeof groupVPILinks !== "undefined" )
 	 }
 
 
-
-	  if(uploadStatus=='Y'){	
-		//$("#overlay_Upload").show();
-		//$("#dialog_uploadSuccess").show();
+	  if(uploadStatus=='Y'){		
 		
 		showGrpImageActionMessage('uploadSuccess', '${imageName}');
 		document.getElementById('btnGPImageUploadAction').disabled=true;
 		
-	  }else if(uploadStatus=='N'){		
-			$("#overlay_Upload").show();
-			$("#dialog_uploadFailure").show();
-		}
+	  }else if(uploadStatus=='N'){
+
+	 showGrpImageActionMessage('uploadError', '${imageName}');
+	
+	}
 	if (typeof imageCount !== "undefined" && (imageCount.trim()) > 0) 
          {
 	      document.getElementById('btnGPImageUploadAction').disabled=true;

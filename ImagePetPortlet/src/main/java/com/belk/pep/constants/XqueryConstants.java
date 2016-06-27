@@ -1023,12 +1023,12 @@ public class XqueryConstants {
      */
     public  String getGroupingScene7ImageLinks() {
         
-        LOGGER.info("***Entering getScene7ImageLinks() method.");
+        LOGGER.info("***Entering getGroupingScene7ImageLinks() method.");
         
         String IMAGE_LINKS_QUERY = " SELECT AGC.MDMID, "+
         	" T.IMAGEURL, T.SWATCHURL, T.VIEWERURL, "+
         	" T.SHOTTYPE FROM ADSE_GROUP_CATALOG AGC, "+
-        	" XMLTABLE( 'for $image in $XML_DATA/pim_entry/entry/Image_Sec_Spec/Scene7_Images/Id return $image'  "+
+        	" XMLTABLE( 'for $image in $XML_DATA/pim_entry/entry/Image_Sec_Spec/Scene7_Images return $image'  "+
         	" passing AGC.XML_DATA AS \"XML_DATA\"  "+
         	" COLUMNS  IMAGEURL VARCHAR(1000) path 'ImageURL',  "+
         	" SWATCHURL VARCHAR(1000) path 'SwatchURL',  "+

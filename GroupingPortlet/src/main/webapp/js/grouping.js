@@ -377,7 +377,13 @@ var app = app || {};
 				});
 				//group create button action
 				$('#btnCreateGroup').on('click', function(e){
-					$('#startDate').prop('readonly',false);
+					//triming all whitespaces
+					$('#createGroupForm').find('input[type=text], textarea').each(function(){
+						$(this).val($(this).val().trim());
+					});
+					
+					$('#startDate').prop('readonly', false); //for validation purpose making it editable again
+					
 					if($('#createGroupForm')[0].checkValidity()){
 						e.preventDefault();  //preventing default form submission
 						

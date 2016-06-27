@@ -2,7 +2,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <head>
-
+ 
      
      
      <title>WorkFlow Display.</title>
@@ -184,8 +184,8 @@ lockClearOnBack.value='1';
 				<c:if test="${isInternal =='yes'}">
 					Show:
 						<select name="workListType" id="workListType" onchange="document.getElementById('workListDisplayForm').submit()" style="width: auto; margin-right:10px;margin-bottom:4px;">
-							<option value="Regular PET" <c:if test="${'Groupings'!= workflowForm.workListType}"> selected="selected" </c:if>>Regular PET</option>
-							<option value="Groupings" <c:if test="${'Groupings'== workflowForm.workListType}"> selected="selected" </c:if>>Groupings</option>
+							<option value="Regular PET" <c:if test="${'Groupings'!= workflowForm.workListType}"> selected="selected" </c:if>>Item PET</option>
+							<option value="Groupings" <c:if test="${'Groupings'== workflowForm.workListType}"> selected="selected" </c:if>>Grouping PET</option>
 						</select>
 				</c:if>
 				<input type="hidden" id="updateDateMessage" name="updateDateMessage" value="${workflowForm.updateCompletionDateMsg}"/>
@@ -384,7 +384,7 @@ lockClearOnBack.value='1';
 													<input type="checkbox" name="styleItem" id="styleItem" class="checkbox1" value="${workFlow.orinNumber}_${workFlow.petStatus}" onclick="childCheckedRows(this,'${workFlow.orinNumber}','${workflowForm.searchClicked}', '${workFlow.isGroup}' );getPetStatValue('${workFlow.petStatus}')" style="margin:0;" data-group="${workFlow.isGroup}"/>
 												</c:if>
 												<c:if test="${workFlow.isGroup == 'Y'}"	>
-													<input type="checkbox" name="styleItem" id="styleItem" class="checkbox1" value="${workFlow.orinNumber}_${workFlow.petStatus}" onclick="getPetStatValue('${workFlow.petStatus}')" style="margin:0;" data-group="${workFlow.isGroup}"/>
+													<input type="checkbox" name="styleItem" id="styleItem" class="checkbox1" value="${workFlow.orinNumber}_${workFlow.petStatus}_${workFlow.entryType}" onclick="getPetStatValue('${workFlow.petStatus}')" style="margin:0;" data-group="${workFlow.isGroup}"/>
 												</c:if>
 											</div>
 											
@@ -1085,7 +1085,7 @@ lockClearOnBack.value='1';
 				<img id="parentSpan_{{=item.styleOrinNum}}_collapsed" onclick="expandCollapse('{{=item.styleOrinNum}}','{{=item.advSearchClicked}}', '{{=item.isGroup}}', '{{=uniqueIdentifier===undefined ? '' : uniqueIdentifier}}')" src="${contextpath}${imagemidpath}collapsed.png"  
 					style="display:none;cursor:pointer" style="cursor:pointer;border:0;" width="14" rel="parentSpan_{{=item.styleOrinNum}}_{{=random}}_collapsed" />
 					
-					<input type="checkbox" name="styleItem" id="styleItem" class="checkbox1" value="{{=item.styleOrinNum}}_{{=item.petStatus}}" onclick="getPetStatValue('{{=item.petStatus}}')" style="margin:0;" data-group="{{=item.isGroup}}"/>
+					<input type="checkbox" name="styleItem" id="styleItem" class="checkbox1" value="{{=item.styleOrinNum}}_{{=item.petStatus}}_{{=item.ENTRY_TYPE}}" onclick="getPetStatValue('{{=item.petStatus}}')" style="margin:0;" data-group="{{=item.isGroup}}"/>
 			{{ }else{  }}
 				<img id="parentSpan_{{=item.styleOrinNum}}_{{=random}}_expand" onclick="expandStyleColorCollapse('{{=item.styleOrinNum}}', '{{=random}}')" src="${contextpath}${imagemidpath}expand.png"  
 					style="cursor:pointer;border:0;" width="14" />
@@ -1110,7 +1110,7 @@ lockClearOnBack.value='1';
 		<a href="#" onclick="contentStatus('{{=item.contentStatus}}','{{=item.styleOrinNum}}')">{{=item.contentStatus}}</a>
 		</td>
 		<td>
-		<a href="#" onclick="imageStatus('{{item.imageStatus}}','{{=item.styleOrinNum}}','{{=item.petStatus}}')">{{=item.imageStatus}}</a>
+		<a href="#" onclick="imageStatus('{{=item.imageStatus}}','{{=item.styleOrinNum}}','{{=item.petStatus}}')">{{=item.imageStatus}}</a>
 		</td>
 		<td>{{=item.petStatus}}
 			<input type="hidden" id="{{=orinNum}}_petStatus" value="{{=item.petStatus}}"/>
@@ -1149,7 +1149,10 @@ lockClearOnBack.value='1';
 								<input type="checkbox" parentOrinNo="{{=item.styleOrinNum}}_{{=random}}" name="selectedStyles" class="checkbox1" value="{{=childItem.styleOrinNum}}_{{=childItem.petStatus}}" onclick="getStyleColorPetStatValue('{{=childItem.petStatus}}')" data-group="{{=childItem.isGroup}}" />
 							</div>
 						</td>		
-						<td>{{=childItem.styleOrinNum}}</td>
+						<td>{{=childItem.styleOrinNum}}
+						{{if(childItem.existsInGroup=='Y'){ }} 
+							<img src="${contextpath}${imagemidpath}grouping_indicator.png" alt="In Grouping" width="9" style="position: relative; top: -8px;" />
+						{{ } }}</td>
 						<td>{{=childItem.deptId}}</td>
 						<td>{{=childItem.vendorName}}</td>
 						<td>{{=childItem.vendorStyle}}</td>
@@ -1158,7 +1161,7 @@ lockClearOnBack.value='1';
 						<a href="#" onclick="contentStatus('{{=childItem.contentStatus}}','{{=item.styleOrinNum}}')">{{=childItem.contentStatus}}</a>
 						</td>
 						<td>
-						<a href="#" onclick="imageStatus('{{childItem.imageStatus}}','{{=item.styleOrinNum}}','{{=childItem.petStatus}}')">{{=childItem.imageStatus}}</a>
+						<a href="#" onclick="imageStatus('{{=childItem.imageStatus}}','{{=item.styleOrinNum}}','{{=childItem.petStatus}}')">{{=childItem.imageStatus}}</a>
 						</td>
 						<td>{{=childItem.petStatus}}
 							<input type="hidden" id="{{=item.styleOrinNum}}_petStatus" value="{{=childItem.petStatus}}"/>

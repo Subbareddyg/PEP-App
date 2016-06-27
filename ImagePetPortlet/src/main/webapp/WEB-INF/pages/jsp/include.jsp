@@ -4,7 +4,6 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 
-
 		
 	<script type="text/javascript" src="<%=response.encodeURL(request.getContextPath()+"/js/dialogModal.js")%>"></script> 
 	

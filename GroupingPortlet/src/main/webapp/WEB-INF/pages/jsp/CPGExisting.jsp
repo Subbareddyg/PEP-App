@@ -3,7 +3,7 @@
 			<table cellpadding="0" cellspacing="0" border="1" class="content-table border-simple colored-row tree-grid">
 				<thead>
 					<tr>
-						<th width="6%"><label><input type="checkbox" class="select-all" /> Select All</label></th>
+						<th width="6%"><label><input type="checkbox" class="select-all" <c:if test="${readonly =='yes'}"> disabled="disabled" </c:if> /> Select All</label></th>
 						<th width="10%"><a href="javascript:;" class="sortable" data-sort-column="StyleOrinNo" data-sorted-by="">ORIN#</a></th>
 						<th width="10%"><a href="javascript:;" class="sortable" data-sort-column="vendorStyleNo" data-sorted-by="">Style Number</a></th>
 						<th width="15%"><a href="javascript:;" class="sortable" data-sort-column="productName" data-sorted-by="">Name</a></th>
@@ -19,7 +19,14 @@
 	{{_.each(data, function(row, key){ }}
 		{{ key = 'E'+key }}
 		<tr>
-			<td><input type="checkbox" name="selectedItem[]" value="{{=row.StyleOrinNo}}" class="item-check" style="margin-left:12px" /></td>
+			<td>
+				<c:if test="${readonly =='yes'}">
+					<input type="checkbox" name="selectedItem[]" value="{{=row.StyleOrinNo}}" class="item-check" style="margin-left:12px" disabled="disabled"/>
+				</c:if>
+				<c:if test="${readonly !='yes'}">
+					<input type="checkbox" name="selectedItem[]" value="{{=row.StyleOrinNo}}" class="item-check" style="margin-left:12px" />
+				</c:if>
+			</td>
 			<td>
 				{{ if(row.childList && row.childList.length){ }}
 					<div class="icon-tree parent-node-expand" data-node-id="{{=(row.StyleOrinNo + '_' + key)}}">
