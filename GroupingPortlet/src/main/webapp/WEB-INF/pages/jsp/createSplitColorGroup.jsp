@@ -143,7 +143,7 @@
 				<td align="right"><fmt:message key="splitgroup.screen.level.groupingDesc" /> <span class="red-text">(*)</span>:</td>
 				<td>
 					<textarea cols="10" rows="4" class="" name="groupDesc" id="groupDesc" required></textarea>
-					<div class="charlimit"><fmt:message key="splitgroup.screen.level.currentChars" /> <span id="descCurChars">0</span> <fmt:message key="splitgroup.screen.level.maxChars" /> <span id="descMaxChars">0</span>
+					<div class="charlimit"><fmt:message key="splitgroup.screen.level.currentChars" /> <span id="descCurChars">0</span> Min Chars:<span id="descMinChars">0</span> <fmt:message key="splitgroup.screen.level.maxChars" /> <span id="descMaxChars">0</span>
 				</td>
 			</tr>
 			<tr class="optional-fields">
