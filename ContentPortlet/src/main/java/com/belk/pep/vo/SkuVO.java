@@ -45,7 +45,31 @@ public class SkuVO  implements Serializable{
 
     private String contentStatusCode;
 
-    /**
+    private String parentStyleColor;
+    
+    private String VPN;
+    
+    public String getVPN() {
+		return VPN;
+	}
+
+
+	public void setVPN(String vPN) {
+		VPN = vPN;
+	}
+
+
+	public String getParentStyleColor() {
+		return parentStyleColor;
+	}
+
+
+	public void setParentStyleColor(String parentStyleColor) {
+		this.parentStyleColor = parentStyleColor;
+	}
+
+
+	/**
      * Instantiates a new sku vo.
      */
     public SkuVO() {

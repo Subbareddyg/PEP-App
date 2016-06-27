@@ -1751,9 +1751,10 @@ public boolean releseLockedPet(  String orin, String pepUserID,String pepFunctio
             Reader reader = data.getCharacterStream();
             BufferedReader br = new BufferedReader(reader);
 
-            String line;
-            while(null != (line = br.readLine())) {
-                sb.append(line);
+            
+            int b;
+            while(-1 != (b = br.read())) {
+                sb.append((char)b);
             }
             br.close();
         } catch (SQLException e) {
@@ -1872,8 +1873,6 @@ public boolean releseLockedPet(  String orin, String pepUserID,String pepFunctio
 				for(Object[] obj : rows){
 					// Populate style information object with the department details
 					styleInformationVO.setDeptDescription(checkNull(obj[0]).toString());
-					
-		            
 					styleInformationVO.setClassDescription(checkNull(obj[1]).toString());
 				}
 			}
@@ -2207,12 +2206,14 @@ public boolean releseLockedPet(  String orin, String pepUserID,String pepFunctio
 					groupsFound.setCompletionDate(completionDate);
 					groupsFound.setPetStatus(checkNull(obj[4]).toString());
 					groupsFound.setContentStatus(prop.getProperty("Content"+checkNull(obj[5])));
-					//groupsFound.setContentStatus("Initiated");
+					
 					groupsFound.setEntryType(checkNull(obj[6]).toString());
 					groupsFound.setComponentType(checkNull(obj[7]).toString());
 					groupsFound.setColorCode(checkNull(obj[8]).toString());
 					groupsFound.setColorDesc(checkNull(obj[9]).toString());
 					groupsFound.setVendorSizeodeDesc(checkNull(obj[10]).toString());
+					groupsFound.setOmniChannelCodeDesc(checkNull(obj[15]).toString());
+					groupsFound.setVPN(checkNull(obj[11]).toString());
 					groupsList.add(groupsFound);
 				}
 			}
@@ -2296,54 +2297,7 @@ public boolean releseLockedPet(  String orin, String pepUserID,String pepFunctio
 		return groupContentHistoryList;
 	}
 	
-	/**
-	 * This method populates grouping specific section data
-	 * @param groupId
-	 * @return GroupingVo
-	 * @throws PEPFetchException
-	 */
-	@Override
-	public GroupingVO getGroupingSpecificAttributes(String groupId) throws PEPFetchException {
-		GroupingVO groupVo = null;
-		Session session = null;
-		
-		List<Object[]> rows = null;
-		final XqueryConstants xqueryConstants = new XqueryConstants();
-		
-		try{
-			session = sessionFactory.openSession();
-			//
-			
-			final Query query = session.createSQLQuery(xqueryConstants.getGroupingSpecificAttributes());
-			
-			if(null!=query){
-				query.setParameter("groupingNo", groupId);
-				rows = query.list();
-			}
-			
-			if(LOGGER.isDebugEnabled()){
-				LOGGER.debug("Rows size in getGroupingSpecificAttributes:::: "+rows.size());
-			}
-			
-			
-			if(null!=rows){
-				groupVo = new GroupingVO();
-				for(Object[] obj : rows){
-					groupVo.setStyleNumber(checkNull(obj[0]));
-					groupVo.setStyleDescription(checkNull(obj[2]));
-					groupVo.setStyleName(checkNull(obj[1]));
-				}
-			}
-		}catch (Exception e) {
-			LOGGER.info("Error in DAO getGroupingSpecificAttributes:::: "+e.getMessage());
-			e.printStackTrace();
-			throw new PEPFetchException();
-		}finally{
-			if(session!=null)
-			session.close();
-		}
-		return groupVo;
-	}
+	
 	
 	/**
 	 * This method populates IPH category drop down list
@@ -2352,7 +2306,7 @@ public boolean releseLockedPet(  String orin, String pepUserID,String pepFunctio
 	 * @throws PEPFetchException
 	 * @author AFUSKJ2 6/17/2016
 	 */
-	@Override //AFUSAM1
+	@Override
 	public List<ItemPrimaryHierarchyVO> selectedIPHCategorydropdown(String groupId) throws PEPFetchException {
 		LOGGER.info("ContentDAOImpl populateIPHCategorydropdown : starts");
         List<Object[]> rows=null;

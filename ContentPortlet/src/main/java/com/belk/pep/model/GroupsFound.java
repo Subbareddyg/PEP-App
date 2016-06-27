@@ -37,6 +37,16 @@ public class GroupsFound {
 	
 	/** Omni Channel Code Description **/
 	private String omniChannelCodeDesc;
+	
+	private String VPN;
+
+	public String getVPN() {
+		return VPN;
+	}
+
+	public void setVPN(String vPN) {
+		VPN = vPN;
+	}
 
 	public String getGroupId() {
 		return groupId;

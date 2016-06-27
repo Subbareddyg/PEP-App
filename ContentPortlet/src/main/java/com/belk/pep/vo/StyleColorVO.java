@@ -47,10 +47,19 @@ public class StyleColorVO implements Serializable {
     /** The color. */
     private String color;
 
+    private String VPN;
 
 
 
-    /** The content status. */
+    public String getVPN() {
+		return VPN;
+	}
+
+	public void setVPN(String vPN) {
+		VPN = vPN;
+	}
+
+	/** The content status. */
     private String contentStatus;
 
     /** The completion date. */
