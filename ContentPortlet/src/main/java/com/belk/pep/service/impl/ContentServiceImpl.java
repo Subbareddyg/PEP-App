@@ -746,24 +746,7 @@ public class ContentServiceImpl implements ContentService {
 		}
 	}
 	
-	/**
-	 * This method populates Grouping Specific Attributes section data
-	 * @param groupId
-	 * @return
-	 * @throws PEPServiceException
-	 * @author AFUSKJ2 6/17/2016
-	 */
-	@Override
-	public GroupingVO getGroupingSpecificAttributes(String groupId) throws PEPServiceException {
-		try{
-			return contentDAO.getGroupingSpecificAttributes(groupId);
-		}catch (PEPFetchException e) {
-			LOGGER.error("Error oin service getGroupingSpecificAttributes:::: "+e.getMessage());
-			e.printStackTrace();
-			throw new PEPServiceException();
-		}
-	}
-	
+
 
 
 	/**

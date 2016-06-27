@@ -67,8 +67,18 @@ public class StyleVO  implements Serializable{
 
     /** The completion date. */
     private String completionDate ;
+    
+    private String VPN;
 
-    /**
+    public String getVPN() {
+		return VPN;
+	}
+
+	public void setVPN(String vPN) {
+		VPN = vPN;
+	}
+
+	/**
      * Instantiates a new style vo.
      */
     public StyleVO() {

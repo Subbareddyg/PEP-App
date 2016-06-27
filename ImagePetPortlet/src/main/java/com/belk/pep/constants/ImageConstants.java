@@ -111,6 +111,7 @@ public class ImageConstants {
     public static final String IMAGE_AD_REQUEST_PARAM_CURRENT_ADIMGID = "currentAdImgId";
     public static final String SERVICE_IMAGE_UPLOAD_LIST = "list";
     
+    
     //New Image Screen Requirement 
     public static final String UPDATEDBY = "updatedBy";
     public static final String IMAGE_STATUS_COMPLETED = "02";

@@ -70,6 +70,15 @@ public class GroupingVO implements Serializable {
     /** Style description **/
     private String styleDescription;
     
+    public String getVPN() {
+		return VPN;
+	}
+
+	public void setVPN(String vPN) {
+		VPN = vPN;
+	}
+
+	private String VPN;
     
     /** Style List **/
     List<StyleVO> groupChildStyleList;

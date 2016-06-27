@@ -2555,9 +2555,6 @@ public class ContentController implements ResourceAwareController, EventAwareCon
 		// Populate Grouping Copy Attributes
 		displayGroupCopyAttributes(groupId, contentDisplayForm, request, response);
 
-		// Populate Grouping Soecific Data
-		displayGroupingSpcificData(groupId, contentDisplayForm, request, response);
-
 		// Populate Grouping Components
 		displayGroupingComponent(groupId, contentDisplayForm, request, response);
 
@@ -2608,7 +2605,7 @@ public class ContentController implements ResourceAwareController, EventAwareCon
 			if(mappedCategoryId!=null){
 				request.setAttribute("selectedCategory", mappedCategoryId);
 				request.setAttribute("selectedCarbrand", contentDisplayForm.getCarBrandSelected());
-				request.setAttribute("selectedOmniBrand", contentDisplayForm.getOmniBrandSelected());
+				request.setAttribute("selectedOmnichannelbrand", contentDisplayForm.getOmniBrandSelected());
 			}else{
 				request.setAttribute("selectedCategory", dynamicCategoryId);
 				// Logic for highlighting the selected omnichannelbrand in its drop
@@ -2748,26 +2745,7 @@ public class ContentController implements ResourceAwareController, EventAwareCon
 		}
 	}
 
-	/** This method populates grouping specfic data
-	 * 
-	 * @param groupId
-	 * @param contentDisplayForm
-	 * @param request
-	 * @param response
-	 * @author AFUSKJ2 06172016 */
-	public void displayGroupingSpcificData(String groupId, ContentForm contentDisplayForm, RenderRequest request,
-			RenderResponse response) {
-		try {
-			GroupingVO groupVo = contentDelegate.getGroupingSpecificAttributes(groupId);
-			if (null != groupVo) {
-				contentDisplayForm.setGrouping(groupVo);
-			}
-			modelAndView.addObject(ContentScreenConstants.CONTENT_DISPLAY_FORM, contentDisplayForm);
-		} catch (PEPDelegateException e) {
-			LOGGER.error("Error in delegate:::: " + e.getMessage());
-			modelAndView.addObject(ContentScreenConstants.CONTENT_DISPLAY_FORM, contentDisplayForm);
-		}
-	}
+
 
 	/** This method populates Grouping Component data
 	 * 
@@ -4311,6 +4289,8 @@ public class ContentController implements ResourceAwareController, EventAwareCon
 				groupingVo.setContentStatus(found.getContentStatus());
 				groupingVo.setColor(found.getColorDesc());
 				groupingVo.setVendorSizeCodeDesc(found.getVendorSizeodeDesc());
+				groupingVo.setOmniChannelSizeDescription(found.getOmniChannelCodeDesc());
+				groupingVo.setVPN(found.getVPN());
 				childGroupList.add(groupingVo);
 			}
 
@@ -4324,6 +4304,8 @@ public class ContentController implements ResourceAwareController, EventAwareCon
 				styleVO.setContentStatus(found.getContentStatus());
 				styleVO.setColor(found.getColorDesc());
 				styleVO.setVendorSize(found.getVendorSizeodeDesc());
+				
+				styleVO.setVPN(found.getVPN());
 				styleList.add(styleVO);
 			}
 
@@ -4336,6 +4318,7 @@ public class ContentController implements ResourceAwareController, EventAwareCon
 				styleColorVO.setContentStatus(found.getContentStatus());
 				styleColorVO.setColor(found.getColorDesc());
 				styleColorVO.setVendorSize(found.getVendorSizeodeDesc());
+				styleColorVO.setVPN(found.getVPN());
 				styleColorList.add(styleColorVO);
 			}
 
@@ -4349,6 +4332,8 @@ public class ContentController implements ResourceAwareController, EventAwareCon
 				skuVO.setColorCode(found.getColorCode());
 				skuVO.setColor(found.getColorDesc());
 				skuVO.setVendorSize(found.getVendorSizeodeDesc());
+				skuVO.setOmniChannelSizeDescription(found.getOmniChannelCodeDesc());
+				skuVO.setVPN(found.getVPN());
 				skuList.add(skuVO);
 			}
 
@@ -4361,19 +4346,28 @@ public class ContentController implements ResourceAwareController, EventAwareCon
 		List<SkuVO> childSkuList = new ArrayList<SkuVO>();
 
 		for (StyleVO style : styleList) {
-
+			LOGGER.info("Style :"+style.getOrinNumber());
 			for (StyleColorVO styleColor : styleColorList) {
+				LOGGER.info("StyleColor ORIN:"+styleColor.getOrinNumber());
+				LOGGER.info("StyleColor StyleN:"+styleColor.getStyleNumber());
 				if (style.getOrinNumber().equalsIgnoreCase(styleColor.getStyleNumber())) {
+					LOGGER.info("COLOR MATCHED");
 
 					for (SkuVO sku : skuList) {
-
+						
 						String skuId = sku.getStyleId() + sku.getColorCode();
+						
+						LOGGER.info("SKU :"+skuId);
+						
 						if (skuId.equalsIgnoreCase(styleColor.getOrinNumber())) {
+							LOGGER.info("SKU MATCHED " +sku.getOrin());
+							sku.setParentStyleColor(skuId);
 							childSkuList.add(sku);
 							styleColor.setSkuList(childSkuList);
 
 						}
 					}
+					LOGGER.info("COLOR Added");
 					subStyleColorList.add(styleColor);
 					style.setStyleColorList(subStyleColorList);
 

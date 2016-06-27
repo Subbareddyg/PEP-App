@@ -357,14 +357,6 @@ public interface ContentService {
      */
     public List<ItemPrimaryHierarchyVO> selectedIPHCategorydropdown(String groupId) throws PEPServiceException;
   
-    /**
-     * This method populates Grouping Specific attributes
-     * @param groupId
-     * @return
-     * @throws PEPServiceException
-     * @author AFUSKJ2 6/17/2016
-     */
-    public GroupingVO getGroupingSpecificAttributes(String groupId) throws PEPServiceException;
     
     /**
      * This method saves grouping data

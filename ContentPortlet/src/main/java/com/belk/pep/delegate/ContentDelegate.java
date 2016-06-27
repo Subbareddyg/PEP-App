@@ -1064,21 +1064,7 @@ public class ContentDelegate {
 		}
      }
      
-     /**
-      * This method populates Grouping specific attributes 
-      * @param groupId
-      * @return
-      * @throws PEPDelegateException
-      * @author AFUSKJ2 6/17/2016
-      */
-     public GroupingVO getGroupingSpecificAttributes(String groupId) throws PEPDelegateException	{
-    	 try{
-    		 return contentService.getGroupingSpecificAttributes(groupId);
-    	 }catch (PEPServiceException e) {
-			LOGGER.log(Level.SEVERE,e.getMessage());
-			throw new PEPDelegateException();
-		}
-     }
+
      
      /**
       * Method to get the group copy validation from database.

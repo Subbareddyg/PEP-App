@@ -404,7 +404,9 @@ public String callUploadVPIService(JSONArray jsonArray) throws Exception,PEPFetc
     String msgCodeStr = "";
     try {
         Properties prop =PropertyLoader.getPropertyLoader(ImageConstants.MESS_PROP);
-        String targetURLs = prop.getProperty(ImageConstants.DEV_SERVICE_UPLOADVPI_IMAGE_URL);      
+        String targetURLs = prop.getProperty(ImageConstants.DEV_SERVICE_UPLOADVPI_IMAGE_URL);        
+        //String targetURLs = ImageConstants.DEV_SERVICE_UPLOADVPI_IMAGE_URL;
+        //String targetURLs = "http://ralpimwsasit02:7507/JERSYRest/rest/UpdateItemServices/uploadImage";
         URL targetUrl = new URL(targetURLs);
         LOGGER.info("ImageRequestServiceImpl::targetURLs callUploadVPIService  " + targetURLs);
         HttpURLConnection httpConnection =(HttpURLConnection) targetUrl.openConnection();
@@ -426,31 +428,75 @@ public String callUploadVPIService(JSONArray jsonArray) throws Exception,PEPFetc
         LOGGER.info("Output from Server:callUploadVPIService::\n ");
         while ((output = responseBuffer.readLine()) != null) {
             LOGGER.info("Upload VPI webservice response *****"+output);
-                // This block is for handling multiple row data.
-            
-             if(null!=output && output.contains("SUCCESS")){
-            	 LOGGER.info("Upload VPI webservice response  FLAG*****"+output);
-            	  flag = true;
-                }else{
-            	 flag =false ;
-                }
+        // This block is for handling Single Request
+		if ((jsonArray != null) && (jsonArray.length() <= 1)) {
+            LOGGER.info("Single Request file upload:");            
+            JsonElement jelement1 = new JsonParser().parse(output);
+            JsonObject jobject1 = jelement1.getAsJsonObject();
+            JsonArray jsonObject1 =(JsonArray) jobject1.get("list");            
+            if ((output != null)
+                    && (output.contains("not")||output.contains("may be") || output.contains("Failed".trim())) && (output.indexOf("Failed".trim()) != -1 ||output.indexOf("may be") != -1||output.indexOf("not") != -1)) {
+                
+				responseMsg = prop.getProperty(ImageConstants.DEV_SERVICE_UPLOADVPI_ERROR_IMAGE_MESSAGE);                
+                LOGGER.info("Failure File Upload::" + responseMsg);
+            }
+            else {
+				responseMsg = prop.getProperty(ImageConstants.DEV_SERVICE_UPLOADVPI_SUCCESS_IMAGE_MESSAGE);
+                LOGGER.info("Success File Upload::" + responseMsg);
+            }
+        }else{
+				// This block is for handling Multiple Request
+				LOGGER.info("Multiple Request File Upload");
                 JsonElement jelement = new JsonParser().parse(output);
                 JsonObject jobject = jelement.getAsJsonObject();
-                JsonArray jsonObject =(JsonArray) jobject.get(ImageConstants.SERVICE_IMAGE_UPLOAD_LIST);            
+                JsonArray jsonObject =(JsonArray) jobject.get(ImageConstants.SERVICE_IMAGE_UPLOAD_LIST);
+                for (int i = 0; i < jsonObject.size(); i++) {
+                    LOGGER.info("ImageRequestServiceImpl::Id value size" + jsonObject.size() + "i value" + i);
+                    if (jsonObject.size() == 1) {
+                    	LOGGER.info("Line 436");
+                        JsonObject individualjson = jsonObject.getAsJsonObject();
+                        Object msgCode =individualjson.get(ImageConstants.MSG_CODE);
+
+                        LOGGER.info("ImageRequestServiceImpl::MsgCode with one json" + msgCode.toString());
+                        msgCodeStr = msgCode.toString();
+                        msgCodeStr =msgCodeStr.substring(1, msgCodeStr.length() - 1);
+                        LOGGER.info("aa" + msgCodeStr);
+                    } else {
+                    	LOGGER.info("Line 445");
+                        JsonObject individualjson = jsonObject.get(i).getAsJsonObject();
+                        Object msgCode =individualjson.get(ImageConstants.MSG_CODE);
+
+                        LOGGER.info("ImageRequestServiceImpl::MsgCode callUploadImageservice" + msgCode.toString());
+
+                        msgCodeStr = msgCode.toString();
+                        msgCodeStr =msgCodeStr.substring(1, msgCodeStr.length() - 1);
+                        LOGGER.info("msgCodeStr" + msgCodeStr);
+                    }
+                    if (msgCodeStr.equalsIgnoreCase(ImageConstants.SUCCESS_CODE)) {
+                        flag = true;
+                        LOGGER.info("ImageRequestServiceImpl:::callUploadImageservice:::flag" + flag);
+                    } else if (msgCodeStr.equalsIgnoreCase(ImageConstants.FAILURE_CODE)) {
+                    	LOGGER.info("Line 460");
+                        flag = false;
+                    }
+                }
                 if (flag) {
+                	LOGGER.info("Line 465");
                     responseMsg = prop.getProperty(ImageConstants.DEV_SERVICE_UPLOADVPI_SUCCESS_IMAGE_MESSAGE);
                     LOGGER.info("ImageRequestServiceImpl:::callUploadImageservice:::responseMsg" + responseMsg);
 
                 } else {
-                    responseMsg = ImageConstants.DEV_SERVICE_UPLOADVPI_ERROR_IMAGE_MESSAGE;
+                	LOGGER.info("Line 470");
+                    responseMsg = prop.getProperty(ImageConstants.DEV_SERVICE_UPLOADVPI_ERROR_IMAGE_MESSAGE);
                     LOGGER.info("ImageRequestServiceImpl:::callUploadImageservice:::responseMsg"+ responseMsg);
 
                 }
         }
+}
 
         httpConnection.disconnect();
     } catch (MalformedURLException e) {
-        LOGGER.info("inside malformedException callUploadImageservice",e);
+        LOGGER.info("inside malformedException callUploadImageservice");
         throw new PEPFetchException();
        // e.printStackTrace();
 
@@ -477,7 +523,7 @@ public String callUploadVPIService(JSONArray jsonArray) throws Exception,PEPFetc
         throw new Exception();
 
     }
-    LOGGER.info("responseMsg Response message in upload image ***********" + responseMsg);
+
     return responseMsg;
 }
 

@@ -350,14 +350,6 @@ public  interface ContentDAO {
     public List<ContentHistoryVO> getGroupContentHistory(String groupId) throws PEPFetchException;
     
     
-    /**
-     * This method populates Grouping Specific Attributes section data
-     * @param groupId
-     * @return
-     * @throws PEPFetchException
-     * @author AFUSKJ2 6/17/2016
-     */
-    public GroupingVO getGroupingSpecificAttributes(String groupId) throws PEPFetchException;
     
     /**
      * Method to get the group copy validation from database.

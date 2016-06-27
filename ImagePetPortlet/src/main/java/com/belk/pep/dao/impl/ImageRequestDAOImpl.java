@@ -52,7 +52,6 @@ public class ImageRequestDAOImpl implements ImageRequestDAO {
     
     /** The xquery constants. */
     XqueryConstants xqueryConstants= new XqueryConstants();
-
     /**
      * Sets the session factory.
      * 
@@ -1175,7 +1174,7 @@ public class ImageRequestDAOImpl implements ImageRequestDAO {
     @Override
     public List<ImageLinkVO> getGroupingScene7ImageLinks(String groupingId) throws PEPPersistencyException {
 
-        LOGGER.info("***Entering getScene7ImageLinks() method.");
+        LOGGER.info("***Entering getScene7ImageLinks()  method in ImageRequestDAOImpl.");
         Session session = null;        
         List<ImageLinkVO> imageLinkVOList = new ArrayList<ImageLinkVO>();
         ImageLinkVO imageLinkVO = null;
@@ -1193,11 +1192,13 @@ public class ImageRequestDAOImpl implements ImageRequestDAO {
             {
                 for (final Object[] row : rows) {
                 	imageLinkVO = new ImageLinkVO();
+                	if(row[1]!=null){
                 	imageLinkVO.setOrin(row[0] == null? "" : row[0].toString());
                 	imageLinkVO.setShotType(row[4] == null? "" : row[4].toString());
                 	imageLinkVO.setImageURL(row[1] == null? "" : row[1].toString());
                 	imageLinkVO.setSwatchURL(row[2] == null? "" : row[2].toString());
-                	imageLinkVO.setViewURL(row[3] == null? "" : row[3].toString());              
+                	imageLinkVO.setViewURL(row[3] == null? "" : row[3].toString()); 
+                	}
                     
                     LOGGER.debug("Image Link Attribute Values -- \nORIN: " + imageLinkVO.getOrin() +
                         "\nSHOT TYPE: " + imageLinkVO.getShotType() +

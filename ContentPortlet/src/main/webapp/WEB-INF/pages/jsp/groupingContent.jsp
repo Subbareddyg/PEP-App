@@ -698,11 +698,11 @@
             			  
                    			
 
-                $('.tree').treegrid();
+                /* $('.tree').treegrid();
                 $('.tree2').treegrid({
                     expanderExpandedClass: 'icon-minus-sign',
                     expanderCollapsedClass: 'icon-plus-sign'
-                });
+                }); */
                 
                 // Display +/- signs in grouping component 
                 // group id tr tablereport
@@ -1535,7 +1535,7 @@
 		     var selectedCategory = document.getElementById("iphCategoryDropDownId");
 		 
 		     if(from == 'Submit'){
-				  	$('#overlay_pageLoadingapprove').show();
+				  	$('#overlay_pageLoadingsave').show();
 				  }else{
 					$('#overlay_pageLoadingsave').show();
 			  }
@@ -1598,8 +1598,9 @@
                     	  						 if(val.UpdateStatus == 'Success'){
 													 if(val.ContentStatusUpdate !== undefined && val.ContentStatusUpdate != ''){
 															$("#ajaxResponseSaveContentPetAttribute").html("");
-														  $("#ajaxResponseSaveContentPetAttribute").append("<b><font size='2'>" + val.ContentStatusUpdate +"</font></b>"); 															
-															window.location.reload(true)
+														  $("#ajaxResponseSaveContentPetAttribute").append("<b><font size='2'>" + val.ContentStatusUpdate +"</font></b>"); 
+															$("#overlay_pageLoadingsave").show();
+															window.location.reload(true);
 																	
 																	
                     	                                                    $("#saveButtonId").attr("disabled", "disabled");
@@ -1724,7 +1725,7 @@
 	       	                      	                	$("#ajaxResponseUpdateStylePetContentStatus").append("<b><font size='2'>Style Pet Status could not be updated as Pet Content save failed. Please contact Belk helpdesk.</font></b> <br>"); 
 	       	                      	                    $("#ajaxResponseUpdateStylePetContentStatus").append("<br>");
 	                 	                              }
-													  $('#overlay_pageLoadingapprove').hide();
+													  $('#overlay_pageLoadingsave').hide();
                     	  						 }
                     	  					});			 
                     	  				} 
@@ -2173,7 +2174,6 @@ function clickListenerContent(e){
 }
 
 function toggleRows(currentRow, styleId, styleColorId){
-
 	if(currentRow == 'group'){
 		if($("#tablereport").hasClass("treegrid-collapsed")){
 			$("#tablereport").removeClass("treegrid-collapsed");
@@ -2181,7 +2181,7 @@ function toggleRows(currentRow, styleId, styleColorId){
 			$("tr[id*=tablereportStyle]").show();
 			$("tr[id*=tablereportStyleColor]").show();
 			$("tr[id*=tablereportSku]").show();
-			$("tr[id*=tablereportGroup]").show();
+			$("tr[id*=tablereportGroup]").show();			
 		}else{
 			$("#tablereport").removeClass("treegrid-expanded");
 			$("#tablereport").addClass("treegrid-collapsed");
@@ -2190,42 +2190,51 @@ function toggleRows(currentRow, styleId, styleColorId){
 			$("tr[id*=tablereportSku]").hide();
 			$("tr[id*=tablereportGroup]").hide();
 		}
-		
+					
 		if($("#groupSign").hasClass("icon-minus-sign")){
 			$("#groupSign").removeClass("icon-minus-sign");
 			$("#groupSign").addClass("icon-plus-sign");
 		}else{
 			$("#groupSign").removeClass("icon-plus-sign");
 			$("#groupSign").addClass("icon-minus-sign");
+			
+			$("[id^=tablereportStyle_]").removeClass("treegrid-collapsed").addClass("treegrid-expanded");
+			$("[id^=styleSign_]").removeClass("icon-plus-sign").addClass("icon-minus-sign");
+			
+			$("[id^=tablereportStyleColor_]").removeClass("treegrid-collapsed").addClass("treegrid-expanded");
+			$("[id^=styleColorSign_]").removeClass("icon-plus-sign").addClass("icon-minus-sign");
 		}
 	}else if(currentRow == 'style'){
 		var styleTableId = "tablereportStyle_"+styleId;
 		var styleSign = "styleSign_"+styleId;
 		
 		if($("#"+styleTableId).hasClass("treegrid-collapsed")){
-			$("#"+styleTableId).removeClass("treegrid-collapsed");
-			$("#"+styleTableId).addClass("treegrid-expanded");
-			var styleColorId = "tr[id*=tablereportStyleColor_"+styleId+"]";
-			var skuId = "tr[id*=tablereportSku_"+styleId+"]";
-			$(styleColorId).show();
-			$(skuId).show();
+						$("#"+styleTableId).removeClass("treegrid-collapsed");
+						$("#"+styleTableId).addClass("treegrid-expanded");
+						var styleColorId = "tr[id*=tablereportStyleColor_"+styleId+"]";
+						var skuId = "tr[id*=tablereportSku_"+styleId+"]";
+						$(styleColorId).show();
+						$(skuId).show();
+						
 		}else{
-			$("#"+styleTableId).removeClass("treegrid-expanded");
-			$("#"+styleTableId).addClass("treegrid-collapsed");
-			var styleColorId = "tr[id*=tablereportStyleColor_"+styleId+"]";
-			var skuId = "tr[id*=tablereportSku_"+styleId+"]";
-			$(styleColorId).hide();
-			$(skuId).hide();
+						$("#"+styleTableId).removeClass("treegrid-expanded");
+						$("#"+styleTableId).addClass("treegrid-collapsed");
+						var styleColorId = "tr[id*=tablereportStyleColor_"+styleId+"]";
+						var skuId = "tr[id*=tablereportSku_"+styleId+"]";
+						$(styleColorId).hide();
+						$(skuId).hide();
 		}
 		
 		if($("#"+styleSign).hasClass("icon-minus-sign")){
-			$("#"+styleSign).removeCLass("icon-minus-sign");
-			$("#"+styleSign).addCLass("icon-plus-sign");
+			$("#"+styleSign).removeClass("icon-minus-sign");
+			$("#"+styleSign).addClass("icon-plus-sign");
 		}else{
 			$("#"+styleSign).removeClass("icon-plus-sign");
 			$("#"+styleSign).addClass("icon-minus-sign");
-		}
-		
+			
+			$("[id^=tablereportStyleColor_]").removeClass("treegrid-collapsed").addClass("treegrid-expanded");
+			$("[id^=styleColorSign_]").removeClass("icon-plus-sign").addClass("icon-minus-sign");
+		}				
 	}else if(currentRow == 'styleColor'){
 		var styleColortableId = "tablereportStyleColor_"+styleId+"_"+styleColorId;
 		var styleColorSign = "styleColorSign_"+styleId+"_"+styleColorId;
@@ -2233,13 +2242,14 @@ function toggleRows(currentRow, styleId, styleColorId){
 		if($("#"+styleColortableId).hasClass("treegrid-collapsed")){
 			$("#"+styleColortableId).removeClass("treegrid-collapsed");
 			$("#"+styleColortableId).addClass("treegrid-expanded");
-			var skuId = "tr[id*=tablereportSku_"+styleId+"]";
-			$(skuId).show();
+			var skuId = "tablereportSku_"+styleId+"_"+styleColorId;
+			$("tr#"+skuId).show();
 		}else{
 			$("#"+styleColortableId).removeClass("treegrid-expanded");
 			$("#"+styleColortableId).addClass("treegrid-collapsed");
-			var skuId = "tr[id*=tablereportSku_"+styleId+"]";
-			$(skuId).hide();
+			
+			var skuId = "tablereportSku_"+styleId+"_"+styleColorId;
+			$("tr#"+skuId).hide();
 		}
 		
 		if($("#"+styleColorSign).hasClass("icon-minus-sign")){
@@ -2248,11 +2258,9 @@ function toggleRows(currentRow, styleId, styleColorId){
 		}else{
 			$("#"+styleColorSign).removeClass("icon-plus-sign");
 			$("#"+styleColorSign).addClass("icon-minus-sign");
-		}
-		
+		}			
 	}
 }
-
 </script>
 
 <portlet:defineObjects />
@@ -2775,16 +2783,16 @@ function toggleRows(currentRow, styleId, styleColorId){
 						                    	<tr id="tablereport" class="treegrid-${countList}">
 						                    		<td>
 						                    			<c:if test="${fn:length(contentDisplayForm.styleAndItsChildDisplay.styleList) > 0}">
-						                    			<span id="groupSign" class="treegrid-expander icon-minus-sign" onclick="toggleRows('group','','')"></span>
+															<span id="groupSign" class="icon-minus-sign" onclick="toggleRows('group','','')"></span>
 						                    			</c:if>
 						                    		</td>
-						                    		<td><c:out value="${contentDisplayForm.groupingNumber}"/></td>
-						                    		<td></td>
+						                    		<td><c:out value="${contentDisplayForm.styleInformationVO.orin}"/></td>
+						                    		<td><c:out value="${contentDisplayForm.styleInformationVO.style}"/></td>
 						                    		<td></td>
 						                    		<td></td>
 						                    		<td></td>
 						                    		<td class="contentStatusId"><c:out value="${contentDisplayForm.styleInformationVO.contentStatus}"/></td>
-						                    		<td></td>
+						                    		<td><c:out value="${contentDisplayForm.styleInformationVO.completionDateOfStyle}"/></td>
 						                    	
 						                    	
 												   	<c:forEach items="${contentDisplayForm.styleAndItsChildDisplay.styleList}" 
@@ -2798,13 +2806,12 @@ function toggleRows(currentRow, styleId, styleColorId){
 															<tr id="tablereportStyle_${styleDisplayList.orinNumber}"  class="treegrid-${countList} treegrid-expanded">	
 																<td>
 																	<c:if test="${fn:length(styleDisplayList.styleColorList)>0}">
-																		<span class="treegrid-indent"></span>
-																		<span id="styleSign_${styleDisplayList.orinNumber}" class="treegrid-expander icon-minus-sign" onclick="toggleRows('style','<c:out value="${styleDisplayList.orinNumber}"/>','')">
+																		<span style="margin-left: 15px;" id="styleSign_${styleDisplayList.orinNumber}" class="icon-minus-sign" onclick="toggleRows('style','<c:out value="${styleDisplayList.orinNumber}"/>','')"></span>
 																	</c:if>
 																</td>													
 															 	<td>${styleDisplayList.orinNumber}</td>
 															 	<input type="hidden" id="styleOrinNumberId" name="styleOrinNumber" value="${styleDisplayList.orinNumber}"></input>
-																<td><c:out value="${contentDisplayForm.styleInformationVO.styleId}"/></td>
+																<td><c:out value="${styleDisplayList.VPN}"/></td>
 																<td><c:out value="${styleDisplayList.color}"/></td>
 																<td><c:out value="${styleDisplayList.vendorSize}" /></td>
 																<td><c:out value="${styleDisplayList.omniSizeDescription}" /></td>											
@@ -2827,9 +2834,7 @@ function toggleRows(currentRow, styleId, styleColorId){
 																	          <tr id="tablereportStyleColor_${styleDisplayList.orinNumber}_${styleDisplayColorList.orinNumber}" name="treegrid-${subcount} treegrid-parent-${countList}"  class="treegrid-${subcount} treegrid-parent-${countList}  treegrid-expanded">               
 																			   <td>
 																			   		<c:if test="${fn:length(styleDisplayColorList.skuList)>0}">
-																			   			<span>&nbsp;&nbsp;&nbsp;&nbsp;</span>
-																						<span class="treegrid-indent"></span>
-																						<span id="styleColorSign_${styleDisplayList.orinNumber}_${styleDisplayColorList.orinNumber}" class="treegrid-expander icon-minus-sign" onclick="toggleRows('styleColor','<c:out value="${styleDisplayList.orinNumber}"/>','<c:out value="${styleDisplayColorList.orinNumber}" />')"></span>
+																						<span style="margin-left: 25px;" id="styleColorSign_${styleDisplayList.orinNumber}_${styleDisplayColorList.orinNumber}" class="icon-minus-sign" onclick="toggleRows('styleColor','<c:out value="${styleDisplayList.orinNumber}"/>','<c:out value="${styleDisplayColorList.orinNumber}" />')"></span>
 																					</c:if>
 																			   </td> 
 																			   <c:choose>
@@ -2844,7 +2849,7 @@ function toggleRows(currentRow, styleId, styleColorId){
 																			   															  														  
 																			   <input type="hidden" id="styleColorOrinNumberId" name="styleColorOrinNumber" value="${styleDisplayColorList.orinNumber}"></input>                                                                                       
 																		
-																			   <td><c:out value="${contentDisplayForm.styleInformationVO.styleId}"/></td>                                                                                         
+																			   <td><c:out value="${styleDisplayColorList.VPN}"/></td>                                                                                         
 																			   <td><c:out value="${styleDisplayColorList.color}"/></td> 
 																			   <td><c:out value="${styleDisplayColorList.vendorSize}" /></td>                                                                                        
 																			   <td><c:out value="${styleDisplayColorList.omniSizeDescription}" /></td>  
@@ -2868,11 +2873,11 @@ function toggleRows(currentRow, styleId, styleColorId){
 									                                            </portlet:resourceURL>
 										                        		        
 										                        		        <input type="hidden" id="selectedSkuOrinNumber" name="selectedSkuOrinNumber" value=""/>		
-																	       <c:if test="${styleColorsChildSkuList.styleId == styleDisplayList.orinNumber}">
+																	       <c:if test="${styleColorsChildSkuList.parentStyleColor == styleDisplayColorList.orinNumber && styleDisplayColorList.styleNumber == styleDisplayList.orinNumber}">
 																		       <tr id="tablereportSku_${styleDisplayList.orinNumber}_${styleDisplayColorList.orinNumber}" name="tablereportSku" class="treegrid-${subcount} treegrid-parent-${countList} treegrid-expanded">               
 																		          <td>&nbsp;</td>
 																		          <td>${styleColorsChildSkuList.orin}</td> 															          								      
-																		          <td><c:out value="${contentDisplayForm.styleInformationVO.styleId}"/></td>                                                                                         
+																		          <td><c:out value="${styleColorsChildSkuList.VPN}"/></td>                                                                                         
 																		          <td><c:out value="${styleColorsChildSkuList.color}"/></td> 
 																		          <td><c:out value="${styleColorsChildSkuList.vendorSize}" /></td>                                                                                        
 																		          <td><c:out value="${styleColorsChildSkuList.omniChannelSizeDescription}" /></td>  															         
@@ -2896,7 +2901,7 @@ function toggleRows(currentRow, styleId, styleColorId){
 												    	<tr id="tablereportGroup" class="treegrid-${countList}">
 												    		<td></td>
 												    		<td><c:out value="${groupDisplayList.orin}"/></td>
-												    		<td><c:out value="${groupDisplayList.styleNumber}"/></td>
+												    		<td><c:out value="${groupDisplayList.VPN}"/></td>
 												    		<td><c:out value="${groupDisplayList.color}"/></td>
 												    		<td><c:out value="${groupDisplayList.vendorSizeCodeDesc}"/></td>
 												    		<td></td>
