@@ -493,7 +493,7 @@ function openGRPImage(url){
 function openGRPScen7Image(url){
 
 
-	var win = window.open(url, '', "toolbar=no,resizable=no,width=300,height=410,scrollbars=yes");
+	var win = window.open(url, '', "toolbar=no,resizable=no,width=400,height=580,scrollbars=yes");
 }
 
 
