@@ -837,7 +837,7 @@ public class XqueryConstants {
         "   T.VIEWERURL,                   "+
         "   T.SHOTTYPE                     "+
         " FROM ADSE_PET_CATALOG AIC,       "+
-        "   XMLTABLE( 'for $image in $XML_DATA/pim_entry/entry/Image_Sec_Spec/Scene7_Images return $image'  passing AIC.XML_DATA AS \"XML_DATA\" COLUMNS IMAGEURL VARCHAR(1000) path 'ImageURL', SWATCHURL VARCHAR(1000) path 'SwatchURL', VIEWERURL VARCHAR(1000) path 'ViewerURL', SHOTTYPE VARCHAR(100) path 'ViewerURL/Shot_Type') T "+
+        "   XMLTABLE( 'for $image in $XML_DATA/pim_entry/entry/Image_Sec_Spec/Scene7_Images return $image'  passing AIC.XML_DATA AS \"XML_DATA\" COLUMNS IMAGEURL VARCHAR(2000) path 'ImageURL', SWATCHURL VARCHAR(2000) path 'SwatchURL', VIEWERURL VARCHAR(2000) path 'ViewerURL', SHOTTYPE VARCHAR(100) path 'Shot_Type') T "+
         " WHERE AIC.MDMID = ?   ";
 
         LOGGER.debug("IMAGE LINKS QUERY -- \n" + IMAGE_LINKS_QUERY);
