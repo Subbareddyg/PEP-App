@@ -109,7 +109,7 @@ public class ContentDAOImpl implements ContentDAO{
                 query.setParameter("supplier", supplierId);
                 query.setFetchSize(20);
                 rows = query.list();
-                LOGGER.info("rows size:"+rows.size());
+               
             }
             
             /**
@@ -605,11 +605,6 @@ public class ContentDAOImpl implements ContentDAO{
                          itemPrimaryHierarchy.setCategoryFullPath(finalPath);
                      }
                      
-                     /**
-                      * MODIFICATION END BY AFUAXK4
-                      * DATE: 02/05/2016
-                      */
-                     //Add each itemPrimaryHierarchy object to the list
                      iphCategoryList.add(itemPrimaryHierarchy);
                      Collections.sort(iphCategoryList);
                  }}}
@@ -1658,6 +1653,7 @@ public boolean releseLockedPet(  String orin, String pepUserID,String pepFunctio
      * Method added For PIM Phase 2 - Regular Item Copy Attribute
      * Date: 05/16/2016
      * Added By: Cognizant
+     * @throws PEPFetchException 
      */
     @Override
     public CopyAttributeVO fetchCopyAttributes(String orin) throws PEPFetchException {
@@ -1719,14 +1715,12 @@ public boolean releseLockedPet(  String orin, String pepUserID,String pepFunctio
                         "\nCOPY IMPORT DOMESTIC: " + copyAttributeVO.getImportDomestic());
                 }
             }
-        }
-        catch(final Exception exception)
-        {
-            LOGGER.error("Exception in fetchCopyAttributes() method. -- " + exception.getMessage());
-            throw new PEPFetchException(exception);
-        }
+        } catch (PEPFetchException e) {
+        	LOGGER.error("ContentDAOImpl :fetchCopyAttributes:fetchCopyAttributes"+e);
+        	throw e;
+		}
         finally {
-            session.flush();            
+            if(session!=null)         
             session.close();
         }
         LOGGER.info("***Exiting fetchCopyAttributes() method.");
@@ -1758,10 +1752,10 @@ public boolean releseLockedPet(  String orin, String pepUserID,String pepFunctio
             }
             br.close();
         } catch (SQLException e) {
-            LOGGER.error("Exception in clobToString() method. -- " + e.getMessage());
+            LOGGER.error("Exception in clobToString() method. -- " + e);
             throw new PEPFetchException(e);
         } catch (IOException e) {
-            LOGGER.error("Exception in clobToString() method. -- " + e.getMessage());
+            LOGGER.error("Exception in clobToString() method. -- " + e);
             throw new PEPFetchException(e);
         }
         LOGGER.info("***Exiting clobToString() method.");
@@ -1800,9 +1794,7 @@ public boolean releseLockedPet(  String orin, String pepUserID,String pepFunctio
 				query.setFetchSize(10);
 				row = query.list();
 			}
-			if(LOGGER.isDebugEnabled()){
-				LOGGER.debug("row size in getGroupingInformation::::: "+row.size());
-			}
+
 			
 			final Properties prop =   PropertiesFileLoader.getPropertyLoader("contentDisplay.properties");
 			if(null!=row && row.size() > 0){
@@ -1865,9 +1857,7 @@ public boolean releseLockedPet(  String orin, String pepUserID,String pepFunctio
 			if(null!= query){
 				rows = query.list();
 			}
-			if(LOGGER.isDebugEnabled()){
-				LOGGER.debug("row size in getGroupingDepartmentDetails:::::: "+rows.size());
-			}
+
 			
 			if(null!=rows && rows.size()>0){
 				for(Object[] obj : rows){
@@ -1876,15 +1866,12 @@ public boolean releseLockedPet(  String orin, String pepUserID,String pepFunctio
 					styleInformationVO.setClassDescription(checkNull(obj[1]).toString());
 				}
 			}
-		}catch (Exception e) {
-			e.printStackTrace();
-			throw new PEPFetchException();
 		}
 		finally{
-			
-			session.close();
+			if(session!=null)
+				session.close();
 		}
-		
+		LOGGER.info("ContentDaoImpl getGroupingDepartmentDetails : end");
 		return styleInformationVO;
 	}
 	
@@ -1894,9 +1881,11 @@ public boolean releseLockedPet(  String orin, String pepUserID,String pepFunctio
 	 * @author AFUSKJ2 6/17/2016
 	 * @return ProductDetailsVO
 	 * @param groupId
+	 * @throws PEPFetchException 
 	 */
 	@Override
 	public ProductDetailsVO getGroupingDetails(String groupId) throws PEPFetchException{
+		LOGGER.info("ContentDAOImpl getGroupingDetails : start");
 		ProductDetailsVO productDetailsVO = new ProductDetailsVO();
 		
 		Session session = null;
@@ -1916,9 +1905,7 @@ public boolean releseLockedPet(  String orin, String pepUserID,String pepFunctio
 				query.setFetchSize(10);
 				row = query.list();
 			}
-			if(LOGGER.isDebugEnabled()){
-				LOGGER.debug("Rows size in  getGroupingDetails DAO:::::: "+row.size());
-			}
+
 			
 			if(null!= row && row.size() > 0){
 				for(Object[] obj : row){
@@ -1938,13 +1925,14 @@ public boolean releseLockedPet(  String orin, String pepUserID,String pepFunctio
 				}
 			}
 			
-		}catch (Exception e) {
-			e.printStackTrace();
-			throw new PEPFetchException();
+		} catch (PEPFetchException e) {
+			LOGGER.info("ContentDAOImpl getGroupingDetails : PEPFetchException"+e);
+			throw e;
 		}finally{
 			if(session!=null)
 				session.close();
 		}
+		LOGGER.info("ContentDAOImpl getGroupingDetails : end");
 		return productDetailsVO;
 	}
 	
@@ -1958,7 +1946,7 @@ public boolean releseLockedPet(  String orin, String pepUserID,String pepFunctio
 	@Override
 	public CopyAttributeVO getGroupingCopyAttributes(String groupId)throws PEPFetchException {
 		CopyAttributeVO copyAttributeVO = new CopyAttributeVO();
-		
+		LOGGER.info("ContentDAOImpl getGroupingCopyAttributes : start");
 		Session session = null;
 		
 		List<Object[]> row = null;
@@ -1976,9 +1964,7 @@ public boolean releseLockedPet(  String orin, String pepUserID,String pepFunctio
 				row = query.list();
 			}
 			
-			if(LOGGER.isDebugEnabled()){
-				LOGGER.debug("Row size in DAO getGroupingCopyAttributes::::: "+row.size());
-			}
+
 			
 			
 			if(null!= row && row.size() > 0){
@@ -2006,14 +1992,11 @@ public boolean releseLockedPet(  String orin, String pepUserID,String pepFunctio
 					copyAttributeVO.setImportDomestic(checkNull(obj[13]).toString());
 				}
 			}
-		}catch (Exception e) {
-			e.printStackTrace();
-			throw new PEPFetchException();
 		}finally{
 			if (session!=null)
 				session.close();
 		}
-		
+		LOGGER.info("ContentDAOImpl getGroupingCopyAttributes : end");
 		return copyAttributeVO;
 	}
 	
@@ -2026,7 +2009,8 @@ public boolean releseLockedPet(  String orin, String pepUserID,String pepFunctio
 	 * @throws PEPFetchException
 	 */
 	@Override
-	public List<OmniChannelBrandVO> getGroupingOmniChannelBrand(String groupId) throws PEPFetchException{
+	public List<OmniChannelBrandVO> getGroupingOmniChannelBrand(String groupId){
+		LOGGER.info("ContentDAOImpl getGroupingOmniChannelBrand : start");
 		List<OmniChannelBrandVO> listOmniChannelBrand = null;
 		Session session = null;
 
@@ -2037,8 +2021,7 @@ public boolean releseLockedPet(  String orin, String pepUserID,String pepFunctio
 		
 		try{
 			session = sessionFactory.openSession();
-			//
-			
+
 			// XQuery constants string
 			final Query query = session.createSQLQuery(xqueryConstants.getGroupingOmniChannelBrand());
 			
@@ -2051,9 +2034,7 @@ public boolean releseLockedPet(  String orin, String pepUserID,String pepFunctio
 				query.setParameter("groupingNo", groupId);
 				rows = query.list();
 			}
-			if(LOGGER.isDebugEnabled()){
-				LOGGER.debug("row size getGroupingOmniChannelBrand::: "+rows.size());
-			}
+
 			
 			if(null!= rows){
 				listOmniChannelBrand = new ArrayList<OmniChannelBrandVO>();
@@ -2074,16 +2055,11 @@ public boolean releseLockedPet(  String orin, String pepUserID,String pepFunctio
 				
 				
 			}
-			
-		}catch (Exception e) {
-			LOGGER.info("ERROR in getGroupingOmniChannelBrand DAO::: "+e.getMessage());
-			e.printStackTrace();
-			throw new PEPFetchException(); 
 		}finally{
 			if(session!=null)
 				session.close();
 		}
-		
+		LOGGER.info("ContentDAOImpl getGroupingOmniChannelBrand : end");
 		return listOmniChannelBrand;
 	}
 	
@@ -2095,7 +2071,8 @@ public boolean releseLockedPet(  String orin, String pepUserID,String pepFunctio
 	 * @param groupId
 	 * @throws PEPFetchException
 	 */
-	public List<CarBrandVO> populateGroupCarBrandList(String groupId) throws PEPFetchException {
+	public List<CarBrandVO> populateGroupCarBrandList(String groupId){
+		LOGGER.info("ContentDAOImpl populateGroupCarBrandList : start");
 		List<CarBrandVO> carBrandList = null;
 		Session session = null;
 		CarBrandVO carBrandVO = null;
@@ -2109,19 +2086,13 @@ public boolean releseLockedPet(  String orin, String pepUserID,String pepFunctio
 
 			// Populate Car brand query
 			if(LOGGER.isDebugEnabled()){
-				LOGGER.debug(xqueryConstants.getGroupingCarBrandQuery());
+				LOGGER.debug("Query in populateGroupCarBrandList DAO -->"+xqueryConstants.getGroupingCarBrandQuery());
 			}
 			final Query query = session.createSQLQuery(xqueryConstants.getGroupingCarBrandQuery());
-			
-			LOGGER.info("Query in populateGroupCarBrandList DAO::::: "+query);
 			
 			if(null!= query){
 				query.setParameter("groupingNo", groupId);
 				rows = query.list();
-			}
-			
-			if(LOGGER.isDebugEnabled()){
-				LOGGER.debug("Row size in populateGroupCarBrandList DAO::: "+rows.size());
 			}
 			
 			
@@ -2142,14 +2113,11 @@ public boolean releseLockedPet(  String orin, String pepUserID,String pepFunctio
 				}
 			}
 			
-		}catch (Exception e) {
-			e.printStackTrace();
-			throw new PEPFetchException();
 		}finally{
 			if(session!=null)
 				session.close();
 		}
-		
+		LOGGER.info("ContentDAOImpl populateGroupCarBrandList : end");
 		return carBrandList;
 	}
 	
@@ -2160,7 +2128,8 @@ public boolean releseLockedPet(  String orin, String pepUserID,String pepFunctio
 	 * @throws PEPFetchException
 	 */
 	@Override
-	public List<GroupsFound> getGroupingComponents(String groupId) throws PEPFetchException {
+	public List<GroupsFound> getGroupingComponents(String groupId) {
+		LOGGER.info("ContentDAOImpl getGroupingComponents : start");
 		List<GroupsFound> groupsList = null;
 		Session session = null;
 		
@@ -2184,9 +2153,7 @@ public boolean releseLockedPet(  String orin, String pepUserID,String pepFunctio
 				rows = query.list();
 			}
 			final Properties prop =   PropertiesFileLoader.getPropertyLoader("contentDisplay.properties");
-			if(LOGGER.isDebugEnabled()){
-				LOGGER.debug("Rows size in DAO getGroupingComponents::::: "+rows.size());
-			}
+			
 			
 			
 			if(null!= rows){
@@ -2217,13 +2184,11 @@ public boolean releseLockedPet(  String orin, String pepUserID,String pepFunctio
 					groupsList.add(groupsFound);
 				}
 			}
-		}catch (Exception e) {
-			e.printStackTrace();
-			throw new PEPFetchException();
 		}finally{
 			if(session!=null)
 			session.close();
 		}
+		LOGGER.info("ContentDAOImpl getGroupingComponents : end");
 		return groupsList;
 	}
 	
@@ -2235,7 +2200,9 @@ public boolean releseLockedPet(  String orin, String pepUserID,String pepFunctio
 	 * @throws PEPFetchException
 	 */
 	@Override
-	public List<ContentHistoryVO> getGroupContentHistory(String groupId) throws PEPFetchException{
+	public List<ContentHistoryVO> getGroupContentHistory(String groupId){
+		
+		LOGGER.info("ContentDAOImpl getGroupContentHistory : start");
 		List<ContentHistoryVO> groupContentHistoryList = null;
 		Session session = null;
 		
@@ -2253,9 +2220,7 @@ public boolean releseLockedPet(  String orin, String pepUserID,String pepFunctio
 				rows = query.list();
 			}
 			
-			if(LOGGER.isDebugEnabled()){
-				LOGGER.debug("Row size in getGroupContentHistory:::: "+rows.size());
-			}
+			
 			
 			
 			if(null != rows){
@@ -2286,14 +2251,11 @@ public boolean releseLockedPet(  String orin, String pepUserID,String pepFunctio
 					groupContentHistoryList.add(historyVO);
 				}
 			}
-		}catch (Exception e) {
-			e.printStackTrace();
-			throw new PEPFetchException();
 		}finally{
 			if(session!=null)
 				session.close();
 		}
-		
+		LOGGER.info("ContentDAOImpl getGroupContentHistory : end");
 		return groupContentHistoryList;
 	}
 	
@@ -2307,8 +2269,8 @@ public boolean releseLockedPet(  String orin, String pepUserID,String pepFunctio
 	 * @author AFUSKJ2 6/17/2016
 	 */
 	@Override
-	public List<ItemPrimaryHierarchyVO> selectedIPHCategorydropdown(String groupId) throws PEPFetchException {
-		LOGGER.info("ContentDAOImpl populateIPHCategorydropdown : starts");
+	public List<ItemPrimaryHierarchyVO> selectedIPHCategorydropdown(String groupId) {
+		LOGGER.info("ContentDAOImpl selectedIPHCategorydropdown : starts");
         List<Object[]> rows=null;
         ItemPrimaryHierarchyVO itemPrimaryHierarchy = null;
         List<ItemPrimaryHierarchyVO> iphCategoryList = null;
@@ -2329,10 +2291,7 @@ public boolean releseLockedPet(  String orin, String pepUserID,String pepFunctio
 				query.setParameter("groupingNo", groupId);
 				rows = query.list();
 			}
-			
-			if(LOGGER.isDebugEnabled()){
-				LOGGER.debug("Row size in DAO populateIPHCategorydropdown::::: "+rows.size());
-			}
+
 			
 			
 			 if((rows!=null) && (rows.size()>0))
@@ -2367,15 +2326,12 @@ public boolean releseLockedPet(  String orin, String pepUserID,String pepFunctio
 					
 	            }
 						
-		}catch (Exception e) {
-			LOGGER.info("Error in DAO class for populateIPHCategorydropdown:::: "+e.getMessage());
-			e.printStackTrace();
-			throw new PEPFetchException();
+		
 		}finally{
 			if(session!=null)
 				session.close();
 		}
-		
+		LOGGER.info("ContentDAOImpl selectedIPHCategorydropdown : ends");
 		return iphCategoryList;
 	}
 	

@@ -2426,7 +2426,7 @@ public class XqueryConstants {
      * @return OMNICHANNEL_BRAND_QUERY
      */
     public String getGroupingOmniChannelBrand(){
-    	final String OMNICHANNEL_BRAND_QUERY = "	SELECT RF.MDMID OMNI_BRANDS,	"
+    	final String OMNICHANNEL_BRAND_QUERY = "	SELECT DISTINCT RF.MDMID OMNI_BRANDS,	"
 			+ "  RF.THEVALUE OMNI_BRANDS_DESCRIPTION,	"
 			+ "  T.OMNICODE OMNI_BRAND,		"
 			+ "  T.OMNIGROUPCODE OMNI_GROUP_BRAND,		"
@@ -2437,7 +2437,7 @@ public class XqueryConstants {
 			+ "		FROM ADSE_REFERENCE_DATA RF,	"
 			+ "  	VENDORPORTAL.ADSE_GROUP_CATALOG AGC LEFT OUTER JOIN ADSE_GROUP_CHILD_MAPPING AGCM		"
 			+ "  	ON AGC.MDMID=AGCM.MDMID AND AGCM.PEP_COMPONENT_TYPE<>'Group'		"
-			+ "  AND AGCM.COMPONENT_DEFAULT ='true' "
+			+ "  AND AGCM.COMPONENT_DEFAULT ='true'"
 			+ "  	LEFT OUTER JOIN ADSE_ITEM_CATALOG AIC ON AIC.MDMID=AGCM.COMPONENT_STYLE_ID,	"
 			+ " 	 XMLTABLE( '      "
 			+ "  let $code := $XML_DATA/pim_entry/entry/Ecomm_Style_Spec/OmniChannelBrand,    "
@@ -2459,7 +2459,7 @@ public class XqueryConstants {
      * @return CAR_BRAND_QUERY
      */
     public String getGroupingCarBrandQuery(){
-    	final String CAR_BRAND_QUERY = "	SELECT RF.MDMID CAR_BRANDS,		"
+    	final String CAR_BRAND_QUERY = "	SELECT DISTINCT RF.MDMID CAR_BRANDS,		"
 			+ "	  RF.THEVALUE CAR_BRANDS_DESCRIPTION,	"
 			+ "  T.OMNICODE CARS_BRAND,		"
 			+ "  T.OMNIGROUPCODE CARS_GROUP_BRAND,	"
@@ -2474,7 +2474,7 @@ public class XqueryConstants {
 			+ "  LEFT OUTER JOIN ADSE_ITEM_CATALOG AIC ON AIC.MDMID=AGCM.COMPONENT_STYLE_ID,	"
 			+ "  XMLTABLE( '    "
 			+ "  let $code := $XML_DATA/pim_entry/entry/Ecomm_Style_Spec/Cars_Brand,  "
-			+ "	$groupcode:=$XML_DATA/pim_entry/entry/Collection_Spec/Cars_Brand   "
+			+ "	$groupcode:=$XML_DATA/pim_entry/entry/Collection_Spec/CarBrand   "
 			+ "  return   "
 			+ "  <category>   "
 			+ "  <code>{$code}</code>	"

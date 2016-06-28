@@ -2501,6 +2501,7 @@ public class ContentController implements ResourceAwareController, EventAwareCon
 		String groupId = null;
 		String roleNameFromIPC = null;
 
+		try{
 		groupId = contentPetDetailsFromIPC.getOrinNumber();
 		LOGGER.info("orinNumberFromIPC----" + groupId);
 		final String contentStatusFromIPC = contentPetDetailsFromIPC.getContentStatus();
@@ -2572,12 +2573,9 @@ public class ContentController implements ResourceAwareController, EventAwareCon
 			LOGGER.info("Inside IPH Changed.......................................");
 			
 			LOGGER.info("dynamicCategoryId -->"+dynamicCategoryId);
-			try {
-				displayGroupIPHAttributesOnChange(request, response, contentDisplayForm, groupId, dynamicCategoryId);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			
+			displayGroupIPHAttributesOnChange(request, response, contentDisplayForm, groupId, dynamicCategoryId);
+			
 
 		}
 		if (mappedCategoryId!=null || dynamicCategoryId!=null){
@@ -2602,7 +2600,7 @@ public class ContentController implements ResourceAwareController, EventAwareCon
 			displayCategorySpecificAttributeData(finalCatIds, contentDisplayForm, request, response, groupId);
 
 			displayBlueMartiniSpecificAttributeData(finalCatIds, contentDisplayForm, request, response, groupId);
-			if(mappedCategoryId!=null){
+			if(mappedCategoryId!=null && dynamicCategoryId==null){
 				request.setAttribute("selectedCategory", mappedCategoryId);
 				request.setAttribute("selectedCarbrand", contentDisplayForm.getCarBrandSelected());
 				request.setAttribute("selectedOmnichannelbrand", contentDisplayForm.getOmniBrandSelected());
@@ -2626,13 +2624,12 @@ public class ContentController implements ResourceAwareController, EventAwareCon
 		}
 
 			
-			modelAndView.addObject(ContentScreenConstants.CONTENT_DISPLAY_FORM, contentDisplayForm);
-		
-		
-		
-		
-
 		modelAndView.addObject(ContentScreenConstants.CONTENT_DISPLAY_FORM, contentDisplayForm);
+		}
+		catch(IOException e){
+			LOGGER.error("Fatal Error in populateGroupingContent"+e);
+		}
+		
 		LOGGER.info("Exiting populateGroupingContent......");
 	}
 
@@ -2675,12 +2672,9 @@ public class ContentController implements ResourceAwareController, EventAwareCon
 	private List<OmniChannelBrandVO> populateGroupOmniChannelBrandList(String groupId) {
 		List<OmniChannelBrandVO> groupOmniChannelBrandList = null;
 		LOGGER.info("Entering populateGroupOmniChannelBrandList....");
-		try {
-			groupOmniChannelBrandList = contentDelegate.getGroupingOmniChannelBrand(groupId);
-		} catch (PEPDelegateException e) {
 
-			LOGGER.error("populateGroupOmniChannelBrandList :PEPDelegateException--> "+e);
-		}
+		groupOmniChannelBrandList = contentDelegate.getGroupingOmniChannelBrand(groupId);		
+		
 		LOGGER.info("Exiting populateGroupOmniChannelBrandList....");
 		return groupOmniChannelBrandList;
 	}
@@ -2692,12 +2686,7 @@ public class ContentController implements ResourceAwareController, EventAwareCon
 	private List<CarBrandVO> populateGroupCarBrandList(String groupId) {
 		List<CarBrandVO> groupCarBrandList = null;
 		LOGGER.info("Entering populateGroupCarBrandList....");
-		try {
-			groupCarBrandList = contentDelegate.populateGroupCarBrandList(groupId);
-
-		} catch (PEPDelegateException e) {
-			LOGGER.error("populateGroupCarBrandList :PEPDelegateException--> "+e);
-		}
+		groupCarBrandList = contentDelegate.populateGroupCarBrandList(groupId);
 		LOGGER.info("Exiting populateGroupCarBrandList....");
 		return groupCarBrandList;
 	}
@@ -2709,6 +2698,7 @@ public class ContentController implements ResourceAwareController, EventAwareCon
 	 * @param request
 	 * @param response */
 	private void displayGroupingDetails(String groupId, ContentForm contentDisplayForm, RenderRequest request, RenderResponse response) {
+		LOGGER.info("ContentController :displayGroupingDetails:Enter");
 		try {
 			ProductDetailsVO productDetailsVO = contentDelegate.getGroupingDetails(groupId);
 
@@ -2721,6 +2711,7 @@ public class ContentController implements ResourceAwareController, EventAwareCon
 			LOGGER.error("Error in Controller:::: " + e.getMessage());
 			modelAndView.addObject(ContentScreenConstants.CONTENT_DISPLAY_FORM, contentDisplayForm);
 		}
+		LOGGER.info("ContentController :displayGroupingDetails:Exit");
 	}
 
 	/** This method retrieves Grouping Copy Attributes
@@ -2731,6 +2722,7 @@ public class ContentController implements ResourceAwareController, EventAwareCon
 	 * @param response */
 	private void displayGroupCopyAttributes(String groupId, ContentForm contentDisplayForm, RenderRequest request,
 			RenderResponse response) {
+		LOGGER.info("ContentController :displayGroupCopyAttributes:Enter");
 		try {
 			CopyAttributeVO copyAttributeVO = contentDelegate.getGroupingCopyAttributes(groupId);
 
@@ -2743,6 +2735,7 @@ public class ContentController implements ResourceAwareController, EventAwareCon
 			contentDisplayForm.setCopyAttributeData("No Copy Attribute Data Available");
 			modelAndView.addObject(ContentScreenConstants.CONTENT_DISPLAY_FORM, contentDisplayForm);
 		}
+		LOGGER.info("ContentController :displayGroupCopyAttributes:Exit");
 	}
 
 
@@ -2756,18 +2749,16 @@ public class ContentController implements ResourceAwareController, EventAwareCon
 	 * @author AFUSKJ2 6/17/2016 */
 	private void displayGroupingComponent(String groupId, ContentForm contentDisplayForm, RenderRequest request,
 			RenderResponse response) {
+		LOGGER.info("ContentController :displayGroupingComponent:Enter");
 		List<GroupsFound> groupsList = new ArrayList<GroupsFound>();
 
-		try {
-			groupsList = contentDelegate.getGroupingComponents(groupId);
-			StyleAndItsChildDisplay styleAndItsChildDisplay = displayGroupsAsParentChild(groupsList, contentDisplayForm, groupId);
-			contentDisplayForm.setStyleAndItsChildDisplay(styleAndItsChildDisplay);
-			contentDisplayForm.setGroupingNumber(groupId);
-			contentDisplayForm.setGroupingType(contentDisplayForm.getStyleInformationVO().getGroupingType());
-			modelAndView.addObject(ContentScreenConstants.CONTENT_DISPLAY_FORM, contentDisplayForm);
-		} catch (PEPDelegateException e) {
-			LOGGER.error("Error in Controller displayGroupingComponent:::: " + e.getMessage());
-		}
+		groupsList = contentDelegate.getGroupingComponents(groupId);
+		StyleAndItsChildDisplay styleAndItsChildDisplay = displayGroupsAsParentChild(groupsList, contentDisplayForm, groupId);
+		contentDisplayForm.setStyleAndItsChildDisplay(styleAndItsChildDisplay);
+		contentDisplayForm.setGroupingNumber(groupId);
+		contentDisplayForm.setGroupingType(contentDisplayForm.getStyleInformationVO().getGroupingType());
+		modelAndView.addObject(ContentScreenConstants.CONTENT_DISPLAY_FORM, contentDisplayForm);
+		LOGGER.info("ContentController :displayGroupingComponent:Exit");
 
 	}
 
@@ -2780,6 +2771,7 @@ public class ContentController implements ResourceAwareController, EventAwareCon
 	 * @author AFUSKJ2 6/17/2016 */
 	private String populateIPHCategorydropdown(String groupId, ContentForm contentDisplayForm, RenderRequest request,
 			RenderResponse response) {
+		LOGGER.info("ContentController :populateIPHCategorydropdown:Enter");
 		List<ItemPrimaryHierarchyVO> iphCategoryList = null;
 		List<ItemPrimaryHierarchyVO> iphList = null;
 		String categoryId = null;
@@ -2787,10 +2779,8 @@ public class ContentController implements ResourceAwareController, EventAwareCon
 		try {
 
 			Map<String, String> categoryReferenceData = new HashMap<String, String>();
-
-
-				iphList = contentDelegate.selectedIPHCategorydropdown(groupId);
-				// categoryMap = new LinkedHashMap<String,String>();
+			iphList = contentDelegate.selectedIPHCategorydropdown(groupId);
+				
 
 				if (iphList != null) {
 
@@ -2819,8 +2809,9 @@ public class ContentController implements ResourceAwareController, EventAwareCon
 			modelAndView.addObject(ContentScreenConstants.CONTENT_DISPLAY_FORM, contentDisplayForm);
 
 		} catch (PEPDelegateException e) {
-			LOGGER.error("Error in Controller::: " + e.getMessage());
+			LOGGER.error("Error in Controller::: " + e);
 		}
+		LOGGER.info("ContentController :populateIPHCategorydropdown:Exit");
 		return categoryId; 
 	}
 
@@ -2833,6 +2824,7 @@ public class ContentController implements ResourceAwareController, EventAwareCon
 	 * @author AFUSKJ2 6/17/2016 */
 	private void populatGroupContentHistry(String groupId, ContentForm contentDisplayForm, RenderRequest request,
 			RenderResponse response) {
+		LOGGER.info("ContentController :populatGroupContentHistry:Enter");
 		List<ContentHistoryVO> contentHistoryList = new ArrayList<ContentHistoryVO>();
 
 		try {
@@ -2842,6 +2834,7 @@ public class ContentController implements ResourceAwareController, EventAwareCon
 		} catch (PEPDelegateException e) {
 			LOGGER.error("Error in controller populateGroupContentHistory::: " + e.getMessage());
 		}
+		LOGGER.info("ContentController :populatGroupContentHistry:Exit");
 	}
 
 	/** This method populates IPH related data on change of IPH category drop
@@ -4260,24 +4253,16 @@ public class ContentController implements ResourceAwareController, EventAwareCon
 	 * @author AFUSKJ2 6/17/2016 */
 	private StyleAndItsChildDisplay displayGroupsAsParentChild(List<GroupsFound> groupsFoundList, ContentForm contentDisplayForm,
 			String groupId) {
+		
+		LOGGER.info("ContentController :displayGroupsAsParentChild:Enter");
 		StyleAndItsChildDisplay styleAndItsChildDisplay = new StyleAndItsChildDisplay();
 
-		String childsParentOrinNumber = null;
-		String parentOrinNumber = null;
-		String earliestCompletionDate = "";
-		String styleColorOriNumber = "";
-		String styleColorOrinNumber1 = "";
-		Map<String, String> completionDateMap = new HashMap<String, String>();
+
 		final List<SkuVO> skuList = new ArrayList<SkuVO>();
 		final List<StyleColorVO> styleColorList = new ArrayList<StyleColorVO>();
 		final List<StyleVO> styleList = new ArrayList<StyleVO>();
-		List<String> styleColorCompletionDateList = null;
+		
 		List<GroupingVO> childGroupList = new ArrayList<GroupingVO>();
-		List<GroupingVO> parentGroupList = new ArrayList<GroupingVO>();
-		final List<StyleVO> styleListForContentDisplay = new ArrayList<StyleVO>();
-
-		// Populating parent group details
-
 		for (final GroupsFound found : groupsFoundList) {
 			// Populate Groups List
 			if (found.getComponentType().equalsIgnoreCase("Group")) {
@@ -4346,28 +4331,28 @@ public class ContentController implements ResourceAwareController, EventAwareCon
 		List<SkuVO> childSkuList = new ArrayList<SkuVO>();
 
 		for (StyleVO style : styleList) {
-			LOGGER.info("Style :"+style.getOrinNumber());
+			
 			for (StyleColorVO styleColor : styleColorList) {
-				LOGGER.info("StyleColor ORIN:"+styleColor.getOrinNumber());
-				LOGGER.info("StyleColor StyleN:"+styleColor.getStyleNumber());
+				
+				
 				if (style.getOrinNumber().equalsIgnoreCase(styleColor.getStyleNumber())) {
-					LOGGER.info("COLOR MATCHED");
+					
 
 					for (SkuVO sku : skuList) {
 						
 						String skuId = sku.getStyleId() + sku.getColorCode();
 						
-						LOGGER.info("SKU :"+skuId);
+						
 						
 						if (skuId.equalsIgnoreCase(styleColor.getOrinNumber())) {
-							LOGGER.info("SKU MATCHED " +sku.getOrin());
+							
 							sku.setParentStyleColor(skuId);
 							childSkuList.add(sku);
 							styleColor.setSkuList(childSkuList);
 
 						}
 					}
-					LOGGER.info("COLOR Added");
+					
 					subStyleColorList.add(styleColor);
 					style.setStyleColorList(subStyleColorList);
 
@@ -4379,7 +4364,7 @@ public class ContentController implements ResourceAwareController, EventAwareCon
 
 		styleAndItsChildDisplay.setStyleList(subStyleList);
 		styleAndItsChildDisplay.setGroupList(childGroupList);
-
+		LOGGER.info("ContentController :displayGroupsAsParentChild:Exit");
 		return styleAndItsChildDisplay;
 	}
 	

@@ -1614,6 +1614,7 @@
                     	                                                   
 														}else{
 														 $("#ajaxResponseSaveContentPetAttribute").html("");
+														 $("#formIphMappingErrorMessage").html("");
 														  $("#ajaxResponseSaveContentPetAttribute").append("<b><font size='3'>Pet Content saved successfully!</font></b>"); 
 														  $("#ajaxResponseSaveContentPetAttribute").focus();
 														}
@@ -2487,8 +2488,8 @@ function toggleRows(currentRow, styleId, styleColorId){
 									 </c:if>
 									</div>
 									<div style="float:right;margin-right:35px">
-										<label style="margin-right:15px"><input type="radio" id="publisStatusCodeReadyForCopy" name="publisStatusCode" value="02" <c:if test="${contentDisplayForm.roleName == 'readonly'}"> disabled="disabled" </c:if> /> Ready For Copy</label>
-										<label style="margin-right:15px"><input type="radio" id="publisStatusCodePublishToWeb" name="publisStatusCode" value="09" <c:if test="${contentDisplayForm.roleName == 'readonly'}"> disabled="disabled" </c:if> /> Publish to Web</label>
+										<label style="margin-right:15px"><input type="radio" id="publisStatusCodeReadyForCopy" name="publisStatusCode" value="02" <c:if test="${contentDisplayForm.roleName == 'readonly'}"> disabled="disabled" </c:if> /> <b>Ready For Copy</b></label>
+										<label style="margin-right:15px"><input type="radio" id="publisStatusCodePublishToWeb" name="publisStatusCode" value="09" <c:if test="${contentDisplayForm.roleName == 'readonly'}"> disabled="disabled" </c:if> /> <b>Publish to Web</b></label>
 									</div>
                                 </div>								 
 							</div>
