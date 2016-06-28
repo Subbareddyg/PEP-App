@@ -610,14 +610,14 @@ public class ContentServiceImpl implements ContentService {
 	@Override
 	public ProductDetailsVO getGroupingDetails(String groupId) throws PEPServiceException{
 		ProductDetailsVO productDetailsVO = null;
-		
+		LOGGER.info("ContentServiceImpl :getGroupingDetails :start");
 		try{
 			productDetailsVO = contentDAO.getGroupingDetails(groupId);
 		}catch (PEPFetchException e) {
-			LOGGER.error("Error in service::: "+e.getMessage());
-			throw new PEPServiceException();
+			LOGGER.error("ContentServiceImpl :getGroupingDetails::: "+e);
+			throw new PEPServiceException(e);
 		}
-		
+		LOGGER.info("ContentServiceImpl :getGroupingDetails :end");
 		return productDetailsVO;
 	}
 	
@@ -630,14 +630,16 @@ public class ContentServiceImpl implements ContentService {
 	 */
 	@Override
 	public CopyAttributeVO getGroupingCopyAttributes(String groupId)throws PEPServiceException {
+		LOGGER.info("ContentServiceImpl :getGroupingCopyAttributes :start");
 		CopyAttributeVO copyAttributeVO = null;
 		
 		try{
 			copyAttributeVO = contentDAO.getGroupingCopyAttributes(groupId);
 		}catch (PEPFetchException e) {
-			LOGGER.error("Error in service::::: "+e.getMessage());
-			throw new PEPServiceException();
+			LOGGER.error("ContentServiceImpl :getGroupingCopyAttributes::::: "+e);
+			throw new PEPServiceException(e);
 		}
+		LOGGER.info("ContentServiceImpl :getGroupingCopyAttributes :end");
 		return copyAttributeVO;
 	}
 	
@@ -649,12 +651,17 @@ public class ContentServiceImpl implements ContentService {
 	 */
 	@Override
 	public StyleInformationVO getGroupingDepartmentDetails(StyleInformationVO styleInformationVO)throws PEPServiceException	{
+		LOGGER.info("ContenServiceImpl :getGroupingDepartmentDetails :start");
+		StyleInformationVO styleInfoVO =null;
 		try{
-			return contentDAO.getGroupingDepartmentDetails(styleInformationVO);
+			styleInfoVO =  contentDAO.getGroupingDepartmentDetails(styleInformationVO);
 		}catch (PEPFetchException e) {
-			LOGGER.error("Error in Service getGroupingDepartmentDetails:::: "+e.getMessage());
-			throw new PEPServiceException();
+			LOGGER.error("ContentServiceImpl : Error in Service getGroupingDepartmentDetails:::: "+e);
+			throw new PEPServiceException(e);
 		}
+		LOGGER.info("ContentServiceImpl :getGroupingDepartmentDetails :end");
+		return styleInfoVO;
+		
 	}
 
 	/**
@@ -664,14 +671,12 @@ public class ContentServiceImpl implements ContentService {
 	 * @author AFUSKJ2 6/17/2016
 	 */
 	@Override
-	public List<OmniChannelBrandVO> getGroupingOmniChannelBrand(String groupId) throws PEPServiceException{
-		try{
-			return contentDAO.getGroupingOmniChannelBrand(groupId);
-		}catch (PEPFetchException e) {
-			LOGGER.error("Erro rin service TODO: handle exception::: "+e.getMessage());
-			e.printStackTrace();
-			throw new PEPServiceException();
-		}
+	public List<OmniChannelBrandVO> getGroupingOmniChannelBrand(String groupId){
+		LOGGER.info("ContentServiceImpl :getGroupingOmniChannelBrand :start");
+		List<OmniChannelBrandVO> omniChannelBrandVo = null;
+		omniChannelBrandVo= contentDAO.getGroupingOmniChannelBrand(groupId);		
+		LOGGER.info("ContentServiceImpl :getGroupingOmniChannelBrand :end");
+		return omniChannelBrandVo;
 	}
 	
 	/**
@@ -681,14 +686,13 @@ public class ContentServiceImpl implements ContentService {
 	 * @author AFUSKJ2 6/17/2016
 	 */
 	@Override
-	public List<CarBrandVO> populateGroupCarBrandList(String groupId) throws PEPServiceException {
-		try{
-			return contentDAO.populateGroupCarBrandList(groupId);
-		}catch (PEPFetchException e) {
-			LOGGER.error("Error in Service populateGroupCarBrandList:::: "+e.getMessage());
-			e.printStackTrace();
-			throw new PEPServiceException();
-		}
+	public List<CarBrandVO> populateGroupCarBrandList(String groupId){
+		LOGGER.info("ContentServiceImpl :populateGroupCarBrandList :end");
+		List<CarBrandVO> carBrandVO =null;
+		carBrandVO= contentDAO.populateGroupCarBrandList(groupId);
+		
+		LOGGER.info("ContentServiceImpl :populateGroupCarBrandList :end");
+		return carBrandVO;
 	}
 	
 	/**
@@ -698,15 +702,11 @@ public class ContentServiceImpl implements ContentService {
 	 * @author AFUSKJ2 6/17/2016
 	 */
 	@Override
-	public List<GroupsFound> getGroupingComponents(String groupId) throws PEPServiceException {
+	public List<GroupsFound> getGroupingComponents(String groupId) {
+		LOGGER.info("ContentServiceImpl :getGroupingComponents :start");
 		List<GroupsFound> grpList = new ArrayList<GroupsFound>();
-		try{
-			grpList = contentDAO.getGroupingComponents(groupId);
-		}catch (PEPFetchException e) {
-			LOGGER.error("Error in service getGroupingComponents::: "+e.getMessage());
-			e.printStackTrace();
-			throw new PEPServiceException();
-		}
+		grpList = contentDAO.getGroupingComponents(groupId);		
+		LOGGER.info("ContentServiceImpl :getGroupingComponents :end");
 		return grpList;
 	}
 	
@@ -719,13 +719,17 @@ public class ContentServiceImpl implements ContentService {
 	 */
 	@Override
 	public List<ItemPrimaryHierarchyVO> populateIPHCategorydropdown(String groupId, String groupType) throws PEPServiceException {
+		LOGGER.info("ContentServiceImpl :populateIPHCategorydropdown :start");
+		List<ItemPrimaryHierarchyVO> iphVO = null;
 		try{
-			return contentDAO.getIPHCategories(groupId, groupType);
+			iphVO= contentDAO.getIPHCategories(groupId, groupType);
 		}catch (PEPFetchException e) {
-			LOGGER.error("Error in service populateIPHCategorydropdown::: "+e.getMessage());
-			e.printStackTrace();
-			throw new PEPServiceException();
+			LOGGER.error("ContentServiceImpl : Error in service populateIPHCategorydropdown::: "+e);
+			
+			throw new PEPServiceException(e);
 		}
+		LOGGER.info("ContentServiceImpl :populateIPHCategorydropdown :end");
+		return iphVO;
 	}
 	
 	/**
@@ -736,14 +740,12 @@ public class ContentServiceImpl implements ContentService {
 	 * @author AFUSKJ2 6/17/2016
 	 */
 	@Override
-	public List<ContentHistoryVO> getGroupContentHistory(String groupId) throws PEPServiceException {
-		try{
-			return contentDAO.getGroupContentHistory(groupId);
-		}catch (PEPFetchException e) {
-			LOGGER.error("Error in Service getGroupContentHistory::: "+e.getMessage());
-			e.printStackTrace();
-			throw new PEPServiceException();
-		}
+	public List<ContentHistoryVO> getGroupContentHistory(String groupId) {
+		LOGGER.info("ContentServiceImpl :getGroupContentHistory :start");
+			List<ContentHistoryVO>  contentHistoryVO =null;
+			contentHistoryVO= contentDAO.getGroupContentHistory(groupId);
+			LOGGER.info("ContentServiceImpl :getGroupContentHistory :end");
+			return contentHistoryVO;
 	}
 	
 
@@ -754,20 +756,18 @@ public class ContentServiceImpl implements ContentService {
 	 * 
 	 * @param jsonStyleSpliColor
 	 * @return responseMsg
+	 * @throws PEPServiceException 
+	 * @throws IOException 
 	 * @throws Exception
 	 * @throws PEPFetchException
 	 */
-	public final String createGroupContentWebService(final JSONObject jsonContentUpdateColor) throws MalformedURLException, ClassCastException, 
-	IOException, JSONException {
-		LOGGER.info("Entering createGroupContentWebService-->.");
+	public final String createGroupContentWebService(final JSONObject jsonContentUpdateColor) throws  PEPServiceException, IOException {
+		LOGGER.info("ContentServiceImpl :Entering createGroupContentWebService-->.");
 		String responseMsg = "";
 		BufferedReader responseBuffer=null;
 		HttpURLConnection httpConnection = null;
 		try {
 	        final Properties prop =   PropertiesFileLoader.getPropertyLoader(ContentScreenConstants.MESS_PROP);
-			//Properties prop = PropertyLoader.getPropertyLoader(GroupingConstants.MESS_PROP);
-			//String serviceURL = prop.getProperty(GroupingConstants.ADD_COMPONENT_TO_SCG_SERVICE_URL);
-			//final String serviceURL = "http://ralpimwsasit02:7507/JERSYRest_SIT/rest/UpdateItemServices/updateGroupContent";
 			final String serviceURL = prop.getProperty(ContentScreenConstants.GROUP_CONTENT_ITEMS_SAVE);
 			
 			LOGGER.info("Add update content ServiceURL-->" + serviceURL);
@@ -778,7 +778,7 @@ public class ContentServiceImpl implements ContentService {
 			httpConnection.setRequestMethod(prop.getProperty(ContentScreenConstants.SERVICE_REQUEST_METHOD));
 			httpConnection.setRequestProperty(prop.getProperty(ContentScreenConstants.SERVICE_REQUEST_PROPERTY_CONTENT_TYPE),
 					prop.getProperty(ContentScreenConstants.SERVICE_REQUEST_PROPERTY_APPLICATION_TYPE));
-			
+			if(LOGGER.isDebugEnabled())
 			LOGGER.debug("Method-->"+prop.getProperty(ContentScreenConstants.SERVICE_REQUEST_METHOD));
 
 			LOGGER.info("createGroupContentWebService Service::Json Array-->" + jsonContentUpdateColor.toString());
@@ -799,16 +799,16 @@ public class ContentServiceImpl implements ContentService {
 
 		} catch (MalformedURLException e) {
 			LOGGER.error("inside malformedException-->" + e);
-			throw new MalformedURLException(e.getMessage());
+			throw new PEPServiceException(e);
 		} catch (ClassCastException e) {
 			LOGGER.error("inside ClassCastException-->" + e);
-			throw new ClassCastException(e.getMessage());
+			throw new PEPServiceException(e);
 		}catch (JSONException e) {
 			LOGGER.error("inside JSOnException-->" + e);
-			throw new JSONException(e.getMessage());
+			throw new PEPServiceException(e);
 		}catch (IOException e) {
 			LOGGER.error("inside IOException-->" + e);
-			throw new IOException(e.getMessage());
+			throw new PEPServiceException(e);
 		}finally {
 			if(null != httpConnection){
 				httpConnection.disconnect();
@@ -871,14 +871,17 @@ public class ContentServiceImpl implements ContentService {
 		LOGGER.info("Entering callCopyOrinContentService.");
 		String responseMsg = ContentScreenConstants.EMPTY;
 		String responseMsgCode = ContentScreenConstants.EMPTY;
-
+try{
 		JSONObject jsonObj = new JSONObject();
 		jsonObj.put(ContentScreenConstants.FROM_MDMID, styleId);
 		jsonObj.put(ContentScreenConstants.TO_MDMID, groupId);
 		jsonObj.put(ContentScreenConstants.MODIFIED_BY, updatedBy);
 
 		/** Calling Web Service **/
-		String resMsg = callContentCopyService(jsonObj);
+		String resMsg;
+	
+			resMsg = callContentCopyService(jsonObj);
+		
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("Copy Content Service message-->" + resMsg);
 		}
@@ -906,7 +909,13 @@ public class ContentServiceImpl implements ContentService {
 			responseMsg = prop
 					.getProperty(ContentScreenConstants.COPY_CONTENT_FAILURE_MESSAGE);
 		}
-
+}catch(IOException e){
+	LOGGER.error("Exception in callCopyOrinContentService:IOException "+e);
+	throw new PEPServiceException(e);
+}catch(JSONException e){
+	LOGGER.error("Exception in callCopyOrinContentService:JSONException "+e);
+	throw new PEPServiceException(e);
+}
 		LOGGER.info("Exiting callCopyOrinContentService.");
 		return responseMsg;
 	}
@@ -921,9 +930,10 @@ public class ContentServiceImpl implements ContentService {
 	 * 
 	 *             Method added For PIM Phase 2 - Group Content Date: 06/18/2016
 	 *             Added By: Cognizant
+	 * @throws IOException 
 	 */
 	private String callContentCopyService(final JSONObject jsonObject)
-			throws PEPServiceException {
+			throws PEPServiceException, IOException {
 		LOGGER.info("Entering callContentCopyService.");
 
 		String responseMsg = ContentScreenConstants.EMPTY;
@@ -987,13 +997,7 @@ public class ContentServiceImpl implements ContentService {
 				httpConnection.disconnect();
 			}
 			if (responseBuffer != null) {
-				try {
-					responseBuffer.close();
-				} catch (IOException e) {
-					LOGGER.error("inside responseBuffer.close() IOException-->"
-							+ e);
-					throw new PEPServiceException(e.getMessage());
-				}
+					responseBuffer.close();				
 			}
 		}
 		LOGGER.info("Exiting callContentCopyService");
@@ -1013,6 +1017,7 @@ public class ContentServiceImpl implements ContentService {
      * Method added For PIM Phase 2 - Group Content
      * Date: 06/18/2016
      * Added By: Cognizant
+	 * @throws  
      */
     @Override
 	public final String callUpdateContentStatusService(final String groupId,
@@ -1022,7 +1027,7 @@ public class ContentServiceImpl implements ContentService {
 		LOGGER.info("Entering callCopyOrinContentService.");
 		String responseMsg = ContentScreenConstants.EMPTY;
 		String responseMsgCode = ContentScreenConstants.EMPTY;
-
+		try{
 		JSONObject jsonObj = new JSONObject();
 		jsonObj.put(ContentScreenConstants.GROUP_ID, groupId);
 		jsonObj.put(ContentScreenConstants.GROUP_TYPE, groupType);
@@ -1059,7 +1064,15 @@ public class ContentServiceImpl implements ContentService {
 			responseMsg = prop
 					.getProperty(ContentScreenConstants.UPDATE_CONTENT_STATUS_FAILURE_MESSAGE);
 		}
-
+		}catch(IOException e){
+			LOGGER.error("Exception in callCopyOrinContentService:IOException :"+e);
+			throw new PEPServiceException(e);
+			
+		}catch(JSONException e){
+			LOGGER.error("Exception in callCopyOrinContentService:JSONException :"+e);
+			throw new PEPServiceException(e);
+			
+		}
 		LOGGER.info("Exiting callCopyOrinContentService.");
 		return responseMsg;
 	}
@@ -1074,9 +1087,10 @@ public class ContentServiceImpl implements ContentService {
 	 * 
 	 *             Method added For PIM Phase 2 - Group Content Date: 06/18/2016
 	 *             Added By: Cognizant
+	 * @throws IOException 
 	 */
 	private String callUpdateContentStatusService(final JSONObject jsonObject)
-			throws PEPServiceException {
+			throws PEPServiceException, IOException {
 		LOGGER.info("Entering callUpdateContentStatusService.");
 
 		String responseMsg = ContentScreenConstants.EMPTY;
@@ -1140,13 +1154,7 @@ public class ContentServiceImpl implements ContentService {
 				httpConnection.disconnect();
 			}
 			if (responseBuffer != null) {
-				try {
-					responseBuffer.close();
-				} catch (IOException e) {
-					LOGGER.error("inside responseBuffer.close() IOException-->"
-							+ e);
-					throw new PEPServiceException(e.getMessage());
-				}
+					responseBuffer.close();				
 			}
 		}
 		LOGGER.info("Exiting callUpdateContentStatusService");
@@ -1162,14 +1170,13 @@ public class ContentServiceImpl implements ContentService {
 	 * @author AFUSKJ2 6/17/2016
 	 */
 	@Override
-	public List<ItemPrimaryHierarchyVO> selectedIPHCategorydropdown(String groupId) throws PEPServiceException {
-		try{
-			return contentDAO.selectedIPHCategorydropdown(groupId);
-		}catch (PEPFetchException e) {
-			LOGGER.error("Error in service populateIPHCategorydropdown::: "+e.getMessage());
-			e.printStackTrace();
-			throw new PEPServiceException();
-		}
+	public List<ItemPrimaryHierarchyVO> selectedIPHCategorydropdown(String groupId){
+		LOGGER.info("ContentServiceImpl: selectedIPHCategorydropdown: starts");
+			List<ItemPrimaryHierarchyVO> iphVo = null;
+			iphVo=  contentDAO.selectedIPHCategorydropdown(groupId);
+			LOGGER.info("ContentServiceImpl: selectedIPHCategorydropdown: end");
+			return iphVo;
+		
 	}
 }
 
