@@ -66,6 +66,7 @@ var app = app || {};
 						minHeight: 370,
 						create: function(event, ui){
 							$('#nameMaxChars').text(app.Global.defaults.maxGroupNameChars);
+							$('#descMinChars').text(app.Global.defaults.minGroupDescChars);
 							$('#descMaxChars').text(app.Global.defaults.maxGroupDescChars);
 						},
 						beforeClose: function(event, ui){
@@ -232,8 +233,8 @@ var app = app || {};
 					
 					
 					if($('#closeGrpDlg').hasClass('refresh')){
-						$('.overlay_pageLoading').removeClass('hidden'); 
-						$('#frmComponentSearch').trigger('submit'); //trigerring search internally																				
+						//$('.overlay_pageLoading').removeClass('hidden'); 
+						$('#frmComponentSearch').trigger('submit');  //trigerring search internally																				
 						$('#closeGrpDlg').val('Cancel');
 						$('#closeGrpDlg').removeClass('refresh');
 						$('#select-all').prop('checked', false);
@@ -333,7 +334,7 @@ var app = app || {};
 							var groupId = _that.data('group-id');
 							var groupType = _that.data('group-type');
 							
-							$('#overlay_pageLoading').removeClass('hidden'); //showing as working
+							$('.overlay_pageLoading').removeClass('hidden'); //showing as working
 							
 							//requesting factorty to validate and delete
 							app.GroupFactory.deleteGroup({groupId: groupId, groupType: groupType})
@@ -354,14 +355,14 @@ var app = app || {};
 											messageHtml = _super.buildMessage(responseJSON.deleteStatusMessage, 'error');
 									}
 									
-									$('#group-deletion-messages').html(messageHtml).fadeIn('slow');
+									$('#group-deletion-messages').html(messageHtml).fadeIn('fast');
 									
 									//cleaning up message after 4 sec
-									_super.cleanupMessage($('#group-deletion-messages'), 4000);
+									_super.cleanupMessage($('#group-deletion-messages'), 8000);
 									
 								})
 								.complete(function(){
-									$('#overlay_pageLoading').addClass('hidden'); //hiding loader icon
+									$('.overlay_pageLoading').addClass('hidden'); //hiding loader icon
 								});
 						},
 					   },
@@ -375,6 +376,7 @@ var app = app || {};
 				$("#startDate , #endDate").on('keydown',function(e){
 					e.preventDefault();
 				});
+				
 				//group create button action
 				$('#btnCreateGroup').on('click', function(e){
 					//triming all whitespaces
@@ -386,6 +388,12 @@ var app = app || {};
 					
 					if($('#createGroupForm')[0].checkValidity()){
 						e.preventDefault();  //preventing default form submission
+						
+						if($('#groupDesc').val().trim().length < app.Global.defaults.minGroupDescChars){
+							$('#error-massege').html("Please enter at least " + app.Global.defaults.minGroupDescChars + " characters in description field.");
+							$('#errorBox').dialog('open');
+							return;
+						}
 						
 						var checkString = [];
 						 
@@ -601,7 +609,7 @@ var app = app || {};
 							return;
 						}
 						
-//now looking the selected dept list to determine whether it has been generated or typed
+						//now looking the selected dept list to determine whether it has been generated or typed
 						var classArr = $(this).val().trim().split(',');
 						
 						//looking inside the available list to validate
@@ -635,7 +643,7 @@ var app = app || {};
 				
 				
 				//bootstrapping events when DOM is ready State
-				$(document).on('ready', function(e){				
+				$(document).on('ready', function(e){
 					if(app.URLFactory.getURL('groupSearchUrl')){
 						//code to fetch all depts
 						
@@ -886,6 +894,7 @@ var app = app || {};
 					e.preventDefault(); //preventing default form submission 
 					
 					var validationClass= $(this).attr('class');
+					
 					//dialog to show error when no field is entered
 					if(validationClass.indexOf('CPG') > -1 || validationClass.indexOf('RCG') > -1 
 						|| validationClass.indexOf('BCG') > -1 || validationClass.indexOf('GSG') > -1 )
@@ -917,14 +926,6 @@ var app = app || {};
 										var componentList = response.componentList;
 										//deleting componentList to pass only header
 										delete response.componentList;
-										
-										/* app.DataTable.dtContainer = '#dataTable';
-										app.DataTable.dataHeader = response;
-										app.DataTable.data = componentList;
-										
-										$('.paginator').removeData('twbs-pagination'); //reconstructing the paginator
-										
-										app.DataTable.init(); */
 										
 										var config = {};
 										
@@ -982,14 +983,6 @@ var app = app || {};
 										//deleting componentList to pass only header
 										delete response.componentList;
 										
-										/* app.DataTable.dtContainer = '#dataTable';
-										app.DataTable.dataHeader = response;
-										app.DataTable.data = componentList;
-										
-										$('.paginator').removeData('twbs-pagination'); //reconstructing the paginator
-										
-										app.DataTable.init(); */
-										
 										var dtTable = new app.DataTable();
 										dtTable.setDataHeader(response);
 										dtTable.setData(componentList);
@@ -999,11 +992,10 @@ var app = app || {};
 										dtTable.init();
 									}
 									
-									
+									//displaying search page
 									$("#search-result-panel").removeClass('hidden');
 																	
 								}).complete(function(){
-									
 									$('.overlay_pageLoading').addClass('hidden');
 									$('.select-all').prop('checked',false);
 								});
@@ -1018,6 +1010,15 @@ var app = app || {};
 				
 				
 				$('#split-components').on('click',function(){
+					/**
+					* new rule updated on 06272016
+					* if selected item is only one then the its corresponding radio will be checked
+					* in other ways first selcted item will have default radio selected
+					*/
+					
+					if($('.item-check:checked').length == 1){
+						$('.item-check:checked').parent().parent().find('input[type=radio]').prop('checked', true);
+					}
 					
 					if($('.item-check:checked').length < 1){
 						$('#error-massege').html("Please select atleast one item.");
@@ -1028,10 +1029,6 @@ var app = app || {};
 					}else{
 						$('#dlgGroupCreate').dialog('open');
 					}
-					
-					
-					
-					
 				})
 				
 			}catch(ex){

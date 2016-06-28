@@ -101,6 +101,7 @@ public class GroupingConstants {
 	public static final String VENDOR_STYLE_NO = "vendorStyleNo";
 	public static final String STYLE_ORIN_NO_SEARCH_PARAM = "styleOrinNo";
 	public static final String STYLE_ORIN_NO = "StyleOrinNo";
+	public static final String STYLE_MDMID = "mdmid";
 	public static final String VENDOR_STYLE_NO_SEARCH = "vendorStyleNoSearch";
 	public static final String STYLE_ORIN_NO_SEARCH = "styleOrinNoSearch";
 

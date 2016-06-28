@@ -185,6 +185,7 @@ function sampleImageButton(tableID) {
 
 
 
+
 function swatchImageButton(tableID) {
 	if(sampleImageExist){
 	return;
@@ -495,6 +496,7 @@ function openGRPScen7Image(url){
 
 	var win = window.open(url, '', "toolbar=no,resizable=no,width=400,height=580,scrollbars=yes");
 }
+
 
 
 function onloadVPILinks(groupVPILinks){

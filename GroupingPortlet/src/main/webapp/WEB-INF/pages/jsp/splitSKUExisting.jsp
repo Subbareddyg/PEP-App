@@ -10,7 +10,7 @@
 						<th width="10%"><a href="javascript:;" class="sortable" data-sort-column="colorCode" data-sorted-by=""><fmt:message key="splitgroup.screen.level.component.colorCode" /></a></th>
 						<th width="10%"><a href="javascript:;" class="sortable" data-sort-column="colorName" data-sorted-by=""><fmt:message key="splitgroup.screen.level.component.colorName" /></a></th>
 						<th width="8%"><a href="javascript:;" class="sortable" data-sort-column="size" data-sorted-by=""><fmt:message key="splitgroup.screen.level.component.size" /></a></th>
-						<th width="10%"><fmt:message key="splitgroup.screen.level.component.defaultSize" /></th>						
+						<th width="10%"><fmt:message key="splitgroup.screen.level.component.defaultColor" /></th>						
 					</tr>
 				</thead>
 				<tbody class="row-container"></tbody>
@@ -23,10 +23,10 @@
 		<tr>
 			<td>
 				<c:if test="${readonly =='yes'}">  
-				<input type="checkbox" name="selectedItem[]" value="{{=row.size}}" class="item-check" style="margin-left:12px" disabled="disabled" />
+				<input type="checkbox" name="selectedItem[]" value="{{=row.mdmid}}" class="item-check" style="margin-left:12px" disabled="disabled" />
 				</c:if>
 				<c:if test="${readonly !='yes'}">  
-				<input type="checkbox" name="selectedItem[]" value="{{=row.size}}" class="item-check" style="margin-left:12px"/>
+				<input type="checkbox" name="selectedItem[]" value="{{=row.mdmid}}" class="item-check" style="margin-left:12px"/>
 				</c:if>
 			</td>
 			<td class="text-center">{{=row.StyleOrinNo}}</td>

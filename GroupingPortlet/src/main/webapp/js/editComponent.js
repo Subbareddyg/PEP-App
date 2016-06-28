@@ -148,7 +148,8 @@ var app = app || {} ;
 								//console.log(_super.searchValue.classId);
 								serializedData += '&classId=' + _super.searchValue.classId;
 							}
-								
+							
+							$('.overlay_pageLoading').removeClass('hidden');							
 							app.GroupFactory.addNewSplitComponent(serializedData) //sending and asigning few group type specific values
 								.done(function(result){
 									if(!result.length){
@@ -162,6 +163,7 @@ var app = app || {} ;
 									
 									app.GroupLandingApp.handleGroupCreationResponse(resultJSON, resultJSON.groupType, false);
 									
+									$('.overlay_pageLoading').removeClass('hidden');
 									//now refreshing existing component list
 									_super.loadExitingData(false)
 										.complete(function(){
@@ -283,6 +285,13 @@ var app = app || {} ;
 							$(this).click();
 						}else{
 							$(this).attr('type', 'button');
+							
+							if($('#groupDesc').val().trim().length < app.Global.defaults.minGroupDescChars){
+								$('#error-massege').html("Please enter at least " + app.Global.defaults.minGroupDescChars + " characters in description field.");
+								$('#errorBox').dialog('open');
+								return;
+							}
+							
 							$(this).val('Saving..').css({opacity: 0.5});
 							editAjaxReq = app.GroupFactory.updateHeader($('#fromHeaderEdit').serialize())
 								.done(function(result){
@@ -559,6 +568,7 @@ var app = app || {} ;
 				
 				$(document).on('ready', function(e){
 					$('#nameMaxChars').text(app.Global.defaults.maxGroupNameChars);
+					$('#descMinChars').text(app.Global.defaults.minGroupDescChars);
 					$('#descMaxChars').text(app.Global.defaults.maxGroupDescChars);
 				});
 			},

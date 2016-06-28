@@ -450,6 +450,7 @@ public class GroupingController {
 				styleOrinNoSearch = GroupingUtil.checkNull(groupAttributeForm.getParentMdmid());
 				vendorStyleNoSearch = GroupingUtil.checkNull(groupAttributeForm.getStyleNumber());
 				jsonObjComponent.put(GroupingConstants.STYLE_ORIN_NO, styleOrinNoSearch);
+				jsonObjComponent.put(GroupingConstants.STYLE_MDMID, GroupingUtil.checkNull(groupAttributeForm.getOrinNumber()));
 				jsonObjComponent.put(GroupingConstants.VENDOR_STYLE_NO, vendorStyleNoSearch);
 				jsonObjComponent.put(GroupingConstants.PRODUCT_NAME, groupAttributeForm.getProdName());
 				jsonObjComponent.put(GroupingConstants.COLOR_CODE, groupAttributeForm.getColorCode());
@@ -1918,7 +1919,7 @@ try{
 	 */
 	@ResourceMapping("removeComponent")
 	public void removedSelectedComponents(ResourceRequest request,ResourceResponse response){
-		LOGGER.info("Entered saveEditedGroup Method of Grouping Controller");
+		LOGGER.info("Entered removedSelectedComponents Method of Grouping Controller");
 		String userID="";
 		String sessionDataKey = (String) request.getPortletSession().getAttribute("sessionDataKey");
 		if (null != sessionDataKey) {
@@ -1929,6 +1930,7 @@ try{
 		String componentsStr=(request.getParameter(GroupingConstants.COMPONENT_LIST)!=null) ? (request.getParameter(GroupingConstants.COMPONENT_LIST)): "" ;
 		String groupingType=(request.getParameter(GroupingConstants.GROUP_TYPE)!=null) ? (request.getParameter(GroupingConstants.GROUP_TYPE)): "" ;
 		String[] components=componentsStr.split(",");
+		LOGGER.debug("componentsStr------------------------------------------------------------------->"+componentsStr);
 		LOGGER.info("no of components"+components.length);
 		JSONArray compArray=new JSONArray();
 		for (String component : components) {
@@ -2152,6 +2154,15 @@ try{
 						: "No";
 				
 				jsonObjComponent.put(GroupingConstants.ALREADY_IN_SAME_GROUP, isAlreadyInSameGroup);
+				
+				// Start modification for Defect#3037
+				String isAlreadyInGroup = styleAttributeForm.getIsAlreadyInGroup();
+				isAlreadyInGroup = null == isAlreadyInGroup ? "No" : ("").equalsIgnoreCase(isAlreadyInGroup.trim()) ? "No" : ("N")
+						.equalsIgnoreCase(isAlreadyInGroup.trim()) ? "No" : ("Y").equalsIgnoreCase(isAlreadyInGroup.trim()) ? "Yes"
+						: "No";
+				jsonObjComponent.put(GroupingConstants.ALREADY_IN_GROUP, isAlreadyInGroup);
+				// End modification for Defect#3037
+				
 				jsonObjComponent.put(GroupingConstants.IS_GROUP, styleAttributeForm.getIsGroup());
 				jsonObjComponent.put(GroupingConstants.PRIORITY, styleAttributeForm.getPriority());
 				jsonObjComponent.put(GroupingConstants.HAVE_CHILD_GROUP, styleAttributeForm.getHaveChildGroup());
