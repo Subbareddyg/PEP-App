@@ -852,14 +852,13 @@ public class XqueryConstants {
      * @return
      */
     public String getGroupingInfoDetails(){
-        final String GROUPING_INFO_QUERY = " SELECT AGC.MDMID GROUP_ID, "+
+        final String GROUPING_INFO_QUERY = " SELECT DISTINCT AGC.MDMID GROUP_ID, "+
         	" AGC.DEF_DEPT_ID DEPT_ID, "+
         	" AGC.DEF_PRIMARYSUPPLIERVPN VENDOR_STYLE, "+
         	" AGC.ENTRY_TYPE GROUP_TYPE, s.VenId, s.VenName, s.OmnichannelIndicator, "+
         	" AIC.CLASS_ID,  Vendor_Image,  Vendor_Sample,  AGC.GROUP_OVERALL_STATUS_CODE, "+
         	" AGC.GROUP_IMAGE_STATUS_CODE, "+
-        	" AGC.GROUP_CONTENT_STATUS_CODE, "+
-        	" GROUP_XML.DESCRIPTION "+
+        	" AGC.GROUP_CONTENT_STATUS_CODE "+
         	" FROM VENDORPORTAL.ADSE_GROUP_CATALOG AGC "+
         	" LEFT OUTER JOIN VENDORPORTAL.ADSE_SUPPLIER_CATALOG sup "+
         	" ON SUP.MDMID=AGC.DEF_PRIMARY_SUPPLIER_ID "+
@@ -879,9 +878,7 @@ public class XqueryConstants {
         	" XMLTABLE('for $i in $XML_DATA/pim_entry/entry  return $i' passing sup.xml_data   " +   
         	" AS \"XML_DATA\" COLUMNS Id      VARCHAR2(20) path 'Supplier_Ctg_Spec/Id', VenName VARCHAR2(20) " +
         	" path 'Supplier_Ctg_Spec/Name', VenId VARCHAR2(20) path 'Supplier_Ctg_Spec/VEN_Id', OmnichannelIndicator VARCHAR(2) path 'if "+
-        	" (Supplier_Site_Spec/Omni_Channel/Omni_Channel_Indicator eq \"true\") then \"Y\" else \"N\"' ) (+)s, " +
-        	" XMLTABLE('for $i in $group/pim_entry/entry/Group_Ctg_Spec return <out><desc>{$i/Description}</desc></out>' Passing AGC.XML_DATA AS \"group\"  " +
-        	" Columns Description CLOB path '/out/desc') (+)GROUP_XML "+ 
+        	" (Supplier_Site_Spec/Omni_Channel/Omni_Channel_Indicator eq \"true\") then \"Y\" else \"N\"' ) (+)s "+ 
         	" WHERE AGC.MDMID=? ";
 
         
