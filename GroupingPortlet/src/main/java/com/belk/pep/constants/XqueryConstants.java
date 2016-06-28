@@ -30,33 +30,33 @@ public class XqueryConstants {
 	 * 
 	 * @return String */
 	public static  final String getGroupHeaderDetails() {
-		final String getGroupHeaderDetailsQuery = " "
-				+ " SELECT                                                                                "
-				+ "      AGC.MDMID GROUP_ID,                                                               "
-				+ "      AGC.GROUP_NAME,                                                                   "
-				+ "      AGCXML.Description,                                                               "
-				+ "      AGC.START_DATE,                                                      "
-				+ "      AGC.END_DATE,                                                        "
-				+ "      AGCXML.CARS_Group_Type,                                                      "
-				+ "      AGC.ENTRY_TYPE GROUP_TYPE, AGC.GROUP_OVERALL_STATUS_CODE,                          "
-				+ "      AGC.CREATED_BY                                                                    "
-				+ "      FROM ADSE_GROUP_CATALOG AGC,                                                      "
-				+ "        XMLTABLE( 'let                                                                  "
-				+ "        $Description:= /pim_entry/entry/Group_Ctg_Spec/Description,                     "
-				+ "        $CARS_Group_Type:= /pim_entry/entry/Group_Ctg_Spec/CARS_Group_Type        "
-				+ "        return                                         "
-				+ "      <out>                                                                             "
-				+ "          <Description>{$Description}</Description>                                     "
-				+ "          <CARS_Group_Type>{$CARS_Group_Type}</CARS_Group_Type>                "
-				+ "      </out>' passing AGC.XML_DATA                                                      "
-				+ "        Columns                                                                         "
-				+ "        Description CLOB path '/out/Description',                               "
-				+ "        CARS_Group_Type VARCHAR2(50) path '/out/CARS_Group_Type') AGCXML          "
-				+ "      WHERE                                                                             "
-				+ "      MDMID = :groupIdSql AND DELETED_FLAG = 'false'                                     ";
+		StringBuilder getGroupHeaderDetailsQuery = new StringBuilder();
+		getGroupHeaderDetailsQuery.append(" SELECT                                                                                ");
+		getGroupHeaderDetailsQuery.append("      AGC.MDMID GROUP_ID,                                                               ");
+		getGroupHeaderDetailsQuery.append("      AGC.GROUP_NAME,                                                                   ");
+		getGroupHeaderDetailsQuery.append("      AGCXML.Description,                                                        ");
+		getGroupHeaderDetailsQuery.append("      AGC.START_DATE,                                               ");
+		getGroupHeaderDetailsQuery.append("      AGC.END_DATE,                                                 ");
+		getGroupHeaderDetailsQuery.append("      AGCXML.CARS_Group_Type,                                               ");
+		getGroupHeaderDetailsQuery.append("      AGC.ENTRY_TYPE GROUP_TYPE, AGC.GROUP_OVERALL_STATUS_CODE,                   ");
+		getGroupHeaderDetailsQuery.append("      AGC.CREATED_BY                                                             ");
+		getGroupHeaderDetailsQuery.append("      FROM ADSE_GROUP_CATALOG AGC,                                               ");
+		getGroupHeaderDetailsQuery.append("        XMLTABLE( 'let                                                           ");
+		getGroupHeaderDetailsQuery.append("        $Description:= /pim_entry/entry/Group_Ctg_Spec/Description,              ");
+		getGroupHeaderDetailsQuery.append("        $CARS_Group_Type:= /pim_entry/entry/Group_Ctg_Spec/CARS_Group_Type ");
+		getGroupHeaderDetailsQuery.append("        return                                  ");
+		getGroupHeaderDetailsQuery.append("      <out>                                                                      ");
+		getGroupHeaderDetailsQuery.append("          <Description>{$Description}</Description>                              ");
+		getGroupHeaderDetailsQuery.append("          <CARS_Group_Type>{$CARS_Group_Type}</CARS_Group_Type>         ");
+		getGroupHeaderDetailsQuery.append("      </out>' passing AGC.XML_DATA                                               ");
+		getGroupHeaderDetailsQuery.append("        Columns                                                                  ");
+		getGroupHeaderDetailsQuery.append("        Description CLOB path '/out/Description',                        ");
+		getGroupHeaderDetailsQuery.append("        CARS_Group_Type VARCHAR2(50) path '/out/CARS_Group_Type') AGCXML   ");
+		getGroupHeaderDetailsQuery.append("      WHERE                                                                      ");
+		getGroupHeaderDetailsQuery.append("      MDMID = :groupIdSql AND DELETED_FLAG = 'false'                              ");
 
 
-		return getGroupHeaderDetailsQuery;
+		return getGroupHeaderDetailsQuery.toString();
 	}
 
 	/** This method is used to build the Query to retrieve Split Color details to
@@ -65,42 +65,43 @@ public class XqueryConstants {
 	 * @return String
 	 * @param vendorStyleNo */
 	public static  final String getSplitColorDetails(final String vendorStyleNo) {
-		String getSplitColorDetailsQuery = " Select                                 "
-				+ "  ITEM.MDMID, ITEM.PARENT_MDMID,                                                                      "
-				+ "  ITEM.PRIMARYSUPPLIERVPN,                                                                            "
-				+ "  PET_XML.PRODUCT_NAME,                                                                               "
-				+ "  PET_XML.COLOR_CODE,                                                                                 "
-				+ "  PET_XML.COLOR_DESC,                                                                                 "
-				+ "  PET.EXIST_IN_GROUP ALREADY_IN_GROUP, PET.PET_STATE, PET.ENTRY_TYPE                                    "
-				+ "  FROM                                                                                                "
-				+ "  ADSE_ITEM_CATALOG ITEM,                                                                             "
-				+ "  ADSE_PET_CATALOG PET,                                                                                 "
-				+ "  XMLTABLE('let                                                                                       "
-				+ "      $colordesc:= /pim_entry/entry/Ecomm_StyleColor_Spec/NRF_Color_Description,                      "
-				+ "      $colorCode:= /pim_entry/entry/Ecomm_StyleColor_Spec/NRF_Color_Code                              "
-				+ "  return                                                                                              "
-				+ "  <COLOR>                                                                                             "
-				+ "      <COLOR_CODE>{$colorCode}</COLOR_CODE>                                                           "
-				+ "      <COLOR_DESC>{$colordesc}</COLOR_DESC>                                                           "
-				+ "      <PRODUCT_NAME>{/pim_entry/entry/Ecomm_Style_Spec/Product_Name}</PRODUCT_NAME>                   "
-				+ "  </COLOR>'                                                                                           "
-				+ "  passing Pet.XML_DATA                                                                                "
-				+ "  Columns                                                                                             "
-				+ "      COLOR_CODE VARCHAR2(5) path '/COLOR/COLOR_CODE',                                                "
-				+ "      COLOR_DESC VARCHAR2(20) path '/COLOR/COLOR_DESC',                                               "
-				+ "      PRODUCT_NAME VARCHAR2(20) path '/COLOR/PRODUCT_NAME'                                            "
-				+ "      ) PET_XML                                                                                       "
-				+ "  WHERE                                                                                               "
-				+ "  ITEM.ENTRY_TYPE in ('Style', 'StyleColor')                                                          "
-				+ "  AND ITEM.DELETED_FLAG= 'false'                                                                      "
-				+ "   AND PET.MDMID=ITEM.MDMID                                                                           ";
+		StringBuilder getSplitColorDetailsQuery = new StringBuilder();
+		getSplitColorDetailsQuery.append(" Select                          ");
+		getSplitColorDetailsQuery.append("   ITEM.MDMID, ITEM.PARENT_MDMID,                                                               ");
+		getSplitColorDetailsQuery.append("   ITEM.PRIMARYSUPPLIERVPN,                                                                     ");
+		getSplitColorDetailsQuery.append("   PET_XML.PRODUCT_NAME,                                                                        ");
+		getSplitColorDetailsQuery.append("   PET_XML.COLOR_CODE,                                                                          ");
+		getSplitColorDetailsQuery.append("   PET_XML.COLOR_DESC,                                                                          ");
+		getSplitColorDetailsQuery.append("   PET.EXIST_IN_GROUP ALREADY_IN_GROUP, PET.PET_STATE, PET.ENTRY_TYPE                             ");
+		getSplitColorDetailsQuery.append("   FROM                                                                                         ");
+		getSplitColorDetailsQuery.append("   ADSE_ITEM_CATALOG ITEM,                                                                      ");
+		getSplitColorDetailsQuery.append("   ADSE_PET_CATALOG PET,                                                                          ");
+		getSplitColorDetailsQuery.append("   XMLTABLE('let                                                                                ");
+		getSplitColorDetailsQuery.append("       $colordesc:= /pim_entry/entry/Ecomm_StyleColor_Spec/NRF_Color_Description,               ");
+		getSplitColorDetailsQuery.append("       $colorCode:= /pim_entry/entry/Ecomm_StyleColor_Spec/NRF_Color_Code                       ");
+		getSplitColorDetailsQuery.append("   return                                                                                       ");
+		getSplitColorDetailsQuery.append("   <COLOR>                                                                                      ");
+		getSplitColorDetailsQuery.append("       <COLOR_CODE>{$colorCode}</COLOR_CODE>                                                    ");
+		getSplitColorDetailsQuery.append("       <COLOR_DESC>{$colordesc}</COLOR_DESC>                                                    ");
+		getSplitColorDetailsQuery.append("       <PRODUCT_NAME>{/pim_entry/entry/Ecomm_Style_Spec/Product_Name}</PRODUCT_NAME>            ");
+		getSplitColorDetailsQuery.append("   </COLOR>'                                                                                    ");
+		getSplitColorDetailsQuery.append("   passing Pet.XML_DATA                                                                         ");
+		getSplitColorDetailsQuery.append("   Columns                                                                                      ");
+		getSplitColorDetailsQuery.append("       COLOR_CODE VARCHAR2(5) path '/COLOR/COLOR_CODE',                                         ");
+		getSplitColorDetailsQuery.append("       COLOR_DESC VARCHAR2(20) path '/COLOR/COLOR_DESC',                                        ");
+		getSplitColorDetailsQuery.append("       PRODUCT_NAME VARCHAR2(20) path '/COLOR/PRODUCT_NAME'                                     ");
+		getSplitColorDetailsQuery.append("       ) PET_XML                                                                                ");
+		getSplitColorDetailsQuery.append("   WHERE                                                                                        ");
+		getSplitColorDetailsQuery.append("   ITEM.ENTRY_TYPE in ('Style', 'StyleColor')                                                   ");
+		getSplitColorDetailsQuery.append("   AND ITEM.DELETED_FLAG= 'false'                                                               ");
+		getSplitColorDetailsQuery.append("    AND PET.MDMID=ITEM.MDMID                                                                    ");
 		if (vendorStyleNo != null) {
-			getSplitColorDetailsQuery = getSplitColorDetailsQuery + " AND item.PRIMARYSUPPLIERVPN = :styleIdSql";
+			getSplitColorDetailsQuery.append(" AND item.PRIMARYSUPPLIERVPN = :styleIdSql");
 		} else {
-			getSplitColorDetailsQuery = getSplitColorDetailsQuery + " AND NVL(ITEM.PARENT_MDMID,ITEM.MDMID) = :mdmidSql";
+			getSplitColorDetailsQuery.append(" AND NVL(ITEM.PARENT_MDMID,ITEM.MDMID) = :mdmidSql");
 		}
 
-		return getSplitColorDetailsQuery;
+		return getSplitColorDetailsQuery.toString();
 	}
 
 	/** This method is used to build the Query to retrieve Split SKU details to
@@ -109,49 +110,50 @@ public class XqueryConstants {
 	 * @param vendorStyleNo
 	 * @return String */
 	public static  final String getSplitSKUDetails(final String vendorStyleNo) {
-		String getSplitSKUDetailsQuery = "   Select                                                                      "
-				+ "  ITEM.MDMID,  ITEM.PARENT_MDMID,                                                                      "
-				+ "  ITEM.PRIMARYSUPPLIERVPN,                                                                            "
-				+ "  ITEM_XML.NAME,                                                                                      "
-				+ "  ITEM_XML.COLOR_CODE,                                                                                "
-				+ "  ITEM_XML.COLOR_NAME,                                                                                "
-				+ "  ITEM_XML.SIZEDESC, ITEM_XML.SIZE_CODE,                                                              "
-				+ "  PET.EXIST_IN_GROUP ALREADY_IN_GROUP, PET.PET_STATE, PET.ENTRY_TYPE                                  "
-				+ "  FROM                                                                                                "
-				+ "  ADSE_ITEM_CATALOG ITEM,                                                                             "
-				+ "  ADSE_PET_CATALOG PET,                                                                                "
-				+ "  XMLTABLE('let                                                                                       "
-				+ "  $colorcode:=/pim_entry/entry/Item_SKU_Spec/Differentiators[Type eq \"COLOR\"]/Code,                   "
-				+ "  $colorname:=/pim_entry/entry/Item_SKU_Spec/Differentiators[Type eq \"COLOR\"]/Vendor_Description,     "
-				+ "  $size:=/pim_entry/entry/Item_SKU_Spec/Differentiators[Type eq \"SIZE\"]/Vendor_Description,           "
-				+ "  $sizeCode:=/pim_entry/entry/Item_SKU_Spec/Differentiators[Type eq \"SIZE\"]/Code,           "
-				+ "  $name:=/pim_entry/entry/Item_Ctg_Spec/Description/Short                                             "
-				+ "  return                                                                                              "
-				+ "      <SPEC>                                                                                          "
-				+ "          <COLOR_CODE>{$colorcode}</COLOR_CODE>                                                       "
-				+ "          <COLOR_NAME>{$colorname}</COLOR_NAME>                                                       "
-				+ "          <SIZE>{$size}</SIZE>                                                                        "
-				+ "          <SIZE_CODE>{$sizeCode}</SIZE_CODE>                                                                        "
-				+ "          <NAME>{$name}</NAME>                                                                        "
-				+ "      </SPEC>'                                                                                        "
-				+ "  passing ITEM.XML_DATA                                                                               "
-				+ "  Columns                                                                                             "
-				+ "      COLOR_CODE VARCHAR2(5) path '/SPEC/COLOR_CODE',                                                 "
-				+ "      COLOR_NAME VARCHAR2(20) path '/SPEC/COLOR_NAME',                                                "
-				+ "      SIZEDESC VARCHAR2(20) path '/SPEC/SIZE',                                                        "
-				+ "      SIZE_CODE VARCHAR2(20) path '/SPEC/SIZE_CODE',                                                  "
-				+ "      NAME VARCHAR2(50) path '/SPEC/NAME') ITEM_XML                                                   "
-				+ "  WHERE                                                                                               "
-				+ "      ITEM.ENTRY_TYPE in ('Style', 'StyleColor', 'SKU')                                               "
-				+ "      AND ITEM.DELETED_FLAG= 'false'                                                                  "
-				+ "      AND PET.MDMID=ITEM.MDMID                                                                        ";
+		StringBuilder getSplitSKUDetailsQuery = new StringBuilder();
+		getSplitSKUDetailsQuery.append("   Select                                                                      ");
+		getSplitSKUDetailsQuery.append("  ITEM.MDMID,  ITEM.PARENT_MDMID,                                                               ");
+		getSplitSKUDetailsQuery.append("  ITEM.PRIMARYSUPPLIERVPN,                                                                     ");
+		getSplitSKUDetailsQuery.append("  ITEM_XML.NAME,                                                                               ");
+		getSplitSKUDetailsQuery.append("  ITEM_XML.COLOR_CODE,                                                                         ");
+		getSplitSKUDetailsQuery.append("  ITEM_XML.COLOR_NAME,                                                                         ");
+		getSplitSKUDetailsQuery.append("  ITEM_XML.SIZEDESC, ITEM_XML.SIZE_CODE,                                                       ");
+		getSplitSKUDetailsQuery.append("  PET.EXIST_IN_GROUP ALREADY_IN_GROUP, PET.PET_STATE, PET.ENTRY_TYPE                           ");
+		getSplitSKUDetailsQuery.append("  FROM                                                                                         ");
+		getSplitSKUDetailsQuery.append("  ADSE_ITEM_CATALOG ITEM,                                                                      ");
+		getSplitSKUDetailsQuery.append("  ADSE_PET_CATALOG PET,                                                                         ");
+		getSplitSKUDetailsQuery.append("  XMLTABLE('let                                                                                ");
+		getSplitSKUDetailsQuery.append("  $colorcode:=/pim_entry/entry/Item_SKU_Spec/Differentiators[Type eq \"COLOR\"]/Code,            ");
+		getSplitSKUDetailsQuery.append("  $colorname:=/pim_entry/entry/Item_SKU_Spec/Differentiators[Type eq \"COLOR\"]/Vendor_Description,     ");
+		getSplitSKUDetailsQuery.append("  $size:=/pim_entry/entry/Item_SKU_Spec/Differentiators[Type eq \"SIZE\"]/Vendor_Description,    ");
+		getSplitSKUDetailsQuery.append("  $sizeCode:=/pim_entry/entry/Item_SKU_Spec/Differentiators[Type eq \"SIZE\"]/Code,    ");
+		getSplitSKUDetailsQuery.append("  $name:=/pim_entry/entry/Item_Ctg_Spec/Description/Short                                      ");
+		getSplitSKUDetailsQuery.append("  return                                                                                       ");
+		getSplitSKUDetailsQuery.append("      <SPEC>                                                                                   ");
+		getSplitSKUDetailsQuery.append("          <COLOR_CODE>{$colorcode}</COLOR_CODE>                                                ");
+		getSplitSKUDetailsQuery.append("          <COLOR_NAME>{$colorname}</COLOR_NAME>                                                ");
+		getSplitSKUDetailsQuery.append("          <SIZE>{$size}</SIZE>                                                                 ");
+		getSplitSKUDetailsQuery.append("          <SIZE_CODE>{$sizeCode}</SIZE_CODE>                                                                 ");
+		getSplitSKUDetailsQuery.append("          <NAME>{$name}</NAME>                                                                 ");
+		getSplitSKUDetailsQuery.append("      </SPEC>'                                                                                 ");
+		getSplitSKUDetailsQuery.append("  passing ITEM.XML_DATA                                                                        ");
+		getSplitSKUDetailsQuery.append("  Columns                                                                                      ");
+		getSplitSKUDetailsQuery.append("      COLOR_CODE VARCHAR2(5) path '/SPEC/COLOR_CODE',                                          ");
+		getSplitSKUDetailsQuery.append("      COLOR_NAME VARCHAR2(20) path '/SPEC/COLOR_NAME',                                         ");
+		getSplitSKUDetailsQuery.append("      SIZEDESC VARCHAR2(20) path '/SPEC/SIZE',                                                 ");
+		getSplitSKUDetailsQuery.append("      SIZE_CODE VARCHAR2(20) path '/SPEC/SIZE_CODE',                                           ");
+		getSplitSKUDetailsQuery.append("      NAME VARCHAR2(50) path '/SPEC/NAME') ITEM_XML                                            ");
+		getSplitSKUDetailsQuery.append("  WHERE                                                                                        ");
+		getSplitSKUDetailsQuery.append("      ITEM.ENTRY_TYPE in ('Style', 'StyleColor', 'SKU')                                        ");
+		getSplitSKUDetailsQuery.append("      AND ITEM.DELETED_FLAG= 'false'                                                           ");
+		getSplitSKUDetailsQuery.append("      AND PET.MDMID=ITEM.MDMID                                                                 ");
 		if (vendorStyleNo != null) {
-			getSplitSKUDetailsQuery = getSplitSKUDetailsQuery + " AND item.PRIMARYSUPPLIERVPN = :styleIdSql";
+			getSplitSKUDetailsQuery.append(" AND item.PRIMARYSUPPLIERVPN = :styleIdSql");
 		} else {
-			getSplitSKUDetailsQuery = getSplitSKUDetailsQuery + " AND NVL(ITEM.PARENT_MDMID,ITEM.MDMID) = :mdmidSql";
+			getSplitSKUDetailsQuery.append(" AND NVL(ITEM.PARENT_MDMID,ITEM.MDMID) = :mdmidSql");
 		}
 
-		return getSplitSKUDetailsQuery;
+		return getSplitSKUDetailsQuery.toString();
 	}
 
 	/** Method to get the Search Group query.
@@ -162,7 +164,7 @@ public class XqueryConstants {
 	 * 
 	 *         Method added For PIM Phase 2 - Search Group Date: 05/19/2016
 	 *         Added By: Cognizant */
-	public static  final String getGroupDetailsQuery(final GroupSearchForm groupSearchForm) {
+	public static final String getGroupDetailsQuery(final GroupSearchForm groupSearchForm) {
 
 		LOGGER.info("Entering getGroupDetailsQuery() in Grouping XQueryConstant class.");
 
@@ -185,10 +187,8 @@ public class XqueryConstants {
 			getGroupDetailsQuery.append(" ,ADSE_GROUP_CHILD_MAPPING GCM, ADSE_ITEM_CATALOG AIC ");
 		}
 
-		getGroupDetailsQuery
-				.append(" WHERE                                                                                          ");
-		getGroupDetailsQuery
-				.append(" GRP.DELETED_FLAG = 'false'                                                                       ");
+		getGroupDetailsQuery.append(" WHERE                                                                                          ");
+		getGroupDetailsQuery.append(" GRP.DELETED_FLAG = 'false'                                                                       ");
 		if (groupSearchForm.getGroupId() != null && !"".equals(groupSearchForm.getGroupId().trim())) {
 			getGroupDetailsQuery.append(" AND GRP.MDMID = '");
 			getGroupDetailsQuery.append(groupSearchForm.getGroupId());
@@ -290,9 +290,9 @@ public class XqueryConstants {
 			getGroupDetailsCountQuery.append(" ,ADSE_GROUP_CHILD_MAPPING GCM, ADSE_ITEM_CATALOG AIC ");
 		}
 		getGroupDetailsCountQuery
-				.append(" WHERE                                                                                          ");
+		.append(" WHERE                                                                                          ");
 		getGroupDetailsCountQuery
-				.append(" GRP.DELETED_FLAG = 'false'                                                                       ");
+		.append(" GRP.DELETED_FLAG = 'false'                                                                       ");
 		if (groupSearchForm.getGroupId() != null && !"".equals(groupSearchForm.getGroupId().trim())) {
 			getGroupDetailsCountQuery.append(" AND GRP.MDMID = '");
 			getGroupDetailsCountQuery.append(groupSearchForm.getGroupId());
@@ -368,10 +368,10 @@ public class XqueryConstants {
 		getGroupDetailsQueryParent.append(" ADSE_REFERENCE_DATA IMAGE_STATE ON GROUP_IMAGE_STATUS_CODE = IMAGE_STATE.MDMID ");
 		getGroupDetailsQueryParent.append(" AND IMAGE_STATE.ENTRY_TYPE = 'ImageState_Lookup' ");
 		getGroupDetailsQueryParent
-				.append(" , ADSE_GROUP_CHILD_MAPPING GCM                                                                                        ");
+		.append(" , ADSE_GROUP_CHILD_MAPPING GCM                                                                                        ");
 		getGroupDetailsQueryParent.append(" WHERE AGC.DELETED_FLAG = 'false'                   ");
 		getGroupDetailsQueryParent
-				.append(" AND AGC.MDMID = GCM.MDMID                                                                                                              ");
+		.append(" AND AGC.MDMID = GCM.MDMID                                                                                                              ");
 		final List<String> groupIdsList = getCommaSeparatedValues(groupSearchDTOList);
 		if (groupIdsList.size() > 0) {
 			int count = 0;
@@ -435,10 +435,10 @@ public class XqueryConstants {
 		getGroupDetailsQueryParent.append(" ADSE_REFERENCE_DATA IMAGE_STATE ON GROUP_IMAGE_STATUS_CODE = IMAGE_STATE.MDMID ");
 		getGroupDetailsQueryParent.append(" AND IMAGE_STATE.ENTRY_TYPE = 'ImageState_Lookup' ");
 		getGroupDetailsQueryParent
-				.append(" , ADSE_GROUP_CHILD_MAPPING GCM                                                                                        ");
+		.append(" , ADSE_GROUP_CHILD_MAPPING GCM                                                                                        ");
 		getGroupDetailsQueryParent.append(" WHERE AGC.DELETED_FLAG = 'false'                  ");
 		getGroupDetailsQueryParent
-				.append(" AND AGC.MDMID = GCM.MDMID                                                                                                              ");
+		.append(" AND AGC.MDMID = GCM.MDMID                                                                                                              ");
 		final List<String> groupIdsList = getCommaSeparatedValues(groupSearchDTOList);
 		if (groupIdsList.size() > 0) {
 			int count = 0;
@@ -509,10 +509,11 @@ public class XqueryConstants {
 	public static  final String getNumbersInCorrectFormat(final String ids) {
 		LOGGER.info("Entering getNumbersInCorrectFormat() in Grouping XQueryConstant class.");
 		String finalString = "";
+		StringBuilder strBuilder = null;
 		if (null != ids && ids.trim().length() > 0) {
 			final String[] breakId = ids.split(",");
 			for (int count = 0; count < breakId.length; count++) {
-				StringBuilder strBuilder = new StringBuilder();
+				strBuilder = new StringBuilder();
 				strBuilder.append(finalString);
 				strBuilder.append("'");
 				strBuilder.append(breakId[count].trim());
@@ -567,44 +568,44 @@ public class XqueryConstants {
 
 		queryfragment.append("  SELECT /*+ INDEX(cls MERCH_HIER_IDX2) */ CLS_NAME.ClsId CLASS_ID, CLS_NAME.ClsName CLASS_NAME, CLS_NAME.Removal_Flag  ");
 		queryfragment
-				.append("  FROM ADSE_MERCHANDISE_HIERARCHY cls,                                                                              ");
+		.append("  FROM ADSE_MERCHANDISE_HIERARCHY cls,                                                                              ");
 		queryfragment
-				.append("    XMLTABLE('                                                                                                      ");
+		.append("    XMLTABLE('                                                                                                      ");
 		queryfragment
-				.append("    for $cls in $XML_DATA/pim_category/entry                                                                        ");
+		.append("    for $cls in $XML_DATA/pim_category/entry                                                                        ");
 		queryfragment
-				.append("    return                                                                                                          ");
+		.append("    return                                                                                                          ");
 		queryfragment
-				.append("    <out>                                                                                                           ");
+		.append("    <out>                                                                                                           ");
 		queryfragment
-				.append("      <cls_id>{$XML_DATA/pim_category/entry/Merchandise_Hier_Spec/Identifiers/RMS_Id}</cls_id>                      ");
+		.append("      <cls_id>{$XML_DATA/pim_category/entry/Merchandise_Hier_Spec/Identifiers/RMS_Id}</cls_id>                      ");
 		queryfragment
-				.append("      <cls_name>{$XML_DATA/pim_category/entry/Merchandise_Hier_Spec/Name}</cls_name>                                ");
+		.append("      <cls_name>{$XML_DATA/pim_category/entry/Merchandise_Hier_Spec/Name}</cls_name>                                ");
 		queryfragment
-				.append("      <dept_id>{fn:tokenize($XML_DATA/pim_category/merchandise_category_header/full_path,\"\\||///\")[5]}</dept_id>    ");
+		.append("      <dept_id>{fn:tokenize($XML_DATA/pim_category/merchandise_category_header/full_path,\"\\||///\")[5]}</dept_id>    ");
 		queryfragment
-				.append("      <Removal_Flag>{$XML_DATA/pim_category/entry/Merchandise_Hier_Spec/System/Removal_Flag}</Removal_Flag>         ");
+		.append("      <Removal_Flag>{$XML_DATA/pim_category/entry/Merchandise_Hier_Spec/System/Removal_Flag}</Removal_Flag>         ");
 		queryfragment
-				.append("    </out>'                                                                                                         ");
+		.append("    </out>'                                                                                                         ");
 		queryfragment
-				.append("    passing cls.XML_DATA AS \"XML_DATA\" columns                                                                      ");
+		.append("    passing cls.XML_DATA AS \"XML_DATA\" columns                                                                      ");
 		queryfragment
-				.append("      ClsName VARCHAR2(64) path '/out/cls_name',                                                                    ");
+		.append("      ClsName VARCHAR2(64) path '/out/cls_name',                                                                    ");
 		queryfragment
-				.append("      ClsId VARCHAR2(64) path '/out/cls_id',                                                                        ");
+		.append("      ClsId VARCHAR2(64) path '/out/cls_id',                                                                        ");
 		queryfragment
-				.append("      DeptId VARCHAR2(10) path '/out/dept_id',                                                                      ");
+		.append("      DeptId VARCHAR2(10) path '/out/dept_id',                                                                      ");
 		queryfragment
-				.append("      Removal_Flag VARCHAR2(10) path '/out/Removal_Flag') CLS_NAME                                                 ");
+		.append("      Removal_Flag VARCHAR2(10) path '/out/Removal_Flag') CLS_NAME                                                 ");
 		queryfragment
-				.append("  WHERE cls.ENTRY_TYPE = '5'                                                                                         ");
+		.append("  WHERE cls.ENTRY_TYPE = '5'                                                                                         ");
 		queryfragment
-				.append("  AND (CLS_NAME.Removal_Flag = 'false' or CLS_NAME.Removal_Flag is null)                                            ");
+		.append("  AND (CLS_NAME.Removal_Flag = 'false' or CLS_NAME.Removal_Flag is null)                                            ");
 		queryfragment.append("  AND deptId in ( ");
 		queryfragment.append(getNumbersInCorrectFormat(deptids));
 		queryfragment.append("  )                                                                                       ");
 		queryfragment
-				.append("  ORDER BY ClsId                                                                                                    ");
+		.append("  ORDER BY ClsId                                                                                                    ");
 
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("SEARCH CLASS QUERY -- \n" + queryfragment.toString());
@@ -619,42 +620,43 @@ public class XqueryConstants {
 	 * 
 	 * @return String */
 	public static  final String getExistSplitColorDetails() {
-		String getExistSplitColorDetails = "	SELECT                                                                           "
-				+ "	DETAIL.COMPONENT_MDMID,                                                          "
-				+ "	DETAIL.COMPONENT_DEFAULT,                                                        "
-				+ "	ITEM.PARENT_MDMID, 			                                       " // if null, it is style
-				+ "	ITEM.MDMID,                                                                      "
-				+ "	ITEM.ENTRY_TYPE,                                                                 "
-				+ "	ITEM.PRIMARYSUPPLIERVPN,                                                         "
-				+ "	PET_XML.PRODUCT_NAME,                                                            "
-				+ "	PET_XML.COLOR_CODE,                                                              "
-				+ "	PET_XML.COLOR_DESC                                                               "
-				+ "	FROM                                                                             "
-				+ "	ADSE_ITEM_CATALOG ITEM,                                                          "
-				+ "	ADSE_GROUP_CHILD_MAPPING DETAIL,                                                 "
-				+ "	ADSE_PET_CATALOG PET,                                                            "
-				+ "	XMLTABLE(                                                                        "
-				+ "	  'let                                                                           "
-				+ "	  $colordesc:= /pim_entry/entry/Ecomm_StyleColor_Spec/NRF_Color_Description,     "
-				+ "	  $colorCode:= /pim_entry/entry/Ecomm_StyleColor_Spec/NRF_Color_Code             "
-				+ "	  return                                                                         "
-				+ "	  <COLOR>                                                                        "
-				+ "	  <COLOR_CODE>{$colorCode}</COLOR_CODE>                                          "
-				+ "	  <COLOR_DESC>{$colordesc}</COLOR_DESC>                                          "
-				+ "	  <PRODUCT_NAME>{/pim_entry/entry/Ecomm_Style_Spec/Product_Name}</PRODUCT_NAME>  "
-				+ "	  </COLOR>'                                                                      "
-				+ "	  passing Pet.XML_DATA Columns COLOR_CODE VARCHAR2(5) path '/COLOR/COLOR_CODE',  "
-				+ "	  COLOR_DESC                              VARCHAR2(20) path '/COLOR/COLOR_DESC'  "
-				+ "	  , PRODUCT_NAME                          VARCHAR2(20) path                      "
-				+ "	  '/COLOR/PRODUCT_NAME' ) PET_XML                                                "
-				+ "	WHERE                                                                            "
-				+ "	1=1                                                                              "
-				+ "	AND PET.MDMID=ITEM.MDMID                                                         "
-				+ "	AND (ITEM.MDMID = DETAIL.COMPONENT_MDMID                  " // /*To fetch Color data*/
-				+ "	  OR ITEM.MDMID = DETAIL.COMPONENT_STYLE_ID)  " // /*To fetch Style data for that Color for Product name*/
-				+ "	AND DETAIL.MDMID=:groupidSql  ORDER BY ITEM.MDMID "; // /*StyleColor MDMID*/
+		StringBuilder getExistSplitColorDetails = new StringBuilder();
+		getExistSplitColorDetails.append("	SELECT                                                                           ");
+		getExistSplitColorDetails.append("	DETAIL.COMPONENT_MDMID,                                                   ");
+		getExistSplitColorDetails.append("	DETAIL.COMPONENT_DEFAULT,                                                 ");
+		getExistSplitColorDetails.append("	ITEM.PARENT_MDMID, 			                                "); // if null, it is style
+		getExistSplitColorDetails.append("	ITEM.MDMID,                                                               ");
+		getExistSplitColorDetails.append("	ITEM.ENTRY_TYPE,                                                          ");
+		getExistSplitColorDetails.append("	ITEM.PRIMARYSUPPLIERVPN,                                                  ");
+		getExistSplitColorDetails.append("	PET_XML.PRODUCT_NAME,                                                     ");
+		getExistSplitColorDetails.append("	PET_XML.COLOR_CODE,                                                       ");
+		getExistSplitColorDetails.append("	PET_XML.COLOR_DESC                                                        ");
+		getExistSplitColorDetails.append("	FROM                                                                      ");
+		getExistSplitColorDetails.append("	ADSE_ITEM_CATALOG ITEM,                                                   ");
+		getExistSplitColorDetails.append("	ADSE_GROUP_CHILD_MAPPING DETAIL,                                          ");
+		getExistSplitColorDetails.append("	ADSE_PET_CATALOG PET,                                                     ");
+		getExistSplitColorDetails.append("	XMLTABLE(                                                                 ");
+		getExistSplitColorDetails.append("	  'let                                                                    ");
+		getExistSplitColorDetails.append("	  $colordesc:= /pim_entry/entry/Ecomm_StyleColor_Spec/NRF_Color_Description,     ");
+		getExistSplitColorDetails.append("	  $colorCode:= /pim_entry/entry/Ecomm_StyleColor_Spec/NRF_Color_Code      ");
+		getExistSplitColorDetails.append("	  return                                                                  ");
+		getExistSplitColorDetails.append("	  <COLOR>                                                                 ");
+		getExistSplitColorDetails.append("	  <COLOR_CODE>{$colorCode}</COLOR_CODE>                                   ");
+		getExistSplitColorDetails.append("	  <COLOR_DESC>{$colordesc}</COLOR_DESC>                                   ");
+		getExistSplitColorDetails.append("	  <PRODUCT_NAME>{/pim_entry/entry/Ecomm_Style_Spec/Product_Name}</PRODUCT_NAME>  ");
+		getExistSplitColorDetails.append("	  </COLOR>'                                                               ");
+		getExistSplitColorDetails.append("	  passing Pet.XML_DATA Columns COLOR_CODE VARCHAR2(5) path '/COLOR/COLOR_CODE',  ");
+		getExistSplitColorDetails.append("	  COLOR_DESC                              VARCHAR2(20) path '/COLOR/COLOR_DESC'  ");
+		getExistSplitColorDetails.append("	  , PRODUCT_NAME                          VARCHAR2(20) path               ");
+		getExistSplitColorDetails.append("	  '/COLOR/PRODUCT_NAME' ) PET_XML                                         ");
+		getExistSplitColorDetails.append("	WHERE                                                                     ");
+		getExistSplitColorDetails.append("	1=1                                                                       ");
+		getExistSplitColorDetails.append("	AND PET.MDMID=ITEM.MDMID                                                  ");
+		getExistSplitColorDetails.append("	AND (ITEM.MDMID = DETAIL.COMPONENT_MDMID           "); // /*To fetch Color data*/
+		getExistSplitColorDetails.append("	  OR ITEM.MDMID = DETAIL.COMPONENT_STYLE_ID)  "); // /*To fetch Style data for that Color for Product name*/
+		getExistSplitColorDetails.append("	AND DETAIL.MDMID=:groupidSql  ORDER BY ITEM.MDMID "); // /*StyleColor MDMID*/
 
-		return getExistSplitColorDetails;
+		return getExistSplitColorDetails.toString();
 	}
 
 	/** This method is used to get the Existing Group Attribute Details for Split
@@ -662,147 +664,150 @@ public class XqueryConstants {
 	 * 
 	 * @return String */
 	public static  final String getExistSplitSkuDetails() {
-		String getExistSplitSkuDetails = "	SELECT                                                "
-				+ "	DETAIL.COMPONENT_MDMID,                               "
-				+ "	DETAIL.COMPONENT_DEFAULT,                             "
-				+ "	ITEM.PARENT_MDMID,                                    " // if null, it is style
-				+ "	ITEM.MDMID,                                           "
-				+ "	ITEM.ENTRY_TYPE,                                      "
-				+ "	ITEM.PRIMARYSUPPLIERVPN,                              "
-				+ "	ITEM_XML.PRODUCT_NAME,                                "
-				+ "	ITEM_XML.COLOR_CODE,                                  "
-				+ "	ITEM_XML.COLOR_DESC,                                  "
-				+ "	ITEM_XML.SIZEDESC, ITEM_XML.SIZE_CODE                 "
-				+ "	FROM                                                  "
-				+ "	ADSE_ITEM_CATALOG ITEM,                               "
-				+ "	ADSE_GROUP_CHILD_MAPPING DETAIL,                      "
-				+ "	ADSE_PET_CATALOG PET,                                 "
-				+ "	XMLTABLE(                                             "
-				+ "	  'let                                                "
-				+ "	  $colorcode:=/pim_entry/entry/Item_SKU_Spec/Differentiators[Type eq \"COLOR\"]/Code,               "
-				+ "	  $colorname:=/pim_entry/entry/Item_SKU_Spec/Differentiators[Type eq \"COLOR\"]/Vendor_Description, "
-				+ "	  $size:=/pim_entry/entry/Item_SKU_Spec/Differentiators[Type eq \"SIZE\"]/Vendor_Description,       "
-				+ "	  $sizeCode:=/pim_entry/entry/Item_SKU_Spec/Differentiators[Type eq \"SIZE\"]/Code,       "
-				+ "	  $name:=/pim_entry/entry/Item_Ctg_Spec/Description/Short                                         "
-				+ "	  return                                                                "
-				+ "	  <SPEC>                                                                "
-				+ "	  <COLOR_CODE>{$colorcode}</COLOR_CODE>                                 "
-				+ "	  <COLOR_DESC>{$colorname}</COLOR_DESC>                                 "
-				+ "	  <SIZE>{$size}</SIZE>                                                  "
-				+ "	  <SIZE_CODE>{$sizeCode}</SIZE_CODE>                                                  "
-				+ "	  <PRODUCT_NAME>{$name}</PRODUCT_NAME>                                  "
-				+ "	  </SPEC>'                                                              "
-				+ "	  passing ITEM.XML_DATA Columns                                         "
-				+ "	  COLOR_CODE 			VARCHAR2(5) path '/SPEC/COLOR_CODE',            "
-				+ "	  COLOR_DESC            VARCHAR2(20) path '/SPEC/COLOR_DESC',           "
-				+ "	  SIZEDESC              VARCHAR2(20) path '/SPEC/SIZE',                 "
-				+ "	  SIZE_CODE              VARCHAR2(20) path '/SPEC/SIZE_CODE',                 "
-				+ "	  PRODUCT_NAME          VARCHAR2(50) path '/SPEC/PRODUCT_NAME')         "
-				+ "	  ITEM_XML                                                              "
-				+ "	WHERE                                                                   "
-				+ "	1=1                                                                     "
-				+ "	AND PET.MDMID=ITEM.MDMID                                                " // To fetch Color data
-				+ "	AND (ITEM.MDMID = DETAIL.COMPONENT_MDMID)                                "
-				/* + "	  OR ITEM.MDMID = DETAIL.COMPONENT_STYLE_ID)                          " */// To fetch Style data for that Color for Product name
-				+ "	AND DETAIL.MDMID=:groupidSql                                             "; // StyleSKU MDMID
+		StringBuilder getExistSplitSkuDetails = new StringBuilder();
+		getExistSplitSkuDetails.append("	SELECT                                                ");
+		getExistSplitSkuDetails.append("	DETAIL.COMPONENT_MDMID,                        ");
+		getExistSplitSkuDetails.append("	DETAIL.COMPONENT_DEFAULT,                      ");
+		getExistSplitSkuDetails.append("	ITEM.PARENT_MDMID,                             "); // if null, it is style
+		getExistSplitSkuDetails.append("	ITEM.MDMID,                                    ");
+		getExistSplitSkuDetails.append("	ITEM.ENTRY_TYPE,                               ");
+		getExistSplitSkuDetails.append("	ITEM.PRIMARYSUPPLIERVPN,                       ");
+		getExistSplitSkuDetails.append("	ITEM_XML.PRODUCT_NAME,                         ");
+		getExistSplitSkuDetails.append("	ITEM_XML.COLOR_CODE,                           ");
+		getExistSplitSkuDetails.append("	ITEM_XML.COLOR_DESC,                           ");
+		getExistSplitSkuDetails.append("	ITEM_XML.SIZEDESC, ITEM_XML.SIZE_CODE          ");
+		getExistSplitSkuDetails.append("	FROM                                           ");
+		getExistSplitSkuDetails.append("	ADSE_ITEM_CATALOG ITEM,                        ");
+		getExistSplitSkuDetails.append("	ADSE_GROUP_CHILD_MAPPING DETAIL,               ");
+		getExistSplitSkuDetails.append("	ADSE_PET_CATALOG PET,                          ");
+		getExistSplitSkuDetails.append("	XMLTABLE(                                      ");
+		getExistSplitSkuDetails.append("	  'let                                         ");
+		getExistSplitSkuDetails.append("	  $colorcode:=/pim_entry/entry/Item_SKU_Spec/Differentiators[Type eq \"COLOR\"]/Code,        ");
+		getExistSplitSkuDetails.append("	  $colorname:=/pim_entry/entry/Item_SKU_Spec/Differentiators[Type eq \"COLOR\"]/Vendor_Description, ");
+		getExistSplitSkuDetails.append("	  $size:=/pim_entry/entry/Item_SKU_Spec/Differentiators[Type eq \"SIZE\"]/Vendor_Description,");
+		getExistSplitSkuDetails.append("	  $sizeCode:=/pim_entry/entry/Item_SKU_Spec/Differentiators[Type eq \"SIZE\"]/Code,");
+		getExistSplitSkuDetails.append("	  $name:=/pim_entry/entry/Item_Ctg_Spec/Description/Short                                  ");
+		getExistSplitSkuDetails.append("	  return                                                         ");
+		getExistSplitSkuDetails.append("	  <SPEC>                                                         ");
+		getExistSplitSkuDetails.append("	  <COLOR_CODE>{$colorcode}</COLOR_CODE>                          ");
+		getExistSplitSkuDetails.append("	  <COLOR_DESC>{$colorname}</COLOR_DESC>                          ");
+		getExistSplitSkuDetails.append("	  <SIZE>{$size}</SIZE>                                           ");
+		getExistSplitSkuDetails.append("	  <SIZE_CODE>{$sizeCode}</SIZE_CODE>                                           ");
+		getExistSplitSkuDetails.append("	  <PRODUCT_NAME>{$name}</PRODUCT_NAME>                           ");
+		getExistSplitSkuDetails.append("	  </SPEC>'                                                       ");
+		getExistSplitSkuDetails.append("	  passing ITEM.XML_DATA Columns                                  ");
+		getExistSplitSkuDetails.append("	  COLOR_CODE 			VARCHAR2(5) path '/SPEC/COLOR_CODE',     ");
+		getExistSplitSkuDetails.append("	  COLOR_DESC            VARCHAR2(20) path '/SPEC/COLOR_DESC',    ");
+		getExistSplitSkuDetails.append("	  SIZEDESC              VARCHAR2(20) path '/SPEC/SIZE',          ");
+		getExistSplitSkuDetails.append("	  SIZE_CODE              VARCHAR2(20) path '/SPEC/SIZE_CODE',          ");
+		getExistSplitSkuDetails.append("	  PRODUCT_NAME          VARCHAR2(50) path '/SPEC/PRODUCT_NAME')  ");
+		getExistSplitSkuDetails.append("	  ITEM_XML                                                       ");
+		getExistSplitSkuDetails.append("	WHERE                                                            ");
+		getExistSplitSkuDetails.append("	1=1                                                              ");
+		getExistSplitSkuDetails.append("	AND PET.MDMID=ITEM.MDMID                                         "); // To fetch Color data
+		getExistSplitSkuDetails.append("	AND (ITEM.MDMID = DETAIL.COMPONENT_MDMID)                         ");
+		/* getExistSplitSkuDetails.append("	  OR ITEM.MDMID = DETAIL.COMPONENT_STYLE_ID)                   "); */// To fetch Style data for that Color for Product name
+		getExistSplitSkuDetails.append("	AND DETAIL.MDMID=:groupidSql                                      "); // StyleSKU MDMID
 
-		return getExistSplitSkuDetails;
+		return getExistSplitSkuDetails.toString();
 	}
 
 	/** This method is used to get the Existing Group Attribute Details for Consolidate Product Grouping.
 	 * 
 	 * @return String */
 	public static  final String getExistCPGDetails() {
-		String getExistCPGDetails = "	SELECT                                                "
-				+"	DETAIL.COMPONENT_STYLE_ID,                               "
-				+"	DETAIL.COMPONENT_DEFAULT,                             "
-				+"	ITEM.PARENT_MDMID,             " // -- if null, it is style
-				+"	ITEM.MDMID,                                           "
-				+"	ITEM.ENTRY_TYPE,                                      "
-				+"	ITEM.PRIMARYSUPPLIERVPN,                              "
-				+"	PET_XML.PRODUCT_NAME,                                 "
-				+"	PET_XML.COLOR_CODE,                                   "
-				+"	PET_XML.COLOR_DESC,                                   "
-				+"	ITEM.CLASS_ID                                         "
-				+"	FROM                                                  "
-				+"	ADSE_ITEM_CATALOG ITEM,                               "
-				+"	ADSE_GROUP_CHILD_MAPPING DETAIL,                      "
-				+"	ADSE_PET_CATALOG PET,                                 "
-				+"	XMLTABLE(                                             "
-				+"	  'let                                                "                                             
-				+"	  $colordesc:= /pim_entry/entry/Ecomm_StyleColor_Spec/NRF_Color_Description,     "                       
-				+"	  $colorCode:= /pim_entry/entry/Ecomm_StyleColor_Spec/NRF_Color_Code             "                   
-				+"	  return                                                                         "                       
-				+"	  <COLOR>                                                                        "                           
-				+"	  <COLOR_CODE>{$colorCode}</COLOR_CODE>                                          "                       
-				+"	  <COLOR_DESC>{$colordesc}</COLOR_DESC>                                          "                       
-				+"	  <PRODUCT_NAME>{/pim_entry/entry/Ecomm_Style_Spec/Product_Name}</PRODUCT_NAME>  "                   
-				+"	  </COLOR>'                                                                      "
-				+"	  passing Pet.XML_DATA Columns COLOR_CODE VARCHAR2(5) path '/COLOR/COLOR_CODE',  "
-				+"	  COLOR_DESC                              VARCHAR2(20) path '/COLOR/COLOR_DESC',  "
-				+"	  PRODUCT_NAME                          VARCHAR2(20) path '/COLOR/PRODUCT_NAME'   "
-				+"	   ) PET_XML                         "
-				+"                                                            "
-				+"	WHERE                                                     "
-				+"	1=1                                                       "
-				+"	AND PET.MDMID=ITEM.MDMID                                  "
-				+"	AND ITEM.MDMID like CONCAT(DETAIL.COMPONENT_MDMID,'%')    "
-				+"	AND DETAIL.MDMID=:groupidSql ORDER BY ITEM.ENTRY_TYPE         ";
+		StringBuilder getExistCPGDetails = new StringBuilder();
+		getExistCPGDetails.append("	SELECT                                                ");
+		getExistCPGDetails.append("	DETAIL.COMPONENT_STYLE_ID,                        ");
+		getExistCPGDetails.append("	DETAIL.COMPONENT_DEFAULT,                      ");
+		getExistCPGDetails.append("	ITEM.PARENT_MDMID,      "); // -- if null, it is style
+		getExistCPGDetails.append("	ITEM.MDMID,                                    ");
+		getExistCPGDetails.append("	ITEM.ENTRY_TYPE,                               ");
+		getExistCPGDetails.append("	ITEM.PRIMARYSUPPLIERVPN,                       ");
+		getExistCPGDetails.append("	PET_XML.PRODUCT_NAME,                          ");
+		getExistCPGDetails.append("	PET_XML.COLOR_CODE,                            ");
+		getExistCPGDetails.append("	PET_XML.COLOR_DESC,                            ");
+		getExistCPGDetails.append("	ITEM.CLASS_ID                                  ");
+		getExistCPGDetails.append("	FROM                                           ");
+		getExistCPGDetails.append("	ADSE_ITEM_CATALOG ITEM,                        ");
+		getExistCPGDetails.append("	ADSE_GROUP_CHILD_MAPPING DETAIL,               ");
+		getExistCPGDetails.append("	ADSE_PET_CATALOG PET,                          ");
+		getExistCPGDetails.append("	XMLTABLE(                                      ");
+		getExistCPGDetails.append("	  'let                                         ");                                             
+		getExistCPGDetails.append("	  $colordesc:= /pim_entry/entry/Ecomm_StyleColor_Spec/NRF_Color_Description,     " );                     
+		getExistCPGDetails.append("	  $colorCode:= /pim_entry/entry/Ecomm_StyleColor_Spec/NRF_Color_Code      ");                   
+		getExistCPGDetails.append("	  return                                                                  ");                       
+		getExistCPGDetails.append("	  <COLOR>                                                                 ");                           
+		getExistCPGDetails.append("	  <COLOR_CODE>{$colorCode}</COLOR_CODE>                                   ");                       
+		getExistCPGDetails.append("	  <COLOR_DESC>{$colordesc}</COLOR_DESC>                                   ");                       
+		getExistCPGDetails.append("	  <PRODUCT_NAME>{/pim_entry/entry/Ecomm_Style_Spec/Product_Name}</PRODUCT_NAME>  ");                   
+		getExistCPGDetails.append("	  </COLOR>'                                                               ");
+		getExistCPGDetails.append("	  passing Pet.XML_DATA Columns COLOR_CODE VARCHAR2(5) path '/COLOR/COLOR_CODE',  ");
+		getExistCPGDetails.append("	  COLOR_DESC                              VARCHAR2(20) path '/COLOR/COLOR_DESC',  ");
+		getExistCPGDetails.append("	  PRODUCT_NAME                          VARCHAR2(20) path '/COLOR/PRODUCT_NAME'   ");
+		getExistCPGDetails.append("	   ) PET_XML                  ");
+		getExistCPGDetails.append("                                                     ");
+		getExistCPGDetails.append("	WHERE                                              ");
+		getExistCPGDetails.append("	1=1                                                ");
+		getExistCPGDetails.append("	AND PET.MDMID=ITEM.MDMID                           ");
+		getExistCPGDetails.append("	AND ITEM.MDMID like CONCAT(DETAIL.COMPONENT_MDMID,'%')    ");
+		getExistCPGDetails.append("	AND DETAIL.MDMID=:groupidSql ORDER BY ITEM.ENTRY_TYPE  ");
 
 
-		return getExistCPGDetails;
+		return getExistCPGDetails.toString();
 	}
-	
+
 
 
 	/** This method is used to get the Existing Group Attribute Details for Group By Size Grouping.
 	 * 
 	 * @return String */
 	public static  final String getExistGBSDetails() {
-		String getExistGBSDetails = 		"	Select                           "
-				+"		DETAIL.COMPONENT_MDMID, DETAIL.COMPONENT_DEFAULT,        "
-				+"		ITEM.MDMID,  ITEM.PARENT_MDMID, PET.ENTRY_TYPE,          "                                                          
-				+"		ITEM.PRIMARYSUPPLIERVPN,                                 "                                          
-				+"		ITEM_XML.NAME,                                           "                                          
-				+"		ITEM_XML.COLOR_CODE,                                     "                                          
-				+"		ITEM_XML.COLOR_NAME,                                     "                                          
-				+"		ITEM_XML.SIZEDESC, ITEM_XML.SIZE_CODE,                   "                                          
-				+"		PET.EXIST_IN_GROUP ALREADY_IN_GROUP, PET.PET_STATE       "                          
-				+"		FROM                                                     "                                          
-				+"		ADSE_ITEM_CATALOG ITEM,                                  "                                          
-				+"		ADSE_PET_CATALOG PET,                                    "
-				+"	ADSE_GROUP_CHILD_MAPPING DETAIL,                             "
-				+"		XMLTABLE('let                                            "                                          
-				+"		$colorcode:=/pim_entry/entry/Item_SKU_Spec/Differentiators[Type eq \"COLOR\"]/Code,                "  
-				+"		$colorname:=/pim_entry/entry/Item_SKU_Spec/Differentiators[Type eq \"COLOR\"]/Vendor_Description,  "  
-				+"		$size:=/pim_entry/entry/Item_SKU_Spec/Differentiators[Type eq \"SIZE\"]/Vendor_Description,        "  
-				+"		$sizeCode:=/pim_entry/entry/Item_SKU_Spec/Differentiators[Type eq \"SIZE\"]/Code,                  "
-				+"		$name:=/pim_entry/entry/Item_Ctg_Spec/Description/Short    "                                        
-				+"		return                                                     "                                        
-				+"		    <SPEC>                                                 "                                        
-				+"		        <COLOR_CODE>{$colorcode}</COLOR_CODE>              "                                        
-				+"		        <COLOR_NAME>{$colorname}</COLOR_NAME>              "                                        
-				+"		        <SIZE>{$size}</SIZE>                               "                                        
-				+"		        <SIZE_CODE>{$sizeCode}</SIZE_CODE>                 "                                                      
-				+"		        <NAME>{$name}</NAME>                               "                                        
-				+"		    </SPEC>'                                               "                                        
-				+"		passing ITEM.XML_DATA                                      "                                        
-				+"		Columns                                                    "                                        
-				+"		    COLOR_CODE VARCHAR2(5) path '/SPEC/COLOR_CODE',        "                                        
-				+"		    COLOR_NAME VARCHAR2(20) path '/SPEC/COLOR_NAME',       "                                        
-				+"		    SIZEDESC VARCHAR2(20) path '/SPEC/SIZE',               "                                        
-				+"		    SIZE_CODE VARCHAR2(20) path '/SPEC/SIZE_CODE',         "                                        
-				+"		    NAME VARCHAR2(50) path '/SPEC/NAME') ITEM_XML          "                                        
-				+"		WHERE                                                      "
-				+"	  1=1                                                          "           
-				+"	  AND PET.MDMID = ITEM.MDMID                                   "
-				+"	  AND ITEM.ENTRY_TYPE in ('SKU')                               "
-				+"	  AND (NVL(ITEM.PARENT_MDMID,ITEM.MDMID) = DETAIL.COMPONENT_MDMID)                    "           
-				+"	  AND DETAIL.MDMID =:groupidSql     ";
-				//+"	  ORDER BY ITEM.PARENT_MDMID     ";
+		StringBuilder getExistGBSDetails = new StringBuilder();
+		getExistGBSDetails.append("	Select                           ");
+		getExistGBSDetails.append("		DETAIL.COMPONENT_MDMID, DETAIL.COMPONENT_DEFAULT, ");
+		getExistGBSDetails.append("		ITEM.MDMID,  ITEM.PARENT_MDMID, PET.ENTRY_TYPE,   ");                                                          
+		getExistGBSDetails.append("		ITEM.PRIMARYSUPPLIERVPN,                          ");                                          
+		getExistGBSDetails.append("		ITEM_XML.NAME,                                    ");                                          
+		getExistGBSDetails.append("		ITEM_XML.COLOR_CODE,                              ");                                          
+		getExistGBSDetails.append("		ITEM_XML.COLOR_NAME,                              ");                                          
+		getExistGBSDetails.append("		ITEM_XML.SIZEDESC, ITEM_XML.SIZE_CODE,            ");                                          
+		getExistGBSDetails.append("		PET.EXIST_IN_GROUP ALREADY_IN_GROUP, PET.PET_STATE");                          
+		getExistGBSDetails.append("		FROM                                              ");                                          
+		getExistGBSDetails.append("		ADSE_ITEM_CATALOG ITEM,                           ");                                          
+		getExistGBSDetails.append("		ADSE_PET_CATALOG PET,                             ");
+		getExistGBSDetails.append("	ADSE_GROUP_CHILD_MAPPING DETAIL,                      ");
+		getExistGBSDetails.append("		XMLTABLE('let                                     ");                                          
+		getExistGBSDetails.append("		$colorcode:=/pim_entry/entry/Item_SKU_Spec/Differentiators[Type eq \"COLOR\"]/Code,         ");  
+		getExistGBSDetails.append("		$colorname:=/pim_entry/entry/Item_SKU_Spec/Differentiators[Type eq \"COLOR\"]/Vendor_Description,  "); 
+		getExistGBSDetails.append("		$size:=/pim_entry/entry/Item_SKU_Spec/Differentiators[Type eq \"SIZE\"]/Vendor_Description, ");  
+		getExistGBSDetails.append("		$sizeCode:=/pim_entry/entry/Item_SKU_Spec/Differentiators[Type eq \"SIZE\"]/Code,           ");
+		getExistGBSDetails.append("		$name:=/pim_entry/entry/Item_Ctg_Spec/Description/Short    ");                                        
+		getExistGBSDetails.append("		return                                              ");                                        
+		getExistGBSDetails.append("		    <SPEC>                                          ");                                        
+		getExistGBSDetails.append("		        <COLOR_CODE>{$colorcode}</COLOR_CODE>       ");                                        
+		getExistGBSDetails.append("		        <COLOR_NAME>{$colorname}</COLOR_NAME>       ");                                        
+		getExistGBSDetails.append("		        <SIZE>{$size}</SIZE>                        ");                                        
+		getExistGBSDetails.append("		        <SIZE_CODE>{$sizeCode}</SIZE_CODE>          ");                                                      
+		getExistGBSDetails.append("		        <NAME>{$name}</NAME>                        ");                                        
+		getExistGBSDetails.append("		    </SPEC>'                                        ");                                        
+		getExistGBSDetails.append("		passing ITEM.XML_DATA                               ");                                        
+		getExistGBSDetails.append("		Columns                                             ");                                        
+		getExistGBSDetails.append("		    COLOR_CODE VARCHAR2(5) path '/SPEC/COLOR_CODE', ");                                        
+		getExistGBSDetails.append("		    COLOR_NAME VARCHAR2(20) path '/SPEC/COLOR_NAME',");                                        
+		getExistGBSDetails.append("		    SIZEDESC VARCHAR2(20) path '/SPEC/SIZE',        ");                                        
+		getExistGBSDetails.append("		    SIZE_CODE VARCHAR2(20) path '/SPEC/SIZE_CODE',  ");                                        
+		getExistGBSDetails.append("		    NAME VARCHAR2(50) path '/SPEC/NAME') ITEM_XML   ");                                        
+		getExistGBSDetails.append("		WHERE                                               ");
+		getExistGBSDetails.append("	  1=1                                                   ");           
+		getExistGBSDetails.append("	  AND PET.MDMID = ITEM.MDMID                            ");
+		getExistGBSDetails.append("	  AND ITEM.ENTRY_TYPE in ('SKU')                        ");
+		getExistGBSDetails.append("	  AND (NVL(ITEM.PARENT_MDMID,ITEM.MDMID) = DETAIL.COMPONENT_MDMID)             ");           
+		getExistGBSDetails.append("	  AND DETAIL.MDMID =:groupidSql     ");
+		//getExistGBSDetails.append("	  ORDER BY ITEM.PARENT_MDMID     ");
 
 
-		return getExistGBSDetails;
+		return getExistGBSDetails.toString();
 	}
 
 	/** This method is used to get the New Search Group Attribute Details for Consolidate Product Grouping.
@@ -811,71 +816,72 @@ public class XqueryConstants {
 	public static  final String getNewCPGDetails(final String vendorStyleNo, final String styleOrin, final String deptNoForInSearch, 
 			final String classNoForInSearch,	final String supplierSiteIdSearch, final String upcNoSearch, 
 			final String deptNoSearch, final String classNoSearch) {
-		String getNewCPGDetails = "	SELECT                                                              "
-				+"	SEARCH.PARENT_MDMID,                                                                "
-				+"	SEARCH.MDMID,                                                                       "
-				+"	SEARCH.ENTRY_TYPE, SEARCH.CLASS_ID,                                                  "
-				+"	SEARCH.PRIMARYSUPPLIERVPN,                                                          "
-				+"	PET_XML.PRODUCT_NAME,                                                               "
-				+"	PET_XML.COLOR_CODE,                                                                 "
-				+"  PET.EXIST_IN_GROUP ALREADY_IN_GROUP,                                           "
-				+"	PET_XML.COLOR_DESC,                                                                  "
-				+"	  CASE WHEN AGCM.MDMID is NULL THEN 'N'                                             "
-				+"	  ELSE 'Y' END EXIST_IN_SAME_GROUP                                                  "
-				+"	FROM                                                                                "
-				+"	ADSE_PET_CATALOG PET,                                                               "
-				+"	XMLTABLE(                                                                           "
-				+"	  'let                                                                              "
-				+"	  $colordesc:= /pim_entry/entry/Ecomm_StyleColor_Spec/NRF_Color_Description,        "
-				+"	  $colorCode:= /pim_entry/entry/Ecomm_StyleColor_Spec/NRF_Color_Code                "
-				+"	  return                                                                            "
-				+"	  <COLOR>                                                                           "
-				+"	  <COLOR_CODE>{$colorCode}</COLOR_CODE>                                             "
-				+"	  <COLOR_DESC>{$colordesc}</COLOR_DESC>                                             "
-				+"	  <PRODUCT_NAME>{/pim_entry/entry/Ecomm_Style_Spec/Product_Name}</PRODUCT_NAME>     "
-				+"	  </COLOR>'                                                                         "
-				+"	  passing Pet.XML_DATA Columns                                                      "
-				+"	  COLOR_CODE VARCHAR2(5) path '/COLOR/COLOR_CODE',                                  "
-				+"	  COLOR_DESC VARCHAR2(20) path '/COLOR/COLOR_DESC',                                 "
-				+"	  PRODUCT_NAME VARCHAR2(20) path '/COLOR/PRODUCT_NAME' ) PET_XML,                   "
-				+"	  ADSE_ITEM_CATALOG SEARCH                                                          "
-				+"	  LEFT  OUTER JOIN ADSE_GROUP_CHILD_MAPPING AGCM         			           "
-				+"	    ON SEARCH.MDMID =AGCM.COMPONENT_STYLE_ID             				       "
-				+"	    AND AGCM.MDMID = :groupIdSql                 							   "
-				+"	WHERE                                                                               "
-				+"	1=1                                                                                 "
-				+"	AND PET.MDMID=SEARCH.MDMID                                                          "
-				+"	AND SEARCH.DELETED_FLAG ='false' AND SEARCH.ENTRY_TYPE in ('Style','StyleColor')    ";
+		StringBuilder getNewCPGDetails = new StringBuilder();
+		getNewCPGDetails.append("	SELECT                                                              ");
+		getNewCPGDetails.append("	SEARCH.PARENT_MDMID,                                                         ");
+		getNewCPGDetails.append("	SEARCH.MDMID,                                                                ");
+		getNewCPGDetails.append("	SEARCH.ENTRY_TYPE, SEARCH.CLASS_ID,                                           ");
+		getNewCPGDetails.append("	SEARCH.PRIMARYSUPPLIERVPN,                                                   ");
+		getNewCPGDetails.append("	PET_XML.PRODUCT_NAME,                                                        ");
+		getNewCPGDetails.append("	PET_XML.COLOR_CODE,                                                          ");
+		getNewCPGDetails.append("  PET.EXIST_IN_GROUP ALREADY_IN_GROUP,                                    ");
+		getNewCPGDetails.append("	PET_XML.COLOR_DESC,                                                           ");
+		getNewCPGDetails.append("	  CASE WHEN AGCM.MDMID is NULL THEN 'N'                                      ");
+		getNewCPGDetails.append("	  ELSE 'Y' END EXIST_IN_SAME_GROUP                                           ");
+		getNewCPGDetails.append("	FROM                                                                         ");
+		getNewCPGDetails.append("	ADSE_PET_CATALOG PET,                                                        ");
+		getNewCPGDetails.append("	XMLTABLE(                                                                    ");
+		getNewCPGDetails.append("	  'let                                                                       ");
+		getNewCPGDetails.append("	  $colordesc:= /pim_entry/entry/Ecomm_StyleColor_Spec/NRF_Color_Description, ");
+		getNewCPGDetails.append("	  $colorCode:= /pim_entry/entry/Ecomm_StyleColor_Spec/NRF_Color_Code         ");
+		getNewCPGDetails.append("	  return                                                                     ");
+		getNewCPGDetails.append("	  <COLOR>                                                                    ");
+		getNewCPGDetails.append("	  <COLOR_CODE>{$colorCode}</COLOR_CODE>                                      ");
+		getNewCPGDetails.append("	  <COLOR_DESC>{$colordesc}</COLOR_DESC>                                      ");
+		getNewCPGDetails.append("	  <PRODUCT_NAME>{/pim_entry/entry/Ecomm_Style_Spec/Product_Name}</PRODUCT_NAME>     ");
+		getNewCPGDetails.append("	  </COLOR>'                                                                  ");
+		getNewCPGDetails.append("	  passing Pet.XML_DATA Columns                                               ");
+		getNewCPGDetails.append("	  COLOR_CODE VARCHAR2(5) path '/COLOR/COLOR_CODE',                           ");
+		getNewCPGDetails.append("	  COLOR_DESC VARCHAR2(20) path '/COLOR/COLOR_DESC',                          ");
+		getNewCPGDetails.append("	  PRODUCT_NAME VARCHAR2(20) path '/COLOR/PRODUCT_NAME' ) PET_XML,            ");
+		getNewCPGDetails.append("	  ADSE_ITEM_CATALOG SEARCH                                                   ");
+		getNewCPGDetails.append("	  LEFT  OUTER JOIN ADSE_GROUP_CHILD_MAPPING AGCM         			    ");
+		getNewCPGDetails.append("	    ON SEARCH.MDMID =AGCM.COMPONENT_STYLE_ID             				");
+		getNewCPGDetails.append("	    AND AGCM.MDMID = :groupIdSql                 				");
+		getNewCPGDetails.append("	WHERE                                                                        ");
+		getNewCPGDetails.append("	1=1                                                                          ");
+		getNewCPGDetails.append("	AND PET.MDMID=SEARCH.MDMID                                                   ");
+		getNewCPGDetails.append("	AND SEARCH.DELETED_FLAG ='false' AND SEARCH.ENTRY_TYPE in ('Style','StyleColor')    ");
 
 
 		if (null != vendorStyleNo && !("").equals(vendorStyleNo.trim())) {
-			getNewCPGDetails = getNewCPGDetails + " AND SEARCH.PRIMARYSUPPLIERVPN =:styleIdSql ";
+			getNewCPGDetails.append(" AND SEARCH.PRIMARYSUPPLIERVPN =:styleIdSql ");
 		} 
 		if (null != styleOrin && !("").equals(styleOrin.trim())) {
-			getNewCPGDetails = getNewCPGDetails + " AND NVL(SEARCH.PARENT_MDMID,SEARCH.MDMID) =:mdmidSql ";
+			getNewCPGDetails.append(" AND NVL(SEARCH.PARENT_MDMID,SEARCH.MDMID) =:mdmidSql ");
 		}
 		if (null != deptNoSearch && !("").equals(deptNoSearch.trim())) {
-			getNewCPGDetails = getNewCPGDetails + " AND SEARCH.DEPT_ID IN (" + deptNoForInSearch + ")";
+			getNewCPGDetails.append(" AND SEARCH.DEPT_ID IN (" + deptNoForInSearch + ")");
 		}
 		if (null != classNoSearch && !("").equals(classNoSearch.trim())) {
-			getNewCPGDetails = getNewCPGDetails + " AND SEARCH.CLASS_ID IN (" + classNoForInSearch + ")";
+			getNewCPGDetails.append(" AND SEARCH.CLASS_ID IN (" + classNoForInSearch + ")");
 		}
 		if (null != supplierSiteIdSearch && !("").equals(supplierSiteIdSearch.trim())) {
-			getNewCPGDetails = getNewCPGDetails + " AND SEARCH.PRIMARY_SUPPLIER_ID =:supplierIdSql ";
+			getNewCPGDetails.append(" AND SEARCH.PRIMARY_SUPPLIER_ID =:supplierIdSql ");
 		}
 		if (null != upcNoSearch && !("").equals(upcNoSearch.trim())) {
-			getNewCPGDetails = getNewCPGDetails + " AND NVL(SEARCH.PARENT_MDMID,SEARCH.MDMID)  = " +
-			"(SELECT " +
-			"CASE                                " +
-	        "when PRIMARY_UPC is null then MDMID          " +    
-	        "when PRIMARY_UPC = ' '  then MDMID         " +   
-	        "else     PARENT_MDMID   end PARENT_MDMID " +
-	        "FROM ADSE_ITEM_CATALOG WHERE NUMBER_04 =:upcNoSql) ";
+			getNewCPGDetails.append(" AND NVL(SEARCH.PARENT_MDMID,SEARCH.MDMID)  = " +
+					"(SELECT " +
+					"CASE                                " +
+					"when PRIMARY_UPC is null then MDMID          " +    
+					"when PRIMARY_UPC = ' '  then MDMID         " +   
+					"else     PARENT_MDMID   end PARENT_MDMID " +
+					"FROM ADSE_ITEM_CATALOG WHERE NUMBER_04 =:upcNoSql) ");
 		}
-		getNewCPGDetails = getNewCPGDetails + " ORDER BY SEARCH.MDMID";
+		getNewCPGDetails.append(" ORDER BY SEARCH.MDMID");
 
 
-		return getNewCPGDetails;
+		return getNewCPGDetails.toString();
 	}
 
 	/** This method is used to get the SKU Count for a Style Orin.
@@ -884,43 +890,44 @@ public class XqueryConstants {
 	public static  final String getSKUCount(final String vendorStyleNo, final String styleOrin, final String deptNoForInSearch, 
 			final String classNoForInSearch,	final String supplierSiteIdSearch, final String upcNoSearch, 
 			final String deptNoSearch, final String classNoSearch) {
-		String getNewGBSDetails = "	Select                                                                                 "
-				+"		COUNT(ITEM.PARENT_MDMID) COUNT, ITEM.PARENT_MDMID                                                  "                 
-				+"		FROM ADSE_ITEM_CATALOG ITEM,                                                                       " 
-				+"		ADSE_PET_CATALOG PET                                                                               " 
-				+"		WHERE                                                                                              " 
-				+"		    ITEM.ENTRY_TYPE in ('SKU')                                                                     "
-				+"		    AND ITEM.DELETED_FLAG= 'false'                                                                 " 
-				+"		    AND PET.MDMID=ITEM.MDMID                                                                       ";
-		
-				if (null != vendorStyleNo && !("").equals(vendorStyleNo.trim())) {
-					getNewGBSDetails = getNewGBSDetails + " AND ITEM.PRIMARYSUPPLIERVPN =:styleIdSql ";
-				} 
-				if (null != styleOrin && !("").equals(styleOrin.trim())) {
-					getNewGBSDetails = getNewGBSDetails + " AND NVL(ITEM.PARENT_MDMID,ITEM.MDMID) =:mdmidSql ";
-				}
-				if (null != deptNoSearch && !("").equals(deptNoSearch.trim())) {
-					getNewGBSDetails = getNewGBSDetails + " AND ITEM.DEPT_ID IN (" + deptNoForInSearch + ")";
-				}
-				if (null != classNoSearch && !("").equals(classNoSearch.trim())) {
-					getNewGBSDetails = getNewGBSDetails + " AND ITEM.CLASS_ID IN (" + classNoForInSearch + ")";
-				}
-				if (null != supplierSiteIdSearch && !("").equals(supplierSiteIdSearch.trim())) {
-					getNewGBSDetails = getNewGBSDetails + " AND ITEM.PRIMARY_SUPPLIER_ID =:supplierIdSql ";
-				}
-				if (null != upcNoSearch && !("").equals(upcNoSearch.trim())) {
-					getNewGBSDetails = getNewGBSDetails + " AND NVL(ITEM.PARENT_MDMID,ITEM.MDMID)  = " +
-							"(SELECT " +
-							"CASE                                " +
-					        "when PRIMARY_UPC is null then MDMID          " +    
-					        "when PRIMARY_UPC = ' '  then MDMID         " +   
-					        "else     PARENT_MDMID   end PARENT_MDMID " +
-					        "FROM ADSE_ITEM_CATALOG WHERE NUMBER_04 =:upcNoSql) ";
-				}
-				getNewGBSDetails = getNewGBSDetails + " group by ITEM.PARENT_MDMID having COUNT(ITEM.PARENT_MDMID) > 1";
-				//getNewGBSDetails = getNewGBSDetails + " ORDER BY ITEM.PARENT_MDMID";
+		StringBuilder getNewGBSDetails = new StringBuilder();
+		getNewGBSDetails.append("	Select                                                                                 ");
+		getNewGBSDetails.append("		COUNT(ITEM.PARENT_MDMID) COUNT, ITEM.PARENT_MDMID                                           ");                 
+		getNewGBSDetails.append("		FROM ADSE_ITEM_CATALOG ITEM,                                                                "); 
+		getNewGBSDetails.append("		ADSE_PET_CATALOG PET                                                                        "); 
+		getNewGBSDetails.append("		WHERE                                                                                       "); 
+		getNewGBSDetails.append("		    ITEM.ENTRY_TYPE in ('SKU')                                                              ");
+		getNewGBSDetails.append("		    AND ITEM.DELETED_FLAG= 'false'                                                          "); 
+		getNewGBSDetails.append("		    AND PET.MDMID=ITEM.MDMID                                                                ");
 
-		return getNewGBSDetails;
+		if (null != vendorStyleNo && !("").equals(vendorStyleNo.trim())) {
+			getNewGBSDetails.append(" AND ITEM.PRIMARYSUPPLIERVPN =:styleIdSql ");
+		} 
+		if (null != styleOrin && !("").equals(styleOrin.trim())) {
+			getNewGBSDetails.append(" AND NVL(ITEM.PARENT_MDMID,ITEM.MDMID) =:mdmidSql ");
+		}
+		if (null != deptNoSearch && !("").equals(deptNoSearch.trim())) {
+			getNewGBSDetails.append(" AND ITEM.DEPT_ID IN (" + deptNoForInSearch + ")");
+		}
+		if (null != classNoSearch && !("").equals(classNoSearch.trim())) {
+			getNewGBSDetails.append(" AND ITEM.CLASS_ID IN (" + classNoForInSearch + ")");
+		}
+		if (null != supplierSiteIdSearch && !("").equals(supplierSiteIdSearch.trim())) {
+			getNewGBSDetails.append(" AND ITEM.PRIMARY_SUPPLIER_ID =:supplierIdSql ");
+		}
+		if (null != upcNoSearch && !("").equals(upcNoSearch.trim())) {
+			getNewGBSDetails.append(" AND NVL(ITEM.PARENT_MDMID,ITEM.MDMID)  = " +
+					"(SELECT " +
+					"CASE                                " +
+					"when PRIMARY_UPC is null then MDMID          " +    
+					"when PRIMARY_UPC = ' '  then MDMID         " +   
+					"else     PARENT_MDMID   end PARENT_MDMID " +
+					"FROM ADSE_ITEM_CATALOG WHERE NUMBER_04 =:upcNoSql) ");
+		}
+		getNewGBSDetails.append(" group by ITEM.PARENT_MDMID having COUNT(ITEM.PARENT_MDMID) > 1");
+		//getNewGBSDetails = getNewGBSDetails + " ORDER BY ITEM.PARENT_MDMID";
+
+		return getNewGBSDetails.toString();
 	}
 
 	/** This method is used to get the New Search Group Attribute Details for GBS Grouping.
@@ -929,78 +936,79 @@ public class XqueryConstants {
 	public static  final String getNewGBSDetails(final String vendorStyleNo, final String styleOrin, final String deptNoForInSearch, 
 			final String classNoForInSearch,	final String supplierSiteIdSearch, final String upcNoSearch, 
 			final String deptNoSearch, final String classNoSearch) {
-		String getNewGBSDetails = "	Select                                                                                 "
-				+"		ITEM.MDMID,  ITEM.PARENT_MDMID, PET.ENTRY_TYPE,                                                    "                 
-				+"		ITEM.PRIMARYSUPPLIERVPN,                                                                           " 
-				+"		ITEM_XML.NAME,                                                                                     " 
-				+"		ITEM_XML.COLOR_CODE,                                                                               " 
-				+"		ITEM_XML.COLOR_NAME,                                                                               " 
-				+"		ITEM_XML.SIZEDESC, ITEM_XML.SIZE_CODE,                                                             " 
-				+"		PET.EXIST_IN_GROUP ALREADY_IN_GROUP, PET.PET_STATE,                                                 "
-				+"		CASE WHEN AGCM.MDMID is NULL THEN 'N'                                                 "
-				+"		ELSE 'Y' END EXIST_IN_SAME_GROUP                                                 "
-				+"		FROM                                                                                               " 
-				+"		ADSE_ITEM_CATALOG ITEM                                                                            " 
-				+"		LEFT  OUTER JOIN ADSE_GROUP_CHILD_MAPPING AGCM                                                     "
-				+"		ON ITEM.PARENT_MDMID =AGCM.COMPONENT_STYLE_ID                                                                    "
-				+"		AND AGCM.MDMID = :groupIdSql ,                                                                            "
-				+"		ADSE_PET_CATALOG PET,                                                                              "  
-				+"		XMLTABLE('let                                                                                      " 
-				+"		$colorcode:=/pim_entry/entry/Item_SKU_Spec/Differentiators[Type eq \"COLOR\"]/Code,                  " 
-				+"		$colorname:=/pim_entry/entry/Item_SKU_Spec/Differentiators[Type eq \"COLOR\"]/Vendor_Description,    " 
-				+"		$size:=/pim_entry/entry/Item_SKU_Spec/Differentiators[Type eq \"SIZE\"]/Vendor_Description,          " 
-				+"		$sizeCode:=/pim_entry/entry/Item_SKU_Spec/Differentiators[Type eq \"SIZE\"]/Code,                    "
-				+"		$name:=/pim_entry/entry/Item_Ctg_Spec/Description/Short                                            " 
-				+"		return                                                                                             " 
-				+"		    <SPEC>                                                                                         " 
-				+"		        <COLOR_CODE>{$colorcode}</COLOR_CODE>                                                      " 
-				+"		        <COLOR_NAME>{$colorname}</COLOR_NAME>                                                      " 
-				+"		        <SIZE>{$size}</SIZE>                                                                       " 
-				+"		        <SIZE_CODE>{$sizeCode}</SIZE_CODE>                                                         "               
-				+"		        <NAME>{$name}</NAME>                                                                       " 
-				+"		    </SPEC>'                                                                                       " 
-				+"		passing ITEM.XML_DATA                                                                              " 
-				+"		Columns                                                                                            " 
-				+"		    COLOR_CODE VARCHAR2(5) path '/SPEC/COLOR_CODE',                                                " 
-				+"		    COLOR_NAME VARCHAR2(20) path '/SPEC/COLOR_NAME',                                               " 
-				+"		    SIZEDESC VARCHAR2(20) path '/SPEC/SIZE',                                                       " 
-				+"		    SIZE_CODE VARCHAR2(20) path '/SPEC/SIZE_CODE',                                                 " 
-				+"		    NAME VARCHAR2(50) path '/SPEC/NAME') ITEM_XML                                                  " 
-				+"		WHERE                                                                                              " 
-				+"		    ITEM.ENTRY_TYPE in ('SKU')                                                                     "
-				+"		    AND ITEM.DELETED_FLAG= 'false'                                                                 " 
-				+"		    AND PET.MDMID=ITEM.MDMID                                                                       ";
-		
-				if (null != vendorStyleNo && !("").equals(vendorStyleNo.trim())) {
-					getNewGBSDetails = getNewGBSDetails + " AND ITEM.PRIMARYSUPPLIERVPN =:styleIdSql ";
-				} 
-				if (null != styleOrin && !("").equals(styleOrin.trim())) {
-					getNewGBSDetails = getNewGBSDetails + " AND NVL(ITEM.PARENT_MDMID,ITEM.MDMID) =:mdmidSql ";
-				}
-				if (null != deptNoSearch && !("").equals(deptNoSearch.trim())) {
-					getNewGBSDetails = getNewGBSDetails + " AND ITEM.DEPT_ID IN (" + deptNoForInSearch + ")";
-				}
-				if (null != classNoSearch && !("").equals(classNoSearch.trim())) {
-					getNewGBSDetails = getNewGBSDetails + " AND ITEM.CLASS_ID IN (" + classNoForInSearch + ")";
-				}
-				if (null != supplierSiteIdSearch && !("").equals(supplierSiteIdSearch.trim())) {
-					getNewGBSDetails = getNewGBSDetails + " AND ITEM.PRIMARY_SUPPLIER_ID =:supplierIdSql ";
-				}
-				if (null != upcNoSearch && !("").equals(upcNoSearch.trim())) {
-					getNewGBSDetails = getNewGBSDetails + " AND NVL(ITEM.PARENT_MDMID,ITEM.MDMID)  = " +
-							"(SELECT " +
-							"CASE                                " +
-					        "when PRIMARY_UPC is null then MDMID          " +    
-					        "when PRIMARY_UPC = ' '  then MDMID         " +   
-					        "else     PARENT_MDMID   end PARENT_MDMID " +
-					        "FROM ADSE_ITEM_CATALOG WHERE NUMBER_04 =:upcNoSql) ";
-				}
-				//getNewGBSDetails = getNewGBSDetails + " ORDER BY ITEM.PARENT_MDMID";
+		StringBuilder getNewGBSDetails = new StringBuilder();
+		getNewGBSDetails.append("	Select                                                                                 ");
+		getNewGBSDetails.append("		ITEM.MDMID,  ITEM.PARENT_MDMID, PET.ENTRY_TYPE,                                             ");                 
+		getNewGBSDetails.append("		ITEM.PRIMARYSUPPLIERVPN,                                                                    "); 
+		getNewGBSDetails.append("		ITEM_XML.NAME,                                                                              "); 
+		getNewGBSDetails.append("		ITEM_XML.COLOR_CODE,                                                                        "); 
+		getNewGBSDetails.append("		ITEM_XML.COLOR_NAME,                                                                        "); 
+		getNewGBSDetails.append("		ITEM_XML.SIZEDESC, ITEM_XML.SIZE_CODE,                                                      "); 
+		getNewGBSDetails.append("		PET.EXIST_IN_GROUP ALREADY_IN_GROUP, PET.PET_STATE,                                          ");
+		getNewGBSDetails.append("		CASE WHEN AGCM.MDMID is NULL THEN 'N'                                          ");
+		getNewGBSDetails.append("		ELSE 'Y' END EXIST_IN_SAME_GROUP                                          ");
+		getNewGBSDetails.append("		FROM                                                                                        "); 
+		getNewGBSDetails.append("		ADSE_ITEM_CATALOG ITEM                                                                     "); 
+		getNewGBSDetails.append("		LEFT  OUTER JOIN ADSE_GROUP_CHILD_MAPPING AGCM                                              ");
+		getNewGBSDetails.append("		ON ITEM.PARENT_MDMID =AGCM.COMPONENT_STYLE_ID                                                             ");
+		getNewGBSDetails.append("		AND AGCM.MDMID = :groupIdSql ,                                                                     ");
+		getNewGBSDetails.append("		ADSE_PET_CATALOG PET,                                                                       ");  
+		getNewGBSDetails.append("		XMLTABLE('let                                                                               "); 
+		getNewGBSDetails.append("		$colorcode:=/pim_entry/entry/Item_SKU_Spec/Differentiators[Type eq \"COLOR\"]/Code,           "); 
+		getNewGBSDetails.append("		$colorname:=/pim_entry/entry/Item_SKU_Spec/Differentiators[Type eq \"COLOR\"]/Vendor_Description,    ");
+		getNewGBSDetails.append("		$size:=/pim_entry/entry/Item_SKU_Spec/Differentiators[Type eq \"SIZE\"]/Vendor_Description,   "); 
+		getNewGBSDetails.append("		$sizeCode:=/pim_entry/entry/Item_SKU_Spec/Differentiators[Type eq \"SIZE\"]/Code,             ");
+		getNewGBSDetails.append("		$name:=/pim_entry/entry/Item_Ctg_Spec/Description/Short                                     "); 
+		getNewGBSDetails.append("		return                                                                                      "); 
+		getNewGBSDetails.append("		    <SPEC>                                                                                  "); 
+		getNewGBSDetails.append("		        <COLOR_CODE>{$colorcode}</COLOR_CODE>                                               "); 
+		getNewGBSDetails.append("		        <COLOR_NAME>{$colorname}</COLOR_NAME>                                               "); 
+		getNewGBSDetails.append("		        <SIZE>{$size}</SIZE>                                                                "); 
+		getNewGBSDetails.append("		        <SIZE_CODE>{$sizeCode}</SIZE_CODE>                                                  ");               
+		getNewGBSDetails.append("		        <NAME>{$name}</NAME>                                                                "); 
+		getNewGBSDetails.append("		    </SPEC>'                                                                                "); 
+		getNewGBSDetails.append("		passing ITEM.XML_DATA                                                                       "); 
+		getNewGBSDetails.append("		Columns                                                                                     "); 
+		getNewGBSDetails.append("		    COLOR_CODE VARCHAR2(5) path '/SPEC/COLOR_CODE',                                         "); 
+		getNewGBSDetails.append("		    COLOR_NAME VARCHAR2(20) path '/SPEC/COLOR_NAME',                                        "); 
+		getNewGBSDetails.append("		    SIZEDESC VARCHAR2(20) path '/SPEC/SIZE',                                                "); 
+		getNewGBSDetails.append("		    SIZE_CODE VARCHAR2(20) path '/SPEC/SIZE_CODE',                                          "); 
+		getNewGBSDetails.append("		    NAME VARCHAR2(50) path '/SPEC/NAME') ITEM_XML                                           "); 
+		getNewGBSDetails.append("		WHERE                                                                                       "); 
+		getNewGBSDetails.append("		    ITEM.ENTRY_TYPE in ('SKU')                                                              ");
+		getNewGBSDetails.append("		    AND ITEM.DELETED_FLAG= 'false'                                                          "); 
+		getNewGBSDetails.append("		    AND PET.MDMID=ITEM.PARENT_MDMID                                                                ");
+
+		if (null != vendorStyleNo && !("").equals(vendorStyleNo.trim())) {
+			getNewGBSDetails.append(" AND ITEM.PRIMARYSUPPLIERVPN =:styleIdSql ");
+		} 
+		if (null != styleOrin && !("").equals(styleOrin.trim())) {
+			getNewGBSDetails.append(" AND NVL(ITEM.PARENT_MDMID,ITEM.MDMID) =:mdmidSql ");
+		}
+		if (null != deptNoSearch && !("").equals(deptNoSearch.trim())) {
+			getNewGBSDetails.append(" AND ITEM.DEPT_ID IN (" + deptNoForInSearch + ")");
+		}
+		if (null != classNoSearch && !("").equals(classNoSearch.trim())) {
+			getNewGBSDetails.append(" AND ITEM.CLASS_ID IN (" + classNoForInSearch + ")");
+		}
+		if (null != supplierSiteIdSearch && !("").equals(supplierSiteIdSearch.trim())) {
+			getNewGBSDetails.append(" AND ITEM.PRIMARY_SUPPLIER_ID =:supplierIdSql ");
+		}
+		if (null != upcNoSearch && !("").equals(upcNoSearch.trim())) {
+			getNewGBSDetails.append(" AND NVL(ITEM.PARENT_MDMID,ITEM.MDMID)  = " +
+					"(SELECT " +
+					"CASE                                " +
+					"when PRIMARY_UPC is null then MDMID          " +    
+					"when PRIMARY_UPC = ' '  then MDMID         " +   
+					"else     PARENT_MDMID   end PARENT_MDMID " +
+					"FROM ADSE_ITEM_CATALOG WHERE NUMBER_04 =:upcNoSql) ");
+		}
+		//getNewGBSDetails = getNewGBSDetails + " ORDER BY ITEM.PARENT_MDMID";
 
 
-		return getNewGBSDetails;
+		return getNewGBSDetails.toString();
 	}
-	
+
 	/**
 	 *  This method is used to get the search result Details query for Regular/Beauty Collection Grouping.
 	 * @param vendorStyleNo
@@ -1020,7 +1028,7 @@ public class XqueryConstants {
 			final String classNoForInSearch,	final String supplierSiteIdSearch, final String upcNoSearch, 
 			final String deptNoSearch, final String classNoSearch, final String groupIdSearch, final String groupNameSearch,
 			final String orderByColumn, final String sortingOrder) {
-		
+
 		LOGGER.info("Entering getRegularBeautySearchResult() in Grouping XQueryConstant class.");
 		int count = 0;
 		StringBuilder getRegularBeautySearchResult = new StringBuilder();
@@ -1082,10 +1090,10 @@ public class XqueryConstants {
 			getRegularBeautySearchResult.append("   AND NVL(SEARCH.PARENT_MDMID,SEARCH.MDMID)  = " +
 					"(SELECT " +
 					"CASE                                " +
-			        "when PRIMARY_UPC is null then MDMID          " +    
-			        "when PRIMARY_UPC = ' '  then MDMID         " +   
-			        "else     PARENT_MDMID   end PARENT_MDMID " +
-			        "FROM ADSE_ITEM_CATALOG WHERE NUMBER_04 =:upcNoSql) ");
+					"when PRIMARY_UPC is null then MDMID          " +    
+					"when PRIMARY_UPC = ' '  then MDMID         " +   
+					"else     PARENT_MDMID   end PARENT_MDMID " +
+					"FROM ADSE_ITEM_CATALOG WHERE NUMBER_04 =:upcNoSql) ");
 			count = 1;
 		}	
 		if(count == 0 || !groupIdSearch.isEmpty() || !groupNameSearch.isEmpty())
@@ -1133,8 +1141,8 @@ public class XqueryConstants {
 			getRegularBeautySearchResult.append(groupNameSearch.toUpperCase());
 			getRegularBeautySearchResult.append("%'");
 		}
-		
-		
+
+
 		getRegularBeautySearchResult.append(" AND SEARCH.DELETED_FLAG           = 'false'                                  ");
 		if(count == 1)
 		{
@@ -1148,7 +1156,7 @@ public class XqueryConstants {
 				getRegularBeautySearchResult.append("   AND SEARCH.PRIMARYSUPPLIERVPN =:styleIdSql ");
 			}		
 			if (!StringUtils.isEmpty(styleOrin)) {
-				getRegularBeautySearchResult.append("   AND NVL(SEARCH.PARENT_MDMID,SEARCH.MDMID) =:mdmidSql ");;
+				getRegularBeautySearchResult.append("   AND NVL(SEARCH.PARENT_MDMID,SEARCH.MDMID) =:mdmidSql ");
 			}		
 			if (!StringUtils.isEmpty(deptNoSearch)) {
 				getRegularBeautySearchResult.append("   AND SEARCH.DEPT_ID IN (" + deptNoForInSearch + ") ");
@@ -1163,14 +1171,14 @@ public class XqueryConstants {
 				getRegularBeautySearchResult.append("   AND NVL(SEARCH.PARENT_MDMID,SEARCH.MDMID)  = " +
 						"(SELECT " +
 						"CASE                                " +
-				        "when PRIMARY_UPC is null then MDMID          " +    
-				        "when PRIMARY_UPC = ' '  then MDMID         " +   
-				        "else     PARENT_MDMID   end PARENT_MDMID " +
-				        "FROM ADSE_ITEM_CATALOG WHERE NUMBER_04 =:upcNoSql) ");
+						"when PRIMARY_UPC is null then MDMID          " +    
+						"when PRIMARY_UPC = ' '  then MDMID         " +   
+						"else     PARENT_MDMID   end PARENT_MDMID " +
+						"FROM ADSE_ITEM_CATALOG WHERE NUMBER_04 =:upcNoSql) ");
 			}
 			getRegularBeautySearchResult.append("     )                                                                        ");	
 		}
-		 
+
 		if(StringUtils.isEmpty(orderByColumn) || orderByColumn.equals("orinNumber"))
 		{
 			getRegularBeautySearchResult.append("  ORDER BY MDMID ");
@@ -1182,7 +1190,7 @@ public class XqueryConstants {
 			{
 				getRegularBeautySearchResult.append(sortingOrder);
 			}
-				
+
 		}
 		else if(orderByColumn.equals("vendorStyle"))
 		{
@@ -1208,7 +1216,7 @@ public class XqueryConstants {
 		LOGGER.info("Exiting getRegularBeautySearchResult() in Grouping XQueryConstant class.");
 		return getRegularBeautySearchResult.toString();
 	}
-	
+
 	/**
 	 *  This method is used to get the search result Details count query for Regular/Beauty Collection Grouping.
 	 * @param vendorStyleNo
@@ -1291,10 +1299,10 @@ public class XqueryConstants {
 			getRegularBeautySearchResult.append("   AND NVL(SEARCH.PARENT_MDMID,SEARCH.MDMID)  = " +
 					"(SELECT " +
 					"CASE                                " +
-			        "when PRIMARY_UPC is null then MDMID          " +    
-			        "when PRIMARY_UPC = ' '  then MDMID         " +   
-			        "else     PARENT_MDMID   end PARENT_MDMID " +
-			        "FROM ADSE_ITEM_CATALOG WHERE NUMBER_04 =:upcNoSql) ");
+					"when PRIMARY_UPC is null then MDMID          " +    
+					"when PRIMARY_UPC = ' '  then MDMID         " +   
+					"else     PARENT_MDMID   end PARENT_MDMID " +
+					"FROM ADSE_ITEM_CATALOG WHERE NUMBER_04 =:upcNoSql) ");
 			count = 1;
 		}	
 		if(count == 0 || !groupIdSearch.isEmpty() || !groupNameSearch.isEmpty())
@@ -1342,8 +1350,8 @@ public class XqueryConstants {
 			getRegularBeautySearchResult.append(groupNameSearch.toUpperCase());
 			getRegularBeautySearchResult.append("%'");
 		}
-		
-		
+
+
 		getRegularBeautySearchResult.append(" AND SEARCH.DELETED_FLAG           = 'false'                                  ");
 		if(count == 1)
 		{
@@ -1357,7 +1365,7 @@ public class XqueryConstants {
 				getRegularBeautySearchResult.append("   AND SEARCH.PRIMARYSUPPLIERVPN =:styleIdSql ");
 			}		
 			if (!StringUtils.isEmpty(styleOrin)) {
-				getRegularBeautySearchResult.append("   AND NVL(SEARCH.PARENT_MDMID,SEARCH.MDMID) =:mdmidSql ");;
+				getRegularBeautySearchResult.append("   AND NVL(SEARCH.PARENT_MDMID,SEARCH.MDMID) =:mdmidSql ");
 			}		
 			if (!StringUtils.isEmpty(deptNoForInSearch)) {
 				getRegularBeautySearchResult.append("   AND SEARCH.DEPT_ID IN (" + deptNoSearch + ") ");
@@ -1372,10 +1380,10 @@ public class XqueryConstants {
 				getRegularBeautySearchResult.append("   AND NVL(SEARCH.PARENT_MDMID,SEARCH.MDMID)  = " +
 						"(SELECT " +
 						"CASE                                " +
-				        "when PRIMARY_UPC is null then MDMID          " +    
-				        "when PRIMARY_UPC = ' '  then MDMID         " +   
-				        "else     PARENT_MDMID   end PARENT_MDMID " +
-				        "FROM ADSE_ITEM_CATALOG WHERE NUMBER_04 =:upcNoSql) ");
+						"when PRIMARY_UPC is null then MDMID          " +    
+						"when PRIMARY_UPC = ' '  then MDMID         " +   
+						"else     PARENT_MDMID   end PARENT_MDMID " +
+						"FROM ADSE_ITEM_CATALOG WHERE NUMBER_04 =:upcNoSql) ");
 			}
 			getRegularBeautySearchResult.append("     )                                                                        ");
 		}
@@ -1387,7 +1395,7 @@ public class XqueryConstants {
 		return getRegularBeautySearchResultCountQuery.toString();
 	}
 
-	
+
 	/**
 	 *  This method is used to get the existing components query for Regular/Beauty Collection Grouping.
 	 * @return String
@@ -1464,7 +1472,7 @@ public class XqueryConstants {
 		LOGGER.info("Entering getExistRegularBeautyDetailsQuery() in Grouping XQueryConstant class.");
 		return getExistRegularBeautyDetailsQuery.toString();
 	}
-	
+
 	/**
 	 *  This method is used to get the group child query for Regular/Beauty Collection Grouping.
 	 * @return String

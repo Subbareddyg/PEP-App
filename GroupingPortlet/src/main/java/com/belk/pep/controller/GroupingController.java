@@ -59,30 +59,34 @@ public class GroupingController {
 	/** The Constant LOGGER. */
 	private final static Logger LOGGER = Logger.getLogger(GroupingController.class.getName());
 
-
 	/** The Grouping Service. */
 	private GroupingService groupingService;
 
 	/**
 	 * Return GroupingService Object.
-	 *  @return the groupingService
-	 *  */
+	 * 
+	 * @return the groupingService
+	 * */
 	public GroupingService getGroupingService() {
 		return groupingService;
 	}
 
-	/** 
+	/**
 	 * Set GroupingService Object.
-	 * @param groupingService the groupingService to set */
+	 * 
+	 * @param groupingService the groupingService to set
+	 */
 	public void setGroupingService(GroupingService groupingService) {
 		this.groupingService = groupingService;
 	}
 
-	/** Create URL to render page for SPLIT Color group.
+	/**
+	 * Create URL to render page for SPLIT Color group.
 	 * 
 	 * @param renderRequest
 	 * @param renderResponse
-	 * @return */
+	 * @return
+	 */
 	@RenderMapping(params = "groupingTypeSplitColor=splitColor")
 	public ModelAndView splitColorRenderHandler(RenderRequest renderRequest, RenderResponse renderResponse) {
 		// do some processing here
@@ -96,9 +100,9 @@ public class GroupingController {
 			LOGGER.info("display user ID" + userID);
 			mv.addObject(GroupingConstants.LAN_ID, userID);
 			custuser = (UserData) renderRequest.getPortletSession().getAttribute(sessionDataKey);
-			if(GroupingConstants.READ_ONLY_ROLE.equals(custuser.getRoleName())){
+			if (GroupingConstants.READ_ONLY_ROLE.equals(custuser.getRoleName())) {
 				mv.addObject(GroupingConstants.READ_ONLY_ROLE, GroupingConstants.YES_VALUE);
-			}else{
+			} else {
 				mv.addObject(GroupingConstants.READ_ONLY_ROLE, GroupingConstants.NO_VALUE);
 			}
 		}
@@ -120,11 +124,13 @@ public class GroupingController {
 		return mv;
 	}
 
-	/** Create URL to render page for SPLIT SKU group.
+	/**
+	 * Create URL to render page for SPLIT SKU group.
 	 * 
 	 * @param renderRequest
 	 * @param renderResponse
-	 * @return */
+	 * @return
+	 */
 	@RenderMapping(params = "groupingTypeSplitSKU=splitSKU")
 	public ModelAndView splitSKURenderHandler(RenderRequest renderRequest, RenderResponse renderResponse) {
 		// do some processing here
@@ -138,9 +144,9 @@ public class GroupingController {
 			LOGGER.info("display user ID" + userID);
 			mv.addObject(GroupingConstants.LAN_ID, userID);
 			custuser = (UserData) renderRequest.getPortletSession().getAttribute(sessionDataKey);
-			if(GroupingConstants.READ_ONLY_ROLE.equals(custuser.getRoleName())){
+			if (GroupingConstants.READ_ONLY_ROLE.equals(custuser.getRoleName())) {
 				mv.addObject(GroupingConstants.READ_ONLY_ROLE, GroupingConstants.YES_VALUE);
-			}else{
+			} else {
 				mv.addObject(GroupingConstants.READ_ONLY_ROLE, GroupingConstants.NO_VALUE);
 			}
 		}
@@ -180,9 +186,9 @@ public class GroupingController {
 			LOGGER.info("display user ID" + userID);
 			modelAndView.addObject(GroupingConstants.LAN_ID, userID);
 			custuser = (UserData) request.getPortletSession().getAttribute(sessionDataKey);
-			if(GroupingConstants.READ_ONLY_ROLE.equals(custuser.getRoleName())){
+			if (GroupingConstants.READ_ONLY_ROLE.equals(custuser.getRoleName())) {
 				modelAndView.addObject(GroupingConstants.READ_ONLY_ROLE, GroupingConstants.YES_VALUE);
-			}else{
+			} else {
 				modelAndView.addObject(GroupingConstants.READ_ONLY_ROLE, GroupingConstants.NO_VALUE);
 			}
 		}
@@ -206,8 +212,10 @@ public class GroupingController {
 		return modelAndView;
 	}
 
-	/** This method will handle the Event request and to fetch the user details
-	 * from the login portlet */
+	/**
+	 * This method will handle the Event request and to fetch the user details
+	 * from the login portlet
+	 */
 	/**
 	 * @param request
 	 * @param response
@@ -220,47 +228,47 @@ public class GroupingController {
 
 		if (event.getName() != null && GroupingConstants.USER_DATA_OBJ.equals(event.getName())) {
 			LOGGER.info("GroupingController:handlingPagination : " + event.getName());
-				UserData custuser = (UserData) event.getValue();
+			UserData custuser = (UserData) event.getValue();
 
-				if (null != custuser) {
-					Common_BelkUser belkUser = (Common_BelkUser) custuser.getBelkUser();
-					
-						if (null!=custuser.getVpUser() && null != custuser.getVpUser().getUserEmailAddress()) {
-							LOGGER.info("This is from Event Email Id********************" + custuser.getVpUser().getUserEmailAddress());
-							loggedInUser = custuser.getVpUser().getUserEmailAddress();
-						} else if (null != custuser.getRoleName()) {
-							LOGGER.info("This is from Event Role name********************" + custuser.getRoleName());
-						} else if (null != custuser.getAccessRight()) {
-							LOGGER.info("This is from Access********************" + custuser.getAccessRight());
-						}
+			if (null != custuser) {
+				Common_BelkUser belkUser = (Common_BelkUser) custuser.getBelkUser();
 
-						if (null != belkUser && null != belkUser.getLanId()) {
-							LOGGER.info("belkUser.getLanId() ******************" + belkUser.getLanId());
-							loggedInUser = belkUser.getLanId();
-						}
-
-					String sessionDataKey = GroupingConstants.USER_DATA + request.getPortletSession().getId() + loggedInUser;
-					String formSessionKey = request.getPortletSession().getId() + loggedInUser;
-					
-					
-					request.getPortletSession().setAttribute("formSessionKey", formSessionKey);
-					request.getPortletSession().setAttribute("sessionDataKey", sessionDataKey);
-					request.getPortletSession().setAttribute(sessionDataKey, custuser);
+				if (null != custuser.getVpUser() && null != custuser.getVpUser().getUserEmailAddress()) {
+					LOGGER.info("This is from Event Email Id********************" + custuser.getVpUser().getUserEmailAddress());
+					loggedInUser = custuser.getVpUser().getUserEmailAddress();
+				} else if (null != custuser.getRoleName()) {
+					LOGGER.info("This is from Event Role name********************" + custuser.getRoleName());
+				} else if (null != custuser.getAccessRight()) {
+					LOGGER.info("This is from Access********************" + custuser.getAccessRight());
 				}
+
+				if (null != belkUser && null != belkUser.getLanId()) {
+					LOGGER.info("belkUser.getLanId() ******************" + belkUser.getLanId());
+					loggedInUser = belkUser.getLanId();
+				}
+
+				String sessionDataKey = GroupingConstants.USER_DATA + request.getPortletSession().getId() + loggedInUser;
+				String formSessionKey = request.getPortletSession().getId() + loggedInUser;
+
+				request.getPortletSession().setAttribute("formSessionKey", formSessionKey);
+				request.getPortletSession().setAttribute("sessionDataKey", sessionDataKey);
+				request.getPortletSession().setAttribute(sessionDataKey, custuser);
 			}
+		}
 
 	}
 
-	/** This method will take care of handleResourceRequest, handles all Ajax
+	/**
+	 * This method will take care of handleResourceRequest, handles all Ajax
 	 * calls. Used to handle Split Color and Split SKU search request
 	 * 
 	 * @param request
 	 * @param response
 	 * @return
-	  */
+	 */
 	@SuppressWarnings("unchecked")
 	@ResourceMapping("splitAttributeSearch")
-	public ModelAndView handleSplitAttrSearchRequest(ResourceRequest request, ResourceResponse response)  {
+	public ModelAndView handleSplitAttrSearchRequest(ResourceRequest request, ResourceResponse response) {
 		LOGGER.info("Entering handleSplitAttrSearchRequest-->.");
 		String vendorStyleNo = "";
 		String styleOrin = "";
@@ -281,7 +289,7 @@ public class GroupingController {
 		}
 		LOGGER.info(" handleSplitAttrSearchRequest custuser -----------------------> " + custuser);
 		ModelAndView view = new ModelAndView("groupingPage");
-		try{
+		try {
 			if (custuser != null) {
 				LOGGER.info("userData---->in activate");
 				if (custuser.isInternal()) {
@@ -313,8 +321,7 @@ public class GroupingController {
 				List<GroupAttributeForm> updatedSplitColorDetailsList = new ArrayList<>();
 				Map<String, List<GroupAttributeForm>> updatedSplitColorDetailsMap;
 
-				updatedSplitColorDetailsMap = groupingService
-						.validateSCGAttributeDetails(getSplitColorDetailsList);
+				updatedSplitColorDetailsMap = groupingService.validateSCGAttributeDetails(getSplitColorDetailsList);
 
 				Iterator<Entry<String, List<GroupAttributeForm>>> entries = updatedSplitColorDetailsMap.entrySet().iterator();
 				while (entries.hasNext()) {
@@ -333,8 +340,10 @@ public class GroupingController {
 				} else if (updatedSplitColorDetailsList.isEmpty() && "notCompleted".equals(errorCode)) {
 					message = prop.getProperty(GroupingConstants.MESSAGE_SPLITGROUP_VALIDATION_INVALID_DATA);
 				}
-				/** set in session to call add attribute webservice after creating
-				 * group **/
+				/**
+				 * set in session to call add attribute webservice after
+				 * creating group
+				 **/
 				request.getPortletSession().setAttribute(GroupingConstants.SELECTED_ATTRIBUTE_LIST, updatedSplitColorDetailsList);
 
 				/** Code to generate response to display Search result in JSP **/
@@ -345,7 +354,7 @@ public class GroupingController {
 						updatedSplitColorDetailsList);
 				LOGGER.info("getSCGJsonResponse-->" + jsonObj);
 
-				if(jsonObj!=null) {
+				if (jsonObj != null) {
 					response.getWriter().write(jsonObj.toString());
 				}
 
@@ -387,8 +396,10 @@ public class GroupingController {
 					message = prop.getProperty(GroupingConstants.MESSAGE_SPLITGROUP_VALIDATION_INVALID_DATA);
 				}
 
-				/** set in session to call add attribute webservice after creating
-				 * group **/
+				/**
+				 * set in session to call add attribute webservice after
+				 * creating group
+				 **/
 				request.getPortletSession().setAttribute(GroupingConstants.SELECTED_ATTRIBUTE_LIST, updatedSplitSKUDetailsList);
 
 				/** Code to generate response to display Search result in JSP **/
@@ -399,29 +410,25 @@ public class GroupingController {
 						updatedSplitSKUDetailsList);
 				LOGGER.info("getSCGJsonResponse-->" + jsonObj);
 
-
 				response.getWriter().write(jsonObj.toString());
 
 				view = new ModelAndView(null);
 			}
 		} catch (PEPPersistencyException e) {
-			LOGGER.error("GroupingControlle:handleCreateGroupForm handleSplitAttrSearchRequest:PEPPersistencyException------------>"+ e);
-		}
-		catch (IOException e) {
-			LOGGER.error("GroupingControlle:handleCreateGroupForm handleSplitAttrSearchRequest:IOException------------>"
-					+ e);
+			LOGGER.error("GroupingControlle:handleCreateGroupForm handleSplitAttrSearchRequest:PEPPersistencyException------------>" + e);
+		} catch (IOException e) {
+			LOGGER.error("GroupingControlle:handleCreateGroupForm handleSplitAttrSearchRequest:IOException------------>" + e);
 		} catch (PEPServiceException e) {
-			LOGGER.error("GroupingControlle:handleCreateGroupForm handleSplitAttrSearchRequest:PEPServiceException------------>"
-					+ e);
+			LOGGER.error("GroupingControlle:handleCreateGroupForm handleSplitAttrSearchRequest:PEPServiceException------------>" + e);
 		} catch (PEPFetchException e) {
-			LOGGER.error("GroupingControlle:handleCreateGroupForm handleSplitAttrSearchRequest:PEPFetchException------------>"
-					+ e);
+			LOGGER.error("GroupingControlle:handleCreateGroupForm handleSplitAttrSearchRequest:PEPFetchException------------>" + e);
 		}
 		LOGGER.info("Exit handleSplitAttrSearchRequest-->.");
 		return view;
 	}
 
-	/** Method to create JSON object to display search result in jsp for SCG and
+	/**
+	 * Method to create JSON object to display search result in jsp for SCG and
 	 * SSG.
 	 * 
 	 * @param message String
@@ -431,7 +438,8 @@ public class GroupingController {
 	 * @param selectedSplitAttributeList List
 	 * 
 	 * @return JSONObject
-	 * @author Cognizant */
+	 * @author Cognizant
+	 */
 	public final JSONObject getSplitGrpJsonResponse(final String message, final String totalRecords, final String defaultSortCol,
 			final String defaultSortOrder, final List<GroupAttributeForm> selectedSplitAttributeList) {
 		LOGGER.info("Enter getSplitGrpJsonResponse-->.");
@@ -459,21 +467,27 @@ public class GroupingController {
 
 				jsonObjComponent.put(GroupingConstants.COMPONENT_DEFAULT_COLOR, defaultColor);
 				String isAlreadyInGroup = groupAttributeForm.getIsAlreadyInGroup();
-				
-				isAlreadyInGroup = null == isAlreadyInGroup ? "No" : ("").equalsIgnoreCase(isAlreadyInGroup.trim()) ? "No" 
-						: ("N").equalsIgnoreCase(isAlreadyInGroup.trim()) ? "No" : ("Y")
-						.equalsIgnoreCase(isAlreadyInGroup.trim()) ? "Yes" : "No";
+
+				isAlreadyInGroup = null == isAlreadyInGroup ? "No" : ("").equalsIgnoreCase(isAlreadyInGroup.trim()) ? "No" : ("N")
+						.equalsIgnoreCase(isAlreadyInGroup.trim()) ? "No" : ("Y").equalsIgnoreCase(isAlreadyInGroup.trim()) ? "Yes" : "No";
 
 				jsonObjComponent.put(GroupingConstants.ALREADY_IN_GROUP, isAlreadyInGroup);
-				jsonObjComponent.put(GroupingConstants.COMPONENT_SIZE, groupAttributeForm.getSize()); // Only for Split SKU
-				jsonObjComponent.put(GroupingConstants.CLASS_ID, groupAttributeForm.getClassId()); // Only for GSS
-				
+				jsonObjComponent.put(GroupingConstants.COMPONENT_SIZE, groupAttributeForm.getSize()); // Only
+																										// for
+																										// Split
+																										// SKU
+				jsonObjComponent.put(GroupingConstants.CLASS_ID, groupAttributeForm.getClassId()); // Only
+																									// for
+																									// GSS
+
 				String isAlreadyInSameGroup = groupAttributeForm.getIsAlreadyInSameGroup();
-				isAlreadyInSameGroup = null == isAlreadyInSameGroup ? "No" : ("").equalsIgnoreCase(isAlreadyInSameGroup.trim()) ? "No" : ("N")
-						.equalsIgnoreCase(isAlreadyInSameGroup.trim()) ? "No" : ("Y").equalsIgnoreCase(isAlreadyInSameGroup.trim()) ? "Yes"
-						: "No";
-				
-				jsonObjComponent.put(GroupingConstants.ALREADY_IN_SAME_GROUP, isAlreadyInSameGroup); // Only for GBS
+				isAlreadyInSameGroup = null == isAlreadyInSameGroup ? "No" : ("").equalsIgnoreCase(isAlreadyInSameGroup.trim()) ? "No"
+						: ("N").equalsIgnoreCase(isAlreadyInSameGroup.trim()) ? "No"
+								: ("Y").equalsIgnoreCase(isAlreadyInSameGroup.trim()) ? "Yes" : "No";
+
+				jsonObjComponent.put(GroupingConstants.ALREADY_IN_SAME_GROUP, isAlreadyInSameGroup); // Only
+																										// for
+																										// GBS
 
 				jsonArray.put(jsonObjComponent);
 			}
@@ -495,7 +509,8 @@ public class GroupingController {
 		return jsonObj;
 	}
 
-	/** Method to create JSON object to display search result in jsp for CPG.
+	/**
+	 * Method to create JSON object to display search result in jsp for CPG.
 	 * 
 	 * @param message String
 	 * @param totalRecords String
@@ -504,7 +519,8 @@ public class GroupingController {
 	 * @param existCPGDetails List
 	 * 
 	 * @return JSONObject
-	 * @author Cognizant */
+	 * @author Cognizant
+	 */
 	public final JSONObject getCPGGrpJsonResponse(final String message, final String totalRecords, final String defaultSortCol,
 			final String defaultSortOrder, final List<StyleAttributeForm> existCPGDetails) {
 		LOGGER.info("Enter getCPGGrpJsonResponse-->.");
@@ -513,7 +529,7 @@ public class GroupingController {
 		String classId = "";
 		List<GroupAttributeForm> groupAttributeFormList = null;
 		GroupAttributeForm groupAttributeForm = null;
-		
+
 		JSONObject jsonObjComponent = null;
 		JSONObject jsonObjComponentSub = null;
 		JSONArray jsonArraySub = null;
@@ -539,19 +555,18 @@ public class GroupingController {
 				jsonObjComponent.put(GroupingConstants.COMPONENT_DEFAULT_COLOR, defaultColor);
 				String isAlreadyInGroup = styleAttributeForm.getIsAlreadyInGroup();
 				isAlreadyInGroup = null == isAlreadyInGroup ? "No" : ("").equalsIgnoreCase(isAlreadyInGroup.trim()) ? "No" : ("N")
-						.equalsIgnoreCase(isAlreadyInGroup.trim()) ? "No" : ("Y").equalsIgnoreCase(isAlreadyInGroup.trim()) ? "Yes"
-						: "No";
+						.equalsIgnoreCase(isAlreadyInGroup.trim()) ? "No" : ("Y").equalsIgnoreCase(isAlreadyInGroup.trim()) ? "Yes" : "No";
 				jsonObjComponent.put(GroupingConstants.ALREADY_IN_GROUP, isAlreadyInGroup);
 
 				String isAlreadyInSameGroup = styleAttributeForm.getIsAlreadyInSameGroup();
-				isAlreadyInSameGroup = null == isAlreadyInSameGroup ? "No" : ("").equalsIgnoreCase(isAlreadyInSameGroup.trim()) ? "No" : ("N")
-						.equalsIgnoreCase(isAlreadyInSameGroup.trim()) ? "No" : ("Y").equalsIgnoreCase(isAlreadyInSameGroup.trim()) ? "Yes"
-						: "No";
-				
+				isAlreadyInSameGroup = null == isAlreadyInSameGroup ? "No" : ("").equalsIgnoreCase(isAlreadyInSameGroup.trim()) ? "No"
+						: ("N").equalsIgnoreCase(isAlreadyInSameGroup.trim()) ? "No"
+								: ("Y").equalsIgnoreCase(isAlreadyInSameGroup.trim()) ? "Yes" : "No";
+
 				jsonObjComponent.put(GroupingConstants.ALREADY_IN_SAME_GROUP, isAlreadyInSameGroup);
 
 				groupAttributeFormList = styleAttributeForm.getGroupAttributeFormList();
-				
+
 				for (int j = 0; j < groupAttributeFormList.size(); j++) {
 					jsonObjComponentSub = new JSONObject();
 					groupAttributeForm = groupAttributeFormList.get(j);
@@ -567,9 +582,9 @@ public class GroupingController {
 					defaultColor = null == groupAttributeForm.getIsDefault() ? "" : groupAttributeForm.getIsDefault();
 					jsonObjComponentSub.put(GroupingConstants.COMPONENT_DEFAULT_COLOR, defaultColor);
 					isAlreadyInGroup = groupAttributeForm.getIsAlreadyInGroup();
-					isAlreadyInGroup = null == isAlreadyInGroup ? "No" : ("").equalsIgnoreCase(isAlreadyInGroup.trim()) ? "No"
-							: ("N").equalsIgnoreCase(isAlreadyInGroup.trim()) ? "No"
-									: ("Y").equalsIgnoreCase(isAlreadyInGroup.trim()) ? "Yes" : "No";
+					isAlreadyInGroup = null == isAlreadyInGroup ? "No" : ("").equalsIgnoreCase(isAlreadyInGroup.trim()) ? "No" : ("N")
+							.equalsIgnoreCase(isAlreadyInGroup.trim()) ? "No" : ("Y").equalsIgnoreCase(isAlreadyInGroup.trim()) ? "Yes"
+							: "No";
 					jsonObjComponentSub.put(GroupingConstants.ALREADY_IN_GROUP, isAlreadyInGroup);
 
 					jsonArraySub.put(jsonObjComponentSub);
@@ -585,7 +600,7 @@ public class GroupingController {
 			jsonObj.put(GroupingConstants.STYLE_ORIN_NO_SEARCH, styleOrinNoSearch);
 			jsonObj.put(GroupingConstants.VENDOR_STYLE_NO_SEARCH, vendorStyleNoSearch);
 			jsonObj.put(GroupingConstants.CLASS_ID, classId);
-			
+
 			jsonObj.put(GroupingConstants.COMPONENT_LIST, jsonArray);
 			if (LOGGER.isDebugEnabled()) {
 				LOGGER.debug("JSON getCPGGrpJsonResponse-->" + jsonObj);
@@ -597,15 +612,15 @@ public class GroupingController {
 		return jsonObj;
 	}
 
-	/** This method is used to create group.
+	/**
+	 * This method is used to create group.
 	 * 
 	 * @param request ResourceRequest
 	 * @param response ResourceResponse
 	 * @return ModelAndView
- */
+	 */
 	@ResourceMapping("submitCreateGroupForm")
-	public final ModelAndView handleCreateGroupForm(final ResourceRequest request, final ResourceResponse response)
- {
+	public final ModelAndView handleCreateGroupForm(final ResourceRequest request, final ResourceResponse response) {
 		LOGGER.info("GroupingControlle:handleCreateGroupForm ResourceRequest:Enter------------>.");
 		ModelAndView modelAndView = null;
 		String formSessionKey = (String) request.getPortletSession().getAttribute("formSessionKey");
@@ -616,141 +631,135 @@ public class GroupingController {
 		LOGGER.info(" handleActionRequest custuser -----------------------------------> " + custuser);
 		String pepUserId = custuser.getBelkUser().getLanId();
 		LOGGER.info("This is from Reneder Internal User--------------------->" + pepUserId);
-try{
-		String carsGroupingType = "";
-		String[] selectedItemsArr = null;
-		String groupType = GroupingUtil.checkNull(request.getParameter(GroupingConstants.GROUP_TYPE));
-		String groupName = request.getParameter(GroupingConstants.GROUP_NAME);
-		String groupDesc = request.getParameter(GroupingConstants.GROUP_DESC);
-		String startDate = request.getParameter(GroupingConstants.START_DATE);
-		String endDate = request.getParameter(GroupingConstants.END_DATE);
-		String defaultSelectedAttr = request.getParameter(GroupingConstants.COMPONENT_DEFAULT_COLOR);
-		if(GroupingConstants.GROUP_TYPE_REGULAR_COLLECTION.equals(groupType)){
-			carsGroupingType = request.getParameter(GroupingConstants.CARS_GROUPING_TYPE);
-			carsGroupingType = null == carsGroupingType ? "" : carsGroupingType.trim();
-		} else if(GroupingConstants.GROUP_TYPE_BEAUTY_COLLECTION.equals(groupType)){
-			carsGroupingType = GroupingConstants.CARS_GROUP_TYPE_BCG;
-		} else if(GroupingConstants.GROUP_TYPE_GROUP_BY_SIZE.equals(groupType)){
-			carsGroupingType = GroupingConstants.CARS_GROUP_TYPE_GBS;
-		} else if(GroupingConstants.GROUP_TYPE_CONSOLIDATE_PRODUCT.equals(groupType)){
-			carsGroupingType = GroupingConstants.CARS_GROUP_TYPE_CPG;
-		}
-		defaultSelectedAttr = null == defaultSelectedAttr ? "" : defaultSelectedAttr.trim();
-		String selectedItems = request.getParameter(GroupingConstants.COMPONENT_SELECTED_ITEMS);
-		if (null != selectedItems) {
-			selectedItemsArr = selectedItems.split(",");
-		}
-
-		startDate = null == startDate ? "" : startDate.trim();
-		endDate = null == endDate ? "" : endDate.trim();
-		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug("groupType----------------->" + groupType);
-			LOGGER.debug("groupName----------------->" + groupName);
-			LOGGER.debug("groupDesc----------------->" + groupDesc);
-			LOGGER.debug("startDate----------------->" + startDate);
-			LOGGER.debug("endDate----------------->" + endDate);
-			LOGGER.debug("carsGroupingType----------------->" + carsGroupingType);
-			LOGGER.debug("defaultSelectedAttr----------------->" + defaultSelectedAttr);
-			LOGGER.debug("selectedItems----------------->" + selectedItems);
-		}
-
-		/** If request came with create group request **/
-		CreateGroupForm createGroupForm = new CreateGroupForm();
-		List<GroupAttributeForm> selectedSplitAttributeList = new ArrayList<>();
-
-		if (null != groupType && (GroupingConstants.GROUP_TYPE_SPLIT_COLOR).equals(groupType) && null != selectedItems
-				&& null != selectedItemsArr) {
-
-			/** Add Selected Attribute to List (selectedSplitAttributeList) for
-			 * Split Color and Group **/
-			@SuppressWarnings("unchecked")
-			List<GroupAttributeForm> updatedSplitColorDetailsList = (List<GroupAttributeForm>) request.getPortletSession()
-					.getAttribute(GroupingConstants.SELECTED_ATTRIBUTE_LIST);
-			if (LOGGER.isDebugEnabled()) {
-				LOGGER.debug("All Color Attribute List Size()-->" + updatedSplitColorDetailsList.size());
+		try {
+			String carsGroupingType = "";
+			String[] selectedItemsArr = null;
+			String groupType = GroupingUtil.checkNull(request.getParameter(GroupingConstants.GROUP_TYPE));
+			String groupName = request.getParameter(GroupingConstants.GROUP_NAME);
+			String groupDesc = request.getParameter(GroupingConstants.GROUP_DESC);
+			String startDate = request.getParameter(GroupingConstants.START_DATE);
+			String endDate = request.getParameter(GroupingConstants.END_DATE);
+			String defaultSelectedAttr = request.getParameter(GroupingConstants.COMPONENT_DEFAULT_COLOR);
+			if (GroupingConstants.GROUP_TYPE_REGULAR_COLLECTION.equals(groupType)) {
+				carsGroupingType = request.getParameter(GroupingConstants.CARS_GROUPING_TYPE);
+				carsGroupingType = null == carsGroupingType ? "" : carsGroupingType.trim();
+			} else if (GroupingConstants.GROUP_TYPE_BEAUTY_COLLECTION.equals(groupType)) {
+				carsGroupingType = GroupingConstants.CARS_GROUP_TYPE_BCG;
+			} else if (GroupingConstants.GROUP_TYPE_GROUP_BY_SIZE.equals(groupType)) {
+				carsGroupingType = GroupingConstants.CARS_GROUP_TYPE_GBS;
+			} else if (GroupingConstants.GROUP_TYPE_CONSOLIDATE_PRODUCT.equals(groupType)) {
+				carsGroupingType = GroupingConstants.CARS_GROUP_TYPE_CPG;
 			}
-			selectedSplitAttributeList = groupingService.getSelectedColorAttributeList(updatedSplitColorDetailsList, selectedItemsArr,
-					defaultSelectedAttr);
-			
-		}
-		if (GroupingConstants.GROUP_TYPE_SPLIT_SKU.equals(groupType)
-				&& null != selectedItemsArr) {
-			@SuppressWarnings("unchecked")
-			List<GroupAttributeForm> updatedSplitSkuDetailsList = (List<GroupAttributeForm>) request.getPortletSession().getAttribute(
-					GroupingConstants.SELECTED_ATTRIBUTE_LIST);
-			if (LOGGER.isDebugEnabled()) {
-				LOGGER.debug("All SKU Attribute List Size()-->" + updatedSplitSkuDetailsList.size());
+			defaultSelectedAttr = null == defaultSelectedAttr ? "" : defaultSelectedAttr.trim();
+			String selectedItems = request.getParameter(GroupingConstants.COMPONENT_SELECTED_ITEMS);
+			if (null != selectedItems) {
+				selectedItemsArr = selectedItems.split(",");
 			}
-			selectedSplitAttributeList = groupingService.getSelectedSKUAttributeList(updatedSplitSkuDetailsList, selectedItemsArr,
-					defaultSelectedAttr);
 
-		}
+			startDate = null == startDate ? "" : startDate.trim();
+			endDate = null == endDate ? "" : endDate.trim();
+			if (LOGGER.isDebugEnabled()) {
+				LOGGER.debug("groupType-->" + groupType + "groupName-->" + groupName + "groupDesc-->" + groupDesc + "startDate-->"
+						+ startDate + "endDate-->" + endDate + "carsGroupingType-->" + carsGroupingType + "defaultSelectedAttr-->"
+						+ defaultSelectedAttr + "selectedItems-->" + selectedItems);
+			}
 
-		createGroupForm.setGroupType(groupType);
-		createGroupForm.setGroupName(groupName);
-		createGroupForm.setGroupDesc(groupDesc);
-		createGroupForm.setGroupLaunchDate(startDate);
-		createGroupForm.setEndDate(endDate);
-		createGroupForm.setCarsGroupType(carsGroupingType);
-		createGroupForm.setGroupAttributeFormList(selectedSplitAttributeList);
+			/** If request came with create group request **/
+			CreateGroupForm createGroupForm = new CreateGroupForm();
+			List<GroupAttributeForm> selectedSplitAttributeList = new ArrayList<>();
 
-		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug("Before calling createGroup()-->.");
-		}
-		CreateGroupForm createGroupFormRes = createGroup(createGroupForm, pepUserId);
-		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug("After calling createGroup()-->getGroupCreationStatus: " + createGroupFormRes.getGroupCreationStatus());
-			LOGGER.debug("After calling createGroup()-->getGroupCretionMsg: " + createGroupFormRes.getGroupCretionMsg());
-			LOGGER.debug("After calling createGroup()-->GroupID: " + createGroupFormRes.getGroupId());
-			LOGGER.debug("After calling createGroup()-->GroupType: " + createGroupFormRes.getGroupType());
-			LOGGER.debug("After calling createGroup()-->GroupDesc: " + createGroupFormRes.getGroupDesc());
-			LOGGER.debug("After calling createGroup()-->getCarsGroupType: " + createGroupFormRes.getCarsGroupType());
-		}
+			if (null != groupType && (GroupingConstants.GROUP_TYPE_SPLIT_COLOR).equals(groupType) && null != selectedItems
+					&& null != selectedItemsArr) {
 
-		request.getPortletSession().setAttribute(GroupingConstants.GROUP_DETAILS_FORM, createGroupFormRes);
+				/**
+				 * Add Selected Attribute to List (selectedSplitAttributeList)
+				 * for Split Color and Group
+				 **/
+				@SuppressWarnings("unchecked")
+				List<GroupAttributeForm> updatedSplitColorDetailsList = (List<GroupAttributeForm>) request.getPortletSession()
+						.getAttribute(GroupingConstants.SELECTED_ATTRIBUTE_LIST);
+				if (LOGGER.isDebugEnabled()) {
+					LOGGER.debug("All Color Attribute List Size()-->" + updatedSplitColorDetailsList.size());
+				}
+				selectedSplitAttributeList = groupingService.getSelectedColorAttributeList(updatedSplitColorDetailsList, selectedItemsArr,
+						defaultSelectedAttr);
 
-		JSONObject jsonObj = new JSONObject();
-		jsonObj.put(GroupingConstants.GROUP_ID, createGroupFormRes.getGroupId());
-		jsonObj.put(GroupingConstants.GROUP_NAME, createGroupFormRes.getGroupName());
-		jsonObj.put(GroupingConstants.GROUP_TYPE, createGroupFormRes.getGroupType());
-		jsonObj.put(GroupingConstants.GROUP_DESC, createGroupFormRes.getGroupDesc());
-		jsonObj.put(GroupingConstants.START_DATE, createGroupFormRes.getGroupLaunchDate());
-		jsonObj.put(GroupingConstants.START_DATE, createGroupFormRes.getEndDate());
-		jsonObj.put(GroupingConstants.GROUP_CREATION_MSG, createGroupFormRes.getGroupCretionMsg());
-		jsonObj.put(GroupingConstants.GROUP_CREATION_STATUS_CODE, createGroupFormRes.getGroupCreationStatus());
-		jsonObj.put(GroupingConstants.CARS_GROUPING_TYPE, createGroupFormRes.getCarsGroupType());
+			}
+			if (GroupingConstants.GROUP_TYPE_SPLIT_SKU.equals(groupType) && null != selectedItemsArr) {
+				@SuppressWarnings("unchecked")
+				List<GroupAttributeForm> updatedSplitSkuDetailsList = (List<GroupAttributeForm>) request.getPortletSession().getAttribute(
+						GroupingConstants.SELECTED_ATTRIBUTE_LIST);
+				if (LOGGER.isDebugEnabled()) {
+					LOGGER.debug("All SKU Attribute List Size()-->" + updatedSplitSkuDetailsList.size());
+				}
+				selectedSplitAttributeList = groupingService.getSelectedSKUAttributeList(updatedSplitSkuDetailsList, selectedItemsArr,
+						defaultSelectedAttr);
 
-		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug("jsonObj-->" + jsonObj);
-		}
+			}
 
-		
+			createGroupForm.setGroupType(groupType);
+			createGroupForm.setGroupName(groupName);
+			createGroupForm.setGroupDesc(groupDesc);
+			createGroupForm.setGroupLaunchDate(startDate);
+			createGroupForm.setEndDate(endDate);
+			createGroupForm.setCarsGroupType(carsGroupingType);
+			createGroupForm.setGroupAttributeFormList(selectedSplitAttributeList);
+
+			if (LOGGER.isDebugEnabled()) {
+				LOGGER.debug("Before calling createGroup()-->.");
+			}
+			CreateGroupForm createGroupFormRes = createGroup(createGroupForm, pepUserId);
+			if (LOGGER.isDebugEnabled()) {
+				LOGGER.debug("After calling createGroup()-->getGroupCreationStatus: " + createGroupFormRes.getGroupCreationStatus()
+						+ " \ngetGroupCretionMsg: " + createGroupFormRes.getGroupCretionMsg() + " \nGroupID: "
+						+ createGroupFormRes.getGroupId() + " \nGroupType: " + createGroupFormRes.getGroupType() + " \nGroupDesc: "
+						+ createGroupFormRes.getGroupDesc() + " \ngetCarsGroupType: " + createGroupFormRes.getCarsGroupType());
+			}
+
+			request.getPortletSession().setAttribute(GroupingConstants.GROUP_DETAILS_FORM, createGroupFormRes);
+
+			JSONObject jsonObj = new JSONObject();
+			jsonObj.put(GroupingConstants.GROUP_ID, createGroupFormRes.getGroupId());
+			jsonObj.put(GroupingConstants.GROUP_NAME, createGroupFormRes.getGroupName());
+			jsonObj.put(GroupingConstants.GROUP_TYPE, createGroupFormRes.getGroupType());
+			jsonObj.put(GroupingConstants.GROUP_DESC, createGroupFormRes.getGroupDesc());
+			jsonObj.put(GroupingConstants.START_DATE, createGroupFormRes.getGroupLaunchDate());
+			jsonObj.put(GroupingConstants.START_DATE, createGroupFormRes.getEndDate());
+			jsonObj.put(GroupingConstants.GROUP_CREATION_MSG, createGroupFormRes.getGroupCretionMsg());
+			jsonObj.put(GroupingConstants.GROUP_CREATION_STATUS_CODE, createGroupFormRes.getGroupCreationStatus());
+			jsonObj.put(GroupingConstants.CARS_GROUPING_TYPE, createGroupFormRes.getCarsGroupType());
+
+			if (LOGGER.isDebugEnabled()) {
+				LOGGER.debug("jsonObj-->" + jsonObj);
+			}
 
 			response.getWriter().write(jsonObj.toString());
-} catch (IOException e) {
-	LOGGER.error("GroupingControlle:handleCreateGroupForm ResourceRequest:Exception------------>" + e);
-} catch (PEPServiceException e) {
-	LOGGER.error("GroupingControlle:handleCreateGroupForm ResourceRequest:PEPServiceException------------>" + e);
-} catch (PEPPersistencyException e) {
-	LOGGER.error("GroupingControlle:handleCreateGroupForm ResourceRequest:PEPPersistencyException------------>" + e);
-}
+		} catch (IOException e) {
+			LOGGER.error("GroupingControlle:handleCreateGroupForm ResourceRequest:Exception------------>" + e);
+		} catch (PEPServiceException e) {
+			LOGGER.error("GroupingControlle:handleCreateGroupForm ResourceRequest:PEPServiceException------------>" + e);
+		} catch (PEPPersistencyException e) {
+			LOGGER.error("GroupingControlle:handleCreateGroupForm ResourceRequest:PEPPersistencyException------------>" + e);
+		}
 
 		LOGGER.info("GroupingControlle:handleCreateGroupForm ResourceRequest:Exit------------>.");
 		return modelAndView;
 	}
 
-	/** Create URL to render page for Create Group successfully.
+	/**
+	 * Create URL to render page for Create Group successfully.
 	 * 
 	 * @param renderRequest RenderRequest
 	 * @param renderResponse RenderResponse
 	 * @return ModelAndView
-	 * @throws ParseException ParseException */
+	 * @throws ParseException ParseException
+	 */
 	@RenderMapping(params = "createGroupSuccessRender=CreateGrpSuccess")
 	public final ModelAndView createGroupSuccessRender(final RenderRequest renderRequest, final RenderResponse renderResponse)
 			throws ParseException {
 		// do some processing here
 		LOGGER.info("GroupingControlle:createGroupSuccessRender:enter.");
-		
+
 		Properties prop = PropertyLoader.getPropertyLoader(GroupingConstants.GROUPING_PROPERTIES_FILE_NAME);
 
 		CreateGroupForm objCreateGroupForm = (CreateGroupForm) renderRequest.getPortletSession().getAttribute(
@@ -759,14 +768,13 @@ try{
 		String groupTypeDesc = prop.getProperty(groupTypeCode);
 		String groupStatusCode = null == objCreateGroupForm.getGroupStatus() ? "" : objCreateGroupForm.getGroupStatus().trim();
 		String groupStatusDesc = prop.getProperty(GroupingConstants.GROUP_STATUS_EXT + groupStatusCode);
-		
+
 		objCreateGroupForm.setGroupTypeDesc(groupTypeDesc);
 		objCreateGroupForm.setGroupStatusDesc(groupStatusDesc);
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("createGroupSuccessRender.objCreateGroupForm-->" + objCreateGroupForm);
-			LOGGER.debug("createGroupSuccessRender.objCreateGroupForm.getGroupId()-->" + objCreateGroupForm.getGroupId());
-			LOGGER.debug(groupTypeCode + " createGroupSuccessRender.objCreateGroupForm.groupTypeDesc-->" + groupTypeDesc);
-			LOGGER.debug(groupStatusCode + " createGroupSuccessRender.objCreateGroupForm.groupStatus-->" + groupStatusDesc);
+			LOGGER.debug("createGroupSuccessRender.objCreateGroupForm.getGroupId()-->" + objCreateGroupForm.getGroupId() + 
+					" \ngroupTypeDesc-->" + groupTypeDesc + " \ngroupStatus-->" + groupStatusDesc);
 		}
 		ModelAndView mv = new ModelAndView(GroupingConstants.GROUPING_ADD_COMPONENT);
 		mv.addObject(GroupingConstants.GROUP_DETAILS_FORM, objCreateGroupForm);
@@ -778,9 +786,9 @@ try{
 			LOGGER.info("display user ID" + userID);
 			mv.addObject(GroupingConstants.LAN_ID, userID);
 			custuser = (UserData) renderRequest.getPortletSession().getAttribute(sessionDataKey);
-			if(GroupingConstants.READ_ONLY_ROLE.equals(custuser.getRoleName())){
+			if (GroupingConstants.READ_ONLY_ROLE.equals(custuser.getRoleName())) {
 				mv.addObject(GroupingConstants.READ_ONLY_ROLE, GroupingConstants.YES_VALUE);
-			}else{
+			} else {
 				mv.addObject(GroupingConstants.READ_ONLY_ROLE, GroupingConstants.NO_VALUE);
 			}
 		}
@@ -803,13 +811,15 @@ try{
 		return mv;
 	}
 
-	/** This method is used to call Group Creation Service and fetch data from
+	/**
+	 * This method is used to call Group Creation Service and fetch data from
 	 * database.
 	 * 
 	 * @param createGroupForm CreateGroupForm
 	 * @param updatedBy String
 	 * @return CreateGroupForm
-	 * @author AFUPYB3 */
+	 * @author AFUPYB3
+	 */
 	private final CreateGroupForm createGroup(final CreateGroupForm createGroupForm, String updatedBy) {
 		LOGGER.info("Entering:: createGroup method controller");
 
@@ -827,8 +837,7 @@ try{
 			LOGGER.error("inside catch for createGroup()-->controller-->" + e);
 		}
 		try {
-			createGroupFormRes = groupingService.saveGroupHeaderDetails(jsonStyle, updatedBy,
-					createGroupForm.getGroupAttributeFormList());
+			createGroupFormRes = groupingService.saveGroupHeaderDetails(jsonStyle, updatedBy, createGroupForm.getGroupAttributeFormList());
 
 			LOGGER.info("responseMsg_code Controller createGroup-->" + createGroupFormRes.getGroupCretionMsg());
 		} catch (PEPFetchException eService) {
@@ -841,12 +850,14 @@ try{
 		return createGroupFormRes;
 	} // End Group Creation
 
-	/** Method to pass JSON Array to call the Create Group service.
+	/**
+	 * Method to pass JSON Array to call the Create Group service.
 	 * 
 	 * @param createGroupForm CreateGroupForm
 	 * @param updatedBy String
 	 * @return JSONObject
-	 * @author Cognizant */
+	 * @author Cognizant
+	 */
 	public final JSONObject populateCreateGroupJson(final CreateGroupForm createGroupForm, final String updatedBy) {
 		JSONObject jsonObj = new JSONObject();
 		try {
@@ -863,13 +874,15 @@ try{
 		return jsonObj;
 	}
 
-	/** Method to create JSON objects for Search Group List.
+	/**
+	 * Method to create JSON objects for Search Group List.
 	 * 
 	 * @param groupSearchForm GroupSearchForm
 	 * @return JSONObject
 	 * 
 	 *         Method added For PIM Phase 2 - Search Group Date: 05/20/2016
-	 *         Added By: Cognizant */
+	 *         Added By: Cognizant
+	 */
 	public final JSONObject searchGroupJsonObject(final GroupSearchForm groupSearchForm) {
 
 		LOGGER.info("Entering searchGroupJsonObject() in GroupingController class.");
@@ -925,92 +938,92 @@ try{
 		return jsonObjSearch;
 	}
 
-	/** Method to handle all resource requests.
+	/**
+	 * Method to handle all resource requests.
 	 * 
 	 * @param request ResourceRequest
 	 * @param response ResourceResponse
 	 * @return ModelAndView
-	 *  */
+	 * */
 	@ResourceMapping
-	public final ModelAndView handleResourceRequest(final ResourceRequest request, final ResourceResponse response)  {
+	public final ModelAndView handleResourceRequest(final ResourceRequest request, final ResourceResponse response) {
 
 		LOGGER.info("Entering handleResourceRequest() in GroupingController class.");
 		String action = GroupingUtil.checkNull(request.getParameter("resourceType"));
 		ModelAndView modelAndView = null;
-		try{
-		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug("Action is -- " + action);
-		}
-		if ("searchGroup".equals(action)) {
-			GroupSearchForm searchForm = new GroupSearchForm();
-			searchForm.setVendor(GroupingUtil.checkNull(request.getParameter("vendor")));
-			searchForm.setOrinNumber(GroupingUtil.checkNull(request.getParameter("orinNumber")));
-			searchForm.setGroupId(GroupingUtil.checkNull(request.getParameter("groupId")));
-			searchForm.setGroupName(GroupingUtil.checkNull(request.getParameter("groupName")));
-			searchForm.setDepts(GroupingUtil.checkNull(request.getParameter("departments")));
-			searchForm.setClasses(GroupingUtil.checkNull(request.getParameter("classes")));
-			searchForm.setSupplierSiteId(GroupingUtil.checkNull(request.getParameter("supplierId")));
-			if (request.getParameter("totalRecordsCount") != null) {
-				searchForm.setTotalRecordCount(Integer.parseInt(request.getParameter("totalRecordsCount")));
-			} else {
-				searchForm.setTotalRecordCount(0);
-			}
-			if (request.getParameter("recordsPerPage") != null) {
-				searchForm.setRecordsPerPage(Integer.parseInt(request.getParameter("recordsPerPage")));
-			} else {
-				searchForm.setRecordsPerPage(0);
-			}
-			if (request.getParameter("pageNumber") != null) {
-				searchForm.setPageNumber(Integer.parseInt(request.getParameter("pageNumber")));
-			} else {
-				searchForm.setPageNumber(1);
-			}
-			searchForm.setSortColumn(GroupingUtil.checkNull(request.getParameter("sortedColumn")));
-			searchForm.setAscDescOrder(GroupingUtil.checkNull(request.getParameter("ascDescOrder")));
+		try {
 			if (LOGGER.isDebugEnabled()) {
-				LOGGER.debug("Search values from screen -- \nGROUP ID: " + searchForm.getGroupId() + "\nGROUP NAME: "
-						+ searchForm.getGroupName() + "\nORIN#: " + searchForm.getOrinNumber() + "\nVENDOR: " + searchForm.getVendor()
-						+ "\nSUPPILER ID: " + searchForm.getSupplierSiteId() + "\nDEPARTMENTS: " + searchForm.getDepts()
-						+ "\nCLASSES: " + searchForm.getClasses() + "\nPAGE NUMBER: " + searchForm.getPageNumber()
-						+ "\nRECODRS PER PAGE: " + searchForm.getRecordsPerPage() + "\nSORT COLUMN: " + searchForm.getSortColumn()
-						+ "\nASC/DESC: " + searchForm.getAscDescOrder());
+				LOGGER.debug("Action is -- " + action);
 			}
+			if ("searchGroup".equals(action)) {
+				GroupSearchForm searchForm = new GroupSearchForm();
+				searchForm.setVendor(GroupingUtil.checkNull(request.getParameter("vendor")));
+				searchForm.setOrinNumber(GroupingUtil.checkNull(request.getParameter("orinNumber")));
+				searchForm.setGroupId(GroupingUtil.checkNull(request.getParameter("groupId")));
+				searchForm.setGroupName(GroupingUtil.checkNull(request.getParameter("groupName")));
+				searchForm.setDepts(GroupingUtil.checkNull(request.getParameter("departments")));
+				searchForm.setClasses(GroupingUtil.checkNull(request.getParameter("classes")));
+				searchForm.setSupplierSiteId(GroupingUtil.checkNull(request.getParameter("supplierId")));
+				if (request.getParameter("totalRecordsCount") != null) {
+					searchForm.setTotalRecordCount(Integer.parseInt(request.getParameter("totalRecordsCount")));
+				} else {
+					searchForm.setTotalRecordCount(0);
+				}
+				if (request.getParameter("recordsPerPage") != null) {
+					searchForm.setRecordsPerPage(Integer.parseInt(request.getParameter("recordsPerPage")));
+				} else {
+					searchForm.setRecordsPerPage(0);
+				}
+				if (request.getParameter("pageNumber") != null) {
+					searchForm.setPageNumber(Integer.parseInt(request.getParameter("pageNumber")));
+				} else {
+					searchForm.setPageNumber(1);
+				}
+				searchForm.setSortColumn(GroupingUtil.checkNull(request.getParameter("sortedColumn")));
+				searchForm.setAscDescOrder(GroupingUtil.checkNull(request.getParameter("ascDescOrder")));
+				if (LOGGER.isDebugEnabled()) {
+					LOGGER.debug("Search values from screen -- \nGROUP ID: " + searchForm.getGroupId() + "\nGROUP NAME: "
+							+ searchForm.getGroupName() + "\nORIN#: " + searchForm.getOrinNumber() + "\nVENDOR: " + searchForm.getVendor()
+							+ "\nSUPPILER ID: " + searchForm.getSupplierSiteId() + "\nDEPARTMENTS: " + searchForm.getDepts()
+							+ "\nCLASSES: " + searchForm.getClasses() + "\nPAGE NUMBER: " + searchForm.getPageNumber()
+							+ "\nRECODRS PER PAGE: " + searchForm.getRecordsPerPage() + "\nSORT COLUMN: " + searchForm.getSortColumn()
+							+ "\nASC/DESC: " + searchForm.getAscDescOrder());
+				}
 
-			searchForm = groupingService.groupSearch(searchForm);
-			if (searchForm.getGroupId() != null && !"".equals(searchForm.getGroupId().trim())) {
-				searchForm.setTotalRecordCount(groupingService.groupSearchCount(searchForm) + searchForm.getParentCount());
-			} else {
-				searchForm.setTotalRecordCount(groupingService.groupSearchCount(searchForm));
-			}
-			PortletSession portletSession = request.getPortletSession();
-			portletSession.setAttribute("SEARCH_RESULT", searchForm);
-			JSONObject jsonObject = searchGroupJsonObject(searchForm);
-
+				searchForm = groupingService.groupSearch(searchForm);
+				if (searchForm.getGroupId() != null && !"".equals(searchForm.getGroupId().trim())) {
+					searchForm.setTotalRecordCount(groupingService.groupSearchCount(searchForm) + searchForm.getParentCount());
+				} else {
+					searchForm.setTotalRecordCount(groupingService.groupSearchCount(searchForm));
+				}
+				PortletSession portletSession = request.getPortletSession();
+				portletSession.setAttribute("SEARCH_RESULT", searchForm);
+				JSONObject jsonObject = searchGroupJsonObject(searchForm);
 
 				response.getWriter().write(jsonObject.toString());
 
-		}else if("searchDept".equals(action)){
-			ArrayList<DepartmentDetails> deptList = groupingService.getDeptDetailsByDepNoFromADSE();
-			JSONObject jsonObject = departmentListJsonObject(deptList);
+			} else if ("searchDept".equals(action)) {
+				ArrayList<DepartmentDetails> deptList = groupingService.getDeptDetailsByDepNoFromADSE();
+				JSONObject jsonObject = departmentListJsonObject(deptList);
 				response.getWriter().write(jsonObject.toString());
 
-		}else if("searchClass".equals(action)) {
-			String depts = GroupingUtil.checkNull(request.getParameter("depts"));
-			List<ClassDetails> classList = groupingService.getClassDetailsByDepNos(depts);
-			JSONObject jsonObject = classListJsonObject(classList);
+			} else if ("searchClass".equals(action)) {
+				String depts = GroupingUtil.checkNull(request.getParameter("depts"));
+				List<ClassDetails> classList = groupingService.getClassDetailsByDepNos(depts);
+				JSONObject jsonObject = classListJsonObject(classList);
 
 				response.getWriter().write(jsonObject.toString());
 
-		}else if("deleteGroup".equals(action)) {
-			LOGGER.info("handleDeleteGroup ResourceRequest:Enter------------>.");
-			String formSessionKey = (String) request.getPortletSession().getAttribute("formSessionKey");
-			LOGGER.info("handleDeleteGroup formSessionKey  ----------------------------->" + formSessionKey);
-			String sessionDataKey = (String) request.getPortletSession().getAttribute("sessionDataKey");
-			LOGGER.info(" handleDeleteGroup sessionDataKey -----------------------------> " + sessionDataKey);
-			UserData custuser = (UserData) request.getPortletSession().getAttribute(sessionDataKey);
-			LOGGER.info(" handleDeleteGroup custuser -----------------------------------> " + custuser);
-			String pepUserId = custuser.getBelkUser().getLanId();
-			LOGGER.info("This is from Reneder Internal User--------------------->" + pepUserId);
+			} else if ("deleteGroup".equals(action)) {
+				LOGGER.info("handleDeleteGroup ResourceRequest:Enter------------>.");
+				String formSessionKey = (String) request.getPortletSession().getAttribute("formSessionKey");
+				LOGGER.info("handleDeleteGroup formSessionKey  ----------------------------->" + formSessionKey);
+				String sessionDataKey = (String) request.getPortletSession().getAttribute("sessionDataKey");
+				LOGGER.info(" handleDeleteGroup sessionDataKey -----------------------------> " + sessionDataKey);
+				UserData custuser = (UserData) request.getPortletSession().getAttribute(sessionDataKey);
+				LOGGER.info(" handleDeleteGroup custuser -----------------------------------> " + custuser);
+				String pepUserId = custuser.getBelkUser().getLanId();
+				LOGGER.info("This is from Reneder Internal User--------------------->" + pepUserId);
 
 				String groupId = request.getParameter(GroupingConstants.GROUP_ID);
 				String groupType = request.getParameter(GroupingConstants.GROUP_TYPE);
@@ -1029,43 +1042,42 @@ try{
 				json.put(GroupingConstants.DELETE_STATUS, status);
 
 				response.getWriter().write(json.toString());
-			
-		}
-		else if("getChildRCGBCG".equals(action)) {
-			LOGGER.info("get Child for RCG BCG ResourceRequest:Enter------------>.");
+
+			} else if ("getChildRCGBCG".equals(action)) {
+				LOGGER.info("get Child for RCG BCG ResourceRequest:Enter------------>.");
 
 				String groupId = request.getParameter(GroupingConstants.GROUP_ID);
 				if (LOGGER.isDebugEnabled()) {
 					LOGGER.debug("groupId----------------->" + groupId);
 				}
 				String message = GroupingConstants.EMPTY;
-				List<StyleAttributeForm> childList= groupingService.getRegularBeautyChildDetails(groupId);
-				if(childList.isEmpty())
-				{
+				List<StyleAttributeForm> childList = groupingService.getRegularBeautyChildDetails(groupId);
+				if (childList.isEmpty()) {
 					message = "No child data found.";
 				}
 				JSONObject json = getRegularBeautyGrpJsonResponse(message, 0, GroupingConstants.EMPTY, GroupingConstants.EMPTY, childList);
 
 				response.getWriter().write(json.toString());
-			
-		}
-			}catch (IOException e) {
-				LOGGER.error("handleDeleteGroup ResourceRequest:IOException------------>" + e);
+
 			}
-		catch (Exception e) {
+		} catch (IOException e) {
+			LOGGER.error("handleDeleteGroup ResourceRequest:IOException------------>" + e);
+		} catch (Exception e) {
 			LOGGER.error("handleDeleteGroup ResourceRequest:Exception------------>" + e);
 		}
 		LOGGER.info("Exiting handleResourceRequest() in GroupingController class.");
 		return modelAndView;
 	}
 
-	/** Method to create JSON objects for Dept List.
+	/**
+	 * Method to create JSON objects for Dept List.
 	 * 
 	 * @param departmentList ArrayList
 	 * @return JSONObject
 	 * 
 	 *         Method added For PIM Phase 2 - Search Group Date: 05/26/2016
-	 *         Added By: Cognizant */
+	 *         Added By: Cognizant
+	 */
 	public final JSONObject departmentListJsonObject(final ArrayList<DepartmentDetails> departmentList) {
 
 		LOGGER.info("Entering departmentListJsonObject() in GroupingController class.");
@@ -1085,13 +1097,15 @@ try{
 		return jsonObjDeptParent;
 	}
 
-	/** Method to create JSON objects for Class List.
+	/**
+	 * Method to create JSON objects for Class List.
 	 * 
 	 * @param classList ArrayList
 	 * @return JSONObject
 	 * 
 	 *         Method added For PIM Phase 2 - Search Group Date: 05/26/2016
-	 *         Added By: Cognizant */
+	 *         Added By: Cognizant
+	 */
 	public final JSONObject classListJsonObject(final List<ClassDetails> classList) {
 
 		LOGGER.info("Entering classListJsonObject() in GroupingController class.");
@@ -1111,11 +1125,13 @@ try{
 		return jsonObjClassParent;
 	}
 
-	/** This method is used to create group.
+	/**
+	 * This method is used to create group.
 	 * 
 	 * @param request ResourceRequest
 	 * @param response ResourceResponse
-	 * @return ModelAndView */
+	 * @return ModelAndView
+	 */
 	@ResourceMapping("deleteGroupResorceRequest")
 	public final ModelAndView handleDeleteGroup(final ResourceRequest request, final ResourceResponse response) {
 		LOGGER.info("handleDeleteGroup ResourceRequest:Enter------------>.");
@@ -1144,7 +1160,7 @@ try{
 			JSONObject json = new JSONObject();
 			json.put(GroupingConstants.DELETE_STATUS_MESSAGE, responseMesage);
 			response.getWriter().write(json.toString());
-			
+
 		} catch (Exception e) {
 			LOGGER.error("handleDeleteGroup ResourceRequest:Exception------------>" + e);
 		}
@@ -1153,11 +1169,12 @@ try{
 		return modelAndView;
 	}
 
-	/** This method is used to get the existing group Header details.
+	/**
+	 * This method is used to get the existing group Header details.
 	 * 
 	 * @param request ActionRequest
 	 * @param response ActionResponse
- */
+	 */
 	@ActionMapping(params = "getGroupDetails=getGroupDetails")
 	public final void getExistingGrpDetails(final ActionRequest request, final ActionResponse response) {
 		// do some processing here
@@ -1165,8 +1182,7 @@ try{
 		String groupType = GroupingUtil.checkNull(request.getParameter(GroupingConstants.GROUP_TYPE));
 		String groupId = GroupingUtil.checkNull(request.getParameter(GroupingConstants.GROUP_ID));
 		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug("getExistingGrpDetails.groupType---------->" + groupType);
-			LOGGER.debug("getExistingGrpDetails.groupId---------->" + groupId);
+			LOGGER.debug("getExistingGrpDetails.groupType---------->" + groupType + " \ngroupId---------->" + groupId);
 		}
 
 		request.getPortletSession().setAttribute(GroupingConstants.GROUP_TYPE, groupType);
@@ -1177,13 +1193,15 @@ try{
 		LOGGER.info("GroupingControlle:getExistingGrpDetails:exit.");
 	}
 
-	/** This method is used to get the existing group Header details and Render
+	/**
+	 * This method is used to get the existing group Header details and Render
 	 * that page to Component details Page. It's calling from
 	 * getExistingGrpDetails()
 	 * 
 	 * @param request RenderRequest
 	 * @param response RenderResponse
-	 * @return ModelAndView */
+	 * @return ModelAndView
+	 */
 	@RenderMapping(params = "existingGrpDetailsRender=existingGrpDetailsRender")
 	public final ModelAndView existingGrpDetailsRender(final RenderRequest request, final RenderResponse response) {
 
@@ -1195,73 +1213,70 @@ try{
 		String groupId = (String) request.getPortletSession().getAttribute(GroupingConstants.GROUP_ID);
 
 		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug("existingGrpDetailsRender.groupType---------->" + groupType);
-			LOGGER.debug("existingGrpDetailsRender.groupId---------->" + groupId);
+			LOGGER.debug("existingGrpDetailsRender.groupType---------->" + groupType + " \ngroupId---------->" + groupId);
 		}
-		try{
+		try {
 
-		CreateGroupForm objCreateGroupForm = groupingService.getExistingGrpDetails(groupId);
+			CreateGroupForm objCreateGroupForm = groupingService.getExistingGrpDetails(groupId);
 
-		
-		Properties prop = PropertyLoader.getPropertyLoader(GroupingConstants.GROUPING_PROPERTIES_FILE_NAME);
-		String groupTypeCode = null == objCreateGroupForm.getGroupType() ? "" : objCreateGroupForm.getGroupType().trim();
-		String groupTypeDesc = prop.getProperty(groupTypeCode);
-		String groupStatusCode = null == objCreateGroupForm.getGroupStatus() ? "" : objCreateGroupForm.getGroupStatus().trim();
-		String groupStatusDesc = prop.getProperty(GroupingConstants.GROUP_STATUS_EXT + groupStatusCode);
-		
+			Properties prop = PropertyLoader.getPropertyLoader(GroupingConstants.GROUPING_PROPERTIES_FILE_NAME);
+			String groupTypeCode = null == objCreateGroupForm.getGroupType() ? "" : objCreateGroupForm.getGroupType().trim();
+			String groupTypeDesc = prop.getProperty(groupTypeCode);
+			String groupStatusCode = null == objCreateGroupForm.getGroupStatus() ? "" : objCreateGroupForm.getGroupStatus().trim();
+			String groupStatusDesc = prop.getProperty(GroupingConstants.GROUP_STATUS_EXT + groupStatusCode);
 
-		objCreateGroupForm.setGroupTypeDesc(groupTypeDesc);
-		objCreateGroupForm.setGroupStatusDesc(groupStatusDesc);
-		
+			objCreateGroupForm.setGroupTypeDesc(groupTypeDesc);
+			objCreateGroupForm.setGroupStatusDesc(groupStatusDesc);
 
-		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug("getExistingGrpDetails.objCreateGroupForm-->" + objCreateGroupForm);
-			LOGGER.debug("getExistingGrpDetails.objCreateGroupForm.getGroupId()-->" + objCreateGroupForm.getGroupId());
-			LOGGER.debug(groupTypeCode + " getExistingGrpDetails.objCreateGroupForm.groupTypeDesc-->" + groupTypeDesc);
-			LOGGER.debug(groupStatusCode + " getExistingGrpDetails.objCreateGroupForm.groupStatus-->" + groupStatusDesc);
-		}
-		modelAndView.addObject(GroupingConstants.GROUP_DETAILS_FORM, objCreateGroupForm);
-
-		/** changes to display lan id - changed by Ramkumar - starts **/
-		UserData custuser = null;
-		String sessionDataKey = (String) request.getPortletSession().getAttribute("sessionDataKey");
-		if (null != sessionDataKey) {
-			String userID = sessionDataKey.split(GroupingConstants.USER_DATA + request.getPortletSession().getId())[1];
-			LOGGER.info("display user ID" + userID);
-			modelAndView.addObject(GroupingConstants.LAN_ID, userID);
-			custuser = (UserData) request.getPortletSession().getAttribute(sessionDataKey);
-			if(GroupingConstants.READ_ONLY_ROLE.equals(custuser.getRoleName())){
-				modelAndView.addObject(GroupingConstants.READ_ONLY_ROLE, GroupingConstants.YES_VALUE);
-			}else{
-				modelAndView.addObject(GroupingConstants.READ_ONLY_ROLE, GroupingConstants.NO_VALUE);
+			if (LOGGER.isDebugEnabled()) {
+				LOGGER.debug("getExistingGrpDetails.objCreateGroupForm-->" + objCreateGroupForm);
+				LOGGER.debug("getExistingGrpDetails.objCreateGroupForm.getGroupId()-->" + objCreateGroupForm.getGroupId() + 
+						"\ngroupTypeDesc-->" + groupTypeDesc + "\ngroupStatus-->" + groupStatusDesc);
 			}
-		}
-		/** changes to display lan id - changed by Ramkumar - ends **/
+			modelAndView.addObject(GroupingConstants.GROUP_DETAILS_FORM, objCreateGroupForm);
 
-		/** changes to display Grouping Types - starts **/
-		String groups = prop.getProperty(GroupingConstants.GROUP_TYPES);
-		String groupTypes[] = groups.split(",");
-		Map<String, String> groupMap = new TreeMap<>();
-		for (int count = 0; count < groupTypes.length; count++) {
-			String key = groupTypes[count].split("-")[0];
-			String value = groupTypes[count].split("-")[1];
-			groupMap.put(key, value);
-		}
-		modelAndView.addObject("groupTypesMap", groupMap);
-		/** changes to display Grouping Types - Ends **/
-		} catch( Exception e){
-			LOGGER.error("GroupingControlle:existingGrpDetailsRender :Exception --> " +e);
+			/** changes to display lan id - changed by Ramkumar - starts **/
+			UserData custuser = null;
+			String sessionDataKey = (String) request.getPortletSession().getAttribute("sessionDataKey");
+			if (null != sessionDataKey) {
+				String userID = sessionDataKey.split(GroupingConstants.USER_DATA + request.getPortletSession().getId())[1];
+				LOGGER.info("display user ID" + userID);
+				modelAndView.addObject(GroupingConstants.LAN_ID, userID);
+				custuser = (UserData) request.getPortletSession().getAttribute(sessionDataKey);
+				if (GroupingConstants.READ_ONLY_ROLE.equals(custuser.getRoleName())) {
+					modelAndView.addObject(GroupingConstants.READ_ONLY_ROLE, GroupingConstants.YES_VALUE);
+				} else {
+					modelAndView.addObject(GroupingConstants.READ_ONLY_ROLE, GroupingConstants.NO_VALUE);
+				}
+			}
+			/** changes to display lan id - changed by Ramkumar - ends **/
+
+			/** changes to display Grouping Types - starts **/
+			String groups = prop.getProperty(GroupingConstants.GROUP_TYPES);
+			String groupTypes[] = groups.split(",");
+			Map<String, String> groupMap = new TreeMap<>();
+			for (int count = 0; count < groupTypes.length; count++) {
+				String key = groupTypes[count].split("-")[0];
+				String value = groupTypes[count].split("-")[1];
+				groupMap.put(key, value);
+			}
+			modelAndView.addObject("groupTypesMap", groupMap);
+			/** changes to display Grouping Types - Ends **/
+		} catch (Exception e) {
+			LOGGER.error("GroupingControlle:existingGrpDetailsRender :Exception --> " + e);
 		}
 
 		LOGGER.info("GroupingControlle:existingGrpDetailsRender:exit.");
 		return modelAndView;
 	}
 
-	/** This method is used to get Existing Group Component details.
+	/**
+	 * This method is used to get Existing Group Component details.
 	 * 
 	 * @param request
 	 * @param response
-	 * @return modelAndView*/
+	 * @return modelAndView
+	 */
 	@ResourceMapping("getExistGrpComponent")
 	public final ModelAndView getExistGrpComponentResource(final ResourceRequest request, final ResourceResponse response) {
 		LOGGER.info("GroupingControlle:getExistGrpComponentResource ResourceRequest:Enter------------>.");
@@ -1281,11 +1296,10 @@ try{
 		String groupId = GroupingUtil.checkNull(request.getParameter(GroupingConstants.GROUP_ID));
 
 		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug("getExistGrpComponentResource.groupType---------->" + groupType);
-			LOGGER.debug("getExistGrpComponentResource.groupId---------->" + groupId);
+			LOGGER.debug("getExistGrpComponentResource.groupType---------->" + groupType + "\ngroupId---------->" + groupId);
 		}
 
-		try{
+		try {
 
 			if (groupType.equals(GroupingConstants.GROUP_TYPE_SPLIT_COLOR)) {
 				if (LOGGER.isDebugEnabled()) {
@@ -1313,8 +1327,7 @@ try{
 					LOGGER.debug("getExistGrpComponentResource. In GBS");
 				}
 				existComponentDetails = groupingService.getExistGBSDetails(groupId);
-			}
-			else if (groupType.equals(GroupingConstants.GROUP_TYPE_REGULAR_COLLECTION)
+			} else if (groupType.equals(GroupingConstants.GROUP_TYPE_REGULAR_COLLECTION)
 					|| groupType.equals(GroupingConstants.GROUP_TYPE_BEAUTY_COLLECTION)) {
 				if (LOGGER.isDebugEnabled()) {
 					LOGGER.debug("getExistGrpComponentResource. In Regular/Beauty");
@@ -1324,34 +1337,34 @@ try{
 
 			/** Code to generate response to display Search result in JSP **/
 			if (groupType.equals(GroupingConstants.GROUP_TYPE_SPLIT_COLOR) || groupType.equals(GroupingConstants.GROUP_TYPE_SPLIT_SKU)
-					 || groupType.equals(GroupingConstants.GROUP_TYPE_GROUP_BY_SIZE)) {
+					|| groupType.equals(GroupingConstants.GROUP_TYPE_GROUP_BY_SIZE)) {
 				if (existComponentDetails.isEmpty()) {
 					message = prop.getProperty(GroupingConstants.MESSAGE_SPLITGROUP_VALIDATION_NO_DATA);
 				}
 				totalRecords = String.valueOf(existComponentDetails.size());
 				jsonObj = getSplitGrpJsonResponse(message, totalRecords, defaultSortCol, defaultSortOrder, existComponentDetails); // TODO
 
-			}else if (groupType.equals(GroupingConstants.GROUP_TYPE_CONSOLIDATE_PRODUCT)) {
+			} else if (groupType.equals(GroupingConstants.GROUP_TYPE_CONSOLIDATE_PRODUCT)) {
 				if (existComponentDetails.isEmpty()) {
 					message = prop.getProperty(GroupingConstants.MESSAGE_SPLITGROUP_VALIDATION_NO_DATA);
 				}
 				totalRecords = String.valueOf(existCPGDetails.size());
 				jsonObj = getCPGGrpJsonResponse(message, totalRecords, defaultSortCol, defaultSortOrder, existCPGDetails);
-			}
-			else if (groupType.equals(GroupingConstants.GROUP_TYPE_REGULAR_COLLECTION)
+			} else if (groupType.equals(GroupingConstants.GROUP_TYPE_REGULAR_COLLECTION)
 					|| groupType.equals(GroupingConstants.GROUP_TYPE_BEAUTY_COLLECTION)) {
 				if (existRegularBeautyDetails.isEmpty()) {
 					message = prop.getProperty(GroupingConstants.MESSAGE_SPLITGROUP_VALIDATION_NO_DATA);
 				}
 				int totalRecordCount = existRegularBeautyDetails.size();
-				jsonObj = getRegularBeautyGrpJsonResponse(message, totalRecordCount, defaultSortCol, defaultSortOrder, existRegularBeautyDetails);
+				jsonObj = getRegularBeautyGrpJsonResponse(message, totalRecordCount, defaultSortCol, defaultSortOrder,
+						existRegularBeautyDetails);
 			}
 
 			if (LOGGER.isDebugEnabled()) {
 				LOGGER.debug("existComponentDetails JsonResponse-->" + jsonObj);
 			}
 
-			if(jsonObj!=null) {
+			if (jsonObj != null) {
 				response.getWriter().write(jsonObj.toString());
 			}
 
@@ -1367,12 +1380,14 @@ try{
 		return modelAndView;
 	}
 
-	/** This method is used to get New Group Component details after searching
+	/**
+	 * This method is used to get New Group Component details after searching
 	 * with the different Criteria.
 	 * 
 	 * @param request
 	 * @param response
-	 * @return */
+	 * @return
+	 */
 	@SuppressWarnings("unchecked")
 	@ResourceMapping("getNewGrpComponent")
 	public final ModelAndView getNewGrpComponentResource(final ResourceRequest request, final ResourceResponse response) {
@@ -1389,15 +1404,13 @@ try{
 		String groupIdSearch = GroupingConstants.EMPTY;
 		String groupNameSearch = GroupingConstants.EMPTY;
 
-
 		Properties prop = PropertyLoader.getPropertyLoader(GroupingConstants.GROUPING_PROPERTIES_FILE_NAME);
 
 		String groupType = GroupingUtil.checkNull(request.getParameter(GroupingConstants.GROUP_TYPE));
 		String groupId = GroupingUtil.checkNull(request.getParameter(GroupingConstants.GROUP_ID));
-		try{
+		try {
 			if (LOGGER.isDebugEnabled()) {
-				LOGGER.debug("getNewGrpComponentResource.groupType---------->" + groupType);
-				LOGGER.debug("getNewGrpComponentResource.groupId---------->" + groupId);
+				LOGGER.debug("getNewGrpComponentResource.groupType---------->" + groupType + "\ngroupId---------->" + groupId);
 			}
 
 			if (groupType.equals(GroupingConstants.GROUP_TYPE_SPLIT_COLOR)) {
@@ -1437,8 +1450,10 @@ try{
 				} else if (updatedSplitColorDetailsList.isEmpty() && "notCompleted".equals(errorCode)) {
 					message = prop.getProperty(GroupingConstants.MESSAGE_SPLITGROUP_VALIDATION_INVALID_DATA);
 				}
-				/** set in session to call add attribute webservice after creating
-				 * group **/
+				/**
+				 * set in session to call add attribute webservice after
+				 * creating group
+				 **/
 				request.getPortletSession().setAttribute(GroupingConstants.SELECTED_ATTRIBUTE_LIST, updatedSplitColorDetailsList);
 
 				/** Code to generate response to display Search result in JSP **/
@@ -1491,8 +1506,10 @@ try{
 					message = prop.getProperty(GroupingConstants.MESSAGE_SPLITGROUP_VALIDATION_INVALID_DATA);
 				}
 
-				/** set in session to call add attribute webservice after creating
-				 * group **/
+				/**
+				 * set in session to call add attribute webservice after
+				 * creating group
+				 **/
 				request.getPortletSession().setAttribute(GroupingConstants.SELECTED_ATTRIBUTE_LIST, updatedSplitSKUDetailsList);
 
 				/** Code to generate response to display Search result in JSP **/
@@ -1505,7 +1522,7 @@ try{
 				response.getWriter().write(jsonObj.toString());
 
 				modelAndView = new ModelAndView(null);
-				
+
 			} else if (groupType.equals(GroupingConstants.GROUP_TYPE_CONSOLIDATE_PRODUCT)) {
 				if (LOGGER.isDebugEnabled()) {
 					LOGGER.debug("in fetch CPG attribute getNewGrpComponentResource-->.");
@@ -1519,8 +1536,8 @@ try{
 				vendorStyleNo = request.getParameter(GroupingConstants.VENDOR_STYLE_NO);
 				styleOrin = request.getParameter(GroupingConstants.STYLE_ORIN_NO_SEARCH_PARAM);
 				classId = GroupingUtil.checkNull(request.getParameter(GroupingConstants.CLASS_ID));
-				if(LOGGER.isDebugEnabled()) {
-					LOGGER.debug("classId-->"+classId);
+				if (LOGGER.isDebugEnabled()) {
+					LOGGER.debug("classId-->" + classId);
 				}
 				deptNoSearch = request.getParameter(GroupingConstants.DEPT_SEARCH);
 				classNoSearch = request.getParameter(GroupingConstants.CLASS_SEARCH);
@@ -1528,8 +1545,8 @@ try{
 				upcNoSearch = request.getParameter(GroupingConstants.UPC_SEARCH);
 
 				if (LOGGER.isDebugEnabled()) {
-					LOGGER.debug("getNewCPGDetails.Search Attribute: vendorStyleNo-->" + vendorStyleNo + "  styleOrin-->"
-							+ styleOrin + " groupId-->" + groupId + " deptNoSearch-->" + deptNoSearch + " classNoSearch-->" + classNoSearch 
+					LOGGER.debug("getNewCPGDetails.Search Attribute: vendorStyleNo-->" + vendorStyleNo + "  styleOrin-->" + styleOrin
+							+ " groupId-->" + groupId + " deptNoSearch-->" + deptNoSearch + " classNoSearch-->" + classNoSearch
 							+ " supplierSiteIdSearch-->" + supplierSiteIdSearch + " upcNoSearch-->" + upcNoSearch);
 				}
 
@@ -1544,19 +1561,20 @@ try{
 					message = prop.getProperty(GroupingConstants.MESSAGE_SPLITGROUP_VALIDATION_NO_DATA);
 				}
 
-				/** set in session to call add attribute webservice after creating
-				 * group **/
+				/**
+				 * set in session to call add attribute webservice after
+				 * creating group
+				 **/
 				request.getPortletSession().setAttribute(GroupingConstants.SELECTED_ATTRIBUTE_LIST, getCPGDetailsList);
 
 				/** Code to generate response to display Search result in JSP **/
 				totalRecords = String.valueOf(getCPGDetailsList.size());
 
-				JSONObject jsonObj = getCPGGrpJsonResponse(message, totalRecords, defaultSortCol, defaultSortOrder,
-						getCPGDetailsList);
+				JSONObject jsonObj = getCPGGrpJsonResponse(message, totalRecords, defaultSortCol, defaultSortOrder, getCPGDetailsList);
 				response.getWriter().write(jsonObj.toString());
 
 				modelAndView = new ModelAndView(null);
-				
+
 			} else if (groupType.equals(GroupingConstants.GROUP_TYPE_GROUP_BY_SIZE)) {
 				if (LOGGER.isDebugEnabled()) {
 					LOGGER.debug("in fetch new Group By Size attribute getNewGrpComponentResource-->.");
@@ -1569,8 +1587,8 @@ try{
 				vendorStyleNo = request.getParameter(GroupingConstants.VENDOR_STYLE_NO);
 				styleOrin = request.getParameter(GroupingConstants.STYLE_ORIN_NO_SEARCH_PARAM);
 				classId = GroupingUtil.checkNull(request.getParameter(GroupingConstants.CLASS_ID));
-				if(LOGGER.isDebugEnabled()) {
-					LOGGER.debug("classId-->"+classId);
+				if (LOGGER.isDebugEnabled()) {
+					LOGGER.debug("classId-->" + classId);
 				}
 				deptNoSearch = request.getParameter(GroupingConstants.DEPT_SEARCH);
 				classNoSearch = request.getParameter(GroupingConstants.CLASS_SEARCH);
@@ -1578,48 +1596,62 @@ try{
 				upcNoSearch = request.getParameter(GroupingConstants.UPC_SEARCH);
 
 				if (LOGGER.isDebugEnabled()) {
-					LOGGER.debug("getNewGBSDetails.Search Attribute: vendorStyleNo-->" + vendorStyleNo + "  styleOrin-->"
-							+ styleOrin + " groupId-->" + groupId + " deptNoSearch-->" + deptNoSearch + " classNoSearch-->" + classNoSearch 
+					LOGGER.debug("getNewGBSDetails.Search Attribute: vendorStyleNo-->" + vendorStyleNo + "  styleOrin-->" + styleOrin
+							+ " groupId-->" + groupId + " deptNoSearch-->" + deptNoSearch + " classNoSearch-->" + classNoSearch
 							+ " supplierSiteIdSearch-->" + supplierSiteIdSearch + " upcNoSearch-->" + upcNoSearch);
 				}
 
-				/** Validation GBS: Grouping of different Styles where each Style has only one SKU Start TODO**/
+				/**
+				 * Validation GBS: Grouping of different Styles where each Style
+				 * has only one SKU Start TODO
+				 **/
 				List<String> orinList = groupingService.getSKUCount(vendorStyleNo, styleOrin, deptNoSearch, classNoSearch,
 						supplierSiteIdSearch, upcNoSearch, groupId);
-				if(LOGGER.isDebugEnabled()){
-					LOGGER.debug("orinList which has more than one SKU in table. size-->"+orinList.size());
+				if (LOGGER.isDebugEnabled()) {
+					LOGGER.debug("orinList which has more than one SKU in table. size-->" + orinList.size());
 				}
-				/** Validation GBS: Grouping of different Styles where each Style has only one SKU End**/
-				
-				List<GroupAttributeForm> getNewGBSDetailsList = groupingService.getNewGBSDetails(vendorStyleNo, styleOrin, deptNoSearch, classNoSearch,
-						supplierSiteIdSearch, upcNoSearch, groupId, orinList);
+				/**
+				 * Validation GBS: Grouping of different Styles where each Style
+				 * has only one SKU End
+				 **/
+
+				List<GroupAttributeForm> getNewGBSDetailsList = groupingService.getNewGBSDetails(vendorStyleNo, styleOrin, deptNoSearch,
+						classNoSearch, supplierSiteIdSearch, upcNoSearch, groupId, orinList);
 				if (LOGGER.isDebugEnabled()) {
 					LOGGER.debug("Size of getNewGrpComponentResource.getNewGBSDetails-->" + getNewGBSDetailsList.size());
 				}
 
 				/** Validate Split Attribute List **/
 
-				if (orinList.size() == 0 && getNewGBSDetailsList.isEmpty()) {  /*|| "noData".equals(errorCode)*/
+				if (orinList.size() == 0 && getNewGBSDetailsList.isEmpty()) { /*
+																			 * ||
+																			 * "noData"
+																			 * .
+																			 * equals
+																			 * (
+																			 * errorCode
+																			 * )
+																			 */
 					message = prop.getProperty(GroupingConstants.MESSAGE_SPLITGROUP_VALIDATION_NO_DATA); // "No record found!"
-				} else if(orinList.size() > 0 && getNewGBSDetailsList.isEmpty()){
+				} else if (orinList.size() > 0 && getNewGBSDetailsList.isEmpty()) {
 					message = prop.getProperty(GroupingConstants.MESSAGE_GBS_VALIDATION_NOT_ELIGIBLE); // "No record found!"
 				}
-				/** set in session to call add attribute webservice after creating group **/
+				/**
+				 * set in session to call add attribute webservice after
+				 * creating group
+				 **/
 				request.getPortletSession().setAttribute(GroupingConstants.SELECTED_ATTRIBUTE_LIST, getNewGBSDetailsList);
 
 				/** Code to generate response to display Search result in JSP **/
 				totalRecords = String.valueOf(getNewGBSDetailsList.size());
-				JSONObject jsonObj = getSplitGrpJsonResponse(message, totalRecords, defaultSortCol, defaultSortOrder,
-						getNewGBSDetailsList); // TODO
+				JSONObject jsonObj = getSplitGrpJsonResponse(message, totalRecords, defaultSortCol, defaultSortOrder, getNewGBSDetailsList); // TODO
 
 				response.getWriter().write(jsonObj.toString());
 
 				modelAndView = new ModelAndView(null);
 
-			}
-			else if(groupType.equals(GroupingConstants.GROUP_TYPE_REGULAR_COLLECTION)
-					|| groupType.equals(GroupingConstants.GROUP_TYPE_BEAUTY_COLLECTION))
-			{
+			} else if (groupType.equals(GroupingConstants.GROUP_TYPE_REGULAR_COLLECTION)
+					|| groupType.equals(GroupingConstants.GROUP_TYPE_BEAUTY_COLLECTION)) {
 				if (LOGGER.isDebugEnabled()) {
 					LOGGER.debug("in fetch new Regular/Beauty collection getNewGrpComponentResource-->.");
 				}
@@ -1627,7 +1659,7 @@ try{
 				String sortCol = GroupingUtil.checkNull(request.getParameter(GroupingConstants.SORTED_COLUMN));
 				String sortOrder = GroupingUtil.checkNull(request.getParameter(GroupingConstants.ASC_DESC_ORDER));
 				String pageNumber = GroupingUtil.checkNull(request.getParameter(GroupingConstants.PAGE_NUMBER));
-				String recordsPerPage = GroupingUtil.checkNull(request.getParameter(GroupingConstants.RECORDS_PER_PAGE));				
+				String recordsPerPage = GroupingUtil.checkNull(request.getParameter(GroupingConstants.RECORDS_PER_PAGE));
 
 				vendorStyleNo = GroupingUtil.checkNull(request.getParameter(GroupingConstants.VENDOR_STYLE_NO));
 				styleOrin = GroupingUtil.checkNull(request.getParameter(GroupingConstants.STYLE_ORIN_NO_SEARCH_PARAM));
@@ -1638,33 +1670,35 @@ try{
 				upcNoSearch = GroupingUtil.checkNull(request.getParameter(GroupingConstants.UPC_SEARCH));
 				groupIdSearch = GroupingUtil.checkNull(request.getParameter(GroupingConstants.GROUP_ID_SEARCH));
 				groupNameSearch = GroupingUtil.checkNull(request.getParameter(GroupingConstants.GROUP_NAME_SEARCH));
-				
+
 				if (LOGGER.isDebugEnabled()) {
-					LOGGER.debug("getRegularBeautySearch.Search Attribute: vendorStyleNo-->" + vendorStyleNo + "  styleOrin-->"
-							+ styleOrin + " groupId-->" + groupId + " deptNoSearch-->" + deptNoSearch + " classNoSearch-->" + classNoSearch 
-							+ " supplierSiteIdSearch-->" + supplierSiteIdSearch + " upcNoSearch-->" + upcNoSearch
-							+ " groupIdSearch-->" + groupIdSearch + " groupNameSearch-->" + groupNameSearch);
+					LOGGER.debug("getRegularBeautySearch.Search Attribute: vendorStyleNo-->" + vendorStyleNo + "  styleOrin-->" + styleOrin
+							+ " groupId-->" + groupId + " deptNoSearch-->" + deptNoSearch + " classNoSearch-->" + classNoSearch
+							+ " supplierSiteIdSearch-->" + supplierSiteIdSearch + " upcNoSearch-->" + upcNoSearch + " groupIdSearch-->"
+							+ groupIdSearch + " groupNameSearch-->" + groupNameSearch);
 				}
 				int pageNumberSelected = 1;
-				if(!StringUtils.isEmpty(pageNumber))
-				{
+				if (!StringUtils.isEmpty(pageNumber)) {
 					pageNumberSelected = Integer.parseInt(pageNumber);
 				}
 				int recordsPerPageSelected = 10;
-				if(!StringUtils.isEmpty(recordsPerPage))
-				{
+				if (!StringUtils.isEmpty(recordsPerPage)) {
 					recordsPerPageSelected = Integer.parseInt(recordsPerPage);
 				}
-				getSearchResultList = groupingService.getRegularBeautySearchResult(vendorStyleNo, styleOrin, deptNoSearch,
-						classNoSearch, supplierSiteIdSearch, upcNoSearch, groupId, groupIdSearch, groupNameSearch,
-						sortCol, sortOrder, pageNumberSelected, recordsPerPageSelected);
-				/*int totalRecords = groupingService.getRegularBeautySearchResultCount(vendorStyleNo, styleOrin,
-						deptNoSearch, classNoSearch, supplierSiteIdSearch, upcNoSearch, groupId, groupIdSearch, groupNameSearch);*/
+				getSearchResultList = groupingService.getRegularBeautySearchResult(vendorStyleNo, styleOrin, deptNoSearch, classNoSearch,
+						supplierSiteIdSearch, upcNoSearch, groupId, groupIdSearch, groupNameSearch, sortCol, sortOrder, pageNumberSelected,
+						recordsPerPageSelected);
+				/*
+				 * int totalRecords =
+				 * groupingService.getRegularBeautySearchResultCount
+				 * (vendorStyleNo, styleOrin, deptNoSearch, classNoSearch,
+				 * supplierSiteIdSearch, upcNoSearch, groupId, groupIdSearch,
+				 * groupNameSearch);
+				 */
 				int totalRecords = getSearchResultList.size();
-				request.getPortletSession().setAttribute(
-						GroupingConstants.SELECTED_ATTRIBUTE_LIST, getSearchResultList);
+				request.getPortletSession().setAttribute(GroupingConstants.SELECTED_ATTRIBUTE_LIST, getSearchResultList);
 				if (getSearchResultList.isEmpty()) {
-					message = prop.getProperty(GroupingConstants.MESSAGE_SPLITGROUP_VALIDATION_NO_DATA); 
+					message = prop.getProperty(GroupingConstants.MESSAGE_SPLITGROUP_VALIDATION_NO_DATA);
 				}
 				JSONObject jsonObj = getRegularBeautyGrpJsonResponse(message, totalRecords, sortCol, sortOrder, getSearchResultList);
 				response.getWriter().write(jsonObj.toString());
@@ -1685,12 +1719,14 @@ try{
 		return modelAndView;
 	}
 
-	/** This method is used to call add Component Service to add newly selected
+	/**
+	 * This method is used to call add Component Service to add newly selected
 	 * Component from Add Component Page and fetch data from database.
 	 * 
 	 * @param request
 	 * @param response
-	 * @return */
+	 * @return
+	 */
 	@ResourceMapping("addComponentToGroup")
 	public final ModelAndView addComponentToGroup(final ResourceRequest request, final ResourceResponse response) {
 		LOGGER.info("GroupingControlle:addComponentToGroup ResourceRequest:Enter------------>.");
@@ -1729,33 +1765,29 @@ try{
 			String defaultSelectedAttr = GroupingUtil.checkNull(request.getParameter(GroupingConstants.COMPONENT_DEFAULT_COLOR));
 
 			if (LOGGER.isDebugEnabled()) {
-				LOGGER.debug("addComponentToGroup.groupType---------->" + groupType);
-				LOGGER.debug("addComponentToGroup.groupId---------->" + groupId);
-				LOGGER.debug("addComponentToGroup.defaultSelectedAttr---------->" + defaultSelectedAttr);
+				LOGGER.debug("addComponentToGroup.groupType---------->" + groupType+ "\ngroupId---------->" + groupId +
+						"\ndefaultSelectedAttr---------->" + defaultSelectedAttr);
 			}
 			List<GroupAttributeForm> selectedSplitAttributeList = new ArrayList<>();
 
-			if (GroupingConstants.GROUP_TYPE_SPLIT_COLOR.equals(groupType) && null != selectedItems
-					&& null != selectedItemsArr) {
+			if (GroupingConstants.GROUP_TYPE_SPLIT_COLOR.equals(groupType) && null != selectedItems && null != selectedItemsArr) {
 
 				if (LOGGER.isDebugEnabled()) {
 					LOGGER.debug("Adding Component to Split Color Grouping - SCG-->");
 				}
 				@SuppressWarnings("unchecked")
 				List<GroupAttributeForm> updatedSplitColorDetailsList = (List<GroupAttributeForm>) request.getPortletSession()
-				.getAttribute(GroupingConstants.SELECTED_ATTRIBUTE_LIST);
+						.getAttribute(GroupingConstants.SELECTED_ATTRIBUTE_LIST);
 				if (LOGGER.isDebugEnabled()) {
 					LOGGER.debug("All Color Attribute List Size()-->" + updatedSplitColorDetailsList.size());
 				}
 				selectedSplitAttributeList = groupingService.getSelectedColorAttributeList(updatedSplitColorDetailsList, selectedItemsArr,
 						defaultSelectedAttr);
 
-				/*Call Service to add attribute*/
-				createGroupForm = groupingService.addComponentToGroup(groupId, updatedBy, groupType,
-						selectedSplitAttributeList);
+				/* Call Service to add attribute */
+				createGroupForm = groupingService.addComponentToGroup(groupId, updatedBy, groupType, selectedSplitAttributeList);
 
-			} else if (GroupingConstants.GROUP_TYPE_SPLIT_SKU.equals(groupType) && null != selectedItems
-					&& null != selectedItemsArr) {
+			} else if (GroupingConstants.GROUP_TYPE_SPLIT_SKU.equals(groupType) && null != selectedItems && null != selectedItemsArr) {
 
 				if (LOGGER.isDebugEnabled()) {
 					LOGGER.debug("Adding Component to Split SKU Grouping - SSG-->");
@@ -1770,11 +1802,10 @@ try{
 				selectedSplitAttributeList = groupingService.getSelectedSKUAttributeList(updatedSplitSkuDetailsList, selectedItemsArr,
 						defaultSelectedAttr);
 
-				/*Call Service to add attribute*/
-				createGroupForm = groupingService.addComponentToGroup(groupId, updatedBy, groupType,
-						selectedSplitAttributeList);
+				/* Call Service to add attribute */
+				createGroupForm = groupingService.addComponentToGroup(groupId, updatedBy, groupType, selectedSplitAttributeList);
 
-			} else if (GroupingConstants.GROUP_TYPE_CONSOLIDATE_PRODUCT.equals(groupType) ) {
+			} else if (GroupingConstants.GROUP_TYPE_CONSOLIDATE_PRODUCT.equals(groupType)) {
 
 				if (LOGGER.isDebugEnabled()) {
 					LOGGER.debug("Adding Component to Consolidated Product Grouping - CPG-->");
@@ -1790,21 +1821,21 @@ try{
 				if (LOGGER.isDebugEnabled()) {
 					LOGGER.debug("All CPG Attribute List Size()-->" + getCPGDetailsList.size());
 				}
-				List<StyleAttributeForm> getCPGSelectedAttrbuteList = groupingService.getSelectedCPGAttributeList(getCPGDetailsList, selectedItemsArr,
-						defaultSelectedAttr);
+				List<StyleAttributeForm> getCPGSelectedAttrbuteList = groupingService.getSelectedCPGAttributeList(getCPGDetailsList,
+						selectedItemsArr, defaultSelectedAttr);
 
 				String cpgValidationMsg = groupingService.validateCPGAttributeDetails(existClassId, getCPGSelectedAttrbuteList);
 
-				/*Call Service to add attribute*/
-				if("".equals(cpgValidationMsg)){
+				/* Call Service to add attribute */
+				if ("".equals(cpgValidationMsg)) {
 					createGroupForm = groupingService.addCPGComponentToGroup(groupId, updatedBy, groupType, getCPGSelectedAttrbuteList);
-				}else{
+				} else {
 					createGroupForm.setGroupId(groupId);
 					createGroupForm.setGroupType(groupType);
 					createGroupForm.setGroupCretionMsg(cpgValidationMsg);
 					createGroupForm.setGroupCreationStatus(GroupingConstants.COMPONENT_ADDITION_FAILED);
 				}
-			} else if (GroupingConstants.GROUP_TYPE_GROUP_BY_SIZE.equals(groupType) ) {
+			} else if (GroupingConstants.GROUP_TYPE_GROUP_BY_SIZE.equals(groupType)) {
 
 				if (LOGGER.isDebugEnabled()) {
 					LOGGER.debug("Adding Component to Group By Size - GBS-->");
@@ -1816,14 +1847,15 @@ try{
 				if (LOGGER.isDebugEnabled()) {
 					LOGGER.debug("All GBS Attribute List Size()-->" + getGBSDetailsList.size());
 				}
-				List<GroupAttributeForm> getGBSSelectedAttrbuteList = groupingService.getSelectedGBSAttributeList(getGBSDetailsList, selectedItemsArr);
+				List<GroupAttributeForm> getGBSSelectedAttrbuteList = groupingService.getSelectedGBSAttributeList(getGBSDetailsList,
+						selectedItemsArr);
 
-				//String cpgValidationMsg = groupingService.validateCPGAttributeDetails(getGBSSelectedAttrbuteList);
+				// String cpgValidationMsg =
+				// groupingService.validateCPGAttributeDetails(getGBSSelectedAttrbuteList);
 
-				/*Call Service to add attribute*/
-				createGroupForm = groupingService.addGBSComponentToGroup(groupId, updatedBy, groupType,
-						getGBSSelectedAttrbuteList);
-			} else if (GroupingConstants.GROUP_TYPE_REGULAR_COLLECTION.equals(groupType) 
+				/* Call Service to add attribute */
+				createGroupForm = groupingService.addGBSComponentToGroup(groupId, updatedBy, groupType, getGBSSelectedAttrbuteList);
+			} else if (GroupingConstants.GROUP_TYPE_REGULAR_COLLECTION.equals(groupType)
 					|| GroupingConstants.GROUP_TYPE_BEAUTY_COLLECTION.equals(groupType)) {
 
 				if (LOGGER.isDebugEnabled()) {
@@ -1836,24 +1868,26 @@ try{
 				if (LOGGER.isDebugEnabled()) {
 					LOGGER.debug("All RCG Attribute List Size()-->" + getRCGBCGDetailsList.size());
 				}
-				if(GroupingConstants.GROUP_TYPE_REGULAR_COLLECTION.equals(groupType)){
-					getSelectedAttrbuteList = groupingService.getSelectedRCGAttributeList(getRCGBCGDetailsList, selectedItemsArr);	
+				if (GroupingConstants.GROUP_TYPE_REGULAR_COLLECTION.equals(groupType)) {
+					getSelectedAttrbuteList = groupingService.getSelectedRCGAttributeList(getRCGBCGDetailsList, selectedItemsArr);
 				} else {
 					getSelectedAttrbuteList = groupingService.getSelectedBCGAttributeList(getRCGBCGDetailsList, selectedItemsArr);
 				}
 
-				//String cpgValidationMsg = groupingService.validateCPGAttributeDetails(getGBSSelectedAttrbuteList);
+				// String cpgValidationMsg =
+				// groupingService.validateCPGAttributeDetails(getGBSSelectedAttrbuteList);
 
-				/*Call Service to add attribute*/
-				createGroupForm = groupingService.addRCGBCGComponentToGroup(groupId, updatedBy, groupType,
-						getSelectedAttrbuteList);
+				/* Call Service to add attribute */
+				createGroupForm = groupingService.addRCGBCGComponentToGroup(groupId, updatedBy, groupType, getSelectedAttrbuteList);
 			}
 
 			// Call Service to add attribute
-			/*if (GroupingConstants.GROUP_TYPE_SPLIT_COLOR.equals(groupType) || (GroupingConstants.GROUP_TYPE_SPLIT_SKU).equals(groupType)){
-				createGroupForm = groupingService.addComponentToGroup(groupId, updatedBy, groupType,
-					selectedSplitAttributeList);
-			}*/
+			/*
+			 * if (GroupingConstants.GROUP_TYPE_SPLIT_COLOR.equals(groupType) ||
+			 * (GroupingConstants.GROUP_TYPE_SPLIT_SKU).equals(groupType)){
+			 * createGroupForm = groupingService.addComponentToGroup(groupId,
+			 * updatedBy, groupType, selectedSplitAttributeList); }
+			 */
 
 			JSONObject jsonObj = new JSONObject();
 			jsonObj.put(GroupingConstants.GROUP_ID, createGroupForm.getGroupId());
@@ -1870,107 +1904,111 @@ try{
 			modelAndView = new ModelAndView(null);
 			LOGGER.info("GroupingControlle:addComponentToGroup:Exit------------>.");
 
-		}
-		catch (PEPServiceException e) {
+		} catch (PEPServiceException e) {
 			LOGGER.error("GroupingControlle:addComponentToGroup:PEPServiceException------------>" + e);
 		} catch (PEPPersistencyException e) {
 			LOGGER.error("GroupingControlle:addComponentToGroup:PEPPersistencyException------------>" + e);
 		} catch (IOException e) {
 			LOGGER.error("GroupingControlle:addComponentToGroup:IOException------------>" + e);
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			LOGGER.error("GroupingControlle:addComponentToGroup:Exception------------>" + e);
 		}
 		return modelAndView;
 	}
-	
+
 	/**
 	 * Edit Grouping.
+	 * 
 	 * @param request
 	 * @param response
 	 */
 	@ResourceMapping("saveEditedGroup")
-	public void saveEditedGroup(ResourceRequest request,ResourceResponse response){
+	public void saveEditedGroup(ResourceRequest request, ResourceResponse response) {
 		LOGGER.info("Entered saveEditedGroup Method of Grouping Controller");
-		CreateGroupForm createGroupForm=new CreateGroupForm();
+		CreateGroupForm createGroupForm = new CreateGroupForm();
 		createGroupForm.setGroupId(request.getParameter(GroupingConstants.GROUP_ID));
 		createGroupForm.setGroupName(request.getParameter(GroupingConstants.GROUP_NAME));
 		createGroupForm.setGroupDesc(request.getParameter(GroupingConstants.GROUP_DESC));
 		createGroupForm.setGroupStatus(request.getParameter(GroupingConstants.GROUP_STATUS));
 		createGroupForm.setGroupLaunchDate(request.getParameter(GroupingConstants.START_DATE));
 		createGroupForm.setEndDate(request.getParameter(GroupingConstants.END_DATE));
-		String modifiedBy=request.getParameter(GroupingConstants.MODIFIED_BY);
+		String modifiedBy = request.getParameter(GroupingConstants.MODIFIED_BY);
 		createGroupForm.setGroupType(request.getParameter(GroupingConstants.GROUP_TYPE));
-		String resp="";
+		String resp = "";
 		try {
-			resp=groupingService.updateGroupHeaderDetails(createGroupForm, modifiedBy);
+			resp = groupingService.updateGroupHeaderDetails(createGroupForm, modifiedBy);
 			response.getWriter().write(resp);
-		
+
 		} catch (Exception e) {
 			LOGGER.error("GroupingControlle:saveEditedGroup ResourceRequest:Exception------------>" + e);
 		}
-		
+
 	}
+
 	/** edit Grouping **/
 	/**
 	 * This method handles the removing of existing components
+	 * 
 	 * @param request
 	 * @param response
 	 */
 	@ResourceMapping("removeComponent")
-	public void removedSelectedComponents(ResourceRequest request,ResourceResponse response){
+	public void removedSelectedComponents(ResourceRequest request, ResourceResponse response) {
 		LOGGER.info("Entered removedSelectedComponents Method of Grouping Controller");
-		String userID="";
+		String userID = "";
 		String sessionDataKey = (String) request.getPortletSession().getAttribute("sessionDataKey");
 		if (null != sessionDataKey) {
 			userID = sessionDataKey.split(GroupingConstants.USER_DATA + request.getPortletSession().getId())[1];
 			LOGGER.info("display user ID" + userID);
 		}
-		String groupId=(request.getParameter(GroupingConstants.GROUP_ID)!=null) ? (request.getParameter(GroupingConstants.GROUP_ID)): "" ;
-		String componentsStr=(request.getParameter(GroupingConstants.COMPONENT_LIST)!=null) ? (request.getParameter(GroupingConstants.COMPONENT_LIST)): "" ;
-		String groupingType=(request.getParameter(GroupingConstants.GROUP_TYPE)!=null) ? (request.getParameter(GroupingConstants.GROUP_TYPE)): "" ;
-		String[] components=componentsStr.split(",");
-		LOGGER.debug("componentsStr------------------------------------------------------------------->"+componentsStr);
-		LOGGER.info("no of components"+components.length);
-		JSONArray compArray=new JSONArray();
+		String groupId = (request.getParameter(GroupingConstants.GROUP_ID) != null) ? (request.getParameter(GroupingConstants.GROUP_ID))
+				: "";
+		String componentsStr = (request.getParameter(GroupingConstants.COMPONENT_LIST) != null) ? (request
+				.getParameter(GroupingConstants.COMPONENT_LIST)) : "";
+		String groupingType = (request.getParameter(GroupingConstants.GROUP_TYPE) != null) ? (request
+				.getParameter(GroupingConstants.GROUP_TYPE)) : "";
+		String[] components = componentsStr.split(",");
+		if(LOGGER.isDebugEnabled()){
+			LOGGER.debug("componentsStr------>" + componentsStr);
+		}
+		LOGGER.info("no of components" + components.length);
+		JSONArray compArray = new JSONArray();
 		for (String component : components) {
-			if(null!=component & component.length()>1){
+			if (null != component && component.length() > 1) {
 				compArray.put(new JSONObject().put(GroupingConstants.COMPONENT_ATTR, component.toString()));
 			}
 		}
-		JSONObject jsonObject=new JSONObject();
+		JSONObject jsonObject = new JSONObject();
 		jsonObject.put(GroupingConstants.COMPONENT_LIST, compArray);
 		jsonObject.put(GroupingConstants.MODIFIED_BY, userID);
 		jsonObject.put(GroupingConstants.GROUP_ID, groupId);
 		jsonObject.put(GroupingConstants.GROUP_TYPE, groupingType);
-		LOGGER.info("json -"+jsonObject);
-		String resp="";
+		LOGGER.info("json -" + jsonObject);
+		String resp = "";
 		try {
-			resp=groupingService.removeSelectedComponent(jsonObject);
-			LOGGER.info("json -"+resp);
+			resp = groupingService.removeSelectedComponent(jsonObject);
+			LOGGER.info("json -" + resp);
 			Properties prop = PropertyLoader.getPropertyLoader(GroupingConstants.MESS_PROP);
-			String message=prop.getProperty(GroupingConstants.DELETE_COMPNT_FAILURE);
-			JSONObject responseObj=new JSONObject(resp);
-			String code=responseObj.getString(GroupingConstants.MSG_CODE);
-			if(code.equalsIgnoreCase(GroupingConstants.SUCCESS_CODE)){
-				 message=prop.getProperty(GroupingConstants.DELETE_COMPNT_SUCCESS);
+			String message = prop.getProperty(GroupingConstants.DELETE_COMPNT_FAILURE);
+			JSONObject responseObj = new JSONObject(resp);
+			String code = responseObj.getString(GroupingConstants.MSG_CODE);
+			if (code.equalsIgnoreCase(GroupingConstants.SUCCESS_CODE)) {
+				message = prop.getProperty(GroupingConstants.DELETE_COMPNT_SUCCESS);
 			}
-			responseObj.put(GroupingConstants.DESCRIPTION_ATTR,message);
+			responseObj.put(GroupingConstants.DESCRIPTION_ATTR, message);
 			response.getWriter().write(responseObj.toString());
 		} catch (Exception e) {
 			LOGGER.error("GroupingControlle:removedSelectedComponents ResourceRequest:Exception------------>" + e);
 		}
 	}
-	
+
 	/** edit Grouping **/
-	
+
 	/**
 	 * This method is used to save default value.
 	 * 
-	 * @param request
-	 *            ResourceRequest
-	 * @param response
-	 *            ResourceResponse
+	 * @param request ResourceRequest
+	 * @param response ResourceResponse
 	 * @return ModelAndView
 	 */
 	@ResourceMapping("setDefaultColor")
@@ -2023,18 +2061,18 @@ try{
 				jsonObject.put(GroupingConstants.COMPONENT_LIST, componentList);
 				String resp = groupingService.setComponentPriority(jsonObject);
 				Properties prop = PropertyLoader.getPropertyLoader(GroupingConstants.MESS_PROP);
-				
+
 				JSONObject responseObj = new JSONObject(resp);
 				String code = responseObj.getString(GroupingConstants.MSG_CODE);
 				if (code.equalsIgnoreCase(GroupingConstants.SUCCESS_CODE)) {
 					message = prop.getProperty(GroupingConstants.PRIORITY_COMPNT_SUCCESS);
-				}else{
-					message = prop.getProperty(GroupingConstants.PRIORITY_COMPNT_FAILURE);	
+				} else {
+					message = prop.getProperty(GroupingConstants.PRIORITY_COMPNT_FAILURE);
 				}
-				if(LOGGER.isDebugEnabled()){
-					LOGGER.debug("set Priority Message-->"+message);
+				if (LOGGER.isDebugEnabled()) {
+					LOGGER.debug("set Priority Message-->" + message);
 				}
-//				responseObj.put(GroupingConstants.DESCRIPTION_ATTR, message);
+				// responseObj.put(GroupingConstants.DESCRIPTION_ATTR, message);
 				responseObj.put(GroupingConstants.DEFAULT_VALUE_STATUS_MESSAGE, message);
 				response.getWriter().write(responseObj.toString());
 			}
@@ -2099,6 +2137,10 @@ try{
 				response.getWriter().write(json.toString());
 			}
 			/** End to set Default **/
+		} catch (IOException e) {
+			LOGGER.error("handleDefaultValueRequest ResourceRequest:IOException------------>" + e);
+		} catch (PEPFetchException e) {
+			LOGGER.error("handleDefaultValueRequest ResourceRequest:PEPFetchException------------>" + e);
 		} catch (Exception e) {
 			LOGGER.error("handleDefaultValueRequest ResourceRequest:Exception------------>" + e);
 		}
@@ -2106,7 +2148,7 @@ try{
 		LOGGER.info("GroupingController:handleDefaultValueRequest ResourceRequest:Exit------------>.");
 		return modelAndView;
 	}
-	
+
 	/**
 	 * Search for add component - Regular/Beauty collection group - JSON.
 	 * 
@@ -2125,7 +2167,7 @@ try{
 		String classId = "";
 		List<GroupAttributeForm> groupAttributeFormList = null;
 		GroupAttributeForm groupAttributeForm = null;
-		
+
 		JSONObject jsonObjComponent = null;
 		JSONObject jsonObjComponentSub = null;
 		JSONArray jsonArraySub = null;
@@ -2149,25 +2191,24 @@ try{
 				jsonObjComponent.put(GroupingConstants.COLOR_NAME, styleAttributeForm.getColorName());
 
 				String isAlreadyInSameGroup = styleAttributeForm.getIsAlreadyInSameGroup();
-				isAlreadyInSameGroup = null == isAlreadyInSameGroup ? "No" : ("").equalsIgnoreCase(isAlreadyInSameGroup.trim()) ? "No" : ("N")
-						.equalsIgnoreCase(isAlreadyInSameGroup.trim()) ? "No" : ("Y").equalsIgnoreCase(isAlreadyInSameGroup.trim()) ? "Yes"
-						: "No";
-				
+				isAlreadyInSameGroup = null == isAlreadyInSameGroup ? "No" : ("").equalsIgnoreCase(isAlreadyInSameGroup.trim()) ? "No"
+						: ("N").equalsIgnoreCase(isAlreadyInSameGroup.trim()) ? "No"
+								: ("Y").equalsIgnoreCase(isAlreadyInSameGroup.trim()) ? "Yes" : "No";
+
 				jsonObjComponent.put(GroupingConstants.ALREADY_IN_SAME_GROUP, isAlreadyInSameGroup);
-				
+
 				// Start modification for Defect#3037
 				String isAlreadyInGroup = styleAttributeForm.getIsAlreadyInGroup();
 				isAlreadyInGroup = null == isAlreadyInGroup ? "No" : ("").equalsIgnoreCase(isAlreadyInGroup.trim()) ? "No" : ("N")
-						.equalsIgnoreCase(isAlreadyInGroup.trim()) ? "No" : ("Y").equalsIgnoreCase(isAlreadyInGroup.trim()) ? "Yes"
-						: "No";
+						.equalsIgnoreCase(isAlreadyInGroup.trim()) ? "No" : ("Y").equalsIgnoreCase(isAlreadyInGroup.trim()) ? "Yes" : "No";
 				jsonObjComponent.put(GroupingConstants.ALREADY_IN_GROUP, isAlreadyInGroup);
 				// End modification for Defect#3037
-				
+
 				jsonObjComponent.put(GroupingConstants.IS_GROUP, styleAttributeForm.getIsGroup());
 				jsonObjComponent.put(GroupingConstants.PRIORITY, styleAttributeForm.getPriority());
 				jsonObjComponent.put(GroupingConstants.HAVE_CHILD_GROUP, styleAttributeForm.getHaveChildGroup());
 				groupAttributeFormList = styleAttributeForm.getGroupAttributeFormList();
-				
+
 				for (int j = 0; j < groupAttributeFormList.size(); j++) {
 					jsonObjComponentSub = new JSONObject();
 					groupAttributeForm = groupAttributeFormList.get(j);
@@ -2196,7 +2237,7 @@ try{
 			jsonObj.put(GroupingConstants.STYLE_ORIN_NO_SEARCH, styleOrinNoSearch);
 			jsonObj.put(GroupingConstants.VENDOR_STYLE_NO_SEARCH, vendorStyleNoSearch);
 			jsonObj.put(GroupingConstants.CLASS_ID, classId);
-			
+
 			jsonObj.put(GroupingConstants.COMPONENT_LIST, jsonArray);
 			if (LOGGER.isDebugEnabled()) {
 				LOGGER.debug("JSON getRegularBeautyGrpJsonResponse-->" + jsonObj);

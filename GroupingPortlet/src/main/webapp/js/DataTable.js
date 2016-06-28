@@ -254,6 +254,7 @@
 			//delegate to handle record limit per page
 			_super.$(this.config.dtContainer).on('change', '.record-limit', function(){
 				_super.$(_super.config.dtContainer).find('.record-limit').val($(this).val()); //syncing all drop down values
+				_super.$(_super.config.dtContainer).find('.select-all').prop('checked', false); //unchecking select all checkbox if previously checked
 				
 				if(!_super.totalRecords)
 					return;
@@ -306,12 +307,15 @@
 			
 			//constructing pagination
 			try{
-				console.log('Generating totalpages: ' + _super.totalPages);
+				//console.log('Generating totalpages: ' + _super.totalPages);
 				jqArea.twbsPagination({
 					totalPages: _super.totalPages ? _super.totalPages : 1,
 					visiblePages: 10,
 					onPageClick: function (event, page) {
 						//$('#page-content').text('Page ' + page);
+						//console.log(page);
+						//console.log(_super.curPage);
+						
 						if(page != _super.curPage){
 							_super.curPage = page;
 							_super.generateDataTable(_super.dataHeader.recordsPerPage, page, _super.dataHeader.sortedColumn, _super.dataHeader.ascDescOrder);
@@ -351,14 +355,15 @@
 		
 		//housekeeper to release and destroy delegation when regenrating or destroying data table
 		destroyDelegates: function(){
-			this.$(this.config.dtContainer).off('click', '.sortable');  //clearing previously set delegation for safety
+			this.$(this.config.dtContainer).off();  //clearing previously set delegation for duplication
+			/* this.$(this.config.dtContainer).off('click', '.sortable');  //clearing previously set delegation for safety
 			this.$(this.config.dtContainer).off('click', '.parent-node-expand-ajax');  //clearing previously set delegation for safety
 			this.$(this.config.dtContainer).off('click', '.parent-node-collapse-ajax');  //clearing previously set delegation for safety
 			this.$(this.config.dtContainer).off('blur', '.tree');  //clearing previously set delegation for safety
-			this.$(this.config.dtContainer).off('blur', '.tree');
-			this.$(this.config.dtContainer).find('.paginator').removeData('twbs-pagination'); //reconstructing the paginator
-			this.$(this.config.dtContainer).find('.paginator').find('li').off('click'); //clearing all pagination handlers
-			this.$(this.config.dtContainer).find('.paginator').off('page'); //clearing all pagination handlers
+			this.$(this.config.dtContainer).off('blur', '.tree'); */
+			//this.$(this.config.dtContainer).find('.paginator').removeData('twbs-pagination'); //reconstructing the paginator
+			this.$(this.config.dtContainer).find('.paginator').find('li').off(); //clearing all pagination handlers
+			this.$(this.config.dtContainer).find('.paginator').off(); //clearing all pagination handlers
 			this.$(this.config.dtContainer).find('a.sortable').removeClass('sort-up sort-down');
 			this.$(this.config.dtContainer).find('a.sortable').data('sorted-by', null);
 			
@@ -367,8 +372,9 @@
 		//bootstrapper method
 		init: function(){
 			this.totalRecords = this._.size(this.data); //counting total records
-			console.log(this.totalRecords);
-			console.log(this);
+			
+			//console.log(this.totalRecords);
+			//console.log(this);
 			
 			//housekeeping if any required for previous instance
 			this.destroyDelegates();

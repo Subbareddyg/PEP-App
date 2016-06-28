@@ -2353,11 +2353,9 @@ function toggleRows(currentRow, styleId, styleColorId){
 								     <c:if test="${not empty  contentDisplayForm.iphMappingMessage}">	
 										     <table><tr><td><b><font size='2'><c:out value="${contentDisplayForm.iphMappingMessage}"/></font></b></td></tr></table>
 									 </c:if>
-									 <c:if test="${not empty  contentDisplayForm.copyContentMessage}">	
-										     <table><tr><td><b><font size='2'><c:out value="${contentDisplayForm.copyContentMessage}"/></font></b></td></tr></table>
-									 </c:if>
+									 <table><tr><td><b><font size='2'><c:out value="${contentCopyStatusMessage}" /></font></b></td></tr></table>
 								   </div>
-								   <div><table><tr><td><b><font size='2'><c:out value="${contentCopyStatusMessage}" /></font></b></td></tr></table></div>
+								   
 									<c:if test="${contentDisplayForm.styleInformationVO.groupingType == 'CPG'}">
 								    <div class="orin-popup-container">
 										<input type="button" class="btn chevron-down" id="btnCopyORIN" value="Copy ORIN" style="width: 150px; padding: 6px;"/>

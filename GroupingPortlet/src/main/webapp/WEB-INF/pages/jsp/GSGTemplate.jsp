@@ -22,7 +22,7 @@
 		<tr>
 			<td>				
 				<input type="checkbox" name="selectedItem[]" value="{{=row.StyleOrinNo}}" class="item-check" style="margin-left:7px"
-					{{=row.alreadyInSameGroup == 'Yes' ? 'disabled="disabled"' : ''}} 
+					{{=row.alreadyInSameGroup == 'Yes' ? 'disabled="disabled"' : ''}} data-alreadyingroup="{{=row.alreadyInGroup}}"
 				/>								
 			</td>
 			<td class="text-center">{{=row.StyleOrinNo}}</td>

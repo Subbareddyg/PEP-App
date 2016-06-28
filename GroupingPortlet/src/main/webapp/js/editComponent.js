@@ -34,6 +34,8 @@ var app = app || {} ;
 							
 							_super.searchValue = response;
 							
+							//$('#exisiting-table-dataTable').find('.paginator').removeClass('pagination').html('');
+							
 							var dtTableConfig = {
 								dtContainer: '#exisiting-table-dataTable', 
 								rowTemplateId : '#existing-template', 
@@ -58,10 +60,8 @@ var app = app || {} ;
 							var componentList = response.componentList;
 							//deleting componentList to pass only header
 							delete response.componentList;
-							
 
 							var dtTable = new app.DataTable(dtTableConfig);
-							//console.log(response);
 							
 							dtTable.setDataHeader(response);
 							dtTable.setData(componentList);
@@ -73,7 +73,11 @@ var app = app || {} ;
 								$('#save-existing-group').prop('disabled', true);
 							}
 								
-							
+							/* var paginationData = $('.paginator').data('twbs-pagination');
+							console.log(paginationData);
+							if(paginationData !== undefined && typeof paginationData.destroy == "function")
+								paginationData.destroy(); */
+						
 							$('.paginator').removeData('twbs-pagination'); //reconstructing the paginator
 							
 							dtTable.init(); //init data table
@@ -89,6 +93,49 @@ var app = app || {} ;
 					});
 					
 					
+			},
+			
+			addComponent: function(){
+				var _super = this;
+				// AFUPYB3: added groupId as Param
+				var serializedData = $('#selectedComponentForm').serialize() 
+					+ '&groupType=' + $('#groupType').val().trim() + '&groupId=' + $('#groupId').val().trim();
+				
+				//sending and asigning few group type specific values	
+				if($('#groupType').val().trim() == 'CPG'){
+					//console.log(_super.searchValue.classId);
+					serializedData += '&classId=' + _super.searchValue.classId;
+				}
+				
+				$('.overlay_pageLoading').removeClass('hidden');							
+				app.GroupFactory.addNewSplitComponent(serializedData) //sending and asigning few group type specific values
+					.done(function(result){
+						if(!result.length){
+							$('#group-existing-component-area').html(app.GroupLandingApp.buildMessage('Error in adding components', 'error'))
+								.fadeIn('slow');
+								$('.hide_after_error').hide();
+								return;
+						}
+						
+						var resultJSON = $.parseJSON(result);
+						
+						app.GroupLandingApp.handleGroupCreationResponse(resultJSON, resultJSON.groupType, false);
+						
+						$('.overlay_pageLoading').removeClass('hidden');
+						//now refreshing existing component list
+						_super.loadExitingData(false)
+							.complete(function(){
+								//updqating component search result
+								$('#search-components').trigger('submit');
+							});
+						
+					}).error(function(jqXHR, textStatus, errorThrown){
+						$('#group-creation-messages').html(app.GroupLandingApp.buildMessage(jqXHR.status + ' - ' + textStatus + ' - ' + errorThrown, 'error'))
+							.fadeIn('slow');
+					}).complete(function(){
+						//cleaning up message after 4 sec
+						app.GroupLandingApp.cleanupMessage($('#group-creation-messages'), 8000);
+					});
 			},
 			
 			handleEvent : function(){
@@ -109,11 +156,16 @@ var app = app || {} ;
 						});
 					}else{
 						var checkString = [];
+						var alreadyInGroupItems = [];
 						
 						//logic for concatening different types components for various group types	
 						if($('#groupType').val().trim() == 'RCG' || $('#groupType').val().trim() == 'BCG'){
 							//iterating through all selected checkboxes
 							$('.item-check:checked').each(function(){
+								var alreadyInGroupData = $(this).data('alreadyingroup') || null; 
+								if(alreadyInGroupData == 'Yes')
+									alreadyInGroupItems.push($(this).val());
+								
 								if($(this).data('item-type') == 'G'){ //case when group is found
 									checkString.push($(this).val());
 								}else if($(this).data('item-type') == 'S'){
@@ -131,6 +183,10 @@ var app = app || {} ;
 						}else{							
 							//serializing All checkbox value in one hidden field  
 							$('.item-check:checked').each(function(){
+								var alreadyInGroupData = $(this).data('alreadyingroup') || null; 
+								if(alreadyInGroupData == 'Yes')
+									alreadyInGroupItems.push($(this).val());
+								
 								checkString.push($(this).val());
 							});
 						}
@@ -139,45 +195,25 @@ var app = app || {} ;
 						$('#splitCheckboxValue').val(checkString.toString());
 						
 						try{
-							// AFUPYB3: added groupId as Param
-							var serializedData = $('#selectedComponentForm').serialize() 
-								+ '&groupType=' + $('#groupType').val().trim() + '&groupId=' + $('#groupId').val().trim();
-							
-							//sending and asigning few group type specific values	
-							if($('#groupType').val().trim() == 'CPG'){
-								//console.log(_super.searchValue.classId);
-								serializedData += '&classId=' + _super.searchValue.classId;
-							}
-							
-							$('.overlay_pageLoading').removeClass('hidden');							
-							app.GroupFactory.addNewSplitComponent(serializedData) //sending and asigning few group type specific values
-								.done(function(result){
-									if(!result.length){
-										$('#group-existing-component-area').html(app.GroupLandingApp.buildMessage('Error in adding components', 'error'))
-											.fadeIn('slow');
-											$('.hide_after_error').hide();
-											return;
-									}
-									
-									var resultJSON = $.parseJSON(result);
-									
-									app.GroupLandingApp.handleGroupCreationResponse(resultJSON, resultJSON.groupType, false);
-									
-									$('.overlay_pageLoading').removeClass('hidden');
-									//now refreshing existing component list
-									_super.loadExitingData(false)
-										.complete(function(){
-											//updqating component search result
-											$('#search-components').trigger('submit');
-										});
-									
-								}).error(function(jqXHR, textStatus, errorThrown){
-									$('#group-creation-messages').html(app.GroupLandingApp.buildMessage(jqXHR.status + ' - ' + textStatus + ' - ' + errorThrown, 'error'))
-										.fadeIn('slow');
-								}).complete(function(){
-									//cleaning up message after 4 sec
-									app.GroupLandingApp.cleanupMessage($('#group-creation-messages'), 8000);
+							if(alreadyInGroupItems.length){
+								$('#error-massege').html("Child component(s) " + alreadyInGroupItems.join(', ') + " is/are already part of other group(s), would you like to continue?");
+								$('#errorBox').dialog({
+								   autoOpen: true, 
+								   modal: true,
+								   resizable: false,
+								   title : 'Add Component',
+								   dialogClass: "dlg-custom",
+								   buttons: {
+									  Cancel: function() {$(this).dialog("close");},
+									  OK: function() {
+										 $(this).dialog("close");
+										_super.addComponent();
+									  }
+								   },
 								});
+							}else{
+								_super.addComponent();
+							}
 						}catch(ex){
 							console.log(ex.message);
 						}
@@ -185,14 +221,15 @@ var app = app || {} ;
 				});
 				
 				//code to handle enabling or disabling remove component button
-				$('#existingComponentForm').on('click', '.item-check, #select-all', function(){
-					//console.log($(this).is(':checked'));
+				$('#existingComponentForm').on('click', '.item-check, .select-all', function(e){
 					if($(this).is(':checked')){
 						$('#remove-existing-component').prop('disabled', false);
 					}else{
-						if(!$('.item-check:checked').length)
+						if(e.currentTarget.className == 'select-all')
 							$('#remove-existing-component').prop('disabled', true);
-						else
+						else if(!$('#existingComponentForm').find('.item-check:checked').length){
+							$('#remove-existing-component').prop('disabled', true);
+						}else
 							$('#remove-existing-component').prop('disabled', false);
 					}
 				});
@@ -514,7 +551,9 @@ var app = app || {} ;
 						});
 						
 						if(!validpriorities){
-							alert('Please enter valid priorities before saving');
+							$('#error-massege').html("Please enter valid priorities before saving.");
+							$('#errorBox').dialog('option', 'title', 'Priority');
+							$('#errorBox').dialog('open');
 							return;
 						}
 						
@@ -526,6 +565,14 @@ var app = app || {} ;
 						
 						params += '&priorities=' + priorityList.toString();
 					}else if($('#groupType').val().trim() == 'SSG' || $('#groupType').val().trim() == 'SCG'){
+						//checking whether at least one radio is checked for default component
+						if(!$('#existingComponentForm').find('[name=defaultColor]:checked').length){
+							$('#error-massege').html("Please select a default component.");
+							$('#errorBox').dialog('option', 'title', 'Default Component');
+							$('#errorBox').dialog('open');
+							return;
+						}
+							
 						params += '&resourceType=defaultValueSave';
 					}
 					

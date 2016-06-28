@@ -21,7 +21,7 @@
 		<tr>
 			<td>
 				<input type="checkbox" name="selectedItem[]" value="{{=row.StyleOrinNo}}" class="item-check" style="margin-left:17px" 
-					{{=row.alreadyInSameGroup == 'Yes' ? 'disabled="disabled"' : ''}} />
+					{{=row.alreadyInSameGroup == 'Yes' ? 'disabled="disabled"' : ''}} data-alreadyingroup="{{=row.alreadyInGroup}}" />
 			</td>
 			<td>
 				{{ if(row.childList && row.childList.length){ }}
