@@ -3033,6 +3033,10 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
                                     .get(WorkListDisplayConstants.ENTRY_TYPE)
                                     .toString()));
                         workFlow.setIsGroup(WorkListDisplayConstants.YES_Y);
+                        workFlow.setSourceType(row
+                                .get(WorkListDisplayConstants.PET_SOURCE) == null
+                                ? WorkListDisplayConstants.EMPTY_STRING : row.get(
+                                    WorkListDisplayConstants.PET_SOURCE).toString());
                         if ((row.get(WorkListDisplayConstants.CHILD_GROUP) == null
                             ? WorkListDisplayConstants.EMPTY_STRING : row.get(
                                 WorkListDisplayConstants.CHILD_GROUP)
@@ -3069,6 +3073,18 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
                             workFlow
                                 .setIsChildPresent(WorkListDisplayConstants.NO_N);
                         }
+                        String conversionFlag = row.get(WorkListDisplayConstants.CONVERSION_FLAG) == null
+                        ? WorkListDisplayConstants.EMPTY_STRING : row.get(
+                                WorkListDisplayConstants.CONVERSION_FLAG).toString();
+                        String sourceType = row
+                        .get(WorkListDisplayConstants.PET_SOURCE) == null
+                        ? WorkListDisplayConstants.EMPTY_STRING : row.get(
+                            WorkListDisplayConstants.PET_SOURCE).toString();
+                        if(conversionFlag.equals(WorkListDisplayConstants.TRUE_VALUE))
+                        {
+                        	sourceType = sourceType + ":C";
+                        }
+                        workFlow.setSourceType(sourceType);
 
                     }
                     workFlow.setParentStyleOrinNumber(row
@@ -3131,11 +3147,7 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
                             + row.get(WorkListDisplayConstants.CONTENT_STATE) == null
                             ? WorkListDisplayConstants.EMPTY_STRING : row.get(
                                 WorkListDisplayConstants.CONTENT_STATE)
-                                .toString()));
-                    workFlow.setSourceType(row
-                        .get(WorkListDisplayConstants.PET_SOURCE) == null
-                        ? WorkListDisplayConstants.EMPTY_STRING : row.get(
-                            WorkListDisplayConstants.PET_SOURCE).toString());
+                                .toString()));                    
                     workFlow.setEntryType(row
                         .get(WorkListDisplayConstants.ENTRY_TYPE) == null
                         ? WorkListDisplayConstants.EMPTY_STRING : row.get(
@@ -3583,6 +3595,10 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
                                     .get(WorkListDisplayConstants.ENTRY_TYPE)
                                     .toString()));
                         workFlow.setIsGroup(WorkListDisplayConstants.YES_Y);
+                        workFlow.setSourceType(row
+                                .get(WorkListDisplayConstants.PET_SOURCE) == null
+                                ? WorkListDisplayConstants.EMPTY_STRING : row.get(
+                                    WorkListDisplayConstants.PET_SOURCE).toString());
                         if ((row.get(WorkListDisplayConstants.CHILD_GROUP) == null
                             ? WorkListDisplayConstants.EMPTY_STRING : row.get(
                                 WorkListDisplayConstants.CHILD_GROUP)
@@ -3619,6 +3635,18 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
                             workFlow
                                 .setIsChildPresent(WorkListDisplayConstants.NO_N);
                         }
+                        String conversionFlag = row.get(WorkListDisplayConstants.CONVERSION_FLAG) == null
+                        ? WorkListDisplayConstants.EMPTY_STRING : row.get(
+                                WorkListDisplayConstants.CONVERSION_FLAG).toString();
+                        String sourceType = row
+                        .get(WorkListDisplayConstants.PET_SOURCE) == null
+                        ? WorkListDisplayConstants.EMPTY_STRING : row.get(
+                            WorkListDisplayConstants.PET_SOURCE).toString();
+                        if(conversionFlag.equals(WorkListDisplayConstants.TRUE_VALUE))
+                        {
+                        	sourceType = sourceType + ":C";
+                        }
+                        workFlow.setSourceType(sourceType);
 
                     }
                     workFlow.setParentStyleOrinNumber(row
@@ -3681,11 +3709,7 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
                             + row.get(WorkListDisplayConstants.CONTENT_STATE) == null
                             ? WorkListDisplayConstants.EMPTY_STRING : row.get(
                                 WorkListDisplayConstants.CONTENT_STATE)
-                                .toString()));
-                    workFlow.setSourceType(row
-                        .get(WorkListDisplayConstants.PET_SOURCE) == null
-                        ? WorkListDisplayConstants.EMPTY_STRING : row.get(
-                            WorkListDisplayConstants.PET_SOURCE).toString());
+                                .toString()));                    
                     workFlow.setEntryType(row
                         .get(WorkListDisplayConstants.ENTRY_TYPE) == null
                         ? WorkListDisplayConstants.EMPTY_STRING : row.get(

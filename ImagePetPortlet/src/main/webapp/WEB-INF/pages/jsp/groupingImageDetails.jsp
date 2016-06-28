@@ -9,8 +9,6 @@
 <script src="<%=request.getContextPath()%>/js/imageManagment.js"></script>
 <script type="text/javascript" src="<%=response.encodeURL(request.getContextPath()+"/js/dialogModal.js")%>"></script> 
 
-
-
 <script>
 	hljs.initHighlightingOnLoad();
 </script>
@@ -630,13 +628,8 @@ var imageCount = '${imageCount}';
 var imageStatus= '${imageStatus}';
 var imageFilePath= '${imageFilePath}';
 var uploadImgeId= '${uploadImgeId}';
-
-
 var groupVPILinks= '${groupVPILinks}';
-
-	
-
-
+var imageOverallStatus= '${imageOverallStatus}';
 
 $(function() {
  
@@ -648,9 +641,7 @@ if ((typeof groupVPILinks !== "undefined" && groupVPILinks !== null) && (uploadI
 
 	 }
 
-
 	  if(uploadStatus=='Y'){		
-		
 		showGrpImageActionMessage('uploadSuccess', '${imageName}');
 		document.getElementById('btnGPImageUploadAction').disabled=true;
 		
@@ -669,9 +660,10 @@ if ((typeof groupVPILinks !== "undefined" && groupVPILinks !== null) && (uploadI
 	 }
 
 
-	if (typeof imageStatus !== "undefined" && (imageStatus=='Completed')) 
+	if ( imageStatus=='Completed' ||  imageOverallStatus=='Completed') 
          { 
-  	  document.getElementById('image_approve').disabled = true ;
+  	 document.getElementById('image_approve').disabled = true ;
+ 	 document.getElementById('btnGPImageUploadAction').disabled=true;
 
 	 }
 	 

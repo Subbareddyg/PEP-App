@@ -81,6 +81,50 @@ public class StyleInfoDetails {
 	
 	private String groupingName;	
 	private String groupingType;
+	
+	private String groupOverAllStatus;
+	private String groupImageStatus;
+	private String groupContentStatus;	
+	/**
+	 * @return the groupOverAllStatus
+	 */
+	public String getGroupOverAllStatus() {
+		return groupOverAllStatus;
+	}
+	/**
+	 * @param groupOverAllStatus the groupOverAllStatus to set
+	 */
+	public void setGroupOverAllStatus(String groupOverAllStatus) {
+		this.groupOverAllStatus = groupOverAllStatus;
+	}
+	/**
+	 * @return the groupImageStatus
+	 */
+	public String getGroupImageStatus() {
+		return groupImageStatus;
+	}
+	/**
+	 * @param groupImageStatus the groupImageStatus to set
+	 */
+	public void setGroupImageStatus(String groupImageStatus) {
+		this.groupImageStatus = groupImageStatus;
+	}
+	/**
+	 * @return the groupContentStatus
+	 */
+	public String getGroupContentStatus() {
+		return groupContentStatus;
+	}
+	/**
+	 * @param groupContentStatus the groupContentStatus to set
+	 */
+	public void setGroupContentStatus(String groupContentStatus) {
+		this.groupContentStatus = groupContentStatus;
+	}
+
+
+
+
 	/**
 	 * @return the groupingName
 	 */

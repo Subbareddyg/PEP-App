@@ -980,13 +980,28 @@ public class ImageRequestDAOImpl implements ImageRequestDAO {
             styleInfo.setImageClass(row[7]!=null?row[7].toString():null);
             styleInfo.setVendorProvidedImage(row[8]!=null?row[8].toString():null);
             styleInfo.setVendorProvidedSample(row[9]!=null?row[9].toString():null);           
+            styleInfo.setGroupOverAllStatus(row[10]!=null?row[10].toString():null);
+            if(null != row[11]){
+            	if("02".equalsIgnoreCase(row[11].toString())){
+            		 styleInfo.setGroupImageStatus(ImageConstants.GROUP_IMG_STATUS_COMPLETED);            		
+            	}else{
+            		 styleInfo.setGroupImageStatus(row[10]!=null?row[10].toString():null);
+            	}            	
+            }
+            if(null != row[12]){
+            	if("02".equalsIgnoreCase(row[12].toString())){
+            		 styleInfo.setGroupContentStatus(ImageConstants.GROUP_IMG_STATUS_COMPLETED);            		
+            	}else{
+            		 styleInfo.setGroupContentStatus(row[12]!=null?row[12].toString():null);
+            	}            	
+            }           
             styleInfolist.add(styleInfo);
         }
         }catch(Exception e){
         	e.printStackTrace();
         }finally{
         	  session.close();      
-        }       
+        }     
        
         LOGGER.info("Exiting getStyleInfoDetails");
         return (ArrayList<StyleInfoDetails>) styleInfolist;
@@ -1157,8 +1172,7 @@ public class ImageRequestDAOImpl implements ImageRequestDAO {
         	LOGGER.error("inside getGroupingHistoryDetails ",e);
         }finally{     
           session.close();
-        }
-       
+        }       
         return (ArrayList<PepDetailsHistory>) pepList;       
     }
     /**

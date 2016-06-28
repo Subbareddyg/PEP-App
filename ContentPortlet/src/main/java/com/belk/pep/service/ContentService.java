@@ -309,7 +309,7 @@ public interface ContentService {
      * @throws PEPServiceException
      * @author AFUSKJ2 6/17/2016
      */
-    public List<OmniChannelBrandVO> getGroupingOmniChannelBrand(String groupId) throws PEPServiceException;
+    public List<OmniChannelBrandVO> getGroupingOmniChannelBrand(String groupId);
     
     /**
      * This method populates car brand list for group
@@ -318,17 +318,16 @@ public interface ContentService {
      * @throws PEPServiceException
      * @author AFUSKJ2 6/17/2016
      */
-    public List<CarBrandVO> populateGroupCarBrandList(String groupId) throws PEPServiceException;
+    public List<CarBrandVO> populateGroupCarBrandList(String groupId);
     
     /**
      * This method populates group component list
      * @param groupId
      * @return
-     * @throws PEPServiceException
      * @author AFUSKJ2 6/17/2016
      * 
      */
-    public List<GroupsFound> getGroupingComponents(String groupId) throws PEPServiceException;
+    public List<GroupsFound> getGroupingComponents(String groupId);
     
     /**
      * This method populates grouping content history list
@@ -352,19 +351,20 @@ public interface ContentService {
      * This method populates IPH Category drop down list for group
      * @param groupId
      * @return
-     * @throws PEPServiceException
+     * 
      * @author AFUSKJ2 6/17/2016s
      */
-    public List<ItemPrimaryHierarchyVO> selectedIPHCategorydropdown(String groupId) throws PEPServiceException;
+    public List<ItemPrimaryHierarchyVO> selectedIPHCategorydropdown(String groupId);
   
     
     /**
      * This method saves grouping data
      * @param createContentWebServiceReq
      * @return
+     * @throws PEPServiceException 
+     * @throws IOException 
      */
-    public String createGroupContentWebService(final JSONObject jsonContentUpdateColor) throws MalformedURLException, ClassCastException, 
-	IOException, JSONException;
+    public String createGroupContentWebService(final JSONObject jsonContentUpdateColor) throws PEPServiceException, IOException;
     
     /**
      * Method to get the group copy validation from database.

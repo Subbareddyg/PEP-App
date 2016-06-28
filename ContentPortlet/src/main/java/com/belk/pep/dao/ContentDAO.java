@@ -311,7 +311,7 @@ public  interface ContentDAO {
     /**
      * This method retrieves omni-channel brand list for the group
      */
-    public List<OmniChannelBrandVO> getGroupingOmniChannelBrand(String groupId) throws PEPFetchException;
+    public List<OmniChannelBrandVO> getGroupingOmniChannelBrand(String groupId);
     
     /**
      * This method populates car brand list for group
@@ -319,7 +319,7 @@ public  interface ContentDAO {
      * @return
      * @throws PEPFetchException
      */
-    public List<CarBrandVO> populateGroupCarBrandList(String groupId) throws PEPFetchException;
+    public List<CarBrandVO> populateGroupCarBrandList(String groupId);
     
     /**
      * This method retrieves Group Component list
@@ -327,7 +327,7 @@ public  interface ContentDAO {
      * @return
      * @throws PEPFetchException
      */
-    public List<GroupsFound> getGroupingComponents(String groupId) throws PEPFetchException;
+    public List<GroupsFound> getGroupingComponents(String groupId);
     
     
     /**
@@ -337,7 +337,7 @@ public  interface ContentDAO {
      * @throws PEPFetchException
      * @author AFUSKJ2 6/17/2016
      */
-    public List<ItemPrimaryHierarchyVO> selectedIPHCategorydropdown(String groupId) throws PEPFetchException;
+    public List<ItemPrimaryHierarchyVO> selectedIPHCategorydropdown(String groupId);
     
     
     /**
@@ -347,7 +347,7 @@ public  interface ContentDAO {
      * @throws PEPFetchException
      * @author AFUSKJ2 6/17/2016
      */
-    public List<ContentHistoryVO> getGroupContentHistory(String groupId) throws PEPFetchException;
+    public List<ContentHistoryVO> getGroupContentHistory(String groupId);
     
     
     

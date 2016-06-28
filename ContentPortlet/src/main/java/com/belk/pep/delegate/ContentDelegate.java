@@ -902,9 +902,9 @@ public class ContentDelegate {
      * @param createContentWebServiceReq
      * @return
      * @author AFUSKJ2 6/17/2016
+     * @throws IOException 
      */
-    public String createGroupContentWebService(JSONObject jsonContentUpdateColor)  throws MalformedURLException, ClassCastException, 
-	IOException, JSONException {
+    public String createGroupContentWebService(JSONObject jsonContentUpdateColor)  throws PEPServiceException, IOException {
     	return contentService.createGroupContentWebService(jsonContentUpdateColor);
     	
     }
@@ -982,13 +982,8 @@ public class ContentDelegate {
      * @throws PEPDelegateException
      * @author AFUSKJ2 6/17/2016
      */
-    public List<OmniChannelBrandVO> getGroupingOmniChannelBrand(String groupingId) throws PEPDelegateException{
-    	try{
-    		return contentService.getGroupingOmniChannelBrand(groupingId);
-    	}catch (PEPServiceException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage());
-			throw new PEPDelegateException();
-		}
+    public List<OmniChannelBrandVO> getGroupingOmniChannelBrand(String groupingId){
+    	return contentService.getGroupingOmniChannelBrand(groupingId);
     }
     
     /**
@@ -999,13 +994,8 @@ public class ContentDelegate {
      * @author AFUSKJ2 6/17/2016
      * 
      */
-    public List<CarBrandVO> populateGroupCarBrandList(String groupId) throws PEPDelegateException {
-    	try{
-    		return contentService.populateGroupCarBrandList(groupId);
-    	}catch (PEPServiceException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage());
-			throw new PEPDelegateException();
-		}
+    public List<CarBrandVO> populateGroupCarBrandList(String groupId){
+    	return contentService.populateGroupCarBrandList(groupId);
     }
     
     /**
@@ -1016,14 +1006,9 @@ public class ContentDelegate {
      * @author AFUSKJ2 6/17/2016
      * 
      */
-    public List<GroupsFound> getGroupingComponents(String groupId) throws PEPDelegateException {
+    public List<GroupsFound> getGroupingComponents(String groupId) {
     	List<GroupsFound> grpList = new ArrayList<GroupsFound>();
-    	try{
-    		grpList = contentService.getGroupingComponents(groupId);
-    	}catch (PEPServiceException e) {
-			e.printStackTrace();
-			throw new PEPDelegateException();
-		}
+    	grpList = contentService.getGroupingComponents(groupId);
     	
     	return grpList;
     }
@@ -1162,15 +1147,9 @@ public class ContentDelegate {
      * @throws PEPDelegateException
      * @author AFUSKJ2 6/17/2016
      */
-     public List<ItemPrimaryHierarchyVO> selectedIPHCategorydropdown(String groupId) throws PEPDelegateException{
+     public List<ItemPrimaryHierarchyVO> selectedIPHCategorydropdown(String groupId){
     	 
-    	 try{
-    		 return contentService.selectedIPHCategorydropdown(groupId);
-    	 }catch (PEPServiceException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage());
-			e.printStackTrace();
-			throw new PEPDelegateException();
-		}
+    	 return contentService.selectedIPHCategorydropdown(groupId);
     	 
     	 
      }

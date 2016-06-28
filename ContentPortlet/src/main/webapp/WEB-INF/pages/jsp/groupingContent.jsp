@@ -1614,6 +1614,7 @@
                     	                                                   
 														}else{
 														 $("#ajaxResponseSaveContentPetAttribute").html("");
+														 $("#formIphMappingErrorMessage").html("");
 														  $("#ajaxResponseSaveContentPetAttribute").append("<b><font size='3'>Pet Content saved successfully!</font></b>"); 
 														  $("#ajaxResponseSaveContentPetAttribute").focus();
 														}
@@ -2352,11 +2353,9 @@ function toggleRows(currentRow, styleId, styleColorId){
 								     <c:if test="${not empty  contentDisplayForm.iphMappingMessage}">	
 										     <table><tr><td><b><font size='2'><c:out value="${contentDisplayForm.iphMappingMessage}"/></font></b></td></tr></table>
 									 </c:if>
-									 <c:if test="${not empty  contentDisplayForm.copyContentMessage}">	
-										     <table><tr><td><b><font size='2'><c:out value="${contentDisplayForm.copyContentMessage}"/></font></b></td></tr></table>
-									 </c:if>
+									 <table><tr><td><b><font size='2'><c:out value="${contentCopyStatusMessage}" /></font></b></td></tr></table>
 								   </div>
-								   <div><table><tr><td><b><font size='2'><c:out value="${contentCopyStatusMessage}" /></font></b></td></tr></table></div>
+								   
 									<c:if test="${contentDisplayForm.styleInformationVO.groupingType == 'CPG'}">
 								    <div class="orin-popup-container">
 										<input type="button" class="btn chevron-down" id="btnCopyORIN" value="Copy ORIN" style="width: 150px; padding: 6px;"/>
@@ -2487,8 +2486,8 @@ function toggleRows(currentRow, styleId, styleColorId){
 									 </c:if>
 									</div>
 									<div style="float:right;margin-right:35px">
-										<label style="margin-right:15px"><input type="radio" id="publisStatusCodeReadyForCopy" name="publisStatusCode" value="02" <c:if test="${contentDisplayForm.roleName == 'readonly'}"> disabled="disabled" </c:if> /> Ready For Copy</label>
-										<label style="margin-right:15px"><input type="radio" id="publisStatusCodePublishToWeb" name="publisStatusCode" value="09" <c:if test="${contentDisplayForm.roleName == 'readonly'}"> disabled="disabled" </c:if> /> Publish to Web</label>
+										<label style="margin-right:15px"><input type="radio" id="publisStatusCodeReadyForCopy" name="publisStatusCode" value="02" <c:if test="${contentDisplayForm.roleName == 'readonly'}"> disabled="disabled" </c:if> /> <b>Ready For Copy</b></label>
+										<label style="margin-right:15px"><input type="radio" id="publisStatusCodePublishToWeb" name="publisStatusCode" value="09" <c:if test="${contentDisplayForm.roleName == 'readonly'}"> disabled="disabled" </c:if> /> <b>Publish to Web</b></label>
 									</div>
                                 </div>								 
 							</div>

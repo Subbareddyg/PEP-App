@@ -1485,8 +1485,11 @@ public class ImageRequestController {
 		        List<ImageLinkVO> imageLinkVOList = imageRequestDelegate.getGroupingScene7ImageLinks(groupingId);	              
 		        ImageForm imageForm = new ImageForm();
 		        String formSessionKey = request.getPortletSession().getId() + loggedInUser;
-		        request.getPortletSession().setAttribute("formSessionKey", formSessionKey);                
-	            if (styleInfoList !=null && styleInfoList.size() > 0 ){                  
+		        request.getPortletSession().setAttribute("formSessionKey", formSessionKey);
+		        mv = new ModelAndView(ImageConstants.MODELVIEW_SUCCESS_GROUPING);
+		        
+	            if (styleInfoList !=null && styleInfoList.size() > 0 ){   
+	            	mv.addObject(ImageConstants.IMAGE_OVERALL_STATUS, styleInfoList.get(0).getGroupImageStatus());
 	                imageForm.setUsername(loggedInUser);
 	                imageForm.setStyleInfo(styleInfoList);                   
 	            }
@@ -1499,7 +1502,7 @@ public class ImageRequestController {
 	            if (imageLinkVOList !=null && imageLinkVOList.size() > 0){                   
 	                imageForm.setImageLinkVOList(imageLinkVOList);                   
 	            }
-	            mv = new ModelAndView(ImageConstants.MODELVIEW_SUCCESS_GROUPING);            
+	                      
 	            Properties prop =PropertyLoader.getPropertyLoader(ImageConstants.LOAD_IMAGE_PROPERTY_FILE);
 	  		    String fileDir = prop.getProperty(ImageConstants.FILE_UPLOAD_PATH);         
 				String tempStatus  =  (String) request.getPortletSession().getAttribute("uploadedSucess");
@@ -1510,10 +1513,10 @@ public class ImageRequestController {
 					  sampleImageLinkList.get(0).setImageUrl(fileDir+sampleImageLinkList.get(0).getImageName());
 					 	imageForm.setSampleImageDetailList(sampleImageLinkList);
 						mv.addObject("groupVPILinks", groupVPILinks);
-						mv.addObject("uploadImgeId", sampleImageLinkList.get(0).getImageId());
-					 	
+						mv.addObject("uploadImgeId", sampleImageLinkList.get(0).getImageId());					 	
 					 	mv.addObject("imageCount", sampleImageLinkList.size() );
-					 	mv.addObject(ImageConstants.GROUP_IMAGE_STATUS, sampleImageLinkList.get(0).getImageStatus());				 	
+					 	mv.addObject(ImageConstants.IMAGE_OVERALL_STATUS, sampleImageLinkList.get(0).getImageStatus());	
+					 	
 				 }			
 				mv.addObject(ImageConstants.IMAGE_INFO_DETAILS, imageForm);	          
 	     	    mv.addObject("uploadSuccess", tempStatus );
