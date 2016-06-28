@@ -2406,7 +2406,7 @@ public String getWorkListDisplayDataChild(boolean vendorLogin) {
     workListQuery.append("          <PRODUCT_NAME_COMPLEX>{$pets/pim_entry/entry/Ecomm_ComplexPack_Spec/Product_Name}</PRODUCT_NAME_COMPLEX>     ");
     workListQuery.append("            <COLO_DESC>{$colordesc}</COLO_DESC>                                                                        ");
     workListQuery.append("            <COLO_DESC_COMPLEX>{$colordescComplex}</COLO_DESC_COMPLEX>                                                 ");
-    workListQuery.append("            <CONVERSION_FLAG>{$pets/pim_entry/entry/Pet_Ctg_Spec/System/Conversion_Flag}</CONVERSION_FLAG>      ");
+    workListQuery.append("            <CONVERSION_FLAG>{$pets/pim_entry/entry/Pet_Ctg_Spec/System/Pet_Information/Conversion_Flag}</CONVERSION_FLAG>      ");
     workListQuery.append("        </out>'                                                                                                        ");
     workListQuery.append("        passing pet.xml_data AS \"pets\" Columns                                                                         ");
     workListQuery.append("        completion_date             VARCHAR2(10)  path  '/out/completion_date',                                        ");
@@ -2655,7 +2655,7 @@ public String getAdvWorkListDisplayDataForChild(AdvanceSearch advSearch, String 
     advQueryFragment.append("         <COLO_DESC>{$colordesc}</COLO_DESC>                                                                                     ");
     advQueryFragment.append("         <COLO_DESC_COMPLEX>{$colordescComplex}</COLO_DESC_COMPLEX>                                                              ");
     advQueryFragment.append("         <PRODUCT_NAME_COMPLEX>{$pets/pim_entry/entry/Ecomm_ComplexPack_Spec/Product_Name}</PRODUCT_NAME_COMPLEX>                ");
-    advQueryFragment.append("         <CONVERSION_FLAG>{$pets/pim_entry/entry/Pet_Ctg_Spec/System/Conversion_Flag}</CONVERSION_FLAG>        ");
+    advQueryFragment.append("         <CONVERSION_FLAG>{$pets/pim_entry/entry/Pet_Ctg_Spec/System/Pet_Information/Conversion_Flag}</CONVERSION_FLAG>        ");
     advQueryFragment.append("     </out>'                                                                                                                     ");
     advQueryFragment.append("     passing pet.xml_data AS \"pets\" Columns                                                                                      ");
     advQueryFragment.append("         completion_date      VARCHAR2(10) path  '/out/completion_date',                                                         ");
@@ -3573,7 +3573,7 @@ public String getAdvWorkListDisplayDataForParent(AdvanceSearch advSearch) {
         "   PET_SOURCE,                                                                            "+
         "   OmnichannelIndicator,                                                                  "+
         "   CREATED_DTM,                                                                           "+
-        "   EXIST_IN_GROUP                                                                         "+
+        "   EXIST_IN_GROUP, CONVERSION_FLAG                                                        "+
         " FROM                                                                                     "+
         "   (SELECT NULL PARENT_MDMID,                                                             "+
         "     AGC.MDMID,                                                                           "+
@@ -3592,7 +3592,7 @@ public String getAdvWorkListDisplayDataForParent(AdvanceSearch advSearch) {
         "     AGC.DEF_PRIMARYSUPPLIERVPN VENDOR_STYLE,                                             "+
         "   SUPPLIER_XML.OmnichannelIndicator,                                                     "+
         "   AGC.CREATED_DTM,                                                                       "+
-        "   AGC.EXIST_IN_GROUP                                                                     "+
+        "   AGC.EXIST_IN_GROUP, NULL CONVERSION_FLAG                                               "+
         "   FROM ADSE_GROUP_CATALOG AGC LEFT OUTER JOIN                                            "+
         "   ADSE_SUPPLIER_CATALOG ASCT ON ASCT.MDMID = AGC.DEF_PRIMARY_SUPPLIER_ID,                "+
         "   XMLTABLE('for $i in $XML_DATA/pim_entry/entry  return $i'                              "+
@@ -3624,7 +3624,7 @@ public String getAdvWorkListDisplayDataForParent(AdvanceSearch advSearch) {
         "     AIC.PRIMARYSUPPLIERVPN VENDOR_STYLE,                                                   "+
         "   SUPPLIER_XML.OmnichannelIndicator,                                                       "+
         "   APC.CREATED_DTM,                                                                         "+
-        "   APC.EXIST_IN_GROUP                                                                       "+
+        "   APC.EXIST_IN_GROUP, PET_XML.CONVERSION_FLAG                                              "+
         "   FROM ADSE_GROUP_CHILD_MAPPING AGCM,                                                      "+
         "     ADSE_ITEM_CATALOG AIC                                                                  "+
         "   INNER JOIN ADSE_PET_CATALOG APC                                                          "+
@@ -3639,7 +3639,8 @@ public String getAdvWorkListDisplayDataForParent(AdvanceSearch advSearch) {
         " <req_type>{$pets/pim_entry/entry/Pet_Ctg_Spec/SourceSystem}</req_type>                     "+
         " <PRODUCT_NAME>{$pets/pim_entry/entry/Ecomm_Style_Spec/Product_Name}</PRODUCT_NAME>         "+
         " <COLO_DESC>{$colordesc}</COLO_DESC>                                                        "+
-        " </out>' passing APC.xml_data AS \"pets\" Columns completion_date VARCHAR2(10) path '/out/completion_date', req_type VARCHAR2(20) path '/out/req_type', PRODUCT_NAME VARCHAR2(100) path '/out/PRODUCT_NAME', COLO_DESC VARCHAR2(50) path '/out/COLO_DESC' ) (+)PET_XML, "+
+        " <CONVERSION_FLAG>{$pets/pim_entry/entry/Pet_Ctg_Spec/System/Pet_Information/Conversion_Flag}</CONVERSION_FLAG> "+
+        " </out>' passing APC.xml_data AS \"pets\" Columns completion_date VARCHAR2(10) path '/out/completion_date', req_type VARCHAR2(20) path '/out/req_type', PRODUCT_NAME VARCHAR2(100) path '/out/PRODUCT_NAME', COLO_DESC VARCHAR2(50) path '/out/COLO_DESC', CONVERSION_FLAG VARCHAR2(10) path '/out/CONVERSION_FLAG' ) (+)PET_XML, "+
         " XMLTABLE('for $i in $XML_DATA/pim_entry/entry  return $i'                                    "+
         "     passing ASCT.xml_data AS \"XML_DATA\"                                                      "+
         "     COLUMNS                                                                                  "+
@@ -3891,7 +3892,7 @@ public String getAdvWorkListDisplayDataForParent(AdvanceSearch advSearch) {
         "   PET_SOURCE,                                                                              "+
         "   OmnichannelIndicator,                                                                    "+
         "   CREATED_DTM,                                                                             "+
-        "   EXIST_IN_GROUP                                                                           "+
+        "   EXIST_IN_GROUP, CONVERSION_FLAG                                                          "+
         " FROM                                                                                       "+
         "   (SELECT NULL PARENT_MDMID,                                                               "+
         "     AGC.MDMID,                                                                             "+
@@ -3910,7 +3911,7 @@ public String getAdvWorkListDisplayDataForParent(AdvanceSearch advSearch) {
         "     AGC.DEF_PRIMARYSUPPLIERVPN VENDOR_STYLE,                                               "+
         "   SUPPLIER_XML.OmnichannelIndicator,                                                       "+
         "   AGC.CREATED_DTM,                                                                         "+
-        "   AGC.EXIST_IN_GROUP                                                                       "+
+        "   AGC.EXIST_IN_GROUP, NULL CONVERSION_FLAG                                                 "+
         "   FROM ADSE_GROUP_CATALOG AGC LEFT OUTER JOIN                                              "+
         "   ADSE_SUPPLIER_CATALOG ASCT ON ASCT.MDMID = AGC.DEF_PRIMARY_SUPPLIER_ID,                  "+
         "   XMLTABLE('for $i in $XML_DATA/pim_entry/entry  return $i'                                "+
@@ -3945,7 +3946,7 @@ public String getAdvWorkListDisplayDataForParent(AdvanceSearch advSearch) {
         "     AIC.PRIMARYSUPPLIERVPN VENDOR_STYLE,                                                     "+
         "   SUPPLIER_XML.OmnichannelIndicator,                                                         "+
         "   APC.CREATED_DTM,                                                                           "+
-        "   APC.EXIST_IN_GROUP                                                                         "+
+        "   APC.EXIST_IN_GROUP, PET_XML.CONVERSION_FLAG                                                "+
         "   FROM ADSE_GROUP_CHILD_MAPPING AGCM,                                                        "+
         "     ADSE_ITEM_CATALOG AIC                                                                    "+
         "   INNER JOIN ADSE_PET_CATALOG APC                                                            "+
@@ -3960,7 +3961,8 @@ public String getAdvWorkListDisplayDataForParent(AdvanceSearch advSearch) {
         " <req_type>{$pets/pim_entry/entry/Pet_Ctg_Spec/SourceSystem}</req_type>                       "+
         " <PRODUCT_NAME>{$pets/pim_entry/entry/Ecomm_Style_Spec/Product_Name}</PRODUCT_NAME>           "+
         " <COLO_DESC>{$colordesc}</COLO_DESC>                                                          "+
-        " </out>' passing APC.xml_data AS \"pets\" Columns completion_date VARCHAR2(10) path '/out/completion_date', req_type VARCHAR2(20) path '/out/req_type', PRODUCT_NAME VARCHAR2(100) path '/out/PRODUCT_NAME', COLO_DESC VARCHAR2(50) path '/out/COLO_DESC' ) (+)PET_XML, "+
+        " <CONVERSION_FLAG>{$pets/pim_entry/entry/Pet_Ctg_Spec/System/Pet_Information/Conversion_Flag}</CONVERSION_FLAG> "+
+        " </out>' passing APC.xml_data AS \"pets\" Columns completion_date VARCHAR2(10) path '/out/completion_date', req_type VARCHAR2(20) path '/out/req_type', PRODUCT_NAME VARCHAR2(100) path '/out/PRODUCT_NAME', COLO_DESC VARCHAR2(50) path '/out/COLO_DESC', CONVERSION_FLAG VARCHAR2(10) path '/out/CONVERSION_FLAG' ) (+)PET_XML, "+
         " XMLTABLE('for $i in $XML_DATA/pim_entry/entry  return $i'                                      "+
         "     passing ASCT.xml_data AS \"XML_DATA\"                                                        "+
         "     COLUMNS                                                                                    "+
