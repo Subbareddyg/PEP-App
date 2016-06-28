@@ -19,7 +19,7 @@
 		<tr>
 			<td>
 				<input type="checkbox" name="selectedItem[]" value="{{=row.StyleOrinNo}}" class="item-check" style="margin-left:17px" 
-					{{=(row.alreadyInSameGroup == 'Yes' || row.haveChildGroup == 'Y') ? 'disabled="disabled"' : ''}} data-item-type="{{=row.isGroup == 'Y' ? 'G' : 'S'}}"}} data-chknode-id="{{=(row.StyleOrinNo + '_' + key)}}" />
+					{{=(row.alreadyInSameGroup == 'Yes' || row.haveChildGroup == 'Y') ? 'disabled="disabled"' : ''}} data-item-type="{{=row.isGroup == 'Y' ? 'G' : 'S'}}" data-chknode-id="{{=(row.StyleOrinNo + '_' + key)}}" data-alreadyingroup="{{=row.alreadyInGroup}}" />
 			</td>
 			<td>
 				{{ if(row.isGroup == 'Y'){ }}

@@ -21,7 +21,7 @@
 		<tr>
 			<td>
 				<input type="checkbox" name="selectedItem[]" value="{{=row.StyleOrinNo}}" class="item-check" style="margin-left:17px" 
-					{{=(row.alreadyInSameGroup == 'Yes' || row.haveChildGroup == 'Y') ? 'disabled="disabled"' : ''}} data-item-type="{{=row.isGroup == 'Y' ? 'G' : 'S'}}"}} data-chknode-id="{{=(row.StyleOrinNo + '_' + key)}}" />
+					{{=(row.alreadyInSameGroup == 'Yes' || row.haveChildGroup == 'Y') ? 'disabled="disabled"' : ''}} data-item-type="{{=row.isGroup == 'Y' ? 'G' : 'S'}}" data-chknode-id="{{=(row.StyleOrinNo + '_' + key)}}" data-alreadyingroup="{{=row.alreadyInGroup}}" />
 			</td>
 			<td>
 				{{ if(row.isGroup == 'Y'){ }}
@@ -47,7 +47,7 @@
 		{{ if(row.childList && row.childList.length){ }}
 			{{ _.each(row.childList, function(childRow, childKey){ }}
 				<tr class="hidden-child" data-parent-id="{{=(row.StyleOrinNo + '_' + key) }}">
-					<td><input type="checkbox" name="selectedChildItem_{{=key}}" value="{{=childRow.StyleOrinNo}}" class="item-check" style="margin-left:24px"  {{=(row.alreadyInSameGroup == 'Yes' || row.haveChildGroup == 'Y') ? 'disabled="disabled"' : ''}} data-chkparent-id="{{=(row.StyleOrinNo + '_' + key) }}" data-item-type="SC" /></td>
+					<td><input type="checkbox" name="selectedChildItem_{{=key}}" value="{{=childRow.StyleOrinNo}}" class="item-check" style="margin-left:24px"  {{=(row.alreadyInSameGroup == 'Yes' || row.haveChildGroup == 'Y') ? 'disabled="disabled"' : ''}} data-chkparent-id="{{=(row.StyleOrinNo + '_' + key) }}" data-item-type="SC" data-alreadyingroup="{{=childRow.alreadyInGroup}}" /></td>
 					<td>
 						<div class="icon-tree leaf-node" data-node-id="{{=(childRow.StyleOrinNo + '_' + childKey)}}">
 						&nbsp;

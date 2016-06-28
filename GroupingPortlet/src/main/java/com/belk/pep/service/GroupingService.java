@@ -423,7 +423,8 @@ public interface GroupingService {
 	 * @throws PEPFetchException
 	 */
 	String setDefaultColorSize(String groupId, String groupType, String colorId,
-			String childOrinId, String updatedBy) throws PEPFetchException;
+			String childOrinId, String updatedBy) throws MalformedURLException,
+			ClassCastException, IOException, JSONException;
 	
 	/**
 	 *  This method is used to get the search result Details for Regular/Beauty Collection Grouping.

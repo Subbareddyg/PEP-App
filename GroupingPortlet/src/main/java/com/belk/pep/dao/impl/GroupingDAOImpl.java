@@ -43,7 +43,6 @@ public class GroupingDAOImpl implements GroupingDAO {
 
 	/** The session factory. */
 	private SessionFactory sessionFactory;
-		
 
 	/**
 	 * 
@@ -56,8 +55,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 	/**
 	 * Sets the session factory.
 	 * 
-	 * @param sessionFactory
-	 *            the new session factory
+	 * @param sessionFactory the new session factory
 	 */
 	public void setSessionFactory(final SessionFactory sessionFactory) {
 		this.sessionFactory = sessionFactory;
@@ -66,8 +64,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 	/**
 	 * This method is used to get the Group Header Details from Database.
 	 * 
-	 * @param groupId
-	 *            String
+	 * @param groupId String
 	 * @return CreateGroupDTO
 	 * @author Cognizant
 	 * @throws PEPFetchException
@@ -78,7 +75,6 @@ public class GroupingDAOImpl implements GroupingDAO {
 			LOGGER.debug("Group Id-->" + groupId);
 		}
 
-		
 		Session session = null;
 		CreateGroupDTO createGroupDTO = null;
 		try {
@@ -86,10 +82,10 @@ public class GroupingDAOImpl implements GroupingDAO {
 			session = sessionFactory.openSession();
 			// Hibernate provides a createSQLQuery method to let you call your
 			// native SQL statement directly.
-			
+
 			final Query query = session.createSQLQuery(XqueryConstants.getGroupHeaderDetails());
 			query.setParameter("groupIdSql", groupId);
-			
+
 			LOGGER.info("Query-->getGroupHeaderDetails-->" + query);
 			// execute select SQL statement
 			query.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
@@ -110,27 +106,28 @@ public class GroupingDAOImpl implements GroupingDAO {
 
 					final Clob groupDescClob = (Clob) rowMap.get("DESCRIPTION");
 					String groupDesc = GroupingUtil.clobToString(groupDescClob);
-					
+
 					final String groupStatus = rowMap.get("GROUP_OVERALL_STATUS_CODE") != null ? rowMap.get("GROUP_OVERALL_STATUS_CODE")
 							.toString().trim() : "";
 					final String groupType = rowMap.get("GROUP_TYPE") != null ? rowMap.get("GROUP_TYPE").toString().trim() : "";
-					final String carsGroupType = rowMap.get("CARS_GROUP_TYPE") != null ? rowMap.get("CARS_GROUP_TYPE").toString().trim() : "";
+					final String carsGroupType = rowMap.get("CARS_GROUP_TYPE") != null ? rowMap.get("CARS_GROUP_TYPE").toString().trim()
+							: "";
 
-					if(null != groupType && (GroupingConstants.GROUP_TYPE_BEAUTY_COLLECTION).equals(groupType)){
+					if (null != groupType && (GroupingConstants.GROUP_TYPE_BEAUTY_COLLECTION).equals(groupType)) {
 						startDateDt = (Date) rowMap.get("START_DATE");
 						endDateDt = (Date) rowMap.get("END_DATE");
 
-						if(null != startDateDt){
+						if (null != startDateDt) {
 							startDate = DateUtil.DateToStringMMddyyyy(startDateDt);
 						}
-						if(null != endDateDt){
+						if (null != endDateDt) {
 							endDate = DateUtil.DateToStringMMddyyyy(endDateDt);
 						}
 					}
 
 					if (LOGGER.isDebugEnabled()) {
-						LOGGER.debug("getGroupHeaderDetails.groupName-->" + groupName + "startDate-->" + startDate + "groupDesc-->" + groupDesc
-								+ "groupType-->" + groupType + "carsGroupType-->" + carsGroupType);
+						LOGGER.debug("getGroupHeaderDetails.groupName-->" + groupName + "startDate-->" + startDate + "groupDesc-->"
+								+ groupDesc + "groupType-->" + groupType + "carsGroupType-->" + carsGroupType);
 					}
 					createGroupDTO.setGroupId(groupId);
 					createGroupDTO.setGroupName(groupName);
@@ -150,8 +147,8 @@ public class GroupingDAOImpl implements GroupingDAO {
 			throw new ParseException(e.getMessage(), 0);
 		} finally {
 			LOGGER.info("recordsFetched. getGroupHeaderDetails finally block..");
-			if(session!=null) {
-				
+			if (session != null) {
+
 				session.close();
 			}
 		}
@@ -160,16 +157,12 @@ public class GroupingDAOImpl implements GroupingDAO {
 		return createGroupDTO;
 	}
 
-
-
 	/**
 	 * This method is used to get the Group Attribute Details for Split Color
 	 * from Database.
 	 * 
-	 * @param vendorStyleNumber
-	 *            String
-	 * @param styleOrin
-	 *            String
+	 * @param vendorStyleNumber String
+	 * @param styleOrin String
 	 * @return List
 	 */
 	public List<GroupAttributeForm> getSplitColorDetails(final String vendorStyleNumber, final String styleOrin) throws PEPFetchException {
@@ -182,7 +175,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 		Session session = null;
 		GroupAttributeForm groupAttributeForm = null;
 		List<GroupAttributeForm> groupAttributeFormList = null;
-		
+
 		try {
 			session = sessionFactory.openSession();
 			vendorStyleNo = null == vendorStyleNo ? null : "".equals(vendorStyleNo.trim()) ? null : vendorStyleNo.trim();
@@ -207,7 +200,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 				LOGGER.info("recordsFetched..." + rows.size());
 
 				for (final Object row : rows) {
-					
+
 					@SuppressWarnings("rawtypes")
 					final Map rowMap = (Map) row;
 					groupAttributeForm = new GroupAttributeForm();
@@ -239,11 +232,11 @@ public class GroupingDAOImpl implements GroupingDAO {
 			}
 		} finally {
 			LOGGER.info("recordsFetched. getSplitColorDetails finally block..");
-						if(session!=null){
-							
-							session.close();
-						}
-			
+			if (session != null) {
+
+				session.close();
+			}
+
 		}
 
 		LOGGER.info("Fetch Split Color Details--> getSplitColorDetails-->End.");
@@ -254,10 +247,8 @@ public class GroupingDAOImpl implements GroupingDAO {
 	 * This method is used to get the Group Attribute Details for Split SKU from
 	 * Database.
 	 * 
-	 * @param vendorStyleNumber
-	 *            String
-	 * @param styleOrin
-	 *            String
+	 * @param vendorStyleNumber String
+	 * @param styleOrin String
 	 * @return List
 	 */
 	public List<GroupAttributeForm> getSplitSKUDetails(final String vendorStyleNumber, final String styleOrin) throws PEPFetchException {
@@ -271,7 +262,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 		Session session = null;
 		GroupAttributeForm groupAttributeForm = null;
 		List<GroupAttributeForm> groupAttributeFormList = null;
-		
+
 		try {
 			session = sessionFactory.openSession();
 			vendorStyleNo = null == vendorStyleNo ? null : "".equals(vendorStyleNo.trim()) ? null : vendorStyleNo.trim();
@@ -330,20 +321,21 @@ public class GroupingDAOImpl implements GroupingDAO {
 			}
 		} finally {
 			LOGGER.info("recordsFetched. getSplitSKUDetails finally block..");
-						if(session!=null){
-							
-							session.close();
-						}
-			
+			if (session != null) {
+
+				session.close();
+			}
+
 		}
 
 		LOGGER.info("Fetch Split SKU Details--> getSplitSKUDetails-->End.");
 		return groupAttributeFormList;
 	}
-	
 
 	/**
-	 * This method is used to get the Existing Group Attribute Details for Consolidated Product Grouping from Database.
+	 * This method is used to get the Existing Group Attribute Details for
+	 * Consolidated Product Grouping from Database.
+	 * 
 	 * @param vendorStyleNo
 	 * @param styleOrin
 	 * @param deptNoSearch
@@ -354,8 +346,9 @@ public class GroupingDAOImpl implements GroupingDAO {
 	 * @return
 	 * @throws PEPFetchException
 	 */
-	public List<StyleAttributeForm> getNewCPGDetails(final String vendorStyleNo, final String styleOrin, final String deptNoSearch, 
-			final String classNoSearch,	final String supplierSiteIdSearch, final String upcNoSearch, final String groupId) throws PEPFetchException {
+	public List<StyleAttributeForm> getNewCPGDetails(final String vendorStyleNo, final String styleOrin, final String deptNoSearch,
+			final String classNoSearch, final String supplierSiteIdSearch, final String upcNoSearch, final String groupId)
+			throws PEPFetchException {
 		LOGGER.info("Fetch New CPG attribute Details. getNewCPGDetails-->Start.");
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("Vendor vendorStyleNumber-->" + vendorStyleNo);
@@ -366,7 +359,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 		StyleAttributeForm styleAttributeForm = null;
 		List<GroupAttributeForm> groupAttributeFormList = null;
 		List<StyleAttributeForm> styleAttributeFormList = null;
-		
+
 		try {
 			String deptNoForInSearch = GroupingUtil.getInValForQuery(deptNoSearch);
 			String classNoSearchSearch = GroupingUtil.getInValForQuery(classNoSearch);
@@ -377,13 +370,13 @@ public class GroupingDAOImpl implements GroupingDAO {
 			session = sessionFactory.openSession();
 			// Hibernate provides a createSQLQuery method to let you call your
 			// native SQL statement directly.
-			final Query query = session.createSQLQuery(XqueryConstants.getNewCPGDetails(vendorStyleNo, styleOrin, deptNoForInSearch, classNoSearchSearch,
-					supplierSiteIdSearch, upcNoSearch, deptNoSearch, classNoSearch));
+			final Query query = session.createSQLQuery(XqueryConstants.getNewCPGDetails(vendorStyleNo, styleOrin, deptNoForInSearch,
+					classNoSearchSearch, supplierSiteIdSearch, upcNoSearch, deptNoSearch, classNoSearch));
 
 			query.setParameter("groupIdSql", groupId);
 			if (null != vendorStyleNo && !("").equals(vendorStyleNo.trim())) {
 				query.setParameter("styleIdSql", vendorStyleNo);
-			} 
+			}
 			if (null != styleOrin && !("").equals(styleOrin.trim())) {
 				query.setParameter("mdmidSql", styleOrin);
 			}
@@ -394,10 +387,8 @@ public class GroupingDAOImpl implements GroupingDAO {
 			if (null != upcNoSearch && !("").equals(upcNoSearch.trim())) {
 				query.setParameter("upcNoSql", upcNoSearch);
 			}
-			
-			
-			LOGGER.info("Query-->getNewCPGDetails-->" + query);
 
+			LOGGER.info("Query-->getNewCPGDetails-->" + query);
 
 			styleAttributeFormList = new ArrayList<>();
 
@@ -409,12 +400,12 @@ public class GroupingDAOImpl implements GroupingDAO {
 				LOGGER.info("recordsFetched..." + rows.size());
 
 				for (final Object row : rows) {
-					
+
 					@SuppressWarnings("rawtypes")
 					final Map rowMap = (Map) row;
 					groupAttributeForm = new GroupAttributeForm();
 					styleAttributeForm = new StyleAttributeForm();
-					
+
 					final String mdmid = rowMap.get("MDMID") != null ? rowMap.get("MDMID").toString() : "";
 					final String styleNo = rowMap.get("PRIMARYSUPPLIERVPN") != null ? rowMap.get("PRIMARYSUPPLIERVPN").toString() : "";
 					final String productName = rowMap.get("PRODUCT_NAME") != null ? rowMap.get("PRODUCT_NAME").toString() : "";
@@ -422,14 +413,15 @@ public class GroupingDAOImpl implements GroupingDAO {
 					final String colorDesc = rowMap.get("COLOR_DESC") != null ? rowMap.get("COLOR_DESC").toString() : "";
 					final String entryType = rowMap.get("ENTRY_TYPE") != null ? rowMap.get("ENTRY_TYPE").toString() : "";
 					final String parentMdmid = rowMap.get("PARENT_MDMID") != null ? rowMap.get("PARENT_MDMID").toString() : "";
-					final String componentStyleId = rowMap.get("COMPONENT_STYLE_ID") != null ? rowMap.get("COMPONENT_STYLE_ID").toString() : "";
+					final String componentStyleId = rowMap.get("COMPONENT_STYLE_ID") != null ? rowMap.get("COMPONENT_STYLE_ID").toString()
+							: "";
 					final String isDefaultAttr = rowMap.get("COMPONENT_DEFAULT") != null ? rowMap.get("COMPONENT_DEFAULT").toString() : "";
 					final String classId = rowMap.get("CLASS_ID") != null ? rowMap.get("CLASS_ID").toString() : "";
 					final String isAlreadyInGroup = rowMap.get("ALREADY_IN_GROUP") != null ? rowMap.get("ALREADY_IN_GROUP").toString() : "";
-					final String isAlreadyInSameGroup = rowMap.get("EXIST_IN_SAME_GROUP") != null ? rowMap.get("EXIST_IN_SAME_GROUP").toString() : "";
-					
+					final String isAlreadyInSameGroup = rowMap.get("EXIST_IN_SAME_GROUP") != null ? rowMap.get("EXIST_IN_SAME_GROUP")
+							.toString() : "";
 
-					if(("Style").equals(entryType)) {
+					if (("Style").equals(entryType)) {
 						groupAttributeFormList = new ArrayList<>();
 						styleAttributeForm.setOrinNumber(mdmid);
 						styleAttributeForm.setStyleNumber(styleNo);
@@ -448,7 +440,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 						styleAttributeForm.setClassId(classId);
 
 						styleAttributeFormList.add(styleAttributeForm);
-					}else {
+					} else {
 						groupAttributeForm.setOrinNumber(mdmid);
 						groupAttributeForm.setStyleNumber(styleNo);
 						groupAttributeForm.setProdName(productName);
@@ -463,30 +455,34 @@ public class GroupingDAOImpl implements GroupingDAO {
 						groupAttributeForm.setComponentStyleId(componentStyleId);
 						groupAttributeForm.setIsDefault(isDefaultAttr);
 						groupAttributeForm.setClassId(classId);
- 
-						for(int i = 0; i < styleAttributeFormList.size(); i++){
+
+						for (int i = 0; i < styleAttributeFormList.size(); i++) {
 							StyleAttributeForm styleAttributeFormSub = styleAttributeFormList.get(i);
-						
-							if((styleAttributeFormSub.getOrinNumber()).equals(parentMdmid)){
-								LOGGER.debug("styleAttributeFormSub.getOrinNumber()-->"+styleAttributeFormSub.getOrinNumber());
-								LOGGER.debug("Style Available.parentMdmid-->"+parentMdmid);
-								groupAttributeForm.setProdName(styleAttributeFormSub.getProdName()); // Replacing Product Name from Style
+
+							if ((styleAttributeFormSub.getOrinNumber()).equals(parentMdmid)) {
+								LOGGER.debug("styleAttributeFormSub.getOrinNumber()-->" + styleAttributeFormSub.getOrinNumber());
+								LOGGER.debug("Style Available.parentMdmid-->" + parentMdmid);
+								groupAttributeForm.setProdName(styleAttributeFormSub.getProdName()); // Replacing
+																										// Product
+																										// Name
+																										// from
+																										// Style
 								groupAttributeFormList = styleAttributeFormSub.getGroupAttributeFormList();
 								groupAttributeFormList.add(groupAttributeForm);
 								break;
 							}
 						}
-						
+
 					}
 				}
 			}
-		} catch(Exception ex){
+		} catch (Exception ex) {
 			LOGGER.error("inside PEPFetchException-->" + ex);
 			throw new PEPFetchException(ex.getMessage());
 		} finally {
 			LOGGER.info("recordsFetched. getNewCPGDetails finally block..");
-			if(session!=null) {
-				
+			if (session != null) {
+
 				session.close();
 			}
 
@@ -495,9 +491,10 @@ public class GroupingDAOImpl implements GroupingDAO {
 		LOGGER.info("Fetch New CPG attribute Details. getNewCPGDetails-->End.");
 		return styleAttributeFormList;
 	}
-	
+
 	/**
 	 * This method is used to get the SKU Count for a Style Orin.
+	 * 
 	 * @param vendorStyleNo
 	 * @param styleOrin
 	 * @param deptNoSearch
@@ -508,8 +505,9 @@ public class GroupingDAOImpl implements GroupingDAO {
 	 * @return
 	 * @throws PEPFetchException
 	 */
-	public List<String> getSKUCount(final String vendorStyleNo, final String styleOrin, final String deptNoSearch, 
-			final String classNoSearch,	final String supplierSiteIdSearch, final String upcNoSearch, final String groupId) throws PEPFetchException {
+	public List<String> getSKUCount(final String vendorStyleNo, final String styleOrin, final String deptNoSearch,
+			final String classNoSearch, final String supplierSiteIdSearch, final String upcNoSearch, final String groupId)
+			throws PEPFetchException {
 		LOGGER.info("Fetch New GBS attribute Details. getSKUCount-->Start.");
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("Vendor vendorStyleNumber-->" + vendorStyleNo);
@@ -517,7 +515,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 		}
 		Session session = null;
 		List<String> orinList = null;
-		
+
 		try {
 			String deptNoForInSearch = GroupingUtil.getInValForQuery(deptNoSearch);
 			String classNoSearchSearch = GroupingUtil.getInValForQuery(classNoSearch);
@@ -526,14 +524,15 @@ public class GroupingDAOImpl implements GroupingDAO {
 				LOGGER.debug("For query classNoSearchSearch-->" + classNoSearchSearch);
 			}
 			session = sessionFactory.openSession();
-			// Hibernate provides a createSQLQuery method to let you call your native SQL statement directly.
-			final Query query = session.createSQLQuery(XqueryConstants.getSKUCount(vendorStyleNo, styleOrin, deptNoForInSearch, classNoSearchSearch,
-					supplierSiteIdSearch, upcNoSearch, deptNoSearch, classNoSearch));
+			// Hibernate provides a createSQLQuery method to let you call your
+			// native SQL statement directly.
+			final Query query = session.createSQLQuery(XqueryConstants.getSKUCount(vendorStyleNo, styleOrin, deptNoForInSearch,
+					classNoSearchSearch, supplierSiteIdSearch, upcNoSearch, deptNoSearch, classNoSearch));
 
-			//query.setParameter("groupIdSql", groupId);
+			// query.setParameter("groupIdSql", groupId);
 			if (null != vendorStyleNo && !("").equals(vendorStyleNo.trim())) {
 				query.setParameter("styleIdSql", vendorStyleNo);
-			} 
+			}
 			if (null != styleOrin && !("").equals(styleOrin.trim())) {
 				query.setParameter("mdmidSql", styleOrin);
 			}
@@ -545,7 +544,6 @@ public class GroupingDAOImpl implements GroupingDAO {
 			}
 			LOGGER.info("Query-->getSKUCount-->" + query);
 
-
 			// execute select SQL statement
 			query.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
 			@SuppressWarnings("unchecked")
@@ -553,23 +551,23 @@ public class GroupingDAOImpl implements GroupingDAO {
 			if (rows != null) {
 				LOGGER.info("recordsFetched..." + rows.size());
 				orinList = new ArrayList<>();
-				
+
 				for (final Object row : rows) {
 					@SuppressWarnings("rawtypes")
 					final Map rowMap = (Map) row;
 
 					final String parentMdmid = rowMap.get("PARENT_MDMID") != null ? rowMap.get("PARENT_MDMID").toString() : "";
-					
+
 					orinList.add(parentMdmid);
 
 				}
 			}
-		} catch(Exception ex){
+		} catch (Exception ex) {
 			LOGGER.error("inside PEPFetchException-->" + ex);
 			throw new PEPFetchException(ex.getMessage());
 		} finally {
 			LOGGER.info("recordsFetched. getSKUCount finally block..");
-			if(session!=null) {
+			if (session != null) {
 				session.close();
 			}
 		}
@@ -577,10 +575,11 @@ public class GroupingDAOImpl implements GroupingDAO {
 		LOGGER.info("Fetch New GBS attribute Details. getSKUCount-->End.");
 		return orinList;
 	}
-	
 
 	/**
-	 * This method is used to get the Existing Group Attribute Details for GBS Grouping from Database.
+	 * This method is used to get the Existing Group Attribute Details for GBS
+	 * Grouping from Database.
+	 * 
 	 * @param vendorStyleNo
 	 * @param styleOrin
 	 * @param deptNoSearch
@@ -591,8 +590,8 @@ public class GroupingDAOImpl implements GroupingDAO {
 	 * @return
 	 * @throws PEPFetchException
 	 */
-	public List<GroupAttributeForm> getNewGBSDetails(final String vendorStyleNo, final String styleOrin, final String deptNoSearch, 
-			final String classNoSearch,	final String supplierSiteIdSearch, final String upcNoSearch, final String groupId,
+	public List<GroupAttributeForm> getNewGBSDetails(final String vendorStyleNo, final String styleOrin, final String deptNoSearch,
+			final String classNoSearch, final String supplierSiteIdSearch, final String upcNoSearch, final String groupId,
 			List<String> orinList) throws PEPFetchException {
 		LOGGER.info("Fetch New GBS attribute Details. getNewGBSDetails-->Start.");
 		if (LOGGER.isDebugEnabled()) {
@@ -601,10 +600,10 @@ public class GroupingDAOImpl implements GroupingDAO {
 		}
 		Session session = null;
 		GroupAttributeForm groupAttributeForm = null;
-		//StyleAttributeForm styleAttributeForm = null;
+		// StyleAttributeForm styleAttributeForm = null;
 		List<GroupAttributeForm> groupAttributeFormList = null;
-		//List<StyleAttributeForm> styleAttributeFormList = null;
-		
+		// List<StyleAttributeForm> styleAttributeFormList = null;
+
 		try {
 			String deptNoForInSearch = GroupingUtil.getInValForQuery(deptNoSearch);
 			String classNoSearchSearch = GroupingUtil.getInValForQuery(classNoSearch);
@@ -615,13 +614,13 @@ public class GroupingDAOImpl implements GroupingDAO {
 			session = sessionFactory.openSession();
 			// Hibernate provides a createSQLQuery method to let you call your
 			// native SQL statement directly.
-			final Query query = session.createSQLQuery(XqueryConstants.getNewGBSDetails(vendorStyleNo, styleOrin, deptNoForInSearch, classNoSearchSearch,
-					supplierSiteIdSearch, upcNoSearch, deptNoSearch, classNoSearch));
+			final Query query = session.createSQLQuery(XqueryConstants.getNewGBSDetails(vendorStyleNo, styleOrin, deptNoForInSearch,
+					classNoSearchSearch, supplierSiteIdSearch, upcNoSearch, deptNoSearch, classNoSearch));
 
 			query.setParameter("groupIdSql", groupId);
 			if (null != vendorStyleNo && !("").equals(vendorStyleNo.trim())) {
 				query.setParameter("styleIdSql", vendorStyleNo);
-			} 
+			}
 			if (null != styleOrin && !("").equals(styleOrin.trim())) {
 				query.setParameter("mdmidSql", styleOrin);
 			}
@@ -633,8 +632,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 			}
 			LOGGER.info("Query-->getNewGBSDetails-->" + query);
 
-
-			//styleAttributeFormList = new ArrayList<>();
+			// styleAttributeFormList = new ArrayList<>();
 			groupAttributeFormList = new ArrayList<>();
 
 			// execute select SQL statement
@@ -645,19 +643,19 @@ public class GroupingDAOImpl implements GroupingDAO {
 				LOGGER.info("recordsFetched..." + rows.size());
 
 				for (final Object row : rows) {
-					
+
 					@SuppressWarnings("rawtypes")
 					final Map rowMap = (Map) row;
 					groupAttributeForm = new GroupAttributeForm();
 
 					final String parentMdmid = rowMap.get("PARENT_MDMID") != null ? rowMap.get("PARENT_MDMID").toString() : "";
-					
-					if(!orinList.contains(parentMdmid)){
-						
+
+					if (!orinList.contains(parentMdmid)) {
+
 						final String mdmid = rowMap.get("MDMID") != null ? rowMap.get("MDMID").toString() : "";
 						final String styleNo = rowMap.get("PRIMARYSUPPLIERVPN") != null ? rowMap.get("PRIMARYSUPPLIERVPN").toString() : "";
 						String productName = rowMap.get("NAME") != null ? rowMap.get("NAME").toString() : "";
-						if(productName.indexOf(":") != -1){
+						if (productName.indexOf(":") != -1) {
 							productName = productName.substring(0, productName.indexOf(":"));
 						}
 						final String colorCode = rowMap.get("COLOR_CODE") != null ? rowMap.get("COLOR_CODE").toString() : "";
@@ -665,10 +663,12 @@ public class GroupingDAOImpl implements GroupingDAO {
 						final String entryType = rowMap.get("ENTRY_TYPE") != null ? rowMap.get("ENTRY_TYPE").toString() : "";
 						final String sizeDesc = rowMap.get("SIZEDESC") != null ? rowMap.get("SIZEDESC").toString() : "";
 						final String sizeCode = rowMap.get("SIZE_CODE") != null ? rowMap.get("SIZE_CODE").toString() : "";
-						final String isAlreadyInGroup = rowMap.get("ALREADY_IN_GROUP") != null ? rowMap.get("ALREADY_IN_GROUP").toString() : "";
+						final String isAlreadyInGroup = rowMap.get("ALREADY_IN_GROUP") != null ? rowMap.get("ALREADY_IN_GROUP").toString()
+								: "";
 						final String petState = rowMap.get("PET_STATE") != null ? rowMap.get("PET_STATE").toString() : "";
-						final String isAlreadyInSameGroup = rowMap.get("EXIST_IN_SAME_GROUP") != null ? rowMap.get("EXIST_IN_SAME_GROUP").toString() : "";
-	
+						final String isAlreadyInSameGroup = rowMap.get("EXIST_IN_SAME_GROUP") != null ? rowMap.get("EXIST_IN_SAME_GROUP")
+								.toString() : "";
+
 						groupAttributeForm.setOrinNumber(mdmid);
 						groupAttributeForm.setStyleNumber(styleNo);
 						groupAttributeForm.setProdName(productName);
@@ -681,18 +681,18 @@ public class GroupingDAOImpl implements GroupingDAO {
 						groupAttributeForm.setEntryType(entryType);
 						groupAttributeForm.setParentMdmid(parentMdmid);
 						groupAttributeForm.setIsAlreadyInSameGroup(isAlreadyInSameGroup);
-						
+
 						groupAttributeFormList.add(groupAttributeForm);
 					}
 
 				}
 			}
-		} catch(Exception ex){
+		} catch (Exception ex) {
 			LOGGER.error("inside PEPFetchException-->" + ex);
 			throw new PEPFetchException(ex.getMessage());
 		} finally {
 			LOGGER.info("recordsFetched. getNewGBSDetails finally block..");
-			if(session!=null) {
+			if (session != null) {
 				session.close();
 			}
 		}
@@ -704,8 +704,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 	/**
 	 * Method to get the groups for search group.
 	 * 
-	 * @param groupSearchForm
-	 *            GroupSearchForm
+	 * @param groupSearchForm GroupSearchForm
 	 * @return List
 	 * 
 	 *         Method added For PIM Phase 2 - groupSearch Date: 05/19/2016 Added
@@ -713,14 +712,14 @@ public class GroupingDAOImpl implements GroupingDAO {
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<GroupSearchDTO> groupSearch(final GroupSearchForm groupSearchForm){
+	public List<GroupSearchDTO> groupSearch(final GroupSearchForm groupSearchForm) {
 
 		LOGGER.info("Entering GroupingDAO.groupSearch() method.");
 		Session session = null;
 		final List<GroupSearchDTO> groupList = new ArrayList<>();
 		GroupSearchDTO groupSearchDTO = null;
 		List<Object> rows = null;
-		
+
 		try {
 			session = sessionFactory.openSession();
 			final Query query = session.createSQLQuery(XqueryConstants.getGroupDetailsQuery(groupSearchForm));
@@ -756,13 +755,13 @@ public class GroupingDAOImpl implements GroupingDAO {
 					groupList.add(groupSearchDTO);
 				}
 			}
-		} catch(Exception ex){
+		} catch (Exception ex) {
 			LOGGER.error("inside groupSearch.Exception-->" + ex);
 		} finally {
-						if(session!=null){
-							
-							session.close();
-							}
+			if (session != null) {
+
+				session.close();
+			}
 		}
 		LOGGER.info("Exiting GroupingDAO.groupSearch() method.");
 
@@ -772,8 +771,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 	/**
 	 * Method to get the groups count for search group.
 	 * 
-	 * @param groupSearchForm
-	 *            GroupSearchForm
+	 * @param groupSearchForm GroupSearchForm
 	 * @return int
 	 * 
 	 *         Method added For PIM Phase 2 - groupSearch Date: 05/27/2016 Added
@@ -789,7 +787,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 		Session session = null;
 		BigDecimal rowCount = new BigDecimal(0);
 		List<Object> rows = null;
-		
+
 		try {
 			session = sessionFactory.openSession();
 			final Query query = session.createSQLQuery(XqueryConstants.getGroupDetailsCountQuery(groupSearchForm));
@@ -807,11 +805,11 @@ public class GroupingDAOImpl implements GroupingDAO {
 				}
 			}
 		} finally {
-						if(session!=null){
-							
-							session.close();
-						}
-			
+			if (session != null) {
+
+				session.close();
+			}
+
 		}
 		LOGGER.info("Exiting GroupingDAO.groupSearchCount() method.");
 
@@ -821,10 +819,8 @@ public class GroupingDAOImpl implements GroupingDAO {
 	/**
 	 * Method to get the groups for search group.
 	 * 
-	 * @param groupSearchDTOList
-	 *            List
-	 * @param groupSearchForm
-	 *            GroupSearchForm
+	 * @param groupSearchDTOList List
+	 * @param groupSearchForm GroupSearchForm
 	 * @return List
 	 * 
 	 *         Method added For PIM Phase 2 - groupSearch Date: 05/19/2016 Added
@@ -842,7 +838,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 		final List<GroupSearchDTO> groupList = new ArrayList<>();
 		GroupSearchDTO groupSearchDTO = null;
 		List<Object> rows = null;
-		
+
 		try {
 			session = sessionFactory.openSession();
 			final Query query = session.createSQLQuery(XqueryConstants.getGroupDetailsQueryParent(groupSearchDTOList, groupSearchForm));
@@ -850,7 +846,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 
 			query.setFirstResult(((groupSearchForm.getPageNumber() - 1) * groupSearchForm.getRecordsPerPage()) - 1);
 			query.setMaxResults(groupSearchForm.getRecordsPerPage());
-			
+
 			rows = query.list();
 
 			if (rows != null) {
@@ -881,11 +877,11 @@ public class GroupingDAOImpl implements GroupingDAO {
 				}
 			}
 		} finally {
-						if(session!=null) {
-							
-							session.close();
-						}
-			
+			if (session != null) {
+
+				session.close();
+			}
+
 		}
 		LOGGER.info("Exiting GroupingDAO.groupSearchParent() method.");
 		return groupList;
@@ -894,10 +890,8 @@ public class GroupingDAOImpl implements GroupingDAO {
 	/**
 	 * Method to get the parents groups count for search group.
 	 * 
-	 * @param groupSearchDTOList
-	 *            List
-	 * @param groupSearchForm
-	 *            GroupSearchForm
+	 * @param groupSearchDTOList List
+	 * @param groupSearchForm GroupSearchForm
 	 * @return int
 	 * 
 	 *         Method added For PIM Phase 2 - groupSearch Date: 05/27/2016 Added
@@ -914,11 +908,10 @@ public class GroupingDAOImpl implements GroupingDAO {
 		Session session = null;
 		BigDecimal rowCount = new BigDecimal(0);
 		List<Object> rows = null;
-		
+
 		try {
 			session = sessionFactory.openSession();
-			final Query query = session
-					.createSQLQuery(XqueryConstants.getGroupDetailsCountQueryParent(groupSearchDTOList));
+			final Query query = session.createSQLQuery(XqueryConstants.getGroupDetailsCountQueryParent(groupSearchDTOList));
 			query.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
 			rows = query.list();
 			if (rows != null) {
@@ -932,11 +925,11 @@ public class GroupingDAOImpl implements GroupingDAO {
 				}
 			}
 		} finally {
-						if(session!=null){
-							
-							session.close();
-						}
-			
+			if (session != null) {
+
+				session.close();
+			}
+
 		}
 		LOGGER.info("Exiting GroupingDAO.groupSearchParentCount() method.");
 
@@ -961,8 +954,8 @@ public class GroupingDAOImpl implements GroupingDAO {
 			session = sessionFactory.openSession();
 			final Query query1 = session.createSQLQuery(XqueryConstants.getLikeDepartmentDetailsForString());
 			if (query1 != null) {
-			query1.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
-			
+				query1.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
+
 				@SuppressWarnings("unchecked")
 				final List<Object> rows1 = query1.list();
 				if (rows1 != null && rows1.size() > 0) {
@@ -977,11 +970,11 @@ public class GroupingDAOImpl implements GroupingDAO {
 				}
 			}
 		} finally {
-						if(session!=null){
-							
-							session.close();
-						}
-			
+			if (session != null) {
+
+				session.close();
+			}
+
 		}
 		LOGGER.info("Exiting getDeptDetailsByDepNoFromADSE() in GroupingDAOImpl class..");
 		return adseDepartmentList;
@@ -990,8 +983,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 	/**
 	 * Method to get the classes for search group.
 	 * 
-	 * @param departmentNumbers
-	 *            String
+	 * @param departmentNumbers String
 	 * @return List
 	 * 
 	 *         Method added For PIM Phase 2 - groupSearch Date: 05/25/2016 Added
@@ -1018,11 +1010,11 @@ public class GroupingDAOImpl implements GroupingDAO {
 				classDetailsList.add(classDetails);
 			}
 		} finally {
-						if(session!=null) {
-							
-							session.close();
-						}
-			
+			if (session != null) {
+
+				session.close();
+			}
+
 		}
 		LOGGER.info("Exiting getClassDetailsByDepNos() in GroupingDAOImpl class..");
 		return classDetailsList;
@@ -1044,7 +1036,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 		Session session = null;
 		GroupAttributeForm groupAttributeForm = null;
 		List<GroupAttributeForm> groupAttributeFormList = null;
-		
+
 		try {
 			session = sessionFactory.openSession();
 			// Hibernate provides a createSQLQuery method to let you call your
@@ -1064,7 +1056,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 				LOGGER.info("recordsFetched..." + rows.size());
 
 				for (final Object row : rows) {
-				
+
 					@SuppressWarnings("rawtypes")
 					final Map rowMap = (Map) row;
 					groupAttributeForm = new GroupAttributeForm();
@@ -1095,11 +1087,11 @@ public class GroupingDAOImpl implements GroupingDAO {
 			}
 		} finally {
 			LOGGER.info("recordsFetched. getExistSplitColorDetails finally block..");
-			if(session!=null){
-				
+			if (session != null) {
+
 				session.close();
 			}
-			
+
 		}
 
 		LOGGER.info("Fetch Split Color Existing Details. getExistSplitColorDetails-->End.");
@@ -1121,7 +1113,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 		Session session = null;
 		GroupAttributeForm groupAttributeForm = null;
 		List<GroupAttributeForm> groupAttributeFormList = null;
-		
+
 		try {
 			session = sessionFactory.openSession();
 			// Hibernate provides a createSQLQuery method to let you call your
@@ -1141,7 +1133,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 				LOGGER.info("recordsFetched..." + rows.size());
 
 				for (final Object row : rows) {
-				
+
 					@SuppressWarnings("rawtypes")
 					final Map rowMap = (Map) row;
 					groupAttributeForm = new GroupAttributeForm();
@@ -1175,20 +1167,20 @@ public class GroupingDAOImpl implements GroupingDAO {
 			}
 		} finally {
 			LOGGER.info("recordsFetched. getExistSplitSkuDetails finally block..");
-			if(session!=null){
-				
+			if (session != null) {
+
 				session.close();
 			}
-			
+
 		}
 
 		LOGGER.info("Fetch Split Color Existing Details. getExistSplitColorDetails-->End.");
 		return groupAttributeFormList;
 	}
-	
 
 	/**
-	 * This method is used to get the Existing Group Attribute Details for Consolidated Product Grouping from Database.
+	 * This method is used to get the Existing Group Attribute Details for
+	 * Consolidated Product Grouping from Database.
 	 * 
 	 * @param groupId
 	 * @return groupAttributeFormList
@@ -1203,7 +1195,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 		StyleAttributeForm styleAttributeForm = null;
 		List<GroupAttributeForm> groupAttributeFormList = null;
 		List<StyleAttributeForm> styleAttributeFormList = null;
-		
+
 		try {
 			session = sessionFactory.openSession();
 			// Hibernate provides a createSQLQuery method to let you call your
@@ -1212,7 +1204,6 @@ public class GroupingDAOImpl implements GroupingDAO {
 
 			query.setParameter("groupidSql", groupId);
 			LOGGER.info("Query-->getExistCPGDetails-->" + query);
-
 
 			styleAttributeFormList = new ArrayList<>();
 
@@ -1224,12 +1215,12 @@ public class GroupingDAOImpl implements GroupingDAO {
 				LOGGER.info("recordsFetched..." + rows.size());
 
 				for (final Object row : rows) {
-					
+
 					@SuppressWarnings("rawtypes")
 					final Map rowMap = (Map) row;
 					groupAttributeForm = new GroupAttributeForm();
 					styleAttributeForm = new StyleAttributeForm();
-					
+
 					final String mdmid = rowMap.get("MDMID") != null ? rowMap.get("MDMID").toString() : "";
 					final String styleNo = rowMap.get("PRIMARYSUPPLIERVPN") != null ? rowMap.get("PRIMARYSUPPLIERVPN").toString() : "";
 					final String productName = rowMap.get("PRODUCT_NAME") != null ? rowMap.get("PRODUCT_NAME").toString() : "";
@@ -1237,12 +1228,12 @@ public class GroupingDAOImpl implements GroupingDAO {
 					final String colorDesc = rowMap.get("COLOR_DESC") != null ? rowMap.get("COLOR_DESC").toString() : "";
 					final String entryType = rowMap.get("ENTRY_TYPE") != null ? rowMap.get("ENTRY_TYPE").toString() : "";
 					final String parentMdmid = rowMap.get("PARENT_MDMID") != null ? rowMap.get("PARENT_MDMID").toString() : "";
-					final String componentStyleId = rowMap.get("COMPONENT_STYLE_ID") != null ? rowMap.get("COMPONENT_STYLE_ID").toString() : "";
+					final String componentStyleId = rowMap.get("COMPONENT_STYLE_ID") != null ? rowMap.get("COMPONENT_STYLE_ID").toString()
+							: "";
 					final String isDefaultAttr = rowMap.get("COMPONENT_DEFAULT") != null ? rowMap.get("COMPONENT_DEFAULT").toString() : "";
 					final String classId = rowMap.get("CLASS_ID") != null ? rowMap.get("CLASS_ID").toString() : "";
-					
 
-					if(("Style").equals(entryType)) {
+					if (("Style").equals(entryType)) {
 						groupAttributeFormList = new ArrayList<>();
 						styleAttributeForm.setOrinNumber(mdmid);
 						styleAttributeForm.setStyleNumber(styleNo);
@@ -1259,7 +1250,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 						styleAttributeForm.setIsDefault(isDefaultAttr);
 						styleAttributeForm.setClassId(classId);
 						styleAttributeFormList.add(styleAttributeForm);
-					}else {
+					} else {
 						groupAttributeForm.setOrinNumber(mdmid);
 						groupAttributeForm.setStyleNumber(styleNo);
 						groupAttributeForm.setProdName(productName);
@@ -1273,13 +1264,17 @@ public class GroupingDAOImpl implements GroupingDAO {
 						groupAttributeForm.setComponentStyleId(componentStyleId);
 						groupAttributeForm.setIsDefault(isDefaultAttr);
 						groupAttributeForm.setClassId(classId);
- 
-						for(int i = 0; i < styleAttributeFormList.size(); i++){
-							StyleAttributeForm styleAttributeFormSub = styleAttributeFormList.get(i);
-						
-							if((styleAttributeFormSub.getOrinNumber()).equals(parentMdmid)){
 
-								groupAttributeForm.setProdName(styleAttributeFormSub.getProdName()); // Replacing Product Name from Style
+						for (int i = 0; i < styleAttributeFormList.size(); i++) {
+							StyleAttributeForm styleAttributeFormSub = styleAttributeFormList.get(i);
+
+							if ((styleAttributeFormSub.getOrinNumber()).equals(parentMdmid)) {
+
+								groupAttributeForm.setProdName(styleAttributeFormSub.getProdName()); // Replacing
+																										// Product
+																										// Name
+																										// from
+																										// Style
 								groupAttributeFormList = styleAttributeFormSub.getGroupAttributeFormList();
 								groupAttributeFormList.add(groupAttributeForm);
 								break;
@@ -1288,21 +1283,21 @@ public class GroupingDAOImpl implements GroupingDAO {
 					}
 				}
 			}
-		}  finally {
+		} finally {
 			LOGGER.info("recordsFetched. getExistCPGDetails finally block..");
-			if(session!=null){
+			if (session != null) {
 				session.close();
 			}
-			
+
 		}
 
 		LOGGER.info("Fetch Split Color Existing Details. getExistCPGDetails-->End.");
 		return styleAttributeFormList;
 	}
 
-	
 	/**
-	 * This method is used to get the Existing Group Attribute Details for GSS from Database.
+	 * This method is used to get the Existing Group Attribute Details for GSS
+	 * from Database.
 	 * 
 	 * @param groupId
 	 * @return groupAttributeFormList
@@ -1315,7 +1310,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 		Session session = null;
 		GroupAttributeForm groupAttributeForm = null;
 		List<GroupAttributeForm> groupAttributeFormList = null;
-		
+
 		try {
 			session = sessionFactory.openSession();
 			// Hibernate provides a createSQLQuery method to let you call your
@@ -1335,7 +1330,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 				LOGGER.info("recordsFetched..." + rows.size());
 
 				for (final Object row : rows) {
-				
+
 					@SuppressWarnings("rawtypes")
 					final Map rowMap = (Map) row;
 					groupAttributeForm = new GroupAttributeForm();
@@ -1343,7 +1338,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 					final String mdmid = rowMap.get("MDMID") != null ? rowMap.get("MDMID").toString() : "";
 					final String styleNo = rowMap.get("PRIMARYSUPPLIERVPN") != null ? rowMap.get("PRIMARYSUPPLIERVPN").toString() : "";
 					String productName = rowMap.get("NAME") != null ? rowMap.get("NAME").toString() : "";
-					if(productName.indexOf(":") != -1){
+					if (productName.indexOf(":") != -1) {
 						productName = productName.substring(0, productName.indexOf(":"));
 					}
 					final String colorCode = rowMap.get("COLOR_CODE") != null ? rowMap.get("COLOR_CODE").toString() : "";
@@ -1355,10 +1350,9 @@ public class GroupingDAOImpl implements GroupingDAO {
 					final String isAlreadyInGroup = rowMap.get("ALREADY_IN_GROUP") != null ? rowMap.get("ALREADY_IN_GROUP").toString() : "";
 					final String petState = rowMap.get("PET_STATE") != null ? rowMap.get("PET_STATE").toString() : "";
 					String isDefault = rowMap.get("COMPONENT_DEFAULT") != null ? rowMap.get("COMPONENT_DEFAULT").toString() : "";
-					
-					isDefault = ("").equalsIgnoreCase(isDefault.trim()) ? "No" : ("false")
-							.equalsIgnoreCase(isDefault.trim()) ? "No" : ("true").equalsIgnoreCase(isDefault.trim()) ? "Yes"
-							: "No";
+
+					isDefault = ("").equalsIgnoreCase(isDefault.trim()) ? "No" : ("false").equalsIgnoreCase(isDefault.trim()) ? "No"
+							: ("true").equalsIgnoreCase(isDefault.trim()) ? "Yes" : "No";
 
 					groupAttributeForm.setOrinNumber(mdmid);
 					groupAttributeForm.setStyleNumber(styleNo);
@@ -1378,7 +1372,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 			}
 		} finally {
 			LOGGER.info("recordsFetched. getExistGBSDetails finally block..");
-			if(session!=null){
+			if (session != null) {
 				session.close();
 			}
 		}
@@ -1386,9 +1380,11 @@ public class GroupingDAOImpl implements GroupingDAO {
 		LOGGER.info("Fetch Split Color Existing Details. getExistGBSDetails-->End.");
 		return groupAttributeFormList;
 	}
-	
+
 	/**
-	 *  This method is used to get the search result Details for Regular/Beauty Collection Grouping.
+	 * This method is used to get the search result Details for Regular/Beauty
+	 * Collection Grouping.
+	 * 
 	 * @param vendorStyleNo
 	 * @param styleOrin
 	 * @param deptNoSearch
@@ -1406,17 +1402,17 @@ public class GroupingDAOImpl implements GroupingDAO {
 	 * @throws PEPFetchException
 	 */
 	@Override
-	public List<StyleAttributeForm> getRegularBeautySearchResult(final String vendorStyleNo, final String styleOrin, final String deptNoSearch, 
-			final String classNoSearch,	final String supplierSiteIdSearch, final String upcNoSearch, final String groupId,
-			final String groupIdSearch, final String groupNameSearch, final String sortedColumn, final String sortingOrder,
-			final int pageNumber, final int recordsPerPage) throws PEPFetchException {
+	public List<StyleAttributeForm> getRegularBeautySearchResult(final String vendorStyleNo, final String styleOrin,
+			final String deptNoSearch, final String classNoSearch, final String supplierSiteIdSearch, final String upcNoSearch,
+			final String groupId, final String groupIdSearch, final String groupNameSearch, final String sortedColumn,
+			final String sortingOrder, final int pageNumber, final int recordsPerPage) throws PEPFetchException {
 		LOGGER.info("Fetch New Regular/Beauty Collection attribute Details. getRegularBeautySearchResult-->Start.");
 		Session session = null;
 		GroupAttributeForm groupAttributeForm = null;
 		StyleAttributeForm styleAttributeForm = null;
 		List<GroupAttributeForm> groupAttributeFormList = null;
 		List<StyleAttributeForm> styleAttributeFormList = null;
-		
+
 		try {
 			String deptNoForInSearch = GroupingUtil.getInValForQuery(deptNoSearch);
 			String classNoSearchSearch = GroupingUtil.getInValForQuery(classNoSearch);
@@ -1426,13 +1422,14 @@ public class GroupingDAOImpl implements GroupingDAO {
 				LOGGER.debug("styleOrin-->" + styleOrin);
 			}
 			session = sessionFactory.openSession();
-			final Query query = session.createSQLQuery(XqueryConstants.getRegularBeautySearchResult(vendorStyleNo, styleOrin, deptNoForInSearch, classNoSearchSearch,
-					supplierSiteIdSearch, upcNoSearch, deptNoSearch, classNoSearch, groupIdSearch, groupNameSearch, sortedColumn, sortingOrder));
+			final Query query = session.createSQLQuery(XqueryConstants.getRegularBeautySearchResult(vendorStyleNo, styleOrin,
+					deptNoForInSearch, classNoSearchSearch, supplierSiteIdSearch, upcNoSearch, deptNoSearch, classNoSearch, groupIdSearch,
+					groupNameSearch, sortedColumn, sortingOrder));
 
 			query.setParameter("groupIdSql", groupId);
 			if (null != vendorStyleNo && !("").equals(vendorStyleNo.trim())) {
 				query.setParameter("styleIdSql", vendorStyleNo);
-			} 
+			}
 			if (null != styleOrin && !("").equals(styleOrin.trim())) {
 				query.setParameter("mdmidSql", styleOrin);
 			}
@@ -1443,43 +1440,43 @@ public class GroupingDAOImpl implements GroupingDAO {
 			if (null != upcNoSearch && !("").equals(upcNoSearch.trim())) {
 				query.setParameter("upcNoSql", upcNoSearch);
 			}
-			
-			
-			LOGGER.info("Query-->getRegularBeautySearchResult-->" + query);
 
+			LOGGER.info("Query-->getRegularBeautySearchResult-->" + query);
 
 			styleAttributeFormList = new ArrayList<>();
 
 			// execute select SQL statement
 			query.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
-			/*query.setFirstResult(((pageNumber - 1) * recordsPerPage));
-			query.setMaxResults(recordsPerPage);*/
+			/*
+			 * query.setFirstResult(((pageNumber - 1) * recordsPerPage));
+			 * query.setMaxResults(recordsPerPage);
+			 */
 			@SuppressWarnings("unchecked")
 			final List<Object> rows = query.list();
 			if (rows != null) {
 				LOGGER.info("recordsFetched..." + rows.size());
 
 				for (final Object row : rows) {
-					
+
 					@SuppressWarnings("rawtypes")
 					final Map rowMap = (Map) row;
 					groupAttributeForm = new GroupAttributeForm();
 					styleAttributeForm = new StyleAttributeForm();
-					
+
 					final String mdmid = rowMap.get("MDMID") != null ? rowMap.get("MDMID").toString() : "";
 					final String styleNo = rowMap.get("PRIMARYSUPPLIERVPN") != null ? rowMap.get("PRIMARYSUPPLIERVPN").toString() : "";
 					final String productName = rowMap.get("PRODUCT_NAME") != null ? rowMap.get("PRODUCT_NAME").toString() : "";
 					final String colorCode = rowMap.get("COLOR_CODE") != null ? rowMap.get("COLOR_CODE").toString() : "";
 					final String colorDesc = rowMap.get("COLOR_DESC") != null ? rowMap.get("COLOR_DESC").toString() : "";
 					final String entryType = rowMap.get("ENTRY_TYPE") != null ? rowMap.get("ENTRY_TYPE").toString() : "";
-					final String parentMdmid = rowMap.get("PARENT_MDMID") != null ? rowMap.get("PARENT_MDMID").toString() : "";									
+					final String parentMdmid = rowMap.get("PARENT_MDMID") != null ? rowMap.get("PARENT_MDMID").toString() : "";
 					final String classId = rowMap.get("CLASS_ID") != null ? rowMap.get("CLASS_ID").toString() : "";
 					final String isAlreadyInGroup = rowMap.get("ALREADY_IN_GROUP") != null ? rowMap.get("ALREADY_IN_GROUP").toString() : "";
-					final String isAlreadyInSameGroup = rowMap.get("EXIST_IN_SAME_GROUP") != null ? rowMap.get("EXIST_IN_SAME_GROUP").toString() : "";
+					final String isAlreadyInSameGroup = rowMap.get("EXIST_IN_SAME_GROUP") != null ? rowMap.get("EXIST_IN_SAME_GROUP")
+							.toString() : "";
 					final String haveChildGroup = rowMap.get("GROUP_ID") != null ? rowMap.get("GROUP_ID").toString() : "";
 
-					if(!("Style").equals(entryType)
-							&& !("StyleColor").equals(entryType)) {
+					if (!("Style").equals(entryType) && !("StyleColor").equals(entryType)) {
 						groupAttributeFormList = new ArrayList<>();
 						styleAttributeForm.setOrinNumber(mdmid);
 						styleAttributeForm.setStyleNumber(styleNo);
@@ -1495,10 +1492,9 @@ public class GroupingDAOImpl implements GroupingDAO {
 						styleAttributeForm.setGroupAttributeFormList(groupAttributeFormList);
 						styleAttributeForm.setClassId(classId);
 						styleAttributeForm.setIsGroup("Y");
-						styleAttributeForm.setHaveChildGroup(haveChildGroup);						
+						styleAttributeForm.setHaveChildGroup(haveChildGroup);
 						styleAttributeFormList.add(styleAttributeForm);
-					}
-					else if(("Style").equals(entryType)) {
+					} else if (("Style").equals(entryType)) {
 						groupAttributeFormList = new ArrayList<>();
 						styleAttributeForm.setOrinNumber(mdmid);
 						styleAttributeForm.setStyleNumber(styleNo);
@@ -1516,7 +1512,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 						styleAttributeForm.setIsGroup("N");
 						styleAttributeForm.setHaveChildGroup("N");
 						styleAttributeFormList.add(styleAttributeForm);
-					}else {
+					} else {
 						groupAttributeForm.setOrinNumber(mdmid);
 						groupAttributeForm.setStyleNumber(styleNo);
 						groupAttributeForm.setProdName(productName);
@@ -1531,27 +1527,27 @@ public class GroupingDAOImpl implements GroupingDAO {
 						groupAttributeForm.setClassId(classId);
 						groupAttributeForm.setIsGroup("N");
 						groupAttributeForm.setHaveChildGroup("N");
-						for(int i = 0; i < styleAttributeFormList.size(); i++){
+						for (int i = 0; i < styleAttributeFormList.size(); i++) {
 							StyleAttributeForm styleAttributeFormSub = styleAttributeFormList.get(i);
-						
-							if((styleAttributeFormSub.getOrinNumber()).equals(parentMdmid)){
+
+							if ((styleAttributeFormSub.getOrinNumber()).equals(parentMdmid)) {
 								groupAttributeForm.setProdName(styleAttributeFormSub.getProdName());
 								groupAttributeFormList = styleAttributeFormSub.getGroupAttributeFormList();
 								groupAttributeFormList.add(groupAttributeForm);
 								break;
 							}
 						}
-						
+
 					}
 				}
 			}
-		} catch(Exception ex){
+		} catch (Exception ex) {
 			LOGGER.error("inside PEPFetchException-->" + ex);
 			throw new PEPFetchException(ex.getMessage());
 		} finally {
 			LOGGER.info("recordsFetched. getRegularBeautySearchResult finally block..");
-			if(session!=null) {
-				
+			if (session != null) {
+
 				session.close();
 			}
 
@@ -1560,9 +1556,11 @@ public class GroupingDAOImpl implements GroupingDAO {
 		LOGGER.info("getRegularBeautySearchResult-->End.");
 		return styleAttributeFormList;
 	}
-	
+
 	/**
-	 *  This method is used to get the search result Details count for Regular/Beauty Collection Grouping.
+	 * This method is used to get the search result Details count for
+	 * Regular/Beauty Collection Grouping.
+	 * 
 	 * @param vendorStyleNo
 	 * @param styleOrin
 	 * @param deptNoForInSearch
@@ -1577,23 +1575,22 @@ public class GroupingDAOImpl implements GroupingDAO {
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public int getRegularBeautySearchResultCount(final String vendorStyleNo, final String styleOrin, final String deptNoForInSearch, 
-			final String classNoForInSearch, final String supplierSiteIdSearch, final String upcNoSearch,
-			final String groupId, final String groupIdSearch, final String groupNameSearch) {
+	public int getRegularBeautySearchResultCount(final String vendorStyleNo, final String styleOrin, final String deptNoForInSearch,
+			final String classNoForInSearch, final String supplierSiteIdSearch, final String upcNoSearch, final String groupId,
+			final String groupIdSearch, final String groupNameSearch) {
 
 		LOGGER.info("Entering GroupingDAO.getRegularBeautySearchResultCount() method.");
 		Session session = null;
 		BigDecimal rowCount = new BigDecimal(0);
 		List<Object> rows = null;
-		
+
 		try {
 			String deptNoSearch = GroupingUtil.getInValForQuery(deptNoForInSearch);
 			String classNoSearch = GroupingUtil.getInValForQuery(classNoForInSearch);
 			session = sessionFactory.openSession();
-			final Query query = session
-					.createSQLQuery(XqueryConstants.getRegularBeautySearchResultCountQuery(vendorStyleNo, styleOrin,
-							deptNoForInSearch, classNoForInSearch, supplierSiteIdSearch, upcNoSearch,
-							deptNoSearch, classNoSearch, groupIdSearch, groupNameSearch));
+			final Query query = session.createSQLQuery(XqueryConstants.getRegularBeautySearchResultCountQuery(vendorStyleNo, styleOrin,
+					deptNoForInSearch, classNoForInSearch, supplierSiteIdSearch, upcNoSearch, deptNoSearch, classNoSearch, groupIdSearch,
+					groupNameSearch));
 			query.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
 			rows = query.list();
 			if (rows != null) {
@@ -1613,12 +1610,13 @@ public class GroupingDAOImpl implements GroupingDAO {
 
 		}
 		LOGGER.info("Exiting GroupingDAO.getRegularBeautySearchResultCount() method.");
-		
+
 		return rowCount.intValue();
 	}
-	
+
 	/**
-	 * This method is used to get the Existing Regular/Beauty Collection Grouping details from Database.
+	 * This method is used to get the Existing Regular/Beauty Collection
+	 * Grouping details from Database.
 	 * 
 	 * @param groupId
 	 * @return groupAttributeFormList
@@ -1634,7 +1632,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 		StyleAttributeForm styleAttributeForm = null;
 		List<GroupAttributeForm> groupAttributeFormList = null;
 		List<StyleAttributeForm> styleAttributeFormList = null;
-		
+
 		try {
 			session = sessionFactory.openSession();
 			// Hibernate provides a createSQLQuery method to let you call your
@@ -1644,7 +1642,6 @@ public class GroupingDAOImpl implements GroupingDAO {
 			query.setParameter("groupId", groupId);
 			query.setParameter("groupId", groupId);
 			LOGGER.info("Query-->getExistRegularBeautyDetails-->" + query);
-
 
 			styleAttributeFormList = new ArrayList<>();
 
@@ -1656,26 +1653,24 @@ public class GroupingDAOImpl implements GroupingDAO {
 				LOGGER.info("recordsFetched..." + rows.size());
 
 				for (final Object row : rows) {
-					
+
 					@SuppressWarnings("rawtypes")
 					final Map rowMap = (Map) row;
 					groupAttributeForm = new GroupAttributeForm();
 					styleAttributeForm = new StyleAttributeForm();
-					
+
 					final String mdmid = rowMap.get("MDMID") != null ? rowMap.get("MDMID").toString() : "";
 					final String styleNo = rowMap.get("PRIMARYSUPPLIERVPN") != null ? rowMap.get("PRIMARYSUPPLIERVPN").toString() : "";
 					final String productName = rowMap.get("PRODUCT_NAME") != null ? rowMap.get("PRODUCT_NAME").toString() : "";
 					final String colorCode = rowMap.get("COLOR_CODE") != null ? rowMap.get("COLOR_CODE").toString() : "";
 					final String colorDesc = rowMap.get("COLOR_DESC") != null ? rowMap.get("COLOR_DESC").toString() : "";
 					final String entryType = rowMap.get("ENTRY_TYPE") != null ? rowMap.get("ENTRY_TYPE").toString() : "";
-					final String parentMdmid = rowMap.get("PARENT_MDMID") != null ? rowMap.get("PARENT_MDMID").toString() : "";					
+					final String parentMdmid = rowMap.get("PARENT_MDMID") != null ? rowMap.get("PARENT_MDMID").toString() : "";
 					final String isDefaultAttr = rowMap.get("COMPONENT_DEFAULT") != null ? rowMap.get("COMPONENT_DEFAULT").toString() : "";
 					final String classId = rowMap.get("CLASS_ID") != null ? rowMap.get("CLASS_ID").toString() : "";
 					final String priority = rowMap.get("DISPLAY_SEQUENCE") != null ? rowMap.get("DISPLAY_SEQUENCE").toString() : "";
-					
 
-					if(!("Style").equals(entryType)
-							&& !("StyleColor").equals(entryType)) {
+					if (!("Style").equals(entryType) && !("StyleColor").equals(entryType)) {
 						groupAttributeFormList = new ArrayList<>();
 						styleAttributeForm.setOrinNumber(mdmid);
 						styleAttributeForm.setStyleNumber(styleNo);
@@ -1693,8 +1688,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 						styleAttributeForm.setIsGroup("Y");
 						styleAttributeForm.setPriority(priority);
 						styleAttributeFormList.add(styleAttributeForm);
-					}
-					else if(("Style").equals(entryType)) {
+					} else if (("Style").equals(entryType)) {
 						groupAttributeFormList = new ArrayList<>();
 						styleAttributeForm.setOrinNumber(mdmid);
 						styleAttributeForm.setStyleNumber(styleNo);
@@ -1712,7 +1706,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 						styleAttributeForm.setIsGroup("N");
 						styleAttributeForm.setPriority(priority);
 						styleAttributeFormList.add(styleAttributeForm);
-					} else if(("StyleColor").equals(entryType)) {
+					} else if (("StyleColor").equals(entryType)) {
 						groupAttributeForm.setOrinNumber(mdmid);
 						groupAttributeForm.setStyleNumber(styleNo);
 						groupAttributeForm.setProdName(productName);
@@ -1727,13 +1721,13 @@ public class GroupingDAOImpl implements GroupingDAO {
 						groupAttributeForm.setClassId(classId);
 						styleAttributeForm.setIsGroup("N");
 						styleAttributeForm.setPriority(priority);
- 
-						for(int i = 0; i < styleAttributeFormList.size(); i++){
-							StyleAttributeForm styleAttributeFormSub = styleAttributeFormList.get(i);
-						
-							if((styleAttributeFormSub.getOrinNumber()).equals(parentMdmid)){
 
-								groupAttributeForm.setProdName(styleAttributeFormSub.getProdName()); 
+						for (int i = 0; i < styleAttributeFormList.size(); i++) {
+							StyleAttributeForm styleAttributeFormSub = styleAttributeFormList.get(i);
+
+							if ((styleAttributeFormSub.getOrinNumber()).equals(parentMdmid)) {
+
+								groupAttributeForm.setProdName(styleAttributeFormSub.getProdName());
 								groupAttributeFormList = styleAttributeFormSub.getGroupAttributeFormList();
 								groupAttributeFormList.add(groupAttributeForm);
 								break;
@@ -1742,20 +1736,21 @@ public class GroupingDAOImpl implements GroupingDAO {
 					}
 				}
 			}
-		}  finally {
+		} finally {
 			LOGGER.info("recordsFetched. getExistRegularBeautyDetails finally block..");
-			if(session!=null){
+			if (session != null) {
 				session.close();
 			}
-			
+
 		}
 
 		LOGGER.info("getExistRegularBeautyDetails-->End.");
 		return styleAttributeFormList;
 	}
-	
+
 	/**
-	 * This method is used to get the Child Regular/Beauty Collection Grouping details from Database.
+	 * This method is used to get the Child Regular/Beauty Collection Grouping
+	 * details from Database.
 	 * 
 	 * @param groupId
 	 * @return List<StyleAttributeForm>
@@ -1771,7 +1766,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 		StyleAttributeForm styleAttributeForm = null;
 		List<GroupAttributeForm> groupAttributeFormList = null;
 		List<StyleAttributeForm> styleAttributeFormList = null;
-		
+
 		try {
 			session = sessionFactory.openSession();
 			// Hibernate provides a createSQLQuery method to let you call your
@@ -1781,7 +1776,6 @@ public class GroupingDAOImpl implements GroupingDAO {
 			query.setParameter("groupId", groupId);
 			query.setParameter("groupId", groupId);
 			LOGGER.info("Query-->getRegularBeautyChildDetails-->" + query);
-
 
 			styleAttributeFormList = new ArrayList<>();
 
@@ -1793,23 +1787,21 @@ public class GroupingDAOImpl implements GroupingDAO {
 				LOGGER.info("recordsFetched..." + rows.size());
 
 				for (final Object row : rows) {
-					
+
 					@SuppressWarnings("rawtypes")
 					final Map rowMap = (Map) row;
 					groupAttributeForm = new GroupAttributeForm();
 					styleAttributeForm = new StyleAttributeForm();
-					
+
 					final String mdmid = rowMap.get("MDMID") != null ? rowMap.get("MDMID").toString() : "";
 					final String styleNo = rowMap.get("VENDOR_STYLE") != null ? rowMap.get("VENDOR_STYLE").toString() : "";
 					final String productName = rowMap.get("PRODUCTNAME") != null ? rowMap.get("PRODUCTNAME").toString() : "";
 					final String colorCode = rowMap.get("COLOR_CODE") != null ? rowMap.get("COLOR_CODE").toString() : "";
 					final String colorDesc = rowMap.get("COLO_DESC") != null ? rowMap.get("COLO_DESC").toString() : "";
 					final String entryType = rowMap.get("ENTRY_TYPE") != null ? rowMap.get("ENTRY_TYPE").toString() : "";
-					final String parentMdmid = rowMap.get("PARENT_MDMID") != null ? rowMap.get("PARENT_MDMID").toString() : "";																			
-					
+					final String parentMdmid = rowMap.get("PARENT_MDMID") != null ? rowMap.get("PARENT_MDMID").toString() : "";
 
-					if(!("Style").equals(entryType)
-							&& !("StyleColor").equals(entryType)) {
+					if (!("Style").equals(entryType) && !("StyleColor").equals(entryType)) {
 						groupAttributeFormList = new ArrayList<>();
 						styleAttributeForm.setOrinNumber(mdmid);
 						styleAttributeForm.setStyleNumber(styleNo);
@@ -1821,11 +1813,10 @@ public class GroupingDAOImpl implements GroupingDAO {
 						styleAttributeForm.setPetStatus("");
 						styleAttributeForm.setEntryType(entryType);
 						styleAttributeForm.setParentMdmid(parentMdmid);
-						styleAttributeForm.setGroupAttributeFormList(groupAttributeFormList);						
-						styleAttributeForm.setIsGroup("Y");						
+						styleAttributeForm.setGroupAttributeFormList(groupAttributeFormList);
+						styleAttributeForm.setIsGroup("Y");
 						styleAttributeFormList.add(styleAttributeForm);
-					}
-					else if(("Style").equals(entryType)) {
+					} else if (("Style").equals(entryType)) {
 						groupAttributeFormList = new ArrayList<>();
 						styleAttributeForm.setOrinNumber(mdmid);
 						styleAttributeForm.setStyleNumber(styleNo);
@@ -1840,7 +1831,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 						styleAttributeForm.setGroupAttributeFormList(groupAttributeFormList);
 						styleAttributeForm.setIsGroup("N");
 						styleAttributeFormList.add(styleAttributeForm);
-					} else if(("StyleColor").equals(entryType)) {
+					} else if (("StyleColor").equals(entryType)) {
 						groupAttributeForm.setOrinNumber(mdmid);
 						groupAttributeForm.setStyleNumber(styleNo);
 						groupAttributeForm.setProdName(productName);
@@ -1852,13 +1843,13 @@ public class GroupingDAOImpl implements GroupingDAO {
 						groupAttributeForm.setEntryType(entryType);
 						groupAttributeForm.setParentMdmid(parentMdmid);
 						styleAttributeForm.setIsGroup("N");
- 
-						for(int i = 0; i < styleAttributeFormList.size(); i++){
-							StyleAttributeForm styleAttributeFormSub = styleAttributeFormList.get(i);
-						
-							if((styleAttributeFormSub.getOrinNumber()).equals(parentMdmid)){
 
-								groupAttributeForm.setProdName(styleAttributeFormSub.getProdName()); 
+						for (int i = 0; i < styleAttributeFormList.size(); i++) {
+							StyleAttributeForm styleAttributeFormSub = styleAttributeFormList.get(i);
+
+							if ((styleAttributeFormSub.getOrinNumber()).equals(parentMdmid)) {
+
+								groupAttributeForm.setProdName(styleAttributeFormSub.getProdName());
 								groupAttributeFormList = styleAttributeFormSub.getGroupAttributeFormList();
 								groupAttributeFormList.add(groupAttributeForm);
 								break;
@@ -1867,12 +1858,12 @@ public class GroupingDAOImpl implements GroupingDAO {
 					}
 				}
 			}
-		}  finally {
+		} finally {
 			LOGGER.info("recordsFetched. getRegularBeautyChildDetails finally block..");
-			if(session!=null){
+			if (session != null) {
 				session.close();
 			}
-			
+
 		}
 
 		LOGGER.info("getRegularBeautyChildDetails-->End.");
