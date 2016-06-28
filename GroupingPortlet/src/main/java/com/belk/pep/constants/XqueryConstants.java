@@ -977,7 +977,7 @@ public class XqueryConstants {
 		getNewGBSDetails.append("		WHERE                                                                                       "); 
 		getNewGBSDetails.append("		    ITEM.ENTRY_TYPE in ('SKU')                                                              ");
 		getNewGBSDetails.append("		    AND ITEM.DELETED_FLAG= 'false'                                                          "); 
-		getNewGBSDetails.append("		    AND PET.MDMID=ITEM.MDMID                                                                ");
+		getNewGBSDetails.append("		    AND PET.MDMID=ITEM.PARENT_MDMID                                                                ");
 
 		if (null != vendorStyleNo && !("").equals(vendorStyleNo.trim())) {
 			getNewGBSDetails.append(" AND ITEM.PRIMARYSUPPLIERVPN =:styleIdSql ");
