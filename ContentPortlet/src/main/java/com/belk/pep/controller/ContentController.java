@@ -2575,10 +2575,12 @@ public class ContentController implements ResourceAwareController, EventAwareCon
 			LOGGER.info("dynamicCategoryId -->"+dynamicCategoryId);
 			
 			displayGroupIPHAttributesOnChange(request, response, contentDisplayForm, groupId, dynamicCategoryId);
-			
+			// mapped category Id with the dynamic one;
+			mappedCategoryId = dynamicCategoryId;
 
 		}
-		if (mappedCategoryId!=null || dynamicCategoryId!=null){
+		
+		if (mappedCategoryId!=null){
 			List<ItemPrimaryHierarchyVO> familyCategoryList = getFamilyTreeCategory(mappedCategoryId);
 			LOGGER.info("familyCategoryList --------------- " + familyCategoryList.size());
 			
@@ -2600,11 +2602,19 @@ public class ContentController implements ResourceAwareController, EventAwareCon
 			displayCategorySpecificAttributeData(finalCatIds, contentDisplayForm, request, response, groupId);
 
 			displayBlueMartiniSpecificAttributeData(finalCatIds, contentDisplayForm, request, response, groupId);
+		}
+		
+		// if dropdown selected mappedCategoryId will have value
+		// if mapped there will be value
+		
+			
 			if(mappedCategoryId!=null && dynamicCategoryId==null){
+				// actual value mapped 
 				request.setAttribute("selectedCategory", mappedCategoryId);
 				request.setAttribute("selectedCarbrand", contentDisplayForm.getCarBrandSelected());
 				request.setAttribute("selectedOmnichannelbrand", contentDisplayForm.getOmniBrandSelected());
 			}else{
+				// dropdwon selected 
 				request.setAttribute("selectedCategory", dynamicCategoryId);
 				// Logic for highlighting the selected omnichannelbrand in its drop
 				// down on change of IPH Drop Down
@@ -2621,7 +2631,6 @@ public class ContentController implements ResourceAwareController, EventAwareCon
 				}
 
 			}
-		}
 
 			
 		modelAndView.addObject(ContentScreenConstants.CONTENT_DISPLAY_FORM, contentDisplayForm);
