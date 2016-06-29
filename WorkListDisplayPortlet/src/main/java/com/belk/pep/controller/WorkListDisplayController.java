@@ -2890,34 +2890,43 @@ public JSONObject populateReInitiateJson(String petId,String updatedBy) {
  * @param petStatusCode
  * @return
  */
-private String petStatusCodePassToService(String petStatus,String petStatusCode){        
-    LOGGER.info("Entering petStatusCodeToService.. Controller::");
-    if("Initiated".equalsIgnoreCase(petStatus)){
-        petStatusCode = "01";
-    }else if("Completed".equalsIgnoreCase(petStatus)){
-        petStatusCode = "02";
-    }else if("Approved".equalsIgnoreCase(petStatus)){
-        petStatusCode = "03";
-    }else if("Rejected".equalsIgnoreCase(petStatus)){
-        petStatusCode = "04";
-    }else if("Deactivated".equalsIgnoreCase(petStatus)){
-        petStatusCode = "05";
-    }else if("Closed".equalsIgnoreCase(petStatus)){
-        petStatusCode = "06";
-    }else if(null == petStatus || StringUtils.isBlank(petStatus) || "undefined" == petStatus){
-        LOGGER.info("petStatus is not valid in db");
-        petStatusCode = "";
-    }
-    //Passing inactivate pets to make activate and vice-e-versa
-    if(petStatusCode=="01" || petStatusCode=="02" || petStatusCode== "03" || petStatusCode == "06"){
-        petStatusCode = "05";
-    }else if(petStatusCode=="05"){
-        petStatusCode = "01";
-    }
-    LOGGER.info("petStatusCode::" +petStatusCode);
-    LOGGER.info("Exiting petStatusCodeToService.. Controller::");
-    return petStatusCode;
-}
+	private String petStatusCodePassToService(String petStatus, String petStatusCode) {
+		LOGGER.info("Entering petStatusCodeToService.. Controller::");
+		if ("Initiated".equalsIgnoreCase(petStatus)) {
+			petStatusCode = "01";
+		} else if ("Completed".equalsIgnoreCase(petStatus)) {
+			petStatusCode = "02";
+		} else if ("Approved".equalsIgnoreCase(petStatus)) {
+			petStatusCode = "03";
+		} else if ("Rejected".equalsIgnoreCase(petStatus)) {
+			petStatusCode = "04";
+		} else if ("Deactivated".equalsIgnoreCase(petStatus)) {
+			petStatusCode = "05";
+		} else if ("Closed".equalsIgnoreCase(petStatus)) {
+			petStatusCode = "06";
+		} else if ("Waiting_To_Be_Closed".equalsIgnoreCase(petStatus)) {
+			petStatusCode = "07";
+		} else if ("Ready_For_Review".equalsIgnoreCase(petStatus)) {
+			petStatusCode = "08";
+		} else if ("Publish_To_Web".equalsIgnoreCase(petStatus)) {
+			petStatusCode = "09";
+		} else if ("Pre Cut Initiated".equalsIgnoreCase(petStatus)) {
+			petStatusCode = "10";
+		} else if (null == petStatus || StringUtils.isBlank(petStatus) || "undefined" == petStatus) {
+			LOGGER.info("petStatus is not valid in db");
+			petStatusCode = "";
+		}
+		// Passing inactivate pets to make activate and vice-e-versa
+		if (petStatusCode == "01" || petStatusCode == "02" || petStatusCode == "03" || petStatusCode == "06"
+				|| petStatusCode=="07" || petStatusCode=="08" || petStatusCode== "09" || petStatusCode == "10"){
+			petStatusCode = "05";
+		} else if (petStatusCode == "05") {
+			petStatusCode = "01";
+		}
+		LOGGER.info("petStatusCode::" + petStatusCode);
+		LOGGER.info("Exiting petStatusCodeToService.. Controller::");
+		return petStatusCode;
+	}
 
 
 /**
