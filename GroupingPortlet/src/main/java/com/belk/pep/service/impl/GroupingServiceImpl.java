@@ -91,9 +91,7 @@ public class GroupingServiceImpl implements GroupingService {
 		String groupCreationStatus = "";
 
 		/** Calling Web Service to create Group except Split type **/
-		LOGGER.info("Create Group Service Start currentTimeMillis-->");
 		String resMsg = callCreateGroupService(jsonStyle);
-		LOGGER.info("Create Group Service End currentTimeMillis-->");
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("Create Group Service message-->" + resMsg);
 		}
@@ -110,8 +108,7 @@ public class GroupingServiceImpl implements GroupingService {
 		}
 
 		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug("responseMsgCode-->" + responseMsgCode);
-			LOGGER.debug("groupIdRes-->" + groupIdRes);
+			LOGGER.debug("responseMsgCode-->" + responseMsgCode + " \ngroupIdRes-->" + groupIdRes);
 		}
 
 		if (null != responseMsgCode && responseMsgCode.equals(GroupingConstants.SUCCESS_CODE)) {
@@ -142,11 +139,8 @@ public class GroupingServiceImpl implements GroupingService {
 					LOGGER.debug("Add Color Attribute JSON-->" + jsonStyleSpliColor);
 					LOGGER.debug("json Object Add Component to Split Color groupId--> " + jsonStyleSpliColor.getString("groupId"));
 				}
-				LOGGER.info("Create Split Color Group Service Start currentTimeMillis-->");
 				// final String resMsgSplitColor =
-				// callAddComponentSCGService(jsonStyleSpliColor);
 				final String resMsgSplitColor = callAddComponentService(jsonStyleSpliColor, groupType);
-				LOGGER.info("Create Split Color Group Service End currentTimeMillis-->");
 				if (LOGGER.isDebugEnabled()) {
 					LOGGER.debug("Add Component to Split Color Group Service message-->" + resMsgSplitColor);
 				}
@@ -183,16 +177,12 @@ public class GroupingServiceImpl implements GroupingService {
 					LOGGER.debug("Calling Add component for Split SKU service Start.");
 				}
 				// Create Split SKU Group
-				JSONObject jsonStyleSpliSku = populateAddComponentSSGJson(groupIdRes, groupType, updatedBy, selectedSplitAttributeList/* componentList */);
+				JSONObject jsonStyleSpliSku = populateAddComponentSSGJson(groupIdRes, groupType, updatedBy, selectedSplitAttributeList);
 				if (LOGGER.isDebugEnabled()) {
 					LOGGER.debug("Add SKU Attribute JSON-->" + jsonStyleSpliSku);
 					LOGGER.debug("json Object Add Component to Split SKU groupId--> " + jsonStyleSpliSku.getString("groupId"));
 				}
-				LOGGER.info("Create Split SKU Group Service Start currentTimeMillis-->");
-				// String resMsgSplitSku =
-				// callAddComponentSSGService(jsonStyleSpliSku);
 				String resMsgSplitSku = callAddComponentService(jsonStyleSpliSku, groupType);
-				LOGGER.info("Create Split SKU Group Service End currentTimeMillis-->");
 				if (LOGGER.isDebugEnabled()) {
 					LOGGER.debug("Add Component to Split SKU Group Service message-->" + resMsgSplitSku);
 				}
@@ -283,12 +273,6 @@ public class GroupingServiceImpl implements GroupingService {
 			String serviceURL = prop.getProperty(GroupingConstants.CREATE_GROUP_SERVICE_URL);
 			LOGGER.info("Create Group ServiceURL-->" + serviceURL);
 
-			/*URL targetUrl = new URL(serviceURL);
-			httpConnection = (HttpURLConnection) targetUrl.openConnection();
-			httpConnection.setDoOutput(true);
-			httpConnection.setRequestMethod(prop.getProperty(GroupingConstants.SERVICE_REQUEST_METHOD));
-			httpConnection.setRequestProperty(prop.getProperty(GroupingConstants.SERVICE_REQUEST_PROPERTY_CONTENT_TYPE),
-					prop.getProperty(GroupingConstants.SERVICE_REQUEST_PROPERTY_APPLICATION_TYPE));*/
 			httpConnection = getServiceConnection(serviceURL);
 
 			LOGGER.info("callCreateGroupService Service::Json Array-->" + jsonStyle.toString());
@@ -512,7 +496,7 @@ public class GroupingServiceImpl implements GroupingService {
 				String entryType = groupAttributeForm.getEntryType();
 				String petStatus = groupAttributeForm.getPetStatus();
 				if (LOGGER.isDebugEnabled()) {
-					LOGGER.debug("Pet Status not Completed. Orin No: " + groupAttributeForm.getOrinNumber() + ", PetStatus: " + petStatus);
+					LOGGER.debug("Pet Status not Completed. Orin No: " + groupAttributeForm.getOrinNumber() + ", \nPetStatus: " + petStatus);
 					LOGGER.debug("ColorCode------------------added------------------------------------>"
 							+ groupAttributeForm.getColorCode());
 				}
@@ -779,7 +763,7 @@ public class GroupingServiceImpl implements GroupingService {
 		} catch (JSONException e) {
 			LOGGER.error("Exeception in parsing the jsonObj-->" + e);
 		}
-		LOGGER.info("Exiting populateAddComponentGBSJson-->" + jsonObj);
+		LOGGER.info("Exiting populateAddComponentGBSJson-->");
 		return jsonObj;
 	}
 
@@ -894,12 +878,6 @@ public class GroupingServiceImpl implements GroupingService {
 			}
 			LOGGER.info("Add Component to Group ServiceURL-->" + serviceURL);
 
-			/*URL targetUrl = new URL(serviceURL);
-			httpConnection = (HttpURLConnection) targetUrl.openConnection();
-			httpConnection.setDoOutput(true);
-			httpConnection.setRequestMethod(prop.getProperty(GroupingConstants.SERVICE_REQUEST_METHOD));
-			httpConnection.setRequestProperty(prop.getProperty(GroupingConstants.SERVICE_REQUEST_PROPERTY_CONTENT_TYPE),
-					prop.getProperty(GroupingConstants.SERVICE_REQUEST_PROPERTY_APPLICATION_TYPE));*/
 			httpConnection = getServiceConnection(serviceURL);
 
 			LOGGER.info("callAddComponentService Service::Json Array-->" + jsonCpgComponent.toString());
@@ -1195,10 +1173,7 @@ public class GroupingServiceImpl implements GroupingService {
 	 * @throws PEPPersistencyException
 	 */
 	public final List<StyleAttributeForm> getSelectedBCGAttributeList(final List<StyleAttributeForm> getRCGDetailsList,
-			final String[] selectedItemsArr) throws PEPServiceException, PEPPersistencyException { // TODO
-																									// need
-																									// to
-																									// check
+			final String[] selectedItemsArr) throws PEPServiceException, PEPPersistencyException { 
 
 		LOGGER.info("*Enter-->calling getSelectedBCGAttributeList from GroupingServiceImpl.-->" + selectedItemsArr);
 		List<StyleAttributeForm> selectedRCGAttributeList = new ArrayList<>();
@@ -1502,12 +1477,6 @@ public class GroupingServiceImpl implements GroupingService {
 			String serviceURL = prop.getProperty(GroupingConstants.DELETE_GROUP_SERVICE_URL);
 			LOGGER.info("Delete Group ServiceURL-->" + serviceURL);
 
-			/*URL targetUrl = new URL(serviceURL);
-			httpConnection = (HttpURLConnection) targetUrl.openConnection();
-			httpConnection.setDoOutput(true);
-			httpConnection.setRequestMethod(prop.getProperty(GroupingConstants.SERVICE_REQUEST_METHOD));
-			httpConnection.setRequestProperty(prop.getProperty(GroupingConstants.SERVICE_REQUEST_PROPERTY_CONTENT_TYPE),
-					prop.getProperty(GroupingConstants.SERVICE_REQUEST_PROPERTY_APPLICATION_TYPE));*/
 			httpConnection = getServiceConnection(serviceURL);
 
 			LOGGER.info("callDeletGroupService Service::Json Array-->" + jsonGroup.toString());
@@ -1576,9 +1545,7 @@ public class GroupingServiceImpl implements GroupingService {
 		jsonObj.put(GroupingConstants.CREATED_BY, updatedBy);
 
 		/** Calling Web Service to create Group except Split type **/
-		LOGGER.info("Delete Group Service Start currentTimeMillis-->");
 		String resMsg = callDeleteGroupService(jsonObj);
-		LOGGER.info("Delete Group Service End currentTimeMillis-->");
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("Delete Group Service message-->" + resMsg);
 		}
@@ -1731,11 +1698,7 @@ public class GroupingServiceImpl implements GroupingService {
 				LOGGER.debug("addComponentToGroup.json Object Add Component to Split Color groupId--> "
 						+ jsonStyleSpliColor.getString("groupId"));
 			}
-			LOGGER.info("addComponentToGroup.Create Split Color Group Service Start currentTimeMillis-->");
-			// final String resMsgSplitColor =
-			// callAddComponentSCGService(jsonStyleSpliColor);
 			final String resMsgSplitColor = callAddComponentService(jsonStyleSpliColor, groupType);
-			LOGGER.info("addComponentToGroup.Create Split Color Group Service End currentTimeMillis-->");
 			if (LOGGER.isDebugEnabled()) {
 				LOGGER.debug("addComponentToGroup.Add Component to Split Color Group Service message-->" + resMsgSplitColor);
 			}
@@ -1778,11 +1741,7 @@ public class GroupingServiceImpl implements GroupingService {
 				LOGGER.debug("addComponentToGroup.json Object Add Component to Split SKU groupId--> "
 						+ jsonStyleSpliSku.getString("groupId"));
 			}
-			LOGGER.info("addComponentToGroup.Create Split SKU Group Service Start currentTimeMillis-->");
-			// String resMsgSplitSku =
-			// callAddComponentSSGService(jsonStyleSpliSku);
 			final String resMsgSplitSku = callAddComponentService(jsonStyleSpliSku, groupType);
-			LOGGER.info("addComponentToGroup.Create Split SKU Group Service End currentTimeMillis-->");
 			if (LOGGER.isDebugEnabled()) {
 				LOGGER.debug("addComponentToGroup.Add Component to Split SKU Group Service message-->" + resMsgSplitSku);
 			}
@@ -1866,9 +1825,7 @@ public class GroupingServiceImpl implements GroupingService {
 			LOGGER.debug("addCPGComponentToGroup.Add CPG Attribute JSON-->" + jsonCpgComponent);
 			LOGGER.debug("addCPGComponentToGroup.json Object Add Component to CPG groupId--> " + jsonCpgComponent.getString("groupId"));
 		}
-		LOGGER.info("addCPGComponentToGroup.Create CPG Group Service Start currentTimeMillis-->");
 		final String resMsgCPG = callAddComponentService(jsonCpgComponent, groupType);
-		LOGGER.info("addCPGComponentToGroup.Create CPG Group Service End currentTimeMillis-->");
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("addCPGComponentToGroup.Add Component to CPG Group Service message-->" + resMsgCPG);
 		}
@@ -1951,9 +1908,7 @@ public class GroupingServiceImpl implements GroupingService {
 			LOGGER.debug("addGBSComponentToGroup.Add GBS Attribute JSON-->" + jsonGbsComponent);
 			LOGGER.debug("addGBSComponentToGroup.json Object Add Component to CPG groupId--> " + jsonGbsComponent.getString("groupId"));
 		}
-		LOGGER.info("addGBSComponentToGroup.Create GBS Group Service Start currentTimeMillis-->");
 		final String resMsgCPG = callAddComponentService(jsonGbsComponent, groupType);
-		LOGGER.info("addGBSComponentToGroup.Create GBS Group Service End currentTimeMillis-->");
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("addGBSComponentToGroup.Add Component to GBS Group Service message-->" + resMsgCPG);
 		}
@@ -2036,9 +1991,7 @@ public class GroupingServiceImpl implements GroupingService {
 			LOGGER.debug("addRCGBCGComponentToGroup.json Object Add Component to RCG and BCG groupId--> "
 					+ jsonGbsComponent.getString("groupId"));
 		}
-		LOGGER.info("addRCGBCGComponentToGroup.Create RCG and BCG Group Service Start currentTimeMillis-->");
 		final String resMsgCPG = callAddComponentService(jsonGbsComponent, groupType);
-		LOGGER.info("addRCGBCGComponentToGroup.Create RCG and BCG Group Service End currentTimeMillis-->");
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("addRCGBCGComponentToGroup.Add Component to RCG and BCG Group Service message-->" + resMsgCPG);
 		}
@@ -2160,9 +2113,7 @@ public class GroupingServiceImpl implements GroupingService {
 		requestJSON.put(GroupingConstants.END_DATE, endDate != null ? endDate : GroupingConstants.EMPTY);
 		requestJSON.put(GroupingConstants.MODIFIED_BY, modifiedBy != null ? modifiedBy : GroupingConstants.EMPTY);
 		requestJSON.put(GroupingConstants.GROUP_TYPE, groupType != null ? groupType : GroupingConstants.EMPTY);
-		LOGGER.info("Create Group Service Start currentTimeMillis-->");
 		String resMsg = callUpdateGroupService(requestJSON);
-		LOGGER.info("Create Group Service End currentTimeMillis-->");
 		LOGGER.info(resMsg);
 		return resMsg;
 	}
@@ -2189,12 +2140,6 @@ public class GroupingServiceImpl implements GroupingService {
 			String serviceURL = prop.getProperty(GroupingConstants.UPDATE_GROUP_SERVICE_URL);
 			LOGGER.info("Update Group ServiceURL-->" + serviceURL);
 
-			/*URL targetUrl = new URL(serviceURL);
-			httpConnection = (HttpURLConnection) targetUrl.openConnection();
-			httpConnection.setDoOutput(true);
-			httpConnection.setRequestMethod(prop.getProperty(GroupingConstants.SERVICE_REQUEST_METHOD));
-			httpConnection.setRequestProperty(prop.getProperty(GroupingConstants.SERVICE_REQUEST_PROPERTY_CONTENT_TYPE),
-					prop.getProperty(GroupingConstants.SERVICE_REQUEST_PROPERTY_APPLICATION_TYPE));*/
 			httpConnection = getServiceConnection(serviceURL);
 
 			LOGGER.info("callUpdateGroupService Service::Json Array-->" + jsonGroup.toString());
@@ -2266,12 +2211,6 @@ public class GroupingServiceImpl implements GroupingService {
 			String serviceURL = prop.getProperty(GroupingConstants.REMOVE_COMPNT_GROUP_SERVICE_URL);
 			LOGGER.info("remove component ServiceURL-->" + serviceURL);
 
-			/*URL targetUrl = new URL(serviceURL);
-			httpConnection = (HttpURLConnection) targetUrl.openConnection();
-			httpConnection.setDoOutput(true);
-			httpConnection.setRequestMethod(prop.getProperty(GroupingConstants.SERVICE_REQUEST_METHOD));
-			httpConnection.setRequestProperty(prop.getProperty(GroupingConstants.SERVICE_REQUEST_PROPERTY_CONTENT_TYPE),
-					prop.getProperty(GroupingConstants.SERVICE_REQUEST_PROPERTY_APPLICATION_TYPE));*/
 			httpConnection = getServiceConnection(serviceURL);
 
 			String input = jsonObject.toString();
@@ -2342,12 +2281,6 @@ public class GroupingServiceImpl implements GroupingService {
 			String serviceURL = prop.getProperty(GroupingConstants.SET_COMPONENT_PRIORITY_SERVICE_URL);
 			LOGGER.info("SET COMPONENT PRIOROTY ServiceURL-->" + serviceURL);
 
-			/*URL targetUrl = new URL(serviceURL);
-			httpConnection = (HttpURLConnection) targetUrl.openConnection();
-			httpConnection.setDoOutput(true);
-			httpConnection.setRequestMethod(prop.getProperty(GroupingConstants.SERVICE_REQUEST_METHOD));
-			httpConnection.setRequestProperty(prop.getProperty(GroupingConstants.SERVICE_REQUEST_PROPERTY_CONTENT_TYPE),
-					prop.getProperty(GroupingConstants.SERVICE_REQUEST_PROPERTY_APPLICATION_TYPE));*/
 			httpConnection = getServiceConnection(serviceURL);
 
 			LOGGER.info("SET PRIOROTY Service::Json Array-->" + jsonObject.toString());
@@ -2412,12 +2345,6 @@ public class GroupingServiceImpl implements GroupingService {
 			final String serviceURL = prop.getProperty(GroupingConstants.SET_DEFAULT_COLOR_SERVICE_URL);
 			LOGGER.info("Default Color/Size ServiceURL-->" + serviceURL);
 
-			/*final URL targetUrl = new URL(serviceURL);
-			httpConnection = (HttpURLConnection) targetUrl.openConnection();
-			httpConnection.setDoOutput(true);
-			httpConnection.setRequestMethod(prop.getProperty(GroupingConstants.SERVICE_REQUEST_METHOD));
-			httpConnection.setRequestProperty(prop.getProperty(GroupingConstants.SERVICE_REQUEST_PROPERTY_CONTENT_TYPE),
-					prop.getProperty(GroupingConstants.SERVICE_REQUEST_PROPERTY_APPLICATION_TYPE));*/
 			httpConnection = getServiceConnection(serviceURL);
 
 			LOGGER.info("callDefaultColorSizeService Service::Json Array-->" + jsonGroup.toString());

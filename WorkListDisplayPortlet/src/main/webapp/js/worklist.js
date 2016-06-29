@@ -1661,8 +1661,12 @@ function inactivateAjaxCall(){
 				else if(parentStyle[1]=='Completed'){
 					parentActiveFlag='yes';
 				}
-				
-		
+				else if(parentStyle[1]=='Publish_To_Web'){
+					parentActiveFlag='yes';
+				}
+				else if(parentStyle[1]=='Waiting_To_Be_Closed'){
+					parentActiveFlag='yes';
+				}
 			});
 			
 			$.each($("input[name='selectedStyles']:checked"), function(){  
@@ -1678,6 +1682,12 @@ function inactivateAjaxCall(){
 					activeFlag = 'yes';
 				}
 				else if(childStyleColor[1]=='Completed'){
+					activeFlag = 'yes';
+				}
+				else if(childStyleColor[1]=='Publish_To_Web'){
+					activeFlag = 'yes';
+				}
+				else if(childStyleColor[1]=='Waiting_To_Be_Closed'){
 					activeFlag = 'yes';
 				}
 			});
@@ -1801,6 +1811,12 @@ function activateAjaxCall(){
 				else if(parentStyle[1]=='Completed'){
 					parentDeactiveFlag = 'yes';
 				}
+				else if(parentStyle[1]=='Publish_To_Web'){
+					parentDeactiveFlag='yes';
+				}
+				else if(parentStyle[1]=='Waiting_To_Be_Closed'){
+					parentDeactiveFlag='yes';
+				}
 				
 		
 			});
@@ -1819,6 +1835,12 @@ function activateAjaxCall(){
 				}
 				else if(childStyleColor[1]=='Completed'){
 					deactiveFlag = 'yes';
+				}
+				else if(childStyleColor[1]=='Publish_To_Web'){
+					deactiveFlag='yes';
+				}
+				else if(childStyleColor[1]=='Waiting_To_Be_Closed'){
+					deactiveFlag='yes';
 				}
 			});			
 			

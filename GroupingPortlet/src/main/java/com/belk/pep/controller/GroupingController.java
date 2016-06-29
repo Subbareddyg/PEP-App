@@ -97,7 +97,9 @@ public class GroupingController {
 		String sessionDataKey = (String) renderRequest.getPortletSession().getAttribute("sessionDataKey");
 		if (null != sessionDataKey) {
 			String userID = sessionDataKey.split(GroupingConstants.USER_DATA + renderRequest.getPortletSession().getId())[1];
-			LOGGER.info("display user ID" + userID);
+			if (LOGGER.isDebugEnabled()) {
+				LOGGER.debug("display user ID" + userID);
+			}
 			mv.addObject(GroupingConstants.LAN_ID, userID);
 			custuser = (UserData) renderRequest.getPortletSession().getAttribute(sessionDataKey);
 			if (GroupingConstants.READ_ONLY_ROLE.equals(custuser.getRoleName())) {
@@ -141,7 +143,9 @@ public class GroupingController {
 		String sessionDataKey = (String) renderRequest.getPortletSession().getAttribute("sessionDataKey");
 		if (null != sessionDataKey) {
 			String userID = sessionDataKey.split(GroupingConstants.USER_DATA + renderRequest.getPortletSession().getId())[1];
-			LOGGER.info("display user ID" + userID);
+			if (LOGGER.isDebugEnabled()) {
+				LOGGER.debug("display user ID" + userID);
+			}
 			mv.addObject(GroupingConstants.LAN_ID, userID);
 			custuser = (UserData) renderRequest.getPortletSession().getAttribute(sessionDataKey);
 			if (GroupingConstants.READ_ONLY_ROLE.equals(custuser.getRoleName())) {
@@ -183,7 +187,9 @@ public class GroupingController {
 		String sessionDataKey = (String) request.getPortletSession().getAttribute("sessionDataKey");
 		if (null != sessionDataKey) {
 			String userID = sessionDataKey.split(GroupingConstants.USER_DATA + request.getPortletSession().getId())[1];
-			LOGGER.info("display user ID" + userID);
+			if (LOGGER.isDebugEnabled()) {
+				LOGGER.debug("display user ID" + userID);
+			}
 			modelAndView.addObject(GroupingConstants.LAN_ID, userID);
 			custuser = (UserData) request.getPortletSession().getAttribute(sessionDataKey);
 			if (GroupingConstants.READ_ONLY_ROLE.equals(custuser.getRoleName())) {
@@ -234,12 +240,10 @@ public class GroupingController {
 				Common_BelkUser belkUser = (Common_BelkUser) custuser.getBelkUser();
 
 				if (null != custuser.getVpUser() && null != custuser.getVpUser().getUserEmailAddress()) {
-					LOGGER.info("This is from Event Email Id********************" + custuser.getVpUser().getUserEmailAddress());
 					loggedInUser = custuser.getVpUser().getUserEmailAddress();
-				} else if (null != custuser.getRoleName()) {
-					LOGGER.info("This is from Event Role name********************" + custuser.getRoleName());
-				} else if (null != custuser.getAccessRight()) {
-					LOGGER.info("This is from Access********************" + custuser.getAccessRight());
+					if (LOGGER.isDebugEnabled()) {
+						LOGGER.debug("This is from Event Email Id********************" + loggedInUser);
+					}
 				}
 
 				if (null != belkUser && null != belkUser.getLanId()) {
@@ -272,32 +276,12 @@ public class GroupingController {
 		LOGGER.info("Entering handleSplitAttrSearchRequest-->.");
 		String vendorStyleNo = "";
 		String styleOrin = "";
-		String updatedBy = "";
 		String message = "";
 
 		Properties prop = PropertyLoader.getPropertyLoader(GroupingConstants.GROUPING_PROPERTIES_FILE_NAME);
 
-		String formSessionKey = (String) request.getPortletSession().getAttribute("formSessionKey");
-		CreateGroupForm createGroupForm = (CreateGroupForm) request.getPortletSession().getAttribute(formSessionKey);
-		String sessionDataKey = (String) request.getPortletSession().getAttribute("sessionDataKey");
-		UserData custuser = (UserData) request.getPortletSession().getAttribute(sessionDataKey);
-
-		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug(" handleSplitAttrSearchRequest formSessionKey ------------> " + formSessionKey);
-			LOGGER.debug(" handleSplitAttrSearchRequest resourceForm --------------> " + createGroupForm);
-			LOGGER.debug(" handleSplitAttrSearchRequest sessionDataKey ------------> " + sessionDataKey);
-		}
-		LOGGER.info(" handleSplitAttrSearchRequest custuser -----------------------> " + custuser);
 		ModelAndView view = new ModelAndView("groupingPage");
 		try {
-			if (custuser != null) {
-				LOGGER.info("userData---->in activate");
-				if (custuser.isInternal()) {
-					updatedBy = custuser.getBelkUser().getLanId();
-					LOGGER.info("Activate Internal user--->" + updatedBy);
-				}
-			}
-
 			/** Fetch Color details for Split group **/
 			String strFromPage = request.getParameter("fromPage");
 			LOGGER.info("in fetch split color attribute strFromPage--->" + strFromPage);
@@ -623,14 +607,12 @@ public class GroupingController {
 	public final ModelAndView handleCreateGroupForm(final ResourceRequest request, final ResourceResponse response) {
 		LOGGER.info("GroupingControlle:handleCreateGroupForm ResourceRequest:Enter------------>.");
 		ModelAndView modelAndView = null;
-		String formSessionKey = (String) request.getPortletSession().getAttribute("formSessionKey");
-		LOGGER.info("handleRenderRequest formSessionKey  ----------------------------->" + formSessionKey);
 		String sessionDataKey = (String) request.getPortletSession().getAttribute("sessionDataKey");
-		LOGGER.info(" handleActionRequest sessionDataKey -----------------------------> " + sessionDataKey);
 		UserData custuser = (UserData) request.getPortletSession().getAttribute(sessionDataKey);
-		LOGGER.info(" handleActionRequest custuser -----------------------------------> " + custuser);
 		String pepUserId = custuser.getBelkUser().getLanId();
-		LOGGER.info("This is from Reneder Internal User--------------------->" + pepUserId);
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("This is from Reneder Internal User--------------------->" + pepUserId);
+		}
 		try {
 			String carsGroupingType = "";
 			String[] selectedItemsArr = null;
@@ -773,8 +755,8 @@ public class GroupingController {
 		objCreateGroupForm.setGroupStatusDesc(groupStatusDesc);
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("createGroupSuccessRender.objCreateGroupForm-->" + objCreateGroupForm);
-			LOGGER.debug("createGroupSuccessRender.objCreateGroupForm.getGroupId()-->" + objCreateGroupForm.getGroupId() + 
-					" \ngroupTypeDesc-->" + groupTypeDesc + " \ngroupStatus-->" + groupStatusDesc);
+			LOGGER.debug("createGroupSuccessRender.objCreateGroupForm.getGroupId()-->" + objCreateGroupForm.getGroupId()
+					+ " \ngroupTypeDesc-->" + groupTypeDesc + " \ngroupStatus-->" + groupStatusDesc);
 		}
 		ModelAndView mv = new ModelAndView(GroupingConstants.GROUPING_ADD_COMPONENT);
 		mv.addObject(GroupingConstants.GROUP_DETAILS_FORM, objCreateGroupForm);
@@ -1016,20 +998,17 @@ public class GroupingController {
 
 			} else if ("deleteGroup".equals(action)) {
 				LOGGER.info("handleDeleteGroup ResourceRequest:Enter------------>.");
-				String formSessionKey = (String) request.getPortletSession().getAttribute("formSessionKey");
-				LOGGER.info("handleDeleteGroup formSessionKey  ----------------------------->" + formSessionKey);
 				String sessionDataKey = (String) request.getPortletSession().getAttribute("sessionDataKey");
-				LOGGER.info(" handleDeleteGroup sessionDataKey -----------------------------> " + sessionDataKey);
 				UserData custuser = (UserData) request.getPortletSession().getAttribute(sessionDataKey);
-				LOGGER.info(" handleDeleteGroup custuser -----------------------------------> " + custuser);
 				String pepUserId = custuser.getBelkUser().getLanId();
-				LOGGER.info("This is from Reneder Internal User--------------------->" + pepUserId);
+				if (LOGGER.isDebugEnabled()) {
+					LOGGER.debug("This is from Reneder Internal User--------------------->" + pepUserId);
+				}
 
 				String groupId = request.getParameter(GroupingConstants.GROUP_ID);
 				String groupType = request.getParameter(GroupingConstants.GROUP_TYPE);
 				if (LOGGER.isDebugEnabled()) {
-					LOGGER.debug("groupId----------------->" + groupId);
-					LOGGER.debug("groupType----------------->" + groupType);
+					LOGGER.debug("groupId----------------->" + groupId + "\ngroupType----------------->" + groupType);
 				}
 				String responseMesage = "";
 				if (null != groupId) {
@@ -1135,22 +1114,19 @@ public class GroupingController {
 	@ResourceMapping("deleteGroupResorceRequest")
 	public final ModelAndView handleDeleteGroup(final ResourceRequest request, final ResourceResponse response) {
 		LOGGER.info("handleDeleteGroup ResourceRequest:Enter------------>.");
-		String formSessionKey = (String) request.getPortletSession().getAttribute("formSessionKey");
-		LOGGER.info("handleDeleteGroup formSessionKey  ----------------------------->" + formSessionKey);
 		String sessionDataKey = (String) request.getPortletSession().getAttribute("sessionDataKey");
-		LOGGER.info(" handleDeleteGroup sessionDataKey -----------------------------> " + sessionDataKey);
 		UserData custuser = (UserData) request.getPortletSession().getAttribute(sessionDataKey);
-		LOGGER.info(" handleDeleteGroup custuser -----------------------------------> " + custuser);
 		String pepUserId = custuser.getBelkUser().getLanId();
-		LOGGER.info("This is from Reneder Internal User--------------------->" + pepUserId);
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("This is from Reneder Internal User--------------------->" + pepUserId);
+		}
 		ModelAndView modelAndView = null;
 		try {
 			String groupId = request.getParameter(GroupingConstants.GROUP_ID);
 			String groupType = request.getParameter(GroupingConstants.GROUP_TYPE);
 
 			if (LOGGER.isDebugEnabled()) {
-				LOGGER.debug("groupId----------------->" + groupId);
-				LOGGER.debug("groupType----------------->" + groupType);
+				LOGGER.debug("groupId----------------->" + groupId + "\ngroupType----------------->" + groupType);
 			}
 
 			String responseMesage = "";
@@ -1230,8 +1206,8 @@ public class GroupingController {
 
 			if (LOGGER.isDebugEnabled()) {
 				LOGGER.debug("getExistingGrpDetails.objCreateGroupForm-->" + objCreateGroupForm);
-				LOGGER.debug("getExistingGrpDetails.objCreateGroupForm.getGroupId()-->" + objCreateGroupForm.getGroupId() + 
-						"\ngroupTypeDesc-->" + groupTypeDesc + "\ngroupStatus-->" + groupStatusDesc);
+				LOGGER.debug("getExistingGrpDetails.objCreateGroupForm.getGroupId()-->" + objCreateGroupForm.getGroupId()
+						+ "\ngroupTypeDesc-->" + groupTypeDesc + "\ngroupStatus-->" + groupStatusDesc);
 			}
 			modelAndView.addObject(GroupingConstants.GROUP_DETAILS_FORM, objCreateGroupForm);
 
@@ -1240,7 +1216,9 @@ public class GroupingController {
 			String sessionDataKey = (String) request.getPortletSession().getAttribute("sessionDataKey");
 			if (null != sessionDataKey) {
 				String userID = sessionDataKey.split(GroupingConstants.USER_DATA + request.getPortletSession().getId())[1];
-				LOGGER.info("display user ID" + userID);
+				if (LOGGER.isDebugEnabled()) {
+					LOGGER.debug("Display User ID--------------------->" + userID);
+				}
 				modelAndView.addObject(GroupingConstants.LAN_ID, userID);
 				custuser = (UserData) request.getPortletSession().getAttribute(sessionDataKey);
 				if (GroupingConstants.READ_ONLY_ROLE.equals(custuser.getRoleName())) {
@@ -1342,7 +1320,7 @@ public class GroupingController {
 					message = prop.getProperty(GroupingConstants.MESSAGE_SPLITGROUP_VALIDATION_NO_DATA);
 				}
 				totalRecords = String.valueOf(existComponentDetails.size());
-				jsonObj = getSplitGrpJsonResponse(message, totalRecords, defaultSortCol, defaultSortOrder, existComponentDetails); // TODO
+				jsonObj = getSplitGrpJsonResponse(message, totalRecords, defaultSortCol, defaultSortOrder, existComponentDetails);
 
 			} else if (groupType.equals(GroupingConstants.GROUP_TYPE_CONSOLIDATE_PRODUCT)) {
 				if (existComponentDetails.isEmpty()) {
@@ -1603,7 +1581,7 @@ public class GroupingController {
 
 				/**
 				 * Validation GBS: Grouping of different Styles where each Style
-				 * has only one SKU Start TODO
+				 * has only one SKU Start
 				 **/
 				List<String> orinList = groupingService.getSKUCount(vendorStyleNo, styleOrin, deptNoSearch, classNoSearch,
 						supplierSiteIdSearch, upcNoSearch, groupId);
@@ -1644,7 +1622,7 @@ public class GroupingController {
 
 				/** Code to generate response to display Search result in JSP **/
 				totalRecords = String.valueOf(getNewGBSDetailsList.size());
-				JSONObject jsonObj = getSplitGrpJsonResponse(message, totalRecords, defaultSortCol, defaultSortOrder, getNewGBSDetailsList); // TODO
+				JSONObject jsonObj = getSplitGrpJsonResponse(message, totalRecords, defaultSortCol, defaultSortOrder, getNewGBSDetailsList);
 
 				response.getWriter().write(jsonObj.toString());
 
@@ -1749,7 +1727,9 @@ public class GroupingController {
 				LOGGER.info("userData---->in activate");
 				if (custuser.isInternal()) {
 					updatedBy = custuser.getBelkUser().getLanId();
-					LOGGER.info("Activate Internal user--->" + updatedBy);
+				}
+				if (LOGGER.isDebugEnabled()) {
+					LOGGER.debug("Activate Internal user--->" + updatedBy);
 				}
 			}
 
@@ -1765,8 +1745,8 @@ public class GroupingController {
 			String defaultSelectedAttr = GroupingUtil.checkNull(request.getParameter(GroupingConstants.COMPONENT_DEFAULT_COLOR));
 
 			if (LOGGER.isDebugEnabled()) {
-				LOGGER.debug("addComponentToGroup.groupType---------->" + groupType+ "\ngroupId---------->" + groupId +
-						"\ndefaultSelectedAttr---------->" + defaultSelectedAttr);
+				LOGGER.debug("addComponentToGroup.groupType---------->" + groupType + "\ngroupId---------->" + groupId
+						+ "\ndefaultSelectedAttr---------->" + defaultSelectedAttr);
 			}
 			List<GroupAttributeForm> selectedSplitAttributeList = new ArrayList<>();
 
@@ -1874,21 +1854,11 @@ public class GroupingController {
 					getSelectedAttrbuteList = groupingService.getSelectedBCGAttributeList(getRCGBCGDetailsList, selectedItemsArr);
 				}
 
-				// String cpgValidationMsg =
-				// groupingService.validateCPGAttributeDetails(getGBSSelectedAttrbuteList);
-
 				/* Call Service to add attribute */
 				createGroupForm = groupingService.addRCGBCGComponentToGroup(groupId, updatedBy, groupType, getSelectedAttrbuteList);
 			}
 
 			// Call Service to add attribute
-			/*
-			 * if (GroupingConstants.GROUP_TYPE_SPLIT_COLOR.equals(groupType) ||
-			 * (GroupingConstants.GROUP_TYPE_SPLIT_SKU).equals(groupType)){
-			 * createGroupForm = groupingService.addComponentToGroup(groupId,
-			 * updatedBy, groupType, selectedSplitAttributeList); }
-			 */
-
 			JSONObject jsonObj = new JSONObject();
 			jsonObj.put(GroupingConstants.GROUP_ID, createGroupForm.getGroupId());
 			jsonObj.put(GroupingConstants.GROUP_TYPE, createGroupForm.getGroupType());
@@ -1968,7 +1938,7 @@ public class GroupingController {
 		String groupingType = (request.getParameter(GroupingConstants.GROUP_TYPE) != null) ? (request
 				.getParameter(GroupingConstants.GROUP_TYPE)) : "";
 		String[] components = componentsStr.split(",");
-		if(LOGGER.isDebugEnabled()){
+		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("componentsStr------>" + componentsStr);
 		}
 		LOGGER.info("no of components" + components.length);
@@ -2014,14 +1984,12 @@ public class GroupingController {
 	@ResourceMapping("setDefaultColor")
 	public final ModelAndView handleDefaultValueRequest(final ResourceRequest request, final ResourceResponse response) {
 		LOGGER.info("handleDefaultValueRequest ResourceRequest:Enter------------>.");
-		String formSessionKey = (String) request.getPortletSession().getAttribute("formSessionKey");
-		LOGGER.info("handleDefaultValueRequest formSessionKey  ----------------------------->" + formSessionKey);
 		String sessionDataKey = (String) request.getPortletSession().getAttribute("sessionDataKey");
-		LOGGER.info(" handleDefaultValueRequest sessionDataKey -----------------------------> " + sessionDataKey);
 		UserData custuser = (UserData) request.getPortletSession().getAttribute(sessionDataKey);
-		LOGGER.info(" handleDefaultValueRequest custuser -----------------------------------> " + custuser);
 		String pepUserId = custuser.getBelkUser().getLanId();
-		LOGGER.info("This is from Reneder Internal User--------------------->" + pepUserId);
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("This is from Reneder Internal User--------------------->" + pepUserId);
+		}
 		String message = "";
 		ModelAndView modelAndView = null;
 
@@ -2110,8 +2078,7 @@ public class GroupingController {
 				}
 
 				if (LOGGER.isDebugEnabled()) {
-					LOGGER.debug("colorId----------------->" + colorId);
-					LOGGER.debug("childOrinId----------------->" + childOrinId);
+					LOGGER.debug("colorId------->" + colorId + " \nchildOrinId---------->" + childOrinId);
 				}
 
 				String responseMesage = GroupingConstants.EMPTY;
