@@ -852,7 +852,7 @@ function releseLockedPet(loggedInUser,releseLockedPetURL){
 
 		<div class="need_images">							
 			<div id="vendor_images">
-				<table id="vImage" cellpadding="0" cellspacing="0" width="90%">
+				<table id="scene7-table" cellpadding="0" cellspacing="0" width="90%">
 				<thead>
 				<tr>
 				<th class="sorted order1"><fmt:message key="image.scene7.shottype" /></th>
@@ -861,14 +861,11 @@ function releseLockedPet(loggedInUser,releseLockedPetURL){
 				<th><fmt:message key="image.scene7.viewurl" /></th>
 				</tr>
 				</thead>
-				<c:forEach items= "${imageDetailsForm.imageLinkVOList}"  var="imageLinkVOList">
-				<tr>
-					<td><c:out value="${imageLinkVOList.shotType}"/></td>
-					<td><a href="${imageLinkVOList.imageURL}" target="_blank">URL</a></td>
-					<td><a href="${imageLinkVOList.swatchURL}" target="_blank">URL</a></td>
-					<td><a href="${imageLinkVOList.viewURL}" target="_blank">URL</a></td>										
-				</tr>
-				</c:forEach>
+				<tbody id="scene7-rows">
+					<tr>
+						<td colspan="4" align="center"><strong>No Data Found!</strong></td>										
+					</tr>
+				</tbody>
 				</table>
 				</form>
 			</div>

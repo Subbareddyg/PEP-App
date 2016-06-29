@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 //import java.util.logging.Logger;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import org.hibernate.Query;
@@ -940,7 +941,12 @@ public class ImageRequestDAOImpl implements ImageRequestDAO {
                         "\nSWATCH URL: " + imageLinkVO.getSwatchURL() + 
                         "\nVIEW URL: " + imageLinkVO.getViewURL());
                     
-                    imageLinkVOList.add(imageLinkVO);
+                    if(!StringUtils.isEmpty(imageLinkVO.getImageURL())
+                    		|| !StringUtils.isEmpty(imageLinkVO.getSwatchURL())
+                    				|| !StringUtils.isEmpty(imageLinkVO.getViewURL()))
+                    {
+                    	imageLinkVOList.add(imageLinkVO);
+                    }
                 }
             }
         }

@@ -588,6 +588,32 @@ function populateColorCode(ColorCode){
 	
 }
 
+function getScene7Url(orin, url){
+	$.get(url, {selectedColorOrin: orin})
+		.done(function(result){
+			console.log(result);
+			if(result.length){
+				var responseJSON = $.parseJSON(result);
+				var html = '';
+				if(responseJSON !== undefined && responseJSON.forEach instanceof Function){
+					responseJSON.forEach(function(item){
+					html += '<tr>'
+					html += '<td>' + item.shotType + '</td>'
+						+ "<td><a href=\"javascript:openGRPScen7Image(\'" + item.imageUrl + "\');\">ImageURL</a></td>"
+						+ "<td><a href=\"javascript:openGRPScen7Image(\'" + item.swatchUrl + "\');\">SwatchURL</a></td>"
+						+ "<td><a href=\"javascript:openGRPScen7Image(\'" + item.viewUrl + "\');\">ViewURL</a></td>"
+						+ '/<tr>';
+					});
+					
+					if(html.length)
+						$('#scene7-rows').html(html);
+				}		
+			}else
+				console.warn('Invalid Response Received!');
+				
+		});
+};
+
 function getValuesforSubmitorRejectAjax(imageId,imageStatus,element,event){
 	var target = event.srcElement || event.target;
 	//console.log($(target).parent().parent().find('select :selected').val());
@@ -1024,12 +1050,13 @@ function checkApproveImageStatus(orinId,imageStatus){
 							        </portlet:resourceURL>
 							        <portlet:resourceURL var="removeSampleImageUrl" id ="removeSampleImageUrl">								
 									</portlet:resourceURL>
-								
+									<portlet:resourceURL var="scene7ImageURL" id ="scene7ImageURL">								
+									</portlet:resourceURL>
 								<tr name="treegrid2"
-									class="treegrid-${subcount} treegrid-parent-${countList}"  onclick="populateColorCode('${style.vendorColorCode}');setUploadVPILink('${getUploadVPIDetails}','<c:out value="${style.orinNumber}" />','${removeSampleImageUrl}');checkApproveImageStatus('${style.orinNumber}','${style.imageStatus}');disableAllButtons();">
+									class="treegrid-${subcount} treegrid-parent-${countList}"  onclick="populateColorCode('${style.vendorColorCode}');setUploadVPILink('${getUploadVPIDetails}','<c:out value="${style.orinNumber}" />','${removeSampleImageUrl}');checkApproveImageStatus('${style.orinNumber}','${style.imageStatus}');getScene7Url('${style.orinNumber}', '${scene7ImageURL}');disableAllButtons();">
 
 									<td><input type="hidden" name="supplierId" id="supplierId" value="<c:out value="${style.supplierID}" />"/></td>
-									<td><a href="javascript:;" onclick=" populateColorCode('${style.vendorColorCode}');setUploadVPILink('${getUploadVPIDetails}','<c:out value="${style.orinNumber}" />','${removeSampleImageUrl}');checkApproveImageStatus('${style.orinNumber}','${style.imageStatus}');disableAllButtons();"><c:out value="${style.orinNumber}" /> </a>
+									<td><a href="javascript:;" onclick=" populateColorCode('${style.vendorColorCode}');setUploadVPILink('${getUploadVPIDetails}','<c:out value="${style.orinNumber}" />','${removeSampleImageUrl}');checkApproveImageStatus('${style.orinNumber}','${style.imageStatus}');getScene7Url('${style.orinNumber}', '${scene7ImageURL}');disableAllButtons();"><c:out value="${style.orinNumber}" /> </a>
 									<input type="hidden" name="orinHiddenId" id="${style.orinNumber}" value="<c:out value="${style.orinNumber}" />" />
 									</td>
 									<input type="hidden" name="vendorStyle" id="vendorStyle" value="<c:out value="${style.vendorStyle}" />" />

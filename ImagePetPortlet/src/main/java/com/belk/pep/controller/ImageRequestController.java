@@ -256,19 +256,7 @@ public class ImageRequestController {
         ArrayList vendorInformationList = imageRequestDelegate.getVendorInformation(orinNumber);
         ArrayList contactInformationList = imageRequestDelegate.getContactInformation(orinNumber); 
         ArrayList pepHistoryList = imageRequestDelegate.getPepHistoryDetails(orinNumber);
-
-        /**
-    	 * Method to get the Image attribute details in screen.
-    	 * 
-    	 * Method added For PIM Phase 2 - Regular Item Image Link Attribute
-    	 * Date: 05/13/2016
-    	 * Added By: Cognizant
-    	 */	
-        List<ImageLinkVO> imageLinkVOList = imageRequestDelegate.getScene7ImageLinks(orinNumber);
-        LOGGER.debug("Image link attribute list size -- " + imageLinkVOList.size());
-        /**
-         * Modification End.
-         */
+        
         
         LOGGER.info("****inside the  handle handleRenderRequest method****"
             + request.getParameter(ImageConstants.ACTION));
@@ -311,22 +299,7 @@ public class ImageRequestController {
                     imageForm.setPepHistoryList(pepHistoryList);
                     LOGGER.info("exiting inside pepHistoryList");
                 }
-                            
-                /**
-            	 * Method to get the Image attribute details in screen.
-            	 * 
-            	 * Method added For PIM Phase 2 - Regular Item Image Link Attribute
-            	 * Date: 05/13/2016
-            	 * Added By: Cognizant
-            	 */	
-                if (imageLinkVOList.size() > 0 && imageLinkVOList != null) {
-                    LOGGER.debug("inside imageLinkVOList");
-                    imageForm.setImageLinkVOList(imageLinkVOList);
-                    LOGGER.debug("exiting inside imageLinkVOList");
-                }
-                /**
-                 * Modification End.
-                 */
+                                            
                 
                 List<WorkFlow> workFlowList   = new ArrayList<WorkFlow>();   	
             	workFlowList =  imageRequestDelegate.getImageMgmtDetailsByOrin(orinNumber);
@@ -1784,5 +1757,70 @@ public class ImageRequestController {
 
 	}
 
+	/**
+	 * Method to get the Image attribute details in screen.
+	 * 
+	 * Method added For PIM Phase 2 - Regular Item Image Link Attribute
+	 * Date: 05/13/2016
+	 * Added By: Cognizant
+	 */	
+	@ResourceMapping("scene7ImageURL")
+	public ModelAndView getScene7ImageURLDetails(ResourceRequest request,
+			ResourceResponse response) {
+		LOGGER.info("getScene7ImageURLDetails ************..");
+
+		ModelAndView mv = null;
+		try {
+			if (null != request
+					.getParameter(ImageConstants.SELECTED_COLOR_ORIN)) {
+				LOGGER.info(" selected ORIN *******"
+						+ request
+								.getParameter(ImageConstants.SELECTED_COLOR_ORIN));
+				String orinNumber = request.getParameter(ImageConstants.SELECTED_COLOR_ORIN);
+		        List<ImageLinkVO> imageLinkVOList = imageRequestDelegate.getScene7ImageLinks(orinNumber);
+		        LOGGER.debug("Image link attribute list size -- " + imageLinkVOList.size());
+		        
+				JSONArray jsonImageDtls = new JSONArray();
+				jsonImageDtls = populateScene7ImageURLJSON(imageLinkVOList);
+				LOGGER.info("jsonImageLinkDtls *************" + jsonImageDtls);
+				response.getWriter().write(jsonImageDtls.toString());
+			}
+
+		} catch (Exception e) {
+			LOGGER.error("Exception in getScene7ImageURLDetails method - " + e.getMessage());
+		}
+
+		LOGGER.info("Exiting getScene7ImageURLDetails method");
+		return mv;
+
+	}
+	
+	/**
+     * JSON for Scene 7 Image URL
+     * @param imageLinkVOList List<ImageLinkVO>
+     * @return jsonArrayImageDtls JSONArray
+     */
+	public JSONArray populateScene7ImageURLJSON(
+			List<ImageLinkVO> imageLinkVOList) {
+		JSONObject jsonObj = null;
+		JSONArray jsonArrayImageDtls = new JSONArray();
+		LOGGER.info("Entering populateScene7ImageURLJSON....Controller::");
+
+		for (ImageLinkVO item : imageLinkVOList) {
+			jsonObj = new JSONObject();
+			jsonObj.put("shotType", item.getShotType());
+			jsonObj.put("viewUrl", item.getViewURL());
+			jsonObj.put("swatchUrl", item.getSwatchURL());
+			jsonObj.put("imageUrl", item.getImageURL());
+			jsonArrayImageDtls.put(jsonObj);
+
+		}
+
+		LOGGER.info("Exiting populateScene7ImageURLJSON....Controller::");
+		return jsonArrayImageDtls;
+	}
+	/**
+     * Modification End.
+     */
 
 }
