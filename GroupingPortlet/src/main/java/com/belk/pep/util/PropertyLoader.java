@@ -53,6 +53,7 @@ public class PropertyLoader {
 			
 			properties.load(input);
 			// Set the property.
+			@SuppressWarnings("rawtypes")
 			Enumeration e = properties.propertyNames();
 			while (e.hasMoreElements()) {
 				// Pull; the key value pair.

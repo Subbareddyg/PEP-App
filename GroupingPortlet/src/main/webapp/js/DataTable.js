@@ -158,7 +158,7 @@
 				
 				if(_super.$(this).is(':checked')){				
 					_super.$(_super.config.dtContainer).find('.item-check:enabled').prop('checked', true);
-					_super.$(_super.config.dtContainer).find('input[type="radio"]').prop('disabled', false);
+					_super.$(_super.config.dtContainer).find('.item-check:enabled').parent().parent().find('input[type="radio"]').prop('disabled', false);
 				}else{
 					_super.$(_super.config.dtContainer).find('.item-check:enabled').prop('checked', false);					
 					if(_super.$(_super.config.dtContainer).find('input[type="radio"]').hasClass('trueDefult')){

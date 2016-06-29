@@ -8,6 +8,7 @@
 						<th width="15%"><fmt:message key="splitgroup.screen.level.component.styleNo" /></th>
 						<th width="15%"><a href="javascript:;" class="sortable" data-sort-column="productName" data-sorted-by=""><fmt:message key="splitgroup.screen.level.component.productName" /></a></th>
 						<th width="10%"><a href="javascript:;" class="sortable" data-sort-column="colorCode" data-sorted-by=""><fmt:message key="splitgroup.screen.level.component.colorCode" /></a></th>
+						<th width="10%"><a href="javascript:;" class="sortable" data-sort-column="colorCode" data-sorted-by=""><fmt:message key="splitgroup.screen.level.component.colorName" /></a></th>
 						<th width="10%"><fmt:message key="splitgroup.screen.level.component.defaultColor" /></th>
 					</tr>
 				</thead>
@@ -22,16 +23,17 @@
 		<tr>
 			<td>
 				<c:if test="${readonly =='yes'}">
-				<input type="checkbox" name="selectedItem[]" value="{{=row.mdmid}}" class="item-check" style="margin-left:14px" disabled="disabled" />
+				<input type="checkbox" name="selectedItem[]" value="{{=row.colorCode}}" class="item-check" style="margin-left:14px" disabled="disabled" />
 				</c:if>
 				<c:if test="${readonly !='yes'}">
-				<input type="checkbox" name="selectedItem[]" value="{{=row.mdmid}}" class="item-check" style="margin-left:14px" />
+				<input type="checkbox" name="selectedItem[]" value="{{=row.colorCode}}" class="item-check" style="margin-left:14px" />
 				</c:if>
 			</td>
 			<td class="text-center">{{=row.StyleOrinNo}}</td>
 			<td class="text-center">{{=row.vendorStyleNo}}</td>
 			<td>{{=row.productName}}</td>
 			<td class="text-center">{{=row.colorCode}}</td>
+			<td class="text-center">{{=row.colorName}}</td>
 			<td class="text-center">
 				<c:if test="${readonly =='yes'}">
 				<input type="radio" name="defaultColor" value="{{=row.colorCode}}" {{=row.defaultColor=='true' ? 'checked="checked"' : ''}} disabled="disabled" />

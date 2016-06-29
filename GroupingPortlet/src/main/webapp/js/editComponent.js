@@ -568,8 +568,18 @@ var app = app || {} ;
 						//checking whether at least one radio is checked for default component
 						if(!$('#existingComponentForm').find('[name=defaultColor]:checked').length){
 							$('#error-massege').html("Please select a default component.");
-							$('#errorBox').dialog('option', 'title', 'Default Component');
-							$('#errorBox').dialog('open');
+							$('#errorBox').dialog({
+							   autoOpen: true, 
+							   modal: true,
+							   resizable: false,
+							   title : 'Default Component',
+							   dialogClass: "dlg-custom",
+							   buttons: {
+								  OK: function() {$(this).dialog("close");}
+							   },
+							});
+							/* $('#errorBox').dialog('option', 'title', 'Default Component');
+							$('#errorBox').dialog('open'); */
 							return;
 						}
 							
