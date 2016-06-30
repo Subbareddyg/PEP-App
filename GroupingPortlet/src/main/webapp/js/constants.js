@@ -6,7 +6,7 @@ var app = app || {};
 			contextPath: '',
 			maxGroupNameChars: 150,
 			minGroupDescChars: 40,
-			maxGroupDescChars: 7000,
+			maxGroupDescChars: 2000,
 		},
 		
 		constants: {
