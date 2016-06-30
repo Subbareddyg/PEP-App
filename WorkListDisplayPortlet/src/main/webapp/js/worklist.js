@@ -1798,9 +1798,14 @@ function activateAjaxCall(){
 
 				parentStyle = [];
 				parentStyle = $(this).val().split('_');
-				if(parentStyle[1]=='Initiated'){					
-					parentActiveFlag='yes';
-					}
+				if(parentStyle[1]=='Initiated'){
+					var groupFlag = $(this).data('group') || 'N';	
+					if(groupFlag == 'Y'){
+						parentActiveFlag='no';
+						deactiveFlag = 'yes';
+					}else	
+						parentActiveFlag='yes';
+				}
 				else if(parentStyle[1]=='Deactivated'){					
 					//alert("Inside Parent Deactivated");
 					parentDeactiveFlag = 'yes';
@@ -1826,8 +1831,8 @@ function activateAjaxCall(){
 				childStyleColor = $(this).val().split('_');
 				if(childStyleColor[1]=='Initiated'){
 					activeFlag='yes';
-					}
-			else if(childStyleColor[1]=='Deactivated'){
+				}
+				else if(childStyleColor[1]=='Deactivated'){
 					deactiveFlag = 'yes';
 				}
 				else if(childStyleColor[1]=='Closed'){
