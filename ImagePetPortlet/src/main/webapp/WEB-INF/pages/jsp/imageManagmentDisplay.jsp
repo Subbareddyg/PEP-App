@@ -599,9 +599,9 @@ function getScene7Url(orin, url){
 					responseJSON.forEach(function(item){
 					html += '<tr>'
 					html += '<td>' + item.shotType + '</td>'
-						+ "<td><a href=\"javascript:openGRPScen7Image(\'" + item.imageUrl + "\');\">ImageURL</a></td>"
-						+ "<td><a href=\"javascript:openGRPScen7Image(\'" + item.swatchUrl + "\');\">SwatchURL</a></td>"
-						+ "<td><a href=\"javascript:openGRPScen7Image(\'" + item.viewUrl + "\');\">ViewURL</a></td>"
+						+ "<td><a href=\"javascript:openGRPScen7Image(\'" + escape(item.imageUrl) + "\');\">ImageURL</a></td>"
+						+ "<td><a href=\"javascript:openGRPScen7Image(\'" + escape(item.swatchUrl) + "\');\">SwatchURL</a></td>"
+						+ "<td><a href=\"javascript:openGRPScen7Image(\'" + escape(item.viewUrl) + "\');\">ViewURL</a></td>"
 						+ '/<tr>';
 					});
 					
