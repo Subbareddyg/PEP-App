@@ -233,14 +233,12 @@ var app = app || {};
 					
 					
 					if($('#closeGrpDlg').hasClass('refresh')){
-						//$('.overlay_pageLoading').removeClass('hidden'); 
-						$('#frmComponentSearch').trigger('submit');  //trigerring search internally																				
+						$('#frmComponentSearch').trigger('submit'); //trigerring search internally																				
 						$('#closeGrpDlg').val('Cancel');
 						$('#closeGrpDlg').removeClass('refresh');
 						$('#select-all').prop('checked', false);
 						$('#btnCreateGroup').prop('disabled', false).css('opacity','1');
 						$('#dlgGroupCreate').dialog( "option", "height", 370 );
-						$('.overlay_pageLoading').addClass('hidden');
 					} 				
 				});
 				
@@ -655,6 +653,9 @@ var app = app || {};
 								if(resultsJSON.deptList){
 									_super.depts = resultsJSON.deptList;
 								}
+								
+								//enabling dept and class selection input controls
+								$('#s-grouping-dept, #btnDlgDept, #s-grouping-class, #btnDlgClass').prop('disabled', false);
 							});
 					}
 					
@@ -910,6 +911,9 @@ var app = app || {};
 						if(!validInputFlag){
 							$('#error-massege').html('Atleast one field is required');
 							$('#errorBox').dialog("open");
+						}else if($('#alreadyInGroup').length && $('#alreadyInGroup').val() == 'Y' && $('#groupId-search').val().trim().length > 0){
+							$('#error-massege').html("Grouping# " + $('#groupId').val() + " already belongs to another group!");
+							$('#errorBox').dialog("open");			
 						}else{
 							$('.overlay_pageLoading').removeClass('hidden');
 							

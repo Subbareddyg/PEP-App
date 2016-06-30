@@ -14,6 +14,7 @@ import com.belk.pep.exception.checked.PEPServiceException;
 import com.belk.pep.form.GroupAttributeForm;
 import com.belk.pep.form.GroupSearchForm;
 import com.belk.pep.form.StyleAttributeForm;
+import com.belk.pep.util.PetLock;
 
 /** This class responsible for handling all the DAO call to the VP Database.
  * 
@@ -237,4 +238,24 @@ public interface GroupingDAO {
 	List<StyleAttributeForm> getRegularBeautyChildDetails(String groupId)
 			throws PEPFetchException;
 
+	/**
+	 * This method is used check the LOCK status of a pet.
+	 * @param Orin
+	 * @param pepUserId
+	 * @param searchPetLockedtype
+	 * @return
+	 * @throws PEPPersistencyException
+	 */
+	ArrayList<PetLock> isPETLocked(String Orin, String pepUserId, String searchPetLockedtype) throws PEPPersistencyException;
+	
+	/**
+	 * This method is used to lock a PET while using.  
+	 * @param orin
+	 * @param pepUserID
+	 * @param pepfunction
+	 * @return
+	 * @throws PEPPersistencyException
+	 */
+	boolean lockPET(String orin, String pepUserID, String pepfunction) throws PEPPersistencyException;
+	
 }

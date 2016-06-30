@@ -102,6 +102,7 @@
 			<form name="frmComponentSearch" id="frmComponentSearch" action="" class="<c:out value="${groupDetailsForm.groupType}" />-group-validation">
 			<input type="hidden" name="groupType" value=" <c:out value="${groupDetailsForm.groupType}" /> " id="groupType" >
 			<input type="hidden" name="groupId" value=" <c:out value="${groupDetailsForm.groupId}" /> " id="groupId" >
+			<input type="hidden" name="alreadyInGroup" value="${groupDetailsForm.isAlreadyInGroup}" id="alreadyInGroup" />
 			<input type="hidden" name="styleOrinNo" value="" id="styleOrinNo" >
 			<table cellspacing="5" cellpadding="0" border="0" class="content-table">
 				<tr>
@@ -115,15 +116,15 @@
 						<label for="s-grouping-dept"><fmt:message key="addcomponent.screen.level.deptNo" /></label>
 					</td>
 					<td>
-						<input type="text" name="deptSearch" id="s-grouping-dept" value="" />
-						<input type="button" value="open" id="btnDlgDept"/>
+						<input type="text" name="deptSearch" id="s-grouping-dept" value="" disabled />
+						<input type="button" value="open" id="btnDlgDept" disabled />
 					</td>
 					<td width="10%" align="right">
 						<label for="s-grouping-class"><fmt:message key="addcomponent.screen.level.class" /></label>
 					</td>
 					<td>
-						<input type="text" name="classSearch" id="s-grouping-class" value="" />
-						<input type="button" value="open" id="btnDlgClass"/>
+						<input type="text" name="classSearch" id="s-grouping-class" value="" disabled />
+						<input type="button" value="open" id="btnDlgClass" disabled />
 					</td>
 				</tr>
 				<tr>

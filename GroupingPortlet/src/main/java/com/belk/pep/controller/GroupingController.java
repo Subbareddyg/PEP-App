@@ -49,6 +49,7 @@ import com.belk.pep.form.GroupSearchForm;
 import com.belk.pep.form.StyleAttributeForm;
 import com.belk.pep.service.GroupingService;
 import com.belk.pep.util.GroupingUtil;
+import com.belk.pep.util.PetLock;
 import com.belk.pep.util.PropertyLoader;
 
 /** The Class GroupingController. */
@@ -695,7 +696,8 @@ public class GroupingController {
 				LOGGER.debug("After calling createGroup()-->getGroupCreationStatus: " + createGroupFormRes.getGroupCreationStatus()
 						+ " \ngetGroupCretionMsg: " + createGroupFormRes.getGroupCretionMsg() + " \nGroupID: "
 						+ createGroupFormRes.getGroupId() + " \nGroupType: " + createGroupFormRes.getGroupType() + " \nGroupDesc: "
-						+ createGroupFormRes.getGroupDesc() + " \ngetCarsGroupType: " + createGroupFormRes.getCarsGroupType());
+						+ createGroupFormRes.getGroupDesc() + " \ngetCarsGroupType: " + createGroupFormRes.getCarsGroupType() +
+						"\ngetIsAlreadyInGroup: " + createGroupFormRes.getIsAlreadyInGroup());
 			}
 
 			request.getPortletSession().setAttribute(GroupingConstants.GROUP_DETAILS_FORM, createGroupFormRes);
@@ -1182,6 +1184,7 @@ public class GroupingController {
 	public final ModelAndView existingGrpDetailsRender(final RenderRequest request, final RenderResponse response) {
 
 		LOGGER.info("GroupingControlle.existingGrpDetailsRender:enter.");
+		String userID = "";
 		ModelAndView modelAndView = null;
 		modelAndView = new ModelAndView(GroupingConstants.GROUPING_ADD_COMPONENT);
 
@@ -1195,27 +1198,11 @@ public class GroupingController {
 
 			CreateGroupForm objCreateGroupForm = groupingService.getExistingGrpDetails(groupId);
 
-			Properties prop = PropertyLoader.getPropertyLoader(GroupingConstants.GROUPING_PROPERTIES_FILE_NAME);
-			String groupTypeCode = null == objCreateGroupForm.getGroupType() ? "" : objCreateGroupForm.getGroupType().trim();
-			String groupTypeDesc = prop.getProperty(groupTypeCode);
-			String groupStatusCode = null == objCreateGroupForm.getGroupStatus() ? "" : objCreateGroupForm.getGroupStatus().trim();
-			String groupStatusDesc = prop.getProperty(GroupingConstants.GROUP_STATUS_EXT + groupStatusCode);
-
-			objCreateGroupForm.setGroupTypeDesc(groupTypeDesc);
-			objCreateGroupForm.setGroupStatusDesc(groupStatusDesc);
-
-			if (LOGGER.isDebugEnabled()) {
-				LOGGER.debug("getExistingGrpDetails.objCreateGroupForm-->" + objCreateGroupForm);
-				LOGGER.debug("getExistingGrpDetails.objCreateGroupForm.getGroupId()-->" + objCreateGroupForm.getGroupId()
-						+ "\ngroupTypeDesc-->" + groupTypeDesc + "\ngroupStatus-->" + groupStatusDesc);
-			}
-			modelAndView.addObject(GroupingConstants.GROUP_DETAILS_FORM, objCreateGroupForm);
-
 			/** changes to display lan id - changed by Ramkumar - starts **/
 			UserData custuser = null;
 			String sessionDataKey = (String) request.getPortletSession().getAttribute("sessionDataKey");
 			if (null != sessionDataKey) {
-				String userID = sessionDataKey.split(GroupingConstants.USER_DATA + request.getPortletSession().getId())[1];
+				userID = sessionDataKey.split(GroupingConstants.USER_DATA + request.getPortletSession().getId())[1];
 				if (LOGGER.isDebugEnabled()) {
 					LOGGER.debug("Display User ID--------------------->" + userID);
 				}
@@ -1228,6 +1215,30 @@ public class GroupingController {
 				}
 			}
 			/** changes to display lan id - changed by Ramkumar - ends **/
+			/** Group Lock Start **/
+			/*String petOriginImage = GroupingConstants.SEARCH_LOCKED_TYPE_IMAGE;
+			String petOriginContent = GroupingConstants.SEARCH_LOCKED_TYPE_CONTENT;
+			groupingService.lockPET(groupId, userID, petOriginImage);
+			groupingService.lockPET(groupId, userID, petOriginContent);
+			LOGGER.info("Group Image and Content Locked Successfully.");*/
+			/** Group Lock End **/
+			
+			Properties prop = PropertyLoader.getPropertyLoader(GroupingConstants.GROUPING_PROPERTIES_FILE_NAME);
+			String groupTypeCode = null == objCreateGroupForm.getGroupType() ? "" : objCreateGroupForm.getGroupType().trim();
+			String groupTypeDesc = prop.getProperty(groupTypeCode);
+			String groupStatusCode = null == objCreateGroupForm.getGroupStatus() ? "" : objCreateGroupForm.getGroupStatus().trim();
+			String groupStatusDesc = prop.getProperty(GroupingConstants.GROUP_STATUS_EXT + groupStatusCode);
+
+			objCreateGroupForm.setGroupTypeDesc(groupTypeDesc);
+			objCreateGroupForm.setGroupStatusDesc(groupStatusDesc);
+
+			if (LOGGER.isDebugEnabled()) {
+				LOGGER.debug("getExistingGrpDetails.objCreateGroupForm-->" + objCreateGroupForm);
+				LOGGER.debug("getExistingGrpDetails.objCreateGroupForm.getGroupId()-->" + objCreateGroupForm.getGroupId()
+						+ "\ngroupTypeDesc-->" + groupTypeDesc + "\ngroupStatus-->" + groupStatusDesc + 
+						"\ngetIsAlreadyInGroup-->" + objCreateGroupForm.getIsAlreadyInGroup());
+			}
+			modelAndView.addObject(GroupingConstants.GROUP_DETAILS_FORM, objCreateGroupForm);
 
 			/** changes to display Grouping Types - starts **/
 			String groups = prop.getProperty(GroupingConstants.GROUP_TYPES);
@@ -1276,6 +1287,14 @@ public class GroupingController {
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("getExistGrpComponentResource.groupType---------->" + groupType + "\ngroupId---------->" + groupId);
 		}
+
+		/** Checking whether this Group is locked or not Start **/
+		/*String lockedPettype = GroupingConstants.SEARCH_LOCKED_TYPE_IMAGE;
+		LOGGER.info("lockedPet *******************-->" + groupId + "lockedPettype *******************-->" + lockedPettype);
+		if (groupId != null) {
+			isPetLocked(request, response, groupId, lockedPettype);
+		}*/
+		/** Checking whether this Group is locked or not End **/
 
 		try {
 
@@ -2214,5 +2233,72 @@ public class GroupingController {
 		}
 		LOGGER.info("Exit getRegularBeautyGrpJsonResponse-->.");
 		return jsonObj;
+	}
+	
+	
+
+	/**
+	 * This method is responsible for get pet page locked or not.
+	 * @param request
+	 * @param response
+	 * @param lockedPet
+	 * @param lockedPettype
+	 */
+	private void isPetLocked(ResourceRequest request, ResourceResponse response, String lockedPet, String lockedPettype) {
+
+		LOGGER.info("Entering:: aisPetLocked Grouping controller");
+		ArrayList<PetLock> lockedPetDtls = null;
+		try {
+			String searchLockedtype = "";
+			if (lockedPettype.equalsIgnoreCase(GroupingConstants.SEARCH_LOCKED_TYPE_CONTENT)) {
+				searchLockedtype = GroupingConstants.SEARCH_LOCKED_TYPE_CONTENT;
+				LOGGER.info("Entering:: isPetLocked  ****** searchLockedtype" + searchLockedtype);
+
+			} else if (lockedPettype.equalsIgnoreCase(GroupingConstants.SEARCH_LOCKED_TYPE_IMAGE)) {
+				searchLockedtype = GroupingConstants.SEARCH_LOCKED_TYPE_IMAGE;
+				LOGGER.info("Entering:: isPetLocked  ****** searchLockedtype" + searchLockedtype);
+			}
+			lockedPetDtls = groupingService.isPETLocked("", lockedPet, searchLockedtype);
+			
+			boolean petLocked = false;
+			String petLockedUser = null;
+			
+			if (null != lockedPetDtls && lockedPetDtls.size() > 0) {
+				PetLock petLockedDtl = null;
+				for (int i = 0; i < lockedPetDtls.size(); i++) {
+					petLockedDtl = (PetLock) lockedPetDtls.get(i);
+					LOGGER.info("petLockedDtl.getId().getPetId() " + petLockedDtl.getId().getPetId() + "\n  getPepFunction()  " + petLockedDtl.getPepFunction() +
+							"\nLocked Status in controller class " + petLockedDtl.getLockStatus());
+
+					if (petLockedDtl.getId().getPepUser() != null) {
+						petLockedUser = petLockedDtl.getId().getPepUser();
+					}
+					if (petLockedDtl.getLockStatus() != null && petLockedDtl.getLockStatus().equalsIgnoreCase("Yes")) {
+						petLocked = true;
+					}
+				}
+			}
+
+			LOGGER.info("petLocked here ******** " + petLocked);
+			JSONObject jsonObj = null;
+			JSONArray jsonArrayPetDtls = new JSONArray();
+			jsonObj = new JSONObject();
+			jsonObj.put("LockStatus", petLocked);
+			if (petLockedUser != null) {
+				jsonObj.put("petLockedUser", petLockedUser);
+			} else {
+				jsonObj.put("petLockedUser", "NoUser");
+			}
+			jsonArrayPetDtls.put(jsonObj);
+
+			LOGGER.info("Grouping controller . Locked Status end  " + jsonArrayPetDtls.toString());
+			response.getWriter().write(jsonArrayPetDtls.toString());
+		}
+		catch (PEPPersistencyException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		LOGGER.info("Exiting:: aisPetLocked Grouping controller");
 	}
 }

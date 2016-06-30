@@ -56,15 +56,15 @@
 						<label for="s-grouping-dept"><fmt:message key="group.screen.level.dept" /></label>
 					</td>
 					<td>
-						<input type="text" name="departments" id="s-grouping-dept" value="" />
-						<input type="button" value="open" id="btnDlgDept" />
+						<input type="text" name="departments" id="s-grouping-dept" value="" disabled />
+						<input type="button" value="open" id="btnDlgDept" disabled />
 					</td>
 					<td width="10%" align="right">
 						<label for="s-grouping-class"><fmt:message key="group.screen.level.class" /></label>
 					</td>
 					<td>
-						<input type="text" name="classes" id="s-grouping-class" value="" />
-						<input type="button" value="open" id="btnDlgClass"/>
+						<input type="text" name="classes" id="s-grouping-class" value="" disabled />
+						<input type="button" value="open" id="btnDlgClass" disabled />
 					</td>
 					<td width="10%" align="right">
 						<label for="s-orinNumber"><fmt:message key="group.screen.level.styleOrin" /></label>				

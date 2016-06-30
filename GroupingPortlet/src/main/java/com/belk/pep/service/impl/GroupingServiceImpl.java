@@ -37,6 +37,7 @@ import com.belk.pep.form.GroupSearchForm;
 import com.belk.pep.form.StyleAttributeForm;
 import com.belk.pep.service.GroupingService;
 import com.belk.pep.util.GroupingUtil;
+import com.belk.pep.util.PetLock;
 import com.belk.pep.util.PropertyLoader;
 
 /**
@@ -242,6 +243,7 @@ public class GroupingServiceImpl implements GroupingService {
 		createGroupForm.setGroupCreationStatus(groupCreationStatus);
 		createGroupForm.setGroupStatus(createGroupDTO.getGroupStatus());
 		createGroupForm.setCarsGroupType(createGroupDTO.getCarsGroupType());
+		createGroupForm.setIsAlreadyInGroup(createGroupDTO.getIsAlreadyInGroup());
 
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("Transfer object value from DTO to Form Object end.");
@@ -1269,6 +1271,7 @@ public class GroupingServiceImpl implements GroupingService {
 		createGroupForm.setGroupCreationStatus("");
 		createGroupForm.setGroupStatus(createGroupDTO.getGroupStatus());
 		createGroupForm.setCarsGroupType(createGroupDTO.getCarsGroupType());
+		createGroupForm.setIsAlreadyInGroup(createGroupDTO.getIsAlreadyInGroup());
 
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("Transfer object value from DTO to Form Object end.");
@@ -2589,4 +2592,49 @@ public class GroupingServiceImpl implements GroupingService {
 
 		return httpConnection;
 	}
+	
+
+	/**
+	 * This method is used check the LOCK status of a pet.
+	 * @param Orin
+	 * @param pepUserId
+	 * @param searchPetLockedtype
+	 * @return
+	 * @throws PEPPersistencyException
+	 */
+	public ArrayList<PetLock> isPETLocked(String pepUserId, String orin, String searchPetLockedtype) throws PEPPersistencyException {
+		LOGGER.info("service impl :: isPETLocked");
+		ArrayList<PetLock> petLockedDtls = null;
+		try {
+			petLockedDtls = groupingDAO.isPETLocked(orin, pepUserId, searchPetLockedtype);
+		} catch (PEPPersistencyException e) {
+
+			LOGGER.info("Exception occurred at the Service DAO Layer");
+			throw e;
+		}
+		return petLockedDtls;
+
+	}
+
+
+	/**
+	 * This method is used to lock a PET while using.  
+	 * @param orin
+	 * @param pepUserID
+	 * @param pepfunction
+	 * @return
+	 * @throws PEPPersistencyException
+	 */
+	public boolean lockPET(String orin, String pepUserID, String pepfunction) throws PEPPersistencyException {
+		LOGGER.info("service impl :: lockPET");
+		try {
+			groupingDAO.lockPET(orin, pepUserID, pepfunction);
+		} catch (PEPPersistencyException e) {
+
+			LOGGER.info("Exception occurred at the Service DAO Layer");
+			throw e;
+		}
+		return false;
+
+}
 }

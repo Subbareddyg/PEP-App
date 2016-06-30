@@ -286,6 +286,8 @@ var app = app || {} ;
 									//checking if already component search fired befre removeing component(s)
 									//if yes then refreshing the same search result
 									if(!$("#search-result-panel").hasClass('hidden')){
+										
+										//triggering submit for component search form
 										$('#frmComponentSearch').trigger('submit');
 									}
 								}else if(responseJSON.status == 'FAIL'){
@@ -588,6 +590,9 @@ var app = app || {} ;
 					
 					params += '&groupType=' + $('#groupType').val() + '&groupId=' + $('#groupId').val();
 					
+					$(this).val('Saving..').prop('disabled', true); //disabling and showing the on going save action
+					var that = $(this);
+					
 					app.GroupFactory.editDefaultComponent(params)
 						.done(function(result){
 								//console.log(result);
@@ -620,6 +625,8 @@ var app = app || {} ;
 								$('#overlay_pageLoading').addClass('hidden'); //hiding loader icon
 								//cleaning up message after 4 sec
 								app.GroupLandingApp.cleanupMessage($('#group-existing-component-area'), 8000);
+								
+								that.val('Save').prop('disabled', false);
 							});
 				});
 				

@@ -39,7 +39,8 @@ public class XqueryConstants {
 		getGroupHeaderDetailsQuery.append("      AGC.END_DATE,                                                 ");
 		getGroupHeaderDetailsQuery.append("      AGCXML.CARS_Group_Type,                                               ");
 		getGroupHeaderDetailsQuery.append("      AGC.ENTRY_TYPE GROUP_TYPE, AGC.GROUP_OVERALL_STATUS_CODE,                   ");
-		getGroupHeaderDetailsQuery.append("      AGC.CREATED_BY                                                             ");
+		getGroupHeaderDetailsQuery.append("      AGC.CREATED_BY,                                                             ");
+		getGroupHeaderDetailsQuery.append("      AGC.EXIST_IN_GROUP                                                          ");
 		getGroupHeaderDetailsQuery.append("      FROM ADSE_GROUP_CATALOG AGC,                                               ");
 		getGroupHeaderDetailsQuery.append("        XMLTABLE( 'let                                                           ");
 		getGroupHeaderDetailsQuery.append("        $Description:= /pim_entry/entry/Group_Ctg_Spec/Description,              ");
@@ -817,7 +818,7 @@ public class XqueryConstants {
 			final String classNoForInSearch,	final String supplierSiteIdSearch, final String upcNoSearch, 
 			final String deptNoSearch, final String classNoSearch) {
 		StringBuilder getNewCPGDetails = new StringBuilder();
-		getNewCPGDetails.append("	SELECT                                                              ");
+		getNewCPGDetails.append("	SELECT /*+ index(SEARCH ITEM_CTG_IDX8)*/                                     ");
 		getNewCPGDetails.append("	SEARCH.PARENT_MDMID,                                                         ");
 		getNewCPGDetails.append("	SEARCH.MDMID,                                                                ");
 		getNewCPGDetails.append("	SEARCH.ENTRY_TYPE, SEARCH.CLASS_ID,                                           ");
@@ -1032,7 +1033,7 @@ public class XqueryConstants {
 		LOGGER.info("Entering getRegularBeautySearchResult() in Grouping XQueryConstant class.");
 		int count = 0;
 		StringBuilder getRegularBeautySearchResult = new StringBuilder();
-		getRegularBeautySearchResult.append(" SELECT DISTINCT SEARCH.PARENT_MDMID, ");
+		getRegularBeautySearchResult.append(" SELECT /*+ index(SEARCH ITEM_CTG_IDX8)*/ DISTINCT SEARCH.PARENT_MDMID, ");
 		getRegularBeautySearchResult.append("   SEARCH.MDMID,                                                                   ");
 		getRegularBeautySearchResult.append("   SEARCH.ENTRY_TYPE,                                                              ");
 		getRegularBeautySearchResult.append("   SEARCH.CLASS_ID,                                                                ");

@@ -39,21 +39,21 @@
 				<prop key="show_sql">true</prop>
 			</props>
 		</property>
-		<!-- property name="annotatedClasses">
+		<property name="annotatedClasses">
 			<list>
-				           <value>com.belk.pep.domain.Config</value>
+				           <!-- value>com.belk.pep.domain.Config</value>
                            <value>com.belk.pep.domain.PetAttribute</value>
                            <value>com.belk.pep.domain.PepRole</value>
                            <value>com.belk.pep.domain.BelkUser</value>
                            <value>com.belk.pep.domain.ExternalUserPK</value>
   						   <value>com.belk.pep.domain.ExternalUser</value>
                            <value>com.belk.pep.domain.PepDepartmentPK</value>                          
-                           <value>com.belk.pep.domain.PepDepartment</value>
-                           <value>com.belk.pep.domain.PetLock</value> 
-                           <value>com.belk.pep.domain.PetLockPK</value>  
+                           <value>com.belk.pep.domain.PepDepartment</value-->
+                           <value>com.belk.pep.util.PetLock</value> 
+                           <value>com.belk.pep.util.PetLockPK</value>  
 				
 			</list>
-		</property-->
+		</property>
 	</bean>
 	
 

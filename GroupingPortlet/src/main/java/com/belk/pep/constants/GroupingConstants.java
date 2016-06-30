@@ -265,4 +265,8 @@ public class GroupingConstants {
 	public static final String RESOURCE_TYPE = "resourceType";
 	public static final String RESOURCE_TYPE_FOR_SET_PRIORITY = "priorityValueSave";
 	public static final String RESOURCE_TYPE_FOR_SET_DEFAULT = "defaultValueSave";
+	
+	//constants for PET page locked scenarios
+	public static final String SEARCH_LOCKED_TYPE_CONTENT = "Content";
+	public static final String SEARCH_LOCKED_TYPE_IMAGE = "Image";
 }

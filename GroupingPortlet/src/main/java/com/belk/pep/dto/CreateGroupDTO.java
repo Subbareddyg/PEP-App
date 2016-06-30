@@ -35,6 +35,8 @@ public class CreateGroupDTO {
     
     private String groupCretionMsg;
     
+    private String isAlreadyInGroup;
+    
     private List <GroupAttributeForm> groupAttributeDTOList;
     
     /**
@@ -193,6 +195,18 @@ public class CreateGroupDTO {
 	 */
 	public void setCarsGroupType(String carsGroupType) {
 		this.carsGroupType = carsGroupType;
+	}
+	/**
+	 * @return the isAlreadyInGroup
+	 */
+	public String getIsAlreadyInGroup() {
+		return isAlreadyInGroup;
+	}
+	/**
+	 * @param isAlreadyInGroup the isAlreadyInGroup to set
+	 */
+	public void setIsAlreadyInGroup(String isAlreadyInGroup) {
+		this.isAlreadyInGroup = isAlreadyInGroup;
 	}
     
     

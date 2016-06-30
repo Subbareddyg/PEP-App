@@ -36,6 +36,8 @@ public class CreateGroupForm {
     private String groupCretionMsg;
     private String groupCreationStatus;
     
+    private String isAlreadyInGroup;
+    
     // List fo GroupAttribute Form
     private List <GroupAttributeForm> groupAttributeFormList;
     
@@ -231,6 +233,18 @@ public class CreateGroupForm {
 	 */
 	public void setCarsGroupType(String carsGroupType) {
 		this.carsGroupType = carsGroupType;
+	}
+	/**
+	 * @return the isAlreadyInGroup
+	 */
+	public String getIsAlreadyInGroup() {
+		return isAlreadyInGroup;
+	}
+	/**
+	 * @param isAlreadyInGroup the isAlreadyInGroup to set
+	 */
+	public void setIsAlreadyInGroup(String isAlreadyInGroup) {
+		this.isAlreadyInGroup = isAlreadyInGroup;
 	}
 	
     

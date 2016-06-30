@@ -13,6 +13,7 @@ import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 
 import com.belk.pep.constants.GroupingConstants;
 import com.belk.pep.constants.XqueryConstants;
@@ -29,6 +30,8 @@ import com.belk.pep.form.GroupSearchForm;
 import com.belk.pep.form.StyleAttributeForm;
 import com.belk.pep.util.DateUtil;
 import com.belk.pep.util.GroupingUtil;
+import com.belk.pep.util.PetLock;
+import com.belk.pep.util.PetLockPK;
 
 /**
  * This class responsible for handling all the DAO call to the VP Database.
@@ -102,6 +105,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 					String endDate = null;
 					java.util.Date startDateDt = null;
 					java.util.Date endDateDt = null;
+					String isAlreadyInGroup = ""; 
 					final String groupName = rowMap.get("GROUP_NAME") != null ? rowMap.get("GROUP_NAME").toString() : "";
 
 					final Clob groupDescClob = (Clob) rowMap.get("DESCRIPTION");
@@ -113,7 +117,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 					final String carsGroupType = rowMap.get("CARS_GROUP_TYPE") != null ? rowMap.get("CARS_GROUP_TYPE").toString().trim()
 							: "";
 
-					if (null != groupType && (GroupingConstants.GROUP_TYPE_BEAUTY_COLLECTION).equals(groupType)) {
+					if (GroupingConstants.GROUP_TYPE_BEAUTY_COLLECTION.equals(groupType)) {
 						startDateDt = (Date) rowMap.get("START_DATE");
 						endDateDt = (Date) rowMap.get("END_DATE");
 
@@ -123,6 +127,9 @@ public class GroupingDAOImpl implements GroupingDAO {
 						if (null != endDateDt) {
 							endDate = DateUtil.DateToStringMMddyyyy(endDateDt);
 						}
+					}
+					if (GroupingConstants.GROUP_TYPE_BEAUTY_COLLECTION.equals(groupType) || GroupingConstants.GROUP_TYPE_REGULAR_COLLECTION.equals(groupType)) {
+						isAlreadyInGroup = rowMap.get("EXIST_IN_GROUP") != null ? rowMap.get("EXIST_IN_GROUP").toString() : "N";
 					}
 
 					if (LOGGER.isDebugEnabled()) {
@@ -137,6 +144,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 					createGroupDTO.setGroupStatus(groupStatus);
 					createGroupDTO.setGroupType(groupType);
 					createGroupDTO.setCarsGroupType(carsGroupType);
+					createGroupDTO.setIsAlreadyInGroup(isAlreadyInGroup);
 				}
 			}
 		} catch (PEPFetchException e) {
@@ -394,6 +402,10 @@ public class GroupingDAOImpl implements GroupingDAO {
 
 			// execute select SQL statement
 			query.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
+			//PROOF
+			/*query.setFirstResult(((1 - 1) * 10));
+			query.setMaxResults(10);*/
+			
 			@SuppressWarnings("unchecked")
 			final List<Object> rows = query.list();
 			if (rows != null) {
@@ -1447,10 +1459,10 @@ public class GroupingDAOImpl implements GroupingDAO {
 
 			// execute select SQL statement
 			query.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
-			/*
-			 * query.setFirstResult(((pageNumber - 1) * recordsPerPage));
-			 * query.setMaxResults(recordsPerPage);
-			 */
+			//PROOF
+			/*query.setFirstResult(((1 - 1) * 10));
+			query.setMaxResults(10);*/
+			 
 			@SuppressWarnings("unchecked")
 			final List<Object> rows = query.list();
 			if (rows != null) {
@@ -1868,6 +1880,84 @@ public class GroupingDAOImpl implements GroupingDAO {
 
 		LOGGER.info("getRegularBeautyChildDetails-->End.");
 		return styleAttributeFormList;
+	}
+
+	
+	/**
+	 * This method is used check the LOCK status of a pet.
+	 * @param Orin
+	 * @param pepUserId
+	 * @param searchPetLockedtype
+	 * @return
+	 * @throws PEPPersistencyException
+	 */
+	public ArrayList<PetLock> isPETLocked(String Orin, String pepUserId, String searchPetLockedtype) throws PEPPersistencyException {
+
+		LOGGER.info("pepUserId in the isPETLocked layer-->" + pepUserId);
+
+		LOGGER.info("pepUserId in the Orin layer-->" + Orin);
+		LOGGER.info("pepUserId in the searchPetLockedtype layer-->" + searchPetLockedtype);
+		Session session = null;
+		Transaction tx = null;
+		ArrayList<PetLock> petLockDetails = new ArrayList<>();
+		try {
+			session = sessionFactory.openSession();
+			tx = session.beginTransaction();
+			Query query = session.getNamedQuery("PetLock.isPetLocked");
+			query.setString("petId", Orin);
+			query.setString("pepFunction", searchPetLockedtype);
+			@SuppressWarnings("unchecked")
+			List<PetLock> petLock = query.list();
+			if (null != petLock && petLock.size() > 0) {
+				LOGGER.info("isPETLocked  in DAO IMPL  " + petLock.size());
+				for (int i = 0; i < petLock.size(); i++) {
+					petLockDetails.add(petLock.get(i));
+				}
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			session.flush();
+			tx.commit();
+			session.close();
+		}
+		return petLockDetails;
+	}
+	
+	/**
+	 * This method is used to lock a PET while using.  
+	 * @param orin
+	 * @param pepUserID
+	 * @param pepfunction
+	 * @return
+	 * @throws PEPPersistencyException
+	 */
+	public boolean lockPET(String orin, String pepUserID, String pepfunction) throws PEPPersistencyException {
+		LOGGER.info("This is  in DAO IMPL lockRecord.." + pepUserID);
+		boolean isUpdated = false;
+		Session session = null;
+		Transaction tx = null;
+		PetLock ptLock = new PetLock();
+		PetLockPK petLock = new PetLockPK();
+		try {
+			session = sessionFactory.openSession();
+			tx = session.beginTransaction();
+			petLock.setPetId(orin);
+			petLock.setPepUser(pepUserID);
+			petLock.setLockDate(new Date());
+			ptLock.setPepFunction(pepfunction);
+			ptLock.setLockStatus("Yes");
+			ptLock.setId(petLock);
+			LOGGER.info("petLock -->" + petLock);
+			session.saveOrUpdate(ptLock);
+		} finally {
+			session.flush();
+			tx.commit();
+			session.close();
+		}
+		LOGGER.info("This is from lockPET...Exit");
+		return isUpdated;
 	}
 
 }
