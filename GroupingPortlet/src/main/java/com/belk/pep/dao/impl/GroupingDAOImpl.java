@@ -1898,10 +1898,10 @@ public class GroupingDAOImpl implements GroupingDAO {
 		LOGGER.info("pepUserId in the Orin layer-->" + Orin);
 		LOGGER.info("pepUserId in the searchPetLockedtype layer-->" + searchPetLockedtype);
 		Session session = null;
-		
+		session = sessionFactory.openSession();
 		ArrayList<PetLock> petLockDetails = new ArrayList<>();
 		try {
-			session = sessionFactory.openSession();
+			
 		
 			Query query = session.getNamedQuery("PetLock.isPetLocked");
 			query.setString("petId", Orin);
