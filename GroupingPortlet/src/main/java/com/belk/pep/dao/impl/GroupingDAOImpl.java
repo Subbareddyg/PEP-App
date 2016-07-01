@@ -1939,9 +1939,10 @@ public class GroupingDAOImpl implements GroupingDAO {
 		Transaction tx = null;
 		PetLock ptLock = new PetLock();
 		PetLockPK petLock = new PetLockPK();
+		session = sessionFactory.openSession();
+		tx = session.beginTransaction();
 		try {
-			session = sessionFactory.openSession();
-			tx = session.beginTransaction();
+			
 			petLock.setPetId(orin);
 			petLock.setPepUser(pepUserID);
 			petLock.setLockDate(new Date());
