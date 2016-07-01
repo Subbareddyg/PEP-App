@@ -1898,11 +1898,11 @@ public class GroupingDAOImpl implements GroupingDAO {
 		LOGGER.info("pepUserId in the Orin layer-->" + Orin);
 		LOGGER.info("pepUserId in the searchPetLockedtype layer-->" + searchPetLockedtype);
 		Session session = null;
-		Transaction tx = null;
+		
 		ArrayList<PetLock> petLockDetails = new ArrayList<>();
 		try {
 			session = sessionFactory.openSession();
-			tx = session.beginTransaction();
+		
 			Query query = session.getNamedQuery("PetLock.isPetLocked");
 			query.setString("petId", Orin);
 			query.setString("pepFunction", searchPetLockedtype);
@@ -1916,10 +1916,9 @@ public class GroupingDAOImpl implements GroupingDAO {
 			}
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOGGER.info("isPETLocked method in GroupinDAOImpl-->" + e);
 		} finally {
-			session.flush();
-			tx.commit();
+			
 			session.close();
 		}
 		return petLockDetails;
@@ -1951,7 +1950,11 @@ public class GroupingDAOImpl implements GroupingDAO {
 			ptLock.setId(petLock);
 			LOGGER.info("petLock -->" + petLock);
 			session.saveOrUpdate(ptLock);
-		} finally {
+		  }
+			catch (Exception e) {
+				LOGGER.info("lockPET method in GroupinDAOImpl-->" + e);
+			}
+		 finally {
 			session.flush();
 			tx.commit();
 			session.close();

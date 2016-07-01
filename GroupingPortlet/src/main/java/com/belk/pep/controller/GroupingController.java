@@ -2252,11 +2252,11 @@ public class GroupingController {
 			String searchLockedtype = "";
 			if (lockedPettype.equalsIgnoreCase(GroupingConstants.SEARCH_LOCKED_TYPE_CONTENT)) {
 				searchLockedtype = GroupingConstants.SEARCH_LOCKED_TYPE_CONTENT;
-				LOGGER.info("Entering:: isPetLocked  ****** searchLockedtype" + searchLockedtype);
+				
 
 			} else if (lockedPettype.equalsIgnoreCase(GroupingConstants.SEARCH_LOCKED_TYPE_IMAGE)) {
 				searchLockedtype = GroupingConstants.SEARCH_LOCKED_TYPE_IMAGE;
-				LOGGER.info("Entering:: isPetLocked  ****** searchLockedtype" + searchLockedtype);
+				
 			}
 			lockedPetDtls = groupingService.isPETLocked("", lockedPet, searchLockedtype);
 			
@@ -2294,10 +2294,10 @@ public class GroupingController {
 			LOGGER.info("Grouping controller . Locked Status end  " + jsonArrayPetDtls.toString());
 			response.getWriter().write(jsonArrayPetDtls.toString());
 		}
-		catch (PEPPersistencyException e) {
-			e.printStackTrace();
+		catch (PEPPersistencyException e) {			
+			LOGGER.error("isPetLocked  method in GroupingContoller class ",e);
 		} catch (IOException e) {
-			e.printStackTrace();
+			LOGGER.error("isPetLocked  method in GroupingContoller class ",e);
 		}
 		LOGGER.info("Exiting:: aisPetLocked Grouping controller");
 	}
