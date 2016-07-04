@@ -5,19 +5,19 @@ import javax.persistence.*;
 
 import java.sql.Timestamp;
 
-
 /**
  * The persistent class for the PET_LOCK database table.
  * 
  */
 @Entity
-@Table(name="PET_LOCK")
+@Table(name = "PET_LOCK")
 @NamedQueries(
-    {
-     @NamedQuery(name="PetLock.isPetLocked", query=" FROM PetLock p where (p.id.petId = :petId) and (p.pepFunction = :pepFunction)"),
-     @NamedQuery(name="PetLock.deleteLockedPet", query="delete from PetLock p where p.id.petId = :petId ")
-    } 
-)
+				{
+					// @NamedQuery(name="PetLock.isPetLocked", query=" FROM PetLock p where (p.id.petId = :petId) and (p.pepFunction = :pepFunction)"),
+					@NamedQuery(name = "PetLock.isPetLocked", query = " FROM PetLock p where (p.id.petId = :petId)"),
+					@NamedQuery(name = "PetLock.deleteLockedPet", query = "delete from PetLock p where p.id.petId = :petId ") 
+				}
+			)
 
 public class PetLock implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -25,13 +25,13 @@ public class PetLock implements Serializable {
 	@EmbeddedId
 	private PetLockPK id;
 
-	@Column(name="LOCK_STATUS")
+	@Column(name = "LOCK_STATUS")
 	private String lockStatus;
 
-	@Column(name="PEP_FUNCTION")
+	@Column(name = "PEP_FUNCTION")
 	private String pepFunction;
 
-	@Column(name="RELEASE_DATE")
+	@Column(name = "RELEASE_DATE")
 	private Timestamp releaseDate;
 
 	public PetLock() {

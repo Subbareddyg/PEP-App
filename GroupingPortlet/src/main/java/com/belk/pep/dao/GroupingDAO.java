@@ -258,4 +258,13 @@ public interface GroupingDAO {
 	 */
 	boolean lockPET(String orin, String pepUserID, String pepfunction) throws PEPPersistencyException;
 	
+	/**
+	 * This Method is used to release Group Locking.
+	 * @param orin
+	 * @param pepUserID
+	 * @param pepFunction
+	 * @return
+	 * @throws PEPPersistencyException
+	 */
+	boolean releseLockedPet(String orin, String pepUserID, String pepFunction)throws PEPPersistencyException;	
 }

@@ -1216,11 +1216,11 @@ public class GroupingController {
 			}
 			/** changes to display lan id - changed by Ramkumar - ends **/
 			/** Group Lock Start **/
-			/*String petOriginImage = GroupingConstants.SEARCH_LOCKED_TYPE_IMAGE;
+			String petOriginImage = GroupingConstants.SEARCH_LOCKED_TYPE_IMAGE;
 			String petOriginContent = GroupingConstants.SEARCH_LOCKED_TYPE_CONTENT;
 			groupingService.lockPET(groupId, userID, petOriginImage);
 			groupingService.lockPET(groupId, userID, petOriginContent);
-			LOGGER.info("Group Image and Content Locked Successfully.");*/
+			LOGGER.info("Group Image and Content Locked Successfully.");
 			/** Group Lock End **/
 			
 			Properties prop = PropertyLoader.getPropertyLoader(GroupingConstants.GROUPING_PROPERTIES_FILE_NAME);
@@ -1288,16 +1288,8 @@ public class GroupingController {
 			LOGGER.debug("getExistGrpComponentResource.groupType---------->" + groupType + "\ngroupId---------->" + groupId);
 		}
 
-		/** Checking whether this Group is locked or not Start **/
-		/*String lockedPettype = GroupingConstants.SEARCH_LOCKED_TYPE_IMAGE;
-		LOGGER.info("lockedPet *******************-->" + groupId + "lockedPettype *******************-->" + lockedPettype);
-		if (groupId != null) {
-			isPetLocked(request, response, groupId, lockedPettype);
-		}*/
-		/** Checking whether this Group is locked or not End **/
 
 		try {
-
 			if (groupType.equals(GroupingConstants.GROUP_TYPE_SPLIT_COLOR)) {
 				if (LOGGER.isDebugEnabled()) {
 					LOGGER.debug("getExistGrpComponentResource. In SCG");
@@ -2235,7 +2227,56 @@ public class GroupingController {
 		return jsonObj;
 	}
 	
-	
+
+	/**
+	 * This method is responsible to get pet page locked or not status. And it will call before get the group details.
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	@ResourceMapping("checkGroupLockingURL")
+	public final ModelAndView checkGroupLocking(final ResourceRequest request, final ResourceResponse response) {
+		LOGGER.info("GroupingControlle:checkGroupLocking ResourceRequest:Enter------------>.");
+		ModelAndView modelAndView = null;
+		JSONObject jsonObj = null;
+		try {
+			Properties prop = PropertyLoader.getPropertyLoader(GroupingConstants.MESS_PROP);
+			String groupId = request.getParameter(GroupingConstants.GROUP_ID);
+			String message = "";
+			String petLocked = "N";
+			String petLockedUser = "";
+			jsonObj = new JSONObject();
+			String lockedPettype = GroupingConstants.SEARCH_LOCKED_TYPE_IMAGE;
+			if (groupId != null) {
+				petLockedUser = isPetLocked(groupId, lockedPettype);
+				if(petLockedUser.length() > 0){
+					petLocked = "Y";
+				}
+				if("Y".equals(petLocked)){
+					// This Group is already Locked by another usre.
+					message = prop.getProperty(GroupingConstants.GROUP_LOCKED_MESSAGE_ONE) + " " + petLockedUser 
+							+ " " + prop.getProperty(GroupingConstants.GROUP_LOCKED_MESSAGE_TWO);
+				}
+				jsonObj.put(GroupingConstants.LOCK_JSON_COMPONENT_PET_LOCKED_STATUS, petLocked);
+				jsonObj.put(GroupingConstants.LOCK_JSON_COMPONENT_PET_LOCKED_USER, petLockedUser);
+				jsonObj.put(GroupingConstants.MESSAGE, message);
+			}
+			
+			if (LOGGER.isDebugEnabled()) {
+				LOGGER.debug("Grouping controller . Locked Status end  " + jsonObj);
+			}
+			response.getWriter().write(jsonObj.toString());
+
+			modelAndView = new ModelAndView(null);
+			LOGGER.info("GroupingControlle:checkGroupLocking:Exit------------>.");
+
+		} catch (IOException e) {
+			LOGGER.error("GroupingControlle:checkGroupLocking:IOException------------>" + e);
+		} catch (Exception e) {
+			LOGGER.error("GroupingControlle:checkGroupLocking:Exception------------>" + e);
+		}
+		return modelAndView;
+	}
 
 	/**
 	 * This method is responsible for get pet page locked or not.
@@ -2244,24 +2285,23 @@ public class GroupingController {
 	 * @param lockedPet
 	 * @param lockedPettype
 	 */
-	private void isPetLocked(ResourceRequest request, ResourceResponse response, String lockedPet, String lockedPettype) {
+	private String isPetLocked(final String lockedPet, final String lockedPettype) {
 
 		LOGGER.info("Entering:: aisPetLocked Grouping controller");
+		boolean petLocked = false;
+		String petLockedUser = "";
 		ArrayList<PetLock> lockedPetDtls = null;
 		try {
 			String searchLockedtype = "";
 			if (lockedPettype.equalsIgnoreCase(GroupingConstants.SEARCH_LOCKED_TYPE_CONTENT)) {
 				searchLockedtype = GroupingConstants.SEARCH_LOCKED_TYPE_CONTENT;
-				
+				LOGGER.info("Entering:: isPetLocked  ****** searchLockedtype" + searchLockedtype);
 
 			} else if (lockedPettype.equalsIgnoreCase(GroupingConstants.SEARCH_LOCKED_TYPE_IMAGE)) {
 				searchLockedtype = GroupingConstants.SEARCH_LOCKED_TYPE_IMAGE;
-				
+				LOGGER.info("Entering:: isPetLocked  ****** searchLockedtype" + searchLockedtype);
 			}
 			lockedPetDtls = groupingService.isPETLocked("", lockedPet, searchLockedtype);
-			
-			boolean petLocked = false;
-			String petLockedUser = null;
 			
 			if (null != lockedPetDtls && lockedPetDtls.size() > 0) {
 				PetLock petLockedDtl = null;
@@ -2276,29 +2316,56 @@ public class GroupingController {
 					if (petLockedDtl.getLockStatus() != null && petLockedDtl.getLockStatus().equalsIgnoreCase("Yes")) {
 						petLocked = true;
 					}
+					if(petLocked){
+						if (petLockedUser == null) {
+							petLockedUser = GroupingConstants.NO_USER;
+						}
+					} else{
+						petLockedUser = "";
+					}
 				}
 			}
-
 			LOGGER.info("petLocked here ******** " + petLocked);
-			JSONObject jsonObj = null;
-			JSONArray jsonArrayPetDtls = new JSONArray();
-			jsonObj = new JSONObject();
-			jsonObj.put("LockStatus", petLocked);
-			if (petLockedUser != null) {
-				jsonObj.put("petLockedUser", petLockedUser);
-			} else {
-				jsonObj.put("petLockedUser", "NoUser");
-			}
-			jsonArrayPetDtls.put(jsonObj);
-
-			LOGGER.info("Grouping controller . Locked Status end  " + jsonArrayPetDtls.toString());
-			response.getWriter().write(jsonArrayPetDtls.toString());
 		}
-		catch (PEPPersistencyException e) {			
-			LOGGER.error("isPetLocked  method in GroupingContoller class ",e);
-		} catch (IOException e) {
-			LOGGER.error("isPetLocked  method in GroupingContoller class ",e);
+		catch (PEPPersistencyException e) {
+			LOGGER.error("aisPetLocked Grouping controlle:PEPPersistencyException------>" + e);
 		}
 		LOGGER.info("Exiting:: aisPetLocked Grouping controller");
+		return petLockedUser;
+	}
+	
+	
+	/**
+	 * This Method is used to release Group Locking.
+	 * @param request
+	 * @param response
+	 */
+	@ResourceMapping("releseLockedPetURL")
+	public void releseLockedPet(ResourceRequest request, ResourceResponse response) {
+		LOGGER.info("GroupingController.releseLockedPet ************-->Enter");
+		String pepFunction = ""; // Image/Content
+		String loggedInUser = request.getParameter(GroupingConstants.LOGGED_IN_USER);
+		String lockedPet = request.getParameter(GroupingConstants.LOCKED_PET);
+		String lockFunction = GroupingUtil.checkNull(request.getParameter(GroupingConstants.LOCKED_FUNCTION));
+		LOGGER.info("releseLockedPet lockedPet IMAGE REQUEST CONTROLLER ************.." + lockedPet + " lockFunction-->" + lockFunction);
+		try {
+			if(GroupingConstants.LOCKED_FUNCTION_RELEASE_LOCK.equals(lockFunction)){
+				groupingService.releseLockedPet(lockedPet, loggedInUser, pepFunction);
+	
+				/** Group Lock Start **/
+				String petOriginImage = GroupingConstants.SEARCH_LOCKED_TYPE_IMAGE;
+				String petOriginContent = GroupingConstants.SEARCH_LOCKED_TYPE_CONTENT;
+				groupingService.lockPET(lockedPet, loggedInUser, petOriginImage);
+				groupingService.lockPET(lockedPet, loggedInUser, petOriginContent);
+				LOGGER.info("Group Image and Content Locked Successfully.");
+				/** Group Lock End **/
+			} else{
+				groupingService.releseLockedPet(lockedPet, loggedInUser, pepFunction);
+			}
+
+		} catch (PEPPersistencyException e) {
+			LOGGER.error("releseLockedPet Grouping controlle:PEPPersistencyException------>" + e);
+		}
+		LOGGER.info("GroupingController.releseLockedPet ************-->Exit");
 	}
 }

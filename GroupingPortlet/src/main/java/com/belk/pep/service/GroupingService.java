@@ -565,4 +565,14 @@ public interface GroupingService {
 	 * @throws PEPPersistencyException
 	 */
 	boolean lockPET(String orin, String pepUserID, String pepfunction) throws PEPPersistencyException;
+
+	/**
+	 * This method is used to release Grouping pet lock.
+	 * @param orin
+	 * @param pepUserID
+	 * @param pepFunction
+	 * @return
+	 * @throws PEPPersistencyException
+	 */
+	boolean releseLockedPet(String orin, String pepUserID, String pepFunction) throws PEPPersistencyException;
 }
