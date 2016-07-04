@@ -1917,12 +1917,14 @@ public class GroupingDAOImpl implements GroupingDAO {
 				}
 			}
 
-		} catch (Exception e) {
-			LOGGER.error("releseLockedPet Grouping controlle:Exception------>" + e);
 		} finally {
-			session.flush();
-			tx.commit();
-			session.close();
+			if(null != tx){
+				tx.commit();
+			}
+			if(null != session){
+				session.flush();
+				session.close();
+			}
 		}
 		return petLockDetails;
 	}
@@ -1952,12 +1954,14 @@ public class GroupingDAOImpl implements GroupingDAO {
 			ptLock.setId(petLock);
 			LOGGER.info("petLock -->" + petLock);
 			session.saveOrUpdate(ptLock);
-		} catch(Exception e) {
-			LOGGER.error("lockPET Grouping controlle:Exception------>" + e);
 		} finally {
-			session.flush();
-			tx.commit();
-			session.close();
+			if(null != tx){
+				tx.commit();
+			}
+			if(null != session){
+				session.flush();
+				session.close();
+			}
 		}
 		LOGGER.info("This is from lockPET...Exit");
 		return isUpdated;
@@ -1976,23 +1980,23 @@ public class GroupingDAOImpl implements GroupingDAO {
 		LOGGER.info("releseLockedPet Grouping DAO Impl:: lockPET-->Enter");
 		boolean isPetReleased = false;
 
-		Session session = null;
-		Transaction tx = null;
+		Session session = sessionFactory.openSession();
+		Transaction tx = session.beginTransaction();
 		try {
-			session = sessionFactory.openSession();
-			tx = session.beginTransaction();
 			Query query = session.getNamedQuery("PetLock.deleteLockedPet");
 			query.setString("petId", orin);
 			// query.setString("pepUser", pepUserID);
 			// query.setString("pepFunction", pepFunction);
 			query.executeUpdate();
 
-		} catch (Exception e) {
-			LOGGER.error("GroupingDao.releseLockedPet PEPPersistencyException-->" + e);
 		} finally {
-			session.flush();
-			tx.commit();
-			session.close();
+			if(null != tx){
+				tx.commit();
+			}
+			if(null != session){
+				session.flush();
+				session.close();
+			}
 		}
 		return isPetReleased;
 	}
