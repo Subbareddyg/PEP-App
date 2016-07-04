@@ -1175,7 +1175,7 @@ public class GroupingServiceImpl implements GroupingService {
 	 * @throws PEPPersistencyException
 	 */
 	public final List<StyleAttributeForm> getSelectedBCGAttributeList(final List<StyleAttributeForm> getRCGDetailsList,
-			final String[] selectedItemsArr) throws PEPServiceException, PEPPersistencyException { 
+			final String[] selectedItemsArr) throws PEPServiceException, PEPPersistencyException {
 
 		LOGGER.info("*Enter-->calling getSelectedBCGAttributeList from GroupingServiceImpl.-->" + selectedItemsArr);
 		List<StyleAttributeForm> selectedRCGAttributeList = new ArrayList<>();
@@ -2336,8 +2336,8 @@ public class GroupingServiceImpl implements GroupingService {
 	 * @return String
 	 * @throws PEPFetchException
 	 */
-	private String callDefaultColorSizeService(final JSONObject jsonGroup) throws MalformedURLException,
-	ClassCastException, IOException, JSONException {
+	private String callDefaultColorSizeService(final JSONObject jsonGroup) throws MalformedURLException, ClassCastException, IOException,
+			JSONException {
 		LOGGER.info("Entering callDefaultColorSizeService.");
 
 		String responseMsg = GroupingConstants.EMPTY;
@@ -2401,10 +2401,10 @@ public class GroupingServiceImpl implements GroupingService {
 	 * @param childOrinId String
 	 * @param updatedBy String
 	 * @return String
-	 * @throws IOException 
-	 * @throws JSONException 
-	 * @throws ClassCastException 
-	 * @throws MalformedURLException 
+	 * @throws IOException
+	 * @throws JSONException
+	 * @throws ClassCastException
+	 * @throws MalformedURLException
 	 */
 	@Override
 	public final String setDefaultColorSize(final String groupId, final String groupType, final String colorId, final String childOrinId,
@@ -2592,17 +2592,18 @@ public class GroupingServiceImpl implements GroupingService {
 
 		return httpConnection;
 	}
-	
 
 	/**
 	 * This method is used check the LOCK status of a pet.
+	 * 
 	 * @param Orin
 	 * @param pepUserId
 	 * @param searchPetLockedtype
 	 * @return
 	 * @throws PEPPersistencyException
 	 */
-	public ArrayList<PetLock> isPETLocked(String pepUserId, String orin, String searchPetLockedtype) throws PEPPersistencyException {
+	public ArrayList<PetLock> isPETLocked(final String pepUserId, final String orin, final String searchPetLockedtype)
+			throws PEPPersistencyException {
 		LOGGER.info("service impl :: isPETLocked");
 		ArrayList<PetLock> petLockedDtls = null;
 		try {
@@ -2616,25 +2617,45 @@ public class GroupingServiceImpl implements GroupingService {
 
 	}
 
-
 	/**
-	 * This method is used to lock a PET while using.  
+	 * This method is used to lock a PET while using.
+	 * 
 	 * @param orin
 	 * @param pepUserID
 	 * @param pepfunction
 	 * @return
 	 * @throws PEPPersistencyException
 	 */
-	public boolean lockPET(String orin, String pepUserID, String pepfunction) throws PEPPersistencyException {
+	public boolean lockPET(final String orin, final String pepUserID, final String pepfunction) throws PEPPersistencyException {
 		LOGGER.info("service impl :: lockPET");
 		try {
 			groupingDAO.lockPET(orin, pepUserID, pepfunction);
 		} catch (PEPPersistencyException e) {
-
 			LOGGER.info("Exception occurred at the Service DAO Layer");
 			throw e;
 		}
 		return false;
+	}
 
-}
+	/**
+	 * This method is used to release Grouping pet lock.
+	 * @param orin
+	 * @param pepUserID
+	 * @param pepFunction
+	 * @return
+	 * @throws PEPPersistencyException
+	 */
+	public boolean releseLockedPet(final String orin, final String pepUserID, final String pepFunction) throws PEPPersistencyException {
+		LOGGER.info("Grouping releseLockedPet service :: lockPET Enter");
+		boolean isPetReleased = false;
+		try {
+			isPetReleased = groupingDAO.releseLockedPet(orin, pepUserID, pepFunction);
+		} catch (PEPPersistencyException e) {
+			LOGGER.info("Exception occurred at the Service DAO Layer");
+			throw e;
+		}
+		LOGGER.info("Grouping releseLockedPet service :: lockPET Exit");
+		return isPetReleased;
+
+	}
 }

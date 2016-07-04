@@ -43,19 +43,19 @@ var app = app || {};
 		// Featching Exiting Components 
 		fetchExistingComponents : function(params){
 			return $.get(app.URLFactory.getURL('existingCompUrl'), params)
-					.error(handleException);
+				.error(handleException);
 		},
 		
 		// adds new component to a split group
 		addNewSplitComponent: function(params){
 			return $.get(app.URLFactory.getURL('addComponentToGroup'), params)
-					.error(handleException);
+				.error(handleException);
 		},
 		
 		// updates default component for a  split group
 		editDefaultComponent: function(params){
 			return $.post(app.URLFactory.getURL('editDefaultComponentUrl'), params)
-					.error(handleException);
+				.error(handleException);
 		},
 		
 		// method to update group header
@@ -68,6 +68,18 @@ var app = app || {};
 		removeComponents: function(params){
 			return $.post(app.URLFactory.getURL('removeComponentURL'), params)
 					.error(handleException);
+		},
+		
+		//method to get group lock status 
+		checkGroupLock: function(groupId){
+			return $.post(app.URLFactory.getURL('groupLockStatusURL'), {groupId:groupId})
+				.error(handleException);
+		},
+		
+		//method to get group lock status 
+		handleLock: function(mode, userId, groupId){
+			return $.post(app.URLFactory.getURL('groupLockHandleURL'), {loggedInUser:userId, lockedPet: groupId, lockFunction:mode})
+				.error(handleException);
 		},
 	};
 	

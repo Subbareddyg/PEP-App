@@ -172,6 +172,8 @@
 <portlet:resourceURL var="deleteGroupResourceRequest"> 
 </portlet:resourceURL>
 
+<portlet:resourceURL id="checkGroupLockingURL" var="checkGroupLockingURL" />
+
 <portlet:renderURL var="splitSKUGroupingSubmit"> 
 	<portlet:param name="groupingTypeSplitSKU" value="splitSKU" />
 </portlet:renderURL>
@@ -398,7 +400,7 @@
 					<input type="hidden" name="groupId" value="{{=row.groupId}}" />
 					<input type="hidden" name="groupType" value="{{=row.groupTypeCode}}" />
 				</form>
-				<a href="javascript:;" onclick="document.getElementById('form_{{=row.groupId}}_{{=key}}').submit()" class="gs-item-details" data-id="{{=row.groupId}}">Details</a> <c:if test="${readonly !='yes'}"> | <a href="javascript:;" class="delete-item" data-group-type="{{=row.groupTypeCode}}" data-group-id="{{=row.groupId}}">Delete</a></c:if></td>
+				<a href="javascript:;" onclick="app.GroupLandingApp.checkGroupLock('{{=row.groupId}}', 'form_{{=row.groupId}}_{{=key}}');" class="gs-item-details" data-id="{{=row.groupId}}">Details</a> <c:if test="${readonly !='yes'}"> | <a href="javascript:;" class="delete-item" data-group-type="{{=row.groupTypeCode}}" data-group-id="{{=row.groupId}}">Delete</a></c:if></td>
 		</tr>
 		{{ if(row.childList && row.childList.length){ }}
 			</tr>
@@ -452,6 +454,7 @@
 	app.URLFactory.urlCollection.createGroupUrl = "${createGroupFormSubmitURL}";
 	app.URLFactory.urlCollection.addComponentUrl = "${createGrpRenderUrl}";
 	app.URLFactory.urlCollection.deleteGroupUrl = "${deleteGroupResourceRequest}";
+	app.URLFactory.urlCollection.groupLockStatusURL = "${checkGroupLockingURL}";
 	
 	//init main SPA
 	app.GroupLandingApp.init();

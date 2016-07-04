@@ -180,11 +180,11 @@ public class XqueryConstants {
 		getGroupDetailsQuery.append(" ADSE_REFERENCE_DATA IMAGE_STATE ON GROUP_IMAGE_STATUS_CODE = IMAGE_STATE.MDMID ");
 		getGroupDetailsQuery.append(" AND IMAGE_STATE.ENTRY_TYPE = 'ImageState_Lookup' ");
 
-		if ((groupSearchForm.getVendor() != null && !"".equals(groupSearchForm.getVendor().trim()))
-				|| (groupSearchForm.getDepts() != null && !"".equals(groupSearchForm.getDepts().trim()))
-				|| (groupSearchForm.getClasses() != null && !"".equals(groupSearchForm.getClasses().trim()))
-				|| (groupSearchForm.getOrinNumber() != null && !"".equals(groupSearchForm.getOrinNumber().trim()))
-				|| (groupSearchForm.getSupplierSiteId() != null && !"".equals(groupSearchForm.getSupplierSiteId().trim()))) {
+		if (groupSearchForm.getVendor() != null && !"".equals(groupSearchForm.getVendor().trim())
+				|| groupSearchForm.getDepts() != null && !"".equals(groupSearchForm.getDepts().trim())
+				|| groupSearchForm.getClasses() != null && !"".equals(groupSearchForm.getClasses().trim())
+				|| groupSearchForm.getOrinNumber() != null && !"".equals(groupSearchForm.getOrinNumber().trim())
+				|| groupSearchForm.getSupplierSiteId() != null && !"".equals(groupSearchForm.getSupplierSiteId().trim())) {
 			getGroupDetailsQuery.append(" ,ADSE_GROUP_CHILD_MAPPING GCM, ADSE_ITEM_CATALOG AIC ");
 		}
 
@@ -200,11 +200,11 @@ public class XqueryConstants {
 			getGroupDetailsQuery.append(groupSearchForm.getGroupName().toUpperCase());
 			getGroupDetailsQuery.append("%'");
 		}
-		if ((groupSearchForm.getVendor() != null && !"".equals(groupSearchForm.getVendor().trim()))
-				|| (groupSearchForm.getDepts() != null && !"".equals(groupSearchForm.getDepts().trim()))
-				|| (groupSearchForm.getClasses() != null && !"".equals(groupSearchForm.getClasses().trim()))
-				|| (groupSearchForm.getOrinNumber() != null && !"".equals(groupSearchForm.getOrinNumber().trim()))
-				|| (groupSearchForm.getSupplierSiteId() != null && !"".equals(groupSearchForm.getSupplierSiteId().trim()))) {
+		if (groupSearchForm.getVendor() != null && !"".equals(groupSearchForm.getVendor().trim())
+				|| groupSearchForm.getDepts() != null && !"".equals(groupSearchForm.getDepts().trim())
+				|| groupSearchForm.getClasses() != null && !"".equals(groupSearchForm.getClasses().trim())
+				|| groupSearchForm.getOrinNumber() != null && !"".equals(groupSearchForm.getOrinNumber().trim())
+				|| groupSearchForm.getSupplierSiteId() != null && !"".equals(groupSearchForm.getSupplierSiteId().trim())) {
 
 			getGroupDetailsQuery.append(" AND GRP.MDMID = GCM.MDMID ");
 			getGroupDetailsQuery.append(" AND GCM.COMPONENT_STYLE_ID = AIC.MDMID ");

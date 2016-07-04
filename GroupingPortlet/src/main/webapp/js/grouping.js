@@ -47,6 +47,37 @@ var app = app || {};
 				return _.map(_.map(collection, _.values), _.first);
 		},
 		
+		checkGroupLock: function(groupId, formId){
+			$('.overlay_pageLoading').removeClass('hidden'); //showing loader icon
+			try{
+				app.GroupFactory.checkGroupLock(groupId)
+				.done(function(result){
+					if(!result.length){
+						$('#error-massege').html('Invalid Response Received From Server');
+						$('#errorBox').dialog("open");
+						return;
+					}
+					
+					var response = $.parseJSON(result);
+					
+					if(response.LockStatus && response.LockStatus == 'Y'){
+						$('#error-massege').html((response.message && response.message.length) ? response.message : 'Group Is Locked by Another User');
+						$('#errorBox').dialog("open");
+					}else if(response.LockStatus && response.LockStatus != 'Y'){
+						$('#' + formId)[0].submit();
+					}else{
+						$('#error-massege').html('Unknown Group Status Returned From Server');
+						$('#errorBox').dialog("open");
+					}
+				})
+				.complete(function(){
+					$('.overlay_pageLoading').addClass('hidden'); //hiding loader icon
+				});
+			}catch(ex){
+				console.log(ex.message);
+			}
+		},
+		
 		attachControls: function(){
 			var dlgCommonAttr = {
 				modal: true,

@@ -635,6 +635,26 @@ var app = app || {} ;
 					$('#descMinChars').text(app.Global.defaults.minGroupDescChars);
 					$('#descMaxChars').text(app.Global.defaults.maxGroupDescChars);
 				});
+				
+				
+				//code to unlock PET when page is being unloaded or navigated away
+				$(window).on('beforeunload', function(e){
+					_super.handleLock('release');
+				});
+				
+				
+				//locking the PET for further editing by any other user
+				//_super.handleLock('releaseLock');
+			},
+			
+			//method to lock/release pet which is being modified
+			handleLock: function(mode){
+				var userId = $('#userId').val().trim();
+				var groupId = $('#groupId').val().trim();
+				
+				//calling factory service
+				app.GroupFactory.handleLock(mode, userId, groupId);
+					
 			},
 			
 			searchFormValidate : function(groupType){
