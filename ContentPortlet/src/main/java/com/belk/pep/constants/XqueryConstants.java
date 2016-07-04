@@ -2356,7 +2356,11 @@ public class XqueryConstants {
     	queryBuffer.append("        ELSE 'N'                                                                                                                            ");
     	queryBuffer.append("      END Vendor_Sample,                                                                                                                    ");
     	queryBuffer.append("    AGC.COMPLETION_DATE,                                                                                                                     ");
-    	queryBuffer.append("    AGC.GROUP_CONTENT_STATUS_CODE                                                                                                                     ");
+    	queryBuffer.append("    AGC.GROUP_CONTENT_STATUS_CODE,                                                                                                                     ");
+    	
+    	queryBuffer.append("    AGC.GROUP_IMAGE_STATUS_CODE,                                                                                                                     ");
+    	queryBuffer.append("    AGC.GROUP_OVERALL_STATUS_CODE                                                                                                                     ");
+    	
     	queryBuffer.append("    FROM VENDORPORTAL.ADSE_GROUP_CATALOG AGC LEFT OUTER join                                                                                ");
     	queryBuffer.append("    VENDORPORTAL.ADSE_SUPPLIER_CATALOG sup on SUP.MDMID=AGC.DEF_PRIMARY_SUPPLIER_ID                                                         ");
     	queryBuffer.append("      LEFT OUTER JOIN                                                                                                                       ");
