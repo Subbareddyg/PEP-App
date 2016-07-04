@@ -1918,13 +1918,11 @@ public class GroupingDAOImpl implements GroupingDAO {
 			}
 
 		} finally {
+			session.flush();
 			if(null != tx){
 				tx.commit();
 			}
-			if(null != session){
-				session.flush();
-				session.close();
-			}
+			session.close();
 		}
 		return petLockDetails;
 	}
@@ -1955,13 +1953,11 @@ public class GroupingDAOImpl implements GroupingDAO {
 			LOGGER.info("petLock -->" + petLock);
 			session.saveOrUpdate(ptLock);
 		} finally {
+			session.flush();
 			if(null != tx){
 				tx.commit();
 			}
-			if(null != session){
-				session.flush();
-				session.close();
-			}
+			session.close();
 		}
 		LOGGER.info("This is from lockPET...Exit");
 		return isUpdated;
@@ -1990,13 +1986,11 @@ public class GroupingDAOImpl implements GroupingDAO {
 			query.executeUpdate();
 
 		} finally {
+			session.flush();
 			if(null != tx){
 				tx.commit();
 			}
-			if(null != session){
-				session.flush();
-				session.close();
-			}
+			session.close();
 		}
 		return isPetReleased;
 	}
