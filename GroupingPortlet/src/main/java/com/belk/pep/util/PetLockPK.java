@@ -42,7 +42,8 @@ public class PetLockPK implements Serializable {
 	public void setLockDate(java.util.Date lockDate) {
 		this.lockDate = lockDate;
 	}
-
+	
+	@Override
 	public boolean equals(Object other) {
 		if (this == other) {
 			return true;
@@ -56,7 +57,7 @@ public class PetLockPK implements Serializable {
 			&& this.pepUser.equals(castOther.pepUser)
 			&& this.lockDate.equals(castOther.lockDate);
 	}
-
+@Override
 	public int hashCode() {
 		final int prime = 31;
 		int hash = 17;

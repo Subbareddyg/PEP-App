@@ -157,7 +157,7 @@ public interface GroupingDAO {
 	 * 
 	 *             Method added For PIM Phase 2 - groupSearch Date: 05/25/2016
 	 *             Added By: Cognizant */
-	ArrayList<DepartmentDetails> getDeptDetailsByDepNoFromADSE() throws PEPPersistencyException;
+	List<DepartmentDetails> getDeptDetailsByDepNoFromADSE() throws PEPPersistencyException;
 
 	/** Method to get the classes for search group.
 	 * 
@@ -246,7 +246,7 @@ public interface GroupingDAO {
 	 * @return
 	 * @throws PEPPersistencyException
 	 */
-	ArrayList<PetLock> isPETLocked(String Orin, String pepUserId, String searchPetLockedtype) throws PEPPersistencyException;
+	List<PetLock> isPETLocked(String Orin, String pepUserId, String searchPetLockedtype) throws PEPPersistencyException;
 	
 	/**
 	 * This method is used to lock a PET while using.  

@@ -72,6 +72,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 	 * @author Cognizant
 	 * @throws PEPFetchException
 	 */
+	@Override
 	public CreateGroupDTO getGroupHeaderDetails(final String groupId) throws PEPFetchException, ParseException {
 		LOGGER.info("Fetch Group Header Details--> getGroupHeaderDetails-->Start.");
 		if (LOGGER.isDebugEnabled()) {
@@ -174,6 +175,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 	 * @param styleOrin String
 	 * @return List
 	 */
+	@Override
 	public List<GroupAttributeForm> getSplitColorDetails(final String vendorStyleNumber, final String styleOrin) throws PEPFetchException {
 		LOGGER.info("Fetch Split Color Details--> getSplitColorDetails-->Start.");
 		if (LOGGER.isDebugEnabled()) {
@@ -260,6 +262,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 	 * @param styleOrin String
 	 * @return List
 	 */
+	@Override
 	public List<GroupAttributeForm> getSplitSKUDetails(final String vendorStyleNumber, final String styleOrin) throws PEPFetchException {
 
 		LOGGER.info("Fetch Split Color Details--> getSplitSKUDetails-->Start.");
@@ -355,6 +358,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 	 * @return
 	 * @throws PEPFetchException
 	 */
+	@Override
 	public List<StyleAttributeForm> getNewCPGDetails(final String vendorStyleNo, final String styleOrin, final String deptNoSearch,
 			final String classNoSearch, final String supplierSiteIdSearch, final String upcNoSearch, final String groupId)
 			throws PEPFetchException {
@@ -403,10 +407,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 
 			// execute select SQL statement
 			query.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
-			// PROOF
-			/*
-			 * query.setFirstResult(((1 - 1) * 10)); query.setMaxResults(10);
-			 */
+
 
 			@SuppressWarnings("unchecked")
 			final List<Object> rows = query.list();
@@ -519,6 +520,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 	 * @return
 	 * @throws PEPFetchException
 	 */
+	@Override
 	public List<String> getSKUCount(final String vendorStyleNo, final String styleOrin, final String deptNoSearch,
 			final String classNoSearch, final String supplierSiteIdSearch, final String upcNoSearch, final String groupId)
 			throws PEPFetchException {
@@ -543,7 +545,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 			final Query query = session.createSQLQuery(XqueryConstants.getSKUCount(vendorStyleNo, styleOrin, deptNoForInSearch,
 					classNoSearchSearch, supplierSiteIdSearch, upcNoSearch, deptNoSearch, classNoSearch));
 
-			// query.setParameter("groupIdSql", groupId);
+			
 			if (null != vendorStyleNo && !("").equals(vendorStyleNo.trim())) {
 				query.setParameter("styleIdSql", vendorStyleNo);
 			}
@@ -604,6 +606,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 	 * @return
 	 * @throws PEPFetchException
 	 */
+	@Override
 	public List<GroupAttributeForm> getNewGBSDetails(final String vendorStyleNo, final String styleOrin, final String deptNoSearch,
 			final String classNoSearch, final String supplierSiteIdSearch, final String upcNoSearch, final String groupId,
 			List<String> orinList) throws PEPFetchException {
@@ -614,9 +617,9 @@ public class GroupingDAOImpl implements GroupingDAO {
 		}
 		Session session = null;
 		GroupAttributeForm groupAttributeForm = null;
-		// StyleAttributeForm styleAttributeForm = null;
+		
 		List<GroupAttributeForm> groupAttributeFormList = null;
-		// List<StyleAttributeForm> styleAttributeFormList = null;
+		
 
 		try {
 			String deptNoForInSearch = GroupingUtil.getInValForQuery(deptNoSearch);
@@ -646,7 +649,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 			}
 			LOGGER.info("Query-->getNewGBSDetails-->" + query);
 
-			// styleAttributeFormList = new ArrayList<>();
+		
 			groupAttributeFormList = new ArrayList<>();
 
 			// execute select SQL statement
@@ -960,7 +963,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 	 * @throws PEPPersistencyException
 	 */
 	@Override
-	public ArrayList<DepartmentDetails> getDeptDetailsByDepNoFromADSE() throws PEPPersistencyException {
+	public List<DepartmentDetails> getDeptDetailsByDepNoFromADSE() throws PEPPersistencyException {
 		LOGGER.info("Entering getDeptDetailsByDepNoFromADSE() in GroupingDAOImpl class..");
 		Session session = null;
 		final ArrayList<DepartmentDetails> adseDepartmentList = new ArrayList<>();
@@ -972,7 +975,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 
 				@SuppressWarnings("unchecked")
 				final List<Object> rows1 = query1.list();
-				if (rows1 != null && rows1.size() > 0) {
+				if (rows1 != null && !rows1.isEmpty()) {
 					for (final Object row : rows1) {
 						@SuppressWarnings("rawtypes")
 						final Map rowObj = (Map) row;
@@ -1042,6 +1045,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 	 * @param groupId
 	 * @return groupAttributeFormList
 	 */
+	@Override
 	public List<GroupAttributeForm> getExistSplitColorDetails(final String groupId) throws PEPFetchException {
 		LOGGER.info("Fetch Split Color Existing Details. getExistSplitColorDetails-->Start.");
 		if (LOGGER.isDebugEnabled()) {
@@ -1119,6 +1123,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 	 * @param groupId
 	 * @return groupAttributeFormList
 	 */
+	@Override
 	public List<GroupAttributeForm> getExistSplitSkuDetails(final String groupId) throws PEPFetchException {
 		LOGGER.info("Fetch Split Color Existing Details. getExistSplitSkuDetails-->Start.");
 		if (LOGGER.isDebugEnabled()) {
@@ -1199,6 +1204,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 	 * @param groupId
 	 * @return groupAttributeFormList
 	 */
+	@Override
 	public List<StyleAttributeForm> getExistCPGDetails(final String groupId) throws PEPFetchException {
 		LOGGER.info("Fetch Split Color Existing Details. getExistCPGDetails-->Start.");
 		if (LOGGER.isDebugEnabled()) {
@@ -1316,6 +1322,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 	 * @param groupId
 	 * @return groupAttributeFormList
 	 */
+	@Override
 	public List<GroupAttributeForm> getExistGBSDetails(final String groupId) throws PEPFetchException {
 		LOGGER.info("Fetch Split Color Existing Details. getExistGBSDetails-->Start.");
 		if (LOGGER.isDebugEnabled()) {
@@ -1461,10 +1468,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 
 			// execute select SQL statement
 			query.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
-			// PROOF
-			/*
-			 * query.setFirstResult(((1 - 1) * 10)); query.setMaxResults(10);
-			 */
+
 
 			@SuppressWarnings("unchecked")
 			final List<Object> rows = query.list();
@@ -1894,7 +1898,8 @@ public class GroupingDAOImpl implements GroupingDAO {
 	 * @return
 	 * @throws PEPPersistencyException
 	 */
-	public ArrayList<PetLock> isPETLocked(final String Orin, final String pepUserId, final String searchPetLockedtype)
+	@Override
+	public List<PetLock> isPETLocked(final String Orin, final String pepUserId, final String searchPetLockedtype)
 			throws PEPPersistencyException {
 
 		LOGGER.info("pepUserId in the isPETLocked layer-->" + pepUserId);
@@ -1907,10 +1912,10 @@ public class GroupingDAOImpl implements GroupingDAO {
 		try {
 			Query query = session.getNamedQuery("PetLock.isPetLocked");
 			query.setString("petId", Orin);
-			// query.setString("pepFunction", searchPetLockedtype);
+			
 			@SuppressWarnings("unchecked")
 			List<PetLock> petLock = query.list();
-			if (null != petLock && petLock.size() > 0) {
+			if (null != petLock && !petLock.isEmpty()) {
 				LOGGER.info("isPETLocked  in DAO IMPL  " + petLock.size());
 				for (int i = 0; i < petLock.size(); i++) {
 					petLockDetails.add(petLock.get(i));
@@ -1936,6 +1941,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 	 * @return
 	 * @throws PEPPersistencyException
 	 */
+	@Override
 	public boolean lockPET(final String orin, final String pepUserID, final String pepfunction) throws PEPPersistencyException {
 		LOGGER.info("This is  in DAO IMPL lockRecord.." + pepUserID);
 		boolean isUpdated = false;
@@ -1972,6 +1978,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 	 * @return
 	 * @throws PEPPersistencyException
 	 */
+	@Override
 	public boolean releseLockedPet(final String orin, final String pepUserID, final String pepFunction) throws PEPPersistencyException {
 		LOGGER.info("releseLockedPet Grouping DAO Impl:: lockPET-->Enter");
 		boolean isPetReleased = false;
@@ -1981,16 +1988,17 @@ public class GroupingDAOImpl implements GroupingDAO {
 		try {
 			Query query = session.getNamedQuery("PetLock.deleteLockedPet");
 			query.setString("petId", orin);
-			// query.setString("pepUser", pepUserID);
-			// query.setString("pepFunction", pepFunction);
+
 			query.executeUpdate();
 
 		} finally {
-			session.flush();
+			if(session!=null)
+				session.flush();
 			if(null != tx){
 				tx.commit();
 			}
-			session.close();
+			if(session!=null)
+				session.close();
 		}
 		return isPetReleased;
 	}

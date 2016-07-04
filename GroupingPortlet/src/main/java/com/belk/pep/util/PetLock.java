@@ -13,7 +13,7 @@ import java.sql.Timestamp;
 @Table(name = "PET_LOCK")
 @NamedQueries(
 				{
-					// @NamedQuery(name="PetLock.isPetLocked", query=" FROM PetLock p where (p.id.petId = :petId) and (p.pepFunction = :pepFunction)"),
+					
 					@NamedQuery(name = "PetLock.isPetLocked", query = " FROM PetLock p where (p.id.petId = :petId)"),
 					@NamedQuery(name = "PetLock.deleteLockedPet", query = "delete from PetLock p where p.id.petId = :petId ") 
 				}
@@ -34,8 +34,6 @@ public class PetLock implements Serializable {
 	@Column(name = "RELEASE_DATE")
 	private Timestamp releaseDate;
 
-	public PetLock() {
-	}
 
 	public PetLockPK getId() {
 		return this.id;

@@ -240,12 +240,6 @@ public class GroupingController {
 			if (null != custuser) {
 				Common_BelkUser belkUser = (Common_BelkUser) custuser.getBelkUser();
 
-				if (null != custuser.getVpUser() && null != custuser.getVpUser().getUserEmailAddress()) {
-					loggedInUser = custuser.getVpUser().getUserEmailAddress();
-					if (LOGGER.isDebugEnabled()) {
-						LOGGER.debug("This is from Event Email Id********************" + loggedInUser);
-					}
-				}
 
 				if (null != belkUser && null != belkUser.getLanId()) {
 					LOGGER.info("belkUser.getLanId() ******************" + belkUser.getLanId());
@@ -898,7 +892,7 @@ public class GroupingController {
 			jsonObjMain.put(GroupingConstants.CHILD_GROUP, groupForm.getChildGroup());
 			List<GroupForm> groupListChild = groupForm.getChildList();
 			JSONArray childArray = new JSONArray();
-			if (groupListChild != null && groupListChild.size() > 0) {
+			if (groupListChild != null && !groupListChild.isEmpty()) {
 				for (Iterator<GroupForm> iterator2 = groupListChild.iterator(); iterator2.hasNext();) {
 					GroupForm groupFormChild = (GroupForm) iterator2.next();
 					JSONObject jsonObj = new JSONObject();
@@ -987,7 +981,7 @@ public class GroupingController {
 				response.getWriter().write(jsonObject.toString());
 
 			} else if ("searchDept".equals(action)) {
-				ArrayList<DepartmentDetails> deptList = groupingService.getDeptDetailsByDepNoFromADSE();
+				List<DepartmentDetails> deptList = groupingService.getDeptDetailsByDepNoFromADSE();
 				JSONObject jsonObject = departmentListJsonObject(deptList);
 				response.getWriter().write(jsonObject.toString());
 
@@ -1059,7 +1053,7 @@ public class GroupingController {
 	 *         Method added For PIM Phase 2 - Search Group Date: 05/26/2016
 	 *         Added By: Cognizant
 	 */
-	public final JSONObject departmentListJsonObject(final ArrayList<DepartmentDetails> departmentList) {
+	public final JSONObject departmentListJsonObject(final List<DepartmentDetails> departmentList) {
 
 		LOGGER.info("Entering departmentListJsonObject() in GroupingController class.");
 		JSONObject jsonObjDeptParent = new JSONObject();
@@ -1611,9 +1605,9 @@ public class GroupingController {
 
 				/** Validate Split Attribute List **/
 
-				if (orinList.size() == 0 && getNewGBSDetailsList.isEmpty()) { 
+				if (orinList.isEmpty() && getNewGBSDetailsList.isEmpty()) { 
 					message = prop.getProperty(GroupingConstants.MESSAGE_SPLITGROUP_VALIDATION_NO_DATA); // "No record found!"
-				} else if (orinList.size() > 0 && getNewGBSDetailsList.isEmpty()) {
+				} else if (!orinList.isEmpty() && getNewGBSDetailsList.isEmpty()) {
 					message = prop.getProperty(GroupingConstants.MESSAGE_GBS_VALIDATION_NOT_ELIGIBLE); // "No record found!"
 				}
 				/**
@@ -1926,12 +1920,12 @@ public class GroupingController {
 			userID = sessionDataKey.split(GroupingConstants.USER_DATA + request.getPortletSession().getId())[1];
 			LOGGER.info("display user ID" + userID);
 		}
-		String groupId = (request.getParameter(GroupingConstants.GROUP_ID) != null) ? (request.getParameter(GroupingConstants.GROUP_ID))
+		String groupId = (request.getParameter(GroupingConstants.GROUP_ID) != null) ? request.getParameter(GroupingConstants.GROUP_ID)
 				: "";
-		String componentsStr = (request.getParameter(GroupingConstants.COMPONENT_LIST) != null) ? (request
-				.getParameter(GroupingConstants.COMPONENT_LIST)) : "";
-		String groupingType = (request.getParameter(GroupingConstants.GROUP_TYPE) != null) ? (request
-				.getParameter(GroupingConstants.GROUP_TYPE)) : "";
+		String componentsStr = (request.getParameter(GroupingConstants.COMPONENT_LIST) != null) ? request
+				.getParameter(GroupingConstants.COMPONENT_LIST) : "";
+		String groupingType = (request.getParameter(GroupingConstants.GROUP_TYPE) != null) ? request
+				.getParameter(GroupingConstants.GROUP_TYPE) : "";
 		String[] components = componentsStr.split(",");
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("componentsStr------>" + componentsStr);
@@ -2043,7 +2037,7 @@ public class GroupingController {
 			/** Start to set Default **/
 			else if (GroupingConstants.RESOURCE_TYPE_FOR_SET_DEFAULT.equals(resourceType)) {
 				LOGGER.info("Change Default Component of the Existing COmponent from Grouping Controller");
-				/* try { */
+				
 				@SuppressWarnings("unchecked")
 				List<GroupAttributeForm> attributeList = (List<GroupAttributeForm>) request.getPortletSession().getAttribute(
 						GroupingConstants.EXISTING_ATTRIBUTE_LIST);
@@ -2277,7 +2271,7 @@ public class GroupingController {
 		LOGGER.info("Entering:: aisPetLocked Grouping controller");
 		boolean petLocked = false;
 		String petLockedUser = "";
-		ArrayList<PetLock> lockedPetDtls = null;
+		List<PetLock> lockedPetDtls = null;
 		PetLock petLockedDtl = null;
 		try {
 			String searchLockedtype = "";
@@ -2305,13 +2299,7 @@ public class GroupingController {
 							petLockedUser = GroupingConstants.NO_USER;
 						}
 					}
-					/*if (petLocked) {
-						if (petLockedUser == null) {
-							petLockedUser = GroupingConstants.NO_USER;
-						}
-					} else {
-						petLockedUser = "";
-					}*/
+
 				}
 			}
 			LOGGER.info("petLocked here ******** " + petLocked);

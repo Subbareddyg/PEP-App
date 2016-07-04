@@ -374,7 +374,7 @@ public class XqueryConstants {
 		getGroupDetailsQueryParent
 		.append(" AND AGC.MDMID = GCM.MDMID                                                                                                              ");
 		final List<String> groupIdsList = getCommaSeparatedValues(groupSearchDTOList);
-		if (groupIdsList.size() > 0) {
+		if (!groupIdsList.isEmpty()) {
 			int count = 0;
 			for (Iterator<String> iterator = groupIdsList.iterator(); iterator.hasNext();) {
 				final String strGroupIds = (String) iterator.next();
