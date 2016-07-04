@@ -1992,13 +1992,11 @@ public class GroupingDAOImpl implements GroupingDAO {
 			query.executeUpdate();
 
 		} finally {
-			if(session!=null)
-				session.flush();
+			session.flush();
 			if(null != tx){
 				tx.commit();
 			}
-			if(session!=null)
-				session.close();
+			session.close();
 		}
 		return isPetReleased;
 	}
