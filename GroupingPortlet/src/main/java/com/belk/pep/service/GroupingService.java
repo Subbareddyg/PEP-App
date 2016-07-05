@@ -315,7 +315,7 @@ public interface GroupingService {
 	 *         By: Cognizant
 	 * @throws PEPPersistencyException
 	 */
-	ArrayList<DepartmentDetails> getDeptDetailsByDepNoFromADSE() throws PEPPersistencyException, PEPServiceException;
+	List<DepartmentDetails> getDeptDetailsByDepNoFromADSE() throws PEPPersistencyException, PEPServiceException;
 
 	/**
 	 * Method to get the classes for search group.
@@ -553,7 +553,7 @@ public interface GroupingService {
 	 * @return
 	 * @throws PEPPersistencyException
 	 */
-	ArrayList<PetLock> isPETLocked(String pepUserId, String orin, String searchPetLockedtype) throws PEPPersistencyException;
+	List<PetLock> isPETLocked(String pepUserId, String orin, String searchPetLockedtype) throws PEPPersistencyException;
 
 	/**
 	 * This method is used to lock a PET while using.
@@ -565,4 +565,14 @@ public interface GroupingService {
 	 * @throws PEPPersistencyException
 	 */
 	boolean lockPET(String orin, String pepUserID, String pepfunction) throws PEPPersistencyException;
+
+	/**
+	 * This method is used to release Grouping pet lock.
+	 * @param orin
+	 * @param pepUserID
+	 * @param pepFunction
+	 * @return
+	 * @throws PEPPersistencyException
+	 */
+	boolean releseLockedPet(String orin, String pepUserID, String pepFunction) throws PEPPersistencyException;
 }

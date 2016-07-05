@@ -19,7 +19,7 @@
 					<input type="hidden" name="groupType" value=" <c:out value="${groupDetailsForm.groupType}" /> " id="groupType" >
 					<input type="hidden" name="groupId" value=" <c:out value="${groupDetailsForm.groupId}" /> " id="groupId" >
 				</c:if>
-				<input type="hidden" name="modifiedBy" value="${LAN_ID}" />
+				<input type="hidden" name="modifiedBy" value="${LAN_ID}" id="userId" />
 				<table cellspacing="5" cellpadding="0" border="0" class="content-table">
 					<tr>
 						<th width="18%"><b><fmt:message key="addcomponent.screen.level.groupingId" /></b></th>
@@ -328,6 +328,7 @@
 <portlet:resourceURL id="saveEditedGroup" var="editGroupURL" />
 <portlet:resourceURL id="setDefaultColor" var="defaultValueResourceRequest" />
 <portlet:resourceURL id="removeComponent" var="removeComponentURL" />
+<portlet:resourceURL id="releseLockedPetURL" var="releseLockedPetURL" />
 
 
 <!-- Department Search Result Row Template starts -->
@@ -460,6 +461,8 @@
 	app.URLFactory.urlCollection.removeComponentURL = "${removeComponentURL}";
 	
 	app.URLFactory.urlCollection.saveHeader = "${editGroupURL}";
+	
+	app.URLFactory.urlCollection.groupLockHandleURL = "${releseLockedPetURL}";
 	//init main SPA
 	
 	app.EditComponentLandingApp.init();

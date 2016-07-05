@@ -1818,6 +1818,8 @@ public boolean releseLockedPet(  String orin, String pepUserID,String pepFunctio
 					}
 					styleInformation.setCompletionDateOfStyle(completionDate);
 					styleInformation.setContentStatus(prop.getProperty("Content"+checkNull(obj[11])));
+					styleInformation.setImageStatusCode(checkNull(obj[12]));
+					styleInformation.setOverallStatusCode(checkNull(obj[13]));
 				}
 			}
 		}

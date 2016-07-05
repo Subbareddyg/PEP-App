@@ -81,6 +81,7 @@ public class GroupingServiceImpl implements GroupingService {
 	 * @throws ClassCastException
 	 * @throws MalformedURLException
 	 */
+	@Override
 	public final CreateGroupForm saveGroupHeaderDetails(final JSONObject jsonStyle, final String updatedBy,
 			final List<GroupAttributeForm> selectedSplitAttributeList) throws PEPFetchException, MalformedURLException, ClassCastException,
 			JSONException, IOException, ParseException {
@@ -263,6 +264,7 @@ public class GroupingServiceImpl implements GroupingService {
 	 * @throws Exception
 	 * @throws PEPFetchException
 	 */
+	@Override
 	public final String callCreateGroupService(final JSONObject jsonStyle) throws MalformedURLException, ClassCastException, IOException,
 			JSONException {
 		LOGGER.info("Entering callCreateGroupService-->.");
@@ -327,6 +329,7 @@ public class GroupingServiceImpl implements GroupingService {
 	 * @throws PEPServiceException
 	 * @throws PEPPersistencyException
 	 */
+	@Override
 	public final List<GroupAttributeForm> getSplitColorDetails(final String vendorStyleNo, final String styleOrin)
 			throws PEPFetchException, PEPServiceException, PEPPersistencyException {
 		// getting the Style Color details from Database
@@ -351,6 +354,7 @@ public class GroupingServiceImpl implements GroupingService {
 	 * @throws PEPServiceException
 	 * @throws PEPPersistencyException
 	 */
+	@Override
 	public final List<GroupAttributeForm> getSplitSKUDetails(final String vendorStyleNo, final String styleOrin)
 			throws PEPServiceException, PEPPersistencyException {
 		// getting the Style Color details from Database
@@ -381,6 +385,7 @@ public class GroupingServiceImpl implements GroupingService {
 	 * @throws PEPServiceException
 	 * @throws PEPPersistencyException
 	 */
+	@Override
 	public final List<StyleAttributeForm> getNewCPGDetails(final String vendorStyleNo, final String styleOrin, final String deptNoSearch,
 			final String classNoSearch, final String supplierSiteIdSearch, final String upcNoSearch, final String groupId)
 			throws PEPFetchException, PEPServiceException, PEPPersistencyException {
@@ -413,6 +418,7 @@ public class GroupingServiceImpl implements GroupingService {
 	 * @throws PEPServiceException
 	 * @throws PEPPersistencyException
 	 */
+	@Override
 	public final List<String> getSKUCount(final String vendorStyleNo, final String styleOrin, final String deptNoSearch,
 			final String classNoSearch, final String supplierSiteIdSearch, final String upcNoSearch, final String groupId)
 			throws PEPFetchException, PEPServiceException, PEPPersistencyException {
@@ -445,6 +451,7 @@ public class GroupingServiceImpl implements GroupingService {
 	 * @throws PEPServiceException
 	 * @throws PEPPersistencyException
 	 */
+	@Override
 	public final List<GroupAttributeForm> getNewGBSDetails(final String vendorStyleNo, final String styleOrin, final String deptNoSearch,
 			final String classNoSearch, final String supplierSiteIdSearch, final String upcNoSearch, final String groupId,
 			final List<String> orinList) throws PEPFetchException, PEPServiceException, PEPPersistencyException {
@@ -471,6 +478,7 @@ public class GroupingServiceImpl implements GroupingService {
 	 * @throws PEPServiceException
 	 * @throws PEPPersistencyException
 	 */
+	@Override
 	public final Map<String, List<GroupAttributeForm>> validateSCGAttributeDetails(final List<GroupAttributeForm> getSplitColorDetailsList)
 			throws PEPServiceException, PEPPersistencyException {
 		LOGGER.info("Enter-->calling validateSCGAttributeDetails");
@@ -538,6 +546,7 @@ public class GroupingServiceImpl implements GroupingService {
 	 * @throws PEPServiceException
 	 * @throws PEPPersistencyException
 	 */
+	@Override
 	public final Map<String, List<GroupAttributeForm>> validateSSGAttributeDetails(final List<GroupAttributeForm> getSplitSKUDetailsList)
 			throws PEPServiceException, PEPPersistencyException {
 		LOGGER.info("Enter-->calling validateSSGAttributeDetails");
@@ -601,6 +610,7 @@ public class GroupingServiceImpl implements GroupingService {
 	 * @throws PEPServiceException
 	 * @throws PEPPersistencyException
 	 */
+	@Override
 	public final String validateCPGAttributeDetails(final String existClassId, final List<StyleAttributeForm> getCPGSelectedAttrbuteList)
 			throws PEPServiceException, PEPPersistencyException {
 		LOGGER.info("Enter-->calling validateCPGAttributeDetails. existClassId-->" + existClassId);
@@ -650,7 +660,8 @@ public class GroupingServiceImpl implements GroupingService {
 	 * @return jsonObj
 	 * @author Cognizant
 	 */
-	public final JSONObject populateAddComponentSCGJson(final String groupIdRes, final String groupType, final String updatedBy,
+	
+	private final JSONObject populateAddComponentSCGJson(final String groupIdRes, final String groupType, final String updatedBy,
 			final List<GroupAttributeForm> selectedSplitAttributeList) {
 		LOGGER.info("Entering populateAddComponentSCGJson-->.");
 
@@ -690,7 +701,8 @@ public class GroupingServiceImpl implements GroupingService {
 	 * @return jsonObj
 	 * @author Cognizant
 	 */
-	public final JSONObject populateAddComponentCPGJson(final String groupIdRes, final String groupType, final String updatedBy,
+	
+	private final JSONObject populateAddComponentCPGJson(final String groupIdRes, final String groupType, final String updatedBy,
 			final List<StyleAttributeForm> getCPGSelectedAttrbuteList) {
 		LOGGER.info("Entering populateAddComponentCPGJson-->.");
 
@@ -727,22 +739,14 @@ public class GroupingServiceImpl implements GroupingService {
 	 * @return jsonObj
 	 * @author Cognizant
 	 */
-	public final JSONObject populateAddComponentGBSJson(final String groupIdRes, final String groupType, final String updatedBy,
+	
+	private final JSONObject populateAddComponentGBSJson(final String groupIdRes, final String groupType, final String updatedBy,
 			final List<GroupAttributeForm> getGBSSelectedAttrbuteList) {
 		LOGGER.info("Entering populateAddComponentGBSJson-->.");
 
-		/*
-		 * { "groupId":"12345676", "groupType":"RCG/GSS/BCG",
-		 * "modifiedBy":"AFUPRS", "componentList" :[{"id":"23098765001",
-		 * "type":"CPG",
-		 * "component":[{"Style":"st1","ColorList"[{"color":"clr1"}
-		 * ,{"color":"clr2"}]},
-		 * {"Style":"st2","ColorList"[{"color":"clr1"},{"color":"clr2"}]}] },
-		 * {"id":"23098765",
-		 * "type":"Style","ColorList"[{"color":"clr1"},{"color":"clr2"}]}] }
-		 */
+
 		JSONObject jsonObj = new JSONObject();
-		// JSONObject jsonObjComponent = null;
+
 		GroupAttributeForm groupAttributeForm = null;
 		JSONArray jsonArrayComponentList = new JSONArray();
 		JSONObject jsonObjStyle = null;
@@ -780,20 +784,12 @@ public class GroupingServiceImpl implements GroupingService {
 	 * @return jsonObj
 	 * @author Cognizant
 	 */
-	public final JSONObject populateAddComponentRCGBCGJson(final String groupIdRes, final String groupType, final String updatedBy,
+	
+	private final JSONObject populateAddComponentRCGBCGJson(final String groupIdRes, final String groupType, final String updatedBy,
 			final List<StyleAttributeForm> getRCGSelectedAttrbuteList) {
 		LOGGER.info("Entering populateAddComponentRCGBCGJson-->.");
 
-		/*
-		 * { "groupId":"12345676", "groupType":"RCG/GSS/BCG",
-		 * "modifiedBy":"AFUPRS", "componentList" :[{"id":"2309876",
-		 * "type":"CPG",
-		 * "component":[{"Style":"st1","ColorList"[{"color":"clr1"}
-		 * ,{"color":"clr2"}]},
-		 * {"Style":"st2","ColorList"[{"color":"clr1"},{"color":"clr2"}]}] },
-		 * {"id":"23098765",
-		 * "type":"Style","ColorList"[{"color":"clr1"},{"color":"clr2"}]}] }
-		 */
+
 		JSONObject jsonObj = new JSONObject();
 		GroupAttributeForm groupAttributeForm = null;
 		StyleAttributeForm styleAttributeForm = null;
@@ -824,7 +820,7 @@ public class GroupingServiceImpl implements GroupingService {
 					// if ColorList is available add here with in a new json
 					// array
 					if (GroupingConstants.GROUP_TYPE_BEAUTY_COLLECTION.equals(groupType) && null != groupAttributeFormList
-							&& groupAttributeFormList.size() > 0) {
+							&& !groupAttributeFormList.isEmpty()) {
 						for (int j = 0; j < groupAttributeFormList.size(); j++) {
 							groupAttributeForm = groupAttributeFormList.get(j);
 							jsonObjColor = new JSONObject();
@@ -856,7 +852,8 @@ public class GroupingServiceImpl implements GroupingService {
 	 * @throws Exception
 	 * @throws PEPFetchException
 	 */
-	public final String callAddComponentService(final JSONObject jsonCpgComponent, final String groupType) throws MalformedURLException,
+	
+	private final String callAddComponentService(final JSONObject jsonCpgComponent, final String groupType) throws MalformedURLException,
 			ClassCastException, IOException, JSONException {
 		LOGGER.info("Entering callAddComponentService-->.");
 
@@ -933,7 +930,8 @@ public class GroupingServiceImpl implements GroupingService {
 	 * @return jsonObj
 	 * @author Cognizant
 	 */
-	public final JSONObject populateAddComponentSSGJson(final String groupIdRes, final String groupType, final String updatedBy,
+	
+	private final JSONObject populateAddComponentSSGJson(final String groupIdRes, final String groupType, final String updatedBy,
 			final List<GroupAttributeForm> selectedSplitAttributeList) {
 		LOGGER.info("Entering populateAddComponentSSGJson-->.");
 
@@ -975,6 +973,7 @@ public class GroupingServiceImpl implements GroupingService {
 	 * @throws PEPServiceException
 	 * @throws PEPPersistencyException
 	 */
+	@Override
 	public final List<GroupAttributeForm> getSelectedColorAttributeList(final List<GroupAttributeForm> updatedSplitColorDetailsList,
 			final String[] selectedItemsArr, final String defaultSelectedAttr) throws PEPServiceException, PEPPersistencyException {
 
@@ -1015,6 +1014,7 @@ public class GroupingServiceImpl implements GroupingService {
 	 * @throws PEPServiceException
 	 * @throws PEPPersistencyException
 	 */
+	@Override
 	public final List<GroupAttributeForm> getSelectedSKUAttributeList(final List<GroupAttributeForm> updatedSplitSKUDetailsList,
 			final String[] selectedItemsArr, final String defaultSelectedAttr) throws PEPServiceException, PEPPersistencyException {
 		// getting the Style Color details from Database
@@ -1066,6 +1066,7 @@ public class GroupingServiceImpl implements GroupingService {
 	 * @throws PEPServiceException
 	 * @throws PEPPersistencyException
 	 */
+	@Override
 	public final List<StyleAttributeForm> getSelectedCPGAttributeList(final List<StyleAttributeForm> getCPGDetailsList,
 			final String[] selectedItemsArr, final String defaultSelectedAttr) throws PEPServiceException, PEPPersistencyException {
 		// getting the Style Color details from Database
@@ -1102,6 +1103,7 @@ public class GroupingServiceImpl implements GroupingService {
 	 * @throws PEPServiceException
 	 * @throws PEPPersistencyException
 	 */
+	@Override
 	public final List<GroupAttributeForm> getSelectedGBSAttributeList(final List<GroupAttributeForm> getGBSDetailsList,
 			final String[] selectedItemsArr) throws PEPServiceException, PEPPersistencyException {
 
@@ -1136,6 +1138,7 @@ public class GroupingServiceImpl implements GroupingService {
 	 * @throws PEPServiceException
 	 * @throws PEPPersistencyException
 	 */
+	@Override
 	public final List<StyleAttributeForm> getSelectedRCGAttributeList(final List<StyleAttributeForm> getRCGDetailsList,
 			final String[] selectedItemsArr) throws PEPServiceException, PEPPersistencyException {
 
@@ -1174,8 +1177,9 @@ public class GroupingServiceImpl implements GroupingService {
 	 * @throws PEPServiceException
 	 * @throws PEPPersistencyException
 	 */
+	@Override
 	public final List<StyleAttributeForm> getSelectedBCGAttributeList(final List<StyleAttributeForm> getRCGDetailsList,
-			final String[] selectedItemsArr) throws PEPServiceException, PEPPersistencyException { 
+			final String[] selectedItemsArr) throws PEPServiceException, PEPPersistencyException {
 
 		LOGGER.info("*Enter-->calling getSelectedBCGAttributeList from GroupingServiceImpl.-->" + selectedItemsArr);
 		List<StyleAttributeForm> selectedRCGAttributeList = new ArrayList<>();
@@ -1184,7 +1188,7 @@ public class GroupingServiceImpl implements GroupingService {
 		List<GroupAttributeForm> groupAttributeFormListNew = new ArrayList<>();
 		GroupAttributeForm groupAttributeForm = null;
 		String styleOrinGrpNo = "";
-		// boolean isColorSelected = false;
+		
 		String[] selectedItemsColorArr = null;
 		for (int i = 0; i < getRCGDetailsList.size(); i++) {
 			styleAttributeForm = getRCGDetailsList.get(i);
@@ -1192,24 +1196,24 @@ public class GroupingServiceImpl implements GroupingService {
 			groupAttributeFormList = styleAttributeForm.getGroupAttributeFormList();
 			LOGGER.debug("styleOrinGrpNo-->" + styleOrinGrpNo);
 			for (int j = 0; j < selectedItemsArr.length; j++) {
-				// isColorSelected = false;
+				
 				// 100000520:100000520400
 				String selectedOrinGrpNo = GroupingUtil.checkNull(selectedItemsArr[j]);
 				if (selectedOrinGrpNo.indexOf(":") != -1) {
-					// isColorSelected = true;
+					
 					String selectedOrinGrp = selectedOrinGrpNo.substring(0, selectedOrinGrpNo.indexOf(":"));
-					// LOGGER.debug("selectedOrinGrpNo-->"+selectedOrinGrp);
+					
 					String colorList = GroupingUtil.checkNull(selectedOrinGrpNo.substring(selectedOrinGrpNo.indexOf(":") + 1));
-					// LOGGER.debug("colorList-->"+colorList);
+		
 					selectedItemsColorArr = colorList.split("-");
-					// LOGGER.debug("selectedItemsColorArr.length-->"+selectedItemsColorArr.length);
+					
 					groupAttributeFormListNew = new ArrayList<>();
 					if (selectedOrinGrp.equals(styleOrinGrpNo)) {
 						for (int k = 0; k < groupAttributeFormList.size(); k++) {
 							groupAttributeForm = groupAttributeFormList.get(k);
 
 							for (int l = 0; l < selectedItemsColorArr.length; l++) {
-								// LOGGER.debug("selectedItemsColorArr[l]-->"+selectedItemsColorArr[l]);
+								
 								if (selectedItemsColorArr[l].equals(groupAttributeForm.getOrinNumber())) {
 									groupAttributeFormListNew.add(groupAttributeForm);
 									break;
@@ -1244,6 +1248,7 @@ public class GroupingServiceImpl implements GroupingService {
 	 * @throws Exception
 	 * @throws PEPFetchException
 	 */
+	@Override
 	public final CreateGroupForm getExistingGrpDetails(final String groupId) throws PEPFetchException, ParseException {
 		LOGGER.info("Entering getExistingGrpDetails-->.");
 
@@ -1302,7 +1307,7 @@ public class GroupingServiceImpl implements GroupingService {
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("List one size -- " + listOneGroup.size());
 		}
-		if (listOneGroup.size() > 0) {
+		if (!listOneGroup.isEmpty()) {
 			GroupForm groupFormParent = null;
 			Map<String, GroupForm> mapGroup = new HashMap<>();
 			Properties prop = PropertyLoader.getPropertyLoader(GroupingConstants.GROUPING_PROPERTIES_FILE_NAME);
@@ -1338,7 +1343,7 @@ public class GroupingServiceImpl implements GroupingService {
 				if (LOGGER.isDebugEnabled()) {
 					LOGGER.debug("List two size -- " + listTwoGroup.size());
 				}
-				if (listTwoGroup.size() > 0) {
+				if (!listTwoGroup.isEmpty()) {
 					GroupForm groupForm = null;
 
 					List<GroupForm> parentGroupFormList = new ArrayList<>();
@@ -1422,9 +1427,9 @@ public class GroupingServiceImpl implements GroupingService {
 	 * @throws PEPServiceException
 	 */
 	@Override
-	public final ArrayList<DepartmentDetails> getDeptDetailsByDepNoFromADSE() throws PEPPersistencyException, PEPServiceException {
+	public final List<DepartmentDetails> getDeptDetailsByDepNoFromADSE() throws PEPPersistencyException, PEPServiceException {
 		LOGGER.info("Entering getDeptDetailsByDepNoFromADSE() in GroupingService class.");
-		ArrayList<DepartmentDetails> getDepartmentList = null;
+		List<DepartmentDetails> getDepartmentList = null;
 		try {
 			getDepartmentList = groupingDAO.getDeptDetailsByDepNoFromADSE();
 		} catch (Exception e) {
@@ -1585,6 +1590,7 @@ public class GroupingServiceImpl implements GroupingService {
 	 * @throws PEPServiceException
 	 * @throws PEPPersistencyException
 	 */
+	@Override
 	public final List<GroupAttributeForm> getExistSplitColorDetails(final String groupId) throws PEPServiceException,
 			PEPPersistencyException {
 		LOGGER.info("Enter-->calling getExistSplitColorDetails from GroupingServiceImpl.");
@@ -1607,6 +1613,7 @@ public class GroupingServiceImpl implements GroupingService {
 	 * @throws PEPServiceException
 	 * @throws PEPPersistencyException
 	 */
+	@Override
 	public final List<GroupAttributeForm> getExistSplitSkuDetails(final String groupId) throws PEPServiceException, PEPPersistencyException {
 		LOGGER.info("Enter-->calling getSplitSkuDetailsList from GroupingServiceImpl.");
 		List<GroupAttributeForm> getSplitSkuDetailsList = null;
@@ -1651,6 +1658,7 @@ public class GroupingServiceImpl implements GroupingService {
 	 * @throws PEPServiceException
 	 * @throws PEPPersistencyException
 	 */
+	@Override
 	public final List<GroupAttributeForm> getExistGBSDetails(final String groupId) throws PEPServiceException, PEPPersistencyException {
 		LOGGER.info("Enter-->calling getExistGBSDetails from GroupingServiceImpl.");
 		List<GroupAttributeForm> getGBSDetailsList = null;
@@ -1678,6 +1686,7 @@ public class GroupingServiceImpl implements GroupingService {
 	 * @throws JSONException
 	 * @throws IOException
 	 */
+	@Override
 	public final CreateGroupForm addComponentToGroup(final String groupId, final String updatedBy, final String groupType,
 			final List<GroupAttributeForm> selectedSplitAttributeList) throws PEPFetchException, MalformedURLException, ClassCastException,
 			JSONException, IOException {
@@ -1807,6 +1816,7 @@ public class GroupingServiceImpl implements GroupingService {
 	 * @throws JSONException
 	 * @throws IOException
 	 */
+	@Override
 	public final CreateGroupForm addCPGComponentToGroup(final String groupId, final String updatedBy, final String groupType,
 			final List<StyleAttributeForm> getCPGSelectedAttrbuteList) throws PEPFetchException, MalformedURLException, ClassCastException,
 			JSONException, IOException {
@@ -1890,6 +1900,7 @@ public class GroupingServiceImpl implements GroupingService {
 	 * @throws JSONException
 	 * @throws IOException
 	 */
+	@Override
 	public final CreateGroupForm addGBSComponentToGroup(final String groupId, final String updatedBy, final String groupType,
 			final List<GroupAttributeForm> getGBSSelectedAttrbuteList) throws PEPFetchException, MalformedURLException, ClassCastException,
 			JSONException, IOException {
@@ -1972,6 +1983,7 @@ public class GroupingServiceImpl implements GroupingService {
 	 * @throws JSONException
 	 * @throws IOException
 	 */
+	@Override
 	public final CreateGroupForm addRCGBCGComponentToGroup(final String groupId, final String updatedBy, final String groupType,
 			final List<StyleAttributeForm> getRCGBCGSelectedAttrbuteList) throws PEPFetchException, MalformedURLException,
 			ClassCastException, JSONException, IOException {
@@ -2047,6 +2059,7 @@ public class GroupingServiceImpl implements GroupingService {
 	 * @param getSplitColorDetailsList
 	 * @return
 	 */
+	@Override
 	public final List<GroupAttributeForm> prepareListForView(final List<GroupAttributeForm> getSplitColorDetailsList) {
 		LOGGER.info("Enter-->calling prepareListForView");
 		List<GroupAttributeForm> updatedSplitColorDetailsList = new ArrayList<>();
@@ -2199,6 +2212,7 @@ public class GroupingServiceImpl implements GroupingService {
 	 * @throws JSONException
 	 * @throws IOException
 	 */
+	@Override
 	public String removeSelectedComponent(JSONObject jsonObject) throws PEPFetchException, MalformedURLException, ClassCastException,
 			JSONException, IOException {
 		LOGGER.info("Entering callUpdateGroupService-->.");
@@ -2336,8 +2350,9 @@ public class GroupingServiceImpl implements GroupingService {
 	 * @return String
 	 * @throws PEPFetchException
 	 */
-	private String callDefaultColorSizeService(final JSONObject jsonGroup) throws MalformedURLException,
-	ClassCastException, IOException, JSONException {
+	
+	private String callDefaultColorSizeService(final JSONObject jsonGroup) throws MalformedURLException, ClassCastException, IOException,
+			JSONException {
 		LOGGER.info("Entering callDefaultColorSizeService.");
 
 		String responseMsg = GroupingConstants.EMPTY;
@@ -2401,10 +2416,10 @@ public class GroupingServiceImpl implements GroupingService {
 	 * @param childOrinId String
 	 * @param updatedBy String
 	 * @return String
-	 * @throws IOException 
-	 * @throws JSONException 
-	 * @throws ClassCastException 
-	 * @throws MalformedURLException 
+	 * @throws IOException
+	 * @throws JSONException
+	 * @throws ClassCastException
+	 * @throws MalformedURLException
 	 */
 	@Override
 	public final String setDefaultColorSize(final String groupId, final String groupType, final String colorId, final String childOrinId,
@@ -2564,7 +2579,7 @@ public class GroupingServiceImpl implements GroupingService {
 	 * @return
 	 * @throws PEPServiceException
 	 */
-	public final HttpURLConnection getServiceConnection(final String serviceURL) throws ProtocolException, MalformedURLException,
+	private final HttpURLConnection getServiceConnection(final String serviceURL) throws ProtocolException, MalformedURLException,
 			IOException {
 
 		HttpURLConnection httpConnection = null;
@@ -2592,19 +2607,21 @@ public class GroupingServiceImpl implements GroupingService {
 
 		return httpConnection;
 	}
-	
 
 	/**
 	 * This method is used check the LOCK status of a pet.
+	 * 
 	 * @param Orin
 	 * @param pepUserId
 	 * @param searchPetLockedtype
 	 * @return
 	 * @throws PEPPersistencyException
 	 */
-	public ArrayList<PetLock> isPETLocked(String pepUserId, String orin, String searchPetLockedtype) throws PEPPersistencyException {
+	@Override
+	public List<PetLock> isPETLocked(final String pepUserId, final String orin, final String searchPetLockedtype)
+			throws PEPPersistencyException {
 		LOGGER.info("service impl :: isPETLocked");
-		ArrayList<PetLock> petLockedDtls = null;
+		List<PetLock> petLockedDtls = null;
 		try {
 			petLockedDtls = groupingDAO.isPETLocked(orin, pepUserId, searchPetLockedtype);
 		} catch (PEPPersistencyException e) {
@@ -2616,25 +2633,47 @@ public class GroupingServiceImpl implements GroupingService {
 
 	}
 
-
 	/**
-	 * This method is used to lock a PET while using.  
+	 * This method is used to lock a PET while using.
+	 * 
 	 * @param orin
 	 * @param pepUserID
 	 * @param pepfunction
 	 * @return
 	 * @throws PEPPersistencyException
 	 */
-	public boolean lockPET(String orin, String pepUserID, String pepfunction) throws PEPPersistencyException {
+	@Override
+	public boolean lockPET(final String orin, final String pepUserID, final String pepfunction) throws PEPPersistencyException {
 		LOGGER.info("service impl :: lockPET");
 		try {
 			groupingDAO.lockPET(orin, pepUserID, pepfunction);
 		} catch (PEPPersistencyException e) {
-
 			LOGGER.info("Exception occurred at the Service DAO Layer");
 			throw e;
 		}
 		return false;
+	}
 
-}
+	/**
+	 * This method is used to release Grouping pet lock.
+	 * @param orin
+	 * @param pepUserID
+	 * @param pepFunction
+	 * @return
+	 * @throws PEPPersistencyException
+	 */
+	@Override
+	public boolean releseLockedPet(final String orin, final String pepUserID, final String pepFunction) throws PEPPersistencyException {
+		LOGGER.info("Grouping releseLockedPet service :: lockPET Enter");
+		boolean isPetReleased = false;
+		try {
+			isPetReleased = groupingDAO.releseLockedPet(orin, pepUserID, pepFunction);
+		} catch (PEPPersistencyException e) {
+			LOGGER.info("Exception occurred at the Service DAO Layer");
+			throw e;
+		}
+		LOGGER.info("Grouping releseLockedPet service :: lockPET Exit");
+		return isPetReleased;
+
+	}
 }

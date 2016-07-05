@@ -269,4 +269,15 @@ public class GroupingConstants {
 	//constants for PET page locked scenarios
 	public static final String SEARCH_LOCKED_TYPE_CONTENT = "Content";
 	public static final String SEARCH_LOCKED_TYPE_IMAGE = "Image";
+	
+	public static final String LOCK_JSON_COMPONENT_PET_LOCKED_USER = "petLockedUser";
+	public static final String LOCK_JSON_COMPONENT_PET_LOCKED_STATUS = "LockStatus";
+	public static final String GROUP_LOCKED_MESSAGE_ONE = "group.locked.message.one";
+	public static final String GROUP_LOCKED_MESSAGE_TWO = "group.locked.message.two";
+	public static final String NO_USER = "NoUser";
+	public static final String LOCKED_PET = "lockedPet";
+	public static final String LOGGED_IN_USER = "loggedInUser";
+	public static final String LOCKED_FUNCTION = "lockFunction";
+	public static final String LOCKED_FUNCTION_RELEASE = "release";
+	public static final String LOCKED_FUNCTION_RELEASE_LOCK = "releaseLock";
 }

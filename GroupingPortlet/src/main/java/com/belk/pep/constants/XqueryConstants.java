@@ -21,7 +21,7 @@ public class XqueryConstants {
 	private static final Logger LOGGER = Logger.getLogger(XqueryConstants.class.getName());
 
 	/** Instantiates a new xquery constants. */
-	public XqueryConstants() {
+	private XqueryConstants() {
 		// To be implemented.
 	}
 
@@ -180,11 +180,11 @@ public class XqueryConstants {
 		getGroupDetailsQuery.append(" ADSE_REFERENCE_DATA IMAGE_STATE ON GROUP_IMAGE_STATUS_CODE = IMAGE_STATE.MDMID ");
 		getGroupDetailsQuery.append(" AND IMAGE_STATE.ENTRY_TYPE = 'ImageState_Lookup' ");
 
-		if ((groupSearchForm.getVendor() != null && !"".equals(groupSearchForm.getVendor().trim()))
-				|| (groupSearchForm.getDepts() != null && !"".equals(groupSearchForm.getDepts().trim()))
-				|| (groupSearchForm.getClasses() != null && !"".equals(groupSearchForm.getClasses().trim()))
-				|| (groupSearchForm.getOrinNumber() != null && !"".equals(groupSearchForm.getOrinNumber().trim()))
-				|| (groupSearchForm.getSupplierSiteId() != null && !"".equals(groupSearchForm.getSupplierSiteId().trim()))) {
+		if (groupSearchForm.getVendor() != null && !"".equals(groupSearchForm.getVendor().trim())
+				|| groupSearchForm.getDepts() != null && !"".equals(groupSearchForm.getDepts().trim())
+				|| groupSearchForm.getClasses() != null && !"".equals(groupSearchForm.getClasses().trim())
+				|| groupSearchForm.getOrinNumber() != null && !"".equals(groupSearchForm.getOrinNumber().trim())
+				|| groupSearchForm.getSupplierSiteId() != null && !"".equals(groupSearchForm.getSupplierSiteId().trim())) {
 			getGroupDetailsQuery.append(" ,ADSE_GROUP_CHILD_MAPPING GCM, ADSE_ITEM_CATALOG AIC ");
 		}
 
@@ -200,11 +200,11 @@ public class XqueryConstants {
 			getGroupDetailsQuery.append(groupSearchForm.getGroupName().toUpperCase());
 			getGroupDetailsQuery.append("%'");
 		}
-		if ((groupSearchForm.getVendor() != null && !"".equals(groupSearchForm.getVendor().trim()))
-				|| (groupSearchForm.getDepts() != null && !"".equals(groupSearchForm.getDepts().trim()))
-				|| (groupSearchForm.getClasses() != null && !"".equals(groupSearchForm.getClasses().trim()))
-				|| (groupSearchForm.getOrinNumber() != null && !"".equals(groupSearchForm.getOrinNumber().trim()))
-				|| (groupSearchForm.getSupplierSiteId() != null && !"".equals(groupSearchForm.getSupplierSiteId().trim()))) {
+		if (groupSearchForm.getVendor() != null && !"".equals(groupSearchForm.getVendor().trim())
+				|| groupSearchForm.getDepts() != null && !"".equals(groupSearchForm.getDepts().trim())
+				|| groupSearchForm.getClasses() != null && !"".equals(groupSearchForm.getClasses().trim())
+				|| groupSearchForm.getOrinNumber() != null && !"".equals(groupSearchForm.getOrinNumber().trim())
+				|| groupSearchForm.getSupplierSiteId() != null && !"".equals(groupSearchForm.getSupplierSiteId().trim())) {
 
 			getGroupDetailsQuery.append(" AND GRP.MDMID = GCM.MDMID ");
 			getGroupDetailsQuery.append(" AND GCM.COMPONENT_STYLE_ID = AIC.MDMID ");
@@ -374,7 +374,7 @@ public class XqueryConstants {
 		getGroupDetailsQueryParent
 		.append(" AND AGC.MDMID = GCM.MDMID                                                                                                              ");
 		final List<String> groupIdsList = getCommaSeparatedValues(groupSearchDTOList);
-		if (groupIdsList.size() > 0) {
+		if (!groupIdsList.isEmpty()) {
 			int count = 0;
 			for (Iterator<String> iterator = groupIdsList.iterator(); iterator.hasNext();) {
 				final String strGroupIds = (String) iterator.next();
@@ -441,7 +441,7 @@ public class XqueryConstants {
 		getGroupDetailsQueryParent
 		.append(" AND AGC.MDMID = GCM.MDMID                                                                                                              ");
 		final List<String> groupIdsList = getCommaSeparatedValues(groupSearchDTOList);
-		if (groupIdsList.size() > 0) {
+		if (!groupIdsList.isEmpty()) {
 			int count = 0;
 			for (Iterator<String> iterator = groupIdsList.iterator(); iterator.hasNext();) {
 				final String strGroupIds = (String) iterator.next();
@@ -474,7 +474,7 @@ public class XqueryConstants {
 		final List<String> listGroupIds = new ArrayList<>();
 		StringBuilder strGroupIdList = new StringBuilder();
 
-		if (groupSearchDTOList.size() > 0) {
+		if (!groupSearchDTOList.isEmpty()) {
 			int count = 0;
 			for (GroupSearchDTO groupSearchDTO : groupSearchDTOList) {
 
@@ -510,11 +510,10 @@ public class XqueryConstants {
 	public static  final String getNumbersInCorrectFormat(final String ids) {
 		LOGGER.info("Entering getNumbersInCorrectFormat() in Grouping XQueryConstant class.");
 		String finalString = "";
-		StringBuilder strBuilder = null;
 		if (null != ids && ids.trim().length() > 0) {
 			final String[] breakId = ids.split(",");
 			for (int count = 0; count < breakId.length; count++) {
-				strBuilder = new StringBuilder();
+				StringBuilder strBuilder = new StringBuilder();
 				strBuilder.append(finalString);
 				strBuilder.append("'");
 				strBuilder.append(breakId[count].trim());
@@ -707,7 +706,7 @@ public class XqueryConstants {
 		getExistSplitSkuDetails.append("	1=1                                                              ");
 		getExistSplitSkuDetails.append("	AND PET.MDMID=ITEM.MDMID                                         "); // To fetch Color data
 		getExistSplitSkuDetails.append("	AND (ITEM.MDMID = DETAIL.COMPONENT_MDMID)                         ");
-		/* getExistSplitSkuDetails.append("	  OR ITEM.MDMID = DETAIL.COMPONENT_STYLE_ID)                   "); */// To fetch Style data for that Color for Product name
+		
 		getExistSplitSkuDetails.append("	AND DETAIL.MDMID=:groupidSql                                      "); // StyleSKU MDMID
 
 		return getExistSplitSkuDetails.toString();
@@ -805,7 +804,7 @@ public class XqueryConstants {
 		getExistGBSDetails.append("	  AND ITEM.ENTRY_TYPE in ('SKU')                        ");
 		getExistGBSDetails.append("	  AND (NVL(ITEM.PARENT_MDMID,ITEM.MDMID) = DETAIL.COMPONENT_MDMID)             ");           
 		getExistGBSDetails.append("	  AND DETAIL.MDMID =:groupidSql     ");
-		//getExistGBSDetails.append("	  ORDER BY ITEM.PARENT_MDMID     ");
+	
 
 
 		return getExistGBSDetails.toString();
@@ -926,7 +925,7 @@ public class XqueryConstants {
 					"FROM ADSE_ITEM_CATALOG WHERE NUMBER_04 =:upcNoSql) ");
 		}
 		getNewGBSDetails.append(" group by ITEM.PARENT_MDMID having COUNT(ITEM.PARENT_MDMID) > 1");
-		//getNewGBSDetails = getNewGBSDetails + " ORDER BY ITEM.PARENT_MDMID";
+		
 
 		return getNewGBSDetails.toString();
 	}
@@ -1004,7 +1003,7 @@ public class XqueryConstants {
 					"else     PARENT_MDMID   end PARENT_MDMID " +
 					"FROM ADSE_ITEM_CATALOG WHERE NUMBER_04 =:upcNoSql) ");
 		}
-		//getNewGBSDetails = getNewGBSDetails + " ORDER BY ITEM.PARENT_MDMID";
+		
 
 
 		return getNewGBSDetails.toString();
@@ -1180,7 +1179,7 @@ public class XqueryConstants {
 			getRegularBeautySearchResult.append("     )                                                                        ");	
 		}
 
-		if(StringUtils.isEmpty(orderByColumn) || orderByColumn.equals("orinNumber"))
+		if(StringUtils.isEmpty(orderByColumn) || "orinNumber".equals(orderByColumn))
 		{
 			getRegularBeautySearchResult.append("  ORDER BY MDMID ");
 			if(StringUtils.isEmpty(sortingOrder))
@@ -1193,22 +1192,22 @@ public class XqueryConstants {
 			}
 
 		}
-		else if(orderByColumn.equals("vendorStyle"))
+		else if("vendorStyle".equals(orderByColumn))
 		{
 			getRegularBeautySearchResult.append(" ORDER BY PRIMARYSUPPLIERVPN ");
 			getRegularBeautySearchResult.append(sortingOrder);
 		}
-		else if(orderByColumn.equals("productName"))
+		else if("productName".equals(orderByColumn))
 		{
 			getRegularBeautySearchResult.append(" ORDER BY PRODUCT_NAME ");
 			getRegularBeautySearchResult.append(sortingOrder);			
 		}
-		else if(orderByColumn.equals("colorCode"))
+		else if("colorCode".equals(orderByColumn))
 		{
 			getRegularBeautySearchResult.append(" ORDER BY COLOR_CODE ");
 			getRegularBeautySearchResult.append(sortingOrder);
 		}
-		else if(orderByColumn.equals("colorName"))
+		else if("colorName".equals(orderByColumn))
 		{
 			getRegularBeautySearchResult.append(" ORDER BY COLOR_DESC ");
 			getRegularBeautySearchResult.append(sortingOrder);
@@ -1486,7 +1485,7 @@ public class XqueryConstants {
 		getExistRegularBeautyDetailsChildQuery.append("   PRODUCTNAME,                                                           ");
 		getExistRegularBeautyDetailsChildQuery.append("   COMPLETION_DATE,                                                       ");
 		getExistRegularBeautyDetailsChildQuery.append("   ENTRY_TYPE,                                                            ");
-		//getExistRegularBeautyDetailsChildQuery.append("   COMPONENT_TYPE,                                                        ");
+		
 		getExistRegularBeautyDetailsChildQuery.append("   VENDOR_STYLE,                                                          ");
 		getExistRegularBeautyDetailsChildQuery.append("   EXIST_IN_GROUP ,                                                       ");
 		getExistRegularBeautyDetailsChildQuery.append("   COLOR_CODE, COLO_DESC                                                  ");

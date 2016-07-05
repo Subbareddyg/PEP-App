@@ -15,6 +15,11 @@
      <link rel="stylesheet"  type="text/css"  href="<%=response.encodeURL(request.getContextPath()+"/css/jquery.treegrid.css")%>">
 	 <link rel="stylesheet" type="text/css" href="<%=response.encodeURL(request.getContextPath()+ "/css/jquery.alerts.css")%>" >
      
+     
+     	<style type="text/css">
+		.confirm {display: inherit;}
+	</style>
+	
 	<script type="text/javascript" 	src="<%=request.getContextPath()%>/js/libs/jq-plugins-adapter.js"></script>	
 	<script type="text/javascript"  src="<%=request.getContextPath()%>/js/libs/ext-all.js"></script>
 	<script type="text/javascript" src="<%=request.getContextPath()%>/js/libs/jquery.scrollTo-min.js"></script>
@@ -868,28 +873,43 @@
 				 	}
 				}
 			} else if(pepUserRoleName == 'dca'){
-				if(stylePetContentStatus=='Initiated' || stylePetContentStatus=='Ready_For_Review'){
+				if(stylePetContentStatus=='Initiated'){
 
 					
-					 var response =  confirm("Are you sure you want to close without saving ? ");
-					if(response == false){
-						return false;
-				 	} 
+					jConfirm('Are you sure you want to close without saving ?', 'Confirm', function(result) {     
+						if(!result){
+						 return false;
+						}else{
+							if(timeOutFlag == 'yes'){
+								$("#timeOutId").show();
+								timeOutConfirm = 'Y';		
+								setTimeout(function(){
+									logout_home(loggedInUser,releseLockedPetURL);
+									},4000);
+								
+							}else{
+								$("#timeOutId").hide();
+								releseLockedPet(loggedInUser,releseLockedPetURL);
+								window.location = "/wps/portal/home/worklistDisplay";	
+							}
+						}
+					});
+				}else{
+				if(timeOutFlag == 'yes'){
+								$("#timeOutId").show();
+								timeOutConfirm = 'Y';		
+								setTimeout(function(){
+									logout_home(loggedInUser,releseLockedPetURL);
+									},4000);
+								
+							}else{
+								$("#timeOutId").hide();
+								releseLockedPet(loggedInUser,releseLockedPetURL);
+								window.location = "/wps/portal/home/worklistDisplay";	
+							}
 				}
 			}
 			
-			if(timeOutFlag == 'yes'){
-				$("#timeOutId").show();
-				timeOutConfirm = 'Y';		
-				setTimeout(function(){
-					logout_home(loggedInUser,releseLockedPetURL);
-					},4000);
-				
-			}else{
-				$("#timeOutId").hide();
-				releseLockedPet(loggedInUser,releseLockedPetURL);
-				window.location = "/wps/portal/home/worklistDisplay";	
-			}
 		}
 	 	
 		
@@ -1738,8 +1758,27 @@
 		 
 		 // Saving details
 		 function validateFormData(dropdownCount,bmDropDownCount, pimRadioButtonCount, bmRadionButtonCount, styleOrColor){
-				var omniBrandCount = document.getElementById("omniBrandCount").value
-				var carBrandCount = document.getElementById("carBrandCount").value
+		 
+		 		
+		 		var imageStatusCode =document.getElementById("hdnImageStatusCode").value;
+		 		var petStatusCode =document.getElementById("hdnPETStatusCode").value;
+		 		
+		 		if($('#publisStatusCodePublishToWeb').is(':checked')){
+		 			if(imageStatusCode == '01'){
+		 				jAlert('Please complete the Image before Publishing to Web', 'Alert');
+		 				
+		 				return;	
+		 			}
+		 			
+		 			if(petStatusCode == '05'){
+		 				jAlert('Please ReInitiate the Group before Publishing to Web', 'Alert');
+		 				
+		 				return;
+		 			}
+		 		}
+		 		
+				var omniBrandCount = document.getElementById("omniBrandCount").value;
+				var carBrandCount = document.getElementById("carBrandCount").value;
 				//if(omniBrandCount > 0){
 					if(omniBrandCount != 1){
 						var onminvalue =  $("#selectedOmniBrand").val();
@@ -2299,7 +2338,10 @@ function toggleRows(currentRow, styleId, styleColorId){
 							 <div id="overlay_pageLoadingapprove" style="display:none;position:absolute;top:1000px; left:350px;">
 										<img src="<%=response.encodeURL(request.getContextPath()+"/img/loading.gif")%>" height="100px;" />
 							</div> 
-				
+					<input type="hidden" name="hdnImageStatusCode" id="hdnImageStatusCode" value="${contentDisplayForm.styleInformationVO.imageStatusCode}"/>
+					<input type="hidden" name="hdnPETStatusCode" id="hdnPETStatusCode" value="${contentDisplayForm.styleInformationVO.overallStatusCode}"/>
+					
+					
 					        <input type="hidden" id="getIPHCategory" name="getIPHCategory" value=""></input>
 					        <input type="hidden" id="petIdForWebservice" name="petIdForWebservice" value=""/>
 							<input type=hidden id="actionParameter" name="actionParameter"/>
@@ -2486,8 +2528,9 @@ function toggleRows(currentRow, styleId, styleColorId){
 									 </c:if>
 									</div>
 									<div style="float:right;margin-right:35px">
-										<label style="margin-right:15px"><input type="radio" id="publisStatusCodeReadyForCopy" name="publisStatusCode" value="02" <c:if test="${contentDisplayForm.roleName == 'readonly'}"> disabled="disabled" </c:if> /> <b>Ready For Copy</b></label>
-										<label style="margin-right:15px"><input type="radio" id="publisStatusCodePublishToWeb" name="publisStatusCode" value="09" <c:if test="${contentDisplayForm.roleName == 'readonly'}"> disabled="disabled" </c:if> /> <b>Publish to Web</b></label>
+										<label style="margin-right:15px"><input type="checkbox" id="publisStatusCodePublishToWeb" name="publisStatusCode" value="09"
+										<c:if test="${contentDisplayForm.styleInformationVO.overallStatusCode == '09'}"> checked=checked </c:if> 
+										<c:if test="${contentDisplayForm.roleName == 'readonly'}"> disabled="disabled" </c:if> /> <b>Publish to Web</b></label>
 									</div>
                                 </div>								 
 							</div>

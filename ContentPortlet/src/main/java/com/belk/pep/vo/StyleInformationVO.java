@@ -92,6 +92,10 @@ public class StyleInformationVO  implements Serializable{
      */
     private String contentStatus;
 
+
+
+	private String imageStatusCode;
+    private String overallStatusCode;
     
     
     /**
@@ -504,7 +508,21 @@ public class StyleInformationVO  implements Serializable{
 		this.contentStatus = contentStatus;
 	}
 
-    
+    public String getImageStatusCode() {
+		return imageStatusCode;
+	}
+
+	public void setImageStatusCode(String imageStatusCode) {
+		this.imageStatusCode = imageStatusCode;
+	}
+
+	public String getOverallStatusCode() {
+		return overallStatusCode;
+	}
+
+	public void setOverallStatusCode(String overallStatusCode) {
+		this.overallStatusCode = overallStatusCode;
+	}
    
 
 }
