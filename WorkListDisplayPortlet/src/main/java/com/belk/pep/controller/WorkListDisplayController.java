@@ -3532,15 +3532,15 @@ public String ConvertDate(String completionDate){
                     grpNosAndStatus.replaceAll(
                         WorkListDisplayConstants.WILD_CHAR,
                         WorkListDisplayConstants.EMPTY_STRING);
+                String groupStatusType = grpNosAndStatus.substring(grpNosAndStatus.indexOf(WorkListDisplayConstants.UNDERSCORE) + 1);
+                
                 groupNo =
-                    grpNosAndStatus.split(WorkListDisplayConstants.UNDERSCORE)[0]
-                        .toString().trim();
+                    grpNosAndStatus.substring(0, grpNosAndStatus.indexOf(WorkListDisplayConstants.UNDERSCORE));
                 groupStatus =
-                    grpNosAndStatus.split(WorkListDisplayConstants.UNDERSCORE)[1]
-                        .toString().trim();
+                	groupStatusType.split(WorkListDisplayConstants.HASH_SIGN)[0].toString().trim();
                 groupType =
-                	grpNosAndStatus.split(WorkListDisplayConstants.UNDERSCORE)[2]
-                        .toString().trim();
+                	groupStatusType.split(WorkListDisplayConstants.HASH_SIGN)[1].toString().trim();
+                
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("Group Number:--- " + groupNo
                         + "  Group Status:--- " + groupStatus + 
@@ -3632,19 +3632,14 @@ public String ConvertDate(String completionDate){
                         WorkListDisplayConstants.WILD_CHAR,
                         WorkListDisplayConstants.EMPTY_STRING);
 
-                /*groupNo =
-                    groupNosAndStatus.substring(0, groupNosAndStatus
-                        .indexOf(WorkListDisplayConstants.UNDERSCORE));
-                groupNo = groupNo.trim();*/
+                String groupStatusType = groupNosAndStatus.substring(groupNosAndStatus.indexOf(WorkListDisplayConstants.UNDERSCORE) + 1);
+                
                 groupNo =
-                	groupNosAndStatus.split(WorkListDisplayConstants.UNDERSCORE)[0]
-                        .toString().trim();
+                	groupNosAndStatus.substring(0, groupNosAndStatus.indexOf(WorkListDisplayConstants.UNDERSCORE));
                 groupStatus =
-                	groupNosAndStatus.split(WorkListDisplayConstants.UNDERSCORE)[1]
-                        .toString().trim();
+                	groupStatusType.split(WorkListDisplayConstants.HASH_SIGN)[0].toString().trim();
                 groupType =
-                	groupNosAndStatus.split(WorkListDisplayConstants.UNDERSCORE)[2]
-                        .toString().trim();
+                	groupStatusType.split(WorkListDisplayConstants.HASH_SIGN)[1].toString().trim();
 
                 LOGGER.info("group reinitialise:--- " + groupNo + "\nGroup Type -- " + groupType);
 

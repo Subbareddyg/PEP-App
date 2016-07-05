@@ -1647,8 +1647,18 @@ function inactivateAjaxCall(){
 		
 			$.each($("input[name='styleItem']:checked"), function(){   
 
-				parentStyle = [];
-				parentStyle = $(this).val().split('_');
+				var parentStyle = [];
+				var groupFlag = $(this).data('group') || 'N';
+				if(groupFlag == 'Y'){
+					parentStyleGroup = $(this).val().split('##');
+					parentStyle = parentStyleGroup[0].split('_');
+				}else
+					parentStyle = $(this).val().split('_');
+				
+				if(parentStyle.length > 2){
+					parentStyle[1] = parentStyle.slice(1, parentStyle.length).join('_');
+				}
+				
 				if(parentStyle[1]=='Initiated'){
 					parentActiveFlag='yes';
 					}
@@ -1672,6 +1682,10 @@ function inactivateAjaxCall(){
 			$.each($("input[name='selectedStyles']:checked"), function(){  
 				childStyleColor = [];			
 				childStyleColor = $(this).val().split('_');
+				if(childStyleColor.length > 2){
+					childStyleColor[1] = childStyleColor.slice(1, childStyleColor.length).join('_');
+				}
+				
 				if(childStyleColor[1]=='Initiated'){
 					activeFlag='yes';
 					}
@@ -1796,10 +1810,19 @@ function activateAjaxCall(){
 			
 			$.each($("input[name='styleItem']:checked"), function(){   
 
-				parentStyle = [];
-				parentStyle = $(this).val().split('_');
+				var parentStyle = [];
+				var groupFlag = $(this).data('group') || 'N';
+				if(groupFlag == 'Y'){
+					parentStyleGroup = $(this).val().split('##');
+					parentStyle = parentStyleGroup[0].split('_');
+				}else
+					parentStyle = $(this).val().split('_');
+				
+				if(parentStyle.length > 2){
+					parentStyle[1] = parentStyle.slice(1, parentStyle.length).join('_');
+				}
 				if(parentStyle[1]=='Initiated'){
-					var groupFlag = $(this).data('group') || 'N';	
+						
 					if(groupFlag == 'Y'){
 						parentActiveFlag='no';
 						deactiveFlag = 'yes';
@@ -1829,6 +1852,10 @@ function activateAjaxCall(){
 			$.each($("input[name='selectedStyles']:checked"), function(){
 				childStyleColor = [];			
 				childStyleColor = $(this).val().split('_');
+				if(childStyleColor.length > 2){
+					childStyleColor[1] = childStyleColor.slice(1, childStyleColor.length).join('_');
+				}
+				
 				if(childStyleColor[1]=='Initiated'){
 					activeFlag='yes';
 				}

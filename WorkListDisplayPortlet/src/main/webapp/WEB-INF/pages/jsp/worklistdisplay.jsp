@@ -384,7 +384,7 @@ lockClearOnBack.value='1';
 													<input type="checkbox" name="styleItem" id="styleItem" class="checkbox1" value="${workFlow.orinNumber}_${workFlow.petStatus}" onclick="childCheckedRows(this,'${workFlow.orinNumber}','${workflowForm.searchClicked}', '${workFlow.isGroup}' );getPetStatValue('${workFlow.petStatus}')" style="margin:0;" data-group="${workFlow.isGroup}"/>
 												</c:if>
 												<c:if test="${workFlow.isGroup == 'Y'}"	>
-													<input type="checkbox" name="styleItem" id="styleItem" class="checkbox1" value="${workFlow.orinNumber}_${workFlow.petStatus}_${workFlow.entryType}" onclick="getPetStatValue('${workFlow.petStatus}')" style="margin:0;" data-group="${workFlow.isGroup}"/>
+													<input type="checkbox" name="styleItem" id="styleItem" class="checkbox1" value="${workFlow.orinNumber}_${workFlow.petStatus}##${workFlow.entryType}" onclick="getPetStatValue('${workFlow.petStatus}')" style="margin:0;" data-group="${workFlow.isGroup}"/>
 												</c:if>
 											</div>
 											
@@ -1085,7 +1085,7 @@ lockClearOnBack.value='1';
 				<img id="parentSpan_{{=item.styleOrinNum}}_collapsed" onclick="expandCollapse('{{=item.styleOrinNum}}','{{=item.advSearchClicked}}', '{{=item.isGroup}}', '{{=uniqueIdentifier===undefined ? '' : uniqueIdentifier}}')" src="${contextpath}${imagemidpath}collapsed.png"  
 					style="display:none;cursor:pointer" style="cursor:pointer;border:0;" width="14" rel="parentSpan_{{=item.styleOrinNum}}_{{=random}}_collapsed" />
 					
-					<input type="checkbox" name="styleItem" id="styleItem" class="checkbox1" value="{{=item.styleOrinNum}}_{{=item.petStatus}}_{{=item.ENTRY_TYPE}}" onclick="getPetStatValue('{{=item.petStatus}}')" style="margin:0;" data-group="{{=item.isGroup}}"/>
+					<input type="checkbox" name="styleItem" id="styleItem" class="checkbox1" value="{{=item.styleOrinNum}}_{{=item.petStatus}}##{{=item.ENTRY_TYPE}}" onclick="getPetStatValue('{{=item.petStatus}}')" style="margin:0;" data-group="{{=item.isGroup}}"/>
 			{{ }else{  }}
 				<img id="parentSpan_{{=item.styleOrinNum}}_{{=random}}_expand" onclick="expandStyleColorCollapse('{{=item.styleOrinNum}}', '{{=random}}')" src="${contextpath}${imagemidpath}expand.png"  
 					style="cursor:pointer;border:0;" width="14" />
