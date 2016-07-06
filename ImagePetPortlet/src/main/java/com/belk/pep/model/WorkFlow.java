@@ -20,7 +20,6 @@ public class WorkFlow {
 		return supplierID;
 	}
 
-
 	public void setSupplierID(String supplierID) {
 		this.supplierID = supplierID;
 	}
