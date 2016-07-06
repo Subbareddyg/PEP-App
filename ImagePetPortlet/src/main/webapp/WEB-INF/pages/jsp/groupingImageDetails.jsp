@@ -231,21 +231,21 @@ function releseLockedPet(loggedInUser,releseLockedPetURL){
 		key="label.styleInfo.class" /></b> ${styleInformation.imageClass}</li>
 	<li class="txt_attr_name"><b><fmt:message
 		key="label.styleInfo.vendorNumber" /></b> ${styleInformation.vendorNo}</li>
+
 </ul>
 
 <ul class="car_info"
 	style="font-size: 11px; padding: 0 0 10px !important;">
-	<li class="ctxt_attr_name" style="width: 30%;"><b><fmt:message
-		key="label.styleInfo.description" /></b> ${styleInformation.imageDesc}</li>
+	
 	<li class="txt_attr_name" style="width: 25%;"><b><fmt:message
 		key="label.styleInfo.omniChannelVendor" /></b> ${styleInformation.omniChannelVendor}</li>
-	<li class="txt_attr_name"><b><fmt:message
+	<li class="txt_attr_name" ><b><fmt:message
 		key="label.styleInfo.vendorProvidedImage" /></b> ${styleInformation.vendorProvidedImage}</li>
+<li class="txt_attr_name" style="margin-left: 120px;"><b><fmt:message key="label.styleInfo.vendorProvidedSample"/></b> ${styleInformation.vendorProvidedSample}</li>
+
 
 </ul>
-<ul class="car_info" style="font-size: 11px; padding: 0 0 10px !important; margin-left: 15cm;">			
-			<li class="txt_attr_name"><b><fmt:message key="label.styleInfo.vendorProvidedSample"/></b> ${styleInformation.vendorProvidedSample}</li>
-</ul>
+
 	</c:forEach>
 	</c:if>
 <input type="button" name="Close" value="Close"   class="closeContentButton"  onclick="javascript:goToWorkListDisplayScreen('<c:out value="${imageDetailsForm.username}"/>','${releseLockedPet}');" style= " width: 100px; height: 30px; margin-left:800px"/>		
@@ -307,8 +307,8 @@ function releseLockedPet(loggedInUser,releseLockedPetURL){
 
 <input class="btn uploadButton" id="btnGPImageUploadAction"  align="center" type="button" name="imageUploadSubmit" value="Upload VPI"  style="margin-left:400px;" />
 
-<input type="radio"  name="radiobutton" value ="06"  style="margin-left:10px;"  /> <b><fmt:message key="label.readyForCopy" /></b>
- <input type="radio" name="radiobutton"  value="09"  style="margin-left:10px;"  /> <b>
+
+ <input type="checkbox" name="pubTOwebcheckbox"  value="09"  style="margin-left:140px;" onchange="myFunction(this);"  /> <b>
 <fmt:message key="label.publishToWeb" /></b>	
 
 	

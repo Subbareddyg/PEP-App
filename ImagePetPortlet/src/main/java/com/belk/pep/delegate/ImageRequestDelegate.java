@@ -295,4 +295,13 @@ public class ImageRequestDelegate {
 		        LOGGER.info("ImageRequestDelegate:: callUpdateGroupImageStatusJsonObj");
 		        return imageRequestService.callUpdateGroupImageStatusJsonObj(imageInfo);
 		    }
+		    /**
+		     * 
+		     * 
+		     * 
+		     */
+		    public boolean getContentStatus(String groupingId) throws PEPServiceException, PEPPersistencyException {
+		        return imageRequestService.getContentStatus(groupingId);
+		        
+		    }
 }

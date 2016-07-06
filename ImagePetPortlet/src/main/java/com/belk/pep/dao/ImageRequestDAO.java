@@ -138,4 +138,11 @@ public  interface ImageRequestDAO {
      * Added By: Cognizant
      */
     public List<ImageLinkVO> getGroupingScene7ImageLinks(String groupingId) throws PEPPersistencyException;
+
+	/**
+	 * @param groupingId
+	 * @return
+	 * @throws PEPPersistencyException
+	 */
+    boolean getContentStatus(String groupingId) throws PEPPersistencyException;
 }

@@ -46,7 +46,7 @@ import com.belk.pep.util.PropertyLoader;
 public class ImageRequestDAOImpl implements ImageRequestDAO {
     /** The Constant LOGGER. */
     private final static Logger LOGGER =
-        Logger.getLogger(ImageRequestDAO.class.getName());
+        Logger.getLogger(ImageRequestDAOImpl.class.getName());
 
     /** The session factory. */
     private SessionFactory sessionFactory;
@@ -1240,5 +1240,38 @@ public class ImageRequestDAOImpl implements ImageRequestDAO {
         LOGGER.info("***Exiting ImageRequestDAO.getScene7ImageLinks() method.");
         return imageLinkVOList;
     }
+    @Override
+    public boolean getContentStatus(String groupingId) throws PEPPersistencyException {       
+       
+        boolean contentStatus = true;
+        Session session = this.sessionFactory.openSession();
+           
+        Query query = session.createSQLQuery(xqueryConstants.getContentStatus());
+        query.setParameter(0, groupingId); 
+        query.setFetchSize(1);
+        List<Object[]> rows = query.list();
+        try{
+        for(Object[] row : rows){            
+            if(row[0] != null){            	
+            	if(ImageConstants.CONTENT_INITIATEDSTATUS.equalsIgnoreCase(row[0].toString()) ){
+            		contentStatus = false; 
+				}            	
+            } 
+            if(row[1] != null){            	
+            	if(ImageConstants.CONTENT_DEACTIVTEDSTATUS.equalsIgnoreCase(row[1].toString()) ){		
+            		contentStatus = false; 
+				}            	
+            }         
+            
+                      
+        }  
+        }catch(Exception e){
+        	LOGGER.error("Exiting getContentStatus() method",e);
+        }finally{
+        	  session.close();      
+        }      
+        LOGGER.info("Exiting getImageInfoDetails() method");
+        return contentStatus;
+    } 
 
 }

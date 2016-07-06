@@ -1030,6 +1030,25 @@ public class XqueryConstants {
         LOGGER.info("***Exiting getScene7ImageLinks() method.");
         return IMAGE_LINKS_QUERY;
     }
+    
+    /**
+     * This query is responsible for getting the grouping info details 
+     * @param orinNo
+     * @return
+     */
+    
+    
+    public String getContentStatus(){    	
+    	
+    	  final String CONTENT_STATUS_QUERY= " SELECT T.Content_Status,T.Overall_Status FROM ADSE_GROUP_CATALOG AGC, " +
+        	" XMLTABLE( 'for $image in $XML_DATA/pim_entry/entry/Group_Ctg_Spec return $image'   " +
+        	" passing AGC.XML_DATA AS \"XML_DATA\"  " +
+        	" COLUMNS  Content_Status VARCHAR(1000) path 'Content_Status', Overall_Status VARCHAR(1000) path 'Overall_Status') T  " +
+        	" WHERE AGC.MDMID = ?";    		  	  
+    	  
+    	  return CONTENT_STATUS_QUERY;
+    	        
+    }
       
 
 }

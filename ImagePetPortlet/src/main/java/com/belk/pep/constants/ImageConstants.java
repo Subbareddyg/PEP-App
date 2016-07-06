@@ -150,6 +150,10 @@ public class ImageConstants {
     public static final String GROUP_IMG_STATUS_COMPLETED = "Completed";
     public static final String PUBLISH_TO_WEB = "09";
     public static final String READY_FOR_COPY = "06";
+    public static final String CONTENT_INITIATEDSTATUS = "01";
+    public static final String CONTENT_DEACTIVTEDSTATUS = "05";
+    public static final String CONTENT_MSG = "grp.content.status";
+
     
     
     
