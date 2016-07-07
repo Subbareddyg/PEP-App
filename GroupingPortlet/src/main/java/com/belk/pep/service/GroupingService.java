@@ -575,4 +575,25 @@ public interface GroupingService {
 	 * @throws PEPPersistencyException
 	 */
 	boolean releseLockedPet(String orin, String pepUserID, String pepFunction) throws PEPPersistencyException;
+	
+	/**
+	 * This method is used to get the Child Regular/Beauty Collection Grouping
+	 * details.
+	 * 
+	 * @param groupId
+	 * @param styleOrinParent
+	 * @param vendorStyleNo
+	 * @param styleOrin
+	 * @param deptNoSearch
+	 * @param classNoSearch
+	 * @param supplierSiteIdSearch
+	 * @param upcNoSearch
+	 * @return List<GroupAttributeForm>
+	 * @throws PEPServiceException
+	 */
+	List<GroupAttributeForm> getRCGBCGCPGChildDetailsForStyle(String groupId,
+			String styleOrinParent, String vendorStyleNo, String styleOrin,
+			String supplierSiteIdSearch, String upcNoSearch,
+			String deptNoSearch, String classNoSearch)
+			throws PEPServiceException;
 }

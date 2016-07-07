@@ -1030,7 +1030,43 @@ public class GroupingController {
 				if (childList.isEmpty()) {
 					message = "No child data found.";
 				}
-				JSONObject json = getRegularBeautyGrpJsonResponse(message, 0, GroupingConstants.EMPTY, GroupingConstants.EMPTY, childList);
+				JSONObject json = getRegularBeautyGrpJsonResponse(message, 0, GroupingConstants.EMPTY, 
+						GroupingConstants.EMPTY, childList, GroupingConstants.EMPTY,
+						GroupingConstants.EMPTY, GroupingConstants.EMPTY, GroupingConstants.EMPTY, 
+						GroupingConstants.EMPTY, GroupingConstants.EMPTY, GroupingConstants.EMPTY,
+						GroupingConstants.EMPTY, GroupingConstants.EMPTY);
+
+				response.getWriter().write(json.toString());
+
+			} else if ("getChildRCGBCGCPGStyleChild".equals(action)) {
+				LOGGER.info("get Child for Style ResourceRequest:Enter------------>.");
+
+				String vendorStyleNo = GroupingUtil.checkNull(request.getParameter(GroupingConstants.VENDOR_STYLE_NO));
+				String styleOrin = GroupingUtil.checkNull(request.getParameter(GroupingConstants.STYLE_ORIN_NO_SEARCH_PARAM));				
+				String deptNoSearch = GroupingUtil.checkNull(request.getParameter(GroupingConstants.DEPT_SEARCH));
+				String classNoSearch = GroupingUtil.checkNull(request.getParameter(GroupingConstants.CLASS_SEARCH));
+				String supplierSiteIdSearch = GroupingUtil.checkNull(request.getParameter(GroupingConstants.SUPPLIER_SEARCH));
+				String upcNoSearch = GroupingUtil.checkNull(request.getParameter(GroupingConstants.UPC_SEARCH));				
+				String groupId = GroupingUtil.checkNull(request.getParameter(GroupingConstants.GROUP_ID));
+				String styleOrinParent = GroupingUtil.checkNull(request.getParameter(GroupingConstants.PARENT_STYLE_ORIN));
+
+				if (LOGGER.isDebugEnabled()) {
+					LOGGER.debug("getRegularBeautySearch.Search Attribute: vendorStyleNo-->" + vendorStyleNo + "  styleOrin-->" + styleOrin
+							+ " groupId-->" + groupId + " deptNoSearch-->" + deptNoSearch + " classNoSearch-->" + classNoSearch
+							+ " supplierSiteIdSearch-->" + supplierSiteIdSearch + " upcNoSearch-->" + upcNoSearch + " parentStyleOrin-->"
+							+ styleOrinParent);
+				}
+
+				if (LOGGER.isDebugEnabled()) {
+					LOGGER.debug("parentStyleOrin----------------->" + styleOrinParent);
+				}
+				String message = GroupingConstants.EMPTY;
+				List<GroupAttributeForm> childList = groupingService.getRCGBCGCPGChildDetailsForStyle(groupId, styleOrinParent,
+						vendorStyleNo, styleOrin, supplierSiteIdSearch, upcNoSearch, deptNoSearch, classNoSearch);
+				if (childList.isEmpty()) {
+					message = "No child data found.";
+				}
+				JSONObject json = getRCGBCGCPGGrpJsonResponseForStyle(message, childList);
 
 				response.getWriter().write(json.toString());
 
@@ -1339,7 +1375,9 @@ public class GroupingController {
 				}
 				int totalRecordCount = existRegularBeautyDetails.size();
 				jsonObj = getRegularBeautyGrpJsonResponse(message, totalRecordCount, defaultSortCol, defaultSortOrder,
-						existRegularBeautyDetails);
+						existRegularBeautyDetails, GroupingConstants.EMPTY, GroupingConstants.EMPTY, GroupingConstants.EMPTY,
+						GroupingConstants.EMPTY, GroupingConstants.EMPTY, GroupingConstants.EMPTY, GroupingConstants.EMPTY,
+						GroupingConstants.EMPTY, GroupingConstants.EMPTY);
 			}
 
 			if (LOGGER.isDebugEnabled()) {
@@ -1663,12 +1701,20 @@ public class GroupingController {
 						supplierSiteIdSearch, upcNoSearch, groupId, groupIdSearch, groupNameSearch, sortCol, sortOrder, pageNumberSelected,
 						recordsPerPageSelected);
 
-				int totalRecords = getSearchResultList.size();
+				int totalRecords =
+					groupingService.getRegularBeautySearchResultCount(
+						vendorStyleNo, styleOrin, deptNoSearch, classNoSearch,
+						supplierSiteIdSearch, upcNoSearch, groupId, groupIdSearch,
+						groupNameSearch);
+				
 				request.getPortletSession().setAttribute(GroupingConstants.SELECTED_ATTRIBUTE_LIST, getSearchResultList);
 				if (getSearchResultList.isEmpty()) {
 					message = prop.getProperty(GroupingConstants.MESSAGE_SPLITGROUP_VALIDATION_NO_DATA);
 				}
-				JSONObject jsonObj = getRegularBeautyGrpJsonResponse(message, totalRecords, sortCol, sortOrder, getSearchResultList);
+				JSONObject jsonObj = getRegularBeautyGrpJsonResponse(message, totalRecords, 
+						sortCol, sortOrder, getSearchResultList, String.valueOf(recordsPerPageSelected), 
+						vendorStyleNo, styleOrin, deptNoSearch, classNoSearch, supplierSiteIdSearch, upcNoSearch,
+						groupIdSearch, groupNameSearch);
 				response.getWriter().write(jsonObj.toString());
 
 				modelAndView = new ModelAndView(null);
@@ -2114,10 +2160,13 @@ public class GroupingController {
 	 * @param defaultSortCol
 	 * @param defaultSortOrder
 	 * @param searchResultList
+	 * @param recordsPerPage
 	 * @return JSONObject
 	 */
 	public final JSONObject getRegularBeautyGrpJsonResponse(final String message, final int totalRecords, final String defaultSortCol,
-			final String defaultSortOrder, final List<StyleAttributeForm> searchResultList) {
+			final String defaultSortOrder, final List<StyleAttributeForm> searchResultList, final String recordsPerPage,
+			final String vendorStyleNo, final String styleOrin, final String deptNoSearch, final String classNoSearch, 
+			final String supplierSiteIdSearch, final String upcNoSearch, final String groupIdSearch, final String groupNameSearch) {
 		LOGGER.info("Enter getRegularBeautyGrpJsonResponse-->.");
 		String vendorStyleNoSearch = "";
 		String styleOrinNoSearch = "";
@@ -2193,8 +2242,15 @@ public class GroupingController {
 			jsonObj.put(GroupingConstants.SPLIT_GROUP_DEFAULT_SORT_ORDER, defaultSortOrder);
 			jsonObj.put(GroupingConstants.STYLE_ORIN_NO_SEARCH, styleOrinNoSearch);
 			jsonObj.put(GroupingConstants.VENDOR_STYLE_NO_SEARCH, vendorStyleNoSearch);
-			jsonObj.put(GroupingConstants.CLASS_ID, classId);
-
+			jsonObj.put(GroupingConstants.VENDOR_STYLE_NO, vendorStyleNo);
+			jsonObj.put(GroupingConstants.STYLE_ORIN_NO_SEARCH_PARAM, styleOrin);
+			jsonObj.put(GroupingConstants.DEPT_SEARCH, deptNoSearch);
+			jsonObj.put(GroupingConstants.CLASS_SEARCH, classNoSearch);
+			jsonObj.put(GroupingConstants.SUPPLIER_SEARCH, supplierSiteIdSearch);
+			jsonObj.put(GroupingConstants.UPC_SEARCH, upcNoSearch);
+			jsonObj.put(GroupingConstants.GROUP_ID_SEARCH, groupIdSearch);
+			jsonObj.put(GroupingConstants.GROUP_NAME_SEARCH, groupNameSearch);
+			jsonObj.put(GroupingConstants.RECORDS_PER_PAGE, recordsPerPage);
 			jsonObj.put(GroupingConstants.COMPONENT_LIST, jsonArray);
 			if (LOGGER.isDebugEnabled()) {
 				LOGGER.debug("JSON getRegularBeautyGrpJsonResponse-->" + jsonObj);
@@ -2343,5 +2399,63 @@ public class GroupingController {
 			LOGGER.error("releseLockedPet Grouping controlle:PEPPersistencyException------>" + e);
 		}
 		LOGGER.info("GroupingController.releseLockedPet ************-->Exit");
+	}
+	
+	/**
+	 * Search for add component Child - Regular/Beauty/CPG collection group - JSON.
+	 * 
+	 * @param searchResultList
+	 * @return JSONObject
+	 */
+	public final JSONObject getRCGBCGCPGGrpJsonResponseForStyle(final String message, final List<GroupAttributeForm> searchResultList) {
+		LOGGER.info("Enter getRCGBCGCPGGrpJsonResponseForStyle-->.");
+		String vendorStyleNoSearch = "";
+		String styleOrinNoSearch = "";
+		GroupAttributeForm groupAttributeForm = null;
+
+		JSONObject jsonObjComponentSub = null;
+		JSONObject jsonObject = new JSONObject();
+		JSONArray jsonArraySub = new JSONArray();
+
+		try {
+
+			for (int j = 0; j < searchResultList.size(); j++) {
+				jsonObjComponentSub = new JSONObject();
+				groupAttributeForm = searchResultList.get(j);
+
+				styleOrinNoSearch = GroupingUtil.checkNull(groupAttributeForm
+						.getOrinNumber());
+
+				vendorStyleNoSearch = GroupingUtil.checkNull(groupAttributeForm
+						.getStyleNumber());
+				jsonObjComponentSub.put(GroupingConstants.STYLE_ORIN_NO,
+						styleOrinNoSearch);
+				jsonObjComponentSub.put(GroupingConstants.VENDOR_STYLE_NO,
+						vendorStyleNoSearch);
+				jsonObjComponentSub.put(GroupingConstants.PRODUCT_NAME,
+						groupAttributeForm.getProdName());
+				jsonObjComponentSub.put(GroupingConstants.COLOR_CODE,
+						groupAttributeForm.getColorCode());
+				jsonObjComponentSub.put(GroupingConstants.COLOR_NAME,
+						groupAttributeForm.getColorName());
+				jsonObjComponentSub.put(GroupingConstants.IS_GROUP,
+						groupAttributeForm.getIsGroup());
+				jsonObjComponentSub.put(GroupingConstants.PRIORITY,
+						groupAttributeForm.getPriority());
+				jsonObjComponentSub.put(GroupingConstants.HAVE_CHILD_GROUP,
+						groupAttributeForm.getHaveChildGroup());
+				jsonArraySub.put(jsonObjComponentSub);
+			}
+			jsonObject.put(GroupingConstants.MESSAGE, message);
+			jsonObject.put(GroupingConstants.CHILD_LIST, jsonArraySub);
+			if (LOGGER.isDebugEnabled()) {
+				LOGGER.debug("JSON getRCGBCGCPGGrpJsonResponseForStyle-->"
+						+ jsonArraySub);
+			}
+		} catch (JSONException e) {
+			LOGGER.error("Exeception in parsing the jsonObj-->" + e);
+		}
+		LOGGER.info("Exit getRCGBCGCPGGrpJsonResponseForStyle-->.");
+		return jsonObject;
 	}
 }

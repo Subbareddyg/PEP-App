@@ -2676,4 +2676,38 @@ public class GroupingServiceImpl implements GroupingService {
 		return isPetReleased;
 
 	}
+	
+	/**
+	 * This method is used to get the Child Regular/Beauty Collection Grouping
+	 * details.
+	 * 
+	 * @param groupId
+	 * @param styleOrinParent
+	 * @param vendorStyleNo
+	 * @param styleOrin
+	 * @param deptNoSearch
+	 * @param classNoSearch
+	 * @param supplierSiteIdSearch
+	 * @param upcNoSearch
+	 * @return List<GroupAttributeForm>
+	 * @throws PEPServiceException
+	 */
+	@Override
+	public final List<GroupAttributeForm> getRCGBCGCPGChildDetailsForStyle(final String groupId, final String styleOrinParent,
+			final String vendorStyleNo, final String styleOrin, final String supplierSiteIdSearch, final String upcNoSearch,
+			final String deptNoSearch, final String classNoSearch) throws PEPServiceException {
+		LOGGER.info("Enter-->calling getRCGBCGCPGChildDetailsForStyle from GroupingServiceImpl.");
+
+		List<GroupAttributeForm> groupAttributeFormList = null;
+		try {
+			groupAttributeFormList = groupingDAO.getRCGBCGCPGChildDetailsForStyle(groupId, styleOrinParent,
+					vendorStyleNo, styleOrin, supplierSiteIdSearch, upcNoSearch,
+					deptNoSearch, classNoSearch);
+		} catch (Exception e) {
+			LOGGER.error("Exception occurred at the getRCGBCGCPGChildDetailsForStyle().Service Implementation Layer-->" + e);
+			throw new PEPServiceException(e.getMessage());
+		}
+		LOGGER.info("Exit-->calling getRCGBCGCPGChildDetailsForStyle from GroupingServiceImpl.");
+		return groupAttributeFormList;
+	}
 }

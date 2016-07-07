@@ -280,4 +280,6 @@ public class GroupingConstants {
 	public static final String LOCKED_FUNCTION = "lockFunction";
 	public static final String LOCKED_FUNCTION_RELEASE = "release";
 	public static final String LOCKED_FUNCTION_RELEASE_LOCK = "releaseLock";
+	
+	public static final String PARENT_STYLE_ORIN = "parentStyleOrin";
 }
