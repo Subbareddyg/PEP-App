@@ -275,9 +275,10 @@ public class GroupingServiceImpl implements GroupingService {
 	 * @return String
 	 * @throws Exception
 	 * @throws PEPServiceException
+	 * @throws IOException 
 	 */
 	@Override
-	public final String callCreateGroupService(final JSONObject jsonStyle) throws PEPServiceException {
+	public final String callCreateGroupService(final JSONObject jsonStyle) throws PEPServiceException, IOException {
 		LOGGER.info("Entering callCreateGroupService-->.");
 
 		String responseMsg = "";
@@ -324,12 +325,7 @@ public class GroupingServiceImpl implements GroupingService {
 				httpConnection.disconnect();
 			}
 			if (responseBuffer != null)
-				try {
-					responseBuffer.close();
-				} catch (IOException e) {
-					LOGGER.error("inside IOException-->" + e);
-					throw new PEPServiceException(e.getMessage());
-				}
+				responseBuffer.close();				
 		}
 		LOGGER.info("Exiting callCreateGroupService-->" + responseMsg);
 		return responseMsg;

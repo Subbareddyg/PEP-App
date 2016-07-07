@@ -47,8 +47,9 @@ public interface GroupingService {
 	 * @return String
 	 * @throws Exception
 	 * @throws PEPServiceException
+	 * @throws IOException
 	 */
-	String callCreateGroupService(JSONObject jsonStyle) throws PEPServiceException;
+	String callCreateGroupService(JSONObject jsonStyle) throws PEPServiceException, IOException;
 
 	/**
 	 * This method is used to get Component details for Split Color.
