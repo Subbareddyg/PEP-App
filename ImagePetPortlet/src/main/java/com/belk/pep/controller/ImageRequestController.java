@@ -65,8 +65,6 @@ import com.belk.pep.util.PropertyLoader;
 
 
 
-
-
 /**
  * This class is responsible to controlling the image screen activities
  * 
@@ -101,6 +99,7 @@ public class ImageRequestController {
 	public void setUploadedSuccess(String uploadedSuccess) {
 		this.uploadedSuccess = uploadedSuccess;
 	}
+	
 
 	/**
 	 * @return the uploadedSuccess
@@ -196,7 +195,21 @@ public class ImageRequestController {
         String petStatus = null ;
         String imageStatus = null ;
         String [] imageWithPetStatusArray = null;
-        
+        if(request.getPortletSession().getAttribute("internalUser")!=null ){
+        	  LOGGER.info("internal user name ---" + request.getPortletSession().getAttribute("internalUser"));
+        	  String url ="http://ralpimpmapdv01.belkinc.com:10079/wps/portal/home/InternalUserLogin";
+        	
+        	 
+        	 
+        	 
+        }
+        if(null != imageDetailsFromIPC){
+        	LOGGER.info("imageDetailsFromIPC check here ----" + imageDetailsFromIPC.getOrinNumber());	
+        }
+        else{
+        	LOGGER.info("imageDetailsFromIPC- null ---" );	
+        	
+        }
         
     	if(null != imageDetailsFromIPC){
     		String orinOrGrouping =  imageDetailsFromIPC.getOrinNumber();
@@ -1335,9 +1348,23 @@ public class ImageRequestController {
 		   	String loggedInUser= request.getParameter("loggedInUser");   	
 			String lockedPet= request.getParameter("lockedPet"); 
 			String pepFunction = request.getParameter("pepFunction"); 	
+			
+			
 		 	LOGGER.info("releseLockedPet lockedPet IMAGE REQUEST CONTROLLER ************.." +lockedPet);
 		 	try {
 				 imageRequestDelegate.releseLockedPet(lockedPet,loggedInUser,pepFunction);
+				 if (request.getPortletSession().getAttribute("ImageDetailsOBJ") != null)
+			     {					 
+					
+						LOGGER.info("session value here updated ." +request.getPortletSession().getAttribute("formSessionKey"));
+						
+					/*if((request.getPortletSession().getAttribute("formSessionKey")!=null && ((String)request.getPortletSession().getAttribute("formSessionKey")).contains(loggedInUser))){
+						 request.getPortletSession().invalidate();	
+						 request.getPortletSession().setAttribute("internalUser","afusyg6");
+					}*/
+						
+				
+			     } 
 					
 			} catch (PEPPersistencyException e1) {
 				e1.printStackTrace();
@@ -1607,20 +1634,16 @@ public class ImageRequestController {
 		public void setGroupingImageDetails(UploadImagesDTO uploadImagesDTO) {
 			String vendorImageUploadDir = "";
 			String RRDImageUploadedDir = "";
-			try {
-				
+			try {				
 				 Random randomGenerator = new Random();
 				 int randomInt = randomGenerator.nextInt(10000);					
 				 String imageName = uploadImagesDTO.getPetId() + "_"+ randomInt + "_" + uploadImagesDTO.getUserUploadedFileName();
 				 LOGGER.info("imageName :"+imageName);
-				 uploadImagesDTO.setImageName(imageName.toUpperCase());
-				
+				 uploadImagesDTO.setImageName(imageName.toUpperCase());				
 						vendorImageUploadDir = imageRequestDelegate.getVendorImageUploadDir();
 						uploadImagesDTO.setVendorImageUploadDir(vendorImageUploadDir);
 						RRDImageUploadedDir = imageRequestDelegate.getRRDImageUploadedDir();
-						uploadImagesDTO.setRRDImageUploadedDir(RRDImageUploadedDir);
-
-					
+						uploadImagesDTO.setRRDImageUploadedDir(RRDImageUploadedDir);					
 			} catch (Exception e) {
 				LOGGER.info("VendorImageUploadFormController.setImageDetails() error occured while setting the values" ,e);
 			}
@@ -1644,10 +1667,10 @@ public class ImageRequestController {
 			boolean contentStatus =  true ;
 			String groupingType = request.getParameter("groupingType");
 		    String groupOverallStatus = request.getParameter("groupOverallStatus");		   
-			if(groupOverallStatus!=null && !groupOverallStatus.isEmpty()){			
+			if(groupOverallStatus!=null && !groupOverallStatus.isEmpty()){				
 				contentStatus =  getContentStatus(groupingId);
 				if(!contentStatus){
-					responseMsg =ImageConstants.CONTENT_MSG;
+					responseMsg =ImageConstants.CONTENT_MSG;					
 					jObj.put("responseCode", responseMsg);
 					response.getWriter().write(jObj.toString());
 					response.getWriter().flush();

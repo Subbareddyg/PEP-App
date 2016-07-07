@@ -152,7 +152,7 @@ public class ImageConstants {
     public static final String READY_FOR_COPY = "06";
     public static final String CONTENT_INITIATEDSTATUS = "01";
     public static final String CONTENT_DEACTIVTEDSTATUS = "05";
-    public static final String CONTENT_MSG = "grp.content.status";
+    public static final String CONTENT_MSG = "Please complete content before choosing Publish to Web";
 
     
     
