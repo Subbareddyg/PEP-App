@@ -73,7 +73,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 	 * @throws PEPFetchException
 	 */
 	@Override
-	public CreateGroupDTO getGroupHeaderDetails(final String groupId) throws PEPFetchException, ParseException {
+	public CreateGroupDTO getGroupHeaderDetails(final String groupId) throws PEPFetchException {
 		LOGGER.info("Fetch Group Header Details--> getGroupHeaderDetails-->Start.");
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("Group Id-->" + groupId);
@@ -154,7 +154,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 			throw new PEPFetchException(e.getMessage());
 		} catch (ParseException e) {
 			LOGGER.error("inside ParseException-->" + e);
-			throw new ParseException(e.getMessage(), 0);
+			throw new PEPFetchException(e.getMessage());
 		} finally {
 			LOGGER.info("recordsFetched. getGroupHeaderDetails finally block..");
 			if (session != null) {
@@ -793,12 +793,10 @@ public class GroupingDAOImpl implements GroupingDAO {
 	 * 
 	 *         Method added For PIM Phase 2 - groupSearch Date: 05/27/2016 Added
 	 *         By: Cognizant
-	 * @throws PEPPersistencyException
-	 * @throws PEPServiceException
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public int groupSearchCount(final GroupSearchForm groupSearchForm) throws PEPServiceException, PEPPersistencyException {
+	public int groupSearchCount(final GroupSearchForm groupSearchForm) {
 
 		LOGGER.info("Entering GroupingDAO.groupSearchCount() method.");
 		Session session = null;
@@ -842,13 +840,11 @@ public class GroupingDAOImpl implements GroupingDAO {
 	 * 
 	 *         Method added For PIM Phase 2 - groupSearch Date: 05/19/2016 Added
 	 *         By: Cognizant
-	 * @throws PEPPersistencyException
-	 * @throws PEPServiceException
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<GroupSearchDTO> groupSearchParent(final List<GroupSearchDTO> groupSearchDTOList, final GroupSearchForm groupSearchForm)
-			throws PEPServiceException, PEPPersistencyException {
+			{
 
 		LOGGER.info("Entering GroupingDAO.groupSearchParent() method.");
 		Session session = null;
@@ -913,13 +909,11 @@ public class GroupingDAOImpl implements GroupingDAO {
 	 * 
 	 *         Method added For PIM Phase 2 - groupSearch Date: 05/27/2016 Added
 	 *         By: Cognizant
-	 * @throws PEPPersistencyException
-	 * @throws PEPServiceException
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public int groupSearchParentCount(final List<GroupSearchDTO> groupSearchDTOList, final GroupSearchForm groupSearchForm)
-			throws PEPServiceException, PEPPersistencyException {
+			{
 
 		LOGGER.info("Entering GroupingDAO.groupSearchParentCount() method.");
 		Session session = null;
@@ -1429,7 +1423,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 			final String sortingOrder, final int pageNumber, final int recordsPerPage) throws PEPFetchException {
 		LOGGER.info("Fetch New Regular/Beauty Collection attribute Details. getRegularBeautySearchResult-->Start.");
 		Session session = null;
-		GroupAttributeForm groupAttributeForm = null;
+		
 		StyleAttributeForm styleAttributeForm = null;
 		List<GroupAttributeForm> groupAttributeFormList = null;
 		List<StyleAttributeForm> styleAttributeFormList = null;
@@ -1480,7 +1474,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 
 					@SuppressWarnings("rawtypes")
 					final Map rowMap = (Map) row;
-					groupAttributeForm = new GroupAttributeForm();
+					
 					styleAttributeForm = new StyleAttributeForm();
 
 					final String mdmid = rowMap.get("MDMID") != null ? rowMap.get("MDMID").toString() : "";
@@ -2015,7 +2009,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 		}
 		Session session = null;
 		GroupAttributeForm groupAttributeForm = null;
-		StyleAttributeForm styleAttributeForm = null;
+		
 		List<GroupAttributeForm> groupAttributeFormList = null;
 		String deptNoForInSearch = GroupingUtil.getInValForQuery(deptNoSearch);
 		String classNoSearchSearch = GroupingUtil.getInValForQuery(classNoSearch);

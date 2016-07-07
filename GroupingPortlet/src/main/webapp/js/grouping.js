@@ -187,7 +187,8 @@ var app = app || {};
 					buttonText: "",
 					minDate: 0 ,
 					onClose: function( selectedDate ) {
-					 $( "#endDate" ).datepicker( "option", "minDate", selectedDate );
+						if(selectedDate !== undefined && selectedDate.toString().length)
+							$( "#endDate" ).datepicker( "option", "minDate", selectedDate );
 					},
 					onSelect : function(){
 						$('#startDate').prop('readonly',true);
@@ -202,7 +203,8 @@ var app = app || {};
 					buttonText: "",
 					minDate: 0 ,					
 					onClose: function( selectedDate ) {
-					$( "#startDate" ).datepicker( "option", "maxDate", selectedDate );
+						if(selectedDate !== undefined && selectedDate.toString().length)
+							$( "#startDate" ).datepicker( "option", "maxDate", selectedDate );
 					},
 					onSelect : function(){
 						$('#endDate').prop('readonly',true);
@@ -888,6 +890,23 @@ var app = app || {};
 	};
 	
 	app.SplitGroupLanding = {
+		//
+		componentDataSearchService: function(params){
+			$('.overlay_pageLoading').removeClass('hidden');
+			
+			/* if(params != undefined && params.length)
+				params = $('#frmComponentSearch').serialize() + '&' + params;
+			else
+				params = $('#frmComponentSearch').serialize(); */
+			
+			return app.GroupFactory.searchSplitComponents(params)						
+				.complete(function(){
+					$('.overlay_pageLoading').addClass('hidden');
+					//$('.select-all').prop('checked', false);
+					
+					$("#search-result-panel").removeClass('hidden');
+				});
+		},
 		
 		handleEvents: function(){
 			try{
@@ -946,52 +965,51 @@ var app = app || {};
 							$('#error-massege').html("Grouping# " + $('#groupId').val() + " already belongs to another group!");
 							$('#errorBox').dialog("open");			
 						}else{
-							$('.overlay_pageLoading').removeClass('hidden');
+							//$('.overlay_pageLoading').removeClass('hidden');
 							
-							app.GroupFactory.searchSplitComponents($('#frmComponentSearch').serialize())						
-								.done(function(result){
-									if(!result.length)
-										return;
-									
-									var response = $.parseJSON(result);
-									//console.log(response.componentList);
-									if(response.componentList){
-										//processing data table generation
-										//passing only components
-										var componentList = response.componentList;
-										//deleting componentList to pass only header
-										delete response.componentList;
+							if($('#groupType').val().trim() == 'RCG' || $('#groupType').val().trim() == 'BCG'){
+								var config = {
+									dfdChildrenUrl: app.URLFactory.getURL('groupSearchUrl'), 
+									dfdChildrenParams: {resourceType: 'getChildRCGBCG'},
+									dfdChildrenStyleColorParams: {resourceType: 'getChildRCGBCGCPGStyleChild'},
+									dfdStyleColorTemplate: '#row-template-style-color',
+									dataServiceFunc: _super.componentDataSearchService.bind(this)
+								};
+								
+								var dtTableAjax = new app.DataTableComponentAjax(config, $('#frmComponentSearch').serialize());
+								dtTableAjax.init(); //init data table
+								
+							}else{
+								//method to get results to draw the non ajax data Table for specific group types
+								_super.componentDataSearchService($('#frmComponentSearch').serialize())	
+									.done(function(result){
+										if(!result.length)
+											return;
 										
-										var config = {};
-										
-										if($('#groupType').val().trim() == 'RCG' || $('#groupType').val().trim() == 'BCG'){
-											config = {
-												dfdChildrenUrl: app.URLFactory.getURL('groupSearchUrl'), 
-												dfdChildrenParams: {resourceType: 'getChildRCGBCG'},
-											};
+										var response = $.parseJSON(result);
+										//console.log(response.componentList);
+										if(response.componentList){
+											//processing data table generation
+											//passing only components
+											var componentList = response.componentList;
+											//deleting componentList to pass only header
+											delete response.componentList;
+											
+											var dtTable = new app.DataTable();
+											dtTable.setDataHeader(response);
+											dtTable.setData(componentList);
+											
+											//$('.paginator').removeData('twbs-pagination'); //reconstructing the paginator
+											
+											dtTable.init();
 										}
 										
-										var dtTable = new app.DataTable(config);
-										dtTable.setDataHeader(response);
-										dtTable.setData(componentList);
 										
-										$('.paginator').removeData('twbs-pagination'); //reconstructing the paginator
-										
-										dtTable.init();
-									}
-									
-									
-									$("#search-result-panel").removeClass('hidden');
-																	
-								}).complete(function(){
-									
-									$('.overlay_pageLoading').addClass('hidden');
-									$('.select-all').prop('checked',false);
-									
-								});
-								
-						}
-					}else{
+										$("#search-result-panel").removeClass('hidden');								
+									});
+								}
+							}
+						}else{
 						
 						if($('#styleOrinNo').val().trim() == '' && $('#vendorStyleNo').val().trim() == ''){
 							$('#error-massege').html('Atleast one field is required');
@@ -1004,7 +1022,8 @@ var app = app || {};
 						}else{
 							$('.overlay_pageLoading').removeClass('hidden');
 							
-							app.GroupFactory.searchSplitComponents($('#frmComponentSearch').serialize())						
+							//app.GroupFactory.searchSplitComponents($('#frmComponentSearch').serialize())
+							_super.componentDataSearchService($('#frmComponentSearch').serialize())
 								.done(function(result){
 									if(!result.length)
 										return;
@@ -1022,7 +1041,7 @@ var app = app || {};
 										dtTable.setDataHeader(response);
 										dtTable.setData(componentList);
 										
-										$('.paginator').removeData('twbs-pagination'); //reconstructing the paginator
+										//$('.paginator').removeData('twbs-pagination'); //reconstructing the paginator
 										
 										dtTable.init();
 									}
@@ -1030,16 +1049,12 @@ var app = app || {};
 									//displaying search page
 									$("#search-result-panel").removeClass('hidden');
 																	
-								}).complete(function(){
+								})/* .complete(function(){
 									$('.overlay_pageLoading').addClass('hidden');
 									$('.select-all').prop('checked',false);
-								});
-								
-						}
-						
+								}); */
+						}	
 					}
-					
-					
 				});
 				
 				

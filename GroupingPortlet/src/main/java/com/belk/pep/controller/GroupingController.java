@@ -393,15 +393,11 @@ public class GroupingController {
 
 				view = new ModelAndView(null);
 			}
-		} catch (PEPPersistencyException e) {
-			LOGGER.error("GroupingControlle:handleCreateGroupForm handleSplitAttrSearchRequest:PEPPersistencyException------------>" + e);
 		} catch (IOException e) {
 			LOGGER.error("GroupingControlle:handleCreateGroupForm handleSplitAttrSearchRequest:IOException------------>" + e);
 		} catch (PEPServiceException e) {
 			LOGGER.error("GroupingControlle:handleCreateGroupForm handleSplitAttrSearchRequest:PEPServiceException------------>" + e);
-		} catch (PEPFetchException e) {
-			LOGGER.error("GroupingControlle:handleCreateGroupForm handleSplitAttrSearchRequest:PEPFetchException------------>" + e);
-		}
+		} 
 		LOGGER.info("Exit handleSplitAttrSearchRequest-->.");
 		return view;
 	}
@@ -714,11 +710,7 @@ public class GroupingController {
 			response.getWriter().write(jsonObj.toString());
 		} catch (IOException e) {
 			LOGGER.error("GroupingControlle:handleCreateGroupForm ResourceRequest:Exception------------>" + e);
-		} catch (PEPServiceException e) {
-			LOGGER.error("GroupingControlle:handleCreateGroupForm ResourceRequest:PEPServiceException------------>" + e);
-		} catch (PEPPersistencyException e) {
-			LOGGER.error("GroupingControlle:handleCreateGroupForm ResourceRequest:PEPPersistencyException------------>" + e);
-		}
+		} 
 
 		LOGGER.info("GroupingControlle:handleCreateGroupForm ResourceRequest:Exit------------>.");
 		return modelAndView;
@@ -818,8 +810,6 @@ public class GroupingController {
 			createGroupFormRes = groupingService.saveGroupHeaderDetails(jsonStyle, updatedBy, createGroupForm.getGroupAttributeFormList());
 
 			LOGGER.info("responseMsg_code Controller createGroup-->" + createGroupFormRes.getGroupCretionMsg());
-		} catch (PEPFetchException eService) {
-			LOGGER.error("Exception Block in Controller::PEPFetchException-->" + eService);
 		} catch (Exception e) {
 			LOGGER.error("Exception Block in Controller::Exception-->" + e);
 		}
@@ -1723,11 +1713,7 @@ public class GroupingController {
 			LOGGER.error("Exception in getNewGrpComponentResource:IOException------------>" + e);
 		} catch (PEPServiceException e) {
 			LOGGER.error("Exception in getNewGrpComponentResource:PEPServiceException------------>" + e);
-		} catch (PEPPersistencyException e) {
-			LOGGER.error("Exception in getNewGrpComponentResource:PEPPersistencyException------------>" + e);
-		} catch (PEPFetchException e) {
-			LOGGER.error("Exception in getNewGrpComponentResource:PEPFetchException------------>" + e);
-		}
+		} 
 
 		LOGGER.info("GroupingControlle:getNewGrpComponentResource ResourceRequest:Exit------------>.");
 		return modelAndView;
@@ -1911,8 +1897,6 @@ public class GroupingController {
 
 		} catch (PEPServiceException e) {
 			LOGGER.error("GroupingControlle:addComponentToGroup:PEPServiceException------------>" + e);
-		} catch (PEPPersistencyException e) {
-			LOGGER.error("GroupingControlle:addComponentToGroup:PEPPersistencyException------------>" + e);
 		} catch (IOException e) {
 			LOGGER.error("GroupingControlle:addComponentToGroup:IOException------------>" + e);
 		} catch (Exception e) {
@@ -2170,7 +2154,6 @@ public class GroupingController {
 		LOGGER.info("Enter getRegularBeautyGrpJsonResponse-->.");
 		String vendorStyleNoSearch = "";
 		String styleOrinNoSearch = "";
-		String classId = "";
 		List<GroupAttributeForm> groupAttributeFormList = null;
 		GroupAttributeForm groupAttributeForm = null;
 
@@ -2187,7 +2170,6 @@ public class GroupingController {
 				jsonObjComponent = new JSONObject();
 				jsonArraySub = new JSONArray();
 				styleOrinNoSearch = GroupingUtil.checkNull(styleAttributeForm.getOrinNumber());
-				classId = GroupingUtil.checkNull(styleAttributeForm.getClassId());
 
 				vendorStyleNoSearch = GroupingUtil.checkNull(styleAttributeForm.getStyleNumber());
 				jsonObjComponent.put(GroupingConstants.STYLE_ORIN_NO, styleOrinNoSearch);
@@ -2240,6 +2222,7 @@ public class GroupingController {
 			jsonObj.put(GroupingConstants.SPLIT_GROUP_TOTAL_RECORDS, totalRecords);
 			jsonObj.put(GroupingConstants.SPLIT_GROUP_DEFAULT_SORT_COL, defaultSortCol);
 			jsonObj.put(GroupingConstants.SPLIT_GROUP_DEFAULT_SORT_ORDER, defaultSortOrder);
+			jsonObj.put(GroupingConstants.ASC_DESC_ORDER, defaultSortOrder);
 			jsonObj.put(GroupingConstants.STYLE_ORIN_NO_SEARCH, styleOrinNoSearch);
 			jsonObj.put(GroupingConstants.VENDOR_STYLE_NO_SEARCH, vendorStyleNoSearch);
 			jsonObj.put(GroupingConstants.VENDOR_STYLE_NO, vendorStyleNo);
@@ -2349,7 +2332,7 @@ public class GroupingController {
 
 					petLockedUser = petLockedDtl.getId().getPepUser();
 
-					if (petLockedDtl.getLockStatus() != null && petLockedDtl.getLockStatus().equalsIgnoreCase("Yes")) {
+					if (petLockedDtl.getLockStatus() != null && "Yes".equalsIgnoreCase(petLockedDtl.getLockStatus())) {
 						petLocked = true;
 						if (petLockedUser == null) {
 							petLockedUser = GroupingConstants.NO_USER;

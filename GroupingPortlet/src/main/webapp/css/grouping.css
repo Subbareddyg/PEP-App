@@ -71,9 +71,9 @@ ul.paginator li.active a, ul.paginator li.disabled a{color: #23527c; background-
 
 /* css rules specific to tre table */
 .icon-tree{display: inline-block; cursor: pointer;}
-.parent-node-expand, .parent-node-expand-ajax{padding-right: 4px; width: 16px; background: url('images/expand.png') no-repeat 50% 50%;}
-.parent-node-expanding, .parent-node-expanding-ajax{padding-right: 4px; width: 16px; background: url('images/ajax-loader.gif') no-repeat 50% 50%;}
-.parent-node-collapse, .parent-node-collapse-ajax {padding-right: 4px; width: 16px; background: url('images/collapsed.png') no-repeat 50% 50%;}
+.parent-node-expand, .parent-node-expand-ajax, .parent-stylenode-expand-ajax{padding-right: 4px; width: 16px; background: url('images/expand.png') no-repeat 50% 50%;}
+.parent-node-expanding, .parent-node-expanding-ajax, .parent-stylenode-expanding-ajax{padding-right: 4px; width: 16px; background: url('images/ajax-loader.gif') no-repeat 50% 50%;}
+.parent-node-collapse, .parent-node-collapse-ajax, .parent-stylenode-collapse-ajax {padding-right: 4px; width: 16px; background: url('images/collapsed.png') no-repeat 50% 50%;}
 .parent-leaf{padding-left:17px;}
 .leaf-node{padding-right: 30px;}
 .icon-tree i{ font-size: 17px;font-weight: bold;}

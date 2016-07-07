@@ -60,7 +60,7 @@ public class GroupingUtil {
 	 * 
 	 *         Method added For PIM Phase 2 Date: 05/18/2016 Added By: Cognizant */
 	public static String checkNull(Object objectValue) {
-		String valueStr = "";
+		String valueStr;
 		// checkNul of the String.
 		if (objectValue == null) {
 			valueStr = "";

@@ -35,11 +35,10 @@ public interface GroupingService {
 	 * @param updatedBy
 	 * @param selectedSplitAttributeList
 	 * @return CreateGroupForm
-	 * @throws Exception
-	 * @throws PEPFetchException
+	 * @throws PEPServiceException
 	 */
 	CreateGroupForm saveGroupHeaderDetails(JSONObject jsonStyle, String updatedBy, List<GroupAttributeForm> selectedSplitAttributeList)
-			throws PEPFetchException, MalformedURLException, ClassCastException, JSONException, IOException, ParseException;
+			throws PEPServiceException;
 
 	/**
 	 * This method is used to call create group service.
@@ -47,9 +46,9 @@ public interface GroupingService {
 	 * @param jsonStyle
 	 * @return String
 	 * @throws Exception
-	 * @throws PEPFetchException
+	 * @throws PEPServiceException
 	 */
-	String callCreateGroupService(JSONObject jsonStyle) throws MalformedURLException, ClassCastException, IOException, JSONException;
+	String callCreateGroupService(JSONObject jsonStyle) throws PEPServiceException;
 
 	/**
 	 * This method is used to get Component details for Split Color.
@@ -58,10 +57,8 @@ public interface GroupingService {
 	 * @param styleOrin
 	 * @return List
 	 * @throws PEPServiceException
-	 * @throws PEPPersistencyException
 	 */
-	List<GroupAttributeForm> getSplitColorDetails(String vendorStyleNo, String styleOrin) throws PEPFetchException, PEPServiceException,
-			PEPPersistencyException;
+	List<GroupAttributeForm> getSplitColorDetails(String vendorStyleNo, String styleOrin) throws PEPServiceException;
 
 	/**
 	 * This method is used to get Component details for CPG.
@@ -70,11 +67,9 @@ public interface GroupingService {
 	 * @param styleOrin
 	 * @return List
 	 * @throws PEPServiceException
-	 * @throws PEPPersistencyException
 	 */
 	List<StyleAttributeForm> getNewCPGDetails(String vendorStyleNo, String styleOrin, String deptNoSearch, String classNoSearch,
-			String supplierSiteIdSearch, String upcNoSearch, String groupId) throws PEPFetchException, PEPServiceException,
-			PEPPersistencyException;
+			String supplierSiteIdSearch, String upcNoSearch, String groupId) throws PEPServiceException;
 
 	/**
 	 * This method is used to get the SKU details to create Split Color group.
@@ -87,13 +82,10 @@ public interface GroupingService {
 	 * @param upcNoSearch
 	 * @param groupId
 	 * @return
-	 * @throws PEPFetchException
 	 * @throws PEPServiceException
-	 * @throws PEPPersistencyException
 	 */
 	List<String> getSKUCount(String vendorStyleNo, String styleOrin, String deptNoSearch, String classNoSearch,
-			String supplierSiteIdSearch, String upcNoSearch, String groupId) throws PEPFetchException, PEPServiceException,
-			PEPPersistencyException;
+			String supplierSiteIdSearch, String upcNoSearch, String groupId) throws PEPServiceException;
 
 	/**
 	 * This method is used to get Component details for GBS.
@@ -102,11 +94,9 @@ public interface GroupingService {
 	 * @param styleOrin
 	 * @return List
 	 * @throws PEPServiceException
-	 * @throws PEPPersistencyException
 	 */
 	List<GroupAttributeForm> getNewGBSDetails(String vendorStyleNo, String styleOrin, String deptNoSearch, String classNoSearch,
-			String supplierSiteIdSearch, String upcNoSearch, String groupId, List<String> orinList) throws PEPFetchException,
-			PEPServiceException, PEPPersistencyException;
+			String supplierSiteIdSearch, String upcNoSearch, String groupId, List<String> orinList) throws PEPServiceException;
 
 	/**
 	 * This method is used to get Component details for Split SKU.
@@ -115,9 +105,8 @@ public interface GroupingService {
 	 * @param styleOrin
 	 * @return List
 	 * @throws PEPServiceException
-	 * @throws PEPPersistencyException
 	 */
-	List<GroupAttributeForm> getSplitSKUDetails(String vendorStyleNo, String styleOrin) throws PEPServiceException, PEPPersistencyException;
+	List<GroupAttributeForm> getSplitSKUDetails(String vendorStyleNo, String styleOrin) throws PEPServiceException;
 
 	/**
 	 * This method is used to validate SCG attribute list before add to group.
@@ -125,10 +114,9 @@ public interface GroupingService {
 	 * @param getSplitColorDetailsList
 	 * @return List
 	 * @throws PEPServiceException
-	 * @throws PEPPersistencyException
 	 */
 	Map<String, List<GroupAttributeForm>> validateSCGAttributeDetails(List<GroupAttributeForm> getSplitColorDetailsList)
-			throws PEPServiceException, PEPPersistencyException;
+			throws PEPServiceException;
 
 	/**
 	 * This method is used to validate SCG attribute list before add to group.
@@ -136,10 +124,9 @@ public interface GroupingService {
 	 * @param getSplitSKUDetailsList
 	 * @return List
 	 * @throws PEPServiceException
-	 * @throws PEPPersistencyException
 	 */
 	Map<String, List<GroupAttributeForm>> validateSSGAttributeDetails(List<GroupAttributeForm> getSplitSKUDetailsList)
-			throws PEPServiceException, PEPPersistencyException;
+			throws PEPServiceException;
 
 	/**
 	 * This method is used to validate CPG attribute list before add to group.
@@ -148,10 +135,9 @@ public interface GroupingService {
 	 * @param getCPGSelectedAttrbuteList
 	 * @return
 	 * @throws PEPServiceException
-	 * @throws PEPPersistencyException
 	 */
 	String validateCPGAttributeDetails(String existClassId, List<StyleAttributeForm> getCPGSelectedAttrbuteList)
-			throws PEPServiceException, PEPPersistencyException;
+			throws PEPServiceException;
 
 	/**
 	 * This method is used to get the attribute list which is selected by user.
@@ -161,11 +147,9 @@ public interface GroupingService {
 	 * @param selectedItemsArr
 	 * @param defaultSelectedAttr
 	 * @return List
-	 * @throws PEPServiceException
-	 * @throws PEPPersistencyException
 	 */
 	List<GroupAttributeForm> getSelectedColorAttributeList(List<GroupAttributeForm> updatedSplitColorDetailsList,
-			String[] selectedItemsArr, String defaultSelectedAttr) throws PEPServiceException, PEPPersistencyException;
+			String[] selectedItemsArr, String defaultSelectedAttr);
 
 	/**
 	 * This method is used to get the attribute list which is selected by user.
@@ -175,11 +159,9 @@ public interface GroupingService {
 	 * @param selectedItemsArr
 	 * @param defaultSelectedAttr
 	 * @return List
-	 * @throws PEPServiceException
-	 * @throws PEPPersistencyException
 	 */
 	List<GroupAttributeForm> getSelectedSKUAttributeList(List<GroupAttributeForm> updatedSplitSKUDetailsList, String[] selectedItemsArr,
-			String defaultSelectedAttr) throws PEPServiceException, PEPPersistencyException;
+			String defaultSelectedAttr);
 
 	/**
 	 * This method is used to get the attribute list which is selected by user.
@@ -189,11 +171,9 @@ public interface GroupingService {
 	 * @param selectedItemsArr
 	 * @param defaultSelectedAttr
 	 * @return List
-	 * @throws PEPServiceException
-	 * @throws PEPPersistencyException
 	 */
 	List<StyleAttributeForm> getSelectedCPGAttributeList(List<StyleAttributeForm> getCPGDetailsList, String[] selectedItemsArr,
-			String defaultSelectedAttr) throws PEPServiceException, PEPPersistencyException;
+			String defaultSelectedAttr);
 
 	/**
 	 * This method is used to get the selected Attribute List for GBS.
@@ -201,11 +181,8 @@ public interface GroupingService {
 	 * @param getGBSDetailsList
 	 * @param selectedItemsArr
 	 * @return
-	 * @throws PEPServiceException
-	 * @throws PEPPersistencyException
 	 */
-	List<GroupAttributeForm> getSelectedGBSAttributeList(List<GroupAttributeForm> getGBSDetailsList, String[] selectedItemsArr)
-			throws PEPServiceException, PEPPersistencyException;
+	List<GroupAttributeForm> getSelectedGBSAttributeList(List<GroupAttributeForm> getGBSDetailsList, String[] selectedItemsArr);
 
 	/**
 	 * This method is used to get the selected Attribute List for RCG.
@@ -213,11 +190,8 @@ public interface GroupingService {
 	 * @param getGBSDetailsList
 	 * @param selectedItemsArr
 	 * @return
-	 * @throws PEPServiceException
-	 * @throws PEPPersistencyException
 	 */
-	List<StyleAttributeForm> getSelectedRCGAttributeList(List<StyleAttributeForm> getRCGDetailsList, String[] selectedItemsArr)
-			throws PEPServiceException, PEPPersistencyException;
+	List<StyleAttributeForm> getSelectedRCGAttributeList(List<StyleAttributeForm> getRCGDetailsList, String[] selectedItemsArr);
 
 	/**
 	 * This method is used to get the selected Attribute List for RCG.
@@ -225,11 +199,8 @@ public interface GroupingService {
 	 * @param getGBSDetailsList
 	 * @param selectedItemsArr
 	 * @return
-	 * @throws PEPServiceException
-	 * @throws PEPPersistencyException
 	 */
-	List<StyleAttributeForm> getSelectedBCGAttributeList(List<StyleAttributeForm> getRCGDetailsList, String[] selectedItemsArr)
-			throws PEPServiceException, PEPPersistencyException;
+	List<StyleAttributeForm> getSelectedBCGAttributeList(List<StyleAttributeForm> getRCGDetailsList, String[] selectedItemsArr);
 
 	/**
 	 * This method is used to Existing Group details from DB.

@@ -92,7 +92,7 @@ public class DateUtil {
      */
     public static String DateToStringMMddyyyy(final Date sDate) throws ParseException {
         SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
-        String dateSt = "";
+        String dateSt;
         dateSt = formatter.format(sDate);
         return dateSt;
     }

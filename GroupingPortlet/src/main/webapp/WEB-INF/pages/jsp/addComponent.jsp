@@ -103,7 +103,9 @@
 			<input type="hidden" name="groupType" value=" <c:out value="${groupDetailsForm.groupType}" /> " id="groupType" >
 			<input type="hidden" name="groupId" value=" <c:out value="${groupDetailsForm.groupId}" /> " id="groupId" >
 			<input type="hidden" name="alreadyInGroup" value="${groupDetailsForm.isAlreadyInGroup}" id="alreadyInGroup" />
-			<input type="hidden" name="styleOrinNo" value="" id="styleOrinNo" >
+			<c:if test="${groupDetailsForm.groupType == 'SSG' || groupDetailsForm.groupType == 'SCG'}">
+				<input type="hidden" name="styleOrinNo" value="" id="styleOrinNo" >
+			</c:if>
 			<table cellspacing="5" cellpadding="0" border="0" class="content-table">
 				<tr>
 					<td width="10%" align="right">
@@ -388,6 +390,7 @@
 			<table cellspacing="5" cellpadding="0" border="0" class="content-table border-simple" align="center">
 				<thead>
 					<tr>
+
 						<th></th>
 						<th>Dept#</th>
 						<th>Dept Description</th>
@@ -449,6 +452,7 @@
 <script type="text/javascript" src="<%=response.encodeURL(request.getContextPath()+"/js/jquery.twbsPagination.min.js")%>"></script>
 <script type="text/javascript" src="<%=response.encodeURL(request.getContextPath()+"/js/URLFactory.js")%>"></script>
 <script type="text/javascript" src="<%=response.encodeURL(request.getContextPath()+"/js/DataTable.js")%>"></script>
+<script type="text/javascript" src="<%=response.encodeURL(request.getContextPath()+"/js/DataTableComponentAjax.js")%>"></script>
 <script type="text/javascript" src="<%=response.encodeURL(request.getContextPath()+"/js/GroupFactory.js")%>"></script>
 <script type="text/javascript" src="<%=response.encodeURL(request.getContextPath()+"/js/grouping.js")%>"></script>
 <script type="text/javascript" src="<%=response.encodeURL(request.getContextPath()+"/js/editComponent.js")%>"></script>

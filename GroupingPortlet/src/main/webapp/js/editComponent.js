@@ -172,7 +172,6 @@ var app = app || {} ;
 									//getting its all selected children color
 									var nodeChkId = $(this).data('chknode-id');
 									var slctdStyleColors = [];
-									
 									$('[data-chkparent-id=' + nodeChkId +']:checked').each(function(){
 										slctdStyleColors.push($(this).val());
 									});
@@ -396,7 +395,8 @@ var app = app || {} ;
 										buttonText: "",
 										minDate: 0 ,
 										onClose: function( selectedDate ) {
-										 $( "#endDate" ).datepicker( "option", "minDate", selectedDate );
+											if(selectedDate !== undefined && selectedDate.toString().length)
+												$( "#endDate" ).datepicker( "option", "minDate", selectedDate );
 										},
 										onSelect : function(){
 											$('#startDate').prop('readonly',true);
@@ -410,12 +410,15 @@ var app = app || {} ;
 										buttonText: "",
 										minDate: 0 ,
 										onClose: function( selectedDate ) {
-										 $( "#endDate" ).datepicker( "option", "minDate", selectedDate );
+											if(selectedDate !== undefined && selectedDate.toString().length)
+												$( "#startDate" ).datepicker( "option", "maxDate", selectedDate );
 										},
 										onSelect : function(){
 											$('#startDate').prop('readonly',true);
 										}
 									});
+									
+									$('#' + $(this).data('field-name')).datepicker("option", "minDate", new Date($('#startDate').val()));
 								}
 									
 								break;
@@ -475,8 +478,8 @@ var app = app || {} ;
 					} */
 					$('.editable').each(function(){
 						var data = $(this).find('input, textarea').data('original-value');
-						
-						$(this).text(_super.htmlentitiesDecode(data));
+						//console.log(data.toString());
+						$(this).text(_super.htmlentitiesDecode(data.toString()));
 						
 						
 						$('span.red-text').remove();

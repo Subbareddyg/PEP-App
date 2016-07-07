@@ -27,7 +27,7 @@ public interface GroupingDAO {
 	 * @param groupId String
 	 * @return CreateGroupDTO
 	 * @throws PEPFetchException PEPFetchException */
-	CreateGroupDTO getGroupHeaderDetails(String groupId) throws PEPFetchException, ParseException;
+	CreateGroupDTO getGroupHeaderDetails(String groupId) throws PEPFetchException;
 
 	/** Method getSplitColorDetails.
 	 * 
@@ -129,12 +129,9 @@ public interface GroupingDAO {
 	 * @param groupSearchForm GroupSearchForm
 	 * @return int
 	 * 
-	 * @throws PEPServiceException PEPServiceException
-	 * @throws PEPPersistencyException PEPPersistencyException
-	 * 
 	 *             Method added For PIM Phase 2 - groupSearch Date: 05/19/2016
 	 *             Added By: Cognizant */
-	int groupSearchCount(GroupSearchForm groupSearchForm) throws PEPServiceException, PEPPersistencyException;
+	int groupSearchCount(GroupSearchForm groupSearchForm);
 
 	/** Method to get the groups for search group.
 	 * 
@@ -142,13 +139,9 @@ public interface GroupingDAO {
 	 * @param groupSearchDTOList groupSearchParent(List)
 	 * @return List
 	 * 
-	 * @throws PEPServiceException PEPServiceException
-	 * @throws PEPPersistencyException PEPPersistencyException
-	 * 
 	 *             Method added For PIM Phase 2 - groupSearch Date: 05/19/2016
 	 *             Added By: Cognizant */
-	List<GroupSearchDTO> groupSearchParent(List<GroupSearchDTO> groupSearchDTOList, GroupSearchForm groupSearchForm)
-			throws PEPServiceException, PEPPersistencyException;
+	List<GroupSearchDTO> groupSearchParent(List<GroupSearchDTO> groupSearchDTOList, GroupSearchForm groupSearchForm);
 
 	/** Method to get the Depts for search group.
 	 * 
@@ -175,13 +168,9 @@ public interface GroupingDAO {
 	 * @param groupSearchDTOList List
 	 * @return int
 	 * 
-	 * @throws PEPPersistencyException PEPPersistencyException
-	 * @throws PEPServiceException PEPServiceException
-	 * 
 	 *             Method added For PIM Phase 2 - groupSearch Date: 05/27/2016
 	 *             Added By: Cognizant */
-	int groupSearchParentCount(List<GroupSearchDTO> groupSearchDTOList, GroupSearchForm groupSearchForm) throws PEPServiceException,
-			PEPPersistencyException;
+	int groupSearchParentCount(List<GroupSearchDTO> groupSearchDTOList, GroupSearchForm groupSearchForm);
 	
 	/**
 	 *  This method is used to get the search result Details for Regular/Beauty Collection Grouping.
