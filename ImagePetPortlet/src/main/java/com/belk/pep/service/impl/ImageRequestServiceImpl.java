@@ -1437,5 +1437,33 @@ public String callUpdateGroupImageStatusJsonObj(JSONObject jsonObj) throws Excep
     }
     return responseMsgStatus;
 }
+/**
+ * Method to get the Image attribute details from database.
+ *    
+ * @param orin String   
+ * @return imageLinkVOList List<ImageLinkVO>
+ * 
+ * Method added For PIM Phase 2 - Regular Item Image Link Attribute
+ * Date: 05/13/2016
+ * Added By: Cognizant
+ */	
+@Override
+public boolean getContentStatus(String groupingId) throws PEPServiceException, PEPPersistencyException{   
+	boolean contentStatus = true;	
+    try {
+    	contentStatus = imageRequestDAO.getContentStatus(groupingId);
+    }
+    catch (PEPPersistencyException e) {
+    	LOGGER.error("PEPPersistencyException in getContentStatus method, Service Layer -- ", e);
+        throw e;
+    }
+    catch (Exception e) {
+    	LOGGER.error("getContentStatus method, Service Layer -- ",e);
+        throw new PEPServiceException(e.getMessage());
+    }
+    LOGGER.error("***Exiting getContentStatus() method.");
+    return contentStatus;
+    
+}
     
 }

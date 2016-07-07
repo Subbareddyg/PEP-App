@@ -187,5 +187,14 @@ public interface ImageRequestService {
   //Service Call for Approve or Reject Action
     public String callUpdateGroupImageStatusJsonObj(JSONObject imageInfo) throws Exception;
     
+    /**
+	 * 
+	 * 
+	 * @return
+	 * @throws PEPServiceException
+	 * @throws PEPPersistencyException
+	 */
+	public boolean getContentStatus(String groupingId) throws PEPServiceException, PEPPersistencyException;
+	
 }
 

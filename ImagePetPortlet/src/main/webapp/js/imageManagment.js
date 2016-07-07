@@ -394,14 +394,23 @@ function confirmGroupingImageApprove(url){
 
 var groupOverallStatus = "";
 
+function myFunction(elem)
+{
+    if (elem.checked)
+    {
+       groupOverallStatus ='09';
+    }
+    else
+    {
+       groupOverallStatus  ='';
+    }
+}
+
 function groupingImageApproveAction(url){
 var imageId = $("#hidImageId").val().trim();
 var groupingId = $("#groupingId").val();	
 $("#overlay_groupimageLoading").show();	
-var selectedRadioButton = $('input[name=radiobutton]');
-if (typeof selectedRadioButton.filter(':checked').val()  !== "undefined" && selectedRadioButton.filter(':checked').val()){
-   groupOverallStatus = selectedRadioButton.filter(':checked').val();	
-}
+
 
 
 var groupingType = $("#groupingType").val();	
@@ -426,7 +435,9 @@ var groupingType = $("#groupingType").val();
 						document.getElementById('btnGPImageUploadAction').disabled = true ;
 					
 				     }else{
-                                        alert('Image not approved.');
+                                        alert(responseCode);
+					$("#overlay_groupimageLoading").hide();
+
 				     }						
 					
 				},
@@ -439,7 +450,7 @@ var groupingType = $("#groupingType").val();
 				}
 			});
 		
-/* setTimeout(function(){setUploadVPILink($("#ajaxaction").val(),document.getElementById("selectedColorOrinNum").value,$("#removeImageUrl").val());trClick();scrollToView('vImage','vImage');},2000); */			
+
 }
 
 function redirectSessionTimedOutGrpImage(){

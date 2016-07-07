@@ -65,8 +65,6 @@ import com.belk.pep.util.PropertyLoader;
 
 
 
-
-
 /**
  * This class is responsible to controlling the image screen activities
  * 
@@ -101,6 +99,7 @@ public class ImageRequestController {
 	public void setUploadedSuccess(String uploadedSuccess) {
 		this.uploadedSuccess = uploadedSuccess;
 	}
+	
 
 	/**
 	 * @return the uploadedSuccess
@@ -196,7 +195,21 @@ public class ImageRequestController {
         String petStatus = null ;
         String imageStatus = null ;
         String [] imageWithPetStatusArray = null;
-        
+        if(request.getPortletSession().getAttribute("internalUser")!=null ){
+        	  LOGGER.info("internal user name ---" + request.getPortletSession().getAttribute("internalUser"));
+        	  String url ="http://ralpimpmapdv01.belkinc.com:10079/wps/portal/home/InternalUserLogin";
+        	
+        	 
+        	 
+        	 
+        }
+        if(null != imageDetailsFromIPC){
+        	LOGGER.info("imageDetailsFromIPC check here ----" + imageDetailsFromIPC.getOrinNumber());	
+        }
+        else{
+        	LOGGER.info("imageDetailsFromIPC- null ---" );	
+        	
+        }
         
     	if(null != imageDetailsFromIPC){
     		String orinOrGrouping =  imageDetailsFromIPC.getOrinNumber();
@@ -1335,9 +1348,23 @@ public class ImageRequestController {
 		   	String loggedInUser= request.getParameter("loggedInUser");   	
 			String lockedPet= request.getParameter("lockedPet"); 
 			String pepFunction = request.getParameter("pepFunction"); 	
+			
+			
 		 	LOGGER.info("releseLockedPet lockedPet IMAGE REQUEST CONTROLLER ************.." +lockedPet);
 		 	try {
 				 imageRequestDelegate.releseLockedPet(lockedPet,loggedInUser,pepFunction);
+				 if (request.getPortletSession().getAttribute("ImageDetailsOBJ") != null)
+			     {					 
+					
+						LOGGER.info("session value here updated ." +request.getPortletSession().getAttribute("formSessionKey"));
+						
+					/*if((request.getPortletSession().getAttribute("formSessionKey")!=null && ((String)request.getPortletSession().getAttribute("formSessionKey")).contains(loggedInUser))){
+						 request.getPortletSession().invalidate();	
+						 request.getPortletSession().setAttribute("internalUser","afusyg6");
+					}*/
+						
+				
+			     } 
 					
 			} catch (PEPPersistencyException e1) {
 				e1.printStackTrace();
@@ -1555,15 +1582,12 @@ public class ImageRequestController {
 		        				           JSONObject jsonUploadVPI = groupingImageHelper.populateGroupingImgUploadJsonObj(uploadImagesDTO,updatedBy);
 		        				           jsonArray.put(jsonUploadVPI);
 		        				           jsonMapObject.put(ImageConstants.GROUPING_IMAGE_UPLOAD_LIST, jsonArray);
-		        				           LOGGER.info(" grouping Image upload jsonMapObject  --> "+jsonMapObject);	        				           
 		        				           responseMsg = callGroupingImageUploadService(jsonMapObject);
-		        				           LOGGER.info( "responseMsg::" +responseMsg);
 			        					 } catch (Exception e) {
 		        				           LOGGER.info("inside catch for UploadImage ",e);
 		        				           e.printStackTrace();
 		        				          }
 			        				    if(ImageConstants.RESPONSE_SUCCESS_MESSAGE.equalsIgnoreCase(responseMsg)){
-			        				    	LOGGER.info("Image Upload Success in GroupingImageHelper class");
 			        				    	uploadedSucess = "Y";
 			        				    	os = new FileOutputStream(filepath);
 			        				    	byte[] b = new byte[2048];
@@ -1610,20 +1634,16 @@ public class ImageRequestController {
 		public void setGroupingImageDetails(UploadImagesDTO uploadImagesDTO) {
 			String vendorImageUploadDir = "";
 			String RRDImageUploadedDir = "";
-			try {
-				
+			try {				
 				 Random randomGenerator = new Random();
 				 int randomInt = randomGenerator.nextInt(10000);					
 				 String imageName = uploadImagesDTO.getPetId() + "_"+ randomInt + "_" + uploadImagesDTO.getUserUploadedFileName();
 				 LOGGER.info("imageName :"+imageName);
-				 uploadImagesDTO.setImageName(imageName.toUpperCase());
-				
+				 uploadImagesDTO.setImageName(imageName.toUpperCase());				
 						vendorImageUploadDir = imageRequestDelegate.getVendorImageUploadDir();
 						uploadImagesDTO.setVendorImageUploadDir(vendorImageUploadDir);
 						RRDImageUploadedDir = imageRequestDelegate.getRRDImageUploadedDir();
-						uploadImagesDTO.setRRDImageUploadedDir(RRDImageUploadedDir);
-
-					
+						uploadImagesDTO.setRRDImageUploadedDir(RRDImageUploadedDir);					
 			} catch (Exception e) {
 				LOGGER.info("VendorImageUploadFormController.setImageDetails() error occured while setting the values" ,e);
 			}
@@ -1637,43 +1657,64 @@ public class ImageRequestController {
 		 */
 	@ResourceMapping("groupingImgApproveAction")
 	public void groupingImgApproveAction(ResourceRequest request,ResourceResponse response) {
-		LOGGER.info("entering groupingImgApproveAction method");	
-		JSONObject jObj = new JSONObject();
-		String responseCode = "";	
-		ImageDetails imageDetailsFromIPC = getUserDetailsfromLogin(request);
-		String updatedBy = groupingImageHelper.getLoggedInUserName(imageDetailsFromIPC);	   
-		String responseMsg ="";
-		String groupingId = request.getParameter("groupingId");	
-		String groupingType = request.getParameter("groupingType");
-	    String groupOverallStatus = request.getParameter("groupOverallStatus");
-	    String imageId = request.getParameter("imageId");
-		LOGGER.info("--imageId *******---" + imageId);	
+		LOGGER.info("entering groupingImgApproveAction method");
+		try{
+			JSONObject jObj = new JSONObject();	
+			ImageDetails imageDetailsFromIPC = getUserDetailsfromLogin(request);
+			String updatedBy = groupingImageHelper.getLoggedInUserName(imageDetailsFromIPC);	   
+			String responseMsg ="";		
+			String groupingId = request.getParameter("groupingId");			
+			boolean contentStatus =  true ;
+			String groupingType = request.getParameter("groupingType");
+		    String groupOverallStatus = request.getParameter("groupOverallStatus");		   
+			if(groupOverallStatus!=null && !groupOverallStatus.isEmpty()){				
+				contentStatus =  getContentStatus(groupingId);
+				if(!contentStatus){
+					responseMsg =ImageConstants.CONTENT_MSG;					
+					jObj.put("responseCode", responseMsg);
+					response.getWriter().write(jObj.toString());
+					response.getWriter().flush();
+					response.getWriter().close();
+					return ;
+				}
+			}	
+		    	String imageId = request.getParameter("imageId");		  		
+		    	if(null!= imageId && !imageId.isEmpty()){	    		
+		    		JSONObject updateGRPImageStatusJsonObj = groupingImageHelper.updateGroupImageStatusJsonObj(groupingId,updatedBy,groupingType,imageId);								
+					responseMsg = callUpdateGroupImageStatusJsonObj(updateGRPImageStatusJsonObj);					
+					   if(ImageConstants.RESPONSE_SUCCESS_MESSAGE.equalsIgnoreCase(responseMsg)){			   
+						JSONObject approveGRPImgJsonObj = groupingImageHelper.populateGroupingImgAproveJsonObj(groupingId,updatedBy,groupingType,groupOverallStatus);			   
+						responseMsg = callApproveGroupingImageService(approveGRPImgJsonObj);								
+					   }					
+		    	}else if(imageId.isEmpty()){
+		    		JSONObject approveGRPImgJsonObj = groupingImageHelper.populateGroupingImgAproveJsonObj(groupingId,updatedBy,groupingType,groupOverallStatus);			   
+					responseMsg = callApproveGroupingImageService(approveGRPImgJsonObj);
+					
+		    	}		    	
+		    	jObj.put("responseCode", responseMsg);
+				response.getWriter().write(jObj.toString());
+				response.getWriter().flush();
+				response.getWriter().close();	
+					
 		
-	    try {			
-	    	if(null!= imageId && !imageId.isEmpty()){	    		
-	    		JSONObject updateGRPImageStatusJsonObj = groupingImageHelper.updateGroupImageStatusJsonObj(groupingId,updatedBy,groupingType,imageId);			
-				LOGGER.info(" final object in groupingImgApproveAction -->"+updateGRPImageStatusJsonObj);			
-				responseMsg = callUpdateGroupImageStatusJsonObj(updateGRPImageStatusJsonObj);	
-				LOGGER.info("---Service Response on Approve---" + responseMsg);		
-				   if(ImageConstants.RESPONSE_SUCCESS_MESSAGE.equalsIgnoreCase(responseMsg)){			   
-					JSONObject approveGRPImgJsonObj = groupingImageHelper.populateGroupingImgAproveJsonObj(groupingId,updatedBy,groupingType,groupOverallStatus);			   
-					responseMsg = callApproveGroupingImageService(approveGRPImgJsonObj);								
-				   }					
-	    	}else if(imageId.isEmpty()){
-	    		JSONObject approveGRPImgJsonObj = groupingImageHelper.populateGroupingImgAproveJsonObj(groupingId,updatedBy,groupingType,groupOverallStatus);			   
-				responseMsg = callApproveGroupingImageService(approveGRPImgJsonObj);
-				
-	    	}
-	    	LOGGER.info(" ---Service Response is Success on image Approve--- "+responseMsg);
-	    	jObj.put("responseCode", responseMsg);
-			response.getWriter().write(jObj.toString());
-			response.getWriter().flush();
-			response.getWriter().close();
-			
-		} catch (Exception e) {
-			LOGGER.info("inside catch for groupingImgApproveAction() method ",e);
+	} catch (Exception e) {
+		LOGGER.info("inside catch for groupingImgApproveAction() method ",e);		
+	}
+		
+}
+	
+	public boolean getContentStatus(String groupingId){		
+		boolean contentStatus = true ;
+		try {
+			contentStatus = imageRequestDelegate.getContentStatus(groupingId);
+		} catch (PEPServiceException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (PEPPersistencyException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		return contentStatus;
 		
 	}
 
@@ -1705,11 +1746,12 @@ public class ImageRequestController {
 				fileRemove = fileDelete(fileToBeDeleted);
 					LOGGER.error("fileRemove::" +fileRemove);
 				}catch (FileNotFoundException e) {
-					e.printStackTrace();
+					LOGGER.info("*** FileNotFoundException in imagerequest controller class***",e);    
 				}catch (IOException ex) {
-					ex.printStackTrace();
+					LOGGER.info("*** IOException in imagerequest controller class***",ex);   
 				}		
 				catch(Exception ex){
+					LOGGER.info("*** Exception in imagerequest controller class***",ex);   
 					ex.printStackTrace();
 				}
 	        }else{
@@ -1718,7 +1760,7 @@ public class ImageRequestController {
 	        }
 	    } catch (Exception e) {
 	        LOGGER.info("Caught Exception**************removeGroupingImage---Controller",e);
-	        e.printStackTrace();
+	       
 	    }
 	}
 	//WebService Call for Uploading grouping image 
