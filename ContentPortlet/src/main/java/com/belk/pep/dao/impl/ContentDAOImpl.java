@@ -995,7 +995,14 @@ public class ContentDAOImpl implements ContentDAO{
                     // LOGGER.info("row[14]....."+row[14]);
                     final PetAttributeVO petAttributesObject = new PetAttributeVO();
                     petAttributesObject.setMdmId(checkNull(row[0]));
-                    petAttributesObject.setSecondarySpecValue(checkNull(row[1]));
+                    //Fix for ALM Defect 3165
+                    if("Text Field".equals(checkNull(row[5]))){
+                    	petAttributesObject.setSecondarySpecValue(StringEscapeUtils.escapeHtml4(checkNull(row[1])));
+                    	
+                    }else{
+                    	petAttributesObject.setSecondarySpecValue(checkNull(row[1]));
+                    	
+                    }
                     petAttributesObject.setAttributeId(checkNull(row[2]));
                     petAttributesObject.setCategoryId(checkNull(row[3]));
                     petAttributesObject.setAttributeName(checkNull(row[4]));
@@ -1090,10 +1097,16 @@ public class ContentDAOImpl implements ContentDAO{
                 blueMartiniAttributesList=new ArrayList<BlueMartiniAttributesVO>();
                 for (final Object[] row : rows) {
 
-                    // LOGGER.info("row[14]....."+row[14]);
+                    
                     final BlueMartiniAttributesVO blueMartiniAttributeObject = new BlueMartiniAttributesVO();
                     blueMartiniAttributeObject.setMdmId(checkNull(row[0]));
-                    blueMartiniAttributeObject.setZbmSecondarySpecValue(checkNull(row[1]));
+                    //Fix for ALM Defect 3165
+                    if("Text Field".equals(checkNull(row[5]))){
+                    	blueMartiniAttributeObject.setZbmSecondarySpecValue(StringEscapeUtils.escapeHtml4(checkNull(row[1])));
+                    }else{                    
+                    	blueMartiniAttributeObject.setZbmSecondarySpecValue(checkNull(row[1]));
+                    }                   
+                    
                     blueMartiniAttributeObject.setAttributeId(checkNull(row[2]));
                     blueMartiniAttributeObject.setCategoryId(checkNull(row[3]));
                     blueMartiniAttributeObject.setAttributeName(checkNull(row[4]));
