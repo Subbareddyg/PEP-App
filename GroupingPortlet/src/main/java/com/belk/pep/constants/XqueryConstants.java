@@ -1637,7 +1637,7 @@ public class XqueryConstants {
 	public static final String getMaxPriorityQuery() {
 		StringBuilder fetchMaxPrirotiy = new StringBuilder();
 		fetchMaxPrirotiy.append("	SELECT       ");
-		fetchMaxPrirotiy.append("	MAX(NVL(DISPLAY_SEQUENCE, 0)) MAX_PRIORITY ");
+		fetchMaxPrirotiy.append("	MAX(NVL(CAST(DISPLAY_SEQUENCE AS NUMBER), 0)) MAX_PRIORITY ");
 		fetchMaxPrirotiy.append("	FROM ADSE_GROUP_CHILD_MAPPING   ");
 		fetchMaxPrirotiy.append(" 	WHERE MDMID = :groupingId ");
 		return fetchMaxPrirotiy.toString();
