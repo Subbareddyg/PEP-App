@@ -26,7 +26,7 @@ var timeOutConfirm ='N';
 function timeOutPage(){
 	if(timeOutConfirm=='N')
 	{	
-		timeOutvar = setTimeout(redirectSessionTimedOut, 600000);
+		timeOutvar = setTimeout(redirectSessionTimedOutGrpImage, 600000);
 	}
 }
 
