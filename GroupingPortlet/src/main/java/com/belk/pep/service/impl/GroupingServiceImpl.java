@@ -1172,8 +1172,7 @@ public class GroupingServiceImpl implements GroupingService {
 
 		LOGGER.info("*Enter-->calling getSelectedBCGAttributeList from GroupingServiceImpl.-->" + selectedItemsArr);
 		List<StyleAttributeForm> selectedRCGAttributeList = new ArrayList<>();
-		StyleAttributeForm styleAttributeForm;
-		List<GroupAttributeForm> groupAttributeFormList;
+		StyleAttributeForm styleAttributeForm;		
 		List<GroupAttributeForm> groupAttributeFormListNew;
 		GroupAttributeForm groupAttributeForm;
 		String styleOrinGrpNo;
@@ -1181,8 +1180,7 @@ public class GroupingServiceImpl implements GroupingService {
 		String[] selectedItemsColorArr;
 		for (int i = 0; i < getRCGDetailsList.size(); i++) {
 			styleAttributeForm = getRCGDetailsList.get(i);
-			styleOrinGrpNo = GroupingUtil.checkNull(styleAttributeForm.getOrinNumber());
-			groupAttributeFormList = styleAttributeForm.getGroupAttributeFormList();
+			styleOrinGrpNo = GroupingUtil.checkNull(styleAttributeForm.getOrinNumber());			
 			LOGGER.debug("styleOrinGrpNo-->" + styleOrinGrpNo);
 			for (int j = 0; j < selectedItemsArr.length; j++) {
 				
@@ -1940,7 +1938,7 @@ public class GroupingServiceImpl implements GroupingService {
 				GroupAttributeForm groupAttributeForm = getGBSSelectedAttrbuteList.get(i);
 				String styleOrGrpNo = GroupingUtil.checkNull(groupAttributeForm.getParentMdmid());
 				jsonObjectComponent.put(GroupingConstants.COMPONENT_ATTR, styleOrGrpNo);
-				jsonObjectComponent.put(GroupingConstants.ORDER, maxPriority + 1);
+				jsonObjectComponent.put(GroupingConstants.ORDER, maxPriority + i + 1);
 				componentList.put(jsonObjectComponent);
 			}
 			JSONObject jsonObject = new JSONObject();
@@ -2512,7 +2510,7 @@ public class GroupingServiceImpl implements GroupingService {
 	public final String setDefaultColorSize(final String groupId, final String groupType, final String colorId, final String childOrinId,
 			final String updatedBy) throws MalformedURLException, ClassCastException, IOException, JSONException {
 		LOGGER.info("Entering setDefaultColorSize.");
-		// String responseMsg = GroupingConstants.EMPTY;
+		
 		String responseMsgCode = GroupingConstants.EMPTY;
 
 		JSONObject jsonObj = new JSONObject();

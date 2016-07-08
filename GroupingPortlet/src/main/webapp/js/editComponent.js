@@ -547,7 +547,7 @@ var app = app || {} ;
 						/**
 						* code to check all priorities have valid values before saving
 						*/
-						var validpriorities = false;
+						var validpriorities = true;
 						$('input.tree[type=number]').each(function(){
 							if(!$(this).val().trim().length){
 								validpriorities = false;

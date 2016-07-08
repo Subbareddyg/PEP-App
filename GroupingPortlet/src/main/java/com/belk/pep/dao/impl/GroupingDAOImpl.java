@@ -2079,7 +2079,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 						groupAttributeForm.setColorCode(colorCode);
 						groupAttributeForm.setColorName(colorDesc);
 						groupAttributeForm.setIsAlreadyInGroup(isAlreadyInGroup);
-						if(isAlreadyInSameGroup.equalsIgnoreCase("Y")) {
+						if("Y".equalsIgnoreCase(isAlreadyInSameGroup)) {
 							groupAttributeForm.setIsAlreadyInSameGroup("Yes");
 						} else
 						{
