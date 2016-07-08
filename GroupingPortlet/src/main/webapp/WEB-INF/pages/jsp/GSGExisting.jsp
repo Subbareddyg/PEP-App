@@ -11,6 +11,7 @@
 						<th width="10%"><a href="javascript:;" class="sortable" data-sort-column="colorName" data-sorted-by=""><fmt:message key="splitgroup.screen.level.component.colorName" /></a></th>
 						<th width="10%"><a href="javascript:;" class="sortable" data-sort-column="size" data-sorted-by=""><fmt:message key="splitgroup.screen.level.component.size" /></a></th>
 						<th width="10%"><a href="javascript:;" class="sortable" data-sort-column="defaultColor" data-sorted-by=""><fmt:message key="splitgroup.screen.level.component.defaultColor" /></a></th>
+						<th width="10%"><a href="javascript:;" class="sortable" data-sort-column="priority" data-sorted-by="">Priority</a></th>
 					</tr>
 				</thead>
 				<tbody class="row-container"></tbody>
@@ -37,11 +38,19 @@
 			<td class="text-center">{{=row.colorName}}</td>
 			<td class="text-center">{{=row.size}}</td>
 			<td class="text-center">{{=row.defaultColor=='true' ? 'Yes' : 'No'}}</td>
+			<td class="text-center">
+				<c:if test="${readonly !='yes'}">
+					<input type="number" class="tree" value="{{=row.priority}}" name="{{=row.StyleOrinNo}}_{{=key}}" min="1" />
+				</c:if>
+				<c:if test="${readonly =='yes'}">
+					<input type="number" class="tree" value="{{=row.priority}}" name="{{=row.StyleOrinNo}}_{{=key}}" min="1" disabled="disabled"/>
+				</c:if>
+			</td>
 		</tr>
 	{{ }) }}	
 {{ }else{ }}
 	<tr>
-		<td colspan="8" align="center"><strong>{{=dataHeader.message ? dataHeader.message : 'No record Found!'}}</strong></td>
+		<td colspan="9" align="center"><strong>{{=dataHeader.message ? dataHeader.message : 'No record Found!'}}</strong></td>
 	</tr>
 {{ } }}
 </script>

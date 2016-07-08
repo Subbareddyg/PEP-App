@@ -772,7 +772,7 @@ public class XqueryConstants {
 		getExistGBSDetails.append("		ITEM_XML.COLOR_CODE,                              ");                                          
 		getExistGBSDetails.append("		ITEM_XML.COLOR_NAME,                              ");                                          
 		getExistGBSDetails.append("		ITEM_XML.SIZEDESC, ITEM_XML.SIZE_CODE,            ");                                          
-		getExistGBSDetails.append("		PET.EXIST_IN_GROUP ALREADY_IN_GROUP, PET.PET_STATE");                          
+		getExistGBSDetails.append("		PET.EXIST_IN_GROUP ALREADY_IN_GROUP, PET.PET_STATE, DETAIL.DISPLAY_SEQUENCE");                          
 		getExistGBSDetails.append("		FROM                                              ");                                          
 		getExistGBSDetails.append("		ADSE_ITEM_CATALOG ITEM,                           ");                                          
 		getExistGBSDetails.append("		ADSE_PET_CATALOG PET,                             ");
@@ -977,7 +977,7 @@ public class XqueryConstants {
 		getNewGBSDetails.append("		WHERE                                                                                       "); 
 		getNewGBSDetails.append("		    ITEM.ENTRY_TYPE in ('SKU')                                                              ");
 		getNewGBSDetails.append("		    AND ITEM.DELETED_FLAG= 'false'                                                          "); 
-		getNewGBSDetails.append("		    AND PET.MDMID=ITEM.PARENT_MDMID                                                                ");
+		getNewGBSDetails.append("		    AND PET.MDMID=ITEM.PARENT_MDMID  AND EXISTS (SELECT MDMID FROM ADSE_PET_CATALOG APC WHERE APC.MDMID = ITEM.MDMID)       ");
 
 		if (null != vendorStyleNo && !("").equals(vendorStyleNo.trim())) {
 			getNewGBSDetails.append(" AND ITEM.PRIMARYSUPPLIERVPN =:styleIdSql ");
@@ -1591,7 +1591,7 @@ public class XqueryConstants {
 		getChildQueryForStyleCPGBCGRCG.append("	  PRODUCT_NAME VARCHAR2(20) path '/COLOR/PRODUCT_NAME' ) PET_XML,            ");
 		getChildQueryForStyleCPGBCGRCG.append("	  ADSE_ITEM_CATALOG SEARCH                                                   ");
 		getChildQueryForStyleCPGBCGRCG.append("	  LEFT  OUTER JOIN ADSE_GROUP_CHILD_MAPPING AGCM         			    ");
-		getChildQueryForStyleCPGBCGRCG.append("	    ON SEARCH.MDMID =AGCM.COMPONENT_STYLE_ID             				");
+		getChildQueryForStyleCPGBCGRCG.append("	    ON SEARCH.MDMID =AGCM.COMPONENT_STYLECOLOR_ID             				");
 		getChildQueryForStyleCPGBCGRCG.append("	    AND AGCM.MDMID = :groupIdSql                 				");
 		getChildQueryForStyleCPGBCGRCG.append("	WHERE                                                                        ");
 		getChildQueryForStyleCPGBCGRCG.append("	1=1                                                                          ");
@@ -1628,5 +1628,34 @@ public class XqueryConstants {
 
 		return getChildQueryForStyleCPGBCGRCG.toString();
 	}
+	
+	
+	/**
+	 * Query to fetch max priority
+	 * @return String
+	 */
+	public static final String getMaxPriorityQuery() {
+		StringBuilder fetchMaxPrirotiy = new StringBuilder();
+		fetchMaxPrirotiy.append("	SELECT       ");
+		fetchMaxPrirotiy.append("	MAX(NVL(DISPLAY_SEQUENCE, 0)) MAX_PRIORITY ");
+		fetchMaxPrirotiy.append("	FROM ADSE_GROUP_CHILD_MAPPING   ");
+		fetchMaxPrirotiy.append(" 	WHERE MDMID = :groupingId ");
+		return fetchMaxPrirotiy.toString();
+	}
+	
+	
+	/**
+	 * Query to fetch all components at Style or Group level
+	 * @return String
+	 */
+	public static final String getComponentList() {
+		StringBuilder fetchComponent = new StringBuilder();
+		fetchComponent.append("	SELECT  DISTINCT   ");
+		fetchComponent.append("	COMPONENT_MDMID ");
+		fetchComponent.append("	FROM ADSE_GROUP_CHILD_MAPPING   ");
+		fetchComponent.append(" 	WHERE MDMID =:groupingId  AND DISPLAY_SEQUENCE IS NOT NULL");
+		return fetchComponent.toString();
+	}
+       
 
 }

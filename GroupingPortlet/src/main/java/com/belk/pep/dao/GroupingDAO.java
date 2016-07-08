@@ -273,4 +273,20 @@ public interface GroupingDAO {
 			String groupId, String styleOrinParent, String vendorStyleNo,
 			String styleOrin, String supplierSiteIdSearch, String upcNoSearch,
 			String deptNoSearch, String classNoSearch) throws PEPFetchException;
+	
+	/**
+	 *  This method return max of priority for a group
+	 * @param groupId
+	 * @return int
+	 */
+	public int getMaxPriorityFromDB(final String groupId);
+
+	/**
+	 * This method is used to get the available components.
+	 * 
+	 * @param groupId
+	 * @return List
+	 */
+	List getComponentList(String groupId);
+	
 }

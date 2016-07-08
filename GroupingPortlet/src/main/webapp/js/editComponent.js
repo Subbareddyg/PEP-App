@@ -542,17 +542,18 @@ var app = app || {} ;
 					var params = $('#existingComponentForm').serialize();
 					
 					//grouping specific params
-					if($('#groupType').val().trim() == 'BCG'){
+					if($('#groupType').val().trim() == 'BCG' || $('#groupType').val().trim() == 'RCG' || $('#groupType').val().trim() == 'GSG'){
 						params += '&resourceType=priorityValueSave';
 						/**
 						* code to check all priorities have valid values before saving
 						*/
 						var validpriorities = false;
 						$('input.tree[type=number]').each(function(){
-							if($(this).val().trim().length > 0)
-								validpriorities = true;
-							else
+							if(!$(this).val().trim().length){
 								validpriorities = false;
+								return;
+							}
+								
 						});
 						
 						if(!validpriorities){

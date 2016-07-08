@@ -230,7 +230,7 @@
 						//checking parent checkbox
 						$('input.item-check[data-chknode-id=' + _super.$(this).data('chkparent-id') + ']').prop('checked', true);
 					}else if(_super.$(this).data('item-type') == 'S'){
-						$('input.item-check[data-chkparent-id=' + _super.$(this).data('chknode-id') + ']').prop('checked', true);
+						$('input.item-check[data-chkparent-id=' + _super.$(this).data('chknode-id') + ']:enabled').prop('checked', true);
 					}
 					
 					if(_super.$(_super.config.dtContainer).find('.item-check:enabled').length == 

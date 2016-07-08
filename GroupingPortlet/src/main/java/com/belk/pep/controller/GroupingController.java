@@ -463,6 +463,7 @@ public class GroupingController {
 				jsonObjComponent.put(GroupingConstants.ALREADY_IN_SAME_GROUP, isAlreadyInSameGroup); // Only
 																										// for
 																										// GBS
+				jsonObjComponent.put(GroupingConstants.PRIORITY, groupAttributeForm.getPriority());
 
 				jsonArray.put(jsonObjComponent);
 			}
@@ -2427,6 +2428,8 @@ public class GroupingController {
 						groupAttributeForm.getPriority());
 				jsonObjComponentSub.put(GroupingConstants.HAVE_CHILD_GROUP,
 						groupAttributeForm.getHaveChildGroup());
+				jsonObjComponentSub.put(GroupingConstants.ALREADY_IN_SAME_GROUP,
+						groupAttributeForm.getIsAlreadyInSameGroup());
 				jsonArraySub.put(jsonObjComponentSub);
 			}
 			jsonObject.put(GroupingConstants.MESSAGE, message);

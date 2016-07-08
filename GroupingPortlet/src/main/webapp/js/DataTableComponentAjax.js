@@ -203,6 +203,17 @@ var app = app || {};
 						var html = _super.dfdStyleColorTemplate({data: componentList, dataHeader: response, parentStyleORIN: parentStyleORIN, parentKey: parentKey, checkChildren: (eventInfo !== undefined && eventInfo.doCheckAll == true) ? true : false});
 						_that.parent().parent().after(html);
 						
+						/** checking at least one child is available to select 
+						* so that parent selection checkbox can be enabled
+						*/
+						
+						_super.$('tr[data-parent-id=' + parentStyleORIN + '_' + parentKey + ']').each(function(){
+							if(_super.$(this).find('input[type=checkbox]:enabled').length){
+								_super.$('input[type=checkbox][data-chknode-id=' + parentStyleORIN + '_' + parentKey + ']').prop('disabled', false);
+								return;
+							}	
+						});
+						
 						//checking doShow param to make children instantly visible
 						if(eventInfo === undefined || eventInfo.doShow == true){
 							_that.removeClass('parent-stylenode-expanding-ajax').addClass('parent-stylenode-collapse-ajax');
@@ -233,9 +244,7 @@ var app = app || {};
 				if(domItem.hasClass('parent-stylenode-expand-ajax')){
 					domItem.trigger('click', {doShow: false, doCheckAll: true});
 				}else if(domItem.hasClass('parent-stylenode-collapse-ajax')){
-					_super.$(_super.config.dtContainer)
-						.find('input[type=checkbox][data-generator-id=' + _super.$(this).data('chknode-id') + ']')
-						.prop('checked', true);
+					
 				}
 			}else{
 				_super.$(_super.config.dtContainer)

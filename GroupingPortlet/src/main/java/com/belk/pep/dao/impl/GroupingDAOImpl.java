@@ -1365,7 +1365,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 					final String isAlreadyInGroup = rowMap.get("ALREADY_IN_GROUP") != null ? rowMap.get("ALREADY_IN_GROUP").toString() : "";
 					final String petState = rowMap.get("PET_STATE") != null ? rowMap.get("PET_STATE").toString() : "";
 					String isDefault = rowMap.get("COMPONENT_DEFAULT") != null ? rowMap.get("COMPONENT_DEFAULT").toString() : "";
-
+					final String displaySequence = rowMap.get("DISPLAY_SEQUENCE") != null ? rowMap.get("DISPLAY_SEQUENCE").toString() : "";
 					isDefault = ("").equalsIgnoreCase(isDefault.trim()) ? "No" : ("false").equalsIgnoreCase(isDefault.trim()) ? "No"
 							: ("true").equalsIgnoreCase(isDefault.trim()) ? "Yes" : "No";
 
@@ -1381,7 +1381,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 					groupAttributeForm.setEntryType(entryType);
 					groupAttributeForm.setParentMdmid(parentMdmid);
 					groupAttributeForm.setIsDefault(isDefault);
-
+					groupAttributeForm.setPriority(displaySequence);
 					groupAttributeFormList.add(groupAttributeForm);
 				}
 			}
@@ -2079,7 +2079,12 @@ public class GroupingDAOImpl implements GroupingDAO {
 						groupAttributeForm.setColorCode(colorCode);
 						groupAttributeForm.setColorName(colorDesc);
 						groupAttributeForm.setIsAlreadyInGroup(isAlreadyInGroup);
-						groupAttributeForm.setIsAlreadyInSameGroup(isAlreadyInSameGroup);
+						if(isAlreadyInSameGroup.equalsIgnoreCase("Y")) {
+							groupAttributeForm.setIsAlreadyInSameGroup("Yes");
+						} else
+						{
+							groupAttributeForm.setIsAlreadyInSameGroup("No");
+						}
 						groupAttributeForm.setSize("");
 						groupAttributeForm.setPetStatus("");
 						groupAttributeForm.setEntryType(entryType);
@@ -2100,6 +2105,107 @@ public class GroupingDAOImpl implements GroupingDAO {
 		}
 		LOGGER.info("getRCGBCGCPGChildDetailsForStyle-->End.");
 		return groupAttributeFormList;
+	}
+	
+	/**
+	 * This method is used to max priority available in DB for a particular Group.
+	 * 
+	 * @param groupId
+	 * @return int
+	 */
+	@Override
+	public int getMaxPriorityFromDB(final String groupId) {
+		LOGGER.info("GroupinDAOIMP :getMaxPriorityFromDB-->Start.");
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("groupId-->" + groupId);
+		}
+		Session session = null;
+		int maxCount =0;
+
+		try {
+			session = sessionFactory.openSession();
+			// Hibernate provides a createSQLQuery method to let you call your
+			// native SQL statement directly.
+			final Query query = session.createSQLQuery(XqueryConstants.getMaxPriorityQuery());
+			
+			query.setParameter("groupingId", groupId);
+			if (LOGGER.isDebugEnabled()) {
+				LOGGER.debug("Query-->" + XqueryConstants.getMaxPriorityQuery());
+			}
+
+
+			// execute select SQL statement
+			query.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
+			
+			final List<Object> rows = query.list();
+			if (rows != null) {
+				
+
+				for (final Object row : rows) {					
+					final Map rowMap = (Map) row;		
+
+					maxCount = (rowMap.get("MAX_PRIORITY") != null ? Integer.valueOf(rowMap.get("MAX_PRIORITY").toString()) : 0);					
+				}
+			}
+		} finally {
+			
+			if (session != null) {
+				session.close();
+			}
+		}
+
+		LOGGER.info("GroupinDAOIMP :getMaxPriorityFromDB-->End.");
+		return maxCount;
+	}
+
+	
+	/**
+	 * This method is used to get the available components.
+	 * 
+	 * @param groupId
+	 * @return List
+	 */
+	@Override
+	public List getComponentList(final String groupId) {
+		LOGGER.info("GroupinDAOIMPL :getComponentList-->Start.");
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("groupId-->" + groupId);
+		}
+		Session session = null;
+		String component = GroupingConstants.EMPTY;
+		List<String> componentList = new ArrayList<>();
+
+		try {
+			session = sessionFactory.openSession();
+			// Hibernate provides a createSQLQuery method to let you call your
+			// native SQL statement directly.
+			final Query query = session.createSQLQuery(XqueryConstants.getComponentList());
+			
+			query.setParameter("groupingId", groupId);
+			if (LOGGER.isDebugEnabled()) {
+				LOGGER.debug("Query-->" + XqueryConstants.getComponentList());
+			}
+			// execute select SQL statement
+			query.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
+			
+			final List<Object> rows = query.list();
+			if (rows != null) {
+				for (final Object row : rows) {					
+					final Map rowMap = (Map) row;		
+
+					component = (rowMap.get("COMPONENT_MDMID") != null ? rowMap.get("COMPONENT_MDMID").toString() : "");
+					componentList.add(component);
+				}
+			}
+		} finally {
+			
+			if (session != null) {
+				session.close();
+			}
+		}
+
+		LOGGER.info("GroupinDAOIMP :getMaxPriorityFromDB-->End.");
+		return componentList;
 	}
 
 }

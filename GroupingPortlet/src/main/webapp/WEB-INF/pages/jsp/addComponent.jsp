@@ -304,7 +304,7 @@
 			<div class="pagination-container" style="text-align:center; margin-top: 15px;">
 				<c:if test="${readonly !='yes'}"> 
 					<c:choose>
-						<c:when test="${groupDetailsForm.groupType != 'RCG' && groupDetailsForm.groupType != 'CPG' && groupDetailsForm.groupType != 'GSG'}">
+						<c:when test="${groupDetailsForm.groupType != 'CPG'}">
 							<input type="button" class="btn" value="Save" style="width: 70px;" id="save-existing-group"/>
 						</c:when>
 					</c:choose>

@@ -4,7 +4,7 @@
 				<thead>
 					<tr>
 						<th width="8%"><label><input type="checkbox" class="select-all" /> Select All</label></th>
-						<th width="11%"><a href="javascript:;" class="sortable" data-sort-column="orinNumber" data-sorted-by="">ORIN/Grouping#</a></th>
+						<th width="10%"><a href="javascript:;" class="sortable" data-sort-column="orinNumber" data-sorted-by="">ORIN/Grouping#</a></th>
 						<th width="10%"><a href="javascript:;" class="sortable" data-sort-column="vendorStyle" data-sorted-by="">Style Number</a></th>
 						<th width="15%"><a href="javascript:;" class="sortable" data-sort-column="productName" data-sorted-by="">Name</a></th>
 					</tr>

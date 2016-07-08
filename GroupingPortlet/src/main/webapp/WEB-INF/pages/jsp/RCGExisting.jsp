@@ -7,6 +7,7 @@
 						<th width="10%"><a href="javascript:;" class="sortable" data-sort-column="StyleOrinNo" data-sorted-by="">ORIN/Grouping#</a></th>
 						<th width="10%"><a href="javascript:;" class="sortable" data-sort-column="vendorStyleNo" data-sorted-by="">Style Number</a></th>
 						<th width="15%"><a href="javascript:;" class="sortable" data-sort-column="productName" data-sorted-by="">Name</a></th>
+						<th width="10%"><a href="javascript:;" class="sortable" data-sort-column="priority" data-sorted-by="">Priority</a></th>
 					</tr>
 				</thead>
 				<tbody class="row-container"></tbody>
@@ -43,7 +44,15 @@
 				{{=row.StyleOrinNo}}
 			</td>
 			<td class="text-center">{{=row.vendorStyleNo}}</td>
-			<td>{{=row.productName}}</td>			
+			<td>{{=row.productName}}</td>
+			<td class="text-center">
+				<c:if test="${readonly !='yes'}">
+					<input type="number" class="tree" value="{{=row.priority}}" name="{{=row.StyleOrinNo}}_{{=key}}" min="1" />
+				</c:if>
+				<c:if test="${readonly =='yes'}">
+					<input type="number" class="tree" value="{{=row.priority}}" name="{{=row.StyleOrinNo}}_{{=key}}" min="1" disabled="disabled"/>
+				</c:if>
+			</td>
 		</tr>
 		{{ if(row.childList && row.childList.length){ }}
 			{{ _.each(row.childList, function(childRow, childKey){ }}
@@ -56,6 +65,7 @@
 					</td>
 					<td class="text-center">{{=childRow.vendorStyleNo}}</td>
 					<td>{{=childRow.productName}}</td>
+					<td class="text-center"></td>
 				</tr>
 			{{ }) }}
 		{{ } }}
@@ -86,7 +96,8 @@
 				{{=row.StyleOrinNo}}
 			</td>
 			<td class="text-center">{{=row.vendorStyleNo}}</td>
-			<td>{{=row.productName}}</td>		
+			<td>{{=row.productName}}</td>
+			<td class="text-center"></td>
 		</tr>
 		{{ if(row.childList && row.childList.length){ }}
 			{{ _.each(row.childList, function(childRow, childKey){ }}
@@ -101,13 +112,14 @@
 					</td>
 					<td class="text-center">{{=childRow.vendorStyleNo}}</td>
 					<td>{{=childRow.productName}}</td>
+					<td class="text-center"></td>
 				</tr>
 			{{ }) }}
 		{{ } }}
 	{{ }) }}	
 {{ }else{ }}
 	<tr class="dfd-children">
-		<td colspan="4" align="center"><strong>{{=dataHeader.message ? dataHeader.message : 'No record Found!'}}</strong></td>
+		<td colspan="5" align="center"><strong>{{=dataHeader.message ? dataHeader.message : 'No record Found!'}}</strong></td>
 	</tr>
 {{ } }}
 </script>

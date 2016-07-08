@@ -1196,18 +1196,15 @@ public class GroupingServiceImpl implements GroupingService {
 					selectedItemsColorArr = colorList.split("-");
 					
 					groupAttributeFormListNew = new ArrayList<>();
-					if (selectedOrinGrp.equals(styleOrinGrpNo)) {
-						for (int k = 0; k < groupAttributeFormList.size(); k++) {
-							groupAttributeForm = groupAttributeFormList.get(k);
-
+					if (selectedOrinGrp.equals(styleOrinGrpNo)) {							
 							for (int l = 0; l < selectedItemsColorArr.length; l++) {
-								
-								if (selectedItemsColorArr[l].equals(groupAttributeForm.getOrinNumber())) {
+								if (selectedItemsColorArr[l].length() == 12) {
+									groupAttributeForm = new GroupAttributeForm();
+									groupAttributeForm.setColorCode(selectedItemsColorArr[l].substring(9, 12));
+									groupAttributeForm.setOrinNumber(selectedItemsColorArr[l]);
 									groupAttributeFormListNew.add(groupAttributeForm);
-									break;
 								}
 							}
-						}
 						styleAttributeForm.setGroupAttributeFormList(groupAttributeFormListNew);
 						selectedRCGAttributeList.add(styleAttributeForm);
 						break;
@@ -1931,6 +1928,45 @@ public class GroupingServiceImpl implements GroupingService {
 			responseMsg = prop.getProperty(GroupingConstants.ADD_COMPONENT_SUCCESS);
 			groupCreationStatus = GroupingConstants.COMPONENT_ADDEDD_SUCCESSFULLY;
 			LOGGER.info("addGBSComponentToGroup.Add Component to GBS Group. ResponseMsg100::Success-->" + responseMsg);
+			
+			// Add Priority To GBS Start
+			JSONArray componentList = new JSONArray();
+			int maxPriority =groupingDAO.getMaxPriorityFromDB(groupId);
+			if(LOGGER.isDebugEnabled()){
+				LOGGER.debug(" maxPriority available in DB is "+maxPriority+ "  for Group Id "+ groupId);
+			}
+			for (int i = 0; i < getGBSSelectedAttrbuteList.size(); i++) {
+				JSONObject jsonObjectComponent = new JSONObject();
+				GroupAttributeForm groupAttributeForm = getGBSSelectedAttrbuteList.get(i);
+				String styleOrGrpNo = GroupingUtil.checkNull(groupAttributeForm.getParentMdmid());
+				jsonObjectComponent.put(GroupingConstants.COMPONENT_ATTR, styleOrGrpNo);
+				jsonObjectComponent.put(GroupingConstants.ORDER, maxPriority + 1);
+				componentList.put(jsonObjectComponent);
+			}
+			JSONObject jsonObject = new JSONObject();
+			jsonObject.put(GroupingConstants.GROUP_ID, groupId);
+			jsonObject.put(GroupingConstants.GROUP_TYPE, groupType);
+			jsonObject.put(GroupingConstants.MODIFIED_BY, updatedBy);
+			jsonObject.put(GroupingConstants.COMPONENT_LIST, componentList);
+			String resp = setComponentPriority(jsonObject);
+
+			JSONObject responseObj = new JSONObject(resp);
+			String code = responseObj.getString(GroupingConstants.MSG_CODE);
+			String message;
+			if (code.equalsIgnoreCase(GroupingConstants.SUCCESS_CODE)) {
+				message = prop.getProperty(GroupingConstants.PRIORITY_COMPNT_SUCCESS);
+			} else {
+				message = prop.getProperty(GroupingConstants.PRIORITY_COMPNT_FAILURE);
+			}
+			if (LOGGER.isDebugEnabled()) {
+				LOGGER.debug("set Default Priority for GBS Message-->" + message);
+			}
+			//Code End for default priority set for GBS Group
+			
+			
+			
+			
+			
 		} else {
 			responseMsg = prop.getProperty(GroupingConstants.ADD_COMPONENT_FAILURE);
 			groupCreationStatus = GroupingConstants.COMPONENT_ADDITION_FAILED;
@@ -2015,6 +2051,68 @@ public class GroupingServiceImpl implements GroupingService {
 			responseMsg = prop.getProperty(GroupingConstants.ADD_COMPONENT_SUCCESS);
 			groupCreationStatus = GroupingConstants.COMPONENT_ADDEDD_SUCCESSFULLY;
 			LOGGER.info("addRCGBCGComponentToGroup.Add Component to RCG and BCG Group. ResponseMsg100::Success-->" + responseMsg);
+			
+			// Code starts for default priority set for RCG and BCG Group
+			
+			// Add Priority To BCG Start
+			JSONArray componentList = new JSONArray();
+			int maxPriority =groupingDAO.getMaxPriorityFromDB(groupId);
+			if(LOGGER.isDebugEnabled()){
+				LOGGER.debug(" maxPriority available in DB is "+maxPriority+ "  for Group Id "+ groupId);
+			}
+			
+			// Remove the Styles that are already part of Child Component
+			
+			//get the map of all the Components	
+			
+			@SuppressWarnings("unchecked")
+			List<String> existingComponentList = groupingDAO.getComponentList(groupId);
+			
+			
+			for (int i = 0; i < getRCGBCGSelectedAttrbuteList.size(); i++) {
+				JSONObject jsonObjectComponent = new JSONObject();
+				StyleAttributeForm styleAttributeForm = getRCGBCGSelectedAttrbuteList.get(i);
+				String styleOrGrpNo = GroupingUtil.checkNull(styleAttributeForm.getOrinNumber());
+				if (styleOrGrpNo.length() == 7) {
+					// Group
+					jsonObjectComponent.put(GroupingConstants.COMPONENT_ATTR, styleOrGrpNo);
+					jsonObjectComponent.put(GroupingConstants.ORDER, maxPriority + i + 1);
+					componentList.put(jsonObjectComponent);
+				} else {
+					// Style
+					// Check whether the Style is having priority else remove it
+					if(!existingComponentList.contains(styleOrGrpNo)){		
+						jsonObjectComponent.put(GroupingConstants.COMPONENT_ATTR, styleOrGrpNo);
+						jsonObjectComponent.put(GroupingConstants.ORDER, maxPriority + i + 1);
+						componentList.put(jsonObjectComponent);
+					}
+				}
+				
+				
+			}
+			
+			if(componentList.length()>0){
+				JSONObject jsonObject = new JSONObject();
+				jsonObject.put(GroupingConstants.GROUP_ID, groupId);
+				jsonObject.put(GroupingConstants.GROUP_TYPE, groupType);
+				jsonObject.put(GroupingConstants.MODIFIED_BY, updatedBy);
+				jsonObject.put(GroupingConstants.COMPONENT_LIST, componentList);
+				String resp = setComponentPriority(jsonObject);
+	
+				JSONObject responseObj = new JSONObject(resp);
+				String code = responseObj.getString(GroupingConstants.MSG_CODE);
+				String message;
+				if (code.equalsIgnoreCase(GroupingConstants.SUCCESS_CODE)) {
+					message = prop.getProperty(GroupingConstants.PRIORITY_COMPNT_SUCCESS);
+				} else {
+					message = prop.getProperty(GroupingConstants.PRIORITY_COMPNT_FAILURE);
+				}
+				if (LOGGER.isDebugEnabled()) {
+					LOGGER.debug("set Default Priority for BCG Message-->" + message);
+				}
+			}
+			//Code End for default priority set for RCG and BCG Group
+			
 		} else {
 			responseMsg = prop.getProperty(GroupingConstants.ADD_COMPONENT_FAILURE);
 			groupCreationStatus = GroupingConstants.COMPONENT_ADDITION_FAILED;
