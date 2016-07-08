@@ -1462,7 +1462,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 
 			// execute select SQL statement
 			query.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
-			query.setFirstResult(((pageNumber - 1) * recordsPerPage));
+			query.setFirstResult((pageNumber - 1) * recordsPerPage);
 			query.setMaxResults(recordsPerPage);
 
 			@SuppressWarnings("unchecked")
@@ -2144,7 +2144,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 				for (final Object row : rows) {					
 					final Map rowMap = (Map) row;		
 
-					maxCount = (rowMap.get("MAX_PRIORITY") != null ? Integer.valueOf(rowMap.get("MAX_PRIORITY").toString()) : 0);					
+					maxCount = rowMap.get("MAX_PRIORITY") != null ? Integer.valueOf(rowMap.get("MAX_PRIORITY").toString()) : 0;					
 				}
 			}
 		} finally {
@@ -2193,7 +2193,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 				for (final Object row : rows) {					
 					final Map rowMap = (Map) row;		
 
-					component = (rowMap.get("COMPONENT_MDMID") != null ? rowMap.get("COMPONENT_MDMID").toString() : "");
+					component = rowMap.get("COMPONENT_MDMID") != null ? rowMap.get("COMPONENT_MDMID").toString() : "";
 					componentList.add(component);
 				}
 			}

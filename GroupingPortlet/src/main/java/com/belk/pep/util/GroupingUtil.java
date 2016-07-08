@@ -42,10 +42,10 @@ public class GroupingUtil {
 			// Close the buffereader.
 			br.close();
 		} catch (SQLException e) {
-			LOGGER.error("Exception in clobToString() method. -- " + e.getMessage());
+			LOGGER.error("SQLException in clobToString() method. -- " + e.getMessage());
 			throw new PEPFetchException(e);
 		} catch (IOException e) {
-			LOGGER.error("Exception in clobToString() method. -- " + e.getMessage());
+			LOGGER.error("IOException in clobToString() method. -- " + e.getMessage());
 			throw new PEPFetchException(e);
 		}
 		LOGGER.info("***Exiting clobToString() method.");

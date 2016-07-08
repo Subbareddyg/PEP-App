@@ -1965,7 +1965,7 @@ public class GroupingController {
 		JSONArray compArray = new JSONArray();
 		for (String component : components) {
 			if (null != component && component.length() > 1) {
-				compArray.put(new JSONObject().put(GroupingConstants.COMPONENT_ATTR, component.toString()));
+				compArray.put(new JSONObject().put(GroupingConstants.COMPONENT_ATTR, component));
 			}
 		}
 		JSONObject jsonObject = new JSONObject();
