@@ -49,7 +49,7 @@ function clickListenerImage(e){
 	timeOutImagePage();
 }
 
-function redirectSessionTimedOut(){	
+function redirectSessionTimedOutGrpImage(){	
 	timeOutFlag ="yes";
       	var releseLockedPetURL = $("#releseLockedPet").val();
       	var loggedInUser= $("#loggedInUser").val();
