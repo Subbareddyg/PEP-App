@@ -23,6 +23,7 @@ public class PetLockPK implements Serializable {
 	private java.util.Date lockDate;
 
 	public PetLockPK() {
+		//Default Constructor
 	}
 	public String getPetId() {
 		return this.petId;

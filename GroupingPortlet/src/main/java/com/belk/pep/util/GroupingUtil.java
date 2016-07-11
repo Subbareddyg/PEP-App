@@ -80,8 +80,8 @@ public class GroupingUtil {
 	
 	    String inOutputval = "";
 	    // get the inputVal.
-		inputVal = checkNull(inputVal);
-	    String[] valArr = inputVal.split(",");
+		String inputValue = checkNull(inputVal);
+	    String[] valArr = inputValue.split(",");
 	    for(int i = 0; i < valArr.length; i++){
 	          if(("").equals(inOutputval)){
 	                inOutputval = "\'" + valArr[i].trim() + "\'";

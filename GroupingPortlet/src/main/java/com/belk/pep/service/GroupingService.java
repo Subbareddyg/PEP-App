@@ -208,10 +208,9 @@ public interface GroupingService {
 	 * 
 	 * @param groupId
 	 * @return CreateGroupForm
-	 * @throws Exception
 	 * @throws PEPFetchException
 	 */
-	CreateGroupForm getExistingGrpDetails(String groupId) throws PEPFetchException, ParseException;
+	CreateGroupForm getExistingGrpDetails(String groupId) throws PEPFetchException;
 
 	/**
 	 * This method is used to get the Existing Style Color details.
@@ -219,9 +218,8 @@ public interface GroupingService {
 	 * @param groupId
 	 * @return
 	 * @throws PEPServiceException
-	 * @throws PEPPersistencyException
 	 */
-	List<GroupAttributeForm> getExistSplitColorDetails(String groupId) throws PEPServiceException, PEPPersistencyException;
+	List<GroupAttributeForm> getExistSplitColorDetails(String groupId) throws PEPServiceException;
 
 	/**
 	 * This method is used to get the Existing Style Sku details.
@@ -229,9 +227,8 @@ public interface GroupingService {
 	 * @param groupId
 	 * @return
 	 * @throws PEPServiceException
-	 * @throws PEPPersistencyException
 	 */
-	List<GroupAttributeForm> getExistSplitSkuDetails(String groupId) throws PEPServiceException, PEPPersistencyException;
+	List<GroupAttributeForm> getExistSplitSkuDetails(String groupId) throws PEPServiceException;
 
 	/**
 	 * This method is used to get the Existing CPG details.
@@ -239,9 +236,8 @@ public interface GroupingService {
 	 * @param groupId
 	 * @return
 	 * @throws PEPServiceException
-	 * @throws PEPPersistencyException
 	 */
-	List<StyleAttributeForm> getExistCPGDetails(String groupId) throws PEPServiceException, PEPPersistencyException;
+	List<StyleAttributeForm> getExistCPGDetails(String groupId) throws PEPServiceException;
 
 	/**
 	 * This method is used to get the Existing GSS details.
@@ -249,9 +245,8 @@ public interface GroupingService {
 	 * @param groupId
 	 * @return
 	 * @throws PEPServiceException
-	 * @throws PEPPersistencyException
 	 */
-	List<GroupAttributeForm> getExistGBSDetails(String groupId) throws PEPServiceException, PEPPersistencyException;
+	List<GroupAttributeForm> getExistGBSDetails(String groupId) throws PEPServiceException;
 
 	/**
 	 * Method to get the groups for search group.
@@ -262,7 +257,7 @@ public interface GroupingService {
 	 *         Method added For PIM Phase 2 - groupSearch Date: 05/19/2016 Added
 	 *         By: Cognizant
 	 */
-	GroupSearchForm groupSearch(GroupSearchForm groupSearchForm) throws PEPServiceException, PEPPersistencyException;
+	GroupSearchForm groupSearch(GroupSearchForm groupSearchForm);
 
 	/**
 	 * Method to get Group search record count.
@@ -272,10 +267,9 @@ public interface GroupingService {
 	 * 
 	 *         Method added For PIM Phase 2 - groupSearch Date: 05/26/2016 Added
 	 *         By: Cognizant
-	 * @throws PEPPersistencyException
 	 * @throws PEPServiceException
 	 */
-	int groupSearchCount(GroupSearchForm groupSearchForm) throws PEPPersistencyException, PEPServiceException;
+	int groupSearchCount(GroupSearchForm groupSearchForm) throws PEPServiceException;
 
 	/**
 	 * Method to get the Depts for search group.
@@ -285,9 +279,9 @@ public interface GroupingService {
 	 * 
 	 *         Method added For PIM Phase 2 - groupSearch Date: 05/25/2016 Added
 	 *         By: Cognizant
-	 * @throws PEPPersistencyException
+	 * @throws PEPServiceException
 	 */
-	List<DepartmentDetails> getDeptDetailsByDepNoFromADSE() throws PEPPersistencyException, PEPServiceException;
+	List<DepartmentDetails> getDeptDetailsByDepNoFromADSE() throws PEPServiceException;
 
 	/**
 	 * Method to get the classes for search group.
@@ -297,9 +291,9 @@ public interface GroupingService {
 	 * 
 	 *         Method added For PIM Phase 2 - groupSearch Date: 05/26/2016 Added
 	 *         By: Cognizant
-	 * @throws PEPPersistencyException
+	 * @throws PEPServiceException
 	 */
-	List<ClassDetails> getClassDetailsByDepNos(String departmentNumbers) throws PEPPersistencyException, PEPServiceException;
+	List<ClassDetails> getClassDetailsByDepNos(String departmentNumbers) throws PEPServiceException;
 
 	/**
 	 * This method is used to call Group Delete Service.
@@ -314,8 +308,7 @@ public interface GroupingService {
 	 * @throws JSONException
 	 * @throws IOException
 	 */
-	String deleteGroup(String groupId, String groupType, String updatedBy) throws PEPFetchException, MalformedURLException,
-			ClassCastException, JSONException, IOException;
+	String deleteGroup(String groupId, String groupType, String updatedBy) throws PEPServiceException;
 
 	/**
 	 * This method is used to call add Component Service and fetch data from.
@@ -326,15 +319,10 @@ public interface GroupingService {
 	 * @param groupType
 	 * @param selectedSplitAttributeList
 	 * @return
-	 * @throws PEPFetchException
-	 * @throws MalformedURLException
-	 * @throws ClassCastException
-	 * @throws JSONException
-	 * @throws IOException
+	 * @throws PEPServiceException
 	 */
 	CreateGroupForm addComponentToGroup(String groupId, String updatedBy, String groupType,
-			List<GroupAttributeForm> selectedSplitAttributeList) throws PEPFetchException, MalformedURLException, ClassCastException,
-			JSONException, IOException;
+			List<GroupAttributeForm> selectedSplitAttributeList) throws PEPServiceException;
 
 	/**
 	 * This method is used to call add CPG Component Service and fetch data
@@ -345,15 +333,10 @@ public interface GroupingService {
 	 * @param groupType
 	 * @param getCPGSelectedAttrbuteList
 	 * @return
-	 * @throws PEPFetchException
-	 * @throws MalformedURLException
-	 * @throws ClassCastException
-	 * @throws JSONException
-	 * @throws IOException
+	 * @throws PEPServiceException
 	 */
 	CreateGroupForm addCPGComponentToGroup(String groupId, String updatedBy, String groupType,
-			List<StyleAttributeForm> getCPGSelectedAttrbuteList) throws PEPFetchException, MalformedURLException, ClassCastException,
-			JSONException, IOException;
+			List<StyleAttributeForm> getCPGSelectedAttrbuteList) throws PEPServiceException;
 
 	/**
 	 * This method is used to call add GBS Component Service and fetch data from
@@ -363,15 +346,10 @@ public interface GroupingService {
 	 * @param groupType
 	 * @param getCPGSelectedAttrbuteList
 	 * @return
-	 * @throws PEPFetchException
-	 * @throws MalformedURLException
-	 * @throws ClassCastException
-	 * @throws JSONException
-	 * @throws IOException
+	 * @throws PEPServiceException
 	 */
 	CreateGroupForm addGBSComponentToGroup(String groupId, String updatedBy, String groupType,
-			List<GroupAttributeForm> getCPGSelectedAttrbuteList) throws PEPFetchException, MalformedURLException, ClassCastException,
-			JSONException, IOException;
+			List<GroupAttributeForm> getCPGSelectedAttrbuteList) throws PEPServiceException;
 
 	/**
 	 * This method is used to call add RCG Component Service and fetch data from
@@ -381,15 +359,10 @@ public interface GroupingService {
 	 * @param groupType
 	 * @param getRCGSelectedAttrbuteList
 	 * @return
-	 * @throws PEPFetchException
-	 * @throws MalformedURLException
-	 * @throws ClassCastException
-	 * @throws JSONException
-	 * @throws IOException
+	 * @throws PEPServiceException
 	 */
 	CreateGroupForm addRCGBCGComponentToGroup(String groupId, String updatedBy, String groupType,
-			List<StyleAttributeForm> getRCGBCGSelectedAttrbuteList) throws PEPFetchException, MalformedURLException, ClassCastException,
-			JSONException, IOException;
+			List<StyleAttributeForm> getRCGBCGSelectedAttrbuteList) throws PEPServiceException;
 
 	/**
 	 * @param getSplitColorDetailsList
@@ -404,28 +377,19 @@ public interface GroupingService {
 	 * @param createGroupForm
 	 * @param modifiedBy
 	 * @return
-	 * @throws PEPFetchException
-	 * @throws MalformedURLException
-	 * @throws ClassCastException
-	 * @throws JSONException
-	 * @throws IOException
+	 * @throws PEPServiceException
 	 */
-	String updateGroupHeaderDetails(CreateGroupForm createGroupForm, String modifiedBy) throws PEPFetchException, MalformedURLException,
-			ClassCastException, JSONException, IOException;
+	String updateGroupHeaderDetails(CreateGroupForm createGroupForm, String modifiedBy) throws PEPServiceException;
 
 	/**
 	 * This method handles the removing of exising components
 	 * 
 	 * @param jsonObject
 	 * @return
-	 * @throws PEPFetchException
-	 * @throws MalformedURLException
-	 * @throws ClassCastException
-	 * @throws JSONException
+	 * @throws PEPServiceException
 	 * @throws IOException
 	 */
-	String removeSelectedComponent(JSONObject jsonObject) throws PEPFetchException, MalformedURLException, ClassCastException,
-			JSONException, IOException;
+	String removeSelectedComponent(JSONObject jsonObject) throws PEPServiceException, IOException;
 
 	/**
 	 * This method handles the interface method for setting component priority
@@ -438,8 +402,7 @@ public interface GroupingService {
 	 * @throws JSONException
 	 * @throws IOException
 	 */
-	String setComponentPriority(JSONObject jsonObject) throws PEPFetchException, MalformedURLException, ClassCastException, JSONException,
-			IOException;
+	String setComponentPriority(JSONObject jsonObject) throws PEPServiceException, IOException;
 
 	/**
 	 * This method is used to call Default Color Service.
@@ -450,10 +413,10 @@ public interface GroupingService {
 	 * @param childOrinId String
 	 * @param updatedBy String
 	 * @return String
-	 * @throws PEPFetchException
+	 * @throws PEPServiceException
 	 */
 	String setDefaultColorSize(String groupId, String groupType, String colorId, String childOrinId, String updatedBy)
-			throws MalformedURLException, ClassCastException, IOException, JSONException;
+			throws PEPServiceException;
 
 	/**
 	 * This method is used to get the search result Details for Regular/Beauty

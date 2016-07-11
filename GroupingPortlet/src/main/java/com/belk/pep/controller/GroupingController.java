@@ -1381,9 +1381,7 @@ public class GroupingController {
 
 		} catch (PEPServiceException e) {
 			LOGGER.error("GroupingControlle:getExistGrpComponentResource:PEPServiceException------------>" + e);
-		} catch (PEPPersistencyException e) {
-			LOGGER.error("GroupingControlle:getExistGrpComponentResource:PEPPersistencyException------------>" + e);
-		} catch (IOException e) {
+		}  catch (IOException e) {
 			LOGGER.error("GroupingControlle:getExistGrpComponentResource:IOException------------>" + e);
 		}
 
@@ -2127,8 +2125,6 @@ public class GroupingController {
 			/** End to set Default **/
 		} catch (IOException e) {
 			LOGGER.error("handleDefaultValueRequest ResourceRequest:IOException------------>" + e);
-		} catch (PEPFetchException e) {
-			LOGGER.error("handleDefaultValueRequest ResourceRequest:PEPFetchException------------>" + e);
 		} catch (Exception e) {
 			LOGGER.error("handleDefaultValueRequest ResourceRequest:Exception------------>" + e);
 		}
