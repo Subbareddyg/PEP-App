@@ -1317,15 +1317,7 @@ public class ContentDAOImpl implements ContentDAO{
         return skuList;
     }
 
-    /* (non-Javadoc)
-     * @see com.belk.pep.dao.ContentDAO#getStyleAndItsChildFromADSE(java.lang.String)
-     */
-    @Override
-    public List<PetsFound> getStyleAndItsChildFromADSE(String orinNumber)
-            throws PEPFetchException {
-        // TODO Auto-generated method stub
-        return null;
-    }
+
 
     /* (non-Javadoc)
      * @see com.belk.pep.dao.ContentDAO#getStyleAttributesFromADSE(java.lang.String)
@@ -2444,4 +2436,60 @@ public boolean releseLockedPet(  String orin, String pepUserID,String pepFunctio
 		LOGGER.info("***Exiting getGroupCopyValidation() method.");
 		return message;
 	}
+    
+    
+    
+    /* (non-Javadoc)
+     * @see com.belk.pep.dao.ContentDAO#getGroupGlobalAttribute(java.lang.String)
+     */
+    @Override
+    public GlobalAttributesVO getGroupGlobalAttribute(String groupingId)
+            {
+    	LOGGER.info("ContentDAOImp :getGroupGolbalAttribute: start" );
+        Session session = null;        
+        GlobalAttributesVO  groupAttribute = null;
+        List<Object[]> rows=null;
+        
+        try {
+            session = sessionFactory.openSession();
+            
+            // Hibernate provides a createSQLQuery method to let you call your
+            // native SQL statement directly.
+            final Query query =session.createSQLQuery(XqueryConstants.getGroupGlobalAttributes());
+            if(LOGGER.isDebugEnabled()){
+            	LOGGER.debug(" Query -->" +XqueryConstants.getGroupGlobalAttributes());
+            }
+            if(query!=null)
+            {
+                query.setParameter("groupingId", groupingId);
+                query.setFetchSize(1);
+                rows = query.list();
+            }
+
+            if(rows!=null)
+            {
+                for (final Object[] row : rows) {
+                	groupAttribute = new GlobalAttributesVO ();
+
+                	groupAttribute.setBelkExclusive(checkNull(row[0]));
+                	groupAttribute.setChannelExclusive(checkNull(row[1]));
+                	groupAttribute.setBopis(checkNull(row[2]));
+                	groupAttribute.setPyg(checkNull(row[3]));
+                	groupAttribute.setGwp(checkNull(row[4]));
+                	groupAttribute.setPwp(checkNull(row[5]));
+                	groupAttribute.setSdf(checkNull(row[6]));
+                	
+                }
+            }
+
+
+        }
+       
+        finally {
+            if(session!=null)            
+            	session.close();
+        }
+        LOGGER.info("ContentDAOImp :getGroupGolbalAttribute: end" );
+        return groupAttribute;
+    }
 }

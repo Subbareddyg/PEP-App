@@ -1155,4 +1155,18 @@ public class ContentDelegate {
      }
      
      
+     /**
+      * Gets the global attributes.
+      *
+      * @param groupId the orin number
+      * @return GlobalAttributesVO
+      */
+     public GlobalAttributesVO getGroupGlobalAttribute(String groupId){
+
+             return contentService.getGroupGlobalAttribute(groupId);
+     }
+        
+     
+
+     
 }

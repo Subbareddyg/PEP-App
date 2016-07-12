@@ -2566,6 +2566,8 @@ public class ContentController implements ResourceAwareController, EventAwareCon
 		populatGroupContentHistry(groupId, contentDisplayForm, request, response);
 		
 		
+		
+		
 
 		
 		String dynamicCategoryId = (String) request.getAttribute("dynamicCategoryId");
@@ -2621,6 +2623,11 @@ public class ContentController implements ResourceAwareController, EventAwareCon
 				if (request.getAttribute("omnichannelbrand") != null) {
 					// LOGGER.info("omnichannelbrand .... "+request.getAttribute("omnichannelbrand"));
 					request.setAttribute("selectedOmnichannelbrand", request.getAttribute("omnichannelbrand"));
+				}else if(request.getAttribute("omnichannelbrand")==null 
+						&& contentDisplayForm.getOmniBrandSelected()!=null && !"".equals(contentDisplayForm.getOmniBrandSelected().trim())){
+					request.setAttribute("selectedOmnichannelbrand", contentDisplayForm.getOmniBrandSelected().trim());
+				}else{
+					request.setAttribute("selectedOmnichannelbrand", "-1");
 				}
 
 				// Logic for highlighting the selected carbrand in its drop down on
@@ -2628,11 +2635,106 @@ public class ContentController implements ResourceAwareController, EventAwareCon
 				if (request.getAttribute("carbrand") != null) {
 					// LOGGER.info("carbrand .... "+request.getAttribute("carbrand"));
 					request.setAttribute("selectedCarbrand", request.getAttribute("carbrand"));
+				}else if(request.getAttribute("carbrand")==null 
+						&& contentDisplayForm.getCarBrandSelected()!=null && !"".equals(contentDisplayForm.getCarBrandSelected().trim())){
+					request.setAttribute("selectedCarbrand", contentDisplayForm.getCarBrandSelected());
+				}else{
+					request.setAttribute("selectedCarbrand", "-1");
 				}
 
 			}
 
+			//populate Content Global attribute for CPG
+			if(ContentScreenConstants.CONSOLIDATED_PRODUCT_GROUP_TYPE.equals(
+					contentDisplayForm.getStyleInformationVO().getGroupingType())){
+			GlobalAttributesVO globalAttribute = contentDelegate.getGroupGlobalAttribute(groupId);
+			contentDisplayForm.setGlobalAttributesDisplay(globalAttribute);
 			
+			String channelkExcValue;		
+			
+			if (request.getParameter("channelExclId")!= null) {
+				channelkExcValue=request.getParameter("channelExclId");	
+			}else if(request.getParameter("channelExclId")== null 
+						&& globalAttribute!=null && globalAttribute.getChannelExclusive()!=null 
+						&& !"".equals(globalAttribute.getChannelExclusive().trim())){				
+				channelkExcValue=globalAttribute.getChannelExclusive().trim();	
+			}
+			else{
+				channelkExcValue ="-1";
+			}				
+			request.setAttribute("selectedChannelExclusive", channelkExcValue);
+			
+			String belkExcValue;		
+			
+			if (request.getParameter("belkExclId")!= null) {
+				belkExcValue=request.getParameter("belkExclId");	
+			}else if(request.getParameter("belkExclId")== null 
+						&& globalAttribute!=null && globalAttribute.getBelkExclusive()!=null 
+						&& !"".equals(globalAttribute.getBelkExclusive().trim())){				
+				belkExcValue=globalAttribute.getBelkExclusive().trim();	
+			}
+			else{
+				belkExcValue ="-1";
+			}				
+			request.setAttribute("selectedBelkExclusive", belkExcValue);
+			
+			String selectedGWP;		
+			
+			if (request.getParameter("globalGWPId")!= null) {
+				selectedGWP=request.getParameter("globalGWPId");	
+			}else if(request.getParameter("globalGWPId")== null 
+						&& globalAttribute!=null && globalAttribute.getGwp()!=null 
+						&& !"".equals(globalAttribute.getGwp().trim())){				
+				selectedGWP=globalAttribute.getGwp().trim();	
+			}
+			else{
+				selectedGWP ="No";
+			}				
+			request.setAttribute("selectedGWP", selectedGWP);
+
+			String selectedPWP;		
+			
+			if (request.getParameter("globalPWPId")!= null) {
+				selectedPWP=request.getParameter("globalPWPId");	
+			}else if(request.getParameter("globalPWPId")== null 
+						&& globalAttribute!=null && globalAttribute.getPwp()!=null 
+						&& !"".equals(globalAttribute.getPwp().trim())){				
+				selectedPWP=globalAttribute.getPwp().trim();	
+			}
+			else{
+				selectedPWP ="No";
+			}				
+			request.setAttribute("selectedPWP", selectedPWP);
+			
+			
+			String selectedPYG;		
+			
+			if (request.getParameter("globalPYGId")!= null) {
+				selectedPYG=request.getParameter("globalPYGId");	
+			}else if(request.getParameter("globalPYGId")== null 
+						&& globalAttribute!=null && globalAttribute.getPyg()!=null 
+						&& !"".equals(globalAttribute.getPyg().trim())){				
+				selectedPYG=globalAttribute.getPyg().trim();	
+			}
+			else{
+				selectedPYG ="No";
+			}				
+			request.setAttribute("selectedPYG", selectedPYG);
+			
+			String selectedBopis;		
+			
+			if (request.getParameter("bopislId")!= null) {
+				selectedBopis=request.getParameter("bopislId");	
+			}else if(request.getParameter("bopislId")== null 
+						&& globalAttribute!=null && globalAttribute.getBopis()!=null 
+						&& !"".equals(globalAttribute.getBopis().trim())){				
+				selectedBopis=globalAttribute.getBopis().trim();	
+			}
+			else{
+				selectedBopis ="-1";
+			}
+			
+			}
 		modelAndView.addObject(ContentScreenConstants.CONTENT_DISPLAY_FORM, contentDisplayForm);
 		}
 		catch(IOException e){
@@ -3504,7 +3606,41 @@ public class ContentController implements ResourceAwareController, EventAwareCon
 				final String carsBrandXpath = ContentScreenConstants.CARS_BRAND_XPATH;
 				final String omniGroupChannelBrandXpath = ContentScreenConstants.OMNICHANNEL_BRAND_XPATH_GROUP;
 				final String carsGroupBrandXpath = ContentScreenConstants.CARS_BRAND_XPATH_GROUP;
-
+				
+			if(contentDisplayForm!=null && ContentScreenConstants.CONSOLIDATED_PRODUCT_GROUP_TYPE.equals(contentDisplayForm.getGroupingType())){
+				final String belkExclusiveXpath = ContentScreenConstants.BELK_EXCLUSIVE_XPATH;
+				final String gWPValueXpath = ContentScreenConstants.GWP_XPATH;
+				final String pWPValueXpath = ContentScreenConstants.PWP_XPATH;
+				final String pYGValueXpath = ContentScreenConstants.PYG_XPATH;
+				final String channelExclusiveXpath = ContentScreenConstants.CHANNEL_EXCLUSIVE_XPATH;
+				final String bopisXpath = ContentScreenConstants.BOPIS_XPATH;
+				
+				
+				if (StringUtils.isNotBlank(belkExclusive)) {
+					final AttributesBean attributesBeanBelkExclusive = new AttributesBean(belkExclusiveXpath, belkExclusive);
+					beanList.add(attributesBeanBelkExclusive);
+				}
+				if (StringUtils.isNotBlank(channelExclusive) && !channelExclusive.equalsIgnoreCase("-1")) {
+					final AttributesBean attributesBeanChannelExclusive = new AttributesBean(channelExclusiveXpath, channelExclusive);
+					beanList.add(attributesBeanChannelExclusive);
+				}
+				if (StringUtils.isNotBlank(bopisValue) && !bopisValue.equalsIgnoreCase("-1")) {
+					final AttributesBean attributesBopisExclusive = new AttributesBean(bopisXpath, bopisValue);
+					beanList.add(attributesBopisExclusive);
+				}
+				if (StringUtils.isNotBlank(gWPValue)) {
+					final AttributesBean attributesBeangWP = new AttributesBean(gWPValueXpath, gWPValue);
+					beanList.add(attributesBeangWP);
+				}
+				if (StringUtils.isNotBlank(pWPValue)) {
+					final AttributesBean attributesBeanpWPValue = new AttributesBean(pWPValueXpath, pWPValue);
+					beanList.add(attributesBeanpWPValue);
+				}
+				if (StringUtils.isNotBlank(pYGValue)) {
+					final AttributesBean attributesBeanpYGValue = new AttributesBean(pYGValueXpath, pYGValue);
+					beanList.add(attributesBeanpYGValue);
+				}
+			}
 				
 					final AttributesBean attributesBeanProductNameStyle = new AttributesBean(ContentScreenConstants.GROUP_NAME_XPATH, productName);
 					final AttributesBean attributesBeanProductDescriptionStyle = new AttributesBean(ContentScreenConstants.GROUP_DESC_XPATH,

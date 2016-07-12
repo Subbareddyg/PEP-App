@@ -212,12 +212,11 @@ public  interface ContentDAO {
     /**
      * Gets the style and its child from adse.
      *
+     * @param roleName
      * @param orinNumber the orin number
      * @return the style and its child from adse
      * @throws PEPFetchException the PEP fetch exception
      */
-    List<PetsFound>  getStyleAndItsChildFromADSE(String orinNumber) throws  PEPFetchException;
-
 
     List<PetsFound> getStyleAndItsChildFromADSE(String roleName,
         String orinNumber) throws PEPFetchException;
@@ -364,4 +363,13 @@ public  interface ContentDAO {
      */
 	String getGroupCopyValidation(String groupId, String styleId)
 			throws PEPFetchException;
+
+
+	/**
+	 * Method to fetch Group Global Attribute
+	 * 
+	 * @param groupingId
+	 * @return GlobalAttributesVO
+	 */
+	GlobalAttributesVO getGroupGlobalAttribute(String groupingId);
 }

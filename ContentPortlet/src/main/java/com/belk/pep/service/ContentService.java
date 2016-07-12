@@ -413,4 +413,13 @@ public interface ContentService {
      */
 	String callUpdateContentStatusService(String groupId, String groupType,
 			String overallStatus, String updatedBy) throws PEPServiceException;
+
+
+	/**
+	 * This methoid return Group global attribute.
+	 * 
+	 * @param groupingId
+	 * @return
+	 */
+	GlobalAttributesVO getGroupGlobalAttribute(String groupingId);
 }

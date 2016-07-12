@@ -2979,7 +2979,7 @@ public class XqueryConstants {
 		query.append("                                                                                                                                                         " );
 		query.append(" <name>{$categoryname}</name>                                                                                                                            " );
 		query.append(" </category>' PASSING pet.XML_DATA AS \"XML_DATA\" COLUMNS CATEGORY_ID VARCHAR(100) path '/category/pk',                                                   " );
-		//query.append("   --CATEGORY_DESC VARCHAR(100) path '/category/path',                                                                                                   " );
+	                                                                                         
 		query.append("   CATEGORY_NAME VARCHAR(100) path '/category/name') ias ,                                                                                               " );
 		query.append("   VENDORPORTAL.ADSE_MERCHANDISE_HIERARCHY amh,                                                                                                          " );
 		query.append("   XMLTABLE( 'for $j in $XML_DATA/pim_category/merchandise_category_header                                                                               " );
@@ -3024,4 +3024,32 @@ public class XqueryConstants {
     	
 			return query.toString();
     }
+	
+	
+	public static String getGroupGlobalAttributes(){
+		StringBuilder query = new StringBuilder();
+		
+		query.append("	SELECT                                                        ");
+		query.append("    p.Belk_Exclusive,                                           ");
+		query.append("    p.Channel_Exclusive,                                        ");
+		query.append("    p.BOPIS,                                                    ");
+		query.append("    p.Is_PYG,                                                   ");
+		query.append("    p.is_GWP,                                                   ");
+		query.append("    p.is_PWP,                                                    ");
+		query.append("    p.Supplier_Direct_Fulfillment                               ");
+		query.append("  FROM ADSE_GROUP_CATALOG pet,                                  ");
+		query.append("    XMLTable( 'for $i in $item/pim_entry/entry/Ecomm_Style_Spec ");
+		query.append("	return  $i' passing pet.XML_DATA AS \"item\" 						");
+		query.append("    columns                                                       ");
+		query.append("    Belk_Exclusive VARCHAR2(10) Path 'Belk_Exclusive',            ");
+		query.append("    Channel_Exclusive VARCHAR2(30) path 'Channel_Exclusive',      ");
+		query.append("    Bopis VARCHAR2(60) Path 'BOPIS',                              ");
+		query.append("    Is_PYG VARCHAR2(40) path 'Is_PYG',                            ");
+		query.append("    Is_Gwp VARCHAR2(40) Path 'Is_GWP',                            ");
+		query.append("    Is_PWP VARCHAR2(40) path 'Is_PWP',                         ");
+		query.append("    Supplier_Direct_Fulfillment VARCHAR2(40) path 'Supplier_Direct_Fulfillment' ) p                         ");
+		query.append("    WHERE  pet.mdmid = :groupingId                                ");
+		
+		return query.toString();
+	}
 }

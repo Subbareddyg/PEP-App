@@ -132,7 +132,7 @@
                    		//}	
                         				
                     		
-                    		/* 	var selectedChannelEx="${requestScope.selectedChannelExclusive}";
+                    		var selectedChannelEx="${requestScope.selectedChannelExclusive}";
                        		if (typeof selectedChannelEx != "undefined" && selectedChannelEx != null && selectedChannelEx.trim()!='' ) {   
                            			$("#channelExclId").val("${requestScope.selectedChannelExclusive}").attr('selected', 'selected');
                            			document.getElementById("selectedChannelExclusive").value = selectedChannelEx;
@@ -184,7 +184,7 @@
                        		} else{
                             			$("#bopislId").val('-1').attr('selected', 'selected');
                             			document.getElementById("selectedBopis").value = '-1';
-                       		} */
+                       		}
                        		
              	//Logic for highlighting the selected omni channel color family in its  drop down on change of IPH Drop Down	
              	
@@ -621,6 +621,12 @@
 						$("#btnCopyORIN").attr("disabled", "disabled"); 
 						$("#publisStatusCodeReadyForCopy").attr("disabled", "disabled"); 
 						$("#publisStatusCodePublishToWeb").attr("disabled", "disabled"); 
+								            		  $('#channelExclId').attr("disabled", "disabled");
+		            		  $('#belkExclId').attr("disabled", "disabled");
+		            		  $('#globalGWPId').attr("disabled", "disabled");
+		            		  $('#globalPWPId').attr("disabled", "disabled");
+		            		  $('#globalPYGId').attr("disabled", "disabled");
+		            		  $('#bopislId').attr("disabled", "disabled");
         		  }
             	  
             	  
@@ -1350,7 +1356,7 @@
 			var carsvalue =  $("#selectedCarsBrand").val();
 			
 			//Commented for grouping
-		/* 	var channelExcVal =  $("#selectedChannelExclusive").val();
+		var channelExcVal =  $("#selectedChannelExclusive").val();
 			var belkExcVal =  $("#selectedBelkExclusive").val();
 			
 			var bopisValue  =  $("#selectedBopis").val();
@@ -1358,18 +1364,13 @@
 			 // if(compackValue != 'Complex Pack'){
 		     var selectedGWP =  $("#selectedGWP").val();
 		     var selectedPWP =  $("#selectedPWP").val();
-		     var selectedPYG =  $("#selectedPYG").val(); */
+		     var selectedPYG =  $("#selectedPYG").val();
 		     
-		     
-		     var channelExcVal =  "";
-			var belkExcVal =  "";
-			
-			var bopisValue  =  "";
 			
 			 // if(compackValue != 'Complex Pack'){
-		     var selectedGWP =  "";
+		    /* var selectedGWP =  "";
 		     var selectedPWP =  "";
-		     var selectedPYG =  "";
+		     var selectedPYG =  ""; */
 		     
 		     
 		     
@@ -1845,13 +1846,16 @@
 					//alert("Product Description should be less than 2000 characters");
 					 return;
 				}
-				
+				<c:if test="${contentDisplayForm.styleInformationVO.groupingType == 'CPG'}">
+
 				 var belkExcVal = "";
-				/*  var belkExcVal =  $("#selectedBelkExclusive").val();
+				  var belkExcVal =  $("#selectedBelkExclusive").val();
 			     if(belkExcVal == null || belkExcVal == '-1' || belkExcVal == ''){
-			    	 alert("Please select value for Belk Exclusive");
+					 jAlert('Please select value for Belk Exclusive', 'Alert');
+			    	 
 			    	 return;
-			     } */
+			     }
+				</c:if>
 
 			     /* if(styleOrColor == 'Color'){
 				     var a_drop_down_sel= document.getElementById("a_drop_down_box");
@@ -2419,11 +2423,7 @@ function toggleRows(currentRow, styleId, styleColorId){
 										</div>
 									</div>
 									</c:if>
-								   	<ul class="pep_info" style="font-size: 11px; padding: 0 0 10px !important;">								   	    
-										<li class="txt_attr_name" style="width: 30%;">
-											
-										</li>				
-									</ul> 
+
 									  
 									<ul class="pep_info" style="font-size: 11px; padding: 0 0 10px !important;">
 										<li class="txt_attr_name" style="width: 30%;"><fmt:message key="label.grouping" bundle="${display}"/><c:out value="${contentDisplayForm.styleInformationVO.orin}"/></li>				
@@ -2732,28 +2732,73 @@ function toggleRows(currentRow, styleId, styleColorId){
 							</div>
 							
 							<!-- Copy Attribute section ends here -->
+							<c:if test="${contentDisplayForm.styleInformationVO.groupingType == 'CPG'}">
+							<!--Global Attribute Section starts here  -->	
 						
-							<!-- Grouping Specific Attributes Section starts here -->
-							<!-- <div class="cars_panel x-hidden">
-								<div class="x-panel-header">
-									<fmt:message key="label.groupingSpecificAttributes" bundle="${display}"/>
-								</div>
+							 <div class="cars_panel x-hidden" id="globalAttributeSection">
 								
-								<div class="x-panel-body" style="width: 906px;">
-									<ul class="pep_info">
-										<li><fmt:message key="label.styleNumber" bundle="${display}"/></li>
-										<li><c:out value="${contentDisplayForm.grouping.styleNumber}"/></li>
-									</ul>
-									<ul class="pep_info">
-										<li></li>
-									</ul>
-									<ul class="pep_info">
-										<li><fmt:message key="label.style.description" bundle="${display}"/></li>
-										<li><c:out value="${contentDisplayForm.grouping.styleDescription}"/></li>
-									</ul>
-								</div>
-							</div> -->
-							<!-- Grouping Specific Attributes Section ends here -->
+										<div class="x-panel-header">
+											<fmt:message key="sectionGlobalAttribute" bundle="${display}"/>
+										</div>
+										
+										<div id="ajaxResponseStyleAttribute" class="x-panel-body" style="width:906px;">	
+											
+									<ul class="pep_info" style="font-size: 11px; padding: 0 0 10px !important;">								   	    
+									<li class="txt_attr_name" style="width: 25%;"><b>SDF :</b> <c:out value="${contentDisplayForm.globalAttributesDisplay.sdf}"/></li>											
+										
+									</ul> 
+											<ul class="pep_info" style="font-size: 11px; padding: 0 0 10px !important;">
+												<li class="txt_attr_name" style="width: 30%;"><b>Channel Exclusive : </b> 
+												 <select style="width:50%;height: 27px;" id="channelExclId" name="channelExclId" onclick="javascript:getSelectedChannelExclId(channelExclId)"> 
+													<option id="-1" value="-1">Please Select</option>
+													<option id="Store" value="Store">Store</option>
+													<option id="Ecomm" value="Ecomm">Ecomm</option>
+													<option id="Store and Ecomm" value="Store and Ecomm">Store and Ecomm</option>
+												</select>
+												</li>
+												
+												</li>
+												 <li class="txt_attr_name" style="width: 25%;"><b>BOPIS :</b>
+												 <select style="width:50%;height: 27px;" id="bopislId" name="bopislId" onclick="javascript:getSelectedBopislId(bopislId)"> 
+													<option id="-1" value="-1">Please Select</option>
+													<option id="Yes" value="Yes">Yes</option>
+													<option id="No" value="No">No</option>
+												</select>
+												</li>
+												<li class="txt_attr_name" style="width: 25%;"><b>* Belk Exclusive :</b>
+												 <select style="width:50%;height: 27px;" id="belkExclId" name="belkExclId" onclick="javascript:getSelectedbelkExclId(belkExclId)"> 
+													<option id="-1" value="-1">Please Select</option>
+													<option id="Yes" value="Yes">Yes</option>
+													<option id="No" value="No">No</option>
+												</select>
+												</li>
+											</ul>
+												<ul class="pep_info" style="font-size: 11px; padding: 0 0 10px !important;">
+													<li class="txt_attr_name" style="width: 30%;"><b>* GWP :</b>
+														<select style="width:50%;height: 27px;"  id="globalGWPId" name="globalGWPId" onclick="javascript:getSelectedglobalGWPId(globalGWPId)"> 
+															<option id="No" value="No">No</option>
+															<option id="Yes" value="Yes">Yes</option>
+															
+														</select>
+													</li>
+													<li class="txt_attr_name" style="width: 25%;"><b>* PWP :</b>
+													<select style="width:50%;height: 27px;"  id="globalPWPId" name="globalPWPId" onclick="javascript:getSelectedglobalPWPId(globalPWPId)"> 
+														<option id="No" value="No">No</option>
+														<option id="Yes" value="Yes">Yes</option>
+													</select>
+													</li>
+													<li class="txt_attr_name" style="width: 25%;"><b>* PYG :</b>
+													 <select style="width:50%;height: 27px;"  id="globalPYGId" name="globalPYGId" onclick="javascript:getSelectedglobalPYGId(globalPYGId)"> 
+														<option id="No" value="No">No</option>
+														<option id="Yes" value="Yes">Yes</option>
+													</select>
+													</li>
+												</ul>
+											
+									    </div>	
+							</div>
+							</c:if>
+							
 						
 						
 							<!--groupingComponents Section starts over here  -->					

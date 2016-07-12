@@ -480,6 +480,22 @@ public class ContentServiceImpl implements ContentService {
         return styleAttributes;
     }
 
+    
+    /* (non-Javadoc)
+     * @see com.belk.pep.service.ContentService#getGroupGlobalAttribute(java.lang.String)
+     */
+    @Override
+    public  GlobalAttributesVO getGroupGlobalAttribute(String groupingId)
+            {
+
+        LOGGER.info("****start of  getGroupGolbalAttribute  method****");
+
+        GlobalAttributesVO globalAttribute=null;
+        	globalAttribute = contentDAO.getGroupGlobalAttribute(groupingId);
+        
+        LOGGER.info("****End of  getGroupGolbalAttribute  method****");
+        return globalAttribute;
+    }
 
 
     /* (non-Javadoc)
