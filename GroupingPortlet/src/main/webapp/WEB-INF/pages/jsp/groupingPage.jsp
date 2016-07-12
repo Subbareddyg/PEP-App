@@ -4,7 +4,7 @@
 			<c:out value="${LAN_ID}"/> &nbsp;	 
 			<input type="button"   style="font-weight: bold" name="logout" value="Logout" 
 			    onclick="grouping_logOut('<c:out value="${LAN_ID}"/>'); " />	
-			
+			<input type="hidden" name="userId" value="${LAN_ID}" id="userId" />
 		 </div>
 <div  class="cars_panel x-hidden">
 	<div class="x-panel-header">
@@ -286,6 +286,7 @@
 						<th>Dept#</th>
 						<th>Dept Description</th>
 					<tr>
+
 				</thead>
 				<tbody id="dept-search-result">
 					
@@ -438,6 +439,7 @@
 <script type="text/javascript" src="<%=response.encodeURL(request.getContextPath()+"/js/jquery.min.js")%>"></script>
 <script type="text/javascript" src="<%=response.encodeURL(request.getContextPath()+"/js/jquery-ui.js")%>"></script>
 <script type="text/javascript" src="<%=response.encodeURL(request.getContextPath()+"/js/constants.js")%>"></script>
+<script type="text/javascript" src="<%=response.encodeURL(request.getContextPath()+"/js/idle-timer.min.js")%>"></script>
 <script>
 	app.Global.defaults.contextPath = '<%=response.encodeURL(request.getContextPath())%>';
 </script>

@@ -78,6 +78,37 @@ var app = app || {};
 			}
 		},
 		
+		handleAutoLogout: function(){
+			/** section to handle page timeout and auto logout after session timeout
+			*
+			*/			
+			
+			$.idleTimer(app.Global.defaults.pageTimeOutMS);
+			
+			$(document).bind("idle.idleTimer", function(){
+				//setting timer to auto logout and redirect if the user still does not interact
+				setTimeout(function(){grouping_logOut($('#userId').val())}, app.Global.defaults.logOutTimeoutMS - app.Global.defaults.pageTimeOutMS);
+				
+				//dialog to show page timeout
+				$('#error-massege').html('Your session has been ended due to inactivity');
+				$('#errorBox').dialog({
+				   autoOpen: true, 
+				   modal: true,
+				   resizable: false,
+				   title : 'Page Timeout',
+				   dialogClass: "dlg-custom",
+				   close: function(){
+					grouping_logOut($('#userId').val());  
+				   },
+				   buttons: {
+					  Close: function() {
+						  $(this).dialog("close");
+					  }
+				   },
+				});
+			});
+		},
+		
 		attachControls: function(){
 			var dlgCommonAttr = {
 				modal: true,
@@ -691,8 +722,9 @@ var app = app || {};
 								$('#s-grouping-dept, #btnDlgDept, #s-grouping-class, #btnDlgClass').prop('disabled', false);
 							});
 					}
-					
-				});
+				}); 
+				
+				_super.handleAutoLogout();
 				
 			}catch(ex){
 				console.log(ex.message);
@@ -1088,6 +1120,7 @@ var app = app || {};
 		
 		init: function(){
 			//this.attachControls();
+			app.GroupLandingApp.handleAutoLogout();
 			this.handleEvents();
 		},
 	}

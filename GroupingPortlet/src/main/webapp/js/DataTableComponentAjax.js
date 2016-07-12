@@ -244,7 +244,9 @@ var app = app || {};
 				if(domItem.hasClass('parent-stylenode-expand-ajax')){
 					domItem.trigger('click', {doShow: false, doCheckAll: true});
 				}else if(domItem.hasClass('parent-stylenode-collapse-ajax')){
-					
+					_super.$(_super.config.dtContainer)
+						.find('input[type=checkbox][data-generator-id=' + _super.$(this).data('chknode-id') + ']:enabled')
+						.prop('checked', true);
 				}
 			}else{
 				_super.$(_super.config.dtContainer)

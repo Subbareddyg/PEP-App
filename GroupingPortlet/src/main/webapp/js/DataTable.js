@@ -50,6 +50,10 @@
 			this.data = data;
 		},
 		
+		getTotalRecords: function(){
+			return this.totalRecords;
+		},
+		
 		template: function(data){
 			return this.$(this.config.rowTemplateId).length ? this._.template($(this.config.rowTemplateId).html(), null,  {
 				interpolate :  /\{\{\=(.+?)\}\}/g,
@@ -270,25 +274,6 @@
 			//delegate to handle record limit per page
 			_super.$(this.config.dtContainer).on('change', '.record-limit', function(e){
 				_super.handleRecordLimit.call(this, e, _super);
-			});
-			
-			//delegate to handle priority number validation
-			_super.$(this.config.dtContainer).on('keyup', '.tree', function(){
-				if(!/^[0-9]{1,}$/.test(_super.$(this).val().trim())){
-					_super.$(this).val('');
-				}
-			});
-			
-			//delegate to handle priority number validation
-			_super.$(this.config.dtContainer).on('blur', '.tree', function(){
-				if(_super.$(this).val().trim() == 0 || _super.$(this).val().trim() > _super.totalRecords){
-					if(_super.totalRecords == 1)
-						alert('Priority should be only 1');
-					else
-						alert('Priority should have to be between 1 to ' + _super.totalRecords);
-					
-					_super.$(this).val('');
-				}
 			});
 		},
 		
