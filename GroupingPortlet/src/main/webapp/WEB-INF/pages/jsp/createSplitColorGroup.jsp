@@ -4,7 +4,7 @@
 			<c:out value="${LAN_ID}"/> &nbsp;	 
 			<input type="button"   style="font-weight: bold" name="logout" value="Logout" 
 			    onclick="grouping_logOut('<c:out value="${LAN_ID}"/>'); " />	
-			
+			<input type="hidden" name="userId" value="${LAN_ID}" id="userId" />
 		 </div>
 <div  class="cars_panel x-hidden">
 	<div class="x-panel-header">
@@ -181,7 +181,7 @@
 <!-- div loading starts-->
 <div class="overlay_pageLoading hidden"><img src="<%=response.encodeURL(request.getContextPath())%>/img/loading.gif" alt="Loading.."></div>
 <!-- div loading ends-->
-
+<script type="text/javascript" src="<%=response.encodeURL(request.getContextPath()+"/js/idle-timer.min.js")%>"></script>
 <!-- Component Table Row Template ends -->
 <script type="text/javascript" src="<%=response.encodeURL(request.getContextPath()+"/js/underscore-min.js")%>"></script>
 <script type="text/javascript" src="<%=response.encodeURL(request.getContextPath()+"/js/jquery.twbsPagination.min.js")%>"></script>
