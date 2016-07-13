@@ -817,7 +817,7 @@ public class XqueryConstants {
 			final String classNoForInSearch,	final String supplierSiteIdSearch, final String upcNoSearch, 
 			final String deptNoSearch, final String classNoSearch) {
 		StringBuilder getNewCPGDetails = new StringBuilder();
-		getNewCPGDetails.append("	SELECT /*+ index(SEARCH ITEM_CTG_IDX8)*/                                     ");
+		getNewCPGDetails.append("	SELECT                                     ");
 		getNewCPGDetails.append("	SEARCH.PARENT_MDMID,                                                         ");
 		getNewCPGDetails.append("	SEARCH.MDMID,                                                                ");
 		getNewCPGDetails.append("	SEARCH.ENTRY_TYPE, SEARCH.CLASS_ID,                                           ");
@@ -858,7 +858,7 @@ public class XqueryConstants {
 			getNewCPGDetails.append(" AND SEARCH.PRIMARYSUPPLIERVPN =:styleIdSql ");
 		} 
 		if (null != styleOrin && !("").equals(styleOrin.trim())) {
-			getNewCPGDetails.append(" AND NVL(SEARCH.PARENT_MDMID,SEARCH.MDMID) =:mdmidSql ");
+			getNewCPGDetails.append(" AND ( SEARCH.PARENT_MDMID = :mdmidSql OR SEARCH.MDMID = :mdmidSql ) ");
 		}
 		if (null != deptNoSearch && !("").equals(deptNoSearch.trim())) {
 			getNewCPGDetails.append(" AND SEARCH.DEPT_ID IN (" + deptNoForInSearch + ")");
@@ -1032,7 +1032,7 @@ public class XqueryConstants {
 		LOGGER.info("Entering getRegularBeautySearchResult() in Grouping XQueryConstant class.");
 		int count = 0;
 		StringBuilder getRegularBeautySearchResult = new StringBuilder();
-		getRegularBeautySearchResult.append(" SELECT /*+ index(SEARCH ITEM_CTG_IDX8)*/ DISTINCT SEARCH.PARENT_MDMID, ");
+		getRegularBeautySearchResult.append(" SELECT DISTINCT SEARCH.PARENT_MDMID, ");
 		getRegularBeautySearchResult.append("   SEARCH.MDMID,                                                                   ");
 		getRegularBeautySearchResult.append("   SEARCH.ENTRY_TYPE,                                                              ");
 		getRegularBeautySearchResult.append("   SEARCH.CLASS_ID,                                                                ");
@@ -1071,7 +1071,7 @@ public class XqueryConstants {
 			count = 1;
 		}
 		if (!StringUtils.isEmpty(styleOrin)) {
-			getRegularBeautySearchResult.append("   AND NVL(SEARCH.PARENT_MDMID,SEARCH.MDMID) =:mdmidSql ");
+			getRegularBeautySearchResult.append("   AND (SEARCH.PARENT_MDMID = :mdmidSql OR SEARCH.MDMID = :mdmidSql )");
 			count = 1;
 		}	
 		if (!StringUtils.isEmpty(deptNoSearch)) {
