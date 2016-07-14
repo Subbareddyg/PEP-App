@@ -851,14 +851,14 @@ public class XqueryConstants {
 		getNewCPGDetails.append("	WHERE                                                                        ");
 		getNewCPGDetails.append("	1=1                                                                          ");
 		getNewCPGDetails.append("	AND PET.MDMID=SEARCH.MDMID                                                   ");
-		getNewCPGDetails.append("	AND SEARCH.DELETED_FLAG ='false' AND SEARCH.ENTRY_TYPE in ('Style','StyleColor')    ");
+		getNewCPGDetails.append("	AND SEARCH.DELETED_FLAG ='false' AND SEARCH.ENTRY_TYPE = 'Style'    ");
 
 
 		if (null != vendorStyleNo && !("").equals(vendorStyleNo.trim())) {
 			getNewCPGDetails.append(" AND SEARCH.PRIMARYSUPPLIERVPN =:styleIdSql ");
 		} 
 		if (null != styleOrin && !("").equals(styleOrin.trim())) {
-			getNewCPGDetails.append(" AND ( SEARCH.PARENT_MDMID = :mdmidSql OR SEARCH.MDMID = :mdmidSql ) ");
+			getNewCPGDetails.append(" AND SEARCH.MDMID = :mdmidSql  ");
 		}
 		if (null != deptNoSearch && !("").equals(deptNoSearch.trim())) {
 			getNewCPGDetails.append(" AND SEARCH.DEPT_ID IN (" + deptNoForInSearch + ")");
@@ -870,7 +870,7 @@ public class XqueryConstants {
 			getNewCPGDetails.append(" AND SEARCH.PRIMARY_SUPPLIER_ID =:supplierIdSql ");
 		}
 		if (null != upcNoSearch && !("").equals(upcNoSearch.trim())) {
-			getNewCPGDetails.append(" AND NVL(SEARCH.PARENT_MDMID,SEARCH.MDMID)  = " +
+			getNewCPGDetails.append(" AND SEARCH.MDMID  = " +
 					"(SELECT " +
 					"CASE                                " +
 					"when PRIMARY_UPC is null then MDMID          " +    
@@ -878,7 +878,69 @@ public class XqueryConstants {
 					"else     PARENT_MDMID   end PARENT_MDMID " +
 					"FROM ADSE_ITEM_CATALOG WHERE NUMBER_04 =:upcNoSql) ");
 		}
-		getNewCPGDetails.append(" ORDER BY SEARCH.MDMID");
+		getNewCPGDetails.append("	UNION ALL                                ");
+		getNewCPGDetails.append("	SELECT                                     ");
+		getNewCPGDetails.append("	SEARCH.PARENT_MDMID,                                                         ");
+		getNewCPGDetails.append("	SEARCH.MDMID,                                                                ");
+		getNewCPGDetails.append("	SEARCH.ENTRY_TYPE, SEARCH.CLASS_ID,                                           ");
+		getNewCPGDetails.append("	SEARCH.PRIMARYSUPPLIERVPN,                                                   ");
+		getNewCPGDetails.append("	PET_XML.PRODUCT_NAME,                                                        ");
+		getNewCPGDetails.append("	PET_XML.COLOR_CODE,                                                          ");
+		getNewCPGDetails.append("  PET.EXIST_IN_GROUP ALREADY_IN_GROUP,                                    ");
+		getNewCPGDetails.append("	PET_XML.COLOR_DESC,                                                           ");
+		getNewCPGDetails.append("	  CASE WHEN AGCM.MDMID is NULL THEN 'N'                                      ");
+		getNewCPGDetails.append("	  ELSE 'Y' END EXIST_IN_SAME_GROUP                                           ");
+		getNewCPGDetails.append("	FROM                                                                         ");
+		getNewCPGDetails.append("	ADSE_PET_CATALOG PET,                                                        ");
+		getNewCPGDetails.append("	XMLTABLE(                                                                    ");
+		getNewCPGDetails.append("	  'let                                                                       ");
+		getNewCPGDetails.append("	  $colordesc:= /pim_entry/entry/Ecomm_StyleColor_Spec/NRF_Color_Description, ");
+		getNewCPGDetails.append("	  $colorCode:= /pim_entry/entry/Ecomm_StyleColor_Spec/NRF_Color_Code         ");
+		getNewCPGDetails.append("	  return                                                                     ");
+		getNewCPGDetails.append("	  <COLOR>                                                                    ");
+		getNewCPGDetails.append("	  <COLOR_CODE>{$colorCode}</COLOR_CODE>                                      ");
+		getNewCPGDetails.append("	  <COLOR_DESC>{$colordesc}</COLOR_DESC>                                      ");
+		getNewCPGDetails.append("	  <PRODUCT_NAME>{/pim_entry/entry/Ecomm_Style_Spec/Product_Name}</PRODUCT_NAME>     ");
+		getNewCPGDetails.append("	  </COLOR>'                                                                  ");
+		getNewCPGDetails.append("	  passing Pet.XML_DATA Columns                                               ");
+		getNewCPGDetails.append("	  COLOR_CODE VARCHAR2(5) path '/COLOR/COLOR_CODE',                           ");
+		getNewCPGDetails.append("	  COLOR_DESC VARCHAR2(20) path '/COLOR/COLOR_DESC',                          ");
+		getNewCPGDetails.append("	  PRODUCT_NAME VARCHAR2(20) path '/COLOR/PRODUCT_NAME' ) PET_XML,            ");
+		getNewCPGDetails.append("	  ADSE_ITEM_CATALOG SEARCH                                                   ");
+		getNewCPGDetails.append("	  LEFT  OUTER JOIN ADSE_GROUP_CHILD_MAPPING AGCM         			    ");
+		getNewCPGDetails.append("	    ON SEARCH.MDMID =AGCM.COMPONENT_STYLE_ID             				");
+		getNewCPGDetails.append("	    AND AGCM.MDMID = :groupIdSql                 				");
+		getNewCPGDetails.append("	WHERE                                                                        ");
+		getNewCPGDetails.append("	1=1                                                                          ");
+		getNewCPGDetails.append("	AND PET.MDMID=SEARCH.MDMID                                                   ");
+		getNewCPGDetails.append("	AND SEARCH.DELETED_FLAG ='false' AND SEARCH.ENTRY_TYPE = 'StyleColor'    ");
+
+
+		if (null != vendorStyleNo && !("").equals(vendorStyleNo.trim())) {
+			getNewCPGDetails.append(" AND SEARCH.PRIMARYSUPPLIERVPN =:styleIdSql ");
+		} 
+		if (null != styleOrin && !("").equals(styleOrin.trim())) {
+			getNewCPGDetails.append(" AND SEARCH.PARENT_MDMID = :mdmidSql ");
+		}
+		if (null != deptNoSearch && !("").equals(deptNoSearch.trim())) {
+			getNewCPGDetails.append(" AND SEARCH.DEPT_ID IN (" + deptNoForInSearch + ")");
+		}
+		if (null != classNoSearch && !("").equals(classNoSearch.trim())) {
+			getNewCPGDetails.append(" AND SEARCH.CLASS_ID IN (" + classNoForInSearch + ")");
+		}
+		if (null != supplierSiteIdSearch && !("").equals(supplierSiteIdSearch.trim())) {
+			getNewCPGDetails.append(" AND SEARCH.PRIMARY_SUPPLIER_ID =:supplierIdSql ");
+		}
+		if (null != upcNoSearch && !("").equals(upcNoSearch.trim())) {
+			getNewCPGDetails.append(" AND SEARCH.PARENT_MDMID  = " +
+					"(SELECT " +
+					"CASE                                " +
+					"when PRIMARY_UPC is null then MDMID          " +    
+					"when PRIMARY_UPC = ' '  then MDMID         " +   
+					"else     PARENT_MDMID   end PARENT_MDMID " +
+					"FROM ADSE_ITEM_CATALOG WHERE NUMBER_04 =:upcNoSql) ");
+		}
+		getNewCPGDetails.append(" ORDER BY MDMID");
 
 
 		return getNewCPGDetails.toString();
@@ -975,7 +1037,7 @@ public class XqueryConstants {
 		getNewGBSDetails.append("		    SIZE_CODE VARCHAR2(20) path '/SPEC/SIZE_CODE',                                          "); 
 		getNewGBSDetails.append("		    NAME VARCHAR2(50) path '/SPEC/NAME') ITEM_XML                                           "); 
 		getNewGBSDetails.append("		WHERE                                                                                       "); 
-		getNewGBSDetails.append("		    ITEM.ENTRY_TYPE in ('SKU')                                                              ");
+		getNewGBSDetails.append("		    ITEM.ENTRY_TYPE = 'SKU'                                                              ");
 		getNewGBSDetails.append("		    AND ITEM.DELETED_FLAG= 'false'                                                          "); 
 		getNewGBSDetails.append("		    AND PET.MDMID=ITEM.PARENT_MDMID  AND EXISTS (SELECT MDMID FROM ADSE_PET_CATALOG APC WHERE APC.MDMID = ITEM.MDMID)       ");
 
@@ -983,7 +1045,7 @@ public class XqueryConstants {
 			getNewGBSDetails.append(" AND ITEM.PRIMARYSUPPLIERVPN =:styleIdSql ");
 		} 
 		if (null != styleOrin && !("").equals(styleOrin.trim())) {
-			getNewGBSDetails.append(" AND NVL(ITEM.PARENT_MDMID,ITEM.MDMID) =:mdmidSql ");
+			getNewGBSDetails.append(" AND (ITEM.PARENT_MDMID =:mdmidSql OR ITEM.MDMID = :mdmidSql) ");
 		}
 		if (null != deptNoSearch && !("").equals(deptNoSearch.trim())) {
 			getNewGBSDetails.append(" AND ITEM.DEPT_ID IN (" + deptNoForInSearch + ")");
