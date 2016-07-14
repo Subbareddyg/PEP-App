@@ -2326,74 +2326,74 @@ public class XqueryConstants {
     }
     
     public String getGroupingInfoAttribute(){
-    	System.out.println("XQueryConstants getGroupingInfoAttribute : Starts");
-    	
-    	StringBuffer queryBuffer = new StringBuffer();
-    	
-    	queryBuffer.append("    SELECT                                                                                                                                  ");
-    	queryBuffer.append("    AGC.MDMID GROUP_ID,                                                                                                                     ");
-    	queryBuffer.append("    AGC.DEF_DEPT_ID DEPT_ID,                                                                                                                ");
-    	queryBuffer.append("    AGC.DEF_PRIMARYSUPPLIERVPN VENDOR_STYLE,                                                                                                ");
-    	queryBuffer.append("    AGC.ENTRY_TYPE GROUP_TYPE,                                                                                                              ");
-    	queryBuffer.append("  s.VenId,                                                                                                                                  ");
-    	queryBuffer.append("    s.VenName,                                                                                                                              ");
-    	queryBuffer.append("    s.OmnichannelIndicator,                                                                                                                 ");
-    	queryBuffer.append("    AIC.CLASS_ID,                                                                                                                           ");
-    	queryBuffer.append("  CASE                                                                                                                                      ");
-    	queryBuffer.append("        WHEN s.OmnichannelIndicator = 'Y'                                                                                                   ");
-    	queryBuffer.append("        AND (Sample_Image           = 'Image'                                                                                               ");
-    	queryBuffer.append("        OR Sample_Image             = 'Both')                                                                                               ");
-    	queryBuffer.append("        AND Image_Indicator         = 'true'                                                                                                ");
-    	queryBuffer.append("        THEN 'Y'                                                                                                                            ");
-    	queryBuffer.append("        ELSE 'N'                                                                                                                            ");
-    	queryBuffer.append("      END Vendor_Image,                                                                                                                     ");
-    	queryBuffer.append("      CASE                                                                                                                                  ");
-    	queryBuffer.append("        WHEN s.OmnichannelIndicator = 'Y'                                                                                                   ");
-    	queryBuffer.append("        AND (Sample_Image           = 'Sample'                                                                                              ");
-    	queryBuffer.append("        OR Sample_Image             = 'Both')                                                                                               ");
-    	queryBuffer.append("        AND Sample_Indicator        = 'true'                                                                                                ");
-    	queryBuffer.append("        THEN 'Y'                                                                                                                            ");
-    	queryBuffer.append("        ELSE 'N'                                                                                                                            ");
-    	queryBuffer.append("      END Vendor_Sample,                                                                                                                    ");
-    	queryBuffer.append("    AGC.COMPLETION_DATE,                                                                                                                     ");
-    	queryBuffer.append("    AGC.GROUP_CONTENT_STATUS_CODE,                                                                                                                     ");
-    	
-    	queryBuffer.append("    AGC.GROUP_IMAGE_STATUS_CODE,                                                                                                                     ");
-    	queryBuffer.append("    AGC.GROUP_OVERALL_STATUS_CODE                                                                                                                     ");
-    	
-    	queryBuffer.append("    FROM VENDORPORTAL.ADSE_GROUP_CATALOG AGC LEFT OUTER join                                                                                ");
-    	queryBuffer.append("    VENDORPORTAL.ADSE_SUPPLIER_CATALOG sup on SUP.MDMID=AGC.DEF_PRIMARY_SUPPLIER_ID                                                         ");
-    	queryBuffer.append("      LEFT OUTER JOIN                                                                                                                       ");
-    	queryBuffer.append("        VENDORPORTAL.ADSE_GROUP_CHILD_MAPPING AGCM  ON                                                                                      ");
-    	queryBuffer.append("        AGCM.MDMID=AGC.MDMID AND AGCM.COMPONENT_DEFAULT='true'                                                                              ");
-    	queryBuffer.append("      LEFT OUTER JOIN VENDORPORTAL.ADSE_ITEM_CATALOG AIC                                                                                    ");
-    	queryBuffer.append("        on AIC.MDMID = AGCM.COMPONENT_STYLE_ID                                                                                              ");
-    	queryBuffer.append("      LEFT OUTER JOIN VENDORPORTAL.ADSE_PET_CATALOG APC                                                                                     ");
-    	queryBuffer.append("        ON APC.MDMID=AIC.MDMID,                                                                                                             ");
-    	queryBuffer.append("      XMLTABLE('for $i in $pet/pim_entry/entry  return                                                                                      ");
-    	queryBuffer.append("      <out>                                                                                                                                 ");
-    	queryBuffer.append("        <img>{if(count($i/Image_Sec_Spec/Images//*) gt 0) then \"Y\" else \"N\"}</img>                                                          ");
-    	queryBuffer.append("        <sample>{if(count($i/Image_Sec_Spec/Sample//*) gt 0) then \"Y\" else \"N\"}</sample>                                                    ");
-    	queryBuffer.append("      </out>'                                                                                                                               ");
-    	queryBuffer.append("      passing APC.xml_data AS \"pet\"                                                                                                         ");
-    	queryBuffer.append("      columns                                                                                                                               ");
-    	queryBuffer.append("        Vendor_Image VARCHAR2(1) path '/out/img',                                                                                           ");
-    	queryBuffer.append("        Vendor_Sample VARCHAR2(1) path '/out/sample') (+)PET_XML,                                                                           ");
-    	queryBuffer.append("        XMLTABLE('for $i in $XML_DATA/pim_entry/entry   return $i' passing sup.xml_data AS \"XML_DATA\"                                       ");
-    	queryBuffer.append("                    COLUMNS Id VARCHAR2(20) path 'Supplier_Ctg_Spec/Id',                                                                                  ");
-    	queryBuffer.append("                    VenName VARCHAR2(20) path 'Supplier_Ctg_Spec/Name',                                                                                   ");
-    	queryBuffer.append("                    VenId VARCHAR2(20) path 'Supplier_Ctg_Spec/VEN_Id',                                                                                   ");
-    	queryBuffer.append("                    Site_Name VARCHAR2(50) Path 'Supplier_Ctg_Spec/Name',                                                                                 ");
-    	queryBuffer.append("                    Sample_Image VARCHAR2(50) Path 'Supplier_Site_Spec/Omni_Channel/Vendor_Image_or_Sample_Indicator',                                    ");
-    	queryBuffer.append("                    Image_Indicator VARCHAR2(50) Path 'Supplier_Site_Spec/Omni_Channel/Image_Certification',                                              ");
-    	queryBuffer.append("                    Sample_Indicator VARCHAR2(50) Path 'Supplier_Site_Spec/Omni_Channel/Return_Sample_Indicator',                                         ");
-    	queryBuffer.append("                    OmnichannelIndicator VARCHAR(2) path 'if (Supplier_Site_Spec/Omni_Channel/Omni_Channel_Indicator eq \"true\") then \"Y\" else \"N\"' ) (+)s ");
-    	queryBuffer.append("  WHERE AGC.MDMID=:groupId");
+        System.out.println("XQueryConstants getGroupingInfoAttribute : Starts");
+        
+        StringBuffer queryBuffer = new StringBuffer();
+        
+        queryBuffer.append("    SELECT                                                                                                                                  ");
+        queryBuffer.append("    AGC.MDMID GROUP_ID,                                                                                                                     ");
+        queryBuffer.append("    AGC.DEF_DEPT_ID DEPT_ID,                                                                                                                ");
+        queryBuffer.append("    AGC.DEF_PRIMARYSUPPLIERVPN VENDOR_STYLE,                                                                                                ");
+        queryBuffer.append("    AGC.ENTRY_TYPE GROUP_TYPE,                                                                                                              ");
+        queryBuffer.append("  s.VenId,                                                                                                                                  ");
+        queryBuffer.append("    s.VenName,                                                                                                                              ");
+        queryBuffer.append("    s.OmnichannelIndicator,                                                                                                                 ");
+        queryBuffer.append("    AIC.CLASS_ID,                                                                                                                           ");
+        queryBuffer.append("  CASE                                                                                                                                      ");
+        queryBuffer.append("        WHEN s.OmnichannelIndicator = 'Y'                                                                                                   ");
+        queryBuffer.append("        AND (Sample_Image           = 'Image'                                                                                               ");
+        queryBuffer.append("        OR Sample_Image             = 'Both')                                                                                               ");
+        queryBuffer.append("        AND Image_Indicator         = 'true'                                                                                                ");
+        queryBuffer.append("        THEN 'Y'                                                                                                                            ");
+        queryBuffer.append("        ELSE 'N'                                                                                                                            ");
+        queryBuffer.append("      END Vendor_Image,                                                                                                                     ");
+        queryBuffer.append("      CASE                                                                                                                                  ");
+        queryBuffer.append("        WHEN s.OmnichannelIndicator = 'Y'                                                                                                   ");
+        queryBuffer.append("        AND (Sample_Image           = 'Sample'                                                                                              ");
+        queryBuffer.append("        OR Sample_Image             = 'Both')                                                                                               ");
+        queryBuffer.append("        AND Sample_Indicator        = 'true'                                                                                                ");
+        queryBuffer.append("        THEN 'Y'                                                                                                                            ");
+        queryBuffer.append("        ELSE 'N'                                                                                                                            ");
+        queryBuffer.append("      END Vendor_Sample,                                                                                                                    ");
+        queryBuffer.append("    AGC.COMPLETION_DATE,                                                                                                                     ");
+        queryBuffer.append("    AGC.GROUP_CONTENT_STATUS_CODE,                                                                                                                     ");
+        
+        queryBuffer.append("    AGC.GROUP_IMAGE_STATUS_CODE,                                                                                                                     ");
+        queryBuffer.append("    AGC.GROUP_OVERALL_STATUS_CODE                                                                                                                     ");
+        
+        queryBuffer.append("    FROM VENDORPORTAL.ADSE_GROUP_CATALOG AGC LEFT OUTER join                                                                                ");
+        queryBuffer.append("    VENDORPORTAL.ADSE_SUPPLIER_CATALOG sup on SUP.MDMID=AGC.DEF_PRIMARY_SUPPLIER_ID                                                         ");
+        queryBuffer.append("      LEFT OUTER JOIN                                                                                                                       ");
+        queryBuffer.append("        VENDORPORTAL.ADSE_GROUP_CHILD_MAPPING AGCM  ON                                                                                      ");
+        queryBuffer.append("        AGCM.MDMID=AGC.MDMID AND AGCM.COMPONENT_DEFAULT='true'                                                                              ");
+        queryBuffer.append("      LEFT OUTER JOIN VENDORPORTAL.ADSE_ITEM_CATALOG AIC                                                                                    ");
+        queryBuffer.append("        on AIC.MDMID = AGCM.COMPONENT_STYLE_ID                                                                                              ");
+        queryBuffer.append("      LEFT OUTER JOIN VENDORPORTAL.ADSE_PET_CATALOG APC                                                                                     ");
+        queryBuffer.append("        ON APC.MDMID=AIC.MDMID,                                                                                                             ");
+        queryBuffer.append("      XMLTABLE('for $i in $pet/pim_entry/entry  return                                                                                      ");
+        queryBuffer.append("      <out>                                                                                                                                 ");
+        queryBuffer.append("        <img>{if(count($i/Image_Sec_Spec/Images//*) gt 0) then \"Y\" else \"N\"}</img>                                                          ");
+        queryBuffer.append("        <sample>{if(count($i/Image_Sec_Spec/Sample//*) gt 0) then \"Y\" else \"N\"}</sample>                                                    ");
+        queryBuffer.append("      </out>'                                                                                                                               ");
+        queryBuffer.append("      passing APC.xml_data AS \"pet\"                                                                                                         ");
+        queryBuffer.append("      columns                                                                                                                               ");
+        queryBuffer.append("        Vendor_Image VARCHAR2(1) path '/out/img',                                                                                           ");
+        queryBuffer.append("        Vendor_Sample VARCHAR2(1) path '/out/sample') (+)PET_XML,                                                                           ");
+        queryBuffer.append("        XMLTABLE('for $i in $XML_DATA/pim_entry/entry   return $i' passing sup.xml_data AS \"XML_DATA\"                                       ");
+        queryBuffer.append("                    COLUMNS Id VARCHAR2(20) path 'Supplier_Ctg_Spec/Id',                                                                                  ");
+        queryBuffer.append("                    VenName VARCHAR2(20) path 'Supplier_Ctg_Spec/Name',                                                                                   ");
+        queryBuffer.append("                    VenId VARCHAR2(20) path 'Supplier_Ctg_Spec/VEN_Id',                                                                                   ");
+        queryBuffer.append("                    Site_Name VARCHAR2(50) Path 'Supplier_Ctg_Spec/Name',                                                                                 ");
+        queryBuffer.append("                    Sample_Image VARCHAR2(50) Path 'Supplier_Site_Spec/Omni_Channel/Vendor_Image_or_Sample_Indicator',                                    ");
+        queryBuffer.append("                    Image_Indicator VARCHAR2(50) Path 'Supplier_Site_Spec/Omni_Channel/Image_Certification',                                              ");
+        queryBuffer.append("                    Sample_Indicator VARCHAR2(50) Path 'Supplier_Site_Spec/Omni_Channel/Return_Sample_Indicator',                                         ");
+        queryBuffer.append("                    OmnichannelIndicator VARCHAR(2) path 'if (Supplier_Site_Spec/Omni_Channel/Omni_Channel_Indicator eq \"true\") then \"Y\" else \"N\"' ) (+)s ");
+        queryBuffer.append("  WHERE AGC.MDMID=:groupId");
 
-    	
-    	String query = queryBuffer.toString();
-    	
-    	return query;
+        
+        String query = queryBuffer.toString();
+        
+        return query;
     }
     
     /**
@@ -2402,27 +2402,27 @@ public class XqueryConstants {
      * @return query
      */
     public String getGroupDepartmentDetails(String departmentId, String classId){
-    	StringBuffer buff = new StringBuffer();
-    	
-    	buff.append(" SELECT d.Name DEPT_DESC, c.Name CLASS_DESC FROM	");
-    	buff.append(" Vendorportal.Adse_Merchandise_Hierarchy AmC,	");
-    	buff.append(" Vendorportal.Adse_Merchandise_Hierarchy AmD,	");
-    	buff.append(" Xmltable('$i/pim_category/entry/Merchandise_Hier_Spec' Passing Amc.Xml_Data AS	");
-    	buff.append(" \"i\" Columns RMS_ID VARCHAR(10) path 'Identifiers/RMS_Id',	");
-    	buff.append(" Name VARCHAR(100) Path 'Name')C,	");
-    	buff.append(" Xmltable('$i/pim_category/entry/Merchandise_Hier_Spec' Passing AmD.Xml_Data AS	");
-    	buff.append(" \"i\" Columns RMS_ID VARCHAR(10) path 'Identifiers/RMS_Id',	");
-    	buff.append(" Name VARCHAR(100) Path 'Name')D	");
-    	buff.append(" WHERE AmD.Entry_Type='4'	");
-    	buff.append(" AND AmC.Entry_Type  ='5'	");
-    	buff.append(" AND C.rms_id = '");
-    	buff.append(classId);
-    	buff.append("'");
-    	buff.append(" AND D.rms_id = '");
-    	buff.append(departmentId);
-    	buff.append("'");
-    	
-    	return buff.toString();
+        StringBuffer buff = new StringBuffer();
+        
+        buff.append(" SELECT d.Name DEPT_DESC, c.Name CLASS_DESC FROM   ");
+        buff.append(" Vendorportal.Adse_Merchandise_Hierarchy AmC,  ");
+        buff.append(" Vendorportal.Adse_Merchandise_Hierarchy AmD,  ");
+        buff.append(" Xmltable('$i/pim_category/entry/Merchandise_Hier_Spec' Passing Amc.Xml_Data AS    ");
+        buff.append(" \"i\" Columns RMS_ID VARCHAR(10) path 'Identifiers/RMS_Id',   ");
+        buff.append(" Name VARCHAR(100) Path 'Name')C,  ");
+        buff.append(" Xmltable('$i/pim_category/entry/Merchandise_Hier_Spec' Passing AmD.Xml_Data AS    ");
+        buff.append(" \"i\" Columns RMS_ID VARCHAR(10) path 'Identifiers/RMS_Id',   ");
+        buff.append(" Name VARCHAR(100) Path 'Name')D   ");
+        buff.append(" WHERE AmD.Entry_Type='4'  ");
+        buff.append(" AND AmC.Entry_Type  ='5'  ");
+        buff.append(" AND C.rms_id = '");
+        buff.append(classId);
+        buff.append("'");
+        buff.append(" AND D.rms_id = '");
+        buff.append(departmentId);
+        buff.append("'");
+        
+        return buff.toString();
     }
     
     /**
@@ -2430,128 +2430,128 @@ public class XqueryConstants {
      * @return OMNICHANNEL_BRAND_QUERY
      */
     public String getGroupingOmniChannelBrand(){
-		    	final String OMNICHANNEL_BRAND_QUERY = "	SELECT OMNI_BRANDS,	 "
-	+ "		 OMNI_BRANDS_DESCRIPTION,	                 	 "
-	+ "		 OMNI_BRAND,		                         	 "
-	+ "		 OMNI_GROUP_BRAND,		                     	 "
-	+ "		 SUPPLIER,		                             	 "
-	+ "		 CONTAINER_TYPE,		                     	 "
-	+ "		 ORIN,	                                     	 "
-	+ "		 ENTRY_TYPE                                  	 "
-    + "   FROM (SELECT DISTINCT RF.MDMID OMNI_BRANDS,	 	 "
-	+ "		 RF.THEVALUE OMNI_BRANDS_DESCRIPTION,	     	 "
-	+ "		 T.OMNICODE OMNI_BRAND,		                 	 "
-	+ "		 T.OMNIGROUPCODE OMNI_GROUP_BRAND,		     	 "
-	+ "		 RF.PARENT_MDMID SUPPLIER,		             	 "
-	+ "		 RF.CONTAINER CONTAINER_TYPE,		         	 "
-	+ "		 AGC.MDMID ORIN,	                         	 "
-	+ "		 AGC.ENTRY_TYPE		                         	 "
-	+ "			FROM ADSE_REFERENCE_DATA RF,	         	 "
-	+ "		 	VENDORPORTAL.ADSE_GROUP_CATALOG AGC LEFT OUTER JOIN ADSE_GROUP_CHILD_MAPPING AGCM		 "	
-	+ "		 	ON AGC.MDMID=AGCM.MDMID AND AGCM.PEP_COMPONENT_TYPE<>'Group'					    	 "
-	+ "		 	LEFT OUTER JOIN ADSE_ITEM_CATALOG AIC ON AIC.MDMID=AGCM.COMPONENT_STYLE_ID,	        	 "
-	+ "			 XMLTABLE( '                                                                        	 "
-	+ "		 let $code := $XML_DATA/pim_entry/entry/Ecomm_Style_Spec/OmniChannelBrand,              	 "
-	+ "			$groupcode:=$XML_DATA/pim_entry/entry/Collection_Spec/OmniChannelBrand              	 "
-	+ "		 return                                                                                 	 "
-	+ "		 <category>                                                                             	 "
-	+ "		 <code>{$code}</code>                                                                   	 "
-	+ "			<groupcode>{$groupcode}	</groupcode>                                                	 "
-	+ "			 </category>' passing AGC.xml_data AS \"XML_DATA\" COLUMNS OMNICODE VARCHAR(100) path '/category/code', OMNIGROUPCODE VARCHAR(100) path '/category/groupcode') (+)T  "		
-	+ "			WHERE AGC.MDMID = :groupingNo	 "
-	+ "			AND RF.CONTAINER   ='OmniChannelBrand' "		
-	+ "		AND RF.PARENT_MDMID = AIC.PRIMARY_SUPPLIER_ID "		
+                final String OMNICHANNEL_BRAND_QUERY = "    SELECT OMNI_BRANDS,  "
+    + "      OMNI_BRANDS_DESCRIPTION,                        "
+    + "      OMNI_BRAND,                                     "
+    + "      OMNI_GROUP_BRAND,                               "
+    + "      SUPPLIER,                                       "
+    + "      CONTAINER_TYPE,                                 "
+    + "      ORIN,                                           "
+    + "      ENTRY_TYPE                                      "
+    + "   FROM (SELECT DISTINCT RF.MDMID OMNI_BRANDS,        "
+    + "      RF.THEVALUE OMNI_BRANDS_DESCRIPTION,            "
+    + "      T.OMNICODE OMNI_BRAND,                          "
+    + "      T.OMNIGROUPCODE OMNI_GROUP_BRAND,               "
+    + "      RF.PARENT_MDMID SUPPLIER,                       "
+    + "      RF.CONTAINER CONTAINER_TYPE,                    "
+    + "      AGC.MDMID ORIN,                                 "
+    + "      AGC.ENTRY_TYPE                                  "
+    + "         FROM ADSE_REFERENCE_DATA RF,                 "
+    + "         VENDORPORTAL.ADSE_GROUP_CATALOG AGC LEFT OUTER JOIN ADSE_GROUP_CHILD_MAPPING AGCM        "  
+    + "         ON AGC.MDMID=AGCM.MDMID AND AGCM.PEP_COMPONENT_TYPE<>'Group'                             "
+    + "         LEFT OUTER JOIN ADSE_ITEM_CATALOG AIC ON AIC.MDMID=AGCM.COMPONENT_STYLE_ID,              "
+    + "          XMLTABLE( '                                                                             "
+    + "      let $code := $XML_DATA/pim_entry/entry/Ecomm_Style_Spec/OmniChannelBrand,                   "
+    + "         $groupcode:=$XML_DATA/pim_entry/entry/Collection_Spec/OmniChannelBrand                   "
+    + "      return                                                                                      "
+    + "      <category>                                                                                  "
+    + "      <code>{$code}</code>                                                                        "
+    + "         <groupcode>{$groupcode} </groupcode>                                                     "
+    + "          </category>' passing AGC.xml_data AS \"XML_DATA\" COLUMNS OMNICODE VARCHAR(100) path '/category/code', OMNIGROUPCODE VARCHAR(100) path '/category/groupcode') (+)T  "      
+    + "         WHERE AGC.MDMID = :groupingNo    "
+    + "         AND RF.CONTAINER   ='OmniChannelBrand' "        
+    + "     AND RF.PARENT_MDMID = AIC.PRIMARY_SUPPLIER_ID "     
     + "  UNION "
-    + "  SELECT DISTINCT RF.MDMID OMNI_BRANDS, "	
-	+ "		 RF.THEVALUE OMNI_BRANDS_DESCRIPTION, "	
-	+ "		 T.OMNICODE OMNI_BRAND,		"
-	+ "		 T.OMNIGROUPCODE OMNI_GROUP_BRAND, "		
-	+ "		 RF.PARENT_MDMID SUPPLIER,		"
-	+ "		 RF.CONTAINER CONTAINER_TYPE,	"	
-	+ "		 AGC.MDMID ORIN,	"
-	+ "		 AGC.ENTRY_TYPE		"
-	+ "			FROM ADSE_REFERENCE_DATA RF, "	
-	+ "		 	VENDORPORTAL.ADSE_GROUP_CATALOG AGC LEFT OUTER JOIN ADSE_GROUP_CHILD_MAPPING AGCM "		
-	+ "		 	ON AGC.MDMID=AGCM.MDMID AND AGCM.PEP_COMPONENT_TYPE='Group'					 "
-	+ "		 	LEFT OUTER JOIN ADSE_GROUP_CATALOG AIC ON AIC.MDMID=AGCM.COMPONENT_GROUPING_ID, "	
-	+ "			 XMLTABLE( '      "
-	+ "		 let $code := $XML_DATA/pim_entry/entry/Ecomm_Style_Spec/OmniChannelBrand, "    
-	+ "			$groupcode:=$XML_DATA/pim_entry/entry/Collection_Spec/OmniChannelBrand  " 
-	+ "		 return       "
-	+ "		 <category>    " 
-	+ "		 <code>{$code}</code> "
-	+ "			<groupcode>{$groupcode}	</groupcode> "
-	+ "			 </category>' passing AGC.xml_data AS \"XML_DATA\" COLUMNS OMNICODE VARCHAR(100) path '/category/code', OMNIGROUPCODE VARCHAR(100) path '/category/groupcode') (+)T			 "
-	+ "			WHERE AGC.MDMID = :groupingNo	                     	 "
-	+ "			AND RF.CONTAINER   ='OmniChannelBrand'		     	 "
-	+ "		AND RF.PARENT_MDMID = AIC.DEF_PRIMARY_SUPPLIER_ID)   	 "
-	+ "		ORDER BY OMNI_BRANDS                               	 ";
-    	
-    	return OMNICHANNEL_BRAND_QUERY;
+    + "  SELECT DISTINCT RF.MDMID OMNI_BRANDS, "    
+    + "      RF.THEVALUE OMNI_BRANDS_DESCRIPTION, " 
+    + "      T.OMNICODE OMNI_BRAND,     "
+    + "      T.OMNIGROUPCODE OMNI_GROUP_BRAND, "        
+    + "      RF.PARENT_MDMID SUPPLIER,      "
+    + "      RF.CONTAINER CONTAINER_TYPE,   "   
+    + "      AGC.MDMID ORIN,    "
+    + "      AGC.ENTRY_TYPE     "
+    + "         FROM ADSE_REFERENCE_DATA RF, "  
+    + "         VENDORPORTAL.ADSE_GROUP_CATALOG AGC LEFT OUTER JOIN ADSE_GROUP_CHILD_MAPPING AGCM "     
+    + "         ON AGC.MDMID=AGCM.MDMID AND AGCM.PEP_COMPONENT_TYPE='Group'                  "
+    + "         LEFT OUTER JOIN ADSE_GROUP_CATALOG AIC ON AIC.MDMID=AGCM.COMPONENT_GROUPING_ID, "   
+    + "          XMLTABLE( '      "
+    + "      let $code := $XML_DATA/pim_entry/entry/Ecomm_Style_Spec/OmniChannelBrand, "    
+    + "         $groupcode:=$XML_DATA/pim_entry/entry/Collection_Spec/OmniChannelBrand  " 
+    + "      return       "
+    + "      <category>    " 
+    + "      <code>{$code}</code> "
+    + "         <groupcode>{$groupcode} </groupcode> "
+    + "          </category>' passing AGC.xml_data AS \"XML_DATA\" COLUMNS OMNICODE VARCHAR(100) path '/category/code', OMNIGROUPCODE VARCHAR(100) path '/category/groupcode') (+)T          "
+    + "         WHERE AGC.MDMID = :groupingNo                            "
+    + "         AND RF.CONTAINER   ='OmniChannelBrand'               "
+    + "     AND RF.PARENT_MDMID = AIC.DEF_PRIMARY_SUPPLIER_ID)       "
+    + "     ORDER BY OMNI_BRANDS                                 ";
+        
+        return OMNICHANNEL_BRAND_QUERY;
     }
     /**
      * This method populates CAR Brand query for group
      * @return CAR_BRAND_QUERY
      */
     public String getGroupingCarBrandQuery(){
-    	final String CAR_BRAND_QUERY = "	SELECT CAR_BRANDS,		"
-     + "   CAR_BRANDS_DESCRIPTION,	                     "
-	+ "		  CARS_BRAND,		                         "
-	+ "		  CARS_GROUP_BRAND,	                         "
-	+ "		  SUPPLIER,	                                 "
-	+ "		  CONTAINER_TYPE,	                         "
-	+ "		  ORIN,	                                     "
-	+ "		  ENTRY_TYPE FROM (                          "
-    + "    SELECT DISTINCT RF.MDMID CAR_BRANDS,		     "
-	+ "			  RF.THEVALUE CAR_BRANDS_DESCRIPTION,	 "
-	+ "		  T.OMNICODE CARS_BRAND,		             "
-	+ "		  T.OMNIGROUPCODE CARS_GROUP_BRAND,	         "
-	+ "		  RF.PARENT_MDMID SUPPLIER,	                 "
-	+ "		  RF.CONTAINER CONTAINER_TYPE,	             "
-	+ "		  AGC.MDMID ORIN,	                         "
-	+ "		  AGC.ENTRY_TYPE	                         "
-	+ "			FROM ADSE_REFERENCE_DATA RF,	         "
-	+ "		  VENDORPORTAL.ADSE_GROUP_CATALOG AGC LEFT OUTER JOIN ADSE_GROUP_CHILD_MAPPING AGCM	   "
-	+ "		  ON AGC.MDMID=AGCM.MDMID AND AGCM.PEP_COMPONENT_TYPE<>'Group'				           "
-	+ "		  LEFT OUTER JOIN ADSE_ITEM_CATALOG AIC ON AIC.MDMID=AGCM.COMPONENT_STYLE_ID,	       "
-	+ "		  XMLTABLE( '                                                                          "
-	+ "		  let $code := $XML_DATA/pim_entry/entry/Ecomm_Style_Spec/Cars_Brand,                  "
-	+ "			$groupcode:=$XML_DATA/pim_entry/entry/Collection_Spec/CarBrand                     "
-	+ "		  return                                                                               "
-	+ "		  <category>                                                                           "
-	+ "		  <code>{$code}</code>	                                                               "
-	+ "			<groupcode>{$groupcode}	</groupcode>                                               "
-	+ "		  </category>' passing AGC.xml_data AS \"XML_DATA\" COLUMNS OMNICODE VARCHAR(100) path '/category/code', OMNIGROUPCODE VARCHAR(100) path '/category/groupcode') (+)T "
-	+ "			WHERE AGC.MDMID = :groupingNo	                    "
-	+ "			AND RF.CONTAINER   ='Cars_Brand_Names'	        "
-	+ "			AND RF.PARENT_MDMID = AIC.PRIMARY_SUPPLIER_ID	"
+        final String CAR_BRAND_QUERY = "    SELECT CAR_BRANDS,      "
+     + "   CAR_BRANDS_DESCRIPTION,                       "
+    + "       CARS_BRAND,                                "
+    + "       CARS_GROUP_BRAND,                          "
+    + "       SUPPLIER,                                  "
+    + "       CONTAINER_TYPE,                            "
+    + "       ORIN,                                      "
+    + "       ENTRY_TYPE FROM (                          "
+    + "    SELECT DISTINCT RF.MDMID CAR_BRANDS,          "
+    + "           RF.THEVALUE CAR_BRANDS_DESCRIPTION,    "
+    + "       T.OMNICODE CARS_BRAND,                     "
+    + "       T.OMNIGROUPCODE CARS_GROUP_BRAND,          "
+    + "       RF.PARENT_MDMID SUPPLIER,                  "
+    + "       RF.CONTAINER CONTAINER_TYPE,               "
+    + "       AGC.MDMID ORIN,                            "
+    + "       AGC.ENTRY_TYPE                             "
+    + "         FROM ADSE_REFERENCE_DATA RF,             "
+    + "       VENDORPORTAL.ADSE_GROUP_CATALOG AGC LEFT OUTER JOIN ADSE_GROUP_CHILD_MAPPING AGCM    "
+    + "       ON AGC.MDMID=AGCM.MDMID AND AGCM.PEP_COMPONENT_TYPE<>'Group'                         "
+    + "       LEFT OUTER JOIN ADSE_ITEM_CATALOG AIC ON AIC.MDMID=AGCM.COMPONENT_STYLE_ID,          "
+    + "       XMLTABLE( '                                                                          "
+    + "       let $code := $XML_DATA/pim_entry/entry/Ecomm_Style_Spec/Cars_Brand,                  "
+    + "         $groupcode:=$XML_DATA/pim_entry/entry/Collection_Spec/CarBrand                     "
+    + "       return                                                                               "
+    + "       <category>                                                                           "
+    + "       <code>{$code}</code>                                                                 "
+    + "         <groupcode>{$groupcode} </groupcode>                                               "
+    + "       </category>' passing AGC.xml_data AS \"XML_DATA\" COLUMNS OMNICODE VARCHAR(100) path '/category/code', OMNIGROUPCODE VARCHAR(100) path '/category/groupcode') (+)T "
+    + "         WHERE AGC.MDMID = :groupingNo                       "
+    + "         AND RF.CONTAINER   ='Cars_Brand_Names'          "
+    + "         AND RF.PARENT_MDMID = AIC.PRIMARY_SUPPLIER_ID   "
     + "    UNION                                                "
-    + "    	SELECT DISTINCT RF.MDMID CAR_BRANDS,		        "
-	+ "			  RF.THEVALUE CAR_BRANDS_DESCRIPTION,	        "
-	+ "		  T.OMNICODE CARS_BRAND,		                    "
-	+ "		  T.OMNIGROUPCODE CARS_GROUP_BRAND,	                "
-	+ "		  RF.PARENT_MDMID SUPPLIER,	                        "
-	+ "		  RF.CONTAINER CONTAINER_TYPE,	                    "
-	+ "		  AGC.MDMID ORIN,	                                "
-	+ "		  AGC.ENTRY_TYPE	                                "
-	+ "			FROM ADSE_REFERENCE_DATA RF,	                "
-	+ "		  VENDORPORTAL.ADSE_GROUP_CATALOG AGC LEFT OUTER JOIN ADSE_GROUP_CHILD_MAPPING AGCM	    "
-	+ "		  ON AGC.MDMID=AGCM.MDMID AND AGCM.PEP_COMPONENT_TYPE='Group'				            "
-	+ "		  LEFT OUTER JOIN ADSE_GROUP_CATALOG AIC ON AIC.MDMID=AGCM.COMPONENT_GROUPING_ID,	    "
-	+ "		  XMLTABLE( '                                                                           "
-	+ "		  let $code := $XML_DATA/pim_entry/entry/Ecomm_Style_Spec/Cars_Brand,                   "
-	+ "			$groupcode:=$XML_DATA/pim_entry/entry/Collection_Spec/CarBrand                      "
-	+ "		  return                                                                                "
-	+ "		  <category>                                                                            "
-	+ "		  <code>{$code}</code>	                                                                "
-	+ "			<groupcode>{$groupcode}	</groupcode>                                                "
-	+ "		  </category>' passing AGC.xml_data AS \"XML_DATA\" COLUMNS OMNICODE VARCHAR(100) path '/category/code', OMNIGROUPCODE VARCHAR(100) path '/category/groupcode') (+)T "
-	+ "			WHERE AGC.MDMID = :groupingNo	                          "
-	+ "			AND RF.CONTAINER   ='Cars_Brand_Names'	              "
-	+ "			AND RF.PARENT_MDMID = AIC.DEF_PRIMARY_SUPPLIER_ID	) "
-	+ "			ORDER BY CAR_BRANDS	                                 ";
-    	
-    	return CAR_BRAND_QUERY;
+    + "     SELECT DISTINCT RF.MDMID CAR_BRANDS,                "
+    + "           RF.THEVALUE CAR_BRANDS_DESCRIPTION,           "
+    + "       T.OMNICODE CARS_BRAND,                            "
+    + "       T.OMNIGROUPCODE CARS_GROUP_BRAND,                 "
+    + "       RF.PARENT_MDMID SUPPLIER,                         "
+    + "       RF.CONTAINER CONTAINER_TYPE,                      "
+    + "       AGC.MDMID ORIN,                                   "
+    + "       AGC.ENTRY_TYPE                                    "
+    + "         FROM ADSE_REFERENCE_DATA RF,                    "
+    + "       VENDORPORTAL.ADSE_GROUP_CATALOG AGC LEFT OUTER JOIN ADSE_GROUP_CHILD_MAPPING AGCM     "
+    + "       ON AGC.MDMID=AGCM.MDMID AND AGCM.PEP_COMPONENT_TYPE='Group'                           "
+    + "       LEFT OUTER JOIN ADSE_GROUP_CATALOG AIC ON AIC.MDMID=AGCM.COMPONENT_GROUPING_ID,       "
+    + "       XMLTABLE( '                                                                           "
+    + "       let $code := $XML_DATA/pim_entry/entry/Ecomm_Style_Spec/Cars_Brand,                   "
+    + "         $groupcode:=$XML_DATA/pim_entry/entry/Collection_Spec/CarBrand                      "
+    + "       return                                                                                "
+    + "       <category>                                                                            "
+    + "       <code>{$code}</code>                                                                  "
+    + "         <groupcode>{$groupcode} </groupcode>                                                "
+    + "       </category>' passing AGC.xml_data AS \"XML_DATA\" COLUMNS OMNICODE VARCHAR(100) path '/category/code', OMNIGROUPCODE VARCHAR(100) path '/category/groupcode') (+)T "
+    + "         WHERE AGC.MDMID = :groupingNo                             "
+    + "         AND RF.CONTAINER   ='Cars_Brand_Names'                "
+    + "         AND RF.PARENT_MDMID = AIC.DEF_PRIMARY_SUPPLIER_ID   ) "
+    + "         ORDER BY CAR_BRANDS                                  ";
+        
+        return CAR_BRAND_QUERY;
     }
     
     /**
@@ -2559,31 +2559,31 @@ public class XqueryConstants {
      * @return 
      */
     public String getGroupingDetails(){
-    	
-    	final String GROUPING_DETAILS  = "	SELECT	" +
-    			"  AGC.MDMID GROUP_ID,	" +
-    			"  AGC.GROUP_NAME,	" +
-    			"  AGCXML.Description,	" +
-    			"  AGCXML.Effective_Start_Date,	" +
-    			"  AGCXML.Effective_End_Date,	" +
-    			"  AGCXML.CARS_Group_Type,	" +
-    			"  AGC.ENTRY_TYPE GROUP_TYPE,	" +
-    			"  AGC.GROUP_OVERALL_STATUS_CODE,	" +
-    			"  AGC.CREATED_BY	" +
-    			"  /*XML_DATA*/	" +
-    			"	FROM	" +
-    			"  ADSE_GROUP_CATALOG AGC,	" +
-    			"  XMLTABLE(	" +
-    			"  'let                                                                          $Description:= /pim_entry/entry/Group_Ctg_Spec/Description,                             $Effective_Start_Date:= /pim_entry/entry/Group_Ctg_Spec/Effective_Start_Date,           $Effective_End_Date:= /pim_entry/entry/Group_Ctg_Spec/Effective_End_Date,                $CARS_Group_Type:= /pim_entry/entry/Group_Ctg_Spec/CARS_Group_Type                return                                                                                <out>                                                                                       <Description>{$Description}</Description>                                               <Effective_Start_Date>{$Effective_Start_Date}</Effective_Start_Date>                    <Effective_End_Date>{$Effective_End_Date}</Effective_End_Date>                          <CARS_Group_Type>{$CARS_Group_Type}</CARS_Group_Type>                      </out>'	" +
-    			"  passing AGC.XML_DATA Columns Description CLOB path '/out/Description',	" +
-    			"  Effective_Start_Date VARCHAR2(50) path '/out/Effective_Start_Date' ,	" +
-    			"  Effective_End_Date   VARCHAR2(50) path '/out/Effective_End_Date',	" +
-    			"  CARS_Group_Type      VARCHAR2(50) path '/out/CARS_Group_Type') AGCXML	" +
-    			"	WHERE	" +
-    			"  MDMID = :groupingNo";
-    	
-    	
-    	return GROUPING_DETAILS;
+        
+        final String GROUPING_DETAILS  = "  SELECT  " +
+                "  AGC.MDMID GROUP_ID,  " +
+                "  AGC.GROUP_NAME,  " +
+                "  AGCXML.Description,  " +
+                "  AGCXML.Effective_Start_Date, " +
+                "  AGCXML.Effective_End_Date,   " +
+                "  AGCXML.CARS_Group_Type,  " +
+                "  AGC.ENTRY_TYPE GROUP_TYPE,   " +
+                "  AGC.GROUP_OVERALL_STATUS_CODE,   " +
+                "  AGC.CREATED_BY   " +
+                "  /*XML_DATA*/ " +
+                "   FROM    " +
+                "  ADSE_GROUP_CATALOG AGC,  " +
+                "  XMLTABLE(    " +
+                "  'let                                                                          $Description:= /pim_entry/entry/Group_Ctg_Spec/Description,                             $Effective_Start_Date:= /pim_entry/entry/Group_Ctg_Spec/Effective_Start_Date,           $Effective_End_Date:= /pim_entry/entry/Group_Ctg_Spec/Effective_End_Date,                $CARS_Group_Type:= /pim_entry/entry/Group_Ctg_Spec/CARS_Group_Type                return                                                                                <out>                                                                                       <Description>{$Description}</Description>                                               <Effective_Start_Date>{$Effective_Start_Date}</Effective_Start_Date>                    <Effective_End_Date>{$Effective_End_Date}</Effective_End_Date>                          <CARS_Group_Type>{$CARS_Group_Type}</CARS_Group_Type>                      </out>'    " +
+                "  passing AGC.XML_DATA Columns Description CLOB path '/out/Description',   " +
+                "  Effective_Start_Date VARCHAR2(50) path '/out/Effective_Start_Date' , " +
+                "  Effective_End_Date   VARCHAR2(50) path '/out/Effective_End_Date',    " +
+                "  CARS_Group_Type      VARCHAR2(50) path '/out/CARS_Group_Type') AGCXML    " +
+                "   WHERE   " +
+                "  MDMID = :groupingNo";
+        
+        
+        return GROUPING_DETAILS;
     }
     
     /**
@@ -2591,7 +2591,7 @@ public class XqueryConstants {
      * @return COPY_ATTRIBUTES_GROUP_CONTENT
      */
     public String getGroupingCopyAttributes(){
-    	final String COPY_ATTRIBUTES_GROUP_CONTENT = "	SELECT AGC.MDMID,                                                          "+
+        final String COPY_ATTRIBUTES_GROUP_CONTENT = "  SELECT AGC.MDMID,                                                          "+
         "   T.PRODUCTCOPYTEXT,                                                                                                     "+
         "   T.COPYLINE1,                                                                                                           "+
         "   T.COPYLINE2,                                                                                                           "+
@@ -2644,8 +2644,8 @@ public class XqueryConstants {
         "  COPYIMPORTDOMESTIC VARCHAR(3000) path '/category/copyImportDomestic', COPYEXCLUSIVE VARCHAR(3000) path '/category/copyExclusive', " +
         "  COPYCAPROP65COMPLIANT VARCHAR(3000) path '/category/copyCAProp65Compliant') T "+
         " WHERE AGC.MDMID = :groupingNo";
-    	
-    	return COPY_ATTRIBUTES_GROUP_CONTENT;
+        
+        return COPY_ATTRIBUTES_GROUP_CONTENT;
     }
     
    
@@ -2655,253 +2655,253 @@ public class XqueryConstants {
      * @return GROUPING_COMPONENT_QUERY
      */
     public String getGroupingComponentQuery(){
-    	StringBuffer queryBuffer = new StringBuffer();
-    	queryBuffer.append(" SELECT TAB.GROUPING_ID,                                                                                                                                   ");
-    	queryBuffer.append("   TAB.PARENT_MDMID STYLE_ID,                                                                                                                              ");
-    	queryBuffer.append("   TAB.MDMID COMPONENT_ID,                                                                                                                                 ");
-    	queryBuffer.append("   TAB.COMPLETION_DATE,                                                                                                                                    ");
-    	queryBuffer.append("   TAB.PET_STATE,                                                                                                                                          ");
-    	queryBuffer.append("   TAB.CONTENT_STATE,                                                                                                                                      ");
-    	queryBuffer.append("   TAB.ENTRY_TYPE,                                                                                                                                         ");
-    	queryBuffer.append("   TAB.PEP_COMPONENT_TYPE COMPONENT_TYPE,                                                                                                                  ");
-    	queryBuffer.append("   TAB.Color_code,                                                                                                                                         ");
-    	queryBuffer.append("   TAB.Color,                                                                                                                                              ");
-    	queryBuffer.append("   TAB.Vendor_Size,                                                                                                                                        ");
-    	queryBuffer.append("   TAB.PRIMARYSUPPLIERVPN,                                                                                                                                 ");
-    	queryBuffer.append("   TAB.DEPT_ID,                                                                                                                                            ");
-    	queryBuffer.append("   TAB.CLASS_ID,                                                                                                                                           ");
-    	queryBuffer.append("   TAB.VENDOR_SIZE_CODE,                                                                                                                                   ");
-    	queryBuffer.append("   OMNI_SIZE_DESC                                                                                                                                          ");
-    	queryBuffer.append("                                                                                                                                                           ");
-    	queryBuffer.append(" FROM                                                                                                                                                      ");
-    	queryBuffer.append("   (SELECT AGCM.MDMID GROUPING_ID,                                                                                                                         ");
-    	queryBuffer.append("     NULL PARENT_MDMID,                                                                                                                                    ");
-    	queryBuffer.append("     NULL PARENT_STYLECOLOR,                                                                                                                               ");
-    	queryBuffer.append("     AGC.MDMID,                                                                                                                                            ");
-    	queryBuffer.append("     TO_CHAR(AGC.COMPLETION_DATE,'YYYY-MM-DD') COMPLETION_DATE,                                                                                            ");
-    	queryBuffer.append("     AGC.GROUP_OVERALL_STATUS_CODE PET_STATE,                                                                                                              ");
-    	queryBuffer.append("     AGC.GROUP_CONTENT_STATUS_CODE CONTENT_STATE,                                                                                                          ");
-    	queryBuffer.append("     AGC.ENTRY_TYPE,                                                                                                                                       ");
-    	queryBuffer.append("     AGCM.PEP_COMPONENT_TYPE,                                                                                                                              ");
-    	queryBuffer.append("     NULL Color_code,                                                                                                                                      ");
-    	queryBuffer.append("     NULL Color,                                                                                                                                           ");
-    	queryBuffer.append("     NULL Vendor_Size,                                                                                                                                     ");
-    	queryBuffer.append("     AGC.DEF_PRIMARYSUPPLIERVPN PRIMARYSUPPLIERVPN,                                                                                                        ");
-    	queryBuffer.append("     NULL DEPT_ID,                                                                                                                                         ");
-    	queryBuffer.append("     NULL CLASS_ID,                                                                                                                                        ");
-    	queryBuffer.append("     NULL VENDOR_SIZE_CODE                                                                                                                                 ");
-    	queryBuffer.append("   FROM ADSE_GROUP_CATALOG AGC,                                                                                                                            ");
-    	queryBuffer.append("     ADSE_GROUP_CHILD_MAPPING AGCM                                                                                                                         ");
-    	queryBuffer.append("   WHERE AGC.MDMID            = AGCM.COMPONENT_GROUPING_ID                                                                                                 ");
-    	queryBuffer.append("   AND AGCM.PEP_COMponent_Type='Group'                                                                                                                     ");
-    	queryBuffer.append("   AND AGCM.MDMID            =:groupingNo                                                                                                                  ");
-    	queryBuffer.append("   UNION                                                                                                                                                   ");
-    	queryBuffer.append("   SELECT AGCM.MDMID,                                                                                                                                      ");
-    	queryBuffer.append("     AIC.PARENT_MDMID,                                                                                                                                     ");
-    	queryBuffer.append("     AIC.PARENT_STYLECOLOR,                                                                                                                                ");
-    	queryBuffer.append("     AIC.MDMID,                                                                                                                                            ");
-    	queryBuffer.append("     CASE                                                                                                                                                  ");
-    	queryBuffer.append("       WHEN AIC.ENTRY_TYPE='Style'                                                                                                                         ");
-    	queryBuffer.append("       THEN TO_CHAR(APC.PET_EARLIEST_COMP_DATE,'YYYY-MM-DD')                                                                                               ");
-    	queryBuffer.append("       ELSE PET_XML.completion_date                                                                                                                        ");
-    	queryBuffer.append("     END completion_date,                                                                                                                                  ");
-    	queryBuffer.append("     APC.PET_STATE PET_STATE,                                                                                                                              ");
-    	queryBuffer.append("     APC.CONTENT_STATUS CONTENT_STATE,                                                                                                                     ");
-    	queryBuffer.append("     AIC.ENTRY_TYPE,                                                                                                                                       ");
-    	queryBuffer.append("     AGCM.PEP_COMponent_Type,                                                                                                                              ");
-    	queryBuffer.append("     AIC_XML.VENDOR_COLOR_CODE Color_code,                                                                                                                 ");
-    	queryBuffer.append("     AIC_XML.VENDOR_COLOR_CODE                                                                                                                             ");
-    	queryBuffer.append("     || ' '                                                                                                                                                ");
-    	queryBuffer.append("     ||AIC_XML.VENDOR_COLOR_DESC Color,                                                                                                                    ");
-    	queryBuffer.append("     AIC_XML.VENDOR_SIZE_CODE                                                                                                                              ");
-    	queryBuffer.append("     || ' '                                                                                                                                                ");
-    	queryBuffer.append("     ||AIC_XML.VENDOR_SIZE_DESC Vendor_Size,                                                                                                               ");
-    	queryBuffer.append("     AIC.PRIMARYSUPPLIERVPN,                                                                                                                               ");
-    	queryBuffer.append("     AIC.DEPT_ID,                                                                                                                                          ");
-    	queryBuffer.append("     AIC.CLASS_ID,                                                                                                                                         ");
-    	queryBuffer.append("     AIC_XML.VENDOR_SIZE_CODE                                                                                                                              ");
-    	queryBuffer.append("   FROM ADSE_GROUP_CHILD_MAPPING AGCM,                                                                                                                     ");
-    	queryBuffer.append("     ADSE_ITEM_CATALOG AIC                                                                                                                                 ");
-    	queryBuffer.append("   INNER JOIN ADSE_PET_CATALOG APC                                                                                                                         ");
-    	queryBuffer.append("   ON AIC.MDMID=APC.MDMID,                                                                                                                                 ");
-    	queryBuffer.append("     XMLTABLE( 'let                                                                                                                                        ");
-    	queryBuffer.append("     $completionDate := $pets/pim_entry/entry/Pet_Ctg_Spec/Completion_Date,                                                                                ");
-    	queryBuffer.append("     $colordesc:= $pets/pim_entry/entry/Ecomm_StyleColor_Spec/NRF_Color_Description   return                                                               ");
-    	queryBuffer.append("     <out>        <completion_date>{$completionDate}</completion_date>                                                                                     ");
-    	queryBuffer.append("     <COLO_DESC>{$colordesc}</COLO_DESC>     </out>' passing APC.xml_data AS \"pets\"                                                                        ");
-    	queryBuffer.append("     Columns completion_date VARCHAR2(10) path '/out/completion_date',                                                                                     ");
-    	queryBuffer.append("     COLO_DESC VARCHAR2(50) path '/out/COLO_DESC' ) (+)PET_XML,                                                                                            ");
-    	queryBuffer.append("     XMLTABLE(                                                                                                                                             ");
-    	queryBuffer.append("     'for $i in $XML_DATA/pim_entry/entry                                                                                                                  ");
-    	queryBuffer.append("     let                                                                                                                                                   ");
-    	queryBuffer.append("     $uda80 := (fn:count($i/Item_UDA_Spec/UDA/Id) gt 0 and $i/Item_UDA_Spec/UDA/Id eq \"80\"),                                                               ");
-    	queryBuffer.append("     $non_sellable :=   (fn:count($i/Item_Simple_Pack_Spec/Sellable_Flag/text()) gt 0 and                                                                  ");
-    	queryBuffer.append("     ($i/Item_Simple_Pack_Spec/Sellable_Flag eq \"false\")),                                                                                                 ");
-    	queryBuffer.append("     $non_sellable_pack :=   (fn:count($i/Item_Complex_Pack_Spec/Sellable_Flag/text()) gt 0                                                                ");
-    	queryBuffer.append("     and  ($i/Item_Complex_Pack_Spec/Sellable_Flag eq \"false\")),                                                                                           ");
-    	queryBuffer.append("     $removal := $i/Item_Ctg_Spec/System/Removal_Flag eq     \"true\"                                                                                        ");
-    	queryBuffer.append("     return    <out>                                                                                                                                       ");
-    	queryBuffer.append("     <dept_id>{fn:tokenize($i/../item_header/category_paths/category[fn:starts-with(path, \"Merchandise_Hierarchy\")]/path,\"\\||///\")[5]}</dept_id>           ");
-    	queryBuffer.append("     <class_id>{fn:tokenize($i/../item_header/category_paths/category[fn:starts-with(path,   \"Merchandise_Hierarchy\")]/path,\"\\||///\")[6]}</class_id>       ");
-    	queryBuffer.append("     <supplier_id>{$i/Item_Ctg_Spec/Supplier[Primary_Flag eq \"true\"]/Id}</supplier_id>                                                                     ");
-    	queryBuffer.append("     <flag>{$uda80 and     $non_sellable_pack and $removal}</flag>                                                                                         ");
-    	queryBuffer.append("     <colorCode>{$i/Item_SKU_Spec/Differentiators[Type eq   \"COLOR\"]/Code}</colorCode>                                                                     ");
-    	queryBuffer.append("     <colorDesc>{$i/Item_SKU_Spec/Differentiators[Type eq   \"COLOR\"]/Vendor_Description}</colorDesc>                                                       ");
-    	queryBuffer.append("     <sizeCode>{$i/Item_SKU_Spec/Differentiators[Type eq   \"SIZE\"]/Code}</sizeCode>                                                                        ");
-    	queryBuffer.append("     <sizeDesc>{$i/Item_SKU_Spec/Differentiators[Type eq \"SIZE\"]/Vendor_Description}</sizeDesc>        </out>'                                             ");
-    	queryBuffer.append("     passing aic.XML_DATA AS \"XML_DATA\" columns flag VARCHAR(10) path '/out/flag',                                                                         ");
-    	queryBuffer.append("     supplier_id VARCHAR2(20) path '/out/supplier_id', deptid VARCHAR2(20) path '/out/dept_id',                                                            ");
-    	queryBuffer.append("     classid VARCHAR2(20) path '/out/class_id', descr VARCHAR2(64) path '/out/desc',                                                                       ");
-    	queryBuffer.append("     VENDOR_COLOR_CODE VARCHAR2(10) path '/out/colorCode', VENDOR_COLOR_DESC VARCHAR2(40) path '/out/colorDesc',                                           ");
-    	queryBuffer.append("     VENDOR_SIZE_CODE VARCHAR2(10) path '/out/sizeCode', VENDOR_SIZE_DESC VARCHAR2(10) path '/out/sizeDesc') AIC_XML                                       ");
-    	queryBuffer.append("   WHERE NVL(AIC.PARENT_MDMID,AIC.MDMID) = AGCM.COMPONENT_STYLE_ID                                                                                         ");
-    	queryBuffer.append("   AND (                                                                                                                                                   ");
-    	queryBuffer.append("     CASE                                                                                                                                                  ");
-    	queryBuffer.append("       WHEN AGCM.PEP_COMPONENT_TYPE ='SKU'                                                                                                                 ");
-    	queryBuffer.append("       AND AIC.ENTRY_TYPE           ='Style'                                                                                                               ");
-    	queryBuffer.append("       AND AIC.MDMID                =AGCM.COMPONENT_STYLE_ID                                                                                               ");
-    	queryBuffer.append("       OR (AIC.ENTRY_TYPE           ='StyleColor'                                                                                                          ");
-    	queryBuffer.append("       AND AIC.MDMID                =AGCM.COMPONENT_STYLECOLOR_ID)                                                                                         ");
-    	queryBuffer.append("       OR (AIC.ENTRY_TYPE           ='SKU'                                                                                                                 ");
-    	queryBuffer.append("       AND AIC.MDMID                =AGCM.COMPONENT_SKU_ID)                                                                                                ");
-    	queryBuffer.append("       THEN 1                                                                                                                                              ");
-    	queryBuffer.append("       WHEN AGCM.PEP_COMPONENT_TYPE ='StyleColor'                                                                                                          ");
-    	queryBuffer.append("       AND ((AIC.ENTRY_TYPE         ='Style'                                                                                                               ");
-    	queryBuffer.append("       AND AIC.MDMID                =AGCM.COMPONENT_STYLE_ID)                                                                                              ");
-    	queryBuffer.append("       OR (AIC.ENTRY_TYPE           ='StyleColor'                                                                                                          ");
-    	queryBuffer.append("       AND AIC.MDMID                =AGCM.COMPONENT_STYLECOLOR_ID))                                                                                        ");
-    	queryBuffer.append("       THEN 1                                                                                                                                              ");
-    	queryBuffer.append("       WHEN AGCM.PEP_COMPONENT_TYPE ='Style'                                                                                                               ");
-    	queryBuffer.append("       THEN 1                                                                                                                                              ");
-    	queryBuffer.append("       ELSE 0                                                                                                                                              ");
-    	queryBuffer.append("     END )                      =1                                                                                                                         ");
-    	queryBuffer.append("   AND AGCM.PEP_COMponent_Type! ='Group'                                                                                                                   ");
-    	queryBuffer.append("   AND AGCM.MDMID               =:groupingNo                                                                                                                ");
-    	queryBuffer.append("   ) TAB   LEFT OUTER JOIN ADSE_VENDOR_OMNISIZE_DESC omni                                                                                                  ");
-    	queryBuffer.append("   ON TAB.VENDOR_SIZE_CODE =omni.NRF_SIZE_CODE                                                                                                             ");
-    	queryBuffer.append("   AND TAB.dept_id         =omni.DEPT_ID                                                                                                                   ");
-    	queryBuffer.append("   AND TAB.Class_Id        =omni.CLASS_ID                                                                                                                  ");
-    	queryBuffer.append("   LEFT OUTER JOIN xmltable('for $i in $XML//omni_size_desc return $i'                                                                                     ");
-    	queryBuffer.append("   passing omni.XML_DATA AS \"XML\" columns OMNI_SIZE_DESC VARCHAR(40) path '.' ) o                                                                          ");
-    	queryBuffer.append("   ON TAB.Entry_Type = 'SKU'                                                                                                                               ");
-    	queryBuffer.append(" ORDER BY PEP_COMPONENT_TYPE DESC,																															");							
-    	queryBuffer.append("   TAB.MDMID ");
-    	
-    	return queryBuffer.toString();
+        StringBuffer queryBuffer = new StringBuffer();
+        queryBuffer.append(" SELECT TAB.GROUPING_ID,                                                                                                                                   ");
+        queryBuffer.append("   TAB.PARENT_MDMID STYLE_ID,                                                                                                                              ");
+        queryBuffer.append("   TAB.MDMID COMPONENT_ID,                                                                                                                                 ");
+        queryBuffer.append("   TAB.COMPLETION_DATE,                                                                                                                                    ");
+        queryBuffer.append("   TAB.PET_STATE,                                                                                                                                          ");
+        queryBuffer.append("   TAB.CONTENT_STATE,                                                                                                                                      ");
+        queryBuffer.append("   TAB.ENTRY_TYPE,                                                                                                                                         ");
+        queryBuffer.append("   TAB.PEP_COMPONENT_TYPE COMPONENT_TYPE,                                                                                                                  ");
+        queryBuffer.append("   TAB.Color_code,                                                                                                                                         ");
+        queryBuffer.append("   TAB.Color,                                                                                                                                              ");
+        queryBuffer.append("   TAB.Vendor_Size,                                                                                                                                        ");
+        queryBuffer.append("   TAB.PRIMARYSUPPLIERVPN,                                                                                                                                 ");
+        queryBuffer.append("   TAB.DEPT_ID,                                                                                                                                            ");
+        queryBuffer.append("   TAB.CLASS_ID,                                                                                                                                           ");
+        queryBuffer.append("   TAB.VENDOR_SIZE_CODE,                                                                                                                                   ");
+        queryBuffer.append("   OMNI_SIZE_DESC                                                                                                                                          ");
+        queryBuffer.append("                                                                                                                                                           ");
+        queryBuffer.append(" FROM                                                                                                                                                      ");
+        queryBuffer.append("   (SELECT AGCM.MDMID GROUPING_ID,                                                                                                                         ");
+        queryBuffer.append("     NULL PARENT_MDMID,                                                                                                                                    ");
+        queryBuffer.append("     NULL PARENT_STYLECOLOR,                                                                                                                               ");
+        queryBuffer.append("     AGC.MDMID,                                                                                                                                            ");
+        queryBuffer.append("     TO_CHAR(AGC.COMPLETION_DATE,'YYYY-MM-DD') COMPLETION_DATE,                                                                                            ");
+        queryBuffer.append("     AGC.GROUP_OVERALL_STATUS_CODE PET_STATE,                                                                                                              ");
+        queryBuffer.append("     AGC.GROUP_CONTENT_STATUS_CODE CONTENT_STATE,                                                                                                          ");
+        queryBuffer.append("     AGC.ENTRY_TYPE,                                                                                                                                       ");
+        queryBuffer.append("     AGCM.PEP_COMPONENT_TYPE,                                                                                                                              ");
+        queryBuffer.append("     NULL Color_code,                                                                                                                                      ");
+        queryBuffer.append("     NULL Color,                                                                                                                                           ");
+        queryBuffer.append("     NULL Vendor_Size,                                                                                                                                     ");
+        queryBuffer.append("     AGC.DEF_PRIMARYSUPPLIERVPN PRIMARYSUPPLIERVPN,                                                                                                        ");
+        queryBuffer.append("     NULL DEPT_ID,                                                                                                                                         ");
+        queryBuffer.append("     NULL CLASS_ID,                                                                                                                                        ");
+        queryBuffer.append("     NULL VENDOR_SIZE_CODE                                                                                                                                 ");
+        queryBuffer.append("   FROM ADSE_GROUP_CATALOG AGC,                                                                                                                            ");
+        queryBuffer.append("     ADSE_GROUP_CHILD_MAPPING AGCM                                                                                                                         ");
+        queryBuffer.append("   WHERE AGC.MDMID            = AGCM.COMPONENT_GROUPING_ID                                                                                                 ");
+        queryBuffer.append("   AND AGCM.PEP_COMponent_Type='Group'                                                                                                                     ");
+        queryBuffer.append("   AND AGCM.MDMID            =:groupingNo                                                                                                                  ");
+        queryBuffer.append("   UNION                                                                                                                                                   ");
+        queryBuffer.append("   SELECT AGCM.MDMID,                                                                                                                                      ");
+        queryBuffer.append("     AIC.PARENT_MDMID,                                                                                                                                     ");
+        queryBuffer.append("     AIC.PARENT_STYLECOLOR,                                                                                                                                ");
+        queryBuffer.append("     AIC.MDMID,                                                                                                                                            ");
+        queryBuffer.append("     CASE                                                                                                                                                  ");
+        queryBuffer.append("       WHEN AIC.ENTRY_TYPE='Style'                                                                                                                         ");
+        queryBuffer.append("       THEN TO_CHAR(APC.PET_EARLIEST_COMP_DATE,'YYYY-MM-DD')                                                                                               ");
+        queryBuffer.append("       ELSE PET_XML.completion_date                                                                                                                        ");
+        queryBuffer.append("     END completion_date,                                                                                                                                  ");
+        queryBuffer.append("     APC.PET_STATE PET_STATE,                                                                                                                              ");
+        queryBuffer.append("     APC.CONTENT_STATUS CONTENT_STATE,                                                                                                                     ");
+        queryBuffer.append("     AIC.ENTRY_TYPE,                                                                                                                                       ");
+        queryBuffer.append("     AGCM.PEP_COMponent_Type,                                                                                                                              ");
+        queryBuffer.append("     AIC_XML.VENDOR_COLOR_CODE Color_code,                                                                                                                 ");
+        queryBuffer.append("     AIC_XML.VENDOR_COLOR_CODE                                                                                                                             ");
+        queryBuffer.append("     || ' '                                                                                                                                                ");
+        queryBuffer.append("     ||AIC_XML.VENDOR_COLOR_DESC Color,                                                                                                                    ");
+        queryBuffer.append("     AIC_XML.VENDOR_SIZE_CODE                                                                                                                              ");
+        queryBuffer.append("     || ' '                                                                                                                                                ");
+        queryBuffer.append("     ||AIC_XML.VENDOR_SIZE_DESC Vendor_Size,                                                                                                               ");
+        queryBuffer.append("     AIC.PRIMARYSUPPLIERVPN,                                                                                                                               ");
+        queryBuffer.append("     AIC.DEPT_ID,                                                                                                                                          ");
+        queryBuffer.append("     AIC.CLASS_ID,                                                                                                                                         ");
+        queryBuffer.append("     AIC_XML.VENDOR_SIZE_CODE                                                                                                                              ");
+        queryBuffer.append("   FROM ADSE_GROUP_CHILD_MAPPING AGCM,                                                                                                                     ");
+        queryBuffer.append("     ADSE_ITEM_CATALOG AIC                                                                                                                                 ");
+        queryBuffer.append("   INNER JOIN ADSE_PET_CATALOG APC                                                                                                                         ");
+        queryBuffer.append("   ON AIC.MDMID=APC.MDMID,                                                                                                                                 ");
+        queryBuffer.append("     XMLTABLE( 'let                                                                                                                                        ");
+        queryBuffer.append("     $completionDate := $pets/pim_entry/entry/Pet_Ctg_Spec/Completion_Date,                                                                                ");
+        queryBuffer.append("     $colordesc:= $pets/pim_entry/entry/Ecomm_StyleColor_Spec/NRF_Color_Description   return                                                               ");
+        queryBuffer.append("     <out>        <completion_date>{$completionDate}</completion_date>                                                                                     ");
+        queryBuffer.append("     <COLO_DESC>{$colordesc}</COLO_DESC>     </out>' passing APC.xml_data AS \"pets\"                                                                        ");
+        queryBuffer.append("     Columns completion_date VARCHAR2(10) path '/out/completion_date',                                                                                     ");
+        queryBuffer.append("     COLO_DESC VARCHAR2(50) path '/out/COLO_DESC' ) (+)PET_XML,                                                                                            ");
+        queryBuffer.append("     XMLTABLE(                                                                                                                                             ");
+        queryBuffer.append("     'for $i in $XML_DATA/pim_entry/entry                                                                                                                  ");
+        queryBuffer.append("     let                                                                                                                                                   ");
+        queryBuffer.append("     $uda80 := (fn:count($i/Item_UDA_Spec/UDA/Id) gt 0 and $i/Item_UDA_Spec/UDA/Id eq \"80\"),                                                               ");
+        queryBuffer.append("     $non_sellable :=   (fn:count($i/Item_Simple_Pack_Spec/Sellable_Flag/text()) gt 0 and                                                                  ");
+        queryBuffer.append("     ($i/Item_Simple_Pack_Spec/Sellable_Flag eq \"false\")),                                                                                                 ");
+        queryBuffer.append("     $non_sellable_pack :=   (fn:count($i/Item_Complex_Pack_Spec/Sellable_Flag/text()) gt 0                                                                ");
+        queryBuffer.append("     and  ($i/Item_Complex_Pack_Spec/Sellable_Flag eq \"false\")),                                                                                           ");
+        queryBuffer.append("     $removal := $i/Item_Ctg_Spec/System/Removal_Flag eq     \"true\"                                                                                        ");
+        queryBuffer.append("     return    <out>                                                                                                                                       ");
+        queryBuffer.append("     <dept_id>{fn:tokenize($i/../item_header/category_paths/category[fn:starts-with(path, \"Merchandise_Hierarchy\")]/path,\"\\||///\")[5]}</dept_id>           ");
+        queryBuffer.append("     <class_id>{fn:tokenize($i/../item_header/category_paths/category[fn:starts-with(path,   \"Merchandise_Hierarchy\")]/path,\"\\||///\")[6]}</class_id>       ");
+        queryBuffer.append("     <supplier_id>{$i/Item_Ctg_Spec/Supplier[Primary_Flag eq \"true\"]/Id}</supplier_id>                                                                     ");
+        queryBuffer.append("     <flag>{$uda80 and     $non_sellable_pack and $removal}</flag>                                                                                         ");
+        queryBuffer.append("     <colorCode>{$i/Item_SKU_Spec/Differentiators[Type eq   \"COLOR\"]/Code}</colorCode>                                                                     ");
+        queryBuffer.append("     <colorDesc>{$i/Item_SKU_Spec/Differentiators[Type eq   \"COLOR\"]/Vendor_Description}</colorDesc>                                                       ");
+        queryBuffer.append("     <sizeCode>{$i/Item_SKU_Spec/Differentiators[Type eq   \"SIZE\"]/Code}</sizeCode>                                                                        ");
+        queryBuffer.append("     <sizeDesc>{$i/Item_SKU_Spec/Differentiators[Type eq \"SIZE\"]/Vendor_Description}</sizeDesc>        </out>'                                             ");
+        queryBuffer.append("     passing aic.XML_DATA AS \"XML_DATA\" columns flag VARCHAR(10) path '/out/flag',                                                                         ");
+        queryBuffer.append("     supplier_id VARCHAR2(20) path '/out/supplier_id', deptid VARCHAR2(20) path '/out/dept_id',                                                            ");
+        queryBuffer.append("     classid VARCHAR2(20) path '/out/class_id', descr VARCHAR2(64) path '/out/desc',                                                                       ");
+        queryBuffer.append("     VENDOR_COLOR_CODE VARCHAR2(10) path '/out/colorCode', VENDOR_COLOR_DESC VARCHAR2(40) path '/out/colorDesc',                                           ");
+        queryBuffer.append("     VENDOR_SIZE_CODE VARCHAR2(10) path '/out/sizeCode', VENDOR_SIZE_DESC VARCHAR2(10) path '/out/sizeDesc') AIC_XML                                       ");
+        queryBuffer.append("   WHERE NVL(AIC.PARENT_MDMID,AIC.MDMID) = AGCM.COMPONENT_STYLE_ID                                                                                         ");
+        queryBuffer.append("   AND (                                                                                                                                                   ");
+        queryBuffer.append("     CASE                                                                                                                                                  ");
+        queryBuffer.append("       WHEN AGCM.PEP_COMPONENT_TYPE ='SKU'                                                                                                                 ");
+        queryBuffer.append("       AND AIC.ENTRY_TYPE           ='Style'                                                                                                               ");
+        queryBuffer.append("       AND AIC.MDMID                =AGCM.COMPONENT_STYLE_ID                                                                                               ");
+        queryBuffer.append("       OR (AIC.ENTRY_TYPE           ='StyleColor'                                                                                                          ");
+        queryBuffer.append("       AND AIC.MDMID                =AGCM.COMPONENT_STYLECOLOR_ID)                                                                                         ");
+        queryBuffer.append("       OR (AIC.ENTRY_TYPE           ='SKU'                                                                                                                 ");
+        queryBuffer.append("       AND AIC.MDMID                =AGCM.COMPONENT_SKU_ID)                                                                                                ");
+        queryBuffer.append("       THEN 1                                                                                                                                              ");
+        queryBuffer.append("       WHEN AGCM.PEP_COMPONENT_TYPE ='StyleColor'                                                                                                          ");
+        queryBuffer.append("       AND ((AIC.ENTRY_TYPE         ='Style'                                                                                                               ");
+        queryBuffer.append("       AND AIC.MDMID                =AGCM.COMPONENT_STYLE_ID)                                                                                              ");
+        queryBuffer.append("       OR (AIC.ENTRY_TYPE           ='StyleColor'                                                                                                          ");
+        queryBuffer.append("       AND AIC.MDMID                =AGCM.COMPONENT_STYLECOLOR_ID))                                                                                        ");
+        queryBuffer.append("       THEN 1                                                                                                                                              ");
+        queryBuffer.append("       WHEN AGCM.PEP_COMPONENT_TYPE ='Style'                                                                                                               ");
+        queryBuffer.append("       THEN 1                                                                                                                                              ");
+        queryBuffer.append("       ELSE 0                                                                                                                                              ");
+        queryBuffer.append("     END )                      =1                                                                                                                         ");
+        queryBuffer.append("   AND AGCM.PEP_COMponent_Type! ='Group'                                                                                                                   ");
+        queryBuffer.append("   AND AGCM.MDMID               =:groupingNo                                                                                                                ");
+        queryBuffer.append("   ) TAB   LEFT OUTER JOIN ADSE_VENDOR_OMNISIZE_DESC omni                                                                                                  ");
+        queryBuffer.append("   ON TAB.VENDOR_SIZE_CODE =omni.NRF_SIZE_CODE                                                                                                             ");
+        queryBuffer.append("   AND TAB.dept_id         =omni.DEPT_ID                                                                                                                   ");
+        queryBuffer.append("   AND TAB.Class_Id        =omni.CLASS_ID                                                                                                                  ");
+        queryBuffer.append("   LEFT OUTER JOIN xmltable('for $i in $XML//omni_size_desc return $i'                                                                                     ");
+        queryBuffer.append("   passing omni.XML_DATA AS \"XML\" columns OMNI_SIZE_DESC VARCHAR(40) path '.' ) o                                                                          ");
+        queryBuffer.append("   ON TAB.Entry_Type = 'SKU'                                                                                                                               ");
+        queryBuffer.append(" ORDER BY PEP_COMPONENT_TYPE DESC,                                                                                                                          ");                         
+        queryBuffer.append("   TAB.MDMID ");
+        
+        return queryBuffer.toString();
     }
 
     
     public String populateGroupIPHcategoryPath(){
-    	final String CONTENT_IPH_CATEFGORY_PATH = "	SELECT pet.mdmid ORIN,	"
-			+ "  ias.CATEGORY_DESC PET_CATEGORY_NAME	"
-			+ "	FROM 	"
-			+ "	  VENDORPORTAL.ADSE_GROUP_CATALOG pet,	"
-			+ "  XMLTABLE( 'for $j in $XML_DATA/pim_entry/group_entry_header/category_paths/category    "
-			+ "  let               $categorydesc := $j//path,        $categoryname := tokenize($j//path, \"///\")[1]      "
-			+ "  return          <category>              <path>{$categorydesc}</path>            <name>{$categoryname}</name>         </category>' PASSING pet.XML_DATA AS \"XML_DATA\" COLUMNS CATEGORY_DESC VARCHAR(1000) path '/category/path', CATEGORY_NAME VARCHAR(100) path '/category/name') ias	"
-			+ "	WHERE pet.mdmid = :groupingNo	"
-			+ "	AND ias.CATEGORY_NAME LIKE 'Item_Primary_Hierarchy' ";
-    	
-    	return CONTENT_IPH_CATEFGORY_PATH;
+        final String CONTENT_IPH_CATEFGORY_PATH = " SELECT pet.mdmid ORIN,  "
+            + "  ias.CATEGORY_DESC PET_CATEGORY_NAME    "
+            + " FROM    "
+            + "   VENDORPORTAL.ADSE_GROUP_CATALOG pet,  "
+            + "  XMLTABLE( 'for $j in $XML_DATA/pim_entry/group_entry_header/category_paths/category    "
+            + "  let               $categorydesc := $j//path,        $categoryname := tokenize($j//path, \"///\")[1]      "
+            + "  return          <category>              <path>{$categorydesc}</path>            <name>{$categoryname}</name>         </category>' PASSING pet.XML_DATA AS \"XML_DATA\" COLUMNS CATEGORY_DESC VARCHAR(1000) path '/category/path', CATEGORY_NAME VARCHAR(100) path '/category/name') ias    "
+            + " WHERE pet.mdmid = :groupingNo   "
+            + " AND ias.CATEGORY_NAME LIKE 'Item_Primary_Hierarchy' ";
+        
+        return CONTENT_IPH_CATEFGORY_PATH;
     }
     
     
     public String populateGroupIPH(){
-    	final String CONTENT_IPH_CATEGORY_OTHERS = "  SELECT pet.mdmid ORIN,	"
-			+ "  ias.CATEGORY_ID PET_CATEGORY_ID,	"
-			+ "  ias.CATEGORY_NAME PET_CATEGORY_NAME,	"
-			+ "  ics.SUB_CLASS SUB_CLASS,	"
-			+ "  ids.leafnode7,	"
-			+ "  ids.leafnode6,	"
-			+ "  ids.leafnode5,	"
-			+ "  ids.leafnode4,	"
-			+ "  ids.leafnode3,	"
-			+ "  ids.leafnode2,	"
-			+ "  ids.leafnode1,	"
-			+ "  ibs.ITEM_CATEGORY_ID	"
-			+ "	FROM VENDORPORTAL.ADSE_PET_CATALOG pet,	"
-			+ "    XMLTABLE( 'for $j in $XML_DATA/pim_entry/pet_entry_header/category_paths/category[last()]  "
-			+ "    let           $categoryid := $j//pk,        "
-			+ "     "
-			+ "                  $categoryname := tokenize(tokenize($j//path, \"///\")[last()],\"-\")[last()]        "
-			+ "        return        "
-			+ "        <category>      "
-			+ "            <pk>{$categoryid}</pk>      "
-			+ "    "
-			+ "            <name>{$categoryname}</name>     "
-			+ "        </category>' PASSING pet.XML_DATA AS \"XML_DATA\" 	"
-			+ "        COLUMNS 	"
-			+ "        CATEGORY_ID VARCHAR(100) path '/category/pk', 	"
-			+ "        CATEGORY_NAME VARCHAR(100) path '/category/name') ias	"
-			+ "  ,	"
-			+ "    VENDORPORTAL.ADSE_ITEM_CATALOG aic,	"
-			+ "    XMLTABLE( 'for $j in $XML_DATA/pim_entry/item_header/category_paths/category  "
-			+ "    let          "
-			+ "    $itemcategoryid := $j//pk,                "
-			+ "    $itemcategoryname := tokenize($j//path, \"///\")[1]        "
-			+ "    return         "
-			+ "    <category>        "
-			+ "      <pk>{$itemcategoryid}</pk>        "
-			+ "             "
-			+ "      <name>{$itemcategoryname}</name>       "
-			+ "    </category>' PASSING aic.XML_DATA AS \"XML_DATA\" 	"
-			+ "    COLUMNS 	"
-			+ "      ITEM_CATEGORY_ID VARCHAR(100) path '/category/pk', 	"
-			+ "      ITEM_CATEGORY_NAME VARCHAR(100) path '/category/name') ibs		"
-			+ "  ,	"
-			+ "    VENDORPORTAL.ADSE_MERCHANDISE_HIERARCHY amh,	"
-			+ "    XMLTABLE( 'for $j in $XML_DATA/pim_category/merchandise_category_header     "
-			+ "    let           $subclass := tokenize($j//full_path, \"///\")[last()]              "
-			+ "    return           "
-			+ "    <merchandise_category_header>         "
-			+ "      <full_path>{$subclass}</full_path>         "
-			+ "    </merchandise_category_header>' PASSING amh.XML_DATA AS \"XML_DATA\"		"
-			+ "    COLUMNS 	"
-			+ "    SUB_CLASS VARCHAR(100) path '/merchandise_category_header/full_path') ics	"
-			+ "  ,	"
-			+ "  VENDORPORTAL.ADSE_MERCHANDISE_HIERARCHY amh1,	"
-			+ "  XMLTABLE(	"
-			+ "  'for $j in $XML_DATA/pim_category/entry/Merchandise_Hier_Spec/IPH_Category_Mappings               let                                                                                                         $leafnode7 := $j//Level_7,                                                                                  $leafnode6 := $j//Level_6,                                                                                  $leafnode5 := $j//Level_5,                                                                                  $leafnode4 := $j//Level_4,                                                                                  $leafnode3 := $j//Level_3,                                                                                  $leafnode2 := $j//Level_2,                                                                                  $leafnode1 := $j//Level_1                                                                                   return                                                                                                      <IPH_Category_Mappings>                                                                                     <leafnode7>{$leafnode7}</leafnode7>                                                                         <leafnode6>{$leafnode6}</leafnode6>                                                                         <leafnode5>{$leafnode5}</leafnode5>                                                                         <leafnode4>{$leafnode4}</leafnode4>                                                                         <leafnode3>{$leafnode3}</leafnode3>                                                                         <leafnode2>{$leafnode2}</leafnode2>                                                                         <leafnode1>{$leafnode1}</leafnode1>                                                                         </IPH_Category_Mappings>'	"
-			+ "PASSING amh1.XML_DATA AS \"XML_DATA\" COLUMNS leafnode7 VARCHAR(100) path '/IPH_Category_Mappings/leafnode7', leafnode6 VARCHAR(100) path '/IPH_Category_Mappings/leafnode6', leafnode5 VARCHAR(100) path '/IPH_Category_Mappings/leafnode5', leafnode4 VARCHAR(100) path '/IPH_Category_Mappings/leafnode4', leafnode3 VARCHAR(100) path '/IPH_Category_Mappings/leafnode3', leafnode2 VARCHAR(100) path '/IPH_Category_Mappings/leafnode2', leafnode1 VARCHAR(100) path '/IPH_Category_Mappings/leafnode1') ids,		"
-			+ "  ADSE_GROUP_CHILD_MAPPING AGCM	"
-			+ "	WHERE ibs.ITEM_CATEGORY_ID = amh1.MDMID	"
-			+ "	AND ibs.ITEM_CATEGORY_ID = amh.MDMID	"
-			+ "  AND UPPER(ibs.ITEM_CATEGORY_NAME) = UPPER('Merchandise_Hierarchy')	"
-			+ "  AND AGCM.COMPONENT_STYLE_ID = AIC.MDMID AND AGCM.COMPONENT_DEFAULT='true'	"
-			+ "  AND AGCM.COMPONENT_STYLE_ID =pet.mdmid	"
-			+ "  AND AGCM.mdmid = :groupingNo	";
-    	
-			return CONTENT_IPH_CATEGORY_OTHERS;
+        final String CONTENT_IPH_CATEGORY_OTHERS = "  SELECT pet.mdmid ORIN,    "
+            + "  ias.CATEGORY_ID PET_CATEGORY_ID,   "
+            + "  ias.CATEGORY_NAME PET_CATEGORY_NAME,   "
+            + "  ics.SUB_CLASS SUB_CLASS,   "
+            + "  ids.leafnode7, "
+            + "  ids.leafnode6, "
+            + "  ids.leafnode5, "
+            + "  ids.leafnode4, "
+            + "  ids.leafnode3, "
+            + "  ids.leafnode2, "
+            + "  ids.leafnode1, "
+            + "  ibs.ITEM_CATEGORY_ID   "
+            + " FROM VENDORPORTAL.ADSE_PET_CATALOG pet, "
+            + "    XMLTABLE( 'for $j in $XML_DATA/pim_entry/pet_entry_header/category_paths/category[last()]  "
+            + "    let           $categoryid := $j//pk,        "
+            + "     "
+            + "                  $categoryname := tokenize(tokenize($j//path, \"///\")[last()],\"-\")[last()]        "
+            + "        return        "
+            + "        <category>      "
+            + "            <pk>{$categoryid}</pk>      "
+            + "    "
+            + "            <name>{$categoryname}</name>     "
+            + "        </category>' PASSING pet.XML_DATA AS \"XML_DATA\"    "
+            + "        COLUMNS  "
+            + "        CATEGORY_ID VARCHAR(100) path '/category/pk',    "
+            + "        CATEGORY_NAME VARCHAR(100) path '/category/name') ias    "
+            + "  ,  "
+            + "    VENDORPORTAL.ADSE_ITEM_CATALOG aic,  "
+            + "    XMLTABLE( 'for $j in $XML_DATA/pim_entry/item_header/category_paths/category  "
+            + "    let          "
+            + "    $itemcategoryid := $j//pk,                "
+            + "    $itemcategoryname := tokenize($j//path, \"///\")[1]        "
+            + "    return         "
+            + "    <category>        "
+            + "      <pk>{$itemcategoryid}</pk>        "
+            + "             "
+            + "      <name>{$itemcategoryname}</name>       "
+            + "    </category>' PASSING aic.XML_DATA AS \"XML_DATA\"    "
+            + "    COLUMNS  "
+            + "      ITEM_CATEGORY_ID VARCHAR(100) path '/category/pk',     "
+            + "      ITEM_CATEGORY_NAME VARCHAR(100) path '/category/name') ibs     "
+            + "  ,  "
+            + "    VENDORPORTAL.ADSE_MERCHANDISE_HIERARCHY amh, "
+            + "    XMLTABLE( 'for $j in $XML_DATA/pim_category/merchandise_category_header     "
+            + "    let           $subclass := tokenize($j//full_path, \"///\")[last()]              "
+            + "    return           "
+            + "    <merchandise_category_header>         "
+            + "      <full_path>{$subclass}</full_path>         "
+            + "    </merchandise_category_header>' PASSING amh.XML_DATA AS \"XML_DATA\"     "
+            + "    COLUMNS  "
+            + "    SUB_CLASS VARCHAR(100) path '/merchandise_category_header/full_path') ics    "
+            + "  ,  "
+            + "  VENDORPORTAL.ADSE_MERCHANDISE_HIERARCHY amh1,  "
+            + "  XMLTABLE(  "
+            + "  'for $j in $XML_DATA/pim_category/entry/Merchandise_Hier_Spec/IPH_Category_Mappings               let                                                                                                         $leafnode7 := $j//Level_7,                                                                                  $leafnode6 := $j//Level_6,                                                                                  $leafnode5 := $j//Level_5,                                                                                  $leafnode4 := $j//Level_4,                                                                                  $leafnode3 := $j//Level_3,                                                                                  $leafnode2 := $j//Level_2,                                                                                  $leafnode1 := $j//Level_1                                                                                   return                                                                                                      <IPH_Category_Mappings>                                                                                     <leafnode7>{$leafnode7}</leafnode7>                                                                         <leafnode6>{$leafnode6}</leafnode6>                                                                         <leafnode5>{$leafnode5}</leafnode5>                                                                         <leafnode4>{$leafnode4}</leafnode4>                                                                         <leafnode3>{$leafnode3}</leafnode3>                                                                         <leafnode2>{$leafnode2}</leafnode2>                                                                         <leafnode1>{$leafnode1}</leafnode1>                                                                         </IPH_Category_Mappings>'    "
+            + "PASSING amh1.XML_DATA AS \"XML_DATA\" COLUMNS leafnode7 VARCHAR(100) path '/IPH_Category_Mappings/leafnode7', leafnode6 VARCHAR(100) path '/IPH_Category_Mappings/leafnode6', leafnode5 VARCHAR(100) path '/IPH_Category_Mappings/leafnode5', leafnode4 VARCHAR(100) path '/IPH_Category_Mappings/leafnode4', leafnode3 VARCHAR(100) path '/IPH_Category_Mappings/leafnode3', leafnode2 VARCHAR(100) path '/IPH_Category_Mappings/leafnode2', leafnode1 VARCHAR(100) path '/IPH_Category_Mappings/leafnode1') ids,       "
+            + "  ADSE_GROUP_CHILD_MAPPING AGCM  "
+            + " WHERE ibs.ITEM_CATEGORY_ID = amh1.MDMID "
+            + " AND ibs.ITEM_CATEGORY_ID = amh.MDMID    "
+            + "  AND UPPER(ibs.ITEM_CATEGORY_NAME) = UPPER('Merchandise_Hierarchy') "
+            + "  AND AGCM.COMPONENT_STYLE_ID = AIC.MDMID AND AGCM.COMPONENT_DEFAULT='true'  "
+            + "  AND AGCM.COMPONENT_STYLE_ID =pet.mdmid "
+            + "  AND AGCM.mdmid = :groupingNo   ";
+        
+            return CONTENT_IPH_CATEGORY_OTHERS;
     }
     
     public String getGroupContentHistoryQuery(){
-    	final String GROUP_CONTENT_HISTORY = "	SELECT pet.mdmid,	"
-			+ "  i.createdBy,	"
-			+ "  i.createdOn,	"
-			+ "  i.lastState,	"
-			+ "  i.lastUpdateOn,	"
-			+ "  i.lastUpdateBy,	"
-			+ "  i.currentState		"
-			+ "	FROM VENDORPORTAL.ADSE_GROUP_CATALOG pet,	"
-			+ "  XMLTable(	"
-			+ "  'for $i in $pet/pim_entry/entry/Group_Ctg_Spec/Audit/Content      "
-			+ "  let  $lastState := $i//Last_State,		"
-			+ "  $lastUpdate := $i//Last_State_On,		"
-			+ "  $lastUpdateBy := $i//Last_State_By,	"
-			+ "  $createdBy := $i//..//Created_By,		"
-			+ "  $createdOn := $i//..//Created_On,		"
-			+ "  $currentState := $i//..//..//State                                                                                                                                  return                                                                       <petStatus>                                                                              <lastState>{$lastState}</lastState>                                                     <lastUpdate>{$lastUpdate}</lastUpdate>                                                  <lastUpdateBy>{$lastUpdateBy}</lastUpdateBy>                                            <createdBy>{$createdBy}</createdBy>                                                     <createdOn>{$createdOn}</createdOn>                                                     <currentState>{$currentState}</currentState>                                </petStatus>'	"
-			+ "  passing pet.XML_DATA AS \"pet\" 	"
-			+ "  columns 	"
-			+ "    lastState VARCHAR2(40) path '/petStatus/lastState' , 	"
-			+ "    lastUpdateOn VARCHAR2(40) path '/petStatus/lastUpdate' , 	"
-			+ "    lastUpdateBy VARCHAR2(40) path '/petStatus/lastUpdateBy', 	"
-			+ "    createdBy VARCHAR2(40) path '/petStatus/createdBy', 		"
-			+ "    createdOn VARCHAR2(40) path '/petStatus/createdOn', 	"
-			+ "    currentState VARCHAR2(40) path '/petStatus/currentState' ) i 	"
-			+ "WHERE pet.mdmid=:groupingNo";
-    	
-    	return GROUP_CONTENT_HISTORY;
+        final String GROUP_CONTENT_HISTORY = "  SELECT pet.mdmid,   "
+            + "  i.createdBy,   "
+            + "  i.createdOn,   "
+            + "  i.lastState,   "
+            + "  i.lastUpdateOn,    "
+            + "  i.lastUpdateBy,    "
+            + "  i.currentState     "
+            + " FROM VENDORPORTAL.ADSE_GROUP_CATALOG pet,   "
+            + "  XMLTable(  "
+            + "  'for $i in $pet/pim_entry/entry/Group_Ctg_Spec/Audit/Content      "
+            + "  let  $lastState := $i//Last_State,     "
+            + "  $lastUpdate := $i//Last_State_On,      "
+            + "  $lastUpdateBy := $i//Last_State_By,    "
+            + "  $createdBy := $i//..//Created_By,      "
+            + "  $createdOn := $i//..//Created_On,      "
+            + "  $currentState := $i//..//..//State                                                                                                                                  return                                                                       <petStatus>                                                                              <lastState>{$lastState}</lastState>                                                     <lastUpdate>{$lastUpdate}</lastUpdate>                                                  <lastUpdateBy>{$lastUpdateBy}</lastUpdateBy>                                            <createdBy>{$createdBy}</createdBy>                                                     <createdOn>{$createdOn}</createdOn>                                                     <currentState>{$currentState}</currentState>                                </petStatus>'    "
+            + "  passing pet.XML_DATA AS \"pet\"    "
+            + "  columns    "
+            + "    lastState VARCHAR2(40) path '/petStatus/lastState' ,     "
+            + "    lastUpdateOn VARCHAR2(40) path '/petStatus/lastUpdate' ,     "
+            + "    lastUpdateBy VARCHAR2(40) path '/petStatus/lastUpdateBy',    "
+            + "    createdBy VARCHAR2(40) path '/petStatus/createdBy',      "
+            + "    createdOn VARCHAR2(40) path '/petStatus/createdOn',  "
+            + "    currentState VARCHAR2(40) path '/petStatus/currentState' ) i     "
+            + "WHERE pet.mdmid=:groupingNo";
+        
+        return GROUP_CONTENT_HISTORY;
     }
     
     /**
@@ -2913,20 +2913,20 @@ public class XqueryConstants {
      * Date: 06/18/2016
      * Added By: Cognizant
      */
-	public String getGroupCopyValidation() {
-		final StringBuffer groupCopyValidationQuery = new StringBuffer();
-		LOGGER.info("***Entering getGroupCopyValidation() method.");
-		groupCopyValidationQuery
-				.append("SELECT COUNT(*) COUNT_GROUP FROM ADSE_GROUP_CHILD_MAPPING WHERE COMPONENT_STYLE_ID = :styleId AND MDMID= :groupId");
-		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug("GROUP COPY VALIDATION QUERY -- \n"
-					+ groupCopyValidationQuery.toString());
-		}
-		LOGGER.info("***Exiting getGroupCopyValidation() method.");
-		return groupCopyValidationQuery.toString();
+    public String getGroupCopyValidation() {
+        final StringBuffer groupCopyValidationQuery = new StringBuffer();
+        LOGGER.info("***Entering getGroupCopyValidation() method.");
+        groupCopyValidationQuery
+                .append("SELECT COUNT(*) COUNT_GROUP FROM ADSE_GROUP_CHILD_MAPPING WHERE COMPONENT_STYLE_ID = :styleId AND MDMID= :groupId");
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("GROUP COPY VALIDATION QUERY -- \n"
+                    + groupCopyValidationQuery.toString());
+        }
+        LOGGER.info("***Exiting getGroupCopyValidation() method.");
+        return groupCopyValidationQuery.toString();
     }
-	
-	/**
+    
+    /**
      * Method to get the group copy validation query.
      *    
      * @return the query string
@@ -2935,121 +2935,241 @@ public class XqueryConstants {
      * Date: 06/23/2016
      * Added By: Cognizant
      */
-	public String getPETStateCopyValidation() {
-		final StringBuffer groupCopyValidationQuery = new StringBuffer();
-		LOGGER.info("***Entering getPETStateCopyValidation() method.");
-		groupCopyValidationQuery
-				.append("SELECT PET_STATE FROM ADSE_PET_CATALOG WHERE MDMID = :styleId ");
-		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug("GROUP COPY VALIDATION QUERY -- \n"
-					+ groupCopyValidationQuery.toString());
-		}
-		LOGGER.info("***Exiting getGroupCopyValidation() method.");
-		return groupCopyValidationQuery.toString();
+    public String getPETStateCopyValidation() {
+        final StringBuffer groupCopyValidationQuery = new StringBuffer();
+        LOGGER.info("***Entering getPETStateCopyValidation() method.");
+        groupCopyValidationQuery
+                .append("SELECT PET_STATE FROM ADSE_PET_CATALOG WHERE MDMID = :styleId ");
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("GROUP COPY VALIDATION QUERY -- \n"
+                    + groupCopyValidationQuery.toString());
+        }
+        LOGGER.info("***Exiting getGroupCopyValidation() method.");
+        return groupCopyValidationQuery.toString();
     }
-	
-	public String populateGroupIPHForCollections(){
-		
-		final Properties prop =   PropertiesFileLoader.getPropertyLoader(ContentScreenConstants.MESS_PROP);
-		String categoryId = prop.getProperty(ContentScreenConstants.DUMMY_CATEGORY_ID_COLLECTION);
-		if(LOGGER.isDebugEnabled())
-			LOGGER.debug("categoryId in  populateGroupIPHForCollections--- >"+categoryId);
-		
-		StringBuilder query = new StringBuilder();
-		
-		query.append(" SELECT pet.mdmid ORIN,                                                                                                                                  " );
-		query.append("   ias.CATEGORY_ID PET_CATEGORY_ID,                                                                                                                      " );
-		query.append("   ias.CATEGORY_NAME PET_CATEGORY_NAME,                                                                                                                  " );
-		query.append("   ics.SUB_CLASS SUB_CLASS,                                                                                                                              " );
-		query.append("   ids.leafnode7,                                                                                                                                        " );
-		query.append("   ids.leafnode6,                                                                                                                                        " );
-		query.append("   ids.leafnode5,                                                                                                                                        " );
-		query.append("   ids.leafnode4,                                                                                                                                        " );
-		query.append("   ids.leafnode3,                                                                                                                                        " );
-		query.append("   ids.leafnode2,                                                                                                                                        " );
-		query.append("   ids.leafnode1                                                                                                                                         " );
-		query.append(" FROM VENDORPORTAL.ADSE_GROUP_CATALOG pet,                                                                                                               " );
-		query.append("   XMLTABLE( 'for $j in $XML_DATA/pim_entry/group_entry_header/category_paths/category[last()]                                                           " );
-		query.append(" let           $categoryid := $j//pk,                                                                                                                    " );
-		query.append("                                                                                                                                                         " );
-		query.append(" $categoryname := tokenize(tokenize($j//path, \"///\")[last()],\"-\")[last()]                                                                                " );
-		query.append(" return                                                                                                                                                  " );
-		query.append(" <category>                                                                                                                                              " );
-		query.append(" <pk>{$categoryid}</pk>                                                                                                                                  " );
-		query.append("                                                                                                                                                         " );
-		query.append(" <name>{$categoryname}</name>                                                                                                                            " );
-		query.append(" </category>' PASSING pet.XML_DATA AS \"XML_DATA\" COLUMNS CATEGORY_ID VARCHAR(100) path '/category/pk',                                                   " );
-	                                                                                         
-		query.append("   CATEGORY_NAME VARCHAR(100) path '/category/name') ias ,                                                                                               " );
-		query.append("   VENDORPORTAL.ADSE_MERCHANDISE_HIERARCHY amh,                                                                                                          " );
-		query.append("   XMLTABLE( 'for $j in $XML_DATA/pim_category/merchandise_category_header                                                                               " );
-		query.append(" let           $subclass := tokenize($j//full_path, \"///\")[last()]                                                                                       " );
-		query.append(" return                                                                                                                                                  " );
-		query.append(" <merchandise_category_header>                                                                                                                           " );
-		query.append(" <full_path>{$subclass}</full_path>                                                                                                                      " );
-		query.append(" </merchandise_category_header>' PASSING amh.XML_DATA AS \"XML_DATA\" COLUMNS SUB_CLASS VARCHAR(100) path '/merchandise_category_header/full_path') ics ,  " );
-		query.append("   VENDORPORTAL.ADSE_MERCHANDISE_HIERARCHY amh1,                                                                                                         " );
-		query.append("   XMLTABLE(                                                                                                                                             " );
-		query.append("   'for $j in $XML_DATA/pim_category/entry/Merchandise_Hier_Spec/IPH_Category_Mappings                                                                   " );
-		query.append("   let                                                                                                                                                   " );
-		query.append("   $leafnode7 := $j//Level_7,                                                                                                                            " );
-		query.append("   $leafnode6 := $j//Level_6,                                                                                                                            " );
-		query.append("   $leafnode5 := $j//Level_5,                                                                                                                            " );
-		query.append("   $leafnode4 := $j//Level_4,                                                                                                                            " );
-		query.append("   $leafnode3 := $j//Level_3,                                                                                                                            " );
-		query.append("   $leafnode2 := $j//Level_2,                                                                                                                            " );
-		query.append("   $leafnode1 := $j//Level_1                                                                                                                             " );
-		query.append("   return                                                                                                                                                " );
-		query.append("   <IPH_Category_Mappings>                                                                                                                               " );
-		query.append("   <leafnode7>{$leafnode7}</leafnode7>                                                                                                                   " );
-		query.append("   <leafnode6>{$leafnode6}</leafnode6>                                                                                                                   " );
-		query.append("   <leafnode5>{$leafnode5}</leafnode5>                                                                                                                   " );
-		query.append("   <leafnode4>{$leafnode4}</leafnode4>                                                                                                                   " );
-		query.append("   <leafnode3>{$leafnode3}</leafnode3>                                                                                                                   " );
-		query.append("   <leafnode2>{$leafnode2}</leafnode2>                                                                                                                   " );
-		query.append("   <leafnode1>{$leafnode1}</leafnode1>                                                                                                                   " );
-		query.append("   </IPH_Category_Mappings>'                                                                                                                             " );
-		query.append("   PASSING amh1.XML_DATA AS \"XML_DATA\"                                                                                                                   " );
-		query.append("   COLUMNS leafnode7 VARCHAR(100) path '/IPH_Category_Mappings/leafnode7',                                                                               " );
-		query.append("   leafnode6 VARCHAR(100) path '/IPH_Category_Mappings/leafnode6',                                                                                       " );
-		query.append("   leafnode5 VARCHAR(100) path '/IPH_Category_Mappings/leafnode5',                                                                                       " );
-		query.append("   leafnode4 VARCHAR(100) path '/IPH_Category_Mappings/leafnode4',                                                                                       " );
-		query.append("   leafnode3 VARCHAR(100) path '/IPH_Category_Mappings/leafnode3',                                                                                       " );
-		query.append("   leafnode2 VARCHAR(100) path '/IPH_Category_Mappings/leafnode2',                                                                                       " );
-		query.append("   leafnode1 VARCHAR(100) path '/IPH_Category_Mappings/leafnode1') ids                                                                                   " );
-		query.append(" WHERE amh1.MDMID = '");
-		query.append(categoryId);                                                                                                                              
-		query.append("' AND amh1.MDMID = amh.MDMID                                                                                                                              " );
-		query.append(" AND pet.mdmid  = :groupingNo																				");	
-    	
-			return query.toString();
+    
+    public String populateGroupIPHForCollections(){
+        
+        final Properties prop =   PropertiesFileLoader.getPropertyLoader(ContentScreenConstants.MESS_PROP);
+        String categoryId = prop.getProperty(ContentScreenConstants.DUMMY_CATEGORY_ID_COLLECTION);
+        if(LOGGER.isDebugEnabled())
+            LOGGER.debug("categoryId in  populateGroupIPHForCollections--- >"+categoryId);
+        
+        StringBuilder query = new StringBuilder();
+        
+        query.append(" SELECT pet.mdmid ORIN,                                                                                                                                  " );
+        query.append("   ias.CATEGORY_ID PET_CATEGORY_ID,                                                                                                                      " );
+        query.append("   ias.CATEGORY_NAME PET_CATEGORY_NAME,                                                                                                                  " );
+        query.append("   ics.SUB_CLASS SUB_CLASS,                                                                                                                              " );
+        query.append("   ids.leafnode7,                                                                                                                                        " );
+        query.append("   ids.leafnode6,                                                                                                                                        " );
+        query.append("   ids.leafnode5,                                                                                                                                        " );
+        query.append("   ids.leafnode4,                                                                                                                                        " );
+        query.append("   ids.leafnode3,                                                                                                                                        " );
+        query.append("   ids.leafnode2,                                                                                                                                        " );
+        query.append("   ids.leafnode1                                                                                                                                         " );
+        query.append(" FROM VENDORPORTAL.ADSE_GROUP_CATALOG pet,                                                                                                               " );
+        query.append("   XMLTABLE( 'for $j in $XML_DATA/pim_entry/group_entry_header/category_paths/category[last()]                                                           " );
+        query.append(" let           $categoryid := $j//pk,                                                                                                                    " );
+        query.append("                                                                                                                                                         " );
+        query.append(" $categoryname := tokenize(tokenize($j//path, \"///\")[last()],\"-\")[last()]                                                                                " );
+        query.append(" return                                                                                                                                                  " );
+        query.append(" <category>                                                                                                                                              " );
+        query.append(" <pk>{$categoryid}</pk>                                                                                                                                  " );
+        query.append("                                                                                                                                                         " );
+        query.append(" <name>{$categoryname}</name>                                                                                                                            " );
+        query.append(" </category>' PASSING pet.XML_DATA AS \"XML_DATA\" COLUMNS CATEGORY_ID VARCHAR(100) path '/category/pk',                                                   " );
+                                                                                             
+        query.append("   CATEGORY_NAME VARCHAR(100) path '/category/name') ias ,                                                                                               " );
+        query.append("   VENDORPORTAL.ADSE_MERCHANDISE_HIERARCHY amh,                                                                                                          " );
+        query.append("   XMLTABLE( 'for $j in $XML_DATA/pim_category/merchandise_category_header                                                                               " );
+        query.append(" let           $subclass := tokenize($j//full_path, \"///\")[last()]                                                                                       " );
+        query.append(" return                                                                                                                                                  " );
+        query.append(" <merchandise_category_header>                                                                                                                           " );
+        query.append(" <full_path>{$subclass}</full_path>                                                                                                                      " );
+        query.append(" </merchandise_category_header>' PASSING amh.XML_DATA AS \"XML_DATA\" COLUMNS SUB_CLASS VARCHAR(100) path '/merchandise_category_header/full_path') ics ,  " );
+        query.append("   VENDORPORTAL.ADSE_MERCHANDISE_HIERARCHY amh1,                                                                                                         " );
+        query.append("   XMLTABLE(                                                                                                                                             " );
+        query.append("   'for $j in $XML_DATA/pim_category/entry/Merchandise_Hier_Spec/IPH_Category_Mappings                                                                   " );
+        query.append("   let                                                                                                                                                   " );
+        query.append("   $leafnode7 := $j//Level_7,                                                                                                                            " );
+        query.append("   $leafnode6 := $j//Level_6,                                                                                                                            " );
+        query.append("   $leafnode5 := $j//Level_5,                                                                                                                            " );
+        query.append("   $leafnode4 := $j//Level_4,                                                                                                                            " );
+        query.append("   $leafnode3 := $j//Level_3,                                                                                                                            " );
+        query.append("   $leafnode2 := $j//Level_2,                                                                                                                            " );
+        query.append("   $leafnode1 := $j//Level_1                                                                                                                             " );
+        query.append("   return                                                                                                                                                " );
+        query.append("   <IPH_Category_Mappings>                                                                                                                               " );
+        query.append("   <leafnode7>{$leafnode7}</leafnode7>                                                                                                                   " );
+        query.append("   <leafnode6>{$leafnode6}</leafnode6>                                                                                                                   " );
+        query.append("   <leafnode5>{$leafnode5}</leafnode5>                                                                                                                   " );
+        query.append("   <leafnode4>{$leafnode4}</leafnode4>                                                                                                                   " );
+        query.append("   <leafnode3>{$leafnode3}</leafnode3>                                                                                                                   " );
+        query.append("   <leafnode2>{$leafnode2}</leafnode2>                                                                                                                   " );
+        query.append("   <leafnode1>{$leafnode1}</leafnode1>                                                                                                                   " );
+        query.append("   </IPH_Category_Mappings>'                                                                                                                             " );
+        query.append("   PASSING amh1.XML_DATA AS \"XML_DATA\"                                                                                                                   " );
+        query.append("   COLUMNS leafnode7 VARCHAR(100) path '/IPH_Category_Mappings/leafnode7',                                                                               " );
+        query.append("   leafnode6 VARCHAR(100) path '/IPH_Category_Mappings/leafnode6',                                                                                       " );
+        query.append("   leafnode5 VARCHAR(100) path '/IPH_Category_Mappings/leafnode5',                                                                                       " );
+        query.append("   leafnode4 VARCHAR(100) path '/IPH_Category_Mappings/leafnode4',                                                                                       " );
+        query.append("   leafnode3 VARCHAR(100) path '/IPH_Category_Mappings/leafnode3',                                                                                       " );
+        query.append("   leafnode2 VARCHAR(100) path '/IPH_Category_Mappings/leafnode2',                                                                                       " );
+        query.append("   leafnode1 VARCHAR(100) path '/IPH_Category_Mappings/leafnode1') ids                                                                                   " );
+        query.append(" WHERE amh1.MDMID = '");
+        query.append(categoryId);                                                                                                                              
+        query.append("' AND amh1.MDMID = amh.MDMID                                                                                                                              " );
+        query.append(" AND pet.mdmid  = :groupingNo                                                                             "); 
+        
+            return query.toString();
     }
-	
-	
-	public static String getGroupGlobalAttributes(){
-		StringBuilder query = new StringBuilder();
-		
-		query.append("	SELECT                                                        ");
-		query.append("    p.Belk_Exclusive,                                           ");
-		query.append("    p.Channel_Exclusive,                                        ");
-		query.append("    p.BOPIS,                                                    ");
-		query.append("    p.Is_PYG,                                                   ");
-		query.append("    p.is_GWP,                                                   ");
-		query.append("    p.is_PWP,                                                    ");
-		query.append("    p.Supplier_Direct_Fulfillment                               ");
-		query.append("  FROM ADSE_GROUP_CATALOG pet,                                  ");
-		query.append("    XMLTable( 'for $i in $item/pim_entry/entry/Ecomm_Style_Spec ");
-		query.append("	return  $i' passing pet.XML_DATA AS \"item\" 						");
-		query.append("    columns                                                       ");
-		query.append("    Belk_Exclusive VARCHAR2(10) Path 'Belk_Exclusive',            ");
-		query.append("    Channel_Exclusive VARCHAR2(30) path 'Channel_Exclusive',      ");
-		query.append("    Bopis VARCHAR2(60) Path 'BOPIS',                              ");
-		query.append("    Is_PYG VARCHAR2(40) path 'Is_PYG',                            ");
-		query.append("    Is_Gwp VARCHAR2(40) Path 'Is_GWP',                            ");
-		query.append("    Is_PWP VARCHAR2(40) path 'Is_PWP',                         ");
-		query.append("    Supplier_Direct_Fulfillment VARCHAR2(40) path 'Supplier_Direct_Fulfillment' ) p                         ");
-		query.append("    WHERE  pet.mdmid = :groupingId                                ");
-		
-		return query.toString();
-	}
+    
+    
+    public static String getGroupGlobalAttributes(){
+        StringBuilder query = new StringBuilder();
+        
+        query.append("  SELECT                                                        ");
+        query.append("    p.Belk_Exclusive,                                           ");
+        query.append("    p.Channel_Exclusive,                                        ");
+        query.append("    p.BOPIS,                                                    ");
+        query.append("    p.Is_PYG,                                                   ");
+        query.append("    p.is_GWP,                                                   ");
+        query.append("    p.is_PWP,                                                    ");
+        query.append("    p.Supplier_Direct_Fulfillment                               ");
+        query.append("  FROM ADSE_GROUP_CATALOG pet,                                  ");
+        query.append("    XMLTable( 'for $i in $item/pim_entry/entry/Ecomm_Style_Spec ");
+        query.append("  return  $i' passing pet.XML_DATA AS \"item\"                        ");
+        query.append("    columns                                                       ");
+        query.append("    Belk_Exclusive VARCHAR2(10) Path 'Belk_Exclusive',            ");
+        query.append("    Channel_Exclusive VARCHAR2(30) path 'Channel_Exclusive',      ");
+        query.append("    Bopis VARCHAR2(60) Path 'BOPIS',                              ");
+        query.append("    Is_PYG VARCHAR2(40) path 'Is_PYG',                            ");
+        query.append("    Is_Gwp VARCHAR2(40) Path 'Is_GWP',                            ");
+        query.append("    Is_PWP VARCHAR2(40) path 'Is_PWP',                         ");
+        query.append("    Supplier_Direct_Fulfillment VARCHAR2(40) path 'Supplier_Direct_Fulfillment' ) p                         ");
+        query.append("    WHERE  pet.mdmid = :groupingId                                ");
+        
+        return query.toString();
+    }
+public String getComponentIDs(){       
+        
+        final String COMPONENT_IDS= " select * from ADSE_GROUP_CHILD_MAPPING AGCM   where  AGCM.MDMID= ?";          
+        
+        return COMPONENT_IDS;
+              
+  }
+    
+    public String getGroupingComponents(){       
+        
+        final String GROUPING_DTLS_QUERY= " SELECT TAB.GROUPING_ID, "+
+            " TAB.PARENT_MDMID STYLE_ID, "+
+            " TAB.MDMID COMPONENT_ID, "+
+            " TAB.COMPLETION_DATE, "+
+            " TAB.PET_STATE, "+
+            " TAB.CONTENT_STATE, "+
+            "  TAB.ENTRY_TYPE, "+
+            " TAB.PEP_COMPONENT_TYPE COMPONENT_TYPE, "+
+            " TAB.Color_code, "+
+            " TAB.Color, "+
+            " TAB.Vendor_Size, "+
+            " TAB.PRIMARYSUPPLIERVPN, "+
+            " TAB.DEPT_ID, "+
+            " TAB.CLASS_ID, "+
+            " TAB.VENDOR_SIZE_CODE, "+
+            " OMNI_SIZE_DESC "+
+            " FROM "+
+            " (SELECT AGCM.MDMID GROUPING_ID, "+
+            " NULL PARENT_MDMID, "+
+            " NULL PARENT_STYLECOLOR, "+
+            " AGC.MDMID, "+
+            " TO_CHAR(AGC.COMPLETION_DATE,'YYYY-MM-DD') COMPLETION_DATE, "+
+            " AGC.GROUP_OVERALL_STATUS_CODE PET_STATE, "+
+            " AGC.GROUP_CONTENT_STATUS_CODE CONTENT_STATE, "+
+            " AGC.ENTRY_TYPE, "+
+            " AGCM.PEP_COMPONENT_TYPE, "+
+            " NULL Color_code, "+
+            " NULL Color, "+
+            " NULL Vendor_Size, "+
+            " AGC.DEF_PRIMARYSUPPLIERVPN PRIMARYSUPPLIERVPN, "+
+            " NULL DEPT_ID, "+
+            " NULL CLASS_ID, "+
+            " NULL VENDOR_SIZE_CODE "+
+            " FROM ADSE_GROUP_CATALOG AGC, "+
+            " ADSE_GROUP_CHILD_MAPPING AGCM "+
+            " WHERE AGC.MDMID            = AGCM.COMPONENT_GROUPING_ID "+
+            " AND AGCM.PEP_COMponent_Type='Group' "+
+            " AND AGCM.MDMID             =:groupingNo "+
+            " UNION "+
+            " SELECT AGCM.MDMID, "+
+            " AIC.PARENT_MDMID, "+
+            " AIC.PARENT_STYLECOLOR, "+
+            " AIC.MDMID, "+
+            " CASE "+
+            " WHEN AIC.ENTRY_TYPE='Style' "+
+            " THEN TO_CHAR(APC.PET_EARLIEST_COMP_DATE,'YYYY-MM-DD') "+
+            " ELSE PET_XML.completion_date "+
+            " END completion_date, "+
+            " APC.PET_STATE PET_STATE, "+
+            " APC.CONTENT_STATUS CONTENT_STATE, "+
+            "  AIC.ENTRY_TYPE, "+
+            " AGCM.PEP_COMponent_Type, "+
+            " AIC_XML.VENDOR_COLOR_CODE Color_code, "+
+            " AIC_XML.VENDOR_COLOR_CODE "+
+            " || ' ' "+
+            " ||AIC_XML.VENDOR_COLOR_DESC Color, "+
+            " AIC_XML.VENDOR_SIZE_CODE "+
+            " || ' ' "+
+            " ||AIC_XML.VENDOR_SIZE_DESC Vendor_Size, "+
+            " AIC.PRIMARYSUPPLIERVPN, "+
+            " AIC.DEPT_ID, "+
+            " AIC.CLASS_ID, "+
+            " AIC_XML.VENDOR_SIZE_CODE "+
+            " FROM ADSE_GROUP_CHILD_MAPPING AGCM, "+
+            " ADSE_ITEM_CATALOG AIC "+
+            " INNER JOIN ADSE_PET_CATALOG APC "+
+            " ON AIC.MDMID=APC.MDMID, "+
+            " XMLTABLE( 'let  $completionDate := $pets/pim_entry/entry/Pet_Ctg_Spec/Completion_Date, $colordesc:= $pets/pim_entry/entry/Ecomm_StyleColor_Spec/NRF_Color_Description   return   <out>        <completion_date>{$completionDate}</completion_date>   <COLO_DESC>{$colordesc}</COLO_DESC>     </out>' passing APC.xml_data AS \"pets\" Columns completion_date VARCHAR2(10) path '/out/completion_date', COLO_DESC VARCHAR2(50) path '/out/COLO_DESC' ) (+)PET_XML, "+
+            " XMLTABLE(  'for $i in $XML_DATA/pim_entry/entry    let   $uda80 := (fn:count($i/Item_UDA_Spec/UDA/Id) gt 0 and $i/Item_UDA_Spec/UDA/Id eq \"80\"),   $non_sellable :=   (fn:count($i/Item_Simple_Pack_Spec/Sellable_Flag/text()) gt 0 and    ($i/Item_Simple_Pack_Spec/Sellable_Flag eq \"false\")), $non_sellable_pack :=   (fn:count($i/Item_Complex_Pack_Spec/Sellable_Flag/text()) gt 0  and  ($i/Item_Complex_Pack_Spec/Sellable_Flag eq \"false\")),   $removal := $i/Item_Ctg_Spec/System/Removal_Flag eq     \"true\"  return    <out>  <dept_id>{fn:tokenize($i/../item_header/category_paths/category[fn:starts-with(path, \"Merchandise_Hierarchy\")]/path,\"\\||///\")[5]}</dept_id>                <class_id>{fn:tokenize($i/../item_header/category_paths/category[fn:starts-with(path,   \"Merchandise_Hierarchy\")]/path,\"\\||///\")[6]}</class_id>            <supplier_id>{$i/Item_Ctg_Spec/Supplier[Primary_Flag eq \"true\"]/Id}</supplier_id>      <flag>{$uda80 and     $non_sellable_pack and $removal}</flag>  <colorCode>{$i/Item_SKU_Spec/Differentiators[Type eq   \"COLOR\"]/Code}</colorCode>     <colorDesc>{$i/Item_SKU_Spec/Differentiators[Type eq   \"COLOR\"]/Vendor_Description}</colorDesc>     <sizeCode>{$i/Item_SKU_Spec/Differentiators[Type eq   \"SIZE\"]/Code}</sizeCode>     <sizeDesc>{$i/Item_SKU_Spec/Differentiators[Type eq \"SIZE\"]/Vendor_Description}</sizeDesc>        </out>' "+
+            " passing aic.XML_DATA AS \"XML_DATA\" columns flag VARCHAR(10) path '/out/flag', supplier_id VARCHAR2(20) path '/out/supplier_id', deptid VARCHAR2(20) path '/out/dept_id', classid VARCHAR2(20) path '/out/class_id', descr VARCHAR2(64) path '/out/desc', VENDOR_COLOR_CODE VARCHAR2(10) path '/out/colorCode', VENDOR_COLOR_DESC VARCHAR2(40) path '/out/colorDesc', VENDOR_SIZE_CODE VARCHAR2(10) path '/out/sizeCode', VENDOR_SIZE_DESC VARCHAR2(10) path '/out/sizeDesc') AIC_XML "+
+            " WHERE (AIC.PARENT_MDMID in (:componentIds) or AIC.MDMID in (:componentIds)) "+ 
+            " AND (APC.PARENT_MDMID in (:componentIds) or APC.MDMID in (:componentIds))  "+
+            " AND ( "+
+            " CASE "+
+            "  WHEN AGCM.PEP_COMPONENT_TYPE ='SKU' "+
+            " AND AIC.ENTRY_TYPE           ='Style' "+
+            " AND AIC.MDMID                =AGCM.COMPONENT_STYLE_ID "+
+            " OR (AIC.ENTRY_TYPE           ='StyleColor' "+
+            " AND AIC.MDMID                =AGCM.COMPONENT_STYLECOLOR_ID) "+
+            " OR (AIC.ENTRY_TYPE           ='SKU' "+
+            " AND AIC.MDMID                =AGCM.COMPONENT_SKU_ID) "+
+            " THEN 1 "+
+            " WHEN AGCM.PEP_COMPONENT_TYPE ='StyleColor' "+
+            " AND ((AIC.ENTRY_TYPE         ='Style' "+
+            " AND AIC.MDMID                =AGCM.COMPONENT_STYLE_ID) "+
+            " OR (AIC.ENTRY_TYPE           ='StyleColor' "+
+            " AND AIC.MDMID                =AGCM.COMPONENT_STYLECOLOR_ID)) "+
+            " THEN 1 "+
+            " WHEN AGCM.PEP_COMPONENT_TYPE ='Style' "+
+            " THEN 1 "+
+            " ELSE 0 "+
+            " END )                      =1 "+
+            " AND AGCM.PEP_COMponent_Type! ='Group' "+
+            " AND AGCM.MDMID               =:groupingNo "+
+            " ) TAB "+
+            " LEFT OUTER JOIN ADSE_VENDOR_OMNISIZE_DESC omni "+
+            " ON TAB.VENDOR_SIZE_CODE =omni.NRF_SIZE_CODE "+
+            " AND TAB.dept_id         =omni.DEPT_ID "+
+            " AND TAB.Class_Id        =omni.CLASS_ID "+
+            " LEFT OUTER JOIN xmltable('for $i in $XML//omni_size_desc return $i' passing omni.XML_DATA AS \"XML\" columns OMNI_SIZE_DESC VARCHAR(40) path '.' ) o "+
+            " ON TAB.Entry_Type = 'SKU' "+
+            " ORDER BY PEP_COMPONENT_TYPE DESC, "+
+            " TAB.MDMID ";
+
+        
+        
+        return GROUPING_DTLS_QUERY;
+              
+    }
+
 }

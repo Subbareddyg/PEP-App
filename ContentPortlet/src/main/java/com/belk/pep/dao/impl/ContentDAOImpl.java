@@ -455,7 +455,7 @@ public class ContentDAOImpl implements ContentDAO{
     @Override
     public List<ItemPrimaryHierarchyVO> getIPHCategories(String groupId, String groupType)
             throws PEPFetchException {
-    	 LOGGER.info("start of getIPHCategories........"+groupId);
+         LOGGER.info("start of getIPHCategories........"+groupId);
          Session session = null;
          
          List<Object[]> rows=null;
@@ -470,14 +470,14 @@ public class ContentDAOImpl implements ContentDAO{
              // native SQL statement directly.
              Query query =null;
              if(ContentScreenConstants.CONSOLIDATED_PRODUCT_GROUP_TYPE.equals(groupType)){
-            	 query =session.createSQLQuery(xqueryConstants.populateGroupIPH());
+                 query =session.createSQLQuery(xqueryConstants.populateGroupIPH());
              }else{
-            	 query =session.createSQLQuery(xqueryConstants.populateGroupIPHForCollections());
+                 query =session.createSQLQuery(xqueryConstants.populateGroupIPHForCollections());
              }
              if(query!=null)
              {
-            	 if(LOGGER.isDebugEnabled())
-            	 LOGGER.debug("Query -->" + query);
+                 if(LOGGER.isDebugEnabled())
+                 LOGGER.debug("Query -->" + query);
                  query.setParameter("groupingNo", groupId);
                  query.setFetchSize(20);
                  rows = query.list();
@@ -514,7 +514,7 @@ public class ContentDAOImpl implements ContentDAO{
                                                  itemPrimaryHierarchy.setMerchandiseCategoryName(values[1]);
                                                  finalPath =  values[1];
                                                  if(LOGGER.isDebugEnabled())
-                                                	 LOGGER.debug(finalPath);
+                                                     LOGGER.debug(finalPath);
                                                  itemPrimaryHierarchy.setCategoryFullPath(finalPath);
                                              }
                                          }
@@ -526,7 +526,7 @@ public class ContentDAOImpl implements ContentDAO{
                                              String[] path10 = checkNull(row[10]).split("-");
                                              finalPath =  path10[1] +"/"+ values[1];
                                              if(LOGGER.isDebugEnabled())
-                                            	 LOGGER.debug(finalPath);
+                                                 LOGGER.debug(finalPath);
                                              itemPrimaryHierarchy.setCategoryFullPath(finalPath);
                                          }
                                      }
@@ -539,7 +539,7 @@ public class ContentDAOImpl implements ContentDAO{
                                          String[] path9 = checkNull(row[9]).split("-");
                                          finalPath =  path10[1] +"/"+ path9[1] + "/" +values[1];
                                          if(LOGGER.isDebugEnabled())
-                                        	 LOGGER.debug(finalPath);
+                                             LOGGER.debug(finalPath);
                                          itemPrimaryHierarchy.setCategoryFullPath(finalPath);
                                      }
                                  }
@@ -553,7 +553,7 @@ public class ContentDAOImpl implements ContentDAO{
                                      String[] path8 = checkNull(row[8]).split("-");
                                      finalPath =  path10[1] +"/"+ path9[1] + "/" + path8[1] + "/" + values[1];
                                      if(LOGGER.isDebugEnabled())
-                                    	 LOGGER.debug(finalPath);
+                                         LOGGER.debug(finalPath);
                                      itemPrimaryHierarchy.setCategoryFullPath(finalPath);
                                  }
                              }
@@ -568,7 +568,7 @@ public class ContentDAOImpl implements ContentDAO{
                                  String[] path7 = checkNull(row[7]).split("-");
                                  finalPath =  path10[1] +"/"+ path9[1] + "/" + path8[1] + "/" +  path7[1] + "/" +values[1];
                                  if(LOGGER.isDebugEnabled())
-                                	 LOGGER.debug(finalPath);
+                                     LOGGER.debug(finalPath);
                                  itemPrimaryHierarchy.setCategoryFullPath(finalPath);
                              }
                          }
@@ -584,7 +584,7 @@ public class ContentDAOImpl implements ContentDAO{
                              String[] path6 = checkNull(row[6]).split("-");
                              finalPath =  path10[1] +"/"+ path9[1] + "/" + path8[1] + "/" +  path7[1] + "/" +  path6[1] + "/" +values[1];
                              if(LOGGER.isDebugEnabled())
-                            	 LOGGER.debug(finalPath);
+                                 LOGGER.debug(finalPath);
                              itemPrimaryHierarchy.setCategoryFullPath(finalPath);
                          }
                      }
@@ -601,7 +601,7 @@ public class ContentDAOImpl implements ContentDAO{
                          String[] path5 = checkNull(row[5]).split("-");
                          finalPath =  path10[1] +"/"+ path9[1] + "/" + path8[1] + "/" +  path7[1] + "/" +  path6[1] + "/" +  path5[1] + "/" +values[1];
                          if(LOGGER.isDebugEnabled())
-                        	 LOGGER.debug(finalPath);
+                             LOGGER.debug(finalPath);
                          itemPrimaryHierarchy.setCategoryFullPath(finalPath);
                      }
                      
@@ -972,9 +972,9 @@ public class ContentDAOImpl implements ContentDAO{
             
             Query query  = null;
             if(orinNumber.length() == 7){
-            	query = session.createSQLQuery(SqueryConstants.getGroupIPHAttributeData(categoryId, orinNumber));
+                query = session.createSQLQuery(SqueryConstants.getGroupIPHAttributeData(categoryId, orinNumber));
             }else{
-            	query=session.createSQLQuery(SqueryConstants.getProductAttributes(categoryId,orinNumber));
+                query=session.createSQLQuery(SqueryConstants.getProductAttributes(categoryId,orinNumber));
             }
             
             if(query!=null)
@@ -997,11 +997,11 @@ public class ContentDAOImpl implements ContentDAO{
                     petAttributesObject.setMdmId(checkNull(row[0]));
                     //Fix for ALM Defect 3165
                     if("Text Field".equals(checkNull(row[5]))){
-                    	petAttributesObject.setSecondarySpecValue(StringEscapeUtils.escapeHtml4(checkNull(row[1])));
-                    	
+                        petAttributesObject.setSecondarySpecValue(StringEscapeUtils.escapeHtml4(checkNull(row[1])));
+                        
                     }else{
-                    	petAttributesObject.setSecondarySpecValue(checkNull(row[1]));
-                    	
+                        petAttributesObject.setSecondarySpecValue(checkNull(row[1]));
+                        
                     }
                     petAttributesObject.setAttributeId(checkNull(row[2]));
                     petAttributesObject.setCategoryId(checkNull(row[3]));
@@ -1072,11 +1072,11 @@ public class ContentDAOImpl implements ContentDAO{
         try {
             session = sessionFactory.openSession();
             
-			Query query = null;
+            Query query = null;
             if(orinNumber.length() == 7){
-            	query = session.createSQLQuery(SqueryConstants.getGroupBlueMartiniAttributes(categoryId, orinNumber));
+                query = session.createSQLQuery(SqueryConstants.getGroupBlueMartiniAttributes(categoryId, orinNumber));
             }else{
-            	query = session.createSQLQuery(SqueryConstants.getBlueMartiniAttributes(categoryId, orinNumber));
+                query = session.createSQLQuery(SqueryConstants.getBlueMartiniAttributes(categoryId, orinNumber));
             }
             
             
@@ -1102,9 +1102,9 @@ public class ContentDAOImpl implements ContentDAO{
                     blueMartiniAttributeObject.setMdmId(checkNull(row[0]));
                     //Fix for ALM Defect 3165
                     if("Text Field".equals(checkNull(row[5]))){
-                    	blueMartiniAttributeObject.setZbmSecondarySpecValue(StringEscapeUtils.escapeHtml4(checkNull(row[1])));
+                        blueMartiniAttributeObject.setZbmSecondarySpecValue(StringEscapeUtils.escapeHtml4(checkNull(row[1])));
                     }else{                    
-                    	blueMartiniAttributeObject.setZbmSecondarySpecValue(checkNull(row[1]));
+                        blueMartiniAttributeObject.setZbmSecondarySpecValue(checkNull(row[1]));
                     }                   
                     
                     blueMartiniAttributeObject.setAttributeId(checkNull(row[2]));
@@ -1721,9 +1721,9 @@ public boolean releseLockedPet(  String orin, String pepUserID,String pepFunctio
                 }
             }
         } catch (PEPFetchException e) {
-        	LOGGER.error("ContentDAOImpl :fetchCopyAttributes:fetchCopyAttributes"+e);
-        	throw e;
-		}
+            LOGGER.error("ContentDAOImpl :fetchCopyAttributes:fetchCopyAttributes"+e);
+            throw e;
+        }
         finally {
             if(session!=null)         
             session.close();
@@ -1773,576 +1773,601 @@ public boolean releseLockedPet(  String orin, String pepUserID,String pepFunctio
      * @return StyleInformationVO
      * @param groupId
      */
-	@Override
-	public StyleInformationVO getGroupingInformation(String groupId)
-			throws PEPFetchException {
-		LOGGER.info("ContentDAOImpl getGroupingInformation : Starts");
-		StyleInformationVO styleInformation = new StyleInformationVO();
-		
-		Session session = null;
-		
-		List<Object[]> row = null;
-		final XqueryConstants xqueryConstants = new XqueryConstants();
-		
-		try{
-			session = sessionFactory.openSession();
-			
-			// XQuery for retrieving group information 
-			final Query query = session.createSQLQuery(xqueryConstants.getGroupingInfoAttribute());
-			if(LOGGER.isDebugEnabled()){
-				LOGGER.debug("Xquery query in getGroupingInformation:----- "+query);
-			}
-			
-			
-			if(query != null){
-				query.setParameter("groupId", groupId);
-				query.setFetchSize(10);
-				row = query.list();
-			}
+    @Override
+    public StyleInformationVO getGroupingInformation(String groupId)
+            throws PEPFetchException {
+        LOGGER.info("ContentDAOImpl getGroupingInformation : Starts");
+        StyleInformationVO styleInformation = new StyleInformationVO();
+        
+        Session session = null;
+        
+        List<Object[]> row = null;
+        final XqueryConstants xqueryConstants = new XqueryConstants();
+        
+        try{
+            session = sessionFactory.openSession();
+            
+            // XQuery for retrieving group information 
+            final Query query = session.createSQLQuery(xqueryConstants.getGroupingInfoAttribute());
+            if(LOGGER.isDebugEnabled()){
+                LOGGER.debug("Xquery query in getGroupingInformation:----- "+query);
+            }
+            
+            
+            if(query != null){
+                query.setParameter("groupId", groupId);
+                query.setFetchSize(10);
+                row = query.list();
+            }
 
-			
-			final Properties prop =   PropertiesFileLoader.getPropertyLoader("contentDisplay.properties");
-			if(null!=row && row.size() > 0){
-				for(Object[] obj : row){
-					// Populate the Group information object here
-					styleInformation.setOrin(checkNull(obj[0]).toString());
-					styleInformation.setDepartmentId(checkNull(obj[1]).toString());
-					styleInformation.setStyle(checkNull(obj[2]).toString());
-					styleInformation.setGroupingType(checkNull(obj[3]).toString());
-					styleInformation.setVendorId(checkNull(obj[4]).toString());
-					styleInformation.setVendorName(checkNull(obj[5]).toString());
-					styleInformation.setOmniChannelVendorIndicator(checkNull(obj[6]).toString());
-					styleInformation.setClassId(checkNull(obj[7]).toString());
-					styleInformation.setVendorProvidedImageIndicator(checkNull(obj[8]).toString());
-					styleInformation.setVendorSampleIndicator(checkNull(obj[9]).toString());
-					String completionDate = checkNull(obj[10]);
-					if(null == obj[10]){
-						completionDate = "";
-					}else{
-						completionDate =  obj[10].toString().substring(0, 10);
-					}
-					styleInformation.setCompletionDateOfStyle(completionDate);
-					styleInformation.setContentStatus(prop.getProperty("Content"+checkNull(obj[11])));
-					styleInformation.setImageStatusCode(checkNull(obj[12]));
-					styleInformation.setOverallStatusCode(checkNull(obj[13]));
-				}
-			}
-		}
-		finally{
-			if(session!=null)
-			session.close();
-		}
-		return styleInformation;
-	}
-	
-	
-	/**
-	 * This method retrieves department details for the group if department id is not null
-	 * @author AFUSKJ2 6/17/2016
-	 * @return StyleInformationVO
-	 * @param styleInformationVo
-	 */
-	@Override
-	public StyleInformationVO getGroupingDepartmentDetails(StyleInformationVO styleInformationVO) throws PEPFetchException {
-		LOGGER.info("ContentDaoImpl getGroupingDepartmentDetails : starts");
-		Session session = null;
-		List<Object[]> rows = null;
-		
-		final XqueryConstants xqueryConstants = new XqueryConstants();
-		
-		try{
-			session = sessionFactory.openSession();
-			
-			
-			final Query query = session.createSQLQuery(xqueryConstants.getGroupDepartmentDetails(styleInformationVO.getDepartmentId(), styleInformationVO.getClassId()));
-			
-			if(LOGGER.isDebugEnabled()){
-				LOGGER.debug("Quer in getGroupingDepartmentDetails::: "+query);
-			}
-			
-			
-			if(null!= query){
-				rows = query.list();
-			}
+            
+            final Properties prop =   PropertiesFileLoader.getPropertyLoader("contentDisplay.properties");
+            if(null!=row && row.size() > 0){
+                for(Object[] obj : row){
+                    // Populate the Group information object here
+                    styleInformation.setOrin(checkNull(obj[0]).toString());
+                    styleInformation.setDepartmentId(checkNull(obj[1]).toString());
+                    styleInformation.setStyle(checkNull(obj[2]).toString());
+                    styleInformation.setGroupingType(checkNull(obj[3]).toString());
+                    styleInformation.setVendorId(checkNull(obj[4]).toString());
+                    styleInformation.setVendorName(checkNull(obj[5]).toString());
+                    styleInformation.setOmniChannelVendorIndicator(checkNull(obj[6]).toString());
+                    styleInformation.setClassId(checkNull(obj[7]).toString());
+                    styleInformation.setVendorProvidedImageIndicator(checkNull(obj[8]).toString());
+                    styleInformation.setVendorSampleIndicator(checkNull(obj[9]).toString());
+                    String completionDate = checkNull(obj[10]);
+                    if(null == obj[10]){
+                        completionDate = "";
+                    }else{
+                        completionDate =  obj[10].toString().substring(0, 10);
+                    }
+                    styleInformation.setCompletionDateOfStyle(completionDate);
+                    styleInformation.setContentStatus(prop.getProperty("Content"+checkNull(obj[11])));
+                    styleInformation.setImageStatusCode(checkNull(obj[12]));
+                    styleInformation.setOverallStatusCode(checkNull(obj[13]));
+                }
+            }
+        }
+        finally{
+            if(session!=null)
+            session.close();
+        }
+        return styleInformation;
+    }
+    
+    
+    /**
+     * This method retrieves department details for the group if department id is not null
+     * @author AFUSKJ2 6/17/2016
+     * @return StyleInformationVO
+     * @param styleInformationVo
+     */
+    @Override
+    public StyleInformationVO getGroupingDepartmentDetails(StyleInformationVO styleInformationVO) throws PEPFetchException {
+        LOGGER.info("ContentDaoImpl getGroupingDepartmentDetails : starts");
+        Session session = null;
+        List<Object[]> rows = null;
+        
+        final XqueryConstants xqueryConstants = new XqueryConstants();
+        
+        try{
+            session = sessionFactory.openSession();
+            
+            
+            final Query query = session.createSQLQuery(xqueryConstants.getGroupDepartmentDetails(styleInformationVO.getDepartmentId(), styleInformationVO.getClassId()));
+            
+            if(LOGGER.isDebugEnabled()){
+                LOGGER.debug("Quer in getGroupingDepartmentDetails::: "+query);
+            }
+            
+            
+            if(null!= query){
+                rows = query.list();
+            }
 
-			
-			if(null!=rows && rows.size()>0){
-				for(Object[] obj : rows){
-					// Populate style information object with the department details
-					styleInformationVO.setDeptDescription(checkNull(obj[0]).toString());
-					styleInformationVO.setClassDescription(checkNull(obj[1]).toString());
-				}
-			}
-		}
-		finally{
-			if(session!=null)
-				session.close();
-		}
-		LOGGER.info("ContentDaoImpl getGroupingDepartmentDetails : end");
-		return styleInformationVO;
-	}
-	
-	
-	/**
-	 * This method retrieves grouping details
-	 * @author AFUSKJ2 6/17/2016
-	 * @return ProductDetailsVO
-	 * @param groupId
-	 * @throws PEPFetchException 
-	 */
-	@Override
-	public ProductDetailsVO getGroupingDetails(String groupId) throws PEPFetchException{
-		LOGGER.info("ContentDAOImpl getGroupingDetails : start");
-		ProductDetailsVO productDetailsVO = new ProductDetailsVO();
-		
-		Session session = null;
-		
-		List<Object[]> row = null;
-		final XqueryConstants xqueryConstants = new XqueryConstants();
-		
-		try{
-			session = sessionFactory.openSession();
-			
-			
-			//XQuery for retrieving grouping details
-			final Query query = session.createSQLQuery(xqueryConstants.getGroupingDetails());
-			
-			if(null!= query){
-				query.setParameter("groupingNo", groupId);
-				query.setFetchSize(10);
-				row = query.list();
-			}
+            
+            if(null!=rows && rows.size()>0){
+                for(Object[] obj : rows){
+                    // Populate style information object with the department details
+                    styleInformationVO.setDeptDescription(checkNull(obj[0]).toString());
+                    styleInformationVO.setClassDescription(checkNull(obj[1]).toString());
+                }
+            }
+        }
+        finally{
+            if(session!=null)
+                session.close();
+        }
+        LOGGER.info("ContentDaoImpl getGroupingDepartmentDetails : end");
+        return styleInformationVO;
+    }
+    
+    
+    /**
+     * This method retrieves grouping details
+     * @author AFUSKJ2 6/17/2016
+     * @return ProductDetailsVO
+     * @param groupId
+     * @throws PEPFetchException 
+     */
+    @Override
+    public ProductDetailsVO getGroupingDetails(String groupId) throws PEPFetchException{
+        LOGGER.info("ContentDAOImpl getGroupingDetails : start");
+        ProductDetailsVO productDetailsVO = new ProductDetailsVO();
+        
+        Session session = null;
+        
+        List<Object[]> row = null;
+        final XqueryConstants xqueryConstants = new XqueryConstants();
+        
+        try{
+            session = sessionFactory.openSession();
+            
+            
+            //XQuery for retrieving grouping details
+            final Query query = session.createSQLQuery(xqueryConstants.getGroupingDetails());
+            
+            if(null!= query){
+                query.setParameter("groupingNo", groupId);
+                query.setFetchSize(10);
+                row = query.list();
+            }
 
-			
-			if(null!= row && row.size() > 0){
-				for(Object[] obj : row){
-					// Populate the product details object from query result
-					
-					productDetailsVO.setProductName(checkNull(obj[1]).toString());
-					
-					final Clob groupDescClob = (Clob)((Clob)obj[2]!=null ? obj[2]:null);
-					String groupDesc = clobToString(groupDescClob);
+            
+            if(null!= row && row.size() > 0){
+                for(Object[] obj : row){
+                    // Populate the product details object from query result
+                    
+                    productDetailsVO.setProductName(checkNull(obj[1]).toString());
+                    
+                    final Clob groupDescClob = (Clob)((Clob)obj[2]!=null ? obj[2]:null);
+                    String groupDesc = clobToString(groupDescClob);
 
-					if(LOGGER.isDebugEnabled()){
-						LOGGER.debug("Prodcut Description Clob converted to String:::::: "+groupDesc);
-					}
-					
-					productDetailsVO.setProductDescription(groupDesc);
-					productDetailsVO.setStyleId(checkNull(obj[0]).toString());
-				}
-			}
-			
-		} catch (PEPFetchException e) {
-			LOGGER.info("ContentDAOImpl getGroupingDetails : PEPFetchException"+e);
-			throw e;
-		}finally{
-			if(session!=null)
-				session.close();
-		}
-		LOGGER.info("ContentDAOImpl getGroupingDetails : end");
-		return productDetailsVO;
-	}
-	
-	/**
-	 * This method populates Grouping Copy Attrbites section data
-	 * @author AFUSKJ2 6/17/2016
-	 * @param groupId
-	 * @return
-	 * @throws PEPFetchException
-	 */
-	@Override
-	public CopyAttributeVO getGroupingCopyAttributes(String groupId)throws PEPFetchException {
-		CopyAttributeVO copyAttributeVO = new CopyAttributeVO();
-		LOGGER.info("ContentDAOImpl getGroupingCopyAttributes : start");
-		Session session = null;
-		
-		List<Object[]> row = null;
-		final XqueryConstants xqueryConstants = new XqueryConstants();
-		
-		try{
-			session = sessionFactory.openSession();
-			//
-			
-			// XQuery to retieve Grouping Copy Attributes
-			final Query query = session.createSQLQuery(xqueryConstants.getGroupingCopyAttributes());
-			
-			if(null!= query){
-				query.setParameter("groupingNo", groupId);
-				row = query.list();
-			}
-			
+                    if(LOGGER.isDebugEnabled()){
+                        LOGGER.debug("Prodcut Description Clob converted to String:::::: "+groupDesc);
+                    }
+                    
+                    productDetailsVO.setProductDescription(groupDesc);
+                    productDetailsVO.setStyleId(checkNull(obj[0]).toString());
+                }
+            }
+            
+        } catch (PEPFetchException e) {
+            LOGGER.info("ContentDAOImpl getGroupingDetails : PEPFetchException"+e);
+            throw e;
+        }finally{
+            if(session!=null)
+                session.close();
+        }
+        LOGGER.info("ContentDAOImpl getGroupingDetails : end");
+        return productDetailsVO;
+    }
+    
+    /**
+     * This method populates Grouping Copy Attrbites section data
+     * @author AFUSKJ2 6/17/2016
+     * @param groupId
+     * @return
+     * @throws PEPFetchException
+     */
+    @Override
+    public CopyAttributeVO getGroupingCopyAttributes(String groupId)throws PEPFetchException {
+        CopyAttributeVO copyAttributeVO = new CopyAttributeVO();
+        LOGGER.info("ContentDAOImpl getGroupingCopyAttributes : start");
+        Session session = null;
+        
+        List<Object[]> row = null;
+        final XqueryConstants xqueryConstants = new XqueryConstants();
+        
+        try{
+            session = sessionFactory.openSession();
+            //
+            
+            // XQuery to retieve Grouping Copy Attributes
+            final Query query = session.createSQLQuery(xqueryConstants.getGroupingCopyAttributes());
+            
+            if(null!= query){
+                query.setParameter("groupingNo", groupId);
+                row = query.list();
+            }
+            
 
-			
-			
-			if(null!= row && row.size() > 0){
-				for(Object[] obj : row){
-					// Populate Copy Attributes object from row
-					copyAttributeVO.setOrin(checkNull(obj[0]).toString());
-					final Clob groupDescClob = (Clob) ((Clob) obj[1]!=null?obj[1]:null);
-		             
-		            String groupDesc = clobToString(groupDescClob);
-		            if(LOGGER.isDebugEnabled()){
-		            	LOGGER.debug("Clob after converted to string:::: "+groupDesc);
-		            }
-					copyAttributeVO.setProductCopyText(groupDesc != null ? groupDesc : "");
-					copyAttributeVO.setCopyLine1(checkNull(obj[2]).toString());
-					copyAttributeVO.setCopyLine2(checkNull(obj[3]).toString());
-					copyAttributeVO.setCopyLine3(checkNull(obj[4]).toString());
-					copyAttributeVO.setCopyLine4(checkNull(obj[5]).toString());
-					copyAttributeVO.setCopyLine5(checkNull(obj[6]).toString());
-					copyAttributeVO.setCopyProductName(checkNull(obj[7]).toString());
-					copyAttributeVO.setMaterial(checkNull(obj[8]).toString());
-					copyAttributeVO.setCare(checkNull(obj[9]).toString());
-					copyAttributeVO.setCountryOfOrigin(checkNull(obj[10]).toString());
-					copyAttributeVO.setExclusive(checkNull(obj[11]).toString());
-					copyAttributeVO.setCaprop65Compliant(checkNull(obj[12]).toString());
-					copyAttributeVO.setImportDomestic(checkNull(obj[13]).toString());
-				}
-			}
-		}finally{
-			if (session!=null)
-				session.close();
-		}
-		LOGGER.info("ContentDAOImpl getGroupingCopyAttributes : end");
-		return copyAttributeVO;
-	}
-	
-	
-	/**
-	 * This method retrieves omni-channel brand list for group
-	 * @author AFUSKJ2 6/17/2016
-	 * @return List<OmniChannelBrandVo>
-	 * @param groupId
-	 * @throws PEPFetchException
-	 */
-	@Override
-	public List<OmniChannelBrandVO> getGroupingOmniChannelBrand(String groupId){
-		LOGGER.info("ContentDAOImpl getGroupingOmniChannelBrand : start");
-		List<OmniChannelBrandVO> listOmniChannelBrand = null;
-		Session session = null;
+            
+            
+            if(null!= row && row.size() > 0){
+                for(Object[] obj : row){
+                    // Populate Copy Attributes object from row
+                    copyAttributeVO.setOrin(checkNull(obj[0]).toString());
+                    final Clob groupDescClob = (Clob) ((Clob) obj[1]!=null?obj[1]:null);
+                     
+                    String groupDesc = clobToString(groupDescClob);
+                    if(LOGGER.isDebugEnabled()){
+                        LOGGER.debug("Clob after converted to string:::: "+groupDesc);
+                    }
+                    copyAttributeVO.setProductCopyText(groupDesc != null ? groupDesc : "");
+                    copyAttributeVO.setCopyLine1(checkNull(obj[2]).toString());
+                    copyAttributeVO.setCopyLine2(checkNull(obj[3]).toString());
+                    copyAttributeVO.setCopyLine3(checkNull(obj[4]).toString());
+                    copyAttributeVO.setCopyLine4(checkNull(obj[5]).toString());
+                    copyAttributeVO.setCopyLine5(checkNull(obj[6]).toString());
+                    copyAttributeVO.setCopyProductName(checkNull(obj[7]).toString());
+                    copyAttributeVO.setMaterial(checkNull(obj[8]).toString());
+                    copyAttributeVO.setCare(checkNull(obj[9]).toString());
+                    copyAttributeVO.setCountryOfOrigin(checkNull(obj[10]).toString());
+                    copyAttributeVO.setExclusive(checkNull(obj[11]).toString());
+                    copyAttributeVO.setCaprop65Compliant(checkNull(obj[12]).toString());
+                    copyAttributeVO.setImportDomestic(checkNull(obj[13]).toString());
+                }
+            }
+        }finally{
+            if (session!=null)
+                session.close();
+        }
+        LOGGER.info("ContentDAOImpl getGroupingCopyAttributes : end");
+        return copyAttributeVO;
+    }
+    
+    
+    /**
+     * This method retrieves omni-channel brand list for group
+     * @author AFUSKJ2 6/17/2016
+     * @return List<OmniChannelBrandVo>
+     * @param groupId
+     * @throws PEPFetchException
+     */
+    @Override
+    public List<OmniChannelBrandVO> getGroupingOmniChannelBrand(String groupId){
+        LOGGER.info("ContentDAOImpl getGroupingOmniChannelBrand : start");
+        List<OmniChannelBrandVO> listOmniChannelBrand = null;
+        Session session = null;
 
-		List<Object[]> rows = null;
-		final XqueryConstants xqueryConstants = new XqueryConstants();
-		OmniChannelBrandVO omniChannelBrandVO = null;
-		
-		
-		try{
-			session = sessionFactory.openSession();
+        List<Object[]> rows = null;
+        final XqueryConstants xqueryConstants = new XqueryConstants();
+        OmniChannelBrandVO omniChannelBrandVO = null;
+        
+        
+        try{
+            session = sessionFactory.openSession();
 
-			// XQuery constants string
-			final Query query = session.createSQLQuery(xqueryConstants.getGroupingOmniChannelBrand());
-			
-			if(LOGGER.isDebugEnabled()){
-				LOGGER.debug("Query query in getGroupingOmniChannelBrand:::: "+query);
-			}
-			
-			
-			if(null!= query){
-				query.setParameter("groupingNo", groupId);
-				rows = query.list();
-			}
+            // XQuery constants string
+            final Query query = session.createSQLQuery(xqueryConstants.getGroupingOmniChannelBrand());
+            
+            if(LOGGER.isDebugEnabled()){
+                LOGGER.debug("Query query in getGroupingOmniChannelBrand:::: "+query);
+            }
+            
+            
+            if(null!= query){
+                query.setParameter("groupingNo", groupId);
+                rows = query.list();
+            }
 
-			
-			if(null!= rows){
-				listOmniChannelBrand = new ArrayList<OmniChannelBrandVO>();
-				for(Object[] obj : rows){
-					// Populate the values;
-					omniChannelBrandVO = new OmniChannelBrandVO();
-					omniChannelBrandVO.setOmniChannelBrandCode(checkNull(obj[0]).toString());
-					omniChannelBrandVO.setOmniChannelBrandDesc(checkNull(obj[1]).toString());
-					omniChannelBrandVO.setSelectedBrand(checkNull(checkNull(obj[2]).toString()));
-					if("CPG".equals(checkNull(checkNull(obj[7]).toString()))){
-						omniChannelBrandVO.setSelectedBrand(checkNull(checkNull(obj[2]).toString()));
-					}
-					else{
-						omniChannelBrandVO.setSelectedBrand(checkNull(checkNull(obj[3]).toString()));
-					}
-					listOmniChannelBrand.add(omniChannelBrandVO);
-				}
-				
-				
-			}
-		}finally{
-			if(session!=null)
-				session.close();
-		}
-		LOGGER.info("ContentDAOImpl getGroupingOmniChannelBrand : end");
-		return listOmniChannelBrand;
-	}
-	
-	
-	/**
-	 * This method populates car brand list for group
-	 * @author AFUSKJ2 6/17/2016
-	 * @return List<CarBrandVO>
-	 * @param groupId
-	 * @throws PEPFetchException
-	 */
-	public List<CarBrandVO> populateGroupCarBrandList(String groupId){
-		LOGGER.info("ContentDAOImpl populateGroupCarBrandList : start");
-		List<CarBrandVO> carBrandList = null;
-		Session session = null;
-		CarBrandVO carBrandVO = null;
-		List<Object[]> rows = null;
-		
-		final XqueryConstants xqueryConstants = new XqueryConstants();
-		
-		try{
-			session = sessionFactory.openSession();
-			//
+            
+            if(null!= rows){
+                listOmniChannelBrand = new ArrayList<OmniChannelBrandVO>();
+                for(Object[] obj : rows){
+                    // Populate the values;
+                    omniChannelBrandVO = new OmniChannelBrandVO();
+                    omniChannelBrandVO.setOmniChannelBrandCode(checkNull(obj[0]).toString());
+                    omniChannelBrandVO.setOmniChannelBrandDesc(checkNull(obj[1]).toString());
+                    omniChannelBrandVO.setSelectedBrand(checkNull(checkNull(obj[2]).toString()));
+                    if("CPG".equals(checkNull(checkNull(obj[7]).toString()))){
+                        omniChannelBrandVO.setSelectedBrand(checkNull(checkNull(obj[2]).toString()));
+                    }
+                    else{
+                        omniChannelBrandVO.setSelectedBrand(checkNull(checkNull(obj[3]).toString()));
+                    }
+                    listOmniChannelBrand.add(omniChannelBrandVO);
+                }
+                
+                
+            }
+        }finally{
+            if(session!=null)
+                session.close();
+        }
+        LOGGER.info("ContentDAOImpl getGroupingOmniChannelBrand : end");
+        return listOmniChannelBrand;
+    }
+    
+    
+    /**
+     * This method populates car brand list for group
+     * @author AFUSKJ2 6/17/2016
+     * @return List<CarBrandVO>
+     * @param groupId
+     * @throws PEPFetchException
+     */
+    public List<CarBrandVO> populateGroupCarBrandList(String groupId){
+        LOGGER.info("ContentDAOImpl populateGroupCarBrandList : start");
+        List<CarBrandVO> carBrandList = null;
+        Session session = null;
+        CarBrandVO carBrandVO = null;
+        List<Object[]> rows = null;
+        
+        final XqueryConstants xqueryConstants = new XqueryConstants();
+        
+        try{
+            session = sessionFactory.openSession();
+            //
 
-			// Populate Car brand query
-			if(LOGGER.isDebugEnabled()){
-				LOGGER.debug("Query in populateGroupCarBrandList DAO -->"+xqueryConstants.getGroupingCarBrandQuery());
-			}
-			final Query query = session.createSQLQuery(xqueryConstants.getGroupingCarBrandQuery());
-			
-			if(null!= query){
-				query.setParameter("groupingNo", groupId);
-				rows = query.list();
-			}
-			
-			
-			if(null != rows){
-				carBrandList = new ArrayList<CarBrandVO>();
-				for(Object[] obj : rows){
-					carBrandVO = new CarBrandVO();
-					carBrandVO.setCarBrandCode(checkNull(obj[0]));
-					carBrandVO.setCarBrandDesc(checkNull(obj[1]));
-					
-					if("CPG".equals(checkNull(checkNull(obj[7]).toString()))){
-						carBrandVO.setSelectedBrand(StringEscapeUtils.unescapeHtml4(checkNull(obj[2])));
-					}
-					else{
-						carBrandVO.setSelectedBrand(StringEscapeUtils.unescapeHtml4(checkNull(obj[3])));
-					}
-					carBrandList.add(carBrandVO);
-				}
-			}
-			
-		}finally{
-			if(session!=null)
-				session.close();
-		}
-		LOGGER.info("ContentDAOImpl populateGroupCarBrandList : end");
-		return carBrandList;
-	}
-	
-	/**
-	 * This method populates grouping component section data
-	 * @param groupId
-	 * @return List<GroupsFound>
-	 * @throws PEPFetchException
-	 */
-	@Override
-	public List<GroupsFound> getGroupingComponents(String groupId) {
-		LOGGER.info("ContentDAOImpl getGroupingComponents : start");
-		List<GroupsFound> groupsList = null;
-		Session session = null;
-		
-		List<Object[]> rows = null;
-		GroupsFound groupsFound = null;
-		final XqueryConstants xqueryConstants = new XqueryConstants();
-		
-		try{
-			session = sessionFactory.openSession();
-			
-			
-			final Query query = session.createSQLQuery(xqueryConstants.getGroupingComponentQuery());
-			
-			if(LOGGER.isDebugEnabled()){
-				LOGGER.debug("Query in DAO getGroupingComponents:::: "+query);
-			}
-			
-			
-			if(null!=query){
-				query.setParameter("groupingNo", groupId);
-				rows = query.list();
-			}
-			final Properties prop =   PropertiesFileLoader.getPropertyLoader("contentDisplay.properties");
-			
-			
-			
-			if(null!= rows){
-				groupsList = new ArrayList<GroupsFound>();
-				for(Object[] obj : rows){
-					groupsFound = new GroupsFound();
-					
-					groupsFound.setGroupId(checkNull(obj[0]).toString());
-					groupsFound.setStyleId(checkNull(obj[1]).toString());
-					groupsFound.setComponentId(checkNull(obj[2]).toString());
-					String completionDate = "";
-					if(null != obj[3]){
-						completionDate = obj[3].toString().substring(0, 10);
-					}else{
-						completionDate = "";
-					}
-					groupsFound.setCompletionDate(completionDate);
-					groupsFound.setPetStatus(checkNull(obj[4]).toString());
-					groupsFound.setContentStatus(prop.getProperty("Content"+checkNull(obj[5])));
-					
-					groupsFound.setEntryType(checkNull(obj[6]).toString());
-					groupsFound.setComponentType(checkNull(obj[7]).toString());
-					groupsFound.setColorCode(checkNull(obj[8]).toString());
-					groupsFound.setColorDesc(checkNull(obj[9]).toString());
-					groupsFound.setVendorSizeodeDesc(checkNull(obj[10]).toString());
-					groupsFound.setOmniChannelCodeDesc(checkNull(obj[15]).toString());
-					groupsFound.setVPN(checkNull(obj[11]).toString());
-					groupsList.add(groupsFound);
-				}
-			}
-		}finally{
-			if(session!=null)
-			session.close();
-		}
-		LOGGER.info("ContentDAOImpl getGroupingComponents : end");
-		return groupsList;
-	}
-	
-	
-	/**
-	 * This method populates grouping content history section data
-	 * @param groupId
-	 * @return List<ContentHistoryVO>
-	 * @throws PEPFetchException
-	 */
-	@Override
-	public List<ContentHistoryVO> getGroupContentHistory(String groupId){
-		
-		LOGGER.info("ContentDAOImpl getGroupContentHistory : start");
-		List<ContentHistoryVO> groupContentHistoryList = null;
-		Session session = null;
-		
-		List<Object[]> rows = null;
-		final XqueryConstants xqueryConstants = new XqueryConstants();
-		
-		try{
-			session = sessionFactory.openSession();
-			//
-			
-			final Query query = session.createSQLQuery(xqueryConstants.getGroupContentHistoryQuery());
-			
-			if(null!=query){
-				query.setParameter("groupingNo", groupId);
-				rows = query.list();
-			}
-			
-			
-			
-			
-			if(null != rows){
-				groupContentHistoryList = new ArrayList<ContentHistoryVO>();
-				for(Object[] obj : rows){
-					ContentHistoryVO historyVO = new ContentHistoryVO();
-					historyVO.setOrinNumber(checkNull(obj[0]).toString());
-					historyVO.setContentCreatedBy(checkNull(obj[1]).toString());
-					String createdDate = "";
-					if(null != obj[2]){
-						createdDate = obj[2].toString().substring(0,10);
-						
-					}else{
-						createdDate = "";
-					}
-					historyVO.setContentCreatedDate(createdDate);
-					historyVO.setContentStatus(checkNull(obj[3]).toString());
-					String lastUpdateddate = "";
-					if(null!=obj[4]){
-						lastUpdateddate = obj[4].toString().substring(0, 10);
-						
-					}else{
-						lastUpdateddate = "";
-					}
-					historyVO.setContentLastUpdatedDate(lastUpdateddate);
-					historyVO.setContentLastUpdatedBy(checkNull(obj[5]).toString());
-					historyVO.setEntryType(checkNull(obj[6]).toString());
-					groupContentHistoryList.add(historyVO);
-				}
-			}
-		}finally{
-			if(session!=null)
-				session.close();
-		}
-		LOGGER.info("ContentDAOImpl getGroupContentHistory : end");
-		return groupContentHistoryList;
-	}
-	
-	
-	
-	/**
-	 * This method populates IPH category drop down list
-	 * @return List<ItemPrimaryHierarchyVO>
-	 * @param groupId
-	 * @throws PEPFetchException
-	 * @author AFUSKJ2 6/17/2016
-	 */
-	@Override
-	public List<ItemPrimaryHierarchyVO> selectedIPHCategorydropdown(String groupId) {
-		LOGGER.info("ContentDAOImpl selectedIPHCategorydropdown : starts");
+            // Populate Car brand query
+            if(LOGGER.isDebugEnabled()){
+                LOGGER.debug("Query in populateGroupCarBrandList DAO -->"+xqueryConstants.getGroupingCarBrandQuery());
+            }
+            final Query query = session.createSQLQuery(xqueryConstants.getGroupingCarBrandQuery());
+            
+            if(null!= query){
+                query.setParameter("groupingNo", groupId);
+                rows = query.list();
+            }
+            
+            
+            if(null != rows){
+                carBrandList = new ArrayList<CarBrandVO>();
+                for(Object[] obj : rows){
+                    carBrandVO = new CarBrandVO();
+                    carBrandVO.setCarBrandCode(checkNull(obj[0]));
+                    carBrandVO.setCarBrandDesc(checkNull(obj[1]));
+                    
+                    if("CPG".equals(checkNull(checkNull(obj[7]).toString()))){
+                        carBrandVO.setSelectedBrand(StringEscapeUtils.unescapeHtml4(checkNull(obj[2])));
+                    }
+                    else{
+                        carBrandVO.setSelectedBrand(StringEscapeUtils.unescapeHtml4(checkNull(obj[3])));
+                    }
+                    carBrandList.add(carBrandVO);
+                }
+            }
+            
+        }finally{
+            if(session!=null)
+                session.close();
+        }
+        LOGGER.info("ContentDAOImpl populateGroupCarBrandList : end");
+        return carBrandList;
+    }
+    
+    /**
+     * This method populates grouping component section data
+     * @param groupId
+     * @return List<GroupsFound>
+     * @throws PEPFetchException
+     */
+    @Override
+    public List<GroupsFound> getGroupingComponents(String groupId) {
+        LOGGER.info("ContentDAOImpl getGroupingComponents : start updatated with new query "+groupId);
+        List<GroupsFound> groupsList = null;
+        Session session = null;
+        
+        List<Object[]> rows = null;
+        List<Object[]> components = null;
+        GroupsFound groupsFound = null;
+        final XqueryConstants xqueryConstants = new XqueryConstants();
+        
+        try{            
+            session = sessionFactory.openSession();
+             final Query getComponents = session.createSQLQuery(xqueryConstants.getComponentIDs());
+                if(null!=getComponents){
+                    getComponents.setParameter(0, groupId);
+                    components = getComponents.list();
+                }
+            List componentIds = new ArrayList();
+            if(null!= components && components.size()>0){
+                new ArrayList();
+                 for(Object[] obj : components){ 
+                     if(obj[2]!=null ){
+                      componentIds.add(obj[2].toString());
+                     }                     
+                
+               }
+                
+              final Query query = session.createSQLQuery(xqueryConstants.getGroupingComponents());
+              LOGGER.info("ContentDAOImpl getGroupingComponents : query "+query);
+              if(null!=query){
+                  query.setParameter("groupingNo", groupId);
+                  query.setParameterList("componentIds", componentIds);           
+                  rows = query.list();
+              }
+              if(LOGGER.isDebugEnabled()){
+                  LOGGER.debug("Query in DAO getGroupingComponents:::: "+query);
+              }            
+                 
+              final Properties prop =   PropertiesFileLoader.getPropertyLoader("contentDisplay.properties");         
+                 
+                 if(null!= rows){
+                     groupsList = new ArrayList<GroupsFound>();
+                     for(Object[] obj : rows){
+                         groupsFound = new GroupsFound();                    
+                         groupsFound.setGroupId(checkNull(obj[0]).toString());
+                         groupsFound.setStyleId(checkNull(obj[1]).toString());
+                         groupsFound.setComponentId(checkNull(obj[2]).toString());
+                         String completionDate = "";
+                         if(null != obj[3]){
+                             completionDate = obj[3].toString().substring(0, 10);
+                         }else{
+                             completionDate = "";
+                         }
+                         groupsFound.setCompletionDate(completionDate);
+                         groupsFound.setPetStatus(checkNull(obj[4]).toString());
+                         groupsFound.setContentStatus(prop.getProperty("Content"+checkNull(obj[5])));
+                         
+                         groupsFound.setEntryType(checkNull(obj[6]).toString());
+                         groupsFound.setComponentType(checkNull(obj[7]).toString());
+                         groupsFound.setColorCode(checkNull(obj[8]).toString());
+                         groupsFound.setColorDesc(checkNull(obj[9]).toString());
+                         groupsFound.setVendorSizeodeDesc(checkNull(obj[10]).toString());
+                         groupsFound.setOmniChannelCodeDesc("");
+                         groupsFound.setVPN(checkNull(obj[11]).toString());
+                         groupsList.add(groupsFound);
+                     }
+                 }
+                 
+            }else{
+               
+                groupsList = new ArrayList<GroupsFound>();
+                groupsFound = new GroupsFound();  
+                groupsFound.setGroupId(groupId);
+                groupsList.add(groupsFound);
+                
+            }
+            
+            }catch(Exception e){
+                LOGGER.debug("Query in DAO getGroupingComponents:::: ",e);
+                e.printStackTrace();
+            }            
+        finally{
+            if(session!=null)
+            session.close();
+        }
+        LOGGER.info("ContentDAOImpl getGroupingComponents : groupsList end"+groupsList);
+        return groupsList;
+    }
+    
+    
+    /**
+     * This method populates grouping content history section data
+     * @param groupId
+     * @return List<ContentHistoryVO>
+     * @throws PEPFetchException
+     */
+    @Override
+    public List<ContentHistoryVO> getGroupContentHistory(String groupId){
+        
+        LOGGER.info("ContentDAOImpl getGroupContentHistory : start");
+        List<ContentHistoryVO> groupContentHistoryList = null;
+        Session session = null;
+        
+        List<Object[]> rows = null;
+        final XqueryConstants xqueryConstants = new XqueryConstants();
+        
+        try{
+            session = sessionFactory.openSession();
+            //
+            
+            final Query query = session.createSQLQuery(xqueryConstants.getGroupContentHistoryQuery());
+            
+            if(null!=query){
+                query.setParameter("groupingNo", groupId);
+                rows = query.list();
+            }
+            
+            
+            
+            
+            if(null != rows){
+                groupContentHistoryList = new ArrayList<ContentHistoryVO>();
+                for(Object[] obj : rows){
+                    ContentHistoryVO historyVO = new ContentHistoryVO();
+                    historyVO.setOrinNumber(checkNull(obj[0]).toString());
+                    historyVO.setContentCreatedBy(checkNull(obj[1]).toString());
+                    String createdDate = "";
+                    if(null != obj[2]){
+                        createdDate = obj[2].toString().substring(0,10);
+                        
+                    }else{
+                        createdDate = "";
+                    }
+                    historyVO.setContentCreatedDate(createdDate);
+                    historyVO.setContentStatus(checkNull(obj[3]).toString());
+                    String lastUpdateddate = "";
+                    if(null!=obj[4]){
+                        lastUpdateddate = obj[4].toString().substring(0, 10);
+                        
+                    }else{
+                        lastUpdateddate = "";
+                    }
+                    historyVO.setContentLastUpdatedDate(lastUpdateddate);
+                    historyVO.setContentLastUpdatedBy(checkNull(obj[5]).toString());
+                    historyVO.setEntryType(checkNull(obj[6]).toString());
+                    groupContentHistoryList.add(historyVO);
+                }
+            }
+        }finally{
+            if(session!=null)
+                session.close();
+        }
+        LOGGER.info("ContentDAOImpl getGroupContentHistory : end");
+        return groupContentHistoryList;
+    }
+    
+    
+    
+    /**
+     * This method populates IPH category drop down list
+     * @return List<ItemPrimaryHierarchyVO>
+     * @param groupId
+     * @throws PEPFetchException
+     * @author AFUSKJ2 6/17/2016
+     */
+    @Override
+    public List<ItemPrimaryHierarchyVO> selectedIPHCategorydropdown(String groupId) {
+        LOGGER.info("ContentDAOImpl selectedIPHCategorydropdown : starts");
         List<Object[]> rows=null;
         ItemPrimaryHierarchyVO itemPrimaryHierarchy = null;
         List<ItemPrimaryHierarchyVO> iphCategoryList = null;
-		Session session = null;
-		final XqueryConstants xqueryConstants = new XqueryConstants();
-		
-		try{
-			session = sessionFactory.openSession();
-			
-			
-			// Query to populate Group IPH Category Paths
-			final Query query = session.createSQLQuery(xqueryConstants.populateGroupIPHcategoryPath());
-			
-			if(null!=query){
-				if(LOGGER.isDebugEnabled()){
-					LOGGER.debug("query -- >"+query);
-				}
-				query.setParameter("groupingNo", groupId);
-				rows = query.list();
-			}
+        Session session = null;
+        final XqueryConstants xqueryConstants = new XqueryConstants();
+        
+        try{
+            session = sessionFactory.openSession();
+            
+            
+            // Query to populate Group IPH Category Paths
+            final Query query = session.createSQLQuery(xqueryConstants.populateGroupIPHcategoryPath());
+            
+            if(null!=query){
+                if(LOGGER.isDebugEnabled()){
+                    LOGGER.debug("query -- >"+query);
+                }
+                query.setParameter("groupingNo", groupId);
+                rows = query.list();
+            }
 
-			
-			
-			 if((rows!=null) && (rows.size()>0))
-	            {
-	                iphCategoryList = new ArrayList<ItemPrimaryHierarchyVO>();
+            
+            
+             if((rows!=null) && (rows.size()>0))
+                {
+                    iphCategoryList = new ArrayList<ItemPrimaryHierarchyVO>();
 
-	                for (final Object[] row : rows) {
-	                    itemPrimaryHierarchy =new ItemPrimaryHierarchyVO();
-	                    String categoryName = checkNull(row[1]);
-	                    String finalCategory = "";
-	                    String finalCategoryId = "";
-	                    if(categoryName != null){
-	                        String[] catArr = categoryName.split("///");
-	                        for(int i=1; i<catArr.length; i++){
-	                            String value = catArr[i].split("-")[1];
-	                            if(finalCategory == ""){
-	                                finalCategory = finalCategory +  value;
-	                            }else{
-	                                finalCategory = finalCategory + "/" +  value;
-	                            }
-	                            if(i == (catArr.length-1)){
-	                                finalCategoryId = catArr[i].split("-")[0];
-	                            }
-	                        }
-	                    }
-	                    itemPrimaryHierarchy.setPetCategoryId(finalCategoryId);
-	                    itemPrimaryHierarchy.setPetCategoryName(finalCategory);
-	                    //Add each itemPrimaryHierarchy object to the list
-	                    iphCategoryList.add(itemPrimaryHierarchy);
+                    for (final Object[] row : rows) {
+                        itemPrimaryHierarchy =new ItemPrimaryHierarchyVO();
+                        String categoryName = checkNull(row[1]);
+                        String finalCategory = "";
+                        String finalCategoryId = "";
+                        if(categoryName != null){
+                            String[] catArr = categoryName.split("///");
+                            for(int i=1; i<catArr.length; i++){
+                                String value = catArr[i].split("-")[1];
+                                if(finalCategory == ""){
+                                    finalCategory = finalCategory +  value;
+                                }else{
+                                    finalCategory = finalCategory + "/" +  value;
+                                }
+                                if(i == (catArr.length-1)){
+                                    finalCategoryId = catArr[i].split("-")[0];
+                                }
+                            }
+                        }
+                        itemPrimaryHierarchy.setPetCategoryId(finalCategoryId);
+                        itemPrimaryHierarchy.setPetCategoryName(finalCategory);
+                        //Add each itemPrimaryHierarchy object to the list
+                        iphCategoryList.add(itemPrimaryHierarchy);
 
-	                }
-					
-	            }
-						
-		
-		}finally{
-			if(session!=null)
-				session.close();
-		}
-		LOGGER.info("ContentDAOImpl selectedIPHCategorydropdown : ends");
-		return iphCategoryList;
-	}
-	
-	/**
+                    }
+                    
+                }
+                        
+        
+        }finally{
+            if(session!=null)
+                session.close();
+        }
+        LOGGER.info("ContentDAOImpl selectedIPHCategorydropdown : ends");
+        return iphCategoryList;
+    }
+    
+    /**
      * Method to get the group copy validation from database.
      *    
      * @param groupId String  
@@ -2355,87 +2380,87 @@ public boolean releseLockedPet(  String orin, String pepUserID,String pepFunctio
      * Added By: Cognizant
      */
     @Override
-	public String getGroupCopyValidation(String groupId, String styleId)
-			throws PEPFetchException {
+    public String getGroupCopyValidation(String groupId, String styleId)
+            throws PEPFetchException {
 
-		LOGGER.info("***Entering getGroupCopyValidation() method.");
-		Session session = null;
-		String message = ContentScreenConstants.FAILURE;
-		List<Object> rows = null;
-		final XqueryConstants xqueryConstants = new XqueryConstants();
-		try {
-			session = sessionFactory.openSession();
-			Query query = session.createSQLQuery(xqueryConstants
-					.getGroupCopyValidation());
-			if (query != null) {
-				query.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
-				query.setParameter(ContentScreenConstants.STYLE_ID, styleId);
-				query.setParameter(ContentScreenConstants.GROUP_ID, groupId);
-				rows = query.list();
-			}
-			int validCount =0;
-			if (rows != null) {
-				for (final Object rowObj : rows) {
-					final Map row = (Map) rowObj;
+        LOGGER.info("***Entering getGroupCopyValidation() method.");
+        Session session = null;
+        String message = ContentScreenConstants.FAILURE;
+        List<Object> rows = null;
+        final XqueryConstants xqueryConstants = new XqueryConstants();
+        try {
+            session = sessionFactory.openSession();
+            Query query = session.createSQLQuery(xqueryConstants
+                    .getGroupCopyValidation());
+            if (query != null) {
+                query.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
+                query.setParameter(ContentScreenConstants.STYLE_ID, styleId);
+                query.setParameter(ContentScreenConstants.GROUP_ID, groupId);
+                rows = query.list();
+            }
+            int validCount =0;
+            if (rows != null) {
+                for (final Object rowObj : rows) {
+                    final Map row = (Map) rowObj;
 
-				validCount = row
-							.get(ContentScreenConstants.COUNT_GROUP) == null ? 0
-							: Integer.parseInt(row.get(
-									ContentScreenConstants.COUNT_GROUP)
-									.toString());
-					if(LOGGER.isDebugEnabled())
-					{
-						LOGGER.debug("Value --COUNT_GROUP: " + validCount);
-					}
-					
-					
-				}
-			}
-			
-			if (validCount > 0) {
-				
-				query = session.createSQLQuery(xqueryConstants
-						.getPETStateCopyValidation());
-				if (query != null) {
-					query.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
-					query.setParameter(ContentScreenConstants.STYLE_ID, styleId);
-					rows = query.list();
-				}
-				
-				if (rows != null) {
-					for (final Object rowObjPET : rows) {
-						final Map rowPET = (Map) rowObjPET;
+                validCount = row
+                            .get(ContentScreenConstants.COUNT_GROUP) == null ? 0
+                            : Integer.parseInt(row.get(
+                                    ContentScreenConstants.COUNT_GROUP)
+                                    .toString());
+                    if(LOGGER.isDebugEnabled())
+                    {
+                        LOGGER.debug("Value --COUNT_GROUP: " + validCount);
+                    }
+                    
+                    
+                }
+            }
+            
+            if (validCount > 0) {
+                
+                query = session.createSQLQuery(xqueryConstants
+                        .getPETStateCopyValidation());
+                if (query != null) {
+                    query.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
+                    query.setParameter(ContentScreenConstants.STYLE_ID, styleId);
+                    rows = query.list();
+                }
+                
+                if (rows != null) {
+                    for (final Object rowObjPET : rows) {
+                        final Map rowPET = (Map) rowObjPET;
 
-						String PETState = (rowPET.get(ContentScreenConstants.PET_STATE)==null?"00":rowPET.get(ContentScreenConstants.PET_STATE)).toString();
+                        String PETState = (rowPET.get(ContentScreenConstants.PET_STATE)==null?"00":rowPET.get(ContentScreenConstants.PET_STATE)).toString();
 
-						if(LOGGER.isDebugEnabled())
-						{
-							LOGGER.debug("Value -- PETState:" + PETState);
-						}
-						//02- Completed
-						//06-Closed
-						//07-Waiting to be Closed
-						//09-Published to Web
-						if("02".equals(PETState) || "06".equals(PETState) || "07".equals(PETState) || "09".equals(PETState)) {
-							message = ContentScreenConstants.SUCCESS;
-						}else{
-							message = ContentScreenConstants.ORIN_NOT_COMPLETED;
-						}
-					}
-			}
-			}
-		} catch (Exception exception) {
-			LOGGER.error("Exception in getGroupCopyValidation() method. -- "
-					+ exception);
-			throw new PEPFetchException(exception.getMessage());
-		} finally {
-			if (session != null) {
-				session.close();
-			}
-		}
-		LOGGER.info("***Exiting getGroupCopyValidation() method.");
-		return message;
-	}
+                        if(LOGGER.isDebugEnabled())
+                        {
+                            LOGGER.debug("Value -- PETState:" + PETState);
+                        }
+                        //02- Completed
+                        //06-Closed
+                        //07-Waiting to be Closed
+                        //09-Published to Web
+                        if("02".equals(PETState) || "06".equals(PETState) || "07".equals(PETState) || "09".equals(PETState)) {
+                            message = ContentScreenConstants.SUCCESS;
+                        }else{
+                            message = ContentScreenConstants.ORIN_NOT_COMPLETED;
+                        }
+                    }
+            }
+            }
+        } catch (Exception exception) {
+            LOGGER.error("Exception in getGroupCopyValidation() method. -- "
+                    + exception);
+            throw new PEPFetchException(exception.getMessage());
+        } finally {
+            if (session != null) {
+                session.close();
+            }
+        }
+        LOGGER.info("***Exiting getGroupCopyValidation() method.");
+        return message;
+    }
     
     
     
@@ -2445,7 +2470,7 @@ public boolean releseLockedPet(  String orin, String pepUserID,String pepFunctio
     @Override
     public GlobalAttributesVO getGroupGlobalAttribute(String groupingId)
             {
-    	LOGGER.info("ContentDAOImp :getGroupGolbalAttribute: start" );
+        LOGGER.info("ContentDAOImp :getGroupGolbalAttribute: start" );
         Session session = null;        
         GlobalAttributesVO  groupAttribute = null;
         List<Object[]> rows=null;
@@ -2457,7 +2482,7 @@ public boolean releseLockedPet(  String orin, String pepUserID,String pepFunctio
             // native SQL statement directly.
             final Query query =session.createSQLQuery(XqueryConstants.getGroupGlobalAttributes());
             if(LOGGER.isDebugEnabled()){
-            	LOGGER.debug(" Query -->" +XqueryConstants.getGroupGlobalAttributes());
+                LOGGER.debug(" Query -->" +XqueryConstants.getGroupGlobalAttributes());
             }
             if(query!=null)
             {
@@ -2469,16 +2494,16 @@ public boolean releseLockedPet(  String orin, String pepUserID,String pepFunctio
             if(rows!=null)
             {
                 for (final Object[] row : rows) {
-                	groupAttribute = new GlobalAttributesVO ();
+                    groupAttribute = new GlobalAttributesVO ();
 
-                	groupAttribute.setBelkExclusive(checkNull(row[0]));
-                	groupAttribute.setChannelExclusive(checkNull(row[1]));
-                	groupAttribute.setBopis(checkNull(row[2]));
-                	groupAttribute.setPyg(checkNull(row[3]));
-                	groupAttribute.setGwp(checkNull(row[4]));
-                	groupAttribute.setPwp(checkNull(row[5]));
-                	groupAttribute.setSdf(checkNull(row[6]));
-                	
+                    groupAttribute.setBelkExclusive(checkNull(row[0]));
+                    groupAttribute.setChannelExclusive(checkNull(row[1]));
+                    groupAttribute.setBopis(checkNull(row[2]));
+                    groupAttribute.setPyg(checkNull(row[3]));
+                    groupAttribute.setGwp(checkNull(row[4]));
+                    groupAttribute.setPwp(checkNull(row[5]));
+                    groupAttribute.setSdf(checkNull(row[6]));
+                    
                 }
             }
 
@@ -2487,7 +2512,7 @@ public boolean releseLockedPet(  String orin, String pepUserID,String pepFunctio
        
         finally {
             if(session!=null)            
-            	session.close();
+                session.close();
         }
         LOGGER.info("ContentDAOImp :getGroupGolbalAttribute: end" );
         return groupAttribute;
