@@ -346,5 +346,6 @@ public static final String COLON = ":";
 public static final String CONVERSION_FLAG = "CONVERSION_FLAG";
 
 public static final String HASH_SIGN = "##";
+public static final String MODEL_VIEW_LOGIN_PAGE = "loginPage" ;
 
 }

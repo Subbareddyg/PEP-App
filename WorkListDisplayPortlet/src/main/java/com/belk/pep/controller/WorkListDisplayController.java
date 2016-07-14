@@ -30,6 +30,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.web.portlet.ModelAndView;
+import org.springframework.web.portlet.bind.annotation.ResourceMapping;
 import org.springframework.web.portlet.mvc.Controller;
 import org.springframework.web.portlet.mvc.EventAwareController;
 import org.springframework.web.portlet.mvc.ResourceAwareController;
@@ -315,8 +316,9 @@ public class WorkListDisplayController implements Controller,EventAwareControlle
         Properties prop= PropertiesFileLoader.getExternalLoginProperties();       
         getUserDetailsFromLoginScreen(request);
         ArrayList departmentDetailsListToLoadPet = new ArrayList();
-        mv = new ModelAndView(WorkListDisplayConstants.MODEL_VIEW_NAME);
-        mv.addObject(WorkListDisplayConstants.IS_PET_AVAILABLE,WorkListDisplayConstants.NO_VALUE);
+        
+        if((request.getPortletSession().getAttribute("formSessionKey")!=null)  && (request.getPortletSession().getAttribute("sessionDataKey")!=null) ){
+            LOGGER.info("session data is not null  *******");
         
         String formSessionKey =  (String)request.getPortletSession().getAttribute("formSessionKey");
         String sessionDataKey =  (String)request.getPortletSession().getAttribute("sessionDataKey");
@@ -332,6 +334,8 @@ public class WorkListDisplayController implements Controller,EventAwareControlle
         }
         
         if(custuser!=null){
+            mv = new ModelAndView(WorkListDisplayConstants.MODEL_VIEW_NAME);
+            mv.addObject(WorkListDisplayConstants.IS_PET_AVAILABLE,WorkListDisplayConstants.NO_VALUE);
             String pepUserId="";
             //Handling the Internal user
             if(custuser.isInternal()){
@@ -558,6 +562,10 @@ public class WorkListDisplayController implements Controller,EventAwareControlle
         
         String belkBestPlan = prop.getProperty(WorkListDisplayConstants.BELK_BEST_PLAN);
         mv.addObject(WorkListDisplayConstants.BELK_BEST_PLAN_URL_KEY, belkBestPlan);
+        }else{          
+            mv = new ModelAndView(WorkListDisplayConstants.MODEL_VIEW_LOGIN_PAGE);
+            mv.addObject("loggedInUser",  request.getPortletSession().getAttribute("loggedInUser") );           
+        }
        
              LOGGER.info("WorkListDisplayController:handleRenderRequest:Exit");
             return mv;
@@ -1350,6 +1358,7 @@ private void assignRole(WorkListDisplayForm workListDisplayForm2,
    * @param request
    */
     private void getUserDetailsFromLoginScreen(RenderRequest request) {
+        if(request.getPortletSession().getAttribute("sessionDataKey")!=null){
         String sessionDataKey =  (String)request.getPortletSession().getAttribute("sessionDataKey");//TODO
         UserData custuser = (UserData) request.getPortletSession().getAttribute(sessionDataKey);//TODO
         
@@ -1370,6 +1379,7 @@ private void assignRole(WorkListDisplayForm workListDisplayForm2,
             }
             
         }
+       }
         
     }
 
@@ -1467,11 +1477,23 @@ private void assignRole(WorkListDisplayForm workListDisplayForm2,
         ResourceResponse response) throws Exception {
         Properties prop= PropertiesFileLoader.getExternalLoginProperties();
         
+        if((String)request.getPortletSession().getAttribute("formSessionKey")!=null)
+        {
+            
         String formSessionKey =  (String)request.getPortletSession().getAttribute("formSessionKey");
         WorkListDisplayForm resourceForm =  (WorkListDisplayForm)request.getPortletSession().getAttribute(formSessionKey);
         String sessionDataKey =  (String)request.getPortletSession().getAttribute("sessionDataKey");//TODO
         UserData custuser = (UserData) request.getPortletSession().getAttribute(sessionDataKey);//TODO
        
+        
+        String loggedInUser= request.getParameter("loggedInUser");  
+        
+        LOGGER.info(" ----loggedInUser -------- "+loggedInUser);
+        if(loggedInUser!=null && !loggedInUser.isEmpty()){
+            invalidateUserSession(request,
+                response);
+            
+        }
         
         LOGGER.info(" handleResourceRequest formSessionKey ---------------------------------------------------------------- "+formSessionKey);
         LOGGER.info(" handleResourceRequest resourceForm ---------------------------------------------------------------- "+resourceForm);
@@ -2271,6 +2293,7 @@ private void assignRole(WorkListDisplayForm workListDisplayForm2,
         LOGGER.info("Form before leaving  resource render request method --------------------------> "+resourceForm);
         //Completion Date Change End    
         mv.addObject(WorkListDisplayConstants.WORK_FLOW_FORM, resourceForm);
+        }
         return mv;
     }
     
@@ -3749,5 +3772,33 @@ public String ConvertDate(String completionDate){
         }
         return jsonObj;
     }
+    
+    /**
+     * Method for locking pet
+     * @param request
+     * @param response
+     */
+  
+    public void invalidateUserSession(ResourceRequest request,
+        ResourceResponse response) {
+        String loggedInUser = request.getParameter("loggedInUser");
+        LOGGER.info("loggedInUser invalidateUserSession ************.." + loggedInUser);
+        try {
 
+            if ((String) request.getPortletSession().getAttribute("sessionDataKey") != null) {
+                if ((request.getPortletSession().getAttribute("formSessionKey") != null && ((String) request
+                    .getPortletSession().getAttribute("formSessionKey")).contains(loggedInUser))) {
+                    LOGGER.info("setting session value here " + loggedInUser);                   
+                    request.getPortletSession().invalidate();
+                    request.getPortletSession().setAttribute("loggedInUser",loggedInUser);
+                }
+
+            }
+
+        }
+        catch (Exception e) {
+            LOGGER.info("invalidateUserSession", e);
+        }
+
+    }
 }
