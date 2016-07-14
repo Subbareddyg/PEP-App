@@ -123,6 +123,9 @@ lockClearOnBack.value='1';
     
     <input type="hidden" id="searchReturnId" name="searchReturnId" value="false" />	
     <input type="hidden" id="groupSearchResult" name="groupSearchResult" value="" />
+<portlet:resourceURL var="invalidateUserSession" id ="invalidateUserSession">  </portlet:resourceURL>
+
+<input type="hidden" id="invalidateUserSession" name="invalidateUserSession" value="${invalidateUserSession}"></input>	
 	
 	<!--Commented Belk Best Plan for displaying DCA afuszr6-->
 	<!--<c:if test="${isInternal =='yes' && workflowForm.readOnlyUser == 'no'}"> 
@@ -135,7 +138,7 @@ lockClearOnBack.value='1';
 		 <div align="right" style="margin-bottom: 0.5cm" >	
 			<c:out value="${workflowForm.pepUserID}"/> &nbsp;	 
 			<input type="button"   style="font-weight: bold" name="logout" value="Logout" 
-			    onclick=logout_home();  />	
+			    onclick=logout_home('${invalidateUserSession}');  />	
 			
 		 </div>
  <span>

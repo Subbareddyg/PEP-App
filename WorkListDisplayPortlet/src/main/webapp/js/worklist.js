@@ -1474,8 +1474,21 @@ function createmannualpet(){
 	}
 
 
-	function logout_home(){			
-		var username = document.getElementById("username").value;		
+	function logout_home(invalidateUserSessURL){
+        var username = document.getElementById("username").value;
+
+	 $.ajax({
+			       url: invalidateUserSessURL,
+			         type: 'GET',
+			         datatype:'json',
+			         data: { loggedInUser:username },
+				         success: function(data){
+                                 //alert('data '+data);
+                                           					
+	                }//End of Success
+	        }); 
+		
+				
 		if(username.indexOf('@') === -1) 
 		{
 		   window.location = "/wps/portal/home/InternalLogin";
