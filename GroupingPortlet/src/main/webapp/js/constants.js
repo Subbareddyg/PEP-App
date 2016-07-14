@@ -6,11 +6,9 @@ var app = app || {};
 			contextPath: '',
 			maxGroupNameChars: 150,
 			minGroupDescChars: 40,
-			maxGroupDescChars: 2000,
-			//pageTimeOutMS: 5000,  //time in MS for pageTimeout
-			pageTimeOutMS: 600000,  //time in MS for pageTimeout
-			logOutTimeoutMS: 3600000,   //time in MS for total Logout
-			//logOutTimeoutMS: 8000,   //time in MS for total Logout
+			maxGroupDescChars: 2000,			
+			pageTimeOutMS: 1800000,  //time in MS for pageTimeout
+			logOutTimeoutMS: 3600000,   //time in MS for total Logout			
 		},
 		
 		constants: {
