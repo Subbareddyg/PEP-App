@@ -470,14 +470,14 @@ public class ContentDAOImpl implements ContentDAO{
              // native SQL statement directly.
              Query query =null;
              if(ContentScreenConstants.CONSOLIDATED_PRODUCT_GROUP_TYPE.equals(groupType)){
-                 query =session.createSQLQuery(xqueryConstants.populateGroupIPH());
+                 query =session.createSQLQuery(xqueryConstants.populateGroupIPH());				
              }else{
                  query =session.createSQLQuery(xqueryConstants.populateGroupIPHForCollections());
              }
              if(query!=null)
              {
                  if(LOGGER.isDebugEnabled())
-                 LOGGER.debug("Query -->" + query);
+                 LOGGER.debug("Query updated -->" + query);
                  query.setParameter("groupingNo", groupId);
                  query.setFetchSize(20);
                  rows = query.list();

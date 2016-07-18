@@ -832,7 +832,7 @@ public class XqueryConstants {
 		getNewCPGDetails.append("	WHERE                                                                        ");
 		getNewCPGDetails.append("	1=1                                                                          ");
 		getNewCPGDetails.append("	AND SEARCH.DELETED_FLAG ='false' AND SEARCH.ENTRY_TYPE = 'Style'    ");
-		getNewCPGDetails.append("	AND EXISTS (SELECT MDMID FROM ADSE_PET_CATALOG APC WHERE APC.MDMID = SEARCH.MDMID) ");
+		getNewCPGDetails.append("	AND  PETEXISTS     ='Y' ");
 
 		if (null != vendorStyleNo && !("").equals(vendorStyleNo.trim())) {
 			getNewCPGDetails.append(" AND SEARCH.PRIMARYSUPPLIERVPN =:styleIdSql ");
@@ -874,7 +874,7 @@ public class XqueryConstants {
 		getNewCPGDetails.append("	WHERE                                                                        ");
 		getNewCPGDetails.append("	1=1                                                                          ");
 		getNewCPGDetails.append("	AND SEARCH.DELETED_FLAG ='false' AND SEARCH.ENTRY_TYPE = 'StyleColor'    ");
-		getNewCPGDetails.append("	AND EXISTS (SELECT MDMID FROM ADSE_PET_CATALOG APC WHERE APC.MDMID = SEARCH.MDMID) ");
+		getNewCPGDetails.append("	AND PETEXISTS     ='Y' ");
 
 		if (null != vendorStyleNo && !("").equals(vendorStyleNo.trim())) {
 			getNewCPGDetails.append(" AND SEARCH.PRIMARYSUPPLIERVPN =:styleIdSql ");
@@ -973,7 +973,7 @@ public class XqueryConstants {
 		getNewGBSDetails.append("		WHERE                                                                                       "); 
 		getNewGBSDetails.append("		    ITEM.ENTRY_TYPE = 'SKU'                                                              ");
 		getNewGBSDetails.append("		    AND ITEM.DELETED_FLAG= 'false'                                                          "); 
-		getNewGBSDetails.append("		    AND EXISTS (SELECT MDMID FROM ADSE_PET_CATALOG APC WHERE APC.MDMID = ITEM.MDMID)       ");
+		getNewGBSDetails.append("		    AND  petexists='Y'      ");
 
 		if (null != vendorStyleNo && !("").equals(vendorStyleNo.trim())) {
 			getNewGBSDetails.append(" AND ITEM.PRIMARYSUPPLIERVPN =:styleIdSql ");
@@ -1044,7 +1044,7 @@ public class XqueryConstants {
 		getRegularBeautySearchResult.append(" WHERE 1                                   =1                                 ");
 		getRegularBeautySearchResult.append(" AND SEARCH.DELETED_FLAG                   ='false'                           ");
 		getRegularBeautySearchResult.append(" AND SEARCH.ENTRY_TYPE                    = 'Style'           ");
-		getRegularBeautySearchResult.append(" AND EXISTS (SELECT MDMID FROM ADSE_PET_CATALOG APC WHERE APC.MDMID = SEARCH.MDMID) ");
+		getRegularBeautySearchResult.append(" AND PETEXISTS     ='Y' ");
 		if (!StringUtils.isEmpty(vendorStyleNo)) {
 			getRegularBeautySearchResult.append("   AND SEARCH.PRIMARYSUPPLIERVPN =:styleIdSql ");
 			count = 1;
@@ -1232,7 +1232,7 @@ public class XqueryConstants {
 		getRegularBeautySearchResultCountQuery.append(" WHERE 1                                   =1                                 ");
 		getRegularBeautySearchResultCountQuery.append(" AND SEARCH.DELETED_FLAG                   ='false'                           ");
 		getRegularBeautySearchResultCountQuery.append(" AND SEARCH.ENTRY_TYPE                    = 'Style'           ");
-		getRegularBeautySearchResultCountQuery.append(" AND EXISTS (SELECT MDMID FROM ADSE_PET_CATALOG APC WHERE APC.MDMID = SEARCH.MDMID) ");
+		getRegularBeautySearchResultCountQuery.append(" AND PETEXISTS     ='Y' ");
 		if (!StringUtils.isEmpty(vendorStyleNo)) {
 			getRegularBeautySearchResultCountQuery.append("   AND SEARCH.PRIMARYSUPPLIERVPN =:styleIdSql ");
 			count = 1;

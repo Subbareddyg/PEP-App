@@ -2807,70 +2807,40 @@ public class XqueryConstants {
     
     
     public String populateGroupIPH(){
-        final String CONTENT_IPH_CATEGORY_OTHERS = "  SELECT pet.mdmid ORIN,    "
-            + "  ias.CATEGORY_ID PET_CATEGORY_ID,   "
-            + "  ias.CATEGORY_NAME PET_CATEGORY_NAME,   "
-            + "  ics.SUB_CLASS SUB_CLASS,   "
-            + "  ids.leafnode7, "
-            + "  ids.leafnode6, "
-            + "  ids.leafnode5, "
-            + "  ids.leafnode4, "
-            + "  ids.leafnode3, "
-            + "  ids.leafnode2, "
-            + "  ids.leafnode1, "
-            + "  ibs.ITEM_CATEGORY_ID   "
-            + " FROM VENDORPORTAL.ADSE_PET_CATALOG pet, "
-            + "    XMLTABLE( 'for $j in $XML_DATA/pim_entry/pet_entry_header/category_paths/category[last()]  "
-            + "    let           $categoryid := $j//pk,        "
-            + "     "
-            + "                  $categoryname := tokenize(tokenize($j//path, \"///\")[last()],\"-\")[last()]        "
-            + "        return        "
-            + "        <category>      "
-            + "            <pk>{$categoryid}</pk>      "
-            + "    "
-            + "            <name>{$categoryname}</name>     "
-            + "        </category>' PASSING pet.XML_DATA AS \"XML_DATA\"    "
-            + "        COLUMNS  "
-            + "        CATEGORY_ID VARCHAR(100) path '/category/pk',    "
-            + "        CATEGORY_NAME VARCHAR(100) path '/category/name') ias    "
-            + "  ,  "
-            + "    VENDORPORTAL.ADSE_ITEM_CATALOG aic,  "
-            + "    XMLTABLE( 'for $j in $XML_DATA/pim_entry/item_header/category_paths/category  "
-            + "    let          "
-            + "    $itemcategoryid := $j//pk,                "
-            + "    $itemcategoryname := tokenize($j//path, \"///\")[1]        "
-            + "    return         "
-            + "    <category>        "
-            + "      <pk>{$itemcategoryid}</pk>        "
-            + "             "
-            + "      <name>{$itemcategoryname}</name>       "
-            + "    </category>' PASSING aic.XML_DATA AS \"XML_DATA\"    "
-            + "    COLUMNS  "
-            + "      ITEM_CATEGORY_ID VARCHAR(100) path '/category/pk',     "
-            + "      ITEM_CATEGORY_NAME VARCHAR(100) path '/category/name') ibs     "
-            + "  ,  "
-            + "    VENDORPORTAL.ADSE_MERCHANDISE_HIERARCHY amh, "
-            + "    XMLTABLE( 'for $j in $XML_DATA/pim_category/merchandise_category_header     "
-            + "    let           $subclass := tokenize($j//full_path, \"///\")[last()]              "
-            + "    return           "
-            + "    <merchandise_category_header>         "
-            + "      <full_path>{$subclass}</full_path>         "
-            + "    </merchandise_category_header>' PASSING amh.XML_DATA AS \"XML_DATA\"     "
-            + "    COLUMNS  "
-            + "    SUB_CLASS VARCHAR(100) path '/merchandise_category_header/full_path') ics    "
-            + "  ,  "
-            + "  VENDORPORTAL.ADSE_MERCHANDISE_HIERARCHY amh1,  "
-            + "  XMLTABLE(  "
-            + "  'for $j in $XML_DATA/pim_category/entry/Merchandise_Hier_Spec/IPH_Category_Mappings               let                                                                                                         $leafnode7 := $j//Level_7,                                                                                  $leafnode6 := $j//Level_6,                                                                                  $leafnode5 := $j//Level_5,                                                                                  $leafnode4 := $j//Level_4,                                                                                  $leafnode3 := $j//Level_3,                                                                                  $leafnode2 := $j//Level_2,                                                                                  $leafnode1 := $j//Level_1                                                                                   return                                                                                                      <IPH_Category_Mappings>                                                                                     <leafnode7>{$leafnode7}</leafnode7>                                                                         <leafnode6>{$leafnode6}</leafnode6>                                                                         <leafnode5>{$leafnode5}</leafnode5>                                                                         <leafnode4>{$leafnode4}</leafnode4>                                                                         <leafnode3>{$leafnode3}</leafnode3>                                                                         <leafnode2>{$leafnode2}</leafnode2>                                                                         <leafnode1>{$leafnode1}</leafnode1>                                                                         </IPH_Category_Mappings>'    "
-            + "PASSING amh1.XML_DATA AS \"XML_DATA\" COLUMNS leafnode7 VARCHAR(100) path '/IPH_Category_Mappings/leafnode7', leafnode6 VARCHAR(100) path '/IPH_Category_Mappings/leafnode6', leafnode5 VARCHAR(100) path '/IPH_Category_Mappings/leafnode5', leafnode4 VARCHAR(100) path '/IPH_Category_Mappings/leafnode4', leafnode3 VARCHAR(100) path '/IPH_Category_Mappings/leafnode3', leafnode2 VARCHAR(100) path '/IPH_Category_Mappings/leafnode2', leafnode1 VARCHAR(100) path '/IPH_Category_Mappings/leafnode1') ids,       "
-            + "  ADSE_GROUP_CHILD_MAPPING AGCM  "
-            + " WHERE ibs.ITEM_CATEGORY_ID = amh1.MDMID "
-            + " AND ibs.ITEM_CATEGORY_ID = amh.MDMID    "
-            + "  AND UPPER(ibs.ITEM_CATEGORY_NAME) = UPPER('Merchandise_Hierarchy') "
-            + "  AND AGCM.COMPONENT_STYLE_ID = AIC.MDMID AND AGCM.COMPONENT_DEFAULT='true'  "
-            + "  AND AGCM.COMPONENT_STYLE_ID =pet.mdmid "
-            + "  AND AGCM.mdmid = :groupingNo   ";
-        
+        final String CONTENT_IPH_CATEGORY_OTHERS = "  SELECT aic.mdmid, "+
+            "  XMLCAST( (XMLQUERY('//pim_entry/item_header/category_paths/category[last()]/pk' PASSING aic.xml_Data RETURNING CONTENT ) ) AS VARCHAR2(1000) ) PET_CATEGORY_ID, "+
+            "  SUBSTR(XMLCAST( (XMLQUERY('//pim_entry/item_header/category_paths/category[last()]/path' PASSING aic.xml_Data RETURNING CONTENT ) ) AS VARCHAR2(1000) ) , instr(XMLCAST( (XMLQUERY('//pim_entry/item_header/category_paths/category[last()]/path' PASSING aic.xml_Data RETURNING CONTENT ) ) AS VARCHAR2(1000) ) ,'-',-1,1) +1 ) PET_CATEGORY_NAME, "+
+            "  SUBSTR(XMLCAST( (XMLQUERY('//pim_category/merchandise_category_header/full_path' PASSING amh.xml_Data RETURNING CONTENT ) ) AS VARCHAR2(1000) ), instr(XMLCAST( (XMLQUERY('//pim_category/merchandise_category_header/full_path' PASSING amh.xml_Data RETURNING CONTENT ) ) AS VARCHAR2(1000) ) ,'/',-1,1) +1 ) SUB_CLASS, "+
+            "  ids.*, "+
+            "  XMLCAST( (XMLQUERY('//pim_entry/item_header/category_paths/category[1]/pk' PASSING aic.xml_Data RETURNING CONTENT ) ) AS VARCHAR2(1000) ) ITEM_CATEGORY_ID "+
+            "  FROM ADSE_GROUP_CHILD_MAPPING AGCM, "+
+            "  adse_item_catalog aic, "+
+            "  ADSE_MERCHANDISE_HIERARCHY amh, "+
+            "  XMLTABLE( 'for $j in $XML_DATA/pim_category/entry/Merchandise_Hier_Spec/IPH_Category_Mappings               let "+   
+            "  $leafnode7 := $j//Level_7, "+   
+            "  $leafnode6 := $j//Level_6, "+  
+            "  $leafnode5 := $j//Level_5, "+  
+            "  $leafnode4 := $j//Level_4, "+  
+            "  $leafnode3 := $j//Level_3, "+  
+            "  $leafnode2 := $j//Level_2, "+  
+            "  $leafnode1 := $j//Level_1 "+     
+            "  return "+        
+            "  <IPH_Category_Mappings> "+    
+            "  <leafnode7>{$leafnode7}</leafnode7> "+   
+            "  <leafnode6>{$leafnode6}</leafnode6>   "+ 
+            "  <leafnode5>{$leafnode5}</leafnode5> "+   
+            "  <leafnode4>{$leafnode4}</leafnode4> "+   
+            "  <leafnode3>{$leafnode3}</leafnode3>    "+
+            "  <leafnode2>{$leafnode2}</leafnode2> "+   
+            "  <leafnode1>{$leafnode1}</leafnode1>   "+
+            "  </IPH_Category_Mappings>' PASSING amh.XML_DATA AS \"XML_DATA\" COLUMNS leafnode7 VARCHAR(100) path '/IPH_Category_Mappings/leafnode7', leafnode6 VARCHAR(100) path '/IPH_Category_Mappings/leafnode6', leafnode5 VARCHAR(100) path '/IPH_Category_Mappings/leafnode5', leafnode4 VARCHAR(100) path '/IPH_Category_Mappings/leafnode4', leafnode3 VARCHAR(100) path "+
+            "   '/IPH_Category_Mappings/leafnode3', leafnode2                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              VARCHAR(100) path '/IPH_Category_Mappings/leafnode2', leafnode1 VARCHAR(100) path '/IPH_Category_Mappings/leafnode1') ids "+ 
+            "  WHERE AGCM.mdmid           =:groupingNo "+
+            "  AND AGCM.COMPONENT_DEFAULT ='true' "+
+            "  AND AGCM.COMPONENT_STYLE_ID=aic.mdmid "+
+            "  AND amh.MDMID              = XMLCAST( (XMLQUERY('//pim_entry/item_header/category_paths/category[1]/pk' PASSING aic.xml_Data RETURNING CONTENT ) ) AS VARCHAR2(1000) ) ";
+
+            LOGGER.debug("CONTENT_IPH_CATEGORY_OTHERS updated here-->" + CONTENT_IPH_CATEGORY_OTHERS);
             return CONTENT_IPH_CATEGORY_OTHERS;
     }
     
