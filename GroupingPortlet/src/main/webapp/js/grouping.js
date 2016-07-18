@@ -81,7 +81,7 @@ var app = app || {};
 		handleAutoLogout: function(){
 			/** section to handle page timeout and auto logout after session timeout
 			*
-			*/			
+			*/
 			
 			$.idleTimer(app.Global.defaults.pageTimeOutMS);
 			
@@ -923,7 +923,7 @@ var app = app || {};
 	
 	app.SplitGroupLanding = {
 		//
-		componentDataSearchService: function(params){
+		componentDataSearchService: function(boradCastRefreshEvent, params){
 			$('.overlay_pageLoading').removeClass('hidden');
 			
 			/* if(params != undefined && params.length)
@@ -937,6 +937,10 @@ var app = app || {};
 					//$('.select-all').prop('checked', false);
 					
 					$("#search-result-panel").removeClass('hidden');
+					
+					//broadcastig event notificatio those bounds dependent to do necessary processing.
+					if(boradCastRefreshEvent !== undefined && boradCastRefreshEvent === true)
+						$('#frmComponentSearch').trigger('search.sucess');
 				});
 		},
 		
@@ -973,8 +977,9 @@ var app = app || {};
 				});
 				
 				//split color search component
-				$('#frmComponentSearch').on('submit', function(e){
+				$('#frmComponentSearch').on('submit', function(e, eventInfo){
 					e.preventDefault(); //preventing default form submission 
+					var boradCastRefreshEvent = (eventInfo && eventInfo.boradCastRefreshEvent) ? eventInfo.boradCastRefreshEvent : false;
 					
 					var validationClass= $(this).attr('class');
 					
@@ -1005,7 +1010,7 @@ var app = app || {};
 									dfdChildrenParams: {resourceType: 'getChildRCGBCG'},
 									dfdChildrenStyleColorParams: {resourceType: 'getChildRCGBCGCPGStyleChild'},
 									dfdStyleColorTemplate: '#row-template-style-color',
-									dataServiceFunc: _super.componentDataSearchService.bind(this)
+									dataServiceFunc: _super.componentDataSearchService.bind(this, boradCastRefreshEvent)
 								};
 								
 								var dtTableAjax = new app.DataTableComponentAjax(config, $('#frmComponentSearch').serialize());
@@ -1013,7 +1018,7 @@ var app = app || {};
 								
 							}else{
 								//method to get results to draw the non ajax data Table for specific group types
-								_super.componentDataSearchService($('#frmComponentSearch').serialize())	
+								_super.componentDataSearchService(boradCastRefreshEvent, $('#frmComponentSearch').serialize())	
 									.done(function(result){
 										if(!result.length)
 											return;
@@ -1055,7 +1060,7 @@ var app = app || {};
 							$('.overlay_pageLoading').removeClass('hidden');
 							
 							//app.GroupFactory.searchSplitComponents($('#frmComponentSearch').serialize())
-							_super.componentDataSearchService($('#frmComponentSearch').serialize())
+							_super.componentDataSearchService(boradCastRefreshEvent, $('#frmComponentSearch').serialize())
 								.done(function(result){
 									if(!result.length)
 										return;

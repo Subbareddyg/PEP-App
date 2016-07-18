@@ -72,7 +72,14 @@
 					<c:if test="${groupDetailsForm.groupType == 'RCG'}">
 						<tr>
 							<td><b><fmt:message key="addcomponent.screen.level.carsGroupType" /></b></td>
-							<td><c:out value="${groupDetailsForm.carsGroupType}" /></td>
+							<td>
+							<c:if test="${groupDetailsForm.carsGroupType == 'PATTERN-SPLIT-VS'}">
+								<fmt:message key="addcomponent.screen.level.pattern" />
+							</c:if>
+							<c:if test="${groupDetailsForm.carsGroupType == 'PATTERN-SSKU-VS'}">
+								<fmt:message key="addcomponent.screen.level.collection" />
+							</c:if>
+							</td>
 							<th></th>
 							<td></td>
 						</tr>

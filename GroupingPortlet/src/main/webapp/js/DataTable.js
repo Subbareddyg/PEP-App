@@ -339,6 +339,7 @@
 		
 		//housekeeper to release and destroy delegation when regenrating or destroying data table
 		destroyDelegates: function(){
+			this.$(this.config.dtContainer).find('.select-all').prop('checked', false); //unchecking select all checkbox if previously checked
 			this.$(this.config.dtContainer).off();  //clearing previously set delegation for duplication
 			/* this.$(this.config.dtContainer).off('click', '.sortable');  //clearing previously set delegation for safety
 			this.$(this.config.dtContainer).off('click', '.parent-node-expand-ajax');  //clearing previously set delegation for safety

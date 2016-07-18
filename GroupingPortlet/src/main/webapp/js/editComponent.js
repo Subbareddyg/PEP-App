@@ -153,18 +153,14 @@ var app = app || {} ;
 						
 						app.GroupLandingApp.handleGroupCreationResponse(resultJSON, resultJSON.groupType, false);
 						
-						$('.overlay_pageLoading').removeClass('hidden');
-						//now refreshing existing component list
-						_super.loadExitingData(false)
-							.complete(function(){
-								//updqating component search result
-								$('#search-components').trigger('submit');
-							});
+						//triggering search result refresh event followed by refreshing existing component list
+						$('#frmComponentSearch').trigger('submit', {boradCastRefreshEvent: true});
 						
 					}).error(function(jqXHR, textStatus, errorThrown){
 						$('#group-creation-messages').html(app.GroupLandingApp.buildMessage(jqXHR.status + ' - ' + textStatus + ' - ' + errorThrown, 'error'))
 							.fadeIn('slow');
 					}).complete(function(){
+						$('.overlay_pageLoading').addClass('hidden');
 						//cleaning up message after 4 sec
 						app.GroupLandingApp.cleanupMessage($('#group-creation-messages'), 8000);
 					});
@@ -172,6 +168,13 @@ var app = app || {} ;
 			
 			handleEvent : function(){
 				var _super = this;
+				
+				//special namespaced event to refresh existing component 
+				$('#frmComponentSearch').on('search.sucess', function(e){
+					$('.overlay_pageLoading').removeClass('hidden');
+					//now refreshing existing component list
+					_super.loadExitingData(false);
+				});
 				
 				$('#add-components').on('click', function(e){
 					if($('.item-check:checked').length < 1){
@@ -313,7 +316,7 @@ var app = app || {} ;
 							
 							$('#existingSeletedItems').val(checkString.toString());
 							
-							$('#overlay_pageLoading').removeClass('hidden'); //showing as working
+							$('.overlay_pageLoading').removeClass('hidden'); //showing as working
 							
 							//requesting factorty to validate and delete
 							app.GroupFactory.removeComponents($('#existingComponentForm').serialize() 
@@ -355,7 +358,10 @@ var app = app || {} ;
 								
 							})
 							.complete(function(){
-								$('#overlay_pageLoading').addClass('hidden'); //hiding loader icon
+								$('.overlay_pageLoading').addClass('hidden'); //hiding loader icon
+								
+								_that.prop('disabled', true); // disabling remove component
+								
 								//cleaning up message after 4 sec
 								app.GroupLandingApp.cleanupMessage($('#group-existing-component-area'), 8000);
 							});	
@@ -689,7 +695,7 @@ var app = app || {} ;
 								
 						})
 						.complete(function(){
-							$('#overlay_pageLoading').addClass('hidden'); //hiding loader icon
+							$('.overlay_pageLoading').addClass('hidden'); //hiding loader icon
 							//cleaning up message after 4 sec
 							app.GroupLandingApp.cleanupMessage($('#group-existing-component-area'), 8000);
 							

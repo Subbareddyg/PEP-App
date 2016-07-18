@@ -222,8 +222,8 @@
 				<td>
 					
 					<select name="carsGroupType" id="carsGroupType">
-						<option value="PATTERN-SPLIT-VS" selected="selected" >PATTERN-SPLIT-VS</option>
-						<option value="PATTERN-SSKU-VS">PATTERN-SSKU-VS </option>
+						<option value="PATTERN-SPLIT-VS" selected="selected" ><fmt:message key="addcomponent.screen.level.pattern" /></option>
+						<option value="PATTERN-SSKU-VS"><fmt:message key="addcomponent.screen.level.collection" /></option>
 					</select>
 				</td>
 			</tr>
