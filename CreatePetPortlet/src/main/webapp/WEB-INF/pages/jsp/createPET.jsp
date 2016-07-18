@@ -122,7 +122,7 @@ if(loggedInUser.indexOf('@') === -1)
 	<table class="table tree2 table-bordered table-striped table-condensed">	
 		<thead>
 		<tr>
-		<th>
+		<th style="width:34px"><input  class="selectAllCheckBox" type="checkbox" name="selectAllRow" id="selectAllRow">
 		</th>
 		<th><fmt:message key="createpet.label.orin"/></th>
 		<th><fmt:message key="createpet.label.orinDescription"/></th>
@@ -135,7 +135,7 @@ if(loggedInUser.indexOf('@') === -1)
 		   
 		   <c:set var="sku" value="${workFlow.skuObj}" />
 		   <c:if test="${not empty workFlow.skuObj}">
-		    	<td align="center" style="width: 54px;  height: 24px;"><input type="checkbox" name="selectedSkus" id="selectedSkus"
+		    	<td align="center" style="width: 54px;  height: 24px;"><input class="checkbox1" type="checkbox" name="selectedSkus" id="selectedSkus"
 								value="<c:out  value="${sku.orin} "/>" /></td>
 				
 				<td><c:out value="${sku.orin}" /><input type="hidden" name="SkuLevelOrin"   value="${sku.orin} "/><input type="hidden" name="entryType"  id="entryType" value="${workFlow.entryType} "/></td>
@@ -156,7 +156,7 @@ if(loggedInUser.indexOf('@') === -1)
 					<tr name="tablereport" class="treegrid-${countList}">
 						
 
-						<td align="center" style="width: 54px;  height: 24px;"><input type="checkbox" name="selectedItems"  id="selectedItems" value="<c:out  value="${workFlow.orin} "/>" /></td>
+						<td align="center" style="width: 54px;  height: 24px;"><input class="checkbox1" type="checkbox" name="selectedItems"  id="selectedItems" value="<c:out  value="${workFlow.orin} "/>" /></td>
 						<td><c:out value="${workFlow.orin}" /><input type="hidden" name="StyleLOrin"  value="${workFlow.orin} "/></td>
 						<td><c:out value="${workFlow.orinDesc}" /><input type="hidden" name="entryType"  id="entryType" value="${workFlow.entryType} "/></td>
 						<td><c:out value="${workFlow.supplierSiteName}" /></td>
@@ -170,7 +170,7 @@ if(loggedInUser.indexOf('@') === -1)
 						<tr name="treegrid2" class="treegrid-${subcount} treegrid-parent-${countList}">
 						
 
-							<td><input  style="margin-left: 1.1cm;" type="checkbox" name="selectedStyles" id="selectedStyles" value="<c:out  value="${style.orin}, ${style.colorCode} "/>" /><input type="hidden" id="entryType" name="entryType"  value="${style.entryType} "/></td>
+							<td><input  style="margin-left: 1.1cm;" class="checkbox1" type="checkbox" name="selectedStyles" id="selectedStyles" value="<c:out  value="${style.orin}, ${style.colorCode} "/>" /><input type="hidden" id="entryType" name="entryType"  value="${style.entryType} "/></td>
 							<td><c:out value="${style.orin}" />&nbsp;<c:out value="${style.colorCode}" /> </td>
 							<td><c:out value="${style.orinDesc}" /></td>
 							<td><c:out value="${style.supplierSiteId}" /><c:out value="${style.supplierSiteName}" /></td>
@@ -183,7 +183,7 @@ if(loggedInUser.indexOf('@') === -1)
 							<tr name="treegrid2" class="treegrid-${subcount} treegrid-parent-${countList}">
 
 
-								<td><input  style="margin-left: 1.9cm;" type="checkbox" name="selectedSkus"  id="selectedSkus" value="<c:out  value="${sku.orin} "/>" /></td>
+								<td><input  style="margin-left: 1.9cm;" class="checkbox1" type="checkbox" name="selectedSkus"  id="selectedSkus" value="<c:out  value="${sku.orin} "/>" /></td>
 								<td><c:out value="${sku.orin}" /></td>
 								<td><c:out value="${sku.orinDesc}" /></td>
 								<td><c:out value="${sku.supplierSiteId}" /><c:out value="${sku.supplierSiteName}" /></td>
@@ -202,7 +202,20 @@ if(loggedInUser.indexOf('@') === -1)
 	  </table>
 	</div>	
 </fmt:bundle>
-		
+<script>
+
+$('#selectAllRow').click(function(event) {  //on click 
+    if(this.checked) { // check select status
+        $('.checkbox1').each(function() { //loop through each checkbox
+            this.checked = true;  //select all checkboxes with class "checkbox1"               
+        });
+    }else{
+        $('.checkbox1').each(function() { //loop through each checkbox
+            this.checked = false; //deselect all checkboxes with class "checkbox1"                       
+        });         
+    }
+});
+</script>	
 
 
 

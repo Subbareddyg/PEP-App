@@ -1586,28 +1586,25 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
            XqueryConstants xqueryConstants= new XqueryConstants();
              Session session = null;
              Transaction tx =  null;
-             
+
              try{
                session = sessionFactory.openSession();
                tx = session.beginTransaction();      
-              //Hibernate provides a createSQLQuery method to let you call your native SQL statement directly.   
-               //Query query = session.createSQLQuery(xqueryConstants.getWorkListDisplayDataParent(depts, email, pepId, supplierId, vendorLogin));
-               /**Newly added for DE795, 796 START**/
-               //Query query = session.createSQLQuery(xqueryConstants.getWorkListDisplayDataParent(vendorLogin));
-               Query query = session.createSQLQuery(xqueryConstants.getWorkListDisplayDataParent(depts, email, pepId, supplierId, vendorLogin));
-
-              // query.setParameter("depts", depts); 
-              // query.setParameter("email", email);
-               //query.setParameter("pepId", pepId);
-              // query.setParameter("supplierId", supplierId);
-               query.setFetchSize(100);
-               /******* END**/
                
-               LOGGER.info("Query..getWorkListDisplayDataForParent-->" + query);
-               // execute delete SQL statement
+               Query query = session.createSQLQuery(xqueryConstants.getWorkListDisplayDataParent(vendorLogin));
+
+               query.setString("email", email);
+               query.setString("pepId", pepId);
+               query.setString("depts", depts);
+               query.setString("supplierId", supplierId);
+               
+               query.setFetchSize(100);
+               
+               LOGGER.info("getWorkListDisplayDataForParent...Query--->" + query);
+              
                List<Object[]> rows = query.list();
                if (rows != null) {
-                   LOGGER.info("recordsFetched..." + rows.size());
+                   LOGGER.info("getWorkListDisplayDataForParent...recordsFetched--->" + rows.size());
                    for(Object[] row : rows){                         
                        String parentStyleORIN = row[0]!=null?row[0].toString():null;
                        
@@ -1660,7 +1657,7 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
         }
          finally
          {
-             LOGGER.info("recordsFetched. getWorkListDisplayDataForParent finally block.." );
+             LOGGER.info("getWorkListDisplayDataForParent finally block.." );
              session.flush();
              tx.commit();
              session.close();

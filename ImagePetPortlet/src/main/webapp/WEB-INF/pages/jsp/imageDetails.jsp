@@ -332,7 +332,7 @@ function validateFields(formId){
 					document.getElementById('errorDIV').style.display ="";
 					errorMessage = errorMessage+"<span style='color:red'>Please select a file lesser than " + constMaxFileSizeMB + " MB in size &nbsp;</span>";
 					document.getElementById('errorDIV').innerHTML = errorMessage;
-				}else if(ext == 'jpeg' || ext == 'jpg' || ext =='psd'|| ext =='tiff'|| ext =='eps' || ext =='tif'){
+				}else if(ext == 'jpeg' || ext == 'jpg' || ext =='psd'|| ext =='tiff'|| ext =='eps' || ext =='tif' || ext == 'png'){
 					document.getElementById('errorDIV').innerHTML = "";
 					$("#overlay_Upload").hide();
 					$("#dialog_UploadImage").hide();
@@ -1099,7 +1099,7 @@ function releseLockedPet(loggedInUser,releseLockedPetURL){
 				<div id="selectImage">			
 			<li>
 				<label style="margin-left:65px;height: 16px;">Select Image *:</label> 
-				<input name="fileData" id="fileData"type="file" onchange="checkfilesize(this);" accept="Image/jpeg,image/jpg,image/psd,image/tiff,image/eps" />
+				<input name="fileData" id="fileData"type="file" onchange="checkfilesize(this);" accept="Image/jpeg,image/jpg,image/psd,image/tiff,image/eps,image/tif,image/png" />
 			</li>
 			</div>
 			</br>

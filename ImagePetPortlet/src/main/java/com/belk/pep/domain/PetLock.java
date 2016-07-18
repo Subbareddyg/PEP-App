@@ -15,7 +15,8 @@ import java.sql.Timestamp;
 @NamedQueries(
     {
      @NamedQuery(name="PetLock.isPetLocked", query=" FROM PetLock p where (p.id.petId = :petId) and (p.pepFunction = :pepFunction)"),
-     @NamedQuery(name="PetLock.deleteLockedPet", query="delete from PetLock p where (p.id.petId = :petId) and (p.pepFunction = :pepFunction)")
+     //@NamedQuery(name="PetLock.deleteLockedPet", query="delete from PetLock p where (p.id.petId = :petId) and (p.pepFunction = :pepFunction)")
+     @NamedQuery(name = "PetLock.deleteLockedPet", query = "delete from PetLock p where (p.pepFunction = :pepFunction) and (p.id.petId = :petId) and p.id.lockDate = (select min(t.id.lockDate) from PetLock t where (t.pepFunction = :pepFunction) and (t.id.petId = :petId))")
     } 
 )
 

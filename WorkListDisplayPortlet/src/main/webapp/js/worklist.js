@@ -1414,7 +1414,8 @@ function advSearch() {
 					  //$("#overlay_Image_advSearch").css("display","block");					
 					  $("#dialog_ASearch").css("display","block");
 					  defaultAdvSearchSettings();
-					  
+					  //VP4
+					  searchClear();
 					  toggleEnability();
 					  
 					  //mapping ui dialog to the searchbox 

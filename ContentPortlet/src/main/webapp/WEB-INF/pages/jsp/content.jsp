@@ -389,7 +389,8 @@
                 $('.tree').treegrid();
                 $('.tree2').treegrid({
                     expanderExpandedClass: 'icon-minus-sign',
-                    expanderCollapsedClass: 'icon-plus-sign'
+                    expanderCollapsedClass: 'icon-plus-sign',
+                    initialState:'collapsed' /*scroll optimization */
                 });
             });
             
@@ -2878,7 +2879,7 @@ function clickListenerContent(e){
 							
 						</div>	
 						<!-- Changes made Cognizant for sorting the attributes ends. -->
-						
+						<c:if test="${not fn:contains(contentDisplayForm.pepUserId,'@') }">
 						<!--Legacy  Attributes Section starts here  -->	
 						<div class="cars_panel x-hidden" id="legacyAttributeSection">
 							
@@ -3005,8 +3006,7 @@ function clickListenerContent(e){
 									</div>				
 									
 						</div>
-
-							</form:form>
+							</c:if></form:form>
 						
 							<!--Pet Content Management Display starts here  -->	
 						<div class="cars_panel x-hidden collapsed">

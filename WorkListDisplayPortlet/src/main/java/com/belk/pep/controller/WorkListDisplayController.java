@@ -3094,6 +3094,18 @@ public String ConvertDate(String completionDate){
         ResourceResponse response,String lockedPet,String lockedPettype) {
     
         LOGGER.info("Entering:: aisPetLocked controller");
+        /* VP-8 - PEP lock out fix - Ramkumar - start 1/2*/
+        String formSessionKey =  (String)request.getPortletSession().getAttribute("formSessionKey");
+        WorkListDisplayForm resourceForm =  (WorkListDisplayForm)request.getPortletSession().getAttribute(formSessionKey);
+        String sessionDataKey =  (String)request.getPortletSession().getAttribute("sessionDataKey");
+        UserData custuser = (UserData) request.getPortletSession().getAttribute(sessionDataKey);
+        String loggedinuser="";
+        if(custuser.isInternal()){
+            loggedinuser=custuser.getBelkUser().getLanId();
+        }else {
+            loggedinuser=custuser.getVpUser().getPepUserID();
+        }
+        /* VP-8 - PEP lock out fix - Ramkumar -end 1/2 */
         ArrayList lockedPetDtls = null;
         try {
             String searchLockedtype="";
@@ -3121,7 +3133,12 @@ public String ConvertDate(String completionDate){
                       } 
                     if(petLockedDtl.getLockStatus()!=null && petLockedDtl.getLockStatus().equalsIgnoreCase("Yes")){
                       petLocked = true;
-                    }                    
+                    }
+                    /* VP-8 - PEP lock out fix - Ramkumar - start 2/2*/
+                    if(petLockedUser.equalsIgnoreCase(loggedinuser)){
+                        petLocked=false;
+                    }
+                    /* VP-8 - PEP lock out fix - Ramkumar - end 2/2*/
                 }
             }
             
