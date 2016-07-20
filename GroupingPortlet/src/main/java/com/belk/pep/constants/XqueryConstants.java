@@ -915,12 +915,11 @@ public class XqueryConstants {
 		StringBuilder getNewGBSDetails = new StringBuilder();
 		getNewGBSDetails.append("	Select                                                                                 ");
 		getNewGBSDetails.append("		COUNT(ITEM.PARENT_MDMID) COUNT, ITEM.PARENT_MDMID                                           ");                 
-		getNewGBSDetails.append("		FROM ADSE_ITEM_CATALOG ITEM,                                                                "); 
-		getNewGBSDetails.append("		ADSE_PET_CATALOG PET                                                                        "); 
+		getNewGBSDetails.append("		FROM ADSE_ITEM_CATALOG ITEM                                                               ");		 
 		getNewGBSDetails.append("		WHERE                                                                                       "); 
 		getNewGBSDetails.append("		    ITEM.ENTRY_TYPE in ('SKU')                                                              ");
 		getNewGBSDetails.append("		    AND ITEM.DELETED_FLAG= 'false'                                                          "); 
-		getNewGBSDetails.append("		    AND PET.MDMID=ITEM.MDMID                                                                ");
+		getNewGBSDetails.append("		    AND ITEM.PETEXISTS='Y'                                                               ");
 
 		if (null != vendorStyleNo && !("").equals(vendorStyleNo.trim())) {
 			getNewGBSDetails.append(" AND ITEM.PRIMARYSUPPLIERVPN =:styleIdSql ");
@@ -960,20 +959,20 @@ public class XqueryConstants {
 			final String deptNoSearch, final String classNoSearch) {
 		StringBuilder getNewGBSDetails = new StringBuilder();
 		getNewGBSDetails.append("	Select                                                                                 ");
-		getNewGBSDetails.append("		ITEM.MDMID,  ITEM.PARENT_MDMID, 'Style' ENTRY_TYPE,                                             ");                 
-		getNewGBSDetails.append("		ITEM.PRIMARYSUPPLIERVPN,                                                                    "); 
-		getNewGBSDetails.append("		XMLCAST(XMLQUERY('//pim_entry/entry/Item_Ctg_Spec/Description/Short' PASSING item.xml_Data RETURNING CONTENT) as varchar2(1000)) NAME,                                                                              "); 
-		getNewGBSDetails.append("		XMLCAST(XMLQUERY('//pim_entry/entry/Item_SKU_Spec/Differentiators[Type eq \"COLOR\"]/Code' PASSING item.xml_Data RETURNING CONTENT) as varchar2(1000)) COLOR_CODE,                                                                        "); 
-		getNewGBSDetails.append("		XMLCAST(XMLQUERY('//pim_entry/entry/Item_SKU_Spec/Differentiators[Type eq \"COLOR\"]/Vendor_Description' PASSING item.xml_Data RETURNING CONTENT) as varchar2(1000)) COLOR_NAME,                                                                        "); 
-		getNewGBSDetails.append("		XMLCAST(XMLQUERY('//pim_entry/entry/Item_SKU_Spec/Differentiators[Type eq \"SIZE\"]/Vendor_Description' PASSING item.xml_Data RETURNING CONTENT) as varchar2(1000)) SIZEDESC, XMLCAST(XMLQUERY('//pim_entry/entry/Item_SKU_Spec/Differentiators[Type eq \"SIZE\"]/Code' PASSING item.xml_Data RETURNING CONTENT) as varchar2(1000)) SIZE_CODE,                                                      "); 
-		getNewGBSDetails.append("		(select exist_in_group from adse_pet_catalog where mdmid=item.parent_mdmid) ALREADY_IN_GROUP, (select PET_STATE from adse_pet_catalog where mdmid=item.parent_mdmid) PET_STATE,                                          ");
-		getNewGBSDetails.append("		(case when (select AGCM.MDMID from ADSE_GROUP_CHILD_MAPPING AGCM where AGCM.MDMID= :groupIdSql and ITEM.PARENT_MDMID =AGCM.COMPONENT_STYLE_ID) is null THEN 'N' else 'Y' END) EXIST_IN_SAME_GROUP                                          ");
-		getNewGBSDetails.append("		FROM                                                                                        "); 
-		getNewGBSDetails.append("		ADSE_ITEM_CATALOG ITEM                                                                     "); 	
-		getNewGBSDetails.append("		WHERE                                                                                       "); 
-		getNewGBSDetails.append("		    ITEM.ENTRY_TYPE = 'SKU'                                                              ");
-		getNewGBSDetails.append("		    AND ITEM.DELETED_FLAG= 'false'                                                          "); 
-		getNewGBSDetails.append("		    AND  petexists='Y'      ");
+		getNewGBSDetails.append(" ITEM.MDMID,  ITEM.PARENT_MDMID, 'Style' ENTRY_TYPE,                                             ");                 
+		getNewGBSDetails.append(" ITEM.PRIMARYSUPPLIERVPN,                                                                    "); 
+		getNewGBSDetails.append(" ITEM.PRODUCT_NAME NAME,                                                                              "); 
+		getNewGBSDetails.append(" ITEM.COLOR_CODE COLOR_CODE,                                                                        "); 
+		getNewGBSDetails.append(" ITEM.COLOR_NAME COLOR_NAME,                                                                        "); 
+		getNewGBSDetails.append(" ITEM.SIZE_NAME SIZEDESC,ITEM.SIZE_CODE SIZE_CODE,                                                      "); 
+		getNewGBSDetails.append(" (select exist_in_group from adse_pet_catalog where mdmid=item.parent_mdmid) ALREADY_IN_GROUP, (select PET_STATE from adse_pet_catalog where mdmid=item.parent_mdmid) PET_STATE,                                          ");
+		getNewGBSDetails.append(" (case when (select AGCM.MDMID from ADSE_GROUP_CHILD_MAPPING AGCM where AGCM.MDMID= :groupIdSql and ITEM.PARENT_MDMID =AGCM.COMPONENT_STYLE_ID) is null THEN 'N' else 'Y' END) EXIST_IN_SAME_GROUP                                          ");
+		getNewGBSDetails.append(" FROM                                                                                        "); 
+		getNewGBSDetails.append(" ADSE_ITEM_CATALOG ITEM                                                                     "); 	
+		getNewGBSDetails.append(" WHERE                                                                                       "); 
+		getNewGBSDetails.append(" ITEM.ENTRY_TYPE = 'SKU'                                                              ");
+		getNewGBSDetails.append("  AND ITEM.DELETED_FLAG= 'false'                                                          "); 
+		getNewGBSDetails.append("  AND  petexists='Y'      ");
 
 		if (null != vendorStyleNo && !("").equals(vendorStyleNo.trim())) {
 			getNewGBSDetails.append(" AND ITEM.PRIMARYSUPPLIERVPN =:styleIdSql ");
