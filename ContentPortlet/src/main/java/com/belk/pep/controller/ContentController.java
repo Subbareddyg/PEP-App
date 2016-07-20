@@ -1093,6 +1093,7 @@ public class ContentController implements ResourceAwareController, EventAwareCon
 				final String omniSizeDescription = pet.getOmniSizeDescription();
 				final String contentState = pet.getContentState();
 				final String completionDate = pet.getCompletionDate();
+				final String petState = pet.getPetState();
 				final StyleVO style = new StyleVO();
 				style.setEntryType(entryType);
 				style.setColor(color);
@@ -1110,6 +1111,7 @@ public class ContentController implements ResourceAwareController, EventAwareCon
 				String contentStatusCode = setContentStatusCode(contentState);
 				style.setContentStatusCode(contentStatusCode);
 				style.setOmniSizeDescription(omniSizeDescription);
+				style.setPetState(petState);
 				styleList.add(style);// Add all the Style to the Style list
 				styleAndItsChildDisplay.setComplexPackEntry("Complex Pack");
 
@@ -1125,6 +1127,7 @@ public class ContentController implements ResourceAwareController, EventAwareCon
 				final String omniSizeDescription = pet.getOmniSizeDescription();
 				final String contentState = pet.getContentState();
 				final String completionDate = pet.getCompletionDate();
+				final String petState = pet.getPetState();
 				final StyleColorVO styleColor = new StyleColorVO();
 				styleColor.setEntryType(entryType);
 				styleColor.setParentStyleOrinNumber(childsParentOrinNumber);
@@ -1136,6 +1139,7 @@ public class ContentController implements ResourceAwareController, EventAwareCon
 				styleColor.setContentStatus(contentState);
 				String contentStatusCode = setContentStatusCode(contentState);
 				styleColor.setContentStatusCode(contentStatusCode);
+				styleColor.setPetState(petState);
 				styleColorList.add(styleColor);// Add all the StyleColor to the
 												// Style Color list
 				styleAndItsChildDisplay.setPackColorEntry("PackColor");
@@ -1178,6 +1182,7 @@ public class ContentController implements ResourceAwareController, EventAwareCon
 				final String omniSizeDescription = pet.getOmniSizeDescription();
 				final String contentState = pet.getContentState();
 				final String completionDate = pet.getCompletionDate();
+				final String petState = pet.getPetState();
 				final StyleColorVO styleColor = new StyleColorVO();
 				styleColor.setEntryType(entryType);
 				styleColor.setParentStyleOrinNumber(childsParentOrinNumber);
@@ -1189,6 +1194,7 @@ public class ContentController implements ResourceAwareController, EventAwareCon
 				styleColor.setContentStatus(contentState);
 				String contentStatusCode = setContentStatusCode(contentState);
 				styleColor.setContentStatusCode(contentStatusCode);
+				styleColor.setPetState(petState);
 				styleColorList.add(styleColor);// Add all the StyleColor to the
 												// Style Color list
 				// LOGGER.info("styleColorList size.."+styleColorList.size());
@@ -1229,6 +1235,7 @@ public class ContentController implements ResourceAwareController, EventAwareCon
 				final String omniSizeDescription = pet.getOmniSizeDescription();
 				final String contentState = pet.getContentState();
 				final String completionDate = pet.getCompletionDate();
+				final String petState = pet.getPetState();
 				final StyleVO style = new StyleVO();
 				style.setEntryType(entryType);
 				style.setColor(color);
@@ -1246,6 +1253,7 @@ public class ContentController implements ResourceAwareController, EventAwareCon
 				String contentStatusCode = setContentStatusCode(contentState);
 				style.setContentStatusCode(contentStatusCode);
 				style.setOmniSizeDescription(omniSizeDescription);
+				style.setPetState(petState);
 				styleList.add(style);// Add all the Style to the Style list
 				styleAndItsChildDisplay.setStyleEntry("Style");
 
@@ -4283,10 +4291,13 @@ public class ContentController implements ResourceAwareController, EventAwareCon
 		final String loggedInUser = request.getParameter("loggedInUser");
 		LOGGER.info("loggedInUser..." + loggedInUser);
 
+		final String petStatus = request.getParameter("petState");
+		LOGGER.info("petStatus..." + petStatus);
+		
 		if (StringUtils.isNotBlank(selectedStyleColorOrinNumber) && StringUtils.isNotBlank(styleColorPetContentStatus)
 				&& StringUtils.isNotBlank(loggedInUser)) {
 			final UpdateContentStatusDataObject dataObject = new UpdateContentStatusDataObject(selectedStyleColorOrinNumber,
-					styleColorPetContentStatus, loggedInUser);
+					styleColorPetContentStatus, loggedInUser,petStatus);
 			final Gson gson = new Gson();
 			// convert java object to JSON format,
 			// and returned as JSON formatted string
@@ -4351,11 +4362,14 @@ public class ContentController implements ResourceAwareController, EventAwareCon
 		LOGGER.info("styleContentStatus..." + styleContentStatus);
 		final String loggedInUser = request.getParameter("loggedInUser");
 		LOGGER.info("loggedInUser..." + loggedInUser);
+		
+		final String petStatus = request.getParameter("petState");
+		LOGGER.info("petStatus..." + petStatus);
 
 		if (StringUtils.isNotBlank(styleOrinNumber) && StringUtils.isNotBlank(styleContentStatus)
 				&& StringUtils.isNotBlank(loggedInUser)) {
 			final UpdateContentStatusDataObject dataObject = new UpdateContentStatusDataObject(styleOrinNumber, styleContentStatus,
-					loggedInUser);
+					loggedInUser,petStatus);
 			final Gson gson = new Gson();
 			// convert java object to JSON format,
 			// and returned as JSON formatted string

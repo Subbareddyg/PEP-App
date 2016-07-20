@@ -21,10 +21,11 @@ public class UpdateContentStatusDataObject {
      * @param state the state
      * @param updatedBy the updated by
      */
-    public UpdateContentStatusDataObject(String petId, String state,String updatedBy) {
+    public UpdateContentStatusDataObject(String petId, String state,String updatedBy, String petStatus) {
         super();
         this.petId = petId;
         this.state = state;
+        this.petStatus = petStatus;
         this.updatedBy=updatedBy;
     }
     
@@ -36,6 +37,8 @@ public class UpdateContentStatusDataObject {
     
     /** The updated by. */
     private String  updatedBy;
+    
+    private String petStatus;
 
     /**
      * Gets the pet id.
@@ -89,6 +92,25 @@ public class UpdateContentStatusDataObject {
      */
     public void setUpdatedBy(String updatedBy) {
         this.updatedBy = updatedBy;
+    }
+    
+    
+    /**
+     * Gets the petStatus .
+     *
+     * @return the petStatus
+     */
+    public String getPetStatus() {
+        return petStatus;
+    }
+
+    /**
+     * Sets the petStatus.
+     *
+     * @param petStatus the petStatus to set
+     */
+    public void setPetStatus(String petStatus) {
+        this.petStatus = petStatus;
     }
 
     /* (non-Javadoc)

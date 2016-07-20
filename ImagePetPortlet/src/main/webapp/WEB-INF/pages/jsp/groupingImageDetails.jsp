@@ -308,12 +308,12 @@ function releseLockedPet(loggedInUser,releseLockedPetURL){
 <input class="btn uploadButton" id="btnGPImageUploadAction"  align="center" type="button" name="imageUploadSubmit" value="Upload VPI"  style="margin-left:400px;" />
 
 
- <input type="checkbox" name="pubTOwebcheckbox"  value="09"  style="margin-left:140px;" onchange="myFunction(this);"  /> <b>
+ <input type="checkbox" name="pubTOwebcheckbox"  value="09"  style="margin-left:63px;" onchange="myFunction(this);"  /> <b>
 <fmt:message key="label.publishToWeb" /></b>	
 
 	
 
-<input    class="btn uploadButton" type="button" id="image_approve" onclick="confirmGroupingImageApprove('${saveImageShotType}');" name="image_approve" title="Approve" width="48" value="  Approve  "  style="margin-left:280px;margin-top:-18px" />								
+<input    class="btn uploadButton" type="button" id="image_approve" onclick="confirmGroupingImageApprove('${saveImageShotType}');" name="image_approve" title="Approve" width="48" value="  Approve  "  style="margin-left:283px;margin-top:-18px" />								
 
 </div>
 		<div class="need_images">							

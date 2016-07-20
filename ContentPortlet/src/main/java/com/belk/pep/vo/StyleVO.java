@@ -69,8 +69,24 @@ public class StyleVO  implements Serializable{
     private String completionDate ;
     
     private String VPN;
+    
+    private String petState;
 
-    public String getVPN() {
+    /**
+	 * @return the petState
+	 */
+	public String getPetState() {
+		return petState;
+	}
+
+	/**
+	 * @param petState the petState to set
+	 */
+	public void setPetState(String petState) {
+		this.petState = petState;
+	}
+
+	public String getVPN() {
 		return VPN;
 	}
 

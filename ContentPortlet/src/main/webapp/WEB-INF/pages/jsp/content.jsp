@@ -404,6 +404,7 @@
         		  $('#iphCategoryDropDownId').removeAttr('disabled'); 
         		  $('#saveButtonId').removeAttr('disabled');   
         		  $('#channelExclId').removeAttr('disabled');  
+        		   $("#publisStatusCodePublishToWeb").removeAttr("disabled"); 
         		  $('#belkExclId').removeAttr('disabled');  
         		  $('#globalGWPId').removeAttr('disabled');  
         		  $('#globalPWPId').removeAttr('disabled');  
@@ -420,6 +421,7 @@
 	       		  $('#iphCategoryDropDownId').attr("disabled", "disabled"); 
 	       		  $('#saveButtonId').attr("disabled", "disabled");
 	       		  $('#channelExclId').attr("disabled", "disabled");
+	       		  $("#publisStatusCodePublishToWeb").attr("disabled", "disabled"); 
 	       		  $('#belkExclId').attr("disabled", "disabled");
 	       		  $('#globalGWPId').attr("disabled", "disabled");
 	       		  $('#globalPWPId').attr("disabled", "disabled");
@@ -1362,7 +1364,8 @@
                           pimradioValues:finalPIMRadioString,
                           bmradioValues:finalBMRadioString,
                           channelExclusive:channelExcVal,
-                          bopisSelectedValue:bopisValue
+                          bopisSelectedValue:bopisValue,
+                          petState:$('#publisStatusCodePublishToWeb:checked').val()
                        },
                     	   success: function(data){		
                     	  						var json = $.parseJSON(data);  
@@ -1390,7 +1393,8 @@
                     	                                   data: { 
                     	                                             selectedOrinNumber:stylePetOrinNumber,
                     	                                             styleContentStatus:stylePetContentStatus,
-                    	                                             loggedInUser:user
+                    	                                             loggedInUser:user,
+                    	                                             petState:$('#publisStatusCodePublishToWeb:checked').val()
                     	                                                  },
                     	                                           
                     	                                       
@@ -1488,6 +1492,27 @@
 		 
 		 // Saving details
 		 function validateFormData(dropdownCount,bmDropDownCount, pimRadioButtonCount, bmRadionButtonCount, styleOrColor){
+		 
+		 		var isStyleColorOpen =$('[name=hdnStyleColorOpen]:last').val();
+		 		var petStatusCode =$('[name=hdnPETStatusCode]:last').val();
+		 		var petStatus = $('#publisStatusCodePublishToWeb:checked').val();
+		 		
+		 		if($('#publisStatusCodePublishToWeb').is(':checked')){
+		 		
+		 			if(isStyleColorOpen == 'true'){
+		 				jAlert('Please complete the StyleColor before Publishing to Web', 'Alert');
+		 				
+		 				return;	
+		 			}
+		 			
+		 			if(petStatusCode == 'Deactivated'){
+		 				jAlert('Please ReInitiate the Style before Publishing to Web', 'Alert');
+		 				
+		 				return;
+		 			}
+		 			
+		 		}
+		 		
 				var omniBrandCount = document.getElementById("omniBrandCount").value
 				var carBrandCount = document.getElementById("carBrandCount").value
 				//if(omniBrandCount > 0){
@@ -1957,7 +1982,10 @@ function clickListenerContent(e){
 							 <div id="overlay_pageLoadingapprove" style="display:none;position:absolute;top:1000px; left:350px;">
 										<img src="<%=response.encodeURL(request.getContextPath()+"/img/loading.gif")%>" height="100px;" />
 							</div> 
-				
+	`						
+							<input type="hidden" name="hdnStyleColorOpen" id="hdnStyleColorOpen" value="false"/>
+							<input type="hidden" name="hdnPETStatusCode" id="hdnPETStatusCode" value=""/>
+									
 					        <input type="hidden" id="getIPHCategory" name="getIPHCategory" value=""></input>
 					        <input type="hidden" id="petIdForWebservice" name="petIdForWebservice" value=""/>
 							<input type=hidden id="actionParameter" name="actionParameter"/>
@@ -2088,13 +2116,12 @@ function clickListenerContent(e){
 										 <li class="txt_attr_name" style="width: 20%;"><fmt:message key="labelCompletionDate" bundle="${display}"/><c:out value="${contentDisplayForm.styleInformationVO.completionDateOfStyle}"/></li>
 									</ul>
 									<!-- End Added by Sriharsha -->
-									
-									
+									<div style="float:right">
 									<c:if test="${contentDisplayForm.roleName == 'readonly'}">									
 									   
 									        
 								             <input type="button" name="Save" value="<fmt:message key="content.label.saveButton" bundle="${display}"/>" 
-				  							       class="saveContentButton"  onclick="javascript:saveContent();" disabled="true"/>							                            
+				  							       class="saveContentButton"  onclick="javascript:saveContent();" disabled="true" style="margin-left:0"/>							                            
 										      
 				  							  
 				  					          <input type="button" name="Close" value="<fmt:message key="content.label.closeButton" bundle="${display}"/>" 
@@ -2107,7 +2134,7 @@ function clickListenerContent(e){
 										  
 										        
 									             <input type="button" name="Save" id="saveButtonId"  value="<fmt:message key="content.label.saveButton" bundle="${display}"/>" 
-					  							       class="saveContentButton"  onclick="javascript:saveContentPetAttributesWebserviceResponse('${saveContentPetAttributes}','<c:out value="${contentDisplayForm.styleInformationVO.orin}"/>','<c:out value="${contentDisplayForm.pepUserId}"/>', '<c:out value="${contentDisplayForm.productAttributesDisplay.dropDownList.size()}"/>','<c:out value="${contentDisplayForm.legacyAttributesDisplay.dropDownList.size()}"/>', '<c:out value="${contentDisplayForm.productAttributesDisplay.radiobuttonList.size()}"/>', '<c:out value="${contentDisplayForm.legacyAttributesDisplay.radiobuttonList.size()}"/>', '', '', 'Save','')"/>
+					  							       class="saveContentButton"  style="margin-left:0" onclick="javascript:saveContentPetAttributesWebserviceResponse('${saveContentPetAttributes}','<c:out value="${contentDisplayForm.styleInformationVO.orin}"/>','<c:out value="${contentDisplayForm.pepUserId}"/>', '<c:out value="${contentDisplayForm.productAttributesDisplay.dropDownList.size()}"/>','<c:out value="${contentDisplayForm.legacyAttributesDisplay.dropDownList.size()}"/>', '<c:out value="${contentDisplayForm.productAttributesDisplay.radiobuttonList.size()}"/>', '<c:out value="${contentDisplayForm.legacyAttributesDisplay.radiobuttonList.size()}"/>', '', '', 'Save','')"/>
 									                            
 											      
 					  							  
@@ -2115,7 +2142,15 @@ function clickListenerContent(e){
 					  							      class="closeContentButton"  onclick="javascript:goToWorkListDisplayScreen('<c:out value="${contentDisplayForm.userName}"/>','${releseLockedPet}');"/>
 										
 									 </c:if>
-                                </div>								 
+									</div>
+									<c:if test="${contentDisplayForm.roleName != 'vendor'}">
+                                	<div style="float:right;margin-right:35px; margin:5px">
+										<label style="margin-right:15px"><input type="checkbox" id="publisStatusCodePublishToWeb" name="publisStatusCodePublishToWeb" style="margin:0;" value="09"
+										<c:if test="${contentDisplayForm.styleInformationVO.overallStatusCode == '09'}"> checked=checked </c:if> 
+										<c:if test="${contentDisplayForm.roleName == 'readonly'}"> disabled="disabled" </c:if> /> <b>Publish to Web (Skip CMP Task)</b></label>
+									</div>
+									</c:if>
+                                </div>					                               				
 							</div>
 							<!--Product Details Section starts over here  -->	
 							<div id="prod_detail_pnl" class="cars_panel x-hidden">
@@ -2471,7 +2506,7 @@ function clickListenerContent(e){
 														<td><c:out value="${styleDisplayList.omniSizeDescription}" /></td>											
 													
 														<td><span class="contentStatusId"><c:out value="${styleDisplayList.contentStatus}"/></span></td>	
-														
+														<input type="hidden" name="hdnPETStatusCode" id="hdnPETStatusCode" value="${styleDisplayList.petState}"/>	
 														  
 														<input type="hidden" id="styleContentStatusId" name="styleContentStatus" value="${styleDisplayList.contentStatus}"></input>								
 														<td><c:out value="${styleDisplayList.completionDate}" /></td>
@@ -2526,7 +2561,9 @@ function clickListenerContent(e){
 															   <input type="hidden" id="selectedStyleColorOrinNumber" name="selectedStyleColorOrinNumber" value=""></input>   
 															   															  														  
 															   <input type="hidden" id="styleColorOrinNumberId" name="styleColorOrinNumber" value="${styleDisplayColorList.orinNumber}"></input>                                                                                       
-														
+																<c:if test="${styleDisplayColorList.petState == 'Initiated' || styleDisplayColorList.petState == 'Ready_For_Review'}">
+																	<input type="hidden" name="hdnStyleColorOpen" id="hdnStyleColorOpen" value="true"/>
+																</c:if>
 															   <td><c:out value="${contentDisplayForm.styleInformationVO.styleId}"/></td>                                                                                         
 															   <td><c:out value="${styleDisplayColorList.color}"/></td> 
 															   <td><c:out value="${styleDisplayColorList.vendorSize}" /></td>                                                                                        

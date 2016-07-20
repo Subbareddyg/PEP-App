@@ -2530,7 +2530,7 @@ function toggleRows(currentRow, styleId, styleColorId){
 									<div style="float:right;margin-right:35px">
 										<label style="margin-right:15px"><input type="checkbox" id="publisStatusCodePublishToWeb" name="publisStatusCode" value="09"
 										<c:if test="${contentDisplayForm.styleInformationVO.overallStatusCode == '09'}"> checked=checked </c:if> 
-										<c:if test="${contentDisplayForm.roleName == 'readonly'}"> disabled="disabled" </c:if> /> <b>Publish to Web</b></label>
+										<c:if test="${contentDisplayForm.roleName == 'readonly'}"> disabled="disabled" </c:if> /> <b>Publish to Web (Skip CMP Task)</b></label>
 									</div>
                                 </div>								 
 							</div>
