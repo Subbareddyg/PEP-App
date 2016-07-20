@@ -421,7 +421,7 @@
 	       		  $('#iphCategoryDropDownId').attr("disabled", "disabled"); 
 	       		  $('#saveButtonId').attr("disabled", "disabled");
 	       		  $('#channelExclId').attr("disabled", "disabled");
-	       		  $("#publisStatusCodePublishToWeb").attr("disabled", "disabled"); 
+	       		  $("#publisStatusCodePublishToWeb").attr("disabled", "disabled");
 	       		  $('#belkExclId').attr("disabled", "disabled");
 	       		  $('#globalGWPId').attr("disabled", "disabled");
 	       		  $('#globalPWPId').attr("disabled", "disabled");
@@ -1402,7 +1402,8 @@
                     	                                                    $("#ajaxResponseUpdateStylePetContentStatus").html("");
                     	                                                    $("#ajaxResponseUpdateStylePetContentStatus").append("<b><font size='2'>Style Pet Status updated successfully !</font></b>" );      
                     	                                                    $("#saveButtonId").attr("disabled", "disabled");
-                    	                                                    $("#styleSubmit").attr("disabled", "disabled"); 
+                    	                                                    $("#styleSubmit").attr("disabled", "disabled");
+                    	                                                    $("#publisStatusCodePublishToWeb").attr("disabled", "disabled");
                     	                                                    $('.contentStatusId').html('Completed');		
                     	                                                    $("#ajaxResponseUpdateStylePetContentStatus").focus();
                     	                                                    styleContentPetWebserviceResponseFlag="true";
@@ -1416,7 +1417,8 @@
                     	                      	                	$("#ajaxResponseUpdateStylePetContentStatus").append("<b><font size='2'>Style Pet Status could not be updated, please contact Belk helpdesk.</font></b> <br>"); 
                     	                      	                    $("#ajaxResponseUpdateStylePetContentStatus").append("<br>");
                     	                      	                    $("#saveButtonId").removeAttr("disabled");
-                    	                      	                    $("#styleSubmit").removeAttr("disabled");    
+                    	                      	                    $("#styleSubmit").removeAttr("disabled"); 
+                    	                      	                    $("#publisStatusCodePublishToWeb").removeAttr("disabled", "disabled");   
                     	                      	                    styleContentPetWebserviceResponseFlag="false";
                     	                      	                  
                     	                      	                  }

@@ -1146,7 +1146,7 @@ lockClearOnBack.value='1';
 			{{ if(item.colorList[0] !== undefined && item.colorList[0].noChildMessage === undefined){ }}
 				
 				{{ _.each(item.colorList, function(childItem, childKey){ }}
-					<tr class="" data-tr-root="{{=orinNum}}" name="child_{{=item.styleOrinNum}}_{{=random}}" id="parent_{{=childItem.styleOrinNum}}" style="display:none">
+					<tr class="" data-tr-root="{{=orinNum}}" name="child_{{=item.styleOrinNum}}_{{=random}}" id="parent_{{=childItem.styleOrinNum.replace(/\s/g, '')}}" style="display:none">
 						<td style="width:56px">
 							<div style="padding-left: 44px;">
 								<input type="checkbox" parentOrinNo="{{=item.styleOrinNum}}_{{=random}}" name="selectedStyles" class="checkbox1" value="{{=childItem.styleOrinNum}}_{{=childItem.petStatus}}" onclick="getStyleColorPetStatValue('{{=childItem.petStatus}}')" data-group="{{=childItem.isGroup}}" />
