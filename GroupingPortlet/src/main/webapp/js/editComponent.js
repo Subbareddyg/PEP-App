@@ -30,6 +30,8 @@ var app = app || {} ;
 			},
 			
 			checkValidPriorityNumbers: function(_super, showDialog){
+				return true; //disabling validation as per UAT defect
+				
 				showDialog = (showDialog === undefined || showDialog == true) ? true : false;
 				
 				if($(this).val().trim() == 0 || $(this).val().trim() > _super.totalExistingComponents){

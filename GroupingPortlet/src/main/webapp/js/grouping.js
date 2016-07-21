@@ -342,6 +342,9 @@ var app = app || {};
 				
 				//group search button action
 				$('#search-groups').on('click', function(e){
+					//validating field values
+					app.SplitGroupLanding.validateFields($('#frmGroupSearch'));
+					
 					e.preventDefault(); //preventing default form submission
 						
 						var validInputFlag = true;
@@ -943,6 +946,12 @@ var app = app || {};
 						$('#frmComponentSearch').trigger('search.sucess');
 				});
 		},
+		validateFields: function(jqElFrm){
+			$(jqElFrm).find('input').each(function(){
+				//console.log(this);
+				$(this).val($(this).val().trim());
+			});
+		},
 		
 		handleEvents: function(){
 			try{
@@ -978,6 +987,9 @@ var app = app || {};
 				
 				//split color search component
 				$('#frmComponentSearch').on('submit', function(e, eventInfo){
+					//validating all field values
+					_super.validateFields(this);
+					
 					e.preventDefault(); //preventing default form submission 
 					var boradCastRefreshEvent = (eventInfo && eventInfo.boradCastRefreshEvent) ? eventInfo.boradCastRefreshEvent : false;
 					
