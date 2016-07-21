@@ -826,7 +826,7 @@ public class XqueryConstants {
 		getNewCPGDetails.append("	SEARCH.COLOR_CODE COLOR_CODE,                                                          ");
 		getNewCPGDetails.append("  (SELECT exist_in_group FROM adse_pet_catalog WHERE mdmid=SEARCH.mdmid) ALREADY_IN_GROUP,                                    ");
 		getNewCPGDetails.append("	SEARCH.COLOR_NAME COLOR_DESC,                                                           ");
-		getNewCPGDetails.append("	  (CASE WHEN (SELECT AGCM.MDMID FROM ADSE_GROUP_CHILD_MAPPING AGCM WHERE AGCM.MDMID = :groupIdSql AND SEARCH.MDMID =AGCM.COMPONENT_STYLE_ID) IS NULL THEN 'N' ELSE 'Y' END) EXIST_IN_SAME_GROUP                                           ");
+		getNewCPGDetails.append("	  (CASE WHEN (SELECT COUNT(AGCM.MDMID) FROM ADSE_GROUP_CHILD_MAPPING AGCM WHERE AGCM.MDMID = :groupIdSql AND SEARCH.MDMID =AGCM.COMPONENT_STYLE_ID) = 0 THEN 'N' ELSE 'Y' END) EXIST_IN_SAME_GROUP                                           ");
 		getNewCPGDetails.append("	FROM                                                                         ");
 		getNewCPGDetails.append("	  ADSE_ITEM_CATALOG SEARCH                                                   ");
 		getNewCPGDetails.append("	WHERE                                                                        ");
@@ -868,7 +868,7 @@ public class XqueryConstants {
 		getNewCPGDetails.append("	SEARCH.COLOR_CODE COLOR_CODE,                                                          ");
 		getNewCPGDetails.append("  (SELECT exist_in_group FROM adse_pet_catalog WHERE mdmid=SEARCH.parent_mdmid) ALREADY_IN_GROUP,                                    ");
 		getNewCPGDetails.append("	SEARCH.COLOR_NAME COLOR_DESC,                                                           ");
-		getNewCPGDetails.append("	  (CASE WHEN (SELECT AGCM.MDMID FROM ADSE_GROUP_CHILD_MAPPING AGCM WHERE AGCM.MDMID = :groupIdSql AND SEARCH.PARENT_MDMID =AGCM.COMPONENT_STYLE_ID) IS NULL THEN 'N' ELSE 'Y' END) EXIST_IN_SAME_GROUP                                           ");
+		getNewCPGDetails.append("	  (CASE WHEN (SELECT COUNT(AGCM.MDMID) FROM ADSE_GROUP_CHILD_MAPPING AGCM WHERE AGCM.MDMID = :groupIdSql AND SEARCH.PARENT_MDMID =AGCM.COMPONENT_STYLE_ID) = 0 THEN 'N' ELSE 'Y' END) EXIST_IN_SAME_GROUP                                           ");
 		getNewCPGDetails.append("	FROM                                                                         ");
 		getNewCPGDetails.append("	  ADSE_ITEM_CATALOG SEARCH                                                   ");
 		getNewCPGDetails.append("	WHERE                                                                        ");
@@ -1037,7 +1037,7 @@ public class XqueryConstants {
 		getRegularBeautySearchResult.append("   (SELECT exist_in_group  FROM adse_pet_catalog  WHERE mdmid=SEARCH.mdmid) ALREADY_IN_GROUP,                                            ");
 		getRegularBeautySearchResult.append("   SEARCH.COLOR_NAME COLOR_DESC,                                                             ");
 		getRegularBeautySearchResult.append("   (CASE                                                                            ");
-		getRegularBeautySearchResult.append("     WHEN (SELECT AGCM.MDMID FROM ADSE_GROUP_CHILD_MAPPING AGCM WHERE AGCM.MDMID = :groupIdSql AND SEARCH.MDMID =AGCM.COMPONENT_STYLE_ID) IS NULL THEN 'N' ELSE 'Y' END) EXIST_IN_SAME_GROUP,                                                        ");
+		getRegularBeautySearchResult.append("     WHEN (SELECT COUNT(AGCM.MDMID) FROM ADSE_GROUP_CHILD_MAPPING AGCM WHERE AGCM.MDMID = :groupIdSql AND SEARCH.MDMID =AGCM.COMPONENT_STYLE_ID) = 0 THEN 'N' ELSE 'Y' END) EXIST_IN_SAME_GROUP,                                                        ");
 		getRegularBeautySearchResult.append("   NULL GROUP_ID  FROM                                                                 ");		
 		getRegularBeautySearchResult.append("   ADSE_ITEM_CATALOG SEARCH                                                   ");
 		getRegularBeautySearchResult.append(" WHERE 1                                   =1                                 ");
@@ -1225,7 +1225,7 @@ public class XqueryConstants {
 		getRegularBeautySearchResultCountQuery.append("   (SELECT exist_in_group  FROM adse_pet_catalog  WHERE mdmid=SEARCH.mdmid) ALREADY_IN_GROUP,                                            ");
 		getRegularBeautySearchResultCountQuery.append("   SEARCH.COLOR_NAME COLOR_DESC,                                                             ");
 		getRegularBeautySearchResultCountQuery.append("   (CASE                                                                            ");
-		getRegularBeautySearchResultCountQuery.append("     WHEN (SELECT AGCM.MDMID FROM ADSE_GROUP_CHILD_MAPPING AGCM WHERE AGCM.MDMID = :groupIdSql AND SEARCH.MDMID =AGCM.COMPONENT_STYLE_ID) IS NULL THEN 'N' ELSE 'Y' END) EXIST_IN_SAME_GROUP,                                                        ");
+		getRegularBeautySearchResultCountQuery.append("     WHEN (SELECT COUNT(AGCM.MDMID) FROM ADSE_GROUP_CHILD_MAPPING AGCM WHERE AGCM.MDMID = :groupIdSql AND SEARCH.MDMID =AGCM.COMPONENT_STYLE_ID) = 0 THEN 'N' ELSE 'Y' END) EXIST_IN_SAME_GROUP,                                                        ");
 		getRegularBeautySearchResultCountQuery.append("   NULL GROUP_ID  FROM                                                                 ");		
 		getRegularBeautySearchResultCountQuery.append("   ADSE_ITEM_CATALOG SEARCH                                                   ");
 		getRegularBeautySearchResultCountQuery.append(" WHERE 1                                   =1                                 ");
