@@ -24,12 +24,17 @@ http://java.sun.com/xml/ns/portlet/portlet-app_2_0.xsd">
      <supported-processing-event>
  		<name>LoggedInUserDetailsOBJ</name>
  	</supported-processing-event>    
+ 	<supported-public-render-parameter>username</supported-public-render-parameter>
   </portlet> 
   	<default-namespace>http://JSR286EventRenderParam/</default-namespace>
   <event-definition>
 		<name>LoggedInUserDetailsOBJ</name>
 		<value-type>com.belk.pep.common.userdata.UserData</value-type>
 	</event-definition> 
+	<public-render-parameter>
+  	<identifier>username</identifier>
+  	<qname xmlns:x="https://JSR286PublicParameter">x:username</qname>
+  </public-render-parameter>
   <container-runtime-option>
    <name>javax.portlet.actionScopedRequestAttributes</name>
    <value>true</value>

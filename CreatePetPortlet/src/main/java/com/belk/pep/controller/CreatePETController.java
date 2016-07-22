@@ -335,6 +335,13 @@ public class CreatePETController implements Controller,EventAwareController,Reso
     public ModelAndView handleRenderRequest(RenderRequest request,
         RenderResponse response) throws Exception {
         LOGGER.info("CreatePETController:::handleRenderRequest");
+      //check for active session
+    	if(request.getPortletSession().getAttribute(CreatePETPortalConstants.LOGGEDIN_USER_DETAILS)==null){
+    		String username=request.getParameter("username");
+    		ModelAndView mv=new ModelAndView("redirect");
+    		mv.addObject("username", username);
+    		return mv;
+    	}
         ModelAndView modelAndView = null;
         modelAndView = new ModelAndView(CreatePETPortalConstants.CREATE_PET);
         LOGGER.info("Create PET render");
@@ -465,9 +472,12 @@ public class CreatePETController implements Controller,EventAwareController,Reso
 	 * @see org.springframework.web.portlet.mvc.ResourceAwareController#handleResourceRequest(javax.portlet.ResourceRequest, javax.portlet.ResourceResponse)
 	 */
 	@Override
-	public ModelAndView handleResourceRequest(ResourceRequest arg0,
-			ResourceResponse arg1) throws Exception {
-		// TODO Auto-generated method stub
+	public ModelAndView handleResourceRequest(ResourceRequest request,
+			ResourceResponse response) throws Exception {
+		if(request.getResourceID()!=null && request.getResourceID().equals("invalidate")){
+    		request.getPortletSession().invalidate();
+    		response.getWriter().write(new String("invalidated"));
+    	}
 		return null;
 	}
 

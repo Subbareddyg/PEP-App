@@ -352,6 +352,7 @@ public class ExternalVendorLoginController implements Controller {
                         commonUserdata.setVpUser(common_Vpuser);
                         //Set the externalvendor login data in the userDataOBJ for IPC ,so the worklist display portlet retrieves the userDataOBJ
                         response.setEvent("userDataOBJ", commonUserdata);
+                        response.setRenderParameter("username", common_Vpuser.getUserEmailAddress());
                     }else{
                         response.setRenderParameter(ExternalVendorLoginConstants.ACTION, ExternalVendorLoginConstants.LOGIN_FAILURE);
                     }

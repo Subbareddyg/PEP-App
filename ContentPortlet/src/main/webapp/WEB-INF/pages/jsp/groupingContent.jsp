@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/pages/jsp/include.jsp" %><form></form>
-
+<portlet:resourceURL id="invalidate" var="logouturl" />
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -2144,6 +2144,14 @@ function redirectSessionTimedOutContent(){
    var releseLockedPetURL = $("#releseLockedPet").val();
    var loggedInUser= $("#loggedInUser").val();
    releseLockedPet(loggedInUser,releseLockedPetURL);
+   var logouturl="${logouturl}";
+   $.ajax({
+		url : logouturl,
+		type : 'GET',
+		success : function(data) {
+			console.log(data);
+		}
+	});
    if(loggedInUser.indexOf('@') === -1) 
    {
       window.location = "/wps/portal/home/InternalLogin";
@@ -2156,6 +2164,14 @@ function redirectSessionTimedOutContent(){
 function logout_home(loggedInUser,releseLockedPetURL){
 	inputChanged  = false ;
     releseLockedPet(loggedInUser,releseLockedPetURL);
+    var logouturl="${logouturl}";
+    $.ajax({
+ 		url : logouturl,
+ 		type : 'GET',
+ 		success : function(data) {
+ 			console.log(data);
+ 		}
+ 	});
     if(loggedInUser.indexOf('@') === -1) 
           {
              window.location = "/wps/portal/home/InternalLogin";

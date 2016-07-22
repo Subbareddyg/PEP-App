@@ -1,4 +1,5 @@
-<%@ include file="/WEB-INF/pages/jsp/include.jsp"%>  
+<%@ include file="/WEB-INF/pages/jsp/include.jsp"%> 
+<portlet:resourceURL id="invalidate" var="logouturl"/> 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <link rel="stylesheet" href="<%=response.encodeURL(request.getContextPath()+"/css/worklistDisplay.css")%>">
 <link rel="stylesheet" href="<%=response.encodeURL(request.getContextPath()+"/css/portletBorder.css")%>">
@@ -506,6 +507,14 @@ function logout_home(loggedInUser,releseLockedPetURL){
 inputChanged  = false ;
 document.getElementById('removeFlagOff').value = inputChanged;
 	releseLockedPet(loggedInUser,releseLockedPetURL);
+	var logouturl="${logouturl}";
+	$.ajax({
+		url : logouturl,
+		type : 'GET',
+		success : function(data) {
+			console.log(data);
+		}
+	});
 	if(loggedInUser.indexOf('@') === -1) 
 		{
 		   window.location = "/wps/portal/home/InternalLogin";
@@ -1582,6 +1591,14 @@ confirmationMessage = false;
 var loggedInUser= $("#loggedInUser").val();
 var releseLockedPetURL = $("#releseLockedPet").val();
 releseLockedPet(loggedInUser,releseLockedPetURL);
+var logouturl="${logouturl}";
+$.ajax({
+	url : logouturl,
+	type : 'GET',
+	success : function(data) {
+		console.log(data);
+	}
+});
 if(loggedInUser.indexOf('@') === -1) 
 {
                 window.location = "/wps/portal/home/InternalLogin";

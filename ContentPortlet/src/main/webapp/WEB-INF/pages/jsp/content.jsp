@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/pages/jsp/include.jsp" %>
-
+<portlet:resourceURL id="invalidate" var="logouturl" />	
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -48,8 +48,10 @@
             	 //code for alternate colors for Product and legacy attribute table rows-START
 			$("#productAttr_table tr:even").css("background-color", "#F9F9F9");
 			$("#productAttr_table tr:odd").css("background-color", "#FFFFFF");
+			<%-- VP21
 			$("#legacyAttributeTable tr:even").css("background-color", "#F9F9F9");
 			$("#legacyAttributeTable tr:odd").css("background-color", "#FFFFFF");
+			VP21 --%>
             //code for alternate colors for Product and legacy attribute table rows-END
             	//Logic for disabling the Product Name , Product Description Text  Area ,Style Submit button ,omni channel ,car brand
             	// when the Style Pet Status is completed or closed
@@ -57,7 +59,12 @@
             	if(document.getElementById("roleNameId") != null){
             		    pepUserRoleName = document.getElementById("roleNameId").value;  
             	}
-            	       	
+				//VP21
+            	      if(pepUserRoleName != "vendor") {
+						  $("#legacyAttributeTable tr:even").css("background-color", "#F9F9F9");
+						  $("#legacyAttributeTable tr:odd").css("background-color", "#FFFFFF");
+					  }
+				//VP21
                   var stylePetContentStatus =    $(".contentStatusId").html();  
                   var styleColorRowCount = "";
                   if(document.getElementById("styleColorCountId") != null) {
@@ -329,7 +336,8 @@
             					document.getElementById("dropdownhidden_id"+q).value = finalVal;
             		  }
             	  }
-            	  
+            	  //VP21
+				  if(pepUserRoleName != "vendor") {
             	  if(document.getElementById("bmDropDownCounter")){ 
             		  var  dropDownCounting=document.getElementById("bmDropDownCounter").value;		
             		 
@@ -349,7 +357,8 @@
             				 document.getElementById("blueMartiniDropDownHidden_id"+q).value = finalVal;
             		  }
             	  }
-            	  
+				  }
+            	  //VP21
             	              	  
             	  if(document.getElementById("paRadioButtonCounter")){ 
             		  var  radioButtonCount =document.getElementById("paRadioButtonCounter").value;		
@@ -366,7 +375,8 @@
                 		 }  
      				  }
             	  }
-                
+				   //VP21
+				   if(pepUserRoleName != "vendor") {
             	  if(document.getElementById("bmRadioButtonCounter")){ 
             		  var  radioButtonCount =document.getElementById("bmRadioButtonCounter").value;	
      				  for(var j=1; j<=radioButtonCount; j++){
@@ -381,7 +391,8 @@
                 		 }  
      				  }
             	  }
-            	  
+				   }
+            	  //VP21
             	  
             			  
                    			
@@ -448,8 +459,9 @@
     					document.getElementById("paText_Id"+(a+1)).disabled=true;		          					    
     				}
                  }
-      		
+				//VP21
       		  //logic for disabling the blue nartini attribute multi  select drop down
+			  if(pepUserRoleName != "vendor") {
       		  if(document.getElementById("bmDropDownCounter")){
       		   var  bmDropDownCounting=document.getElementById("bmDropDownCounter").value;
       		  for(z=1; z<=bmDropDownCounting; z++){
@@ -468,7 +480,8 @@
        				   
        				}
        			  } 
-      		  
+			  }
+      		  //VP21
           	  if(document.getElementById("paRadioButtonCounter")){ 
           		  var  radioButtonCount =document.getElementById("paRadioButtonCounter").value;		
           	   
@@ -479,7 +492,8 @@
               		 }  
    				  }
           	  }
-          	  
+          	  //VP21
+			  if(pepUserRoleName != "vendor") {
           	  if(document.getElementById("bmRadioButtonCounter")){ 
           		  var  radioButtonCount =document.getElementById("bmRadioButtonCounter").value;	
    				  for(var j=1; j<=radioButtonCount; j++){
@@ -489,6 +503,8 @@
 	    	             }
    				  }
           	  }
+			  }
+			  //VP21
             }
             
             // Enable Product Attributes
@@ -501,8 +517,9 @@
       				 document.getElementById(paDropDownId).disabled = false;
       			}
       		  }
-       
+			//VP21
       		 //Logic for enabling the blue martini attribute multi  select drop down
+			 if(pepUserRoleName != "vendor") {
       		 if(document.getElementById("bmDropDownCounter")){ 
           		 
       			 var  bmDropDownCounting=document.getElementById("bmDropDownCounter").value;
@@ -511,7 +528,8 @@
 		            				 document.getElementById(bmDropDownId).disabled = false;
 		            	}	
       			 }
-		            	  
+			 }
+		       //VP21     	  
        
             	//logic for disabling the product attribute  text field
            		  if(document.getElementById("paTextAttributeCount")){
@@ -520,8 +538,9 @@
          					document.getElementById("paText_Id"+(a+1)).disabled=false;		          					    
          				}
                       } 
-            	  
+            	  //VP21
             	  //logic for disabling the blue martini text field 
+				  if(pepUserRoleName != "vendor") {
             	  if(document.getElementById("bmTextAttributeCount")){  
          			 var bmTextFieldCount = document.getElementById("bmTextAttributeCount").value;
          				for(var a=0; a<bmTextFieldCount; a++){
@@ -529,7 +548,8 @@
          			 
          				}
          			  }
-            	  
+				  }
+            	  //VP21
             	  if(document.getElementById("paRadioButtonCounter")){ 
             		  var  radioButtonCount =document.getElementById("paRadioButtonCounter").value;		
             	   
@@ -540,7 +560,8 @@
                 		 }  
      				  }
             	  }
-            	  
+            	  //VP21
+				  if(pepUserRoleName != "vendor") {
             	  if(document.getElementById("bmRadioButtonCounter")){ 
             		  var  radioButtonCount =document.getElementById("bmRadioButtonCounter").value;	
      				  for(var j=1; j<=radioButtonCount; j++){
@@ -550,6 +571,8 @@
 	    	             }
      				  }
             	  }
+				  }
+				  //VP21
             }
             
             function dropDownValues(selectedDropdwonValue, selectedDropDown, totalDropDwons){
@@ -572,7 +595,12 @@
                   //	alert(document.getElementById("dropdownhidden_id"+(selectedDropDown)).value);
          	  	}
             
-            
+            //VP21
+			 var  pepUserRoleName = "";
+            	if(document.getElementById("roleNameId") != null){
+            		    pepUserRoleName = document.getElementById("roleNameId").value;  
+            	}
+			if(pepUserRoleName != "vendor") {
             function bmDropDownValues(selectedDropdwonValue, selectedDropDown, totalDropDwons){
             	
             	 var list =  document.forms['contentDisplayForm'].elements["bmDropDownsId_id"+selectedDropDown+""];
@@ -592,7 +620,8 @@
                      	document.getElementById("blueMartiniDropDownHidden_id"+(selectedDropDown)).value = finalVal;
                      	// alert(document.getElementById("blueMartiniDropDownHidden_id"+(selectedDropDown)).value);
             	  	}
-            
+			}
+            //VP21
             
             
             function pimRadioButtonValues (selectedRadioValue, totalRadio){
@@ -611,7 +640,8 @@
             	  
             }
             
-            
+            //VP21
+			if(pepUserRoleName != "vendor") {
             function bmRadioButtonValues (selectedRadioValue, totalRadio){
             	var attributePath = document.getElementById("bmRadioAttributeXpath_id"+selectedRadioValue).value;
             	
@@ -626,10 +656,17 @@
             	}
             	  // alert(document.getElementById("bmradioButtonHidden_id"+selectedRadioValue).value);
             }
+			}
+			//VP21
      </script>
 	
      <script>
-     
+	 //VP21
+		var  pepUserRoleName = "";
+           if(document.getElementById("roleNameId") != null){
+			pepUserRoleName = document.getElementById("roleNameId").value;  
+        }
+		//VP21
 	     function calliph(iph,petId)
 	     {
 
@@ -1140,6 +1177,11 @@
 	 
 		 //on click of the Save button ,pass content pet attributes and make a ajax call to the  webservice
 		function saveContentPetAttributesWebserviceResponse(url,stylePetOrinNumber,user,dropdownCount,bmDropDownCount, pimRadioButtonCount, bmRadionButtonCount, approveUrl, roleName, from, styleOrColor){	
+				var  pepUserRoleName = "";
+            	if(document.getElementById("roleNameId") != null){
+            		    pepUserRoleName = document.getElementById("roleNameId").value;  
+            	}
+				//VP21
 			
 			 // Validate Form data
 			 if(from == 'Approve'){
@@ -1217,6 +1259,8 @@
 			
 	        // For Blue Martini values
             var bmFinalString = "";
+			//VP21
+			if(pepUserRoleName != "vendor") {
              for(i=0; i<bmDropDownCount; i++){ 
                       var temp = $("#blueMartiniDropDownHidden_id"+(i+1)).val();
                       if(!(temp == null || temp =="")){ 
@@ -1227,7 +1271,8 @@
                                 }
                       }  
              } 
-
+			}
+			//VP21
 			
           // Get Text Field Values
              // Text Field
@@ -1271,6 +1316,8 @@
 			
 		  //Get the bm ration buttons
 		  var finalBMRadioString = "";
+		  //VP21
+		  if(pepUserRoleName != "vendor") {
 			for(i=0; i<bmRadionButtonCount; i++){
 				var temp = $("#bmradioButtonHidden_id"+(i+1)).val();
 				if(!(temp == null || temp =="")){ 
@@ -1281,10 +1328,11 @@
 					}
 				} 
 			}
-			
-		  
+		  }
+			//VP21
+		 //VP21
 		  //Get the Blue Martini Attribute Text Field Values
-		  
+		  if(pepUserRoleName != "vendor") {
 		  if(document.getElementById("bmTextAttributeCount")){
 			 var bmTextFieldCount = document.getElementById("bmTextAttributeCount").value;
 				for(var a=0; a<bmTextFieldCount; a++){
@@ -1296,8 +1344,11 @@
 				//   alert(document.getElementById("textFieldHidden_id"+(a+1)).value);
 				}
 			  }
-           
+		  }
+           //VP21
 		  var bmfinalTextValueString = "";
+		  //VP21
+		  if(pepUserRoleName != "vendor") {
 		  for(j=0; j<bmTextFieldCount; j++){
          var temp = $("#bmTextFieldHidden_id"+(j+1)).val();
          if(!(temp == null || temp =="")){ 
@@ -1308,7 +1359,8 @@
                    }
          	}
          }
-		  
+		  }
+		  //VP21
 		     
 		     //Added to capture the entry type as complex pack ,pack color,style ,style color
 		     
@@ -1689,9 +1741,10 @@
 		           	}
 		           }
 					
-		   			
+		   			//VP21
 			        // For Blue Martini values
 		            var bmFinalString = "";
+					if(pepUserRoleName != "vendor") {
 		             for(i=0; i<bmDropDownCount; i++){ 
 		            	 var attNameAndPath = document.getElementById("blueMartiniDropDownAttributeNameXpath_id"+(i+1)).value;
 		                 var temp = $("#blueMartiniDropDownHidden_id"+(i+1)).val();
@@ -1718,9 +1771,12 @@
 		      				 }  
 		                      
 		             }
-		            
+					}
+		            //VP21
+					//VP21
 	             //Get the bm ration buttons
 		   		  var finalBMRadioString = "";
+				  if(pepUserRoleName != "vendor") {
 		   			for(i=0; i<(bmRadionButtonCount); i++){
 		   				var attributePath = document.getElementById("bmRadioAttributeXpath_id"+(i+1)).value;
 		   				var temp = $("#bmradioButtonHidden_id"+(i+1)).val();
@@ -1743,7 +1799,10 @@
 		   				}  
 		   				
 		   			}
-			   			
+				  }
+					//VP21
+			   		//VP21
+				if(pepUserRoleName != "vendor") {					
 		   		 if(document.getElementById("bmTextAttributeCount")){
 					 var bmTextFieldCount = document.getElementById("bmTextAttributeCount").value;
 						for(var a=0; a<bmTextFieldCount; a++){
@@ -1778,7 +1837,8 @@
 		                   }
 		         	} 
 		         }
-		             
+				}
+		          //VP21   
 				//}// End of Approve
 			  
 			return true;
@@ -1880,6 +1940,14 @@ function redirectSessionTimedOutContent(){
    var releseLockedPetURL = $("#releseLockedPet").val();
    var loggedInUser= $("#loggedInUser").val();
    releseLockedPet(loggedInUser,releseLockedPetURL);
+   var logouturl="${logouturl}";
+   $.ajax({
+		url : logouturl,
+		type : 'GET',
+		success : function(data) {
+			console.log(data);
+		}
+	});
    if(loggedInUser.indexOf('@') === -1) 
    {
       window.location = "/wps/portal/home/InternalLogin";
@@ -1892,6 +1960,14 @@ function redirectSessionTimedOutContent(){
 function logout_home(loggedInUser,releseLockedPetURL){
 	inputChanged  = false ;
     releseLockedPet(loggedInUser,releseLockedPetURL);
+    var logouturl="${logouturl}";
+    $.ajax({
+		url : logouturl,
+		type : 'GET',
+		success : function(data) {
+			console.log(data);
+		}
+	});
     if(loggedInUser.indexOf('@') === -1) 
           {
              window.location = "/wps/portal/home/InternalLogin";

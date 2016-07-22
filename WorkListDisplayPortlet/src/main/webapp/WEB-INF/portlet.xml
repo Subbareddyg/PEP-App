@@ -42,7 +42,7 @@ http://java.sun.com/xml/ns/portlet/portlet-app_2_0.xsd">
 	   <supported-publishing-event>
 			<name>GroupingUserObj</name>
 		</supported-publishing-event>
-	   		
+	   	<supported-public-render-parameter>username</supported-public-render-parameter>	
 	</portlet>
 	<default-namespace>http://JSR286EventRenderParam/</default-namespace>
 
@@ -68,5 +68,8 @@ http://java.sun.com/xml/ns/portlet/portlet-app_2_0.xsd">
 		<name>GroupingUserObj</name>
 		<value-type>com.belk.pep.common.userdata.UserData</value-type>
 	</event-definition>
-
+	<public-render-parameter>
+  	<identifier>username</identifier>
+  	<qname xmlns:x="https://JSR286PublicParameter">x:username</qname>
+  </public-render-parameter>
 </portlet-app>

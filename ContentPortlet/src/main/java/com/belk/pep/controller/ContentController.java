@@ -2172,6 +2172,13 @@ public class ContentController implements ResourceAwareController, EventAwareCon
 	@RenderMapping
 	public ModelAndView handleRenderRequest(RenderRequest request, RenderResponse response) throws Exception {
 		System.out.println("Grouping content orinOrGrouping -->");
+		//check for active session
+        if(request.getPortletSession().getAttribute(ContentScreenConstants.CONTENT_PET_DETAILS)==null){
+        	modelAndView =new ModelAndView("redirect");
+        	String username=request.getParameter("username");
+        	modelAndView.addObject("username",username);
+        	return modelAndView;
+        }
 		LOGGER.info(" ------------------------------------------------------- Start of  handleRenderRequest -----------------------------------"
 				+ new Date());
 
@@ -4594,4 +4601,10 @@ public class ContentController implements ResourceAwareController, EventAwareCon
 
 		LOGGER.info("ContentPortlet:handleActionRequest:Exit");
 	}
+    
+    @ResourceMapping("invalidate")
+    public void invalidateSession(ResourceRequest request){
+    	LOGGER.info("Content screen - invalidating session");
+    	request.getPortletSession().invalidate();
+    }
 }

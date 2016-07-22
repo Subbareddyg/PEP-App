@@ -1,4 +1,5 @@
 <%@ include file="/WEB-INF/pages/jsp/include.jsp" %>
+<<portlet:resourceURL id="invalidate" var="logouturl" />
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <head>
@@ -30,7 +31,14 @@ window.location = "/wps/portal/home/worklistDisplay";
 	}
 	
 function logout_home(){	
-	
+	var logouturl="${logouturl}";
+	$.ajax({
+		url : logouturl,
+		type : 'GET',
+		success : function(data) {
+			console.log(data);
+		}
+	});
 	window.location = "/wps/portal/home/InternalLogin";
 	
 }

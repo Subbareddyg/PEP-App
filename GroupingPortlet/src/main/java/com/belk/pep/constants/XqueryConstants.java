@@ -866,7 +866,7 @@ public class XqueryConstants {
 		getNewCPGDetails.append("	SEARCH.PRIMARYSUPPLIERVPN,                                                   ");
 		getNewCPGDetails.append("	SEARCH.PRODUCT_NAME PRODUCT_NAME,                                                        ");
 		getNewCPGDetails.append("	SEARCH.COLOR_CODE COLOR_CODE,                                                          ");
-		getNewCPGDetails.append("  (SELECT exist_in_group FROM adse_pet_catalog WHERE mdmid=SEARCH.parent_mdmid) ALREADY_IN_GROUP,                                    ");
+		getNewCPGDetails.append("  (SELECT exist_in_group FROM adse_pet_catalog WHERE mdmid=SEARCH.mdmid) ALREADY_IN_GROUP,                                    ");
 		getNewCPGDetails.append("	SEARCH.COLOR_NAME COLOR_DESC,                                                           ");
 		getNewCPGDetails.append("	  (CASE WHEN (SELECT COUNT(AGCM.MDMID) FROM ADSE_GROUP_CHILD_MAPPING AGCM WHERE AGCM.MDMID = :groupIdSql AND SEARCH.PARENT_MDMID =AGCM.COMPONENT_STYLE_ID) = 0 THEN 'N' ELSE 'Y' END) EXIST_IN_SAME_GROUP                                           ");
 		getNewCPGDetails.append("	FROM                                                                         ");
@@ -965,7 +965,7 @@ public class XqueryConstants {
 		getNewGBSDetails.append(" ITEM.COLOR_CODE COLOR_CODE,                                                                        "); 
 		getNewGBSDetails.append(" ITEM.COLOR_NAME COLOR_NAME,                                                                        "); 
 		getNewGBSDetails.append(" ITEM.SIZE_NAME SIZEDESC,ITEM.SIZE_CODE SIZE_CODE,                                                      "); 
-		getNewGBSDetails.append(" (select exist_in_group from adse_pet_catalog where mdmid=item.parent_mdmid) ALREADY_IN_GROUP, (select PET_STATE from adse_pet_catalog where mdmid=item.parent_mdmid) PET_STATE,                                          ");
+		getNewGBSDetails.append(" (select exist_in_group from adse_pet_catalog where mdmid=item.mdmid) ALREADY_IN_GROUP, (select PET_STATE from adse_pet_catalog where mdmid=item.mdmid) PET_STATE,                                          ");
 		getNewGBSDetails.append(" (case when (select AGCM.MDMID from ADSE_GROUP_CHILD_MAPPING AGCM where AGCM.MDMID= :groupIdSql and ITEM.PARENT_MDMID =AGCM.COMPONENT_STYLE_ID) is null THEN 'N' else 'Y' END) EXIST_IN_SAME_GROUP                                          ");
 		getNewGBSDetails.append(" FROM                                                                                        "); 
 		getNewGBSDetails.append(" ADSE_ITEM_CATALOG ITEM                                                                     "); 	
@@ -1126,6 +1126,7 @@ public class XqueryConstants {
 			getRegularBeautySearchResult.append("   WHERE 1                                   =1                               ");
 			getRegularBeautySearchResult.append("   AND SEARCH.DELETED_FLAG                   ='false'                         ");
 			getRegularBeautySearchResult.append("   AND SEARCH.ENTRY_TYPE                    IN ('Style','StyleColor')         ");
+			getRegularBeautySearchResult.append("   AND PETEXISTS     ='Y' ");
 			if (!StringUtils.isEmpty(vendorStyleNo)) {
 				getRegularBeautySearchResult.append("   AND SEARCH.PRIMARYSUPPLIERVPN =:styleIdSql ");
 			}		
@@ -1314,6 +1315,7 @@ public class XqueryConstants {
 			getRegularBeautySearchResultCountQuery.append("   WHERE 1                                   =1                               ");
 			getRegularBeautySearchResultCountQuery.append("   AND SEARCH.DELETED_FLAG                   ='false'                         ");
 			getRegularBeautySearchResultCountQuery.append("   AND SEARCH.ENTRY_TYPE                    IN ('Style','StyleColor')         ");
+			getRegularBeautySearchResultCountQuery.append("   AND PETEXISTS     ='Y' ");
 			if (!StringUtils.isEmpty(vendorStyleNo)) {
 				getRegularBeautySearchResultCountQuery.append("   AND SEARCH.PRIMARYSUPPLIERVPN =:styleIdSql ");
 			}		

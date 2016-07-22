@@ -181,7 +181,13 @@ public class ImageRequestController {
     public ModelAndView handleRenderRequest(
     		RenderRequest request, 
     		RenderResponse response) throws Exception {
-    	
+    	//check for active session
+    	if(request.getPortletSession().getAttribute("ImageDetailsOBJ")==null){
+    		String username=request.getParameter("username");
+    		ModelAndView mv=new ModelAndView("redirect");
+    		mv.addObject("username", username);
+    		return mv;
+    	}
     	this.fdForm = new FileUploadForm();
     	
     	//Get user details in render logic for user details need to modify for the actual user handling
@@ -1864,5 +1870,10 @@ public class ImageRequestController {
 	/**
      * Modification End.
      */
-
+	//logout changes - session invalidation
+	@ResourceMapping("invalidate")
+    public void invalidateSession(ResourceRequest request){
+    	LOGGER.info("Image screen - invalidating session");
+    	request.getPortletSession().invalidate();
+    }
 }

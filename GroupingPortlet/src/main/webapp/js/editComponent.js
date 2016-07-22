@@ -30,19 +30,12 @@ var app = app || {} ;
 			},
 			
 			checkValidPriorityNumbers: function(_super, showDialog){
-				return true; //disabling validation as per UAT defect
-				
 				showDialog = (showDialog === undefined || showDialog == true) ? true : false;
 				
-				if($(this).val().trim() == 0 || $(this).val().trim() > _super.totalExistingComponents){
+				if($(this).val().trim() == 0){
 					if(showDialog){
-						if(_super.totalExistingComponents == 1){
-							$('#error-massege').html("Priority should only be 1");
-							$('#errorBox').dialog('open');
-						}else{
-							$('#error-massege').html('Priority should have to be between 1 to ' + _super.totalExistingComponents);
-							$('#errorBox').dialog('open');
-						}
+						$('#error-massege').html('Priority should be greater than Zero ');
+						$('#errorBox').dialog('open');
 						$(this).val('');	
 					}
 					return false;
@@ -733,7 +726,8 @@ var app = app || {} ;
 				switch(groupType){
 				case  'SSG':
 				case  'SCG':
-					$('#frmComponentSearch input[type="text"], #btnDlgClass , #btnDlgDept').prop('disabled',true);
+					$('#frmComponentSearch input').prop('disabled',true);
+					
 					var styleOrinValue =  this.searchValue.styleOrinNoSearch ?  this.searchValue.styleOrinNoSearch : '';
 					var vendorNoValue =  this.searchValue.vendorStyleNoSearch ? this.searchValue.vendorStyleNoSearch : '' ;
 													
