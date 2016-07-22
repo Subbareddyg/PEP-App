@@ -2810,7 +2810,7 @@ public class XqueryConstants {
         final String CONTENT_IPH_CATEGORY_OTHERS = "  SELECT aic.mdmid, "+
             "  XMLCAST( (XMLQUERY('//pim_entry/item_header/category_paths/category[last()]/pk' PASSING aic.xml_Data RETURNING CONTENT ) ) AS VARCHAR2(1000) ) PET_CATEGORY_ID, "+
             "  SUBSTR(XMLCAST( (XMLQUERY('//pim_entry/item_header/category_paths/category[last()]/path' PASSING aic.xml_Data RETURNING CONTENT ) ) AS VARCHAR2(1000) ) , instr(XMLCAST( (XMLQUERY('//pim_entry/item_header/category_paths/category[last()]/path' PASSING aic.xml_Data RETURNING CONTENT ) ) AS VARCHAR2(1000) ) ,'-',-1,1) +1 ) PET_CATEGORY_NAME, "+
-            "  SUBSTR(XMLCAST( (XMLQUERY('//pim_category/merchandise_category_header/full_path' PASSING amh.xml_Data RETURNING CONTENT ) ) AS VARCHAR2(1000) ), instr(XMLCAST( (XMLQUERY('//pim_category/merchandise_category_header/full_path' PASSING amh.xml_Data RETURNING CONTENT ) ) AS VARCHAR2(1000) ) ,'/',-1,1) +1 ) SUB_CLASS, "+
+            "  '' SUB_CLASS, "+
             "  ids.*, "+
             "  XMLCAST( (XMLQUERY('//pim_entry/item_header/category_paths/category[1]/pk' PASSING aic.xml_Data RETURNING CONTENT ) ) AS VARCHAR2(1000) ) ITEM_CATEGORY_ID "+
             "  FROM ADSE_GROUP_CHILD_MAPPING AGCM, "+

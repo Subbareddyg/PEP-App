@@ -1685,7 +1685,8 @@ public boolean releseLockedPet(  String orin, String pepUserID,String pepFunctio
                     if(row[1] != null)
                     {
                         Clob clob = (Clob) (row[1]);
-                        copyAttributeVO.setProductCopyText(clobToString(clob));
+                        copyAttributeVO.setProductCopyText(StringEscapeUtils.escapeHtml4(clobToString(clob)));
+                        
                     }
                     else
                     {
