@@ -1692,18 +1692,18 @@ public boolean releseLockedPet(  String orin, String pepUserID,String pepFunctio
                     {
                         copyAttributeVO.setProductCopyText("");
                     }
-                    copyAttributeVO.setCopyLine1(checkNull(row[2]));
-                    copyAttributeVO.setCopyLine2(checkNull(row[3]));
-                    copyAttributeVO.setCopyLine3(checkNull(row[4]));
-                    copyAttributeVO.setCopyLine4(checkNull(row[5]));
-                    copyAttributeVO.setCopyLine5(checkNull(row[6]));
-                    copyAttributeVO.setCopyProductName(checkNull(row[7]));
-                    copyAttributeVO.setMaterial(checkNull(row[8]));
-                    copyAttributeVO.setCare(checkNull(row[9]));
-                    copyAttributeVO.setCountryOfOrigin(checkNull(row[10]));
-                    copyAttributeVO.setExclusive(checkNull(row[11]));
-                    copyAttributeVO.setCaprop65Compliant(checkNull(row[12]));
-                    copyAttributeVO.setImportDomestic(checkNull(row[13]));
+                    copyAttributeVO.setCopyLine1(StringEscapeUtils.escapeHtml4(checkNull(row[2])));
+                    copyAttributeVO.setCopyLine2(StringEscapeUtils.escapeHtml4(checkNull(row[3])));
+                    copyAttributeVO.setCopyLine3(StringEscapeUtils.escapeHtml4(checkNull(row[4])));
+                    copyAttributeVO.setCopyLine4(StringEscapeUtils.escapeHtml4(checkNull(row[5])));
+                    copyAttributeVO.setCopyLine5(StringEscapeUtils.escapeHtml4(checkNull(row[6])));
+                    copyAttributeVO.setCopyProductName(StringEscapeUtils.escapeHtml4(checkNull(row[7])));
+                    copyAttributeVO.setMaterial(StringEscapeUtils.escapeHtml4(checkNull(row[8])));
+                    copyAttributeVO.setCare(StringEscapeUtils.escapeHtml4(checkNull(row[9])));
+                    copyAttributeVO.setCountryOfOrigin(StringEscapeUtils.escapeHtml4(checkNull(row[10])));
+                    copyAttributeVO.setExclusive(StringEscapeUtils.escapeHtml4(checkNull(row[11])));
+                    copyAttributeVO.setCaprop65Compliant(StringEscapeUtils.escapeHtml4(checkNull(row[12])));
+                    copyAttributeVO.setImportDomestic(StringEscapeUtils.escapeHtml4(checkNull(row[13])));
                     
                     LOGGER.debug("Copy Attribute Values -- \nORIN: " + copyAttributeVO.getOrin() +
                         "\nPRODUCT COPY TEXT: " + copyAttributeVO.getProductCopyText() +
@@ -2137,15 +2137,13 @@ public boolean releseLockedPet(  String orin, String pepUserID,String pepFunctio
      */
     @Override
     public List<GroupsFound> getGroupingComponents(String groupId) {
-        LOGGER.info("ContentDAOImpl getGroupingComponents : start updatated with new query "+groupId);
+        LOGGER.info("ContentDAOImpl getGroupingComponents : start updatated  "+groupId);
         List<GroupsFound> groupsList = new ArrayList<GroupsFound>();
-        Session session = null;
-        
+        Session session = null;        
         List<Object[]> rows = null;
         List<Object[]> components = null;
         GroupsFound groupsFound = null;
-        final XqueryConstants xqueryConstants = new XqueryConstants();
-        
+        final XqueryConstants xqueryConstants = new XqueryConstants();        
         try{            
             session = sessionFactory.openSession();
              final Query getComponents = session.createSQLQuery(xqueryConstants.getComponentIDs());
@@ -2153,18 +2151,19 @@ public boolean releseLockedPet(  String orin, String pepUserID,String pepFunctio
                     getComponents.setParameter(0, groupId);
                     components = getComponents.list();
                 }
+              
             List componentIds = new ArrayList();
             if(null!= components && components.size()>0){
                 new ArrayList();
                  for(Object[] obj : components){ 
-                     if(obj[2]!=null ){
-                      componentIds.add(obj[2].toString());
-                     }                     
+                     if(obj[1]!=null ){
+                      componentIds.add(obj[1].toString());
+                     } else if (obj[2]!=null){
+                         componentIds.add(obj[2].toString());
+                     }
                 
-               }
-                
-              final Query query = session.createSQLQuery(xqueryConstants.getGroupingComponents());
-            
+               }                
+              final Query query = session.createSQLQuery(xqueryConstants.getGroupingComponents());            
               if(null!=query){
                   query.setParameter("groupingNo", groupId);
                   query.setParameterList("componentIds", componentIds);           
@@ -2172,12 +2171,10 @@ public boolean releseLockedPet(  String orin, String pepUserID,String pepFunctio
               }
               if(LOGGER.isDebugEnabled()){
                   LOGGER.debug("Query in DAO getGroupingComponents:::: "+query);
-              }            
-                 
-              final Properties prop =   PropertiesFileLoader.getPropertyLoader("contentDisplay.properties");         
-                 
-                 if(null!= rows){
-                     
+              }  
+              LOGGER.debug(" rows.size() "+rows.size());
+              final Properties prop =   PropertiesFileLoader.getPropertyLoader("contentDisplay.properties");                
+                 if(null!= rows){                     
                      for(Object[] obj : rows){
                          groupsFound = new GroupsFound();                    
                          groupsFound.setGroupId(checkNull(obj[0]).toString());
@@ -2191,8 +2188,7 @@ public boolean releseLockedPet(  String orin, String pepUserID,String pepFunctio
                          }
                          groupsFound.setCompletionDate(completionDate);
                          groupsFound.setPetStatus(checkNull(obj[4]).toString());
-                         groupsFound.setContentStatus(prop.getProperty("Content"+checkNull(obj[5])));
-                         
+                         groupsFound.setContentStatus(prop.getProperty("Content"+checkNull(obj[5])));                         
                          groupsFound.setEntryType(checkNull(obj[6]).toString());
                          groupsFound.setComponentType(checkNull(obj[7]).toString());
                          groupsFound.setColorCode(checkNull(obj[8]).toString());
