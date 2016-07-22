@@ -2137,7 +2137,7 @@ public boolean releseLockedPet(  String orin, String pepUserID,String pepFunctio
     @Override
     public List<GroupsFound> getGroupingComponents(String groupId) {
         LOGGER.info("ContentDAOImpl getGroupingComponents : start updatated with new query "+groupId);
-        List<GroupsFound> groupsList = null;
+        List<GroupsFound> groupsList = new ArrayList<GroupsFound>();
         Session session = null;
         
         List<Object[]> rows = null;
@@ -2163,7 +2163,7 @@ public boolean releseLockedPet(  String orin, String pepUserID,String pepFunctio
                }
                 
               final Query query = session.createSQLQuery(xqueryConstants.getGroupingComponents());
-              LOGGER.info("ContentDAOImpl getGroupingComponents : query "+query);
+            
               if(null!=query){
                   query.setParameter("groupingNo", groupId);
                   query.setParameterList("componentIds", componentIds);           
@@ -2176,7 +2176,7 @@ public boolean releseLockedPet(  String orin, String pepUserID,String pepFunctio
               final Properties prop =   PropertiesFileLoader.getPropertyLoader("contentDisplay.properties");         
                  
                  if(null!= rows){
-                     groupsList = new ArrayList<GroupsFound>();
+                     
                      for(Object[] obj : rows){
                          groupsFound = new GroupsFound();                    
                          groupsFound.setGroupId(checkNull(obj[0]).toString());
@@ -2203,13 +2203,6 @@ public boolean releseLockedPet(  String orin, String pepUserID,String pepFunctio
                      }
                  }
                  
-            }else{
-               
-                groupsList = new ArrayList<GroupsFound>();
-                groupsFound = new GroupsFound();  
-                groupsFound.setGroupId(groupId);
-                groupsList.add(groupsFound);
-                
             }
             
             }catch(Exception e){

@@ -1546,7 +1546,11 @@
 		 
 		 // Saving details
 		 function validateFormData(dropdownCount,bmDropDownCount, pimRadioButtonCount, bmRadionButtonCount, styleOrColor){
-		 
+				var  pepUserRoleName = "";
+            	if(document.getElementById("roleNameId") != null){
+            		    pepUserRoleName = document.getElementById("roleNameId").value;  
+            	}
+				//VP21
 		 		var isStyleColorOpen =$('[name=hdnStyleColorOpen]:last').val();
 		 		var petStatusCode =$('[name=hdnPETStatusCode]:last').val();
 		 		var petStatus = $('#publisStatusCodePublishToWeb:checked').val();

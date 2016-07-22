@@ -92,6 +92,13 @@ public class GroupingController {
 	public ModelAndView splitColorRenderHandler(RenderRequest renderRequest, RenderResponse renderResponse) {
 		// do some processing here
 		LOGGER.info("GroupingControlle:splitRenderHandler:enter.");
+		//check for active session
+        if(renderRequest.getPortletSession().getAttribute("formSessionKey")==null){
+        	ModelAndView mv =new ModelAndView("redirect");
+        	String username=renderRequest.getParameter("username");
+        	mv.addObject("username",username);
+        	return mv;
+        }
 		ModelAndView mv = new ModelAndView(GroupingConstants.GROUPING_CREATE_SPLIT_COLOR_GROUP);
 		/** changes to display lan id - changed by Ramkumar - starts **/
 		
@@ -138,6 +145,13 @@ public class GroupingController {
 	public ModelAndView splitSKURenderHandler(RenderRequest renderRequest, RenderResponse renderResponse) {
 		// do some processing here
 		LOGGER.info("GroupingControlle:splitSKURenderHandler:enter.");
+		//check for active session
+        if(renderRequest.getPortletSession().getAttribute("formSessionKey")==null){
+        	ModelAndView mv =new ModelAndView("redirect");
+        	String username=renderRequest.getParameter("username");
+        	mv.addObject("username",username);
+        	return mv;
+        }
 		ModelAndView mv = new ModelAndView(GroupingConstants.GROUPING_CREATE_SPLIT_SKU_GROUP);
 		/** changes to display lan id - changed by Ramkumar - starts **/
 		
@@ -178,7 +192,13 @@ public class GroupingController {
 	public ModelAndView handleRenderRequest(RenderRequest request, RenderResponse response) {
 
 		LOGGER.info("GroupingControlle:handleRenderRequest:enter.");
-
+		//check for active session
+        if(request.getPortletSession().getAttribute("formSessionKey")==null){
+        	ModelAndView mv =new ModelAndView("redirect");
+        	String username=request.getParameter("username");
+        	mv.addObject("username",username);
+        	return mv;
+        }
 		String createGroupType = request.getParameter("groupTypeSelector");
 		LOGGER.info("createGroupType----------------->" + createGroupType);
 		
@@ -730,7 +750,13 @@ public class GroupingController {
 			throws ParseException {
 		// do some processing here
 		LOGGER.info("GroupingControlle:createGroupSuccessRender:enter.");
-
+		//check for active session
+        if(renderRequest.getPortletSession().getAttribute("formSessionKey")==null){
+        	ModelAndView mv =new ModelAndView("redirect");
+        	String username=renderRequest.getParameter("username");
+        	mv.addObject("username",username);
+        	return mv;
+        }
 		Properties prop = PropertyLoader.getPropertyLoader(GroupingConstants.GROUPING_PROPERTIES_FILE_NAME);
 
 		CreateGroupForm objCreateGroupForm = (CreateGroupForm) renderRequest.getPortletSession().getAttribute(
@@ -1205,6 +1231,13 @@ public class GroupingController {
 	public final ModelAndView existingGrpDetailsRender(final RenderRequest request, final RenderResponse response) {
 
 		LOGGER.info("GroupingControlle.existingGrpDetailsRender:enter.");
+		//check for active session
+        if(request.getPortletSession().getAttribute("formSessionKey")==null){
+        	ModelAndView mv =new ModelAndView("redirect");
+        	String username=request.getParameter("username");
+        	mv.addObject("username",username);
+        	return mv;
+        }
 		String userID = "";
 		
 		ModelAndView modelAndView = new ModelAndView(GroupingConstants.GROUPING_ADD_COMPONENT);
@@ -2439,5 +2472,10 @@ public class GroupingController {
 		}
 		LOGGER.info("Exit getRCGBCGCPGGrpJsonResponseForStyle-->.");
 		return jsonObject;
+	}
+	//logout changes
+	@ResourceMapping("invalidate")
+	public void invalidateSession(ResourceRequest request){
+		request.getPortletSession().invalidate();
 	}
 }

@@ -1,5 +1,11 @@
-function grouping_logOut(username){			
-	
+function grouping_logOut(username, logouturl){			
+	$.ajax({
+		url : logouturl,
+		type : 'GET',
+		success : function(data) {
+			console.log(data);
+		}
+	});
 	if(username.indexOf('@') === -1) 
 	{
 	   window.location = "/wps/portal/home/InternalLogin";

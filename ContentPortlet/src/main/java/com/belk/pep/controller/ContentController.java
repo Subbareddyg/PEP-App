@@ -1071,6 +1071,9 @@ public class ContentController implements ResourceAwareController, EventAwareCon
 		String parentOrinNumber = null;
 		String earliestCompletionDate = "";
 		String styleColorOrinNumber1 = "";
+		StyleVO style = null;
+		StyleColorVO styleColor = null;
+		SkuVO sku = null;
 		Map<String, String> completionDateMap = new HashMap<String, String>();
 		final List<SkuVO> skuList = new ArrayList<SkuVO>();
 		final List<StyleColorVO> styleColorList = new ArrayList<StyleColorVO>();
@@ -1094,7 +1097,7 @@ public class ContentController implements ResourceAwareController, EventAwareCon
 				final String contentState = pet.getContentState();
 				final String completionDate = pet.getCompletionDate();
 				final String petState = pet.getPetState();
-				final StyleVO style = new StyleVO();
+				style = new StyleVO();
 				style.setEntryType(entryType);
 				style.setColor(color);
 				style.setOrinNumber(orinNumber);
@@ -1128,7 +1131,7 @@ public class ContentController implements ResourceAwareController, EventAwareCon
 				final String contentState = pet.getContentState();
 				final String completionDate = pet.getCompletionDate();
 				final String petState = pet.getPetState();
-				final StyleColorVO styleColor = new StyleColorVO();
+				styleColor = new StyleColorVO();
 				styleColor.setEntryType(entryType);
 				styleColor.setParentStyleOrinNumber(childsParentOrinNumber);
 				styleColor.setOrinNumber(orinNumber);
@@ -1157,7 +1160,7 @@ public class ContentController implements ResourceAwareController, EventAwareCon
 				final String contentState = pet.getContentState();
 				final String colorCode = pet.getColorCode();
 				final String completionDate = pet.getCompletionDate();
-				final SkuVO sku = new SkuVO();
+				sku = new SkuVO();
 				sku.setEntryType(entryType);
 				sku.setStyleId(childsParentOrinNumber);
 				sku.setOrin(orinNumber);
@@ -1183,7 +1186,7 @@ public class ContentController implements ResourceAwareController, EventAwareCon
 				final String contentState = pet.getContentState();
 				final String completionDate = pet.getCompletionDate();
 				final String petState = pet.getPetState();
-				final StyleColorVO styleColor = new StyleColorVO();
+				styleColor = new StyleColorVO();
 				styleColor.setEntryType(entryType);
 				styleColor.setParentStyleOrinNumber(childsParentOrinNumber);
 				styleColor.setOrinNumber(orinNumber);
@@ -1236,7 +1239,7 @@ public class ContentController implements ResourceAwareController, EventAwareCon
 				final String contentState = pet.getContentState();
 				final String completionDate = pet.getCompletionDate();
 				final String petState = pet.getPetState();
-				final StyleVO style = new StyleVO();
+				style = new StyleVO();
 				style.setEntryType(entryType);
 				style.setColor(color);
 				style.setOrinNumber(orinNumber);
@@ -1263,21 +1266,21 @@ public class ContentController implements ResourceAwareController, EventAwareCon
 		LOGGER.info("styleList length=" + styleList.size());
 		LOGGER.info("styleColorList length=" + styleColorList.size());
 		// Check for the Parent Child association
-		for (final StyleVO style : styleList) {
-			parentOrinNumber = style.getParentOrinNumber();
+		for (final StyleVO styleObj : styleList) {
+			parentOrinNumber = styleObj.getParentOrinNumber();
 			LOGGER.info("parentOrinNumber.." + parentOrinNumber);
 			final List<StyleColorVO> subStyleColorList = new ArrayList<StyleColorVO>();
 			List<SkuVO> childSkuList = null;
 
-			for (final StyleColorVO styleColor : styleColorList) {
+			for (final StyleColorVO styleColorObj : styleColorList) {
 				// Get the Orin Number of the Style Color,Style Color is the
 				// child of the Parent Style
-				childsParentOrinNumber = styleColor.getParentStyleOrinNumber();
-				styleColor.getOrinNumber();
+				childsParentOrinNumber = styleColorObj.getParentStyleOrinNumber();
+				styleColorObj.getOrinNumber();
 				childSkuList = new ArrayList<SkuVO>();
-				childsParentOrinNumber = styleColor.getParentStyleOrinNumber();
-				styleColorOrinNumber1 = styleColor.getOrinNumber();
-				earliestCompletionDate = styleColor.getCompletionDate();
+				childsParentOrinNumber = styleColorObj.getParentStyleOrinNumber();
+				styleColorOrinNumber1 = styleColorObj.getOrinNumber();
+				earliestCompletionDate = styleColorObj.getCompletionDate();
 				final String colorCodeFromStyleColorOrinNumber = ExtractColorCode.getLastThreeDigitNRFColorCode(styleColorOrinNumber1);
 				// System.out.println("styleColorOrinNumber1.."+styleColorOrinNumber1);
 				// Check if the Style Parent Orin Number is same as the Style
@@ -1313,46 +1316,46 @@ public class ContentController implements ResourceAwareController, EventAwareCon
 					}
 
 					// End of Logic for calculating earliest completion date
-					for (final SkuVO sku : skuList) {
-						final String skuColorCode = sku.getColorCode();
+					for (final SkuVO skuObj : skuList) {
+						final String skuColorCode = skuObj.getColorCode();
 						// Create the Style Color parent and SKU Child
 						// relationship
 						if (colorCodeFromStyleColorOrinNumber.equalsIgnoreCase(skuColorCode)) {
 							// Add all the sku with the matching color code with
 							// that of the Parent Style Color Number in a list
-							childSkuList.add(sku);
+							childSkuList.add(skuObj);
 						}
 
 					}
 
 					// Add all the list of child SKUs to its respective parent
 					// Style Color
-					styleColor.setSkuList(childSkuList);
-					subStyleColorList.add(styleColor);
+					styleColorObj.setSkuList(childSkuList);
+					subStyleColorList.add(styleColorObj);
 					// Set the earliest completion date in Style Entity
-					style.setCompletionDate(earliestCompletionDate);
+					styleObj.setCompletionDate(earliestCompletionDate);
 					contentDisplayForm.getStyleInformationVO().setCompletionDateOfStyle(earliestCompletionDate);
 					// Add all the list of child Style Colors to its respective
 					// parent Style
 
 					// LOGGER.info("earliestCompletionDate for Style after Parent Child relationship---for style----------------"+earliestCompletionDate);
 					// LOGGER.info("earliestCompletionDate for Style after Parent Child relationship-------------------"+style.getCompletionDate());
-					style.setStyleColorList(subStyleColorList);
-					System.out.println("get the SKUList size..." + styleColor.getSkuList().size());
+					styleObj.setStyleColorList(subStyleColorList);
+					System.out.println("get the SKUList size..." + styleColorObj.getSkuList().size());
 
 				}
 
 			}
 			if (subStyleColorList.size() > 0) {
 				LOGGER.info("Size of the Color List .." + subStyleColorList.size());
-				style.setStyleColorList(subStyleColorList);// Add all the child
+				styleObj.setStyleColorList(subStyleColorList);// Add all the child
 															// Style Colors to
 															// the Parent Style
 			} else {
 				LOGGER.info("This is from Else part just return the style list with out any child style color");
 
 			}
-			styleListForContentDisplay.add(style);// Add all the Styles with
+			styleListForContentDisplay.add(styleObj);// Add all the Styles with
 													// children Style Color to
 													// the declared style list
 													// for content display
@@ -4427,12 +4430,15 @@ public class ContentController implements ResourceAwareController, EventAwareCon
 		final List<SkuVO> skuList = new ArrayList<SkuVO>();
 		final List<StyleColorVO> styleColorList = new ArrayList<StyleColorVO>();
 		final List<StyleVO> styleList = new ArrayList<StyleVO>();
-		
+		GroupingVO groupingVo = null;
+		StyleVO styleVO = null;
+		StyleColorVO styleColorVO = null;
+		SkuVO skuVO = null;
 		List<GroupingVO> childGroupList = new ArrayList<GroupingVO>();
 		for (final GroupsFound found : groupsFoundList) {
 			// Populate Groups List
 			if (found.getComponentType().equalsIgnoreCase("Group")) {
-				GroupingVO groupingVo = new GroupingVO();
+				groupingVo = new GroupingVO();
 				groupingVo.setGroupingNumber(found.getGroupId());
 				groupingVo.setStyleNumber(found.getStyleId());
 				groupingVo.setOrin(found.getComponentId());
@@ -4447,7 +4453,7 @@ public class ContentController implements ResourceAwareController, EventAwareCon
 
 			// Populate Group Style List
 			if (found.getEntryType().equalsIgnoreCase("Style")) {
-				StyleVO styleVO = new StyleVO();
+				styleVO = new StyleVO();
 				styleVO.setGroupingNumber(found.getGroupId());
 				styleVO.setStyleNumber(found.getStyleId());
 				styleVO.setOrinNumber(found.getComponentId());
@@ -4462,7 +4468,7 @@ public class ContentController implements ResourceAwareController, EventAwareCon
 
 			// Populate Group Style Color list
 			if (found.getEntryType().equalsIgnoreCase("StyleColor")) {
-				StyleColorVO styleColorVO = new StyleColorVO();
+				styleColorVO = new StyleColorVO();
 				styleColorVO.setStyleNumber(found.getStyleId());
 				styleColorVO.setOrinNumber(found.getComponentId());
 				styleColorVO.setCompletionDate(found.getCompletionDate());
@@ -4475,7 +4481,7 @@ public class ContentController implements ResourceAwareController, EventAwareCon
 
 			// Populate Group SKU List
 			if (found.getEntryType().equalsIgnoreCase("SKU")) {
-				SkuVO skuVO = new SkuVO();
+				skuVO = new SkuVO();
 				skuVO.setStyleId(found.getStyleId());
 				skuVO.setOrin(found.getComponentId());
 				skuVO.setCompletionDate(found.getCompletionDate());

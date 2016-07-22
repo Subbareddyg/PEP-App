@@ -1,9 +1,10 @@
 <%@ include file="/WEB-INF/pages/jsp/include.jsp" %>
+<portlet:resourceURL id="invalidate" var="logouturl" />
 <fmt:setBundle basename="grouping" />
 <div align="right" style="margin-bottom: 0.5cm" >	
 			<c:out value="${LAN_ID}"/> &nbsp;	 
 			<input type="button"   style="font-weight: bold" name="logout" value="Logout" 
-			    onclick="grouping_logOut('<c:out value="${LAN_ID}"/>'); " />	
+			    onclick="grouping_logOut('<c:out value="${LAN_ID}"/>','${logouturl }'); " />	
 			
 		 </div>
 <div  class="cars_panel x-hidden">

@@ -35,8 +35,17 @@ var app = app || {} ;
 				if($(this).val().trim() == 0){
 					if(showDialog){
 						$('#error-massege').html('Priority should be greater than Zero ');
-						$('#errorBox').dialog('open');
-						$(this).val('');	
+						$('#errorBox').dialog({
+						   autoOpen: true, 
+						   modal: true,
+						   resizable: false,
+						   title : 'Component Priority',
+						   dialogClass: "dlg-custom",
+						   buttons: {
+							  OK: function() {$(this).dialog("close");}
+						   },
+						});
+						$(this).val(''); //clearing on error
 					}
 					return false;
 				}else
@@ -381,7 +390,16 @@ var app = app || {} ;
 							
 							if($('#groupDesc').val().trim().length < app.Global.defaults.minGroupDescChars){
 								$('#error-massege').html("Please enter at least " + app.Global.defaults.minGroupDescChars + " characters in description field.");
-								$('#errorBox').dialog('open');
+								$('#errorBox').dialog({
+								   autoOpen: true, 
+								   modal: true,
+								   resizable: false,
+								   title : 'Group Header',
+								   dialogClass: "dlg-custom",
+								   buttons: {
+									  OK: function() {$(this).dialog("close");}
+								   },
+								});
 								return;
 							}
 							
@@ -622,8 +640,16 @@ var app = app || {} ;
 						
 						if(!validpriorities){
 							$('#error-massege').html("Please enter valid priorities before saving.");
-							$('#errorBox').dialog('option', 'title', 'Priority');
-							$('#errorBox').dialog('open');
+							$('#errorBox').dialog({
+							   autoOpen: true, 
+							   modal: true,
+							   resizable: false,
+							   title : 'Component Priority',
+							   dialogClass: "dlg-custom",
+							   buttons: {
+								  OK: function() {$(this).dialog("close");}
+							   },
+							});
 							return;
 						}
 						
@@ -726,7 +752,7 @@ var app = app || {} ;
 				switch(groupType){
 				case  'SSG':
 				case  'SCG':
-					$('#frmComponentSearch input').prop('disabled',true);
+					$('#frmComponentSearch input').prop('disabled',true); //disabling all search fields except the below conditions
 					
 					var styleOrinValue =  this.searchValue.styleOrinNoSearch ?  this.searchValue.styleOrinNoSearch : '';
 					var vendorNoValue =  this.searchValue.vendorStyleNoSearch ? this.searchValue.vendorStyleNoSearch : '' ;
