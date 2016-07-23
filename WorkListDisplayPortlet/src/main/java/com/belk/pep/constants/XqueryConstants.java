@@ -196,21 +196,9 @@ public class XqueryConstants {
  * @param pepId the pep id
  * @return the work list display data
  */
+ //Redundant method need to be verified and deleted
  public String getWorkListDisplayData() {
-     //String GET_ALL_ORIN_WITH_PETS_XQUERY=null;
-     
-     /*if(depts!=null){
-         depts = "'"+depts+"'";
-         }
-     if(email!=null){
-         email = "'"+email+"'";  
-     }
-     if(pepId!=null){
-         pepId = "'"+pepId+"'";  
-     }
-     if(supplierId!=null){
-         supplierId = "'"+supplierId+"'";  
-     }*/
+
 
      StringBuilder workListQuery = new StringBuilder();
      workListQuery.append("WITH ");
@@ -395,7 +383,8 @@ public class XqueryConstants {
     workListQuery.append("          COLO_DESC              VARCHAR2(50)  path '/out/COLO_DESC'                                               ");
     workListQuery.append("        ) p                                                                                                        ");
     workListQuery.append("      WHERE                                                                                                        ");
-    workListQuery.append("        sda.mdmid     =pet.mdmid                                                                                   ");
+    // Changes to stop displaying deactivated PET in WorkList
+    workListQuery.append("        sda.mdmid     =pet.mdmid AND pet.PET_STATE <>'05'                                                                                   ");
     workListQuery.append("    ),                                                                                                             ");
     workListQuery.append("    finalList as (                                                                                                 ");
     workListQuery.append("      SELECT /*+ use_nl(supplier) index(supplier SUPP_CTG_IDX4) */                                                 ");
@@ -477,22 +466,8 @@ public class XqueryConstants {
      * @param pepId the pep id
      * @return the work list display data
      */
+ //redundant method need to be verified and deleted
  public String getWorkListDisplayDataComplexPack() {
-
-     //String GET_ALL_ORIN_WITH_PETS_XQUERY=null;
-     
-     /*if(depts!=null){
-         depts = "'"+depts+"'";
-         }
-     if(email!=null){
-         email = "'"+email+"'";  
-     }
-     if(pepId!=null){
-         pepId = "'"+pepId+"'";  
-     }
-     if(supplierId!=null){
-         supplierId = "'"+supplierId+"'";  
-     }*/
 
      StringBuilder workListQuery = new StringBuilder();
      workListQuery.append("WITH ");
@@ -678,7 +653,8 @@ public class XqueryConstants {
     workListQuery.append("        COLO_DESC              VARCHAR2(50)  path '/out/COLO_DESC'                                            ");
     workListQuery.append("        ) p                                                                                                   ");
     workListQuery.append("      WHERE                                                                                                   ");
-    workListQuery.append("        sda.mdmid     =pet.mdmid                                                                              ");
+    //Changes to stop displaying deactivated PET in WorkList
+    workListQuery.append("        sda.mdmid     =pet.mdmid         and pet.PET_STATE<>'05'                                                                     ");
     workListQuery.append("    ),                                                                                                        ");
     workListQuery.append("    finalList as (                                                                                            ");
     workListQuery.append("      SELECT /*+ use_nl(supplier) index(supplier SUPP_CTG_IDX4) */                                            ");
@@ -808,32 +784,7 @@ public  String getClassDetailsUsingDeptnumbers(String deptids) {
     queryfragment.append(":deptids");
     queryfragment.append(" Depts ");    
     queryfragment.append("  FROM dual) ");
-    //Kept it part of development
-    /*queryfragment.append(" ");
-    queryfragment.append("select ClsId, Cls ");
-    queryfragment.append("    from  ADSE_MERCHANDISE_HIERARCHY cls, ");
-    queryfragment.append("        XMLTABLE('for $cls in $XML_DATA/pim_category/entry ");
-    queryfragment.append("            where fn:count($cls/Merchandise_Hier_Spec/System/Removal_Flag) eq 0 or $cls/Merchandise_Hier_Spec/System/Removal_Flag eq \"false\" ");
-    queryfragment.append("            return <out> ");
-    queryfragment.append("                    <cls_id>{$cls/Merchandise_Hier_Spec/Identifiers/RMS_Id}</cls_id> ");
-    queryfragment.append("                    <cls_name>{$cls/Merchandise_Hier_Spec/Name}</cls_name> ");
-    queryfragment.append("                    <dept_id>{fn:tokenize($cls/../merchandise_category_header/full_path,\"\\||///\")[5]}</dept_id> ");
-    queryfragment.append("                </out>' ");
-    queryfragment.append("            passing cls.XML_DATA as \"XML_DATA\" ");
-    queryfragment.append("            columns ");
-    queryfragment.append("            Cls varchar2(64) path '/out/cls_name', ");
-    queryfragment.append("            ClsId varchar2(64) path '/out/cls_id', ");
-    queryfragment.append("            DeptId varchar2(10) path '/out/dept_id' ");
-    queryfragment.append("        ) CLS_NAME, Input inp ");
-    queryfragment.append("        where cls.ENTRY_TYPE = 5 and MOD_DTM = '01-JAN-00 12.00.00.000000000 PM' ");
-    queryfragment.append("        and (depts   IS  NULL ");
-    queryfragment.append("    or deptId      IN ");
-    
-    queryfragment.append("      (SELECT regexp_substr(depts,'[^,]+',1,LEVEL) ");
-    queryfragment.append("      FROM dual ");
-    queryfragment.append("        CONNECT BY regexp_substr(depts,'[^,]+',1,LEVEL) IS NOT NULL ");
-    queryfragment.append("      )) ");
-    queryfragment.append("        order by cast(ClsId as Integer)");*/
+
     queryfragment.append("  SELECT CLS_NAME.ClsId, CLS_NAME.ClsName Cls, CLS_NAME.Removal_Flag  ");
     queryfragment.append("  FROM ADSE_MERCHANDISE_HIERARCHY cls,                                                                              ");
     queryfragment.append("    XMLTABLE('                                                                                                      ");
@@ -2105,7 +2056,7 @@ public String getWorkListDisplayDataParent(boolean vendorLogin) {
         workListQuery.append("        ADSE_Item_CATALOG aic,  ADSE_PET_CATALOG pet, givenInpDept d, givenInpSupplier s, Input inp                           ");
         workListQuery.append("      WHERE                                                                                                           ");
         workListQuery.append("        aic.ENTRY_TYPE in ('Style', 'Complex Pack')                                                                       ");
-        workListQuery.append("        AND  pet.mdmid = aic.mdmid AND                                                                                ");
+        workListQuery.append("        AND  pet.mdmid = aic.mdmid AND  pet.PET_STATE <>'05' AND                                                                             ");
         workListQuery.append("         ((                                                                                                           ");
         workListQuery.append("             (inp.EmailId IS NULL)                                                                                    ");
         workListQuery.append("              AND aic.DEPT_ID = d.dept_id and aic.PRIMARY_SUPPLIER_ID is not null                                     ");
@@ -2313,7 +2264,8 @@ public String getWorkListDisplayDataChild(boolean vendorLogin) {
     workListQuery.append("        ,CONVERSION_FLAG VARCHAR2(50) path '/out/CONVERSION_FLAG'                             ");
     workListQuery.append("        ) p                                                                                                            ");
     workListQuery.append("      WHERE                                                                                                            ");
-    workListQuery.append("        sda.mdmid     =pet.mdmid AND pet.WLIST_DISPLAY_FLAG = 'true'                                               ");
+    //Changes to stop displaying deactivated PET in WorkList
+    workListQuery.append("        sda.mdmid     =pet.mdmid AND pet.PET_STATE <>'05' and pet.WLIST_DISPLAY_FLAG = 'true'                                               ");
     workListQuery.append("    )                                                                                                                  ");
     workListQuery.append("    SELECT /*+ use_nl(supplier) index(supplier SUPP_CTG_IDX4) */                                                       ");
     workListQuery.append("        CASE                                                                                                           ");
@@ -3621,8 +3573,8 @@ public String getAdvWorkListDisplayDataForParent(AdvanceSearch advSearch) {
         getGroupDetailsQueryWorkList.append("   GRP.PET_SOURCE,                                        ");
         getGroupDetailsQueryWorkList.append("   GRP.PET_DISPLAY_FLAG CHILD_GROUP,                      ");
         getGroupDetailsQueryWorkList.append("   GRP.EXIST_IN_GROUP                                     ");
-        getGroupDetailsQueryWorkList.append(" FROM ADSE_GROUP_CATALOG GRP                              ");
         
+        getGroupDetailsQueryWorkList.append(" FROM ADSE_GROUP_CATALOG GRP                              ");
         getGroupDetailsQueryWorkList.append(" INNER JOIN ");
         getGroupDetailsQueryWorkList
             .append(" ADSE_REFERENCE_DATA CONTENT_STATE ON GRP.GROUP_CONTENT_STATUS_CODE = CONTENT_STATE.MDMID ");
@@ -3641,20 +3593,26 @@ public String getAdvWorkListDisplayDataForParent(AdvanceSearch advSearch) {
         
         getGroupDetailsQueryWorkList.append(" INNER JOIN ADSE_GROUP_CHILD_MAPPING MAPPING              ");
         getGroupDetailsQueryWorkList.append(" ON GRP.MDMID = MAPPING.MDMID                             ");
-        if(dept != null && dept.trim().length() > 0)
-        {
-            getGroupDetailsQueryWorkList.append(" INNER JOIN ADSE_ITEM_CATALOG AIC                         ");
-            getGroupDetailsQueryWorkList.append(" ON AIC.MDMID = MAPPING.COMPONENT_STYLE_ID                ");
-            getGroupDetailsQueryWorkList.append(" AND AIC.DEPT_ID IN (                                     ");
-            getGroupDetailsQueryWorkList.append(dept);
-            getGroupDetailsQueryWorkList.append(" )                                                        ");
-        }
+
         getGroupDetailsQueryWorkList.append(" LEFT OUTER JOIN ADSE_SUPPLIER_CATALOG ASCT               ");
         getGroupDetailsQueryWorkList.append(" ON GRP.DEF_PRIMARY_SUPPLIER_ID = ASCT.MDMID              ");
         getGroupDetailsQueryWorkList.append(" WHERE GRP.DELETED_FLAG         = 'false'                 ");
         getGroupDetailsQueryWorkList.append(" AND ((GRP.GROUP_OVERALL_STATUS_CODE = '01')              ");
-        getGroupDetailsQueryWorkList.append(" OR (GRP.GROUP_OVERALL_STATUS_CODE <> '01'                ");
+        // Changed as per Defect 3382 - Deactivated Group should not be displayed
+        getGroupDetailsQueryWorkList.append(" OR (GRP.GROUP_OVERALL_STATUS_CODE NOT IN ('01','05')     ");
         getGroupDetailsQueryWorkList.append(" AND GRP.PET_DISPLAY_FLAG = 'O'))                         ");
+        
+        if(dept != null && dept.trim().length() > 0)
+        {
+            getGroupDetailsQueryWorkList.append(" AND ( MAPPING.COMPONENT_STYLE_ID IN (SELECT AIC.MDMID   ");
+            getGroupDetailsQueryWorkList.append(" FROM ADSE_ITEM_CATALOG AIC WHERE AIC.PETEXISTS='Y'                ");
+            getGroupDetailsQueryWorkList.append(" AND AIC.DEPT_ID IN (                                     ");
+            getGroupDetailsQueryWorkList.append(dept);
+            getGroupDetailsQueryWorkList.append(" )) OR  MAPPING.COMPONENT_GROUPING_ID IN (SELECT MDMID ");
+            getGroupDetailsQueryWorkList.append(" FROM ADSE_GROUP_CATALOG WHERE DEF_DEPT_ID IN ( ");
+            getGroupDetailsQueryWorkList.append(dept);
+            getGroupDetailsQueryWorkList.append(" ))) ");
+        }
         
         if (sortColumn == null
                 || sortColumn.trim().equals("")) {
@@ -3734,20 +3692,27 @@ public String getAdvWorkListDisplayDataForParent(AdvanceSearch advSearch) {
         getGroupDetailsCountQueryWorkList.append(" FROM ADSE_GROUP_CATALOG GRP                            ");
         getGroupDetailsCountQueryWorkList.append(" INNER JOIN ADSE_GROUP_CHILD_MAPPING MAPPING            ");
         getGroupDetailsCountQueryWorkList.append(" ON GRP.MDMID = MAPPING.MDMID                           ");
-        if(dept != null && dept.trim().length() > 0)
-        {
-            getGroupDetailsCountQueryWorkList.append(" INNER JOIN ADSE_ITEM_CATALOG AIC                         ");
-            getGroupDetailsCountQueryWorkList.append(" ON AIC.MDMID = MAPPING.COMPONENT_STYLE_ID                ");
-            getGroupDetailsCountQueryWorkList.append(" AND AIC.DEPT_ID IN (                                     ");
-            getGroupDetailsCountQueryWorkList.append(dept);
-            getGroupDetailsCountQueryWorkList.append(" )                                                        ");
-        }
+
+        
         getGroupDetailsCountQueryWorkList.append(" LEFT OUTER JOIN ADSE_SUPPLIER_CATALOG ASCT             ");
         getGroupDetailsCountQueryWorkList.append(" ON GRP.DEF_PRIMARY_SUPPLIER_ID = ASCT.MDMID            ");
         getGroupDetailsCountQueryWorkList.append(" WHERE GRP.DELETED_FLAG         = 'false'               ");
         getGroupDetailsCountQueryWorkList.append(" AND ((GRP.GROUP_OVERALL_STATUS_CODE = '01')            ");
-        getGroupDetailsCountQueryWorkList.append(" OR (GRP.GROUP_OVERALL_STATUS_CODE <> '01'              ");
+        getGroupDetailsCountQueryWorkList.append(" OR (GRP.GROUP_OVERALL_STATUS_CODE NOT IN ('01','05')      ");
         getGroupDetailsCountQueryWorkList.append(" AND GRP.PET_DISPLAY_FLAG = 'O'))                       ");
+        
+        if(dept != null && dept.trim().length() > 0)
+        {
+        	getGroupDetailsCountQueryWorkList.append(" AND ( MAPPING.COMPONENT_STYLE_ID IN (SELECT AIC.MDMID   ");
+        	getGroupDetailsCountQueryWorkList.append(" FROM ADSE_ITEM_CATALOG AIC WHERE AIC.PETEXISTS='Y'                ");
+        	getGroupDetailsCountQueryWorkList.append(" AND AIC.DEPT_ID IN (                                     ");
+        	getGroupDetailsCountQueryWorkList.append(dept);
+        	getGroupDetailsCountQueryWorkList.append(" )) OR  MAPPING.COMPONENT_GROUPING_ID IN (SELECT MDMID ");
+        	getGroupDetailsCountQueryWorkList.append(" FROM ADSE_GROUP_CATALOG WHERE DEF_DEPT_ID IN ( ");
+        	getGroupDetailsCountQueryWorkList.append(dept);
+        	getGroupDetailsCountQueryWorkList.append(" ))) ");
+        }
+        
         getGroupDetailsCountQueryWorkList.append(" ORDER BY PET_SOURCE, COMPLETION_DATE DESC, GRP.MDMID   ");
 
         LOGGER.debug("SEARCH GROUP WORKLIST QUERY -- \n"
@@ -3870,7 +3835,7 @@ public String getAdvWorkListDisplayDataForParent(AdvanceSearch advSearch) {
         "   AND AGCM.PEP_COMPONENT_TYPE!              ='Group'                                              "+
         "   AND AIC.ENTRY_TYPE                   IN ('Style','StyleColor')                              "+
         "   AND  (CASE WHEN AIC.PARENT_MDMID is NOT NULL AND  AIC.MDMID !=AGCM.COMPONENT_STYLECOLOR_ID THEN 0 ELSE 1 END) =1 "+
-        "   AND (APC.WLIST_DISPLAY_FLAG='true' AND PET_STATE = '01' OR (APC.Entry_type='Style' and  APC.PET_STYLE_STATE='Y') ) "+
+        "   AND (APC.WLIST_DISPLAY_FLAG='true' AND PET_STATE = '01' OR (APC.Entry_type='Style' and  APC.PET_STYLE_STATE='Y' AND PET_STATE<>'05' ) ) "+
         "   AND AGCM.MDMID                        = :orinNum "+
         "   )  "+
         " ORDER BY COMPONENT_TYPE DESC, "+
