@@ -520,7 +520,7 @@ public ArrayList<DepartmentDetails> getDepartmentDetailsForExternalUserFirstTime
    //Hibernate provides a createSQLQuery method to let you call your native SQL statement directly.   
     Query query = session.createSQLQuery(xqueryConstants.getAllDepartmentDetails(vendorEmail));
     query.setParameter("vendorEmail", vendorEmail); 
-    query.setFetchSize(100);
+    query.setFetchSize(500);
     List<Object[]> rows = query.list();
     for(Object[] row : rows){      
         DepartmentDetails departmentDetails = new DepartmentDetails();
@@ -680,7 +680,7 @@ public List<PetsFound> getWorkListDisplayData(String depts,String email,String p
         query.setParameter("email", email);
         query.setParameter("pepId", pepId);
         query.setParameter("supplierId", supplierId);   
-        query.setFetchSize(100);
+        query.setFetchSize(500);
          /****END ******/
         
         LOGGER.info("Query..default123-->" + query);
@@ -766,7 +766,7 @@ public List<PetsFound> getWorkListDisplayDataComplexPack(String depts,String ema
         query.setParameter("email", email);
         query.setParameter("pepId", pepId);
         query.setParameter("supplierId", supplierId);    
-        query.setFetchSize(100);
+        query.setFetchSize(500);
          /****END ******/
         LOGGER.info("Query..getWorkListDisplayDataComplexPack-->" + query);
         // execute delete SQL statement
@@ -928,7 +928,7 @@ private List<ClassDetails> getClassDetails(String departmentNumbers)throws PEPFe
     /****Newly added for DE795,796 ******/
     Query query = session.createSQLQuery(xqueryConstants.getClassDetailsUsingDeptnumbers(departmentNumbers));
     query.setParameter("deptids", departmentNumbers);
-    query.setFetchSize(100);
+    query.setFetchSize(500);
     /****END ******/
     List<Object[]> rows = query.list();
     for(Object[] row : rows){      
@@ -1598,7 +1598,7 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
                query.setString("depts", depts);
                query.setString("supplierId", supplierId);
                
-               query.setFetchSize(100);
+               query.setFetchSize(500);
                
                LOGGER.info("getWorkListDisplayDataForParent...Query--->" + query);
               
@@ -1691,7 +1691,7 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
                /****Newly added for DE795,796 ******/
                Query query = session.createSQLQuery(xqueryConstants.getWorkListDisplayDataChild(vendorLogin));
                query.setParameter("parentOrin", parentOrin);
-               query.setFetchSize(100);
+               query.setFetchSize(500);
                /****END ******/
                
              
