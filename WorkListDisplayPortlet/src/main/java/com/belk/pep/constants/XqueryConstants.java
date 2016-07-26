@@ -3835,7 +3835,7 @@ public String getAdvWorkListDisplayDataForParent(AdvanceSearch advSearch) {
         "   AND AGCM.PEP_COMPONENT_TYPE!              ='Group'                                              "+
         "   AND AIC.ENTRY_TYPE                   IN ('Style','StyleColor')                              "+
         "   AND  (CASE WHEN AIC.PARENT_MDMID is NOT NULL AND  AIC.MDMID !=AGCM.COMPONENT_STYLECOLOR_ID THEN 0 ELSE 1 END) =1 "+
-        "   AND (APC.WLIST_DISPLAY_FLAG='true' AND PET_STATE = '01' OR (APC.Entry_type='Style' and  APC.PET_STYLE_STATE='Y' AND PET_STATE<>'05' ) ) "+
+        "   AND ( PET_STATE = '01' OR (APC.Entry_type='Style' and  APC.PET_STYLE_STATE='Y' AND PET_STATE<>'05' ) ) "+
         "   AND AGCM.MDMID                        = :orinNum "+
         "   )  "+
         " ORDER BY COMPONENT_TYPE DESC, "+
