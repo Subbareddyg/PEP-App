@@ -118,7 +118,7 @@
 		{{ } }}
 	{{ }) }}	
 {{ }else{ }}
-	<tr class="dfd-children">
+	<tr class="dfd-children-{{=parentNode}}">
 		<td colspan="6" align="center"><strong>{{=dataHeader.message ? dataHeader.message : 'No record Found!'}}</strong></td>
 	</tr>
 {{ } }}

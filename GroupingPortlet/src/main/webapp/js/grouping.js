@@ -715,9 +715,14 @@ var app = app || {};
 				
 				//bootstrapping events when DOM is ready State
 				$(document).on('ready', function(e){
+					/**
+					*	fetch depts and assoc things for groups excluding split group types
+					*/
+					if($('#groupType').length && ($('#groupType').val().trim() == 'SSG' || $('#groupType').val().trim() == 'SCG'))
+						return;
+					
 					if(app.URLFactory.getURL('groupSearchUrl')){
 						//code to fetch all depts
-						
 						app.GroupFactory.fetchDepts()
 							.done(function(result){
 								//console.log(result)

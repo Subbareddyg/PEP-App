@@ -40,7 +40,7 @@
 				<input type="radio" name="defaultColor" value="{{=row.colorCode}}_{{=row.size}}" {{=row.defaultColor == 'true' ? 'checked="checked"' : ''}} disabled="disabled" />
 				</c:if>
 				<c:if test="${readonly !='yes'}">  
-				<input type="radio" name="defaultColor" value="{{=row.colorCode}}_{{=row.size}}" {{=row.defaultColor == 'true' ? 'checked="checked"' : ''}} />
+				<input type="radio" name="defaultColor" class="trueDefult" value="{{=row.colorCode}}_{{=row.size}}" {{=row.defaultColor == 'true' ? 'checked="checked"' : ''}} />
 				</c:if>
 				
 			</td>			
