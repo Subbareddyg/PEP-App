@@ -752,7 +752,7 @@ var app = app || {} ;
 				switch(groupType){
 				case  'SSG':
 				case  'SCG':
-					$('#frmComponentSearch input').prop('disabled',true); //disabling all search fields except the below conditions
+					$('#frmComponentSearch input').not('#frmComponentSearch input[type=submit]').prop('disabled', true); //disabling all search fields except the below conditions
 					
 					var styleOrinValue =  this.searchValue.styleOrinNoSearch ?  this.searchValue.styleOrinNoSearch : '';
 					var vendorNoValue =  this.searchValue.vendorStyleNoSearch ? this.searchValue.vendorStyleNoSearch : '' ;
