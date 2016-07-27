@@ -152,7 +152,10 @@
 	</div>
 </div>
 <div class="group-search-footer-area">
-	<div class="footer-content"><input type="button" onclick="window.location.href='/wps/portal/home/worklistDisplay'" class="btn" value="Close"></div>
+	<div class="footer-content">
+		<input type="button" onclick="window.location.href='/wps/portal/home/worklistDisplay'" class="btn btn-large" value="Close">
+		<p class="button-caption">Back To Worklist</p>
+	</div>
 </div>
 
 <!-- div loading starts-->

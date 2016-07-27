@@ -9,6 +9,8 @@
 .footer-content{margin: 0 auto; width: 10%;}
 .btn{display: inline !important; padding:3px !important; margin:2px !important; cursor: pointer !important; float: none !important; font-size:13px !important;}
 .btn:disabled{opacity: 0.5 !important;}
+.btn-large{width: 85px;}
+.button-caption{color: #fff; padding-top: 3px;}
 .content-table{margin: 0 auto; padding: 5px; width: 95%}
 .content-table td, .content-table th{padding: 5px;}
 .content-table a, .content-table a:active, .content-table a:focus, .content-table a:visited{color: #00649d;text-decoration: none;}
