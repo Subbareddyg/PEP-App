@@ -591,10 +591,11 @@ function populateColorCode(ColorCode){
 function getScene7Url(orin, url){
 	$.get(url, {selectedColorOrin: orin})
 		.done(function(result){
-			console.log(result);
+			
 			if(result.length){
 				var responseJSON = $.parseJSON(result);
 				var html = '';
+				
 				if(responseJSON !== undefined && responseJSON.forEach instanceof Function){
 					responseJSON.forEach(function(item){
 					html += '<tr>'
@@ -607,6 +608,13 @@ function getScene7Url(orin, url){
 					
 					if(html.length)
 						$('#scene7-rows').html(html);
+					else{
+						$('#scene7-rows').html(
+							'<tr>'
+							+ '<td colspan="4" align="center"><strong>No Data Found!</strong></td>'										
+							+ '</tr>'
+						);
+					}
 				}		
 			}else
 				console.warn('Invalid Response Received!');

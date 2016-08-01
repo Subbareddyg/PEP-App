@@ -2290,7 +2290,7 @@ public class XqueryConstants {
         " $copyProductName := $XML_DATA/pim_entry/entry/Copy_Sec_Spec/Copy_Product_Name,                                           "+
         " $copyMaterial := $XML_DATA/pim_entry/entry/Copy_Sec_Spec/Copy_Material,                                                  "+
         " $copyCare := $XML_DATA/pim_entry/entry/Copy_Sec_Spec/Copy_Care,                                                          "+
-        " $copyCountryOfOrigin := $XML_DATA/pim_entry/entry/Copy_Sec_Spec/Copy_Country_of_Origin,                                  "+
+        " $copyCountryOfOrigin := $XML_DATA/pim_entry/entry/Copy_Sec_Spec/Copy_Country_Of_Origin,                                  "+
         " $copyImportDomestic := $XML_DATA/pim_entry/entry/Copy_Sec_Spec/Copy_Import_Domestic,                                     "+
         " $copyExclusive := $XML_DATA/pim_entry/entry/Copy_Sec_Spec/Copy_Exclusive,                                                "+
         " $copyCAProp65Compliant := $XML_DATA/pim_entry/entry/Copy_Sec_Spec/Copy_CAProp65_Compliant                                "+
@@ -2615,7 +2615,7 @@ public class XqueryConstants {
         " $copyProductName := $XML_DATA/pim_entry/entry/Copy_Sec_Spec/Copy_Product_Name,                                           "+
         " $copyMaterial := $XML_DATA/pim_entry/entry/Copy_Sec_Spec/Copy_Material,                                                  "+
         " $copyCare := $XML_DATA/pim_entry/entry/Copy_Sec_Spec/Copy_Care,                                                          "+
-        " $copyCountryOfOrigin := $XML_DATA/pim_entry/entry/Copy_Sec_Spec/Copy_Country_of_Origin,                                  "+
+        " $copyCountryOfOrigin := $XML_DATA/pim_entry/entry/Copy_Sec_Spec/Copy_Country_Of_Origin,                                  "+
         " $copyImportDomestic := $XML_DATA/pim_entry/entry/Copy_Sec_Spec/Copy_Import_Domestic,                                     "+
         " $copyExclusive := $XML_DATA/pim_entry/entry/Copy_Sec_Spec/Copy_Exclusive,                                                "+
         " $copyCAProp65Compliant := $XML_DATA/pim_entry/entry/Copy_Sec_Spec/Copy_CAProp65_Compliant                                "+
