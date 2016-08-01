@@ -4,7 +4,7 @@ WHEN (NEW.ENTRY_TYPE = 'Style')
     COMPOUND TRIGGER
 L_sql_code                 INT :=0;
 L_sql_err                  VARCHAR2(2000) := NULL;
-L_STYLE_MDMID  ADSE_PET_CATALOG.MDMID%type:=:NEW.MDMID;
+L_STYLE_MDMID  ADSE_PET_CATALOG.MDMID%type;
 STATUS          			VARCHAR2(1) :='P';
 CHILD_GROUP_OPEN          	VARCHAR2(1):='';
 CHILD_EXIST          		VARCHAR2(1):='';
