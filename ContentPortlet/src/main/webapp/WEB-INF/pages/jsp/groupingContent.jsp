@@ -2442,31 +2442,31 @@ function toggleRows(currentRow, styleId, styleColorId){
 
 									  
 									<ul class="pep_info" style="font-size: 11px; padding: 0 0 10px !important;">
-										<li class="txt_attr_name" style="width: 30%;"><fmt:message key="label.grouping" bundle="${display}"/><c:out value="${contentDisplayForm.styleInformationVO.orin}"/></li>				
-										<li class="txt_attr_name" style="width: 30%;"><fmt:message key="label.groupingType" bundle="${display}"/><c:out value="${contentDisplayForm.styleInformationVO.groupingType}"/></li>
-										<%-- <li class="txt_attr_name" style="width: 20%;"><fmt:message key="label.deptDescription" bundle="${display}"/><c:out value="${contentDisplayForm.styleInformationVO.deptDescription}"/></li> --%>
+										<li class="txt_attr_name" style="width: 30%;"><fmt:message key="label.grouping" bundle="${display}"/>&nbsp;<c:out value="${contentDisplayForm.styleInformationVO.orin}"/>&nbsp;</li>				
+										<li class="txt_attr_name" style="width: 30%;"><fmt:message key="label.groupingType" bundle="${display}"/>&nbsp;<c:out value="${contentDisplayForm.styleInformationVO.groupingType}"/>&nbsp;</li>
+										<%-- <li class="txt_attr_name" style="width: 20%;"><fmt:message key="label.deptDescription" bundle="${display}"/>&nbsp;<c:out value="${contentDisplayForm.styleInformationVO.deptDescription}"/>&nbsp;</li> --%>
 									</ul>
 
 
 									<ul class="pep_info"
 										style="font-size: 11px; padding: 0 0 10px !important;">
-										<li class="txt_attr_name" style="width: 30%;"><fmt:message key="label.omnichannelVendor" bundle="${display}"/><c:out value="${contentDisplayForm.styleInformationVO.omniChannelVendorIndicator}"/></li>
-										<li class="txt_attr_name" style="width: 30%;"><fmt:message key="labelDepartment" bundle="${display}"/><c:out value="${contentDisplayForm.styleInformationVO.departmentId}"/></li>
-										<li class="txt_attr_name" style="width: 20%;"><fmt:message key="labelDeptDescription" bundle="${display}"/><c:out value="${contentDisplayForm.styleInformationVO.deptDescription}"/></li>										
+										<li class="txt_attr_name" style="width: 30%;"><fmt:message key="label.omnichannelVendor" bundle="${display}"/>&nbsp;<c:out value="${contentDisplayForm.styleInformationVO.omniChannelVendorIndicator}"/>&nbsp;</li>
+										<li class="txt_attr_name" style="width: 30%;"><fmt:message key="labelDepartment" bundle="${display}"/>&nbsp;<c:out value="${contentDisplayForm.styleInformationVO.departmentId}"/>&nbsp;</li>
+										<li class="txt_attr_name" style="width: 20%;"><fmt:message key="labelDeptDescription" bundle="${display}"/>&nbsp;<c:out value="${contentDisplayForm.styleInformationVO.deptDescription}"/>&nbsp;</li>										
 									</ul>
 			
 									<ul class="pep_info"
 										style="font-size: 11px; padding: 0 0 10px !important;">
-										<li class="txt_attr_name"  style="width: 30%;"><fmt:message key="label.vendorProvidedImage" bundle="${display}"/><c:out value="${contentDisplayForm.styleInformationVO.vendorProvidedImageIndicator}"/></li>
-										<li class="ctxt_attr_name" style="width: 30%;"><fmt:message key="label.class" bundle="${display}"/><c:out value="${contentDisplayForm.styleInformationVO.classId}"/></li>
-										<li class="ctxt_attr_name" style="width: 20%;"><fmt:message key="labelClassDescription" bundle="${display}"/><c:out value="${contentDisplayForm.styleInformationVO.classDescription}"/></li>
+										<li class="txt_attr_name"  style="width: 30%;"><fmt:message key="label.vendorProvidedImage" bundle="${display}"/>&nbsp;<c:out value="${contentDisplayForm.styleInformationVO.vendorProvidedImageIndicator}"/>&nbsp;</li>
+										<li class="ctxt_attr_name" style="width: 30%;"><fmt:message key="label.class" bundle="${display}"/>&nbsp;<c:out value="${contentDisplayForm.styleInformationVO.classId}"/>&nbsp;</li>
+										<li class="ctxt_attr_name" style="width: 20%;"><fmt:message key="labelClassDescription" bundle="${display}"/>&nbsp;<c:out value="${contentDisplayForm.styleInformationVO.classDescription}"/>&nbsp;</li>
 									</ul>
 									
 									<ul class="pep_info"
 										style="font-size: 11px; padding: 0 0 10px !important;">
-										<li class="txt_attr_name" style="width: 30%;"><fmt:message key="label.vendorProvidedSample" bundle="${display}"/><c:out value="${contentDisplayForm.styleInformationVO.vendorSampleIndicator}"/></li>
-										<li class="txt_attr_name" style="width: 30%;"><fmt:message key="label.vendorNumber" bundle="${display}"/><c:out value="${contentDisplayForm.styleInformationVO.vendorId}"/></li>
-										<li class="txt_attr_name" style="width: 20%;"><fmt:message key="label.vendorName" bundle="${display}"/><c:out value="${contentDisplayForm.styleInformationVO.vendorName}"/></li>	
+										<li class="txt_attr_name" style="width: 30%;"><fmt:message key="label.vendorProvidedSample" bundle="${display}"/>&nbsp;<c:out value="${contentDisplayForm.styleInformationVO.vendorSampleIndicator}"/>&nbsp;</li>
+										<li class="txt_attr_name" style="width: 30%;"><fmt:message key="label.vendorNumber" bundle="${display}"/>&nbsp;<c:out value="${contentDisplayForm.styleInformationVO.vendorId}"/>&nbsp;</li>
+										<li class="txt_attr_name" style="width: 20%;"><fmt:message key="label.vendorName" bundle="${display}"/>&nbsp;<c:out value="${contentDisplayForm.styleInformationVO.vendorName}"/>&nbsp;</li>	
 									</ul>
 									
 									<!-- Added by Sriharsha -->

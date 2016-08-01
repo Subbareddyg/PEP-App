@@ -122,8 +122,8 @@
 						<th width="15%"><a href="javascript:;" class="sortable" data-sort-column="groupId" data-sorted-by=""><b><fmt:message key="group.screen.level.table.header1" /></b></a></th>
 						<th width="20%"><a href="javascript:;" class="sortable" data-sort-column="groupName" data-sorted-by=""><b><fmt:message key="group.screen.level.table.header2" /></b></a></th>
 						<th width="19%"><a href="javascript:;" class="sortable" data-sort-column="groupType" data-sorted-by=""><b><fmt:message key="group.screen.level.table.header3" /></b></a></th>
-						<th width="7%"><a href="javascript:;" class="sortable" data-sort-column="imageStatus" data-sorted-by=""><b><fmt:message key="group.screen.level.table.header4" /></b></a></th>
 						<th width="7%"><a href="javascript:;" class="sortable" data-sort-column="contentStatus" data-sorted-by=""><b><fmt:message key="group.screen.level.table.header5" /></b></a></th>
+						<th width="7%"><a href="javascript:;" class="sortable" data-sort-column="imageStatus" data-sorted-by=""><b><fmt:message key="group.screen.level.table.header4" /></b></a></th>
 						<th width="9%"><a href="javascript:;" class="sortable" data-sort-column="startDate" data-sorted-by=""><b><fmt:message key="group.screen.level.table.header6" /></b></a></th>
 						<th width="8%"><a href="javascript:;" class="sortable" data-sort-column="endDate" data-sorted-by=""><b><fmt:message key="group.screen.level.table.header7" /></b></a></th>
 						<th width="10%">&nbsp;</th>
@@ -396,8 +396,8 @@
 			</td>
 			<td>{{=row.groupName}}</td>
 			<td>{{=row.groupType}}</td>
-			<td class="text-center">{{=row.groupImageStatus}}</td>
 			<td class="text-center">{{=row.groupContentStatus}}</td>
+			<td class="text-center">{{=row.groupImageStatus}}</td>
 			<td class="text-center">{{=row.startDate}}</td>
 			<td class="text-center">{{=row.endDate}}</td>
 			<td class="text-center">
@@ -418,8 +418,8 @@
 					</td>
 					<td>{{=childRow.groupName}}</td>
 					<td>{{=childRow.groupType}}</td>
-					<td class="text-center">{{=childRow.groupImageStatus}}</td>
 					<td class="text-center">{{=childRow.groupContentStatus}}</td>
+					<td class="text-center">{{=childRow.groupImageStatus}}</td>
 					<td class="text-center">{{=childRow.startDate}}</td>
 
 					<td class="text-center">{{=childRow.endDate}}</td>
