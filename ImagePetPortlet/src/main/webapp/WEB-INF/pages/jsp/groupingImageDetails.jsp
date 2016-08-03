@@ -226,20 +226,20 @@ function releseLockedPet(loggedInUser,releseLockedPetURL){
 		<input type="hidden" name="groupingType" id="groupingType" value="<c:out value="${styleInformation.groupingType}" />" />
 		<input type="hidden" name="loggedInUser" id="loggedInUser" value="<c:out value="${imageDetailsForm.username}" />" />
 		<li class="txt_attr_name" style="width: 30%;"><b><fmt:message
-			key="label.GroupingNumber" /></b> ${styleInformation.orinGrouping}</li>
+			key="label.GroupingNumber" /></b> &nbsp;${styleInformation.orinGrouping}&nbsp;</li>
 		<li class="txt_attr_name" style="width: 25%;"><b><fmt:message
-			key="label.styleInfo.deptNumber" /></b> ${styleInformation.deptNo}</li>
+			key="label.styleInfo.deptNumber" /></b>&nbsp; ${styleInformation.deptNo}&nbsp;</li>
 		<li class="txt_attr_name" style="width: 25%;"><b><fmt:message
-			key="label.styleInfo.vendorName" /></b> ${styleInformation.vendorName}</li>
+			key="label.styleInfo.vendorName" /></b>&nbsp; ${styleInformation.vendorName}&nbsp;</li>
 </ul>
 <ul class="car_info"
 	style="font-size: 11px; padding: 0 0 10px !important;">
 	<li class="ctxt_attr_name" style="width: 30%;"><b><fmt:message
-		key="label.styleInfo.styleNumber" /></b> ${styleInformation.styleNo}</li>
+		key="label.styleInfo.styleNumber" /></b>&nbsp; ${styleInformation.styleNo}&nbsp;</li>
 	<li class="txt_attr_name" style="width: 25%;"><b><fmt:message
-		key="label.styleInfo.class" /></b> ${styleInformation.imageClass}</li>
+		key="label.styleInfo.class" /></b>&nbsp; ${styleInformation.imageClass}&nbsp;</li>
 	<li class="txt_attr_name"><b><fmt:message
-		key="label.styleInfo.vendorNumber" /></b> ${styleInformation.vendorNo}</li>
+		key="label.styleInfo.vendorNumber" /></b>&nbsp; ${styleInformation.vendorNo}&nbsp;</li>
 
 </ul>
 
@@ -247,10 +247,10 @@ function releseLockedPet(loggedInUser,releseLockedPetURL){
 	style="font-size: 11px; padding: 0 0 10px !important;">
 	
 	<li class="txt_attr_name" style="width: 25%;"><b><fmt:message
-		key="label.styleInfo.omniChannelVendor" /></b> ${styleInformation.omniChannelVendor}</li>
+		key="label.styleInfo.omniChannelVendor" /></b> &nbsp;${styleInformation.omniChannelVendor}&nbsp;</li>
 	<li class="txt_attr_name" ><b><fmt:message
-		key="label.styleInfo.vendorProvidedImage" /></b> ${styleInformation.vendorProvidedImage}</li>
-<li class="txt_attr_name" style="margin-left: 120px;"><b><fmt:message key="label.styleInfo.vendorProvidedSample"/></b> ${styleInformation.vendorProvidedSample}</li>
+		key="label.styleInfo.vendorProvidedImage" /></b>&nbsp; ${styleInformation.vendorProvidedImage}&nbsp;</li>
+<li class="txt_attr_name" style="margin-left: 120px;"><b>&nbsp;<fmt:message key="label.styleInfo.vendorProvidedSample"/></b> ${styleInformation.vendorProvidedSample}&nbsp;</li>
 
 
 </ul>
