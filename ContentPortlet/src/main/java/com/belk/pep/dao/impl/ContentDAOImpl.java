@@ -1337,7 +1337,9 @@ public class ContentDAOImpl implements ContentDAO{
             
             //Hibernate provides a createSQLQuery method to let you call your native SQL statement directly.
             final Query query = session.createSQLQuery(xqueryConstants.getStyleAndStyleColorAndSKU(roleName, orinNumber));
+            LOGGER.info("Updated query with bind variable ***." );
             if(query != null){
+                query.setParameter("orinNo", orinNumber);
                 query.setFetchSize(100);
             final List<Object[]> rows = query.list();
                 if (rows != null) {
@@ -1564,7 +1566,7 @@ public class ContentDAOImpl implements ContentDAO{
             final Query query =session.createSQLQuery(xqueryConstants.getStyleInformation(orinNumber));
             if(query!=null)
             {
-            //    query.setParameter("orinNo", orinNumber);
+            query.setParameter("orinNo", orinNumber);
                 query.setFetchSize(10);
                 rows = query.list();
             }
