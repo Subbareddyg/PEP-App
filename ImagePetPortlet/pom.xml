@@ -267,7 +267,7 @@
 <scm>
  	    <connection>scm:git:ssh://git@bitbucket.org/belk_ecom/pep-application</connection>
 	            <developerConnection>scm:git:ssh://git@bitbucket.org/belk_ecom/pep-application</developerConnection>
-		    		<tag>pep-1.0.0.37-SNAPSHOT</tag>
+		    		<tag>HEAD</tag>
 				    </scm>
 
 			<distributionManagement>
