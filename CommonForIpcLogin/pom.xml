@@ -23,11 +23,11 @@
 			</plugin>
 		</plugins>
 	</build>
-<>
+<scm>
  	    <connection>:git:ssh://git@bitbucket.org/belk_ecom/pep-application</connection>
 	            <developerConnection>:git:ssh://git@bitbucket.org/belk_ecom/pep-application</developerConnection>
 		    		<tag>HEAD</tag>
-				    </>
+					</scm>
 
 			<distributionManagement>
 					<repository>
