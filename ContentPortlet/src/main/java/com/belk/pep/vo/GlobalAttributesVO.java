@@ -923,5 +923,19 @@ public class GlobalAttributesVO implements Serializable {
     }
 
 
+    private String petStatus;
 
+	/**
+	 * @return the petStatus
+	 */
+	public String getPetStatus() {
+		return petStatus;
+	}
+
+	/**
+	 * @param petStatus the petStatus to set
+	 */
+	public void setPetStatus(String petStatus) {
+		this.petStatus = petStatus;
+	}
 }

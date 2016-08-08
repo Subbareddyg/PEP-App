@@ -38,7 +38,7 @@
 						<td><b rel="groupName"><fmt:message key="addcomponent.screen.level.groupingName" /></b></th>
 						<td>
 							<span class="editable" data-type="text" data-field-name="groupName" data-required="true"><c:out value="${groupDetailsForm.groupName}" /></span>
-							<div class="maxChars hidden"><span id="nameCurChars">0</span> Max Chars: <span id="nameMaxChars">0</span></div>
+							<div class="maxChars hidden"><div class="charlimit">Current Chars:<span id="nameCurChars">0</span> Max Chars: <span id="nameMaxChars">0</span></div></div>
 						</td>
 						<td></td>
 						<td></td>
@@ -47,7 +47,7 @@
 						<td><b rel="groupDesc"><fmt:message key="addcomponent.screen.level.groupingDesc" /></b></th>
 						<td>
 							<span class="editable" data-type="textarea" data-field-name="groupDesc" data-required="true"><c:out value="${groupDetailsForm.groupDesc}" /></span>
-							<div class="maxChars hidden"><div class="charlimit">Current Chars: <span id="descCurChars">0</span> Min Chars:<span id="descMinChars">0</span> Max Chars: <span id="descMaxChars">0</span></div>
+							<div class="maxChars hidden"><div class="charlimit">Current Chars: <span id="descCurChars">0</span> Min Chars:<span id="descMinChars">0</span> Max Chars: <span id="descMaxChars">0</span></div></div>
 						</td>
 						<td></td>
 						<td></td>
@@ -65,7 +65,7 @@
 					<c:if test="${groupDetailsForm.groupType == 'BCG'}">
 						<tr>
 							<th><b rel="startDate"><fmt:message key="addcomponent.screen.level.startDate" /></b></th>
-							<td><span class="editable" data-type="date" data-field-name="startDate" data-required="true"><c:out value="${groupDetailsForm.groupLaunchDate}" /></td>
+							<td><span class="editable" data-type="date" data-field-name="startDate"><c:out value="${groupDetailsForm.groupLaunchDate}" /></td>
 							<td><b><fmt:message key="addcomponent.screen.level.endDate" /></b></td>
 							<td><span class="editable" data-type="date" data-field-name="endDate"><c:out value="${groupDetailsForm.endDate}" /></span></td>
 						</tr>

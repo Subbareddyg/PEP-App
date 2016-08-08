@@ -1131,6 +1131,7 @@ public class ContentController implements ResourceAwareController, EventAwareCon
 				final String contentState = pet.getContentState();
 				final String completionDate = pet.getCompletionDate();
 				final String petState = pet.getPetState();
+				final String imageState = pet.getImageState();
 				styleColor = new StyleColorVO();
 				styleColor.setEntryType(entryType);
 				styleColor.setParentStyleOrinNumber(childsParentOrinNumber);
@@ -1143,6 +1144,7 @@ public class ContentController implements ResourceAwareController, EventAwareCon
 				String contentStatusCode = setContentStatusCode(contentState);
 				styleColor.setContentStatusCode(contentStatusCode);
 				styleColor.setPetState(petState);
+				styleColor.setImageStatus(imageState);
 				styleColorList.add(styleColor);// Add all the StyleColor to the
 												// Style Color list
 				styleAndItsChildDisplay.setPackColorEntry("PackColor");
@@ -1186,6 +1188,7 @@ public class ContentController implements ResourceAwareController, EventAwareCon
 				final String contentState = pet.getContentState();
 				final String completionDate = pet.getCompletionDate();
 				final String petState = pet.getPetState();
+				final String imageState = pet.getImageState();
 				styleColor = new StyleColorVO();
 				styleColor.setEntryType(entryType);
 				styleColor.setParentStyleOrinNumber(childsParentOrinNumber);
@@ -1198,6 +1201,7 @@ public class ContentController implements ResourceAwareController, EventAwareCon
 				String contentStatusCode = setContentStatusCode(contentState);
 				styleColor.setContentStatusCode(contentStatusCode);
 				styleColor.setPetState(petState);
+				styleColor.setImageStatus(imageState);
 				styleColorList.add(styleColor);// Add all the StyleColor to the
 												// Style Color list
 				// LOGGER.info("styleColorList size.."+styleColorList.size());

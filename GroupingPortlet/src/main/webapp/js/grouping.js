@@ -217,8 +217,7 @@ var app = app || {};
 								
 				
 				$('#startDate').datepicker({
-					showOn: "button",
-					 showOn: "both",
+					showOn: "both",
 					buttonImage: app.Global.defaults.contextPath + "/img/iconCalendar.gif",
 					buttonImageOnly: true,
 					buttonText: "",
@@ -233,8 +232,7 @@ var app = app || {};
 				});
 				
 				$('#endDate').datepicker({
-					showOn: "button",
-					 showOn: "both",
+					showOn: "both",
 					buttonImage: app.Global.defaults.contextPath + "/img/iconCalendar.gif",
 					buttonImageOnly: true,
 					buttonText: "",
@@ -244,7 +242,7 @@ var app = app || {};
 							$( "#startDate" ).datepicker( "option", "maxDate", selectedDate );
 					},
 					onSelect : function(){
-						$('#endDate').prop('readonly',true);
+						$('#endDate').prop('readonly', true);
 					}
 				});
 				
@@ -456,6 +454,13 @@ var app = app || {};
 					});
 					
 					$('#startDate').prop('readonly', false); //for validation purpose making it editable again
+					
+					// CR ALM 3520, Start Date is not mandatory unless end date is filled up
+					if($('#endDate').val().trim().length){
+						$('#startDate').prop('required', true);
+					}else{
+						$('#startDate').prop('required', false);
+					} //CR ALM 3520 Ends
 					
 					if($('#createGroupForm')[0].checkValidity()){
 						e.preventDefault();  //preventing default form submission
@@ -817,8 +822,7 @@ var app = app || {};
 		},
 		
 		addAddlFields: function(){
-			$('.optional-fields').removeClass('optional-fields').addClass('added-fields');
-			$('#startDate').prop('required', true);
+			$('.optional-fields').removeClass('optional-fields').addClass('added-fields');	
 		},
 		
 		removeAddlFields: function(){
