@@ -1403,7 +1403,7 @@ public class ContentDAOImpl implements ContentDAO{
                          * MODIFICATION END BY AFUAXK4
                          * DATE: 02/05/2016
                          */
-    
+                        pet.setImageState(prop.getProperty("Image"+checkNull(row[11])));
                         petList.add(pet);
                     }
                     LOGGER.info("petList size..."+petList.size());
@@ -1473,6 +1473,7 @@ public class ContentDAOImpl implements ContentDAO{
                     styleAttributes.setGwp(checkNull(row[10]));
                     styleAttributes.setPwp(checkNull(row[11]));
                     styleAttributes.setPyg(checkNull(row[9]));
+                    styleAttributes.setPetStatus(checkNull(row[12]));
                 }
             }
 

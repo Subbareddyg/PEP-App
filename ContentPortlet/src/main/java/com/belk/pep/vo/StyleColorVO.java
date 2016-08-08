@@ -372,7 +372,21 @@ public class StyleColorVO implements Serializable {
     }
 
 
+    private String imageStatus;
 
+	/**
+	 * @return the imageStatus
+	 */
+	public String getImageStatus() {
+		return imageStatus;
+	}
+
+	/**
+	 * @param imageStatus the imageStatus to set
+	 */
+	public void setImageStatus(String imageStatus) {
+		this.imageStatus = imageStatus;
+	}
 
 
 

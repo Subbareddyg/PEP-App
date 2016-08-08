@@ -377,14 +377,31 @@ var app = app || {} ;
 				$('#edit-header').on('click', function(e){
 					
 					if($(this).hasClass('save')){
-						//triming all whitespaces
+						//trimming all white spaces
 						$('#fromHeaderEdit').find('input[type=text], textarea').each(function(){
 							$(this).val($(this).val().trim());
 						});
 						
+						// CR ALM 3520, Start Date is not mandatory unless end date is filled up
+						if($('#endDate').length && $('#startDate').length && $('#endDate').val().trim().length && !$('#startDate').val().trim().length){
+							$('#error-massege').html("Please enter start date.");
+							$('#errorBox').dialog({
+							   autoOpen: true, 
+							   modal: true,
+							   resizable: false,
+							   title : 'Group Header',
+							   dialogClass: "dlg-custom",
+							   buttons: {
+								  OK: function() {$(this).dialog("close");}
+							   },
+							});
+							return;
+						} //CR ALM 3520 Ends
+						
 						if(!$('#fromHeaderEdit')[0].checkValidity()){
 							$(this).attr('type', 'submit');
-							$(this).click();
+							//$(this).click();
+							e.preventDefault();
 						}else{
 							$(this).attr('type', 'button');
 							
@@ -423,7 +440,7 @@ var app = app || {} ;
 										}
 									}
 									
-									$('#group-header-message-area').html(message);
+									$('#group-header-message-area').html(message).fadeIn();
 									
 									app.GroupLandingApp.cleanupMessage($('#group-header-message-area'));
 									

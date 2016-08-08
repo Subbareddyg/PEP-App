@@ -55,7 +55,7 @@
 				<executions>
 					<execution>
 						<id>copy-resources</id>
-						
+
 						<phase>install</phase>
 						<goals>
 							<goal>copy-resources</goal>
@@ -81,9 +81,9 @@
 				</executions>
 			</plugin>
 
-			
-			
-			
+
+
+
 		</plugins>
 	</build>
 	<dependencies>
@@ -220,7 +220,7 @@
 			<version>3.12.1.GA</version>
 		</dependency>
 
-		
+
 		<dependency>
 			<groupId>com.google.code.gson</groupId>
 			<artifactId>gson</artifactId>
