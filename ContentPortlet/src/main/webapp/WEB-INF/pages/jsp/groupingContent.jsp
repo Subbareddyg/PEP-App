@@ -3101,13 +3101,13 @@ function toggleRows(currentRow, styleId, styleColorId){
 																			<c:set var="highlited" value=""/>
 																			<c:forEach  var="savedDropDownMap"  items="${categoryDisplayList.savedDropDownValuesMap}" >
 																				<c:set var="stSelected" value=""/>
-																				<c:if test="${dropDownMap.key ==savedDropDownMap.key}">
+																				<c:if test="${fn:toUpperCase(dropDownMap.key) ==fn:toUpperCase(savedDropDownMap.key)}">
 																					<c:set var="stSelected" value="selected='selected'"/>
 																					 <option value="${dropDownMap.key}"  <c:out value="${stSelected}"/> ><c:out value="${dropDownMap.value}"  escapeXml="false"/></option> 
 																					 <c:set var="highlited" value="${savedDropDownMap.key}"/>
 																				</c:if>                                                     
 					                                                        							</c:forEach>
-																			  <c:if test="${dropDownMap.key != highlited}">
+																			  <c:if test="${fn:toUpperCase(dropDownMap.key) != fn:toUpperCase(highlited)}">
 																			  	<option value="${dropDownMap.key}" /> <c:out value="${dropDownMap.value}"  escapeXml="false"/></option>
 																			</c:if>			
 																		</c:forEach>														
@@ -3121,13 +3121,13 @@ function toggleRows(currentRow, styleId, styleColorId){
 																			<c:set var="highlited" value=""/>
 																			<c:forEach  var="savedDropDownMap"  items="${categoryDisplayList.savedDropDownValuesMap}" >
 																				<c:set var="stSelected" value=""/>
-																				<c:if test="${dropDownMap.key ==savedDropDownMap.key}">
+																				<c:if test="${fn:toUpperCase(dropDownMap.key) ==fn:toUpperCase(savedDropDownMap.key)}">
 																					<c:set var="stSelected" value="selected='selected'"/>
 																					 <option value="${dropDownMap.key}"  <c:out value="${stSelected}"/> escapeXml="false"><c:out value="${dropDownMap.value}"  escapeXml="false"/></option> 
 																					 <c:set var="highlited" value="${savedDropDownMap.key}"/>
 																				</c:if>                                                     
 					                                                        </c:forEach>
-																			  <c:if test="${dropDownMap.key != highlited}">
+																			  <c:if test="${fn:toUpperCase(dropDownMap.key) != fn:toUpperCase(highlited)}">
 																			  	<option value="${dropDownMap.key}"/> <c:out value="${dropDownMap.value}"  escapeXml="false"/></option>
 																			</c:if>			
 																		</c:forEach>														
@@ -3158,7 +3158,7 @@ function toggleRows(currentRow, styleId, styleColorId){
 																	<c:forEach var="dropDownMap" items="${categoryDisplayList.radioButtonValuesMap}">	
 																		<c:if test="${categoryDisplayList.savedRadioButtonValuesMap.size() > 0 }" >
 																			<c:forEach var="savedDropDownMap" items="${categoryDisplayList.savedRadioButtonValuesMap}">	
-																		 	 <input type="radio"  id="paRadio_Id<%=k %><%=z %>"  name="paRadio<%=k %>" value="${dropDownMap.key}" <c:if test="${savedDropDownMap.key == dropDownMap.key}"> checked="checked"  </c:if>/><c:out value="${dropDownMap.value}" escapeXml="false"/>  &nbsp;&nbsp;		
+																		 	 <input type="radio"  id="paRadio_Id<%=k %><%=z %>"  name="paRadio<%=k %>" value="${dropDownMap.key}" <c:if test="${fn:toUpperCase(savedDropDownMap.key) == fn:toUpperCase(dropDownMap.key)}"> checked="checked"  </c:if>/><c:out value="${dropDownMap.value}" escapeXml="false"/>  &nbsp;&nbsp;		
 																		 	 </c:forEach>	
 																		</c:if>
 																		<c:if test="${categoryDisplayList.savedRadioButtonValuesMap.size() == 0 }" >
@@ -3232,13 +3232,14 @@ function toggleRows(currentRow, styleId, styleColorId){
 																			<c:set var="highlited" value=""/>
 																			<c:forEach  var="savedDropDownMap"  items="${blueMartiniAllList.savedDropDownValuesMap}" >
 																				<c:set var="stSelected" value=""/>
-																				 	<c:if test="${dropDownMap.key ==savedDropDownMap.key}">
+																				 	<c:if test="${fn:toUpperCase(dropDownMap.key) ==fn:toUpperCase(savedDropDownMap.key)}">
 																				 	<c:set var="stSelected" value="selected='selected'"/>
 																				 	 <option value="${dropDownMap.key}"  <c:out value="${stSelected}"/> ><c:out value="${dropDownMap.value}"  escapeXml="false"/></option>
 																				 		 <c:set var="highlited" value="${savedDropDownMap.key}"/>
 																				 	</c:if>
 					                                                        							</c:forEach>
-					                                                      	 					<c:if test="${dropDownMap.key != highlited}">
+					                                                      	 					<c:if test="${fn:toUpperCase(dropDownMap.key) != fn:toUpperCase(highlited)}">
+
 																			  	<option value="${dropDownMap.key}"  escapeXml="false" ><c:out value="${dropDownMap.value}" escapeXml="false"/></option>
 																			</c:if>																			  
 																		</c:forEach>														
@@ -3251,13 +3252,14 @@ function toggleRows(currentRow, styleId, styleColorId){
 																			<c:set var="highlited" value=""/>
 																			<c:forEach  var="savedDropDownMap"  items="${blueMartiniAllList.savedDropDownValuesMap}" >
 																				<c:set var="stSelected" value=""/>
-																				 	<c:if test="${dropDownMap.key ==savedDropDownMap.key}">
+																				 	<c:if test="${fn:toUpperCase(dropDownMap.key) ==fn:toUpperCase(savedDropDownMap.key)}">
 																				 	<c:set var="stSelected" value="selected='selected'"/>
 																				 	 <option value="${dropDownMap.key}"  <c:out value="${stSelected}"/> escapeXml="false" ><c:out value="${dropDownMap.value}"  escapeXml="false"/></option>
 																				 		 <c:set var="highlited" value="${savedDropDownMap.key}"/>
 																				 	</c:if>
 					                                                        </c:forEach>
-					                                                      	 			<c:if test="${dropDownMap.key != highlited}">
+					                                                      	 			<c:if test="${fn:toUpperCase(dropDownMap.key) != fn:toUpperCase(highlited)}">
+
 																			  	<option value="${dropDownMap.key}"  ><c:out value="${dropDownMap.value}" escapeXml="false"/></option>
 																			</c:if>																			  
 																		</c:forEach>														
@@ -3287,7 +3289,7 @@ function toggleRows(currentRow, styleId, styleColorId){
 																	<c:forEach var="bmdropDownMap" items="${blueMartiniAllList.radioButtonValuesMap}">
 																		<c:if test="${blueMartiniAllList.savedRadioButtonValuesMap.size() > 0 }" >
 																		<c:forEach var="bmsavedDropDownMap" items="${blueMartiniAllList.savedRadioButtonValuesMap}">	
-																	 	 <input type="radio"  id="bmRadio_Id<%=c %><%=l %>"  name="bmRadio<%=c %>" value="${bmdropDownMap.key}" escapeXml="false" <c:if test="${bmsavedDropDownMap.key == bmdropDownMap.key}"> checked="checked"  </c:if>/><c:out value="${bmdropDownMap.value}" escapeXml="false"/>  &nbsp;&nbsp;		
+																	 	 <input type="radio"  id="bmRadio_Id<%=c %><%=l %>"  name="bmRadio<%=c %>" value="${bmdropDownMap.key}" escapeXml="false" <c:if test="${fn:toUpperCase(bmsavedDropDownMap.key) == fn:toUpperCase(bmdropDownMap.key)}"> checked="checked"  </c:if>/><c:out value="${bmdropDownMap.value}" escapeXml="false"/>  &nbsp;&nbsp;		
 																	 	 </c:forEach>	
 																	 	</c:if>			
 																	 	<c:if test="${blueMartiniAllList.savedRadioButtonValuesMap.size() == 0 }" >
