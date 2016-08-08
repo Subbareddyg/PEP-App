@@ -239,7 +239,7 @@
 				</td>
 			</tr>
 			<tr class="optional-fields">
-				<td align="right">Launch Date <span class="red-text">(*)</span>:</td>
+				<td align="right">Launch Date <!-- Commented out for ALM 3520 <span class="red-text">(*)</span> -->:</td>
 				<td>
 					<input type="text" name="startDate" id="startDate" value="" class="" style="width: 80%"/>
 				</td>

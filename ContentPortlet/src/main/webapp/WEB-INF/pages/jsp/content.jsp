@@ -974,7 +974,7 @@
 		
 	   
 	 //on click of the Style Color  Data row submit button ,pass the style color orin number ,styleColor  pet status and logger in user to the update content pet style color  status by caling webservice
-		function getUpdateStyleColorContentPetStatusWebserviceResponse(url,styleColorPetOrinNumber,styleColorPetContentStatus,user,roleName,clickedButtonId,colorRowCount){
+		function getUpdateStyleColorContentPetStatusWebserviceResponse(url,styleColorPetOrinNumber,styleColorPetContentStatus,user,roleName,clickedButtonId,colorRowCount,styleColorPetImageStatus){
  
 				var status = true;
 			  
@@ -987,6 +987,9 @@
 					status = false;
 					jAlert('Please submit style level before submitting the style color pet', 'Alert');
 					//alert("Please submit style level before submitting the Style Color Pet.");
+				} else if(roleName=='dca' && styleColorPetImageStatus != 'Completed' && $('#publisStatusCodePublishToWeb').is(':checked')){  
+					status = false;
+					jAlert('Please complete Image before approving the style color pet', 'Alert');
 				}
 				
 			if(status){
@@ -1008,7 +1011,8 @@
                 data: { 
                           selectedStyleColorOrinNumber:styleColorPetOrinNumber,
                           styleColorPetContentStatus:styleColorPetContentStatus,
-                          loggedInUser:user
+                          loggedInUser:user,
+                          petState:$('#publisStatusCodePublishToWeb:checked').val()
                        },
                         
                     
@@ -1416,8 +1420,8 @@
                           pimradioValues:finalPIMRadioString,
                           bmradioValues:finalBMRadioString,
                           channelExclusive:channelExcVal,
-                          bopisSelectedValue:bopisValue,
-                          petState:$('#publisStatusCodePublishToWeb:checked').val()
+                          bopisSelectedValue:bopisValue
+                          
                        },
                     	   success: function(data){		
                     	  						var json = $.parseJSON(data);  
@@ -1555,13 +1559,7 @@
 		 		var petStatusCode =$('[name=hdnPETStatusCode]:last').val();
 		 		var petStatus = $('#publisStatusCodePublishToWeb:checked').val();
 		 		
-		 		if($('#publisStatusCodePublishToWeb').is(':checked')){
-		 		
-		 			if(isStyleColorOpen == 'true'){
-		 				jAlert('Please complete the StyleColor before Publishing to Web', 'Alert');
-		 				
-		 				return;	
-		 			}
+		 		if($('#publisStatusCodePublishToWeb').is(':checked')){		 				 			
 		 			
 		 			if(petStatusCode == 'Deactivated'){
 		 				jAlert('Please ReInitiate the Style before Publishing to Web', 'Alert');
@@ -2228,7 +2226,7 @@ function clickListenerContent(e){
 									<c:if test="${contentDisplayForm.roleName != 'vendor'}">
                                 	<div style="float:right;margin-right:35px; margin:5px">
 										<label style="margin-right:15px"><input type="checkbox" id="publisStatusCodePublishToWeb" name="publisStatusCodePublishToWeb" style="margin:0;" value="09"
-										<c:if test="${contentDisplayForm.styleInformationVO.overallStatusCode == '09'}"> checked=checked </c:if> 
+										<c:if test="${contentDisplayForm.styleInformationVO.overallStatusCode == '09' || contentDisplayForm.globalAttributesDisplay.petStatus == '09'}"> checked=checked </c:if> 
 										<c:if test="${contentDisplayForm.roleName == 'readonly'}"> disabled="disabled" </c:if> /> <b>Publish to Web (Skip CMP Task)</b></label>
 									</div>
 									</c:if>
@@ -2645,7 +2643,7 @@ function clickListenerContent(e){
 															   <input type="hidden" id="styleColorOrinNumberId" name="styleColorOrinNumber" value="${styleDisplayColorList.orinNumber}"></input>                                                                                       
 																<c:if test="${styleDisplayColorList.petState == 'Initiated' || styleDisplayColorList.petState == 'Ready_For_Review'}">
 																	<input type="hidden" name="hdnStyleColorOpen" id="hdnStyleColorOpen" value="true"/>
-																</c:if>
+																</c:if>																
 															   <td><c:out value="${contentDisplayForm.styleInformationVO.styleId}"/></td>                                                                                         
 															   <td><c:out value="${styleDisplayColorList.color}"/></td> 
 															   <td><c:out value="${styleDisplayColorList.vendorSize}" /></td>                                                                                        
@@ -2658,16 +2656,16 @@ function clickListenerContent(e){
 																    
 																	 <c:when test="${contentDisplayForm.roleName == 'vendor'}">
 																   
-																	    <td><input type="button"    id="styleColorSubmitButtonId<%= colorRows %>"   name="styleColorSubmitButtonId<%= colorRows %>"  value="Submit"   style="width: 140px; height:30px" onclick="javascript:getUpdateStyleColorContentPetStatusWebserviceResponse('${updateContentPetStyleColorDataStatus}','<c:out value="${styleDisplayColorList.orinNumber}"/>','<c:out value="${styleDisplayColorList.contentStatusCode}"/>','<c:out value="${contentDisplayForm.pepUserId}"/>','vendor',this.id,<%= colorRows %>)"/></td>
+																	    <td><input type="button"    id="styleColorSubmitButtonId<%= colorRows %>"   name="styleColorSubmitButtonId<%= colorRows %>"  value="Submit"   style="width: 140px; height:30px" onclick="javascript:getUpdateStyleColorContentPetStatusWebserviceResponse('${updateContentPetStyleColorDataStatus}','<c:out value="${styleDisplayColorList.orinNumber}"/>','<c:out value="${styleDisplayColorList.contentStatusCode}"/>','<c:out value="${contentDisplayForm.pepUserId}"/>','vendor',this.id,<%= colorRows %>,'<c:out value="${styleDisplayColorList.imageStatus}"/>')"/></td>
 																	     <input type="hidden" id="styleColorSubmitButtonId<%= colorRows %>"  name="styleColorSubmitButtonId<%= colorRows %>"  value="<c:out value="styleColorSubmitButtonId-${styleDisplayColorList.orinNumber}"/>"></input> 
 																    </c:when>
 																    <c:when test="${contentDisplayForm.roleName == 'dca'}">
 																   
-																	    <td><input type="button"    id="styleColorApproveButtonId<%= colorRows %>"  class="petColorApproveButtonClass<%= colorRows %>" name="styleColorApproveButtonId<%= colorRows %>"  value="Approve"   style="width: 140px; height:30px" onclick="javascript:getUpdateStyleColorContentPetStatusWebserviceResponse('${updateContentPetStyleColorDataStatus}','<c:out value="${styleDisplayColorList.orinNumber}"/>','<c:out value="${styleDisplayColorList.contentStatusCode}"/>','<c:out value="${contentDisplayForm.pepUserId}"/>','dca',this.id,<%= colorRows %>)"/></td>
+																	    <td><input type="button"    id="styleColorApproveButtonId<%= colorRows %>"  class="petColorApproveButtonClass<%= colorRows %>" name="styleColorApproveButtonId<%= colorRows %>"  value="Approve"   style="width: 140px; height:30px" onclick="javascript:getUpdateStyleColorContentPetStatusWebserviceResponse('${updateContentPetStyleColorDataStatus}','<c:out value="${styleDisplayColorList.orinNumber}"/>','<c:out value="${styleDisplayColorList.contentStatusCode}"/>','<c:out value="${contentDisplayForm.pepUserId}"/>','dca',this.id,<%= colorRows %>,'<c:out value="${styleDisplayColorList.imageStatus}"/>')"/></td>
 																	    <input type="hidden" id="styleColorApproveButtonId<%= colorRows %>"  name="styleColorApproveButtonId<%= colorRows %>"   value="<c:out value="styleColorApproveButtonId-${styleDisplayColorList.orinNumber}"/>"></input> 
 																    </c:when>
 																    <c:when test="${contentDisplayForm.roleName == 'readonly'}">
-																	    <td><input type="button"  id="styleColorSubmit" name="submitStyleColorData"  value="Submit"   style="width: 140px; height:30px" onclick="javascript:getUpdateStyleColorContentPetStatusWebserviceResponse('${updateContentPetStyleColorDataStatus}','<c:out value="${styleDisplayColorList.orinNumber}"/>','<c:out value="${styleDisplayColorList.contentStatusCode}"/>','<c:out value="${contentDisplayForm.pepUserId}"/>','<c:out value="${contentDisplayForm.roleName}"/>', '', '')" disabled="disabled"/></td>
+																	    <td><input type="button"  id="styleColorSubmit" name="submitStyleColorData"  value="Submit"   style="width: 140px; height:30px" onclick="javascript:getUpdateStyleColorContentPetStatusWebserviceResponse('${updateContentPetStyleColorDataStatus}','<c:out value="${styleDisplayColorList.orinNumber}"/>','<c:out value="${styleDisplayColorList.contentStatusCode}"/>','<c:out value="${contentDisplayForm.pepUserId}"/>','<c:out value="${contentDisplayForm.roleName}"/>', '', '','<c:out value="${styleDisplayColorList.imageStatus}"/>')" disabled="disabled"/></td>
 																    </c:when>
 																    <c:otherwise><td>&nbsp;</td></c:otherwise>
 								                               </c:choose>                                                                                                                                                                               
