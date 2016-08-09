@@ -2225,7 +2225,7 @@ public class XqueryConstants {
                     +"   VenName Vendor_Name, " 
                     +"   i.Vendor_Sytle Style_Id, " 
                     +"   I.Class_Id, " 
-                    +"   i.VenId Vendor_Id, " 
+                    +"   i.id Vendor_Id, " 
                     +"   i.DESCRIPTION, " 
                     +"   i.Omnichannelindicator Omnichannel_Vendor, " 
                     +"   i.Vendor_Image, " 
@@ -2335,7 +2335,7 @@ public class XqueryConstants {
         queryBuffer.append("    AGC.DEF_DEPT_ID DEPT_ID,                                                                                                                ");
         queryBuffer.append("    AGC.DEF_PRIMARYSUPPLIERVPN VENDOR_STYLE,                                                                                                ");
         queryBuffer.append("    AGC.ENTRY_TYPE GROUP_TYPE,                                                                                                              ");
-        queryBuffer.append("  s.VenId,                                                                                                                                  ");
+        queryBuffer.append("  AGC.DEF_PRIMARY_SUPPLIER_ID VenId,                                                                                                                                  ");
         queryBuffer.append("    s.VenName,                                                                                                                              ");
         queryBuffer.append("    s.OmnichannelIndicator,                                                                                                                 ");
         queryBuffer.append("    AIC.CLASS_ID,                                                                                                                           ");
@@ -2382,8 +2382,6 @@ public class XqueryConstants {
         queryBuffer.append("        XMLTABLE('for $i in $XML_DATA/pim_entry/entry   return $i' passing sup.xml_data AS \"XML_DATA\"                                       ");
         queryBuffer.append("                    COLUMNS Id VARCHAR2(20) path 'Supplier_Ctg_Spec/Id',                                                                                  ");
         queryBuffer.append("                    VenName VARCHAR2(20) path 'Supplier_Ctg_Spec/Name',                                                                                   ");
-        queryBuffer.append("                    VenId VARCHAR2(20) path 'Supplier_Ctg_Spec/VEN_Id',                                                                                   ");
-        queryBuffer.append("                    Site_Name VARCHAR2(50) Path 'Supplier_Ctg_Spec/Name',                                                                                 ");
         queryBuffer.append("                    Sample_Image VARCHAR2(50) Path 'Supplier_Site_Spec/Omni_Channel/Vendor_Image_or_Sample_Indicator',                                    ");
         queryBuffer.append("                    Image_Indicator VARCHAR2(50) Path 'Supplier_Site_Spec/Omni_Channel/Image_Certification',                                              ");
         queryBuffer.append("                    Sample_Indicator VARCHAR2(50) Path 'Supplier_Site_Spec/Omni_Channel/Return_Sample_Indicator',                                         ");
@@ -2996,6 +2994,9 @@ public class XqueryConstants {
     }
     
     
+    /**
+     * @return String
+     */
     public static String getGroupGlobalAttributes(){
         StringBuilder query = new StringBuilder();
         
