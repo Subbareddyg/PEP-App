@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.belk.pep</groupId>
 	<artifactId>pep</artifactId>
-	<version>1.0.0.139</version>
+	<version>1.0.0.140-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>Belk PEP</name>
 	<description>Belk Product Enrichment Portal Applications</description>
@@ -48,7 +48,7 @@
 	<scm>
  	    <connection>scm:git:ssh://git@bitbucket.org/belk_ecom/pep-application</connection>
 	            <developerConnection>scm:git:ssh://git@bitbucket.org/belk_ecom/pep-application</developerConnection>
-		    		<tag>pep-1.0.0.139</tag>
+		    		<tag>HEAD</tag>
 				    </scm>
 
 			<distributionManagement>
