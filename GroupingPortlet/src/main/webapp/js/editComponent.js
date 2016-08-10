@@ -398,6 +398,7 @@ var app = app || {} ;
 							return;
 						} //CR ALM 3520 Ends
 						
+						
 						if(!$('#fromHeaderEdit')[0].checkValidity()){
 							$(this).attr('type', 'submit');
 							//$(this).click();
@@ -420,41 +421,46 @@ var app = app || {} ;
 								return;
 							}
 							
-							$(this).val('Saving..').css({opacity: 0.5});
-								app.GroupFactory.updateHeader($('#fromHeaderEdit').serialize())
-								.done(function(result){
-									//console.log(result);
-									if(!result.length){
-										$('#group-header-message-area').html(app.GroupLandingApp.buildMessage('Error in updating group header details', 'error'))
-											.fadeIn('slow');
-											return;
-									}
-									var response = result.length ? $.parseJSON(result): {};
-									var message = '';
-									
-									if(response.status){
-										if(response.status == 'SUCCESS'){
-											message = app.GroupLandingApp.buildMessage(response.description ? response.description : 'Update Success', 'success');
-										}else{
-											message= app.GroupLandingApp.buildMessage(response.description ? response.description : 'Update Error', 'success');
+							var groupHeaderData = $('#fromHeaderEdit').serialize();
+							
+							/** CR ALM 3520, 
+							* Code block to get user confirmation when blank start date for BCG is going to be submitted
+							* When going forward with blank start date after user confirmation, it is being set as current locale date
+							*/
+							if($('#groupType').val().trim() == 'BCG'){
+								if(!$('#startDate').val().trim().length){
+									console.log($('#startDate').val().trim().length);
+									$('#error-massege').html("Are you sure that you would like to continue without adding a Launch Date?");
+									$('#errorBox').dialog({
+									   autoOpen: true, 
+									   modal: true,
+									   resizable: false,
+									   dialogClass: "dlg-custom",
+									   title: 'Create Grouping',
+									   buttons: {
+											"No": function() {
+												$(this).dialog("close");
+											},
+											"Yes": function() {
+												$(this).dialog("close");
+												//modifying the startDate to current Locale date as per CR ALM 3520
+												var dtString = new Date().toLocaleDateString();
+												groupHeaderData = app.GroupLandingApp.replaceFieldValue('&startDate=&', groupHeaderData, 'startDate', dtString);
+												
+												$('[data-field-name="startDate"]').text(dtString);
+												
+												//submitting and creating grouping
+												_saveGroupingHeader(groupHeaderData);
+												
+											}
 										}
-									}
-									
-									$('#group-header-message-area').html(message).fadeIn();
-									
-									app.GroupLandingApp.cleanupMessage($('#group-header-message-area'));
-									
-									$('#cancel-edit-header').trigger('save.success');
-									
-								}).error(function(jqXHR, textStatus, errorThrown){
-									$('#group-header-message-area').html(
-										app.GroupLandingApp.buildMessage(jqXHR.status + ' - ' +  textStatus + ' -' + errorThrown, 'error')
-									);
-									
-									app.GroupLandingApp.cleanupMessage($('#group-header-message-area'));
-								}).complete(function(){
-									$('#edit-header').val('Edit').css({opacity: 1});
-								});
+									});
+								}else{
+									_saveGroupingHeader(groupHeaderData);
+								}
+							}else{
+								_saveGroupingHeader(groupHeaderData);
+							} //CR ALM 3520 Ends
 						}
 					}else{
 						$('.editable').each(function(){
@@ -560,6 +566,45 @@ var app = app || {} ;
 						$(this).val('Save').addClass('save');
 					}	
 				});
+				
+				//private method to update group header
+				function _saveGroupingHeader(serializedData){
+					$(this).val('Saving..').css({opacity: 0.5});
+					app.GroupFactory.updateHeader(serializedData)
+					.done(function(result){
+						//console.log(result);
+						if(!result.length){
+							$('#group-header-message-area').html(app.GroupLandingApp.buildMessage('Error in updating group header details', 'error'))
+								.fadeIn('slow');
+								return;
+						}
+						var response = result.length ? $.parseJSON(result): {};
+						var message = '';
+						
+						if(response.status){
+							if(response.status == 'SUCCESS'){
+								message = app.GroupLandingApp.buildMessage(response.description ? response.description : 'Update Success', 'success');
+							}else{
+								message= app.GroupLandingApp.buildMessage(response.description ? response.description : 'Update Error', 'success');
+							}
+						}
+						
+						$('#group-header-message-area').html(message).fadeIn();
+						
+						app.GroupLandingApp.cleanupMessage($('#group-header-message-area'));
+						
+						$('#cancel-edit-header').trigger('save.success');
+						
+					}).error(function(jqXHR, textStatus, errorThrown){
+						$('#group-header-message-area').html(
+							app.GroupLandingApp.buildMessage(jqXHR.status + ' - ' +  textStatus + ' -' + errorThrown, 'error')
+						);
+						
+						app.GroupLandingApp.cleanupMessage($('#group-header-message-area'));
+					}).complete(function(){
+						$('#edit-header').val('Edit').css({opacity: 1});
+					});
+				}
 				
 				$('#cancel-edit-header').on('click', function(e){
 					$('.editable').each(function(){
