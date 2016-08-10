@@ -473,47 +473,84 @@ var app = app || {};
 						
 						var checkString = [];
 						 
-						 //serializing All checkbox value in one hidden field  
-						 $('.item-check:checked').each(function(){
+						//serializing All checkbox value in one hidden field  
+						$('.item-check:checked').each(function(){
 							 checkString.push($(this).val());
-						 });
+						});
 						$('#splitCheckboxValue').val(checkString.toString());
 						
 						
 						var selectedComponentLists =  $('#selectedComponentForm').serialize();
 						var createFormValues = $('#createGroupForm').serialize();
 						
-						try{
-							$('#btnCreateGroup').prop('disabled', true).css('opacity','0.5').val('Saving..');
-							app.GroupFactory.createGroup(createFormValues + '&' + selectedComponentLists)
-								.done(function(result){
-									$('#btnCreateGroup').prop('disabled', false).css('opacity','1').val('Save');
-									var resultJSON = $.parseJSON(result);
-									//console.log(resultJSON);
-									
-									//handling and taking care of the response 
-									_super.handleGroupCreationResponse(resultJSON, $('#groupType').val());
-
-								}).error(function(){
-									$('#btnCreateGroup').prop('disabled', false).css('opacity','1').val('Save');
-									if($('#groupType').val()=='BCG'){
-										$('#dlgGroupCreate').dialog( "option", "minHeight", 500 );
-										$('#dlgGroupCreate').dialog( "option", "height", 500 );
-									}else if($('#groupType').val()=='RCG'){
-										$('#dlgGroupCreate').dialog( "option", "minHeight", 447 );
-										$('#dlgGroupCreate').dialog( "option", "height", 447 );
-									}else{
-										$('#dlgGroupCreate').dialog( "option", "minHeight", 427 );
-										$('#dlgGroupCreate').dialog( "option", "height", 427 );
+						/** CR ALM 3520, 
+						* Code block to get user confirmation when blank start date for BCG is going to be submitted
+						* When going forward with blank start date after user confirmation, it is being set as current locale date
+						*/
+						if($('#groupType').val()=='BCG'){
+							if(!$('#startDate').val().trim().length){
+								$('#error-massege').html("Are you sure that you would like to continue without adding a Launch Date?");
+								$('#errorBox').dialog({
+								   autoOpen: true, 
+								   modal: true,
+								   resizable: false,
+								   dialogClass: "dlg-custom",
+								   title: 'Create Grouping',
+								   buttons: {
+										"No": function() {
+											$(this).dialog("close");
+										},
+										"Yes": function() {
+											$(this).dialog("close");
+											//modifying the startDate to current Locale date as per CR ALM 3520
+											createFormValues = _super.replaceFieldValue('&startDate=&', createFormValues, 'startDate', new Date().toLocaleDateString());
+											//submitting and creating grouping
+											_submitCreateGrouping(createFormValues + '&' + selectedComponentLists);
+											
+										}
 									}
-									$('#group-creation-messages').html(_super.buildMessage('Group Creation Error', 'error'));									
 								});
-								
-						}catch(ex){
-							console.log(ex.message);
-						}
+							}else{
+								_submitCreateGrouping(createFormValues + '&' + selectedComponentLists);
+							}
+						}else{
+							_submitCreateGrouping(createFormValues + '&' + selectedComponentLists);
+						} //CR ALM 3520 Ends
 					}
 				});
+				
+				//private method to submit and create new grouping
+				function _submitCreateGrouping(serializedData){
+					try{
+						$('#btnCreateGroup').prop('disabled', true)/*.css('opacity','0.5')*/.val('Saving..');
+						app.GroupFactory.createGroup(serializedData)
+							.done(function(result){
+								$('#btnCreateGroup').prop('disabled', false)/*.css('opacity','1')*/.val('Save');
+								var resultJSON = $.parseJSON(result);
+								//console.log(resultJSON);
+								
+								//handling and taking care of the response 
+								_super.handleGroupCreationResponse(resultJSON, $('#groupType').val());
+
+							}).error(function(){
+								$('#btnCreateGroup').prop('disabled', false).css('opacity','1').val('Save');
+								if($('#groupType').val()=='BCG'){
+									$('#dlgGroupCreate').dialog( "option", "minHeight", 500 );
+									$('#dlgGroupCreate').dialog( "option", "height", 500 );
+								}else if($('#groupType').val()=='RCG'){
+									$('#dlgGroupCreate').dialog( "option", "minHeight", 447 );
+									$('#dlgGroupCreate').dialog( "option", "height", 447 );
+								}else{
+									$('#dlgGroupCreate').dialog( "option", "minHeight", 427 );
+									$('#dlgGroupCreate').dialog( "option", "height", 427 );
+								}
+								$('#group-creation-messages').html(_super.buildMessage('Group Creation Error', 'error'));									
+							});
+							
+					}catch(ex){
+						console.log(ex.message);
+					}
+				}
 				
 				/**
 					* Code to handle dept list and their selection procedures
@@ -747,7 +784,7 @@ var app = app || {};
 				
 			}catch(ex){
 				console.log(ex.message);
-			}	
+			}
 		},
 		
 		searchDepts: function(){
@@ -931,6 +968,15 @@ var app = app || {};
 				}
 											
 			}
+		},
+		
+		//static method to replace particular key and value from a serialized string
+		replaceFieldValue: function(needle, heyStack, newKey, newValue){
+			var startPos = heyStack.indexOf(needle);
+			var str1 = heyStack.substring(0, startPos);
+			var str2 = heyStack.substring(startPos + (needle.length -1), heyStack.length);
+			
+			return str1 + '&' + newKey + '=' + newValue + str2;
 		},
 		
 		init: function(){
