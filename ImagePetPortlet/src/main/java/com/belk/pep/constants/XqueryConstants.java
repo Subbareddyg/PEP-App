@@ -1,9 +1,7 @@
 package com.belk.pep.constants;
 
-//import java.util.logging.Logger;
 import org.apache.log4j.Logger;
 
-import com.belk.pep.dao.ImageRequestDAO;
 
 /**
  * The Class XqueryConstants.
@@ -118,7 +116,7 @@ public class XqueryConstants {
             +"  		i.PRIMARY_SUPPLIER_ID,                                                                                            "
             +"  		i.dept_id,                                                                                                        "
             +"  		i.ENTRY_TYPE,                                                                                                     "
-            +"  		s.VenId,                                                                                                          "
+            +"  		i.PRIMARY_SUPPLIER_ID VenId,                                                                                                          "
             +"  		i.Class_Id,                                                                                                       "
             +"  		s.OmnichannelIndicator,                                                                                           "
             +"  		s.VenName,                                                                                                        "
@@ -130,7 +128,7 @@ public class XqueryConstants {
             +"  		passing sup.xml_data AS \"XML_DATA\" COLUMNS                                                                        "
             +"  		Id VARCHAR2(20) path 'Supplier_Ctg_Spec/Id',                                                                      "
             +"  		VenName VARCHAR2(20) path 'Supplier_Ctg_Spec/Name',                                                               "
-            +"  		VenId VARCHAR2(20) path 'Supplier_Ctg_Spec/VEN_Id',                                                               "
+        
             +"  		OmnichannelIndicator VARCHAR(2) path 'if (Supplier_Site_Spec/Omni_Channel/Omni_Channel_Indicator eq \"true\") then \"Y\" else \"N\"' ) s "
             +"  	  WHERE i.PRIMARY_SUPPLIER_ID = sup.MDMID                                                                             "
             +"  	  )                                                                                                                   "
@@ -150,7 +148,7 @@ public class XqueryConstants {
             +"  	WHERE i.ENTRY_TYPE = t.typ                                                                                            "
             +"  	ORDER BY i.Style_Id, t.indx ";
 
-        
+       
         return STYLE_INFO_QUERY;    
         
     }
@@ -855,7 +853,7 @@ public class XqueryConstants {
         final String GROUPING_INFO_QUERY = " SELECT DISTINCT AGC.MDMID GROUP_ID, "+
         	" AGC.DEF_DEPT_ID DEPT_ID, "+
         	" AGC.DEF_PRIMARYSUPPLIERVPN VENDOR_STYLE, "+
-        	" AGC.ENTRY_TYPE GROUP_TYPE, s.VenId, s.VenName, s.OmnichannelIndicator, "+
+        	" AGC.ENTRY_TYPE GROUP_TYPE, AGC.DEF_PRIMARY_SUPPLIER_ID VenId, s.VenName, s.OmnichannelIndicator, "+
         	" AIC.CLASS_ID,  Vendor_Image,  Vendor_Sample,  AGC.GROUP_OVERALL_STATUS_CODE, "+
         	" AGC.GROUP_IMAGE_STATUS_CODE, "+
         	" AGC.GROUP_CONTENT_STATUS_CODE "+
@@ -877,7 +875,7 @@ public class XqueryConstants {
         	" (+)PET_XML, " +        	
         	" XMLTABLE('for $i in $XML_DATA/pim_entry/entry  return $i' passing sup.xml_data   " +   
         	" AS \"XML_DATA\" COLUMNS Id      VARCHAR2(20) path 'Supplier_Ctg_Spec/Id', VenName VARCHAR2(20) " +
-        	" path 'Supplier_Ctg_Spec/Name', VenId VARCHAR2(20) path 'Supplier_Ctg_Spec/VEN_Id', OmnichannelIndicator VARCHAR(2) path 'if "+
+        	" path 'Supplier_Ctg_Spec/Name',  OmnichannelIndicator VARCHAR(2) path 'if "+
         	" (Supplier_Site_Spec/Omni_Channel/Omni_Channel_Indicator eq \"true\") then \"Y\" else \"N\"' ) (+)s "+ 
         	" WHERE AGC.MDMID=? ";
 

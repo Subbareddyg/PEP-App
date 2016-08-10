@@ -2,7 +2,6 @@
 
 	<groupId>com.belk.pep</groupId>
 	<artifactId>ContentPortlet</artifactId>
-	
 	<version>1.0.0.137-SNAPSHOT</version>
 	<name>ContentPortlet</name>
 	<modelVersion>4.0.0</modelVersion>
