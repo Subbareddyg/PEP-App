@@ -3,11 +3,9 @@
 
 <head>
  
-     
-     
+          
      <title>WorkFlow Display.</title>
-	 
-	 
+	 	 
 
 <style type = "text/css">
 tr.children td{#border:1px dashed #ddd;}

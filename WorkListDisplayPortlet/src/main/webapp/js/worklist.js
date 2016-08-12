@@ -204,7 +204,15 @@ function onloaddept() {
 
 
 function depSearch(depOperation) {
-		if(depOperation == 'depSaveClose'){			
+		if(depOperation == 'depSaveClose'){	
+var dept_validation = [];
+			$.each($("input[name='chkSelectedDept']:checked"), function(){            
+			              dept_validation.push($(this).val());
+			          });			 
+			if(dept_validation.length>1){
+					alert('Please select only one department.');
+					return;
+			}		
 		$("#overlay_pageLoading1").show();
 			if('yes'==$("#AdseachClicked").val()){				
 				 var addepts = [];
