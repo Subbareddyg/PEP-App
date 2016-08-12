@@ -1252,6 +1252,13 @@ $('#deptTable').dialog({
 			$('#selectedDeptSearch').focus();
 		},
 		resizeStop: function(event, ui){
+			//VP 27 dialog content resizing code starts
+			var height = parseInt($(this).find ('.scrollbarsetdept').css('height'), 10);
+			height += parseInt(ui.size.height - ui.originalSize.height);
+			height = height < 100 ? 100 : height;
+			$(this).find('.scrollbarsetdept').css({height: height});
+			//VP 27 dialog content resizing code ends
+			
 			$(this).find('#deptTable').css({height: '100%'});
 		},
 	});
@@ -1441,6 +1448,13 @@ $('#deptTable').dialog({
 		$('#selectedDeptSearch').focus();
 	},
 	resizeStop: function(event, ui){
+		//VP 27 dialog content resizing code starts
+		var height = parseInt($(this).find ('.scrollbarsetdept').css('height'), 10);
+		height += parseInt(ui.size.height - ui.originalSize.height);
+		height = height < 100 ? 100 : height;
+		$(this).find('.scrollbarsetdept').css({height: height});
+		//VP 27 dialog content resizing code ends
+		
 		$(this).find('#deptTable').css({height: '100%'});
 	},
 });
@@ -1475,6 +1489,13 @@ function bindDeptDialog (){
 			$('#selectedDeptSearch').focus();
 		},
 		resizeStop: function(event, ui){
+			//VP 27 dialog content resizing code starts
+			var height = parseInt($(this).find ('.scrollbarsetdept').css('height'), 10);
+			height += parseInt(ui.size.height - ui.originalSize.height);
+			height = height < 100 ? 100 : height;
+			$(this).find('.scrollbarsetdept').css({height: height});
+			//VP 27 dialog content resizing code ends
+			
 			$(this).find('#deptTable').css({height: '100%'});
 		},
 	});
