@@ -4,8 +4,7 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 
-		
-    <script type="text/javascript" src="<%=response.encodeURL(request.getContextPath()+"/js/belk.pim.searchDialog.js")%>"></script> 
+		    <script type="text/javascript" src="<%=response.encodeURL(request.getContextPath()+"/js/belk.pim.searchDialog.js")%>"></script> 
 	<script type="text/javascript" src="<%=response.encodeURL(request.getContextPath()+"/js/dialogModal.js")%>"></script> 
 	
 	<script>hljs.initHighlightingOnLoad();</script>
