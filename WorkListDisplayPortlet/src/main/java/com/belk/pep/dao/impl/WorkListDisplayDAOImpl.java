@@ -1630,18 +1630,17 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
                        String petStyleState=row[15]!=null?row[15].toString():null;
                        String petImageState=row[16]!=null?row[16].toString():null;
                        String petContentState=row[17]!=null?row[17].toString():null;
-                       String earliestCompletionDate=row[18]!=null?row[18].toString():null;
-                       String productNameComplex=row[19]!=null?row[19].toString():null;
+                       String earliestCompletionDate=row[18]!=null?row[18].toString():null;                       
                        
-                       String existsInGroup = row[20]!=null?row[20].toString():"";
-                       String cfas = row[21]!=null?row[21].toString():"";
-                       String conversionFlag =row[22]!=null?row[22].toString():"";
+                       String existsInGroup = row[19]!=null?row[19].toString():"";
+                       String cfas = row[20]!=null?row[20].toString():"";
+                       String conversionFlag =row[21]!=null?row[21].toString():"";
                        if(conversionFlag.equalsIgnoreCase("true"))
                        {
                            sourceSystem = sourceSystem + ":C";
                        }
                         //  "orin.PRODUCT_NAME_COMPLEX " +
-                       String productName = (productNameStyle != null) ? productNameStyle : productNameComplex;
+                       String productName = (productNameStyle != null) ? productNameStyle : "";
                        
                        pet  = mapAdseDbPetsToPortal(parentStyleORIN,orinNumber,deptId,productName,
                            entryType,vendorName,vendorStyle,imageState,contentState,completionDate,
@@ -1721,18 +1720,16 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
                        String contentState=row[12]!=null?row[12].toString():null;
                        String completionDate=row[13]!=null?row[13].toString():null;  
                        String omniChannelIndicator=row[14]!=null?row[14].toString():null;
-                       String sourceSystem=row[15]!=null?row[15].toString():null;
-                       String colorDescPackColor=row[16]!=null?row[16].toString():null;
-                       String productNamePackColor=row[17]!=null?row[17].toString():null;
-                       String conversionFlag =row[18]!=null?row[18].toString():"";
-                       String existInGroup =row[19]!=null?row[19].toString():"";
+                       String sourceSystem=row[15]!=null?row[15].toString():null;                       
+                       String conversionFlag =row[16]!=null?row[16].toString():"";
+                       String existInGroup =row[17]!=null?row[17].toString():"";
                        if(conversionFlag.equalsIgnoreCase("true"))
                        {
                            sourceSystem = sourceSystem + ":C";
                        }
 
-                       String colorDesc = (colorDescStyleColor != null) ? colorDescStyleColor : colorDescPackColor;
-                       String productName = (productNameStyleColor != null) ? productNameStyleColor : productNamePackColor;
+                       String colorDesc = (colorDescStyleColor != null) ? colorDescStyleColor : "";
+                       String productName = (productNameStyleColor != null) ? productNameStyleColor : "";
                        
                        
                        pet  = mapAdseDbPetsToPortal(parentStyleORIN,orinNumber,deptId,productName,
@@ -2233,16 +2230,15 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
                        String req_Type=row[15]!=null?row[15].toString():null;
                        
                        String earliestCompletionDate=row[16]!=null?row[16].toString():null;                       
-                       String productNameComplex=row[17]!=null?row[17].toString():null;
                        
-                       String existsInGroup = row[18]!=null?row[18].toString():"";
-                       String cfas = row[19]!=null?row[19].toString():"";
-                       String conversionFlag =row[20]!=null?row[20].toString():"";
+                       String existsInGroup = row[17]!=null?row[17].toString():"";
+                       String cfas = row[18]!=null?row[18].toString():"";
+                       String conversionFlag =row[19]!=null?row[19].toString():"";
                        if(conversionFlag.equalsIgnoreCase("true"))
                        {
                            req_Type = req_Type + ":C";
                        }
-                       String productName = (productNameStyle != null) ? productNameStyle : productNameComplex;
+                       String productName = (productNameStyle != null) ? productNameStyle : "";
 
                        pet  = mapAdseDbPetsToPortalAdvSearch(parentStyleORIN, orinNumber, 
                            deptId, supplierId, productName, entryType, primaryUPC, 
@@ -2324,16 +2320,14 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
                        String vendorName=row[15]!=null?row[15].toString():null;                             
                        String omniChannelIndicator=row[16]!=null?row[16].toString():null;
                        
-                       String colorDescComplexPack=row[17]!=null?row[17].toString():null;
-                       String productNamePackColor = row[18]!=null?row[18].toString():null;
-                       String conversionFlag =row[19]!=null?row[19].toString():"";
-                       String existInGroup =row[20]!=null?row[20].toString():"";
+                       String conversionFlag =row[17]!=null?row[17].toString():"";
+                       String existInGroup =row[18]!=null?row[18].toString():"";
                        if(conversionFlag.equalsIgnoreCase("true"))
                        {
                            req_Type = req_Type + ":C";
                        }
-                       String origincalColorDesc = (null != colorDesc)?colorDesc:colorDescComplexPack;                       
-                       String productName = (productNameStyleColor != null) ? productNameStyleColor : productNamePackColor;
+                       String origincalColorDesc = (null != colorDesc)?colorDesc:"";                       
+                       String productName = (productNameStyleColor != null) ? productNameStyleColor : "";
                        
                        pet  = mapAdseDbPetsToPortalAdvSearch(parentStyleORIN, orinNumber, 
                            deptId, supplierId, productName, entryType, primaryUPC, 
