@@ -3403,106 +3403,153 @@ public String getAdvWorkListDisplayDataForParent(AdvanceSearch advSearch) {
 
         LOGGER.info("Entering getChildForGroupQuery() in Grouping XQueryConstant class.");
 
-        final String getChildForGroup = " SELECT PARENT_MDMID, "+
-        "   MDMID,                                                                                 "+
-        "   PRODUCTNAME,                                                                           "+
-        "   COMPLETION_DATE,                                                                       "+
-        "   PET_STATE,                                                                             "+
-        "   CONTENT_STATE,                                                                         "+
-        "   IMAGE_STATE,                                                                           "+
-        "  CHILD,                                                                                  "+
-        "   DEPT,                                                                                  "+
-        "   ENTRY_TYPE,                                                                            "+
-        "   COMPONENT_TYPE,                                                                        "+
-        "   PRIMARY_SUPPLIER_ID SUPPLIER_ID,                                                       "+
-        "    SUPPLIER_NAME,                                                                        "+
-        "   VENDOR_STYLE,                                                                          "+
-        "   PET_SOURCE,                                                                            "+
-        "   OmnichannelIndicator,                                                                  "+
-        "   CREATED_DTM,                                                                           "+
-        "   EXIST_IN_GROUP, CONVERSION_FLAG                                                        "+
-        " FROM                                                                                     "+
-        "   (SELECT NULL PARENT_MDMID,                                                             "+
-        "     AGC.MDMID,                                                                           "+
-        "     AGC.GROUP_NAME PRODUCTNAME,                                                          "+
-        "     TO_CHAR(AGC.COMPLETION_DATE,'YYYY-MM-DD') COMPLETION_DATE,                           "+
-        "     AGC.GROUP_OVERALL_STATUS_CODE PET_STATE,                                             "+
-        "     AGC.GROUP_CONTENT_STATUS_CODE CONTENT_STATE,                                         "+
-        "     AGC.GROUP_IMAGE_STATUS_CODE IMAGE_STATE,                                             "+
-        "     AGC.PET_DISPLAY_FLAG CHILD,                                                          "+
-        "     AGC.DEF_DEPT_ID DEPT,                                                                "+
-        "     AGC.ENTRY_TYPE,                                                                      "+
-        "     AGCM.PEP_COMPONENT_TYPE COMPONENT_TYPE,                                                                 "+
-        "     SUPPLIER_XML.VENID PRIMARY_SUPPLIER_ID,                                              "+
-        "     SUPPLIER_XML.VenName SUPPLIER_NAME,                                                  "+
-        "     AGC.PET_SOURCE PET_SOURCE,                                                           "+
-        "     AGC.DEF_PRIMARYSUPPLIERVPN VENDOR_STYLE,                                             "+
-        "   SUPPLIER_XML.OmnichannelIndicator,                                                     "+
-        "   AGC.CREATED_DTM,                                                                       "+
-        "   AGC.EXIST_IN_GROUP, NULL CONVERSION_FLAG                                               "+
-        "   FROM ADSE_GROUP_CATALOG AGC LEFT OUTER JOIN                                            "+
-        "   ADSE_SUPPLIER_CATALOG ASCT ON ASCT.MDMID = AGC.DEF_PRIMARY_SUPPLIER_ID,                "+
-        "   XMLTABLE('for $i in $XML_DATA/pim_entry/entry  return $i'                              "+
-        "     passing ASCT.xml_data AS \"XML_DATA\"                                                  "+
-        "     COLUMNS                                                                              "+
-        "       Id VARCHAR2(20) path 'Supplier_Ctg_Spec/Id',                                       "+
-        "       VenName VARCHAR2(20) path 'Supplier_Ctg_Spec/Name',                                "+
-        "       VenId VARCHAR2(20) path 'Supplier_Ctg_Spec/VEN_Id',                                "+
-        "       OmnichannelIndicator VARCHAR(2) path 'if (Supplier_Site_Spec/Omni_Channel/Omni_Channel_Indicator eq \"true\") then \"Y\" else \"N\"' ) (+)SUPPLIER_XML,   "+
-        "     ADSE_GROUP_CHILD_MAPPING AGCM                                                          "+
-        "   WHERE AGC.MDMID        = AGCM.COMPONENT_GROUPING_ID                                      "+
-        "   AND AGCM.PEP_COMPONENT_TYPE='Group'                                                          "+
-        "   AND AGCM.MDMID         = :groupOrin                                                      "+
-        "   UNION                                                                                    "+
-        "  SELECT AIC.PARENT_MDMID,                                                                  "+
-        "     CASE WHEN AIC.ENTRY_TYPE = 'StyleColor' THEN SUBSTR(AIC.MDMID,1,9) || ' ' || SUBSTR(AIC.MDMID,10,12) || ' ' || PET_XML.COLO_DESC ELSE AIC.MDMID END MDMID,   "+
-        "     PET_XML.PRODUCT_NAME PRODUCTNAME,                                                      "+
-        "     CASE WHEN AIC.ENTRY_TYPE = 'Style' THEN TO_CHAR(APC.PET_EARLIEST_COMP_DATE, 'YYYY-MM-DD') ELSE PET_XML.completion_date END AS completion_date,        "+
-        "     APC.PET_STATE PET_STATE,                                                               "+
-        "     APC.CONTENT_STATUS CONTENT_STATE,                                                      "+
-        "     APC.IMAGE_STATUS IMAGE_STATE,                                                          "+
-        "     NULL CHILD,                                                                            "+
-        "     AIC.DEPT_ID DEPT,                                                                      "+
-        "     AIC.ENTRY_TYPE,                                                                        "+
-        "     AGCM.PEP_COMPONENT_TYPE COMPONENT_TYPE,                                                "+
-        "     SUPPLIER_XML.VENID PRIMARY_SUPPLIER_ID,                                                "+
-        "     SUPPLIER_XML.VenName SUPPLIER_NAME,                                                    "+
-        "     PET_XML.req_type PET_SOURCE,                                                           "+
-        "     AIC.PRIMARYSUPPLIERVPN VENDOR_STYLE,                                                   "+
-        "   SUPPLIER_XML.OmnichannelIndicator,                                                       "+
-        "   APC.CREATED_DTM,                                                                         "+
-        "   APC.EXIST_IN_GROUP, PET_XML.CONVERSION_FLAG                                              "+
-        "   FROM ADSE_GROUP_CHILD_MAPPING AGCM,                                                      "+
-        "     ADSE_ITEM_CATALOG AIC                                                                  "+
-        "   INNER JOIN ADSE_PET_CATALOG APC                                                          "+
-        "   ON AIC.MDMID=APC.MDMID LEFT OUTER JOIN                                                   "+
-        "   ADSE_SUPPLIER_CATALOG ASCT ON ASCT.MDMID = AIC.PRIMARY_SUPPLIER_ID,                      "+
-        "     XMLTABLE( 'let                                                                         "+
-        " $completionDate := $pets/pim_entry/entry/Pet_Ctg_Spec/Completion_Date,                     "+
-        " $colordesc:= $pets/pim_entry/entry/Ecomm_StyleColor_Spec/NRF_Color_Description             "+
-        " return                                                                                     "+                                           
-        " <out>                                                                                      "+
-        " <completion_date>{$completionDate}</completion_date>                                       "+
-        " <req_type>{$pets/pim_entry/entry/Pet_Ctg_Spec/SourceSystem}</req_type>                     "+
-        " <PRODUCT_NAME>{$pets/pim_entry/entry/Ecomm_Style_Spec/Product_Name}</PRODUCT_NAME>         "+
-        " <COLO_DESC>{$colordesc}</COLO_DESC>                                                        "+
-        " <CONVERSION_FLAG>{$pets/pim_entry/entry/Pet_Ctg_Spec/System/Pet_Information/Conversion_Flag}</CONVERSION_FLAG> "+
-        " </out>' passing APC.xml_data AS \"pets\" Columns completion_date VARCHAR2(10) path '/out/completion_date', req_type VARCHAR2(20) path '/out/req_type', PRODUCT_NAME VARCHAR2(100) path '/out/PRODUCT_NAME', COLO_DESC VARCHAR2(50) path '/out/COLO_DESC', CONVERSION_FLAG VARCHAR2(10) path '/out/CONVERSION_FLAG' ) (+)PET_XML, "+
-        " XMLTABLE('for $i in $XML_DATA/pim_entry/entry  return $i'                                    "+
-        "     passing ASCT.xml_data AS \"XML_DATA\"                                                      "+
-        "     COLUMNS                                                                                  "+
-        "       Id VARCHAR2(20) path 'Supplier_Ctg_Spec/Id',                                           "+
-        "       VenName VARCHAR2(20) path 'Supplier_Ctg_Spec/Name',                                    "+
-        "       VenId VARCHAR2(20) path 'Supplier_Ctg_Spec/VEN_Id',                                    "+
-        "       OmnichannelIndicator VARCHAR(2) path 'if (Supplier_Site_Spec/Omni_Channel/Omni_Channel_Indicator eq \"true\") then \"Y\" else \"N\"' ) (+)SUPPLIER_XML "+
-        "   WHERE NVL(AIC.PARENT_MDMID,AIC.MDMID) = AGCM.COMPONENT_STYLE_ID                            "+
-        "   AND AGCM.PEP_COMPONENT_TYPE!              ='Group'                                             "+
-        "   AND AIC.ENTRY_TYPE                   IN ('Style','StyleColor')                             "+
-        "   AND  (CASE WHEN AIC.PARENT_MDMID is NOT NULL AND  AIC.MDMID !=AGCM.COMPONENT_STYLECOLOR_ID THEN 0 ELSE 1 END) =1 "+
-        "   AND AGCM.MDMID                        = :groupOrin "+
-        "   )   "+
-        " ORDER BY COMPONENT_TYPE DESC, "+
-        "   MDMID,COMPLETION_DATE ";
+        final String getChildForGroup = "  SELECT  PARENT_MDMID                   ,"
+                + "         MDMID                          ,"
+                + "         PRODUCTNAME                    ,"
+                + "         COMPLETION_DATE                ,"
+                + "         PET_STATE                      ,"
+                + "         CONTENT_STATE                  ,"
+                + "         IMAGE_STATE                    ,"
+                + "         CHILD                          ,"
+                + "         DEPT                           ,"
+                + "         ENTRY_TYPE                     ,"
+                + "         COMPONENT_TYPE                 ,"
+                + "         PRIMARY_SUPPLIER_ID SUPPLIER_ID,"
+                + "         SUPPLIER_NAME                  ,"
+                + "         VENDOR_STYLE                   ,"
+                + "         PET_SOURCE                     ,"
+                + "         OmnichannelIndicator           ,"
+                + "         CREATED_DTM                    ,"
+                + "         EXIST_IN_GROUP                 ,"
+                + "         CONVERSION_FLAG"
+                + " FROM"
+                + "         ("
+                + "                 SELECT  NULL PARENT_MDMID                                        ,"
+                + "                         AGC.MDMID                                                ,"
+                + "                         AGC.GROUP_NAME PRODUCTNAME                               ,"
+                + "                         TO_CHAR(AGC.COMPLETION_DATE,'YYYY-MM-DD') COMPLETION_DATE,"
+                + "                         AGC.GROUP_OVERALL_STATUS_CODE PET_STATE                  ,"
+                + "                         AGC.GROUP_CONTENT_STATUS_CODE CONTENT_STATE              ,"
+                + "                         AGC.GROUP_IMAGE_STATUS_CODE IMAGE_STATE                  ,"
+                + "                         AGC.PET_DISPLAY_FLAG CHILD                               ,"
+                + "                         AGC.DEF_DEPT_ID DEPT                                     ,"
+                + "                         AGC.ENTRY_TYPE                                           ,"
+                + "                         AGCM.PEP_COMPONENT_TYPE COMPONENT_TYPE                   ,"
+                + "                          AGC.DEF_PRIMARY_SUPPLIER_ID PRIMARY_SUPPLIER_ID,"
+                + "                         ASCT.supplier_name SUPPLIER_NAME                           ,"
+                + "                         AGC.PET_SOURCE PET_SOURCE                                ,"
+                + "                         AGC.DEF_PRIMARYSUPPLIERVPN VENDOR_STYLE                  ,"
+                + "                         ''    OmnichannelIndicator                    ,"
+                + "                         AGC.CREATED_DTM                                          ,"
+                + "                         AGC.EXIST_IN_GROUP                                       ,"
+                + "                         NULL CONVERSION_FLAG"
+                + "                 FROM    ADSE_GROUP_CATALOG AGC"
+                + "                         LEFT OUTER JOIN ADSE_SUPPLIER_CATALOG ASCT"
+                + "                         ON      ASCT.MDMID = AGC.DEF_PRIMARY_SUPPLIER_ID                                                                                                                                                                                                                                                                                                                                                                    ,"
+                + "                                ADSE_GROUP_CHILD_MAPPING AGCM"
+                + "                 WHERE   AGC.MDMID                  = AGCM.COMPONENT_GROUPING_ID"
+                + "                         AND AGCM.PEP_COMPONENT_TYPE='Group'"
+                + "                         AND AGCM.MDMID             =:groupOrin"
+                + "                 UNION"
+                + "                 SELECT  AIC.PARENT_MDMID,"
+                + "                          AIC.MDMID"
+                + "                                              ,"
+                + "                         AIC.PRODUCT_NAME PRODUCTNAME,"
+                + "                         TO_CHAR(APC.PET_EARLIEST_COMP_DATE, 'YYYY-MM-DD')"
+                + "                         AS completion_date                ,"
+                + "                         APC.PET_STATE PET_STATE               ,"
+                + "                         APC.CONTENT_STATUS CONTENT_STATE      ,"
+                + "                         APC.IMAGE_STATUS IMAGE_STATE          ,"
+                + "                         NULL CHILD                            ,"
+                + "                         AIC.DEPT_ID DEPT                      ,"
+                + "                         AIC.ENTRY_TYPE                        ,"
+                + "                         AGCM.PEP_COMPONENT_TYPE COMPONENT_TYPE,"
+                + "                           AIC.PRIMARY_SUPPLIER_ID,"
+                + "                         ASCT.supplier_name SUPPLIER_NAME    ,"
+                + "                          XMLCAST( (XMLQUERY('/pim_entry/entry/Pet_Ctg_Spec/SourceSystem' PASSING apc.xml_Data RETURNING CONTENT ) ) AS VARCHAR2(1000) ) PET_SOURCE"
+                + "                                    ,"
+                + "                         AIC.PRIMARYSUPPLIERVPN VENDOR_STYLE   ,"
+                + "                         ''  OmnichannelIndicator   ,"
+                + "                         APC.CREATED_DTM                       ,"
+                + "                         APC.EXIST_IN_GROUP                    ,"
+                + "                          XMLCAST( (XMLQUERY('/pim_entry/entry/Pet_Ctg_Spec/System/Pet_Information/Conversion_Flag' PASSING apc.xml_Data RETURNING CONTENT ) ) AS VARCHAR2(1000) ) CONVERSION_FLAG"
+                + "                 FROM    ADSE_GROUP_CHILD_MAPPING AGCM,"
+                + "                         ADSE_ITEM_CATALOG AIC"
+                + "                         INNER JOIN ADSE_PET_CATALOG APC"
+                + "                         ON      AIC.MDMID=APC.MDMID"
+                + "                         LEFT OUTER JOIN ADSE_SUPPLIER_CATALOG ASCT"
+                + "                         ON      ASCT.MDMID = AIC.PRIMARY_SUPPLIER_ID"
+                + "                         "
+                + "                         WHERE   AIC.MDMID = AGCM.COMPONENT_STYLE_ID"
+                + "                         AND AGCM.PEP_COMPONENT_TYPE!    ='Group'"
+                + "                         AND AIC.ENTRY_TYPE  ='Style'"
+                + "                         AND"
+                + "                         ("
+                + "                                 CASE"
+                + "                                         WHEN AIC.PARENT_MDMID IS NOT NULL"
+                + "                                                 AND AIC.MDMID !=AGCM.COMPONENT_STYLECOLOR_ID"
+                + "                                         THEN 0"
+                + "                                         ELSE 1"
+                + "                                 END"
+                + "                         )"
+                + "                                        =1"
+                + "                         AND AGCM.MDMID =:groupOrin"
+                + "                         "
+                + "                         union"
+                + "                             SELECT  AIC.PARENT_MDMID,"
+                + "                         SUBSTR(AIC.MDMID,1,9)"
+                + "                                         ||"
+                + "                                         ' '"
+                + "                                         ||"
+                + "                                         SUBSTR(AIC.MDMID,10,12)"
+                + "                                         ||"
+                + "                                         ' '"
+                + "                                         ||"
+                + "                                         AIC.COLOR_Name"
+                + "                                               ,"
+                + "                         AIC.PRODUCT_NAME PRODUCTNAME,"
+                + "                          XMLCAST( (XMLQUERY('pim_entry/entry/Pet_Ctg_Spec/Completion_Date' PASSING apc.xml_Data RETURNING CONTENT ) ) AS VARCHAR2(1000) ) completion_date                ,"
+                + "                         APC.PET_STATE PET_STATE               ,"
+                + "                         APC.CONTENT_STATUS CONTENT_STATE      ,"
+                + "                         APC.IMAGE_STATUS IMAGE_STATE          ,"
+                + "                         NULL CHILD                            ,"
+                + "                         AIC.DEPT_ID DEPT                      ,"
+                + "                         AIC.ENTRY_TYPE                        ,"
+                + "                         AGCM.PEP_COMPONENT_TYPE COMPONENT_TYPE,"
+                + "                         AIC.PRIMARY_SUPPLIER_ID,"
+                + "                         ASCT.supplier_name SUPPLIER_NAME    ,"
+                + "                          XMLCAST( (XMLQUERY('/pim_entry/entry/Pet_Ctg_Spec/SourceSystem' PASSING apc.xml_Data RETURNING CONTENT ) ) AS VARCHAR2(1000) ) PET_SOURCE"
+                + "                                  ,"
+                + "                         AIC.PRIMARYSUPPLIERVPN VENDOR_STYLE   ,"
+                + "                         '' OmnichannelIndicator   ,"
+                + "                         APC.CREATED_DTM                       ,"
+                + "                         APC.EXIST_IN_GROUP                    ,"
+                + "                         XMLCAST( (XMLQUERY('/pim_entry/entry/Pet_Ctg_Spec/System/Pet_Information/Conversion_Flag' PASSING apc.xml_Data RETURNING CONTENT ) ) AS VARCHAR2(1000) ) CONVERSION_FLAG"
+                + "           "
+                + "                 FROM    ADSE_GROUP_CHILD_MAPPING AGCM,"
+                + "                         ADSE_ITEM_CATALOG AIC"
+                + "                         INNER JOIN ADSE_PET_CATALOG APC"
+                + "                         ON      AIC.MDMID=APC.MDMID"
+                + "                         LEFT OUTER JOIN ADSE_SUPPLIER_CATALOG ASCT"
+                + "                         ON      ASCT.MDMID = AIC.PRIMARY_SUPPLIER_ID"
+                + "                 WHERE  AIC.PARENT_MDMID = AGCM.COMPONENT_STYLE_ID"
+                + "                         AND AGCM.PEP_COMPONENT_TYPE!    ='Group'"
+                + "                         AND AIC.ENTRY_TYPE             IN ('StyleColor')"
+                + "                         AND"
+                + "                         ("
+                + "                                 CASE"
+                + "                                         WHEN AIC.PARENT_MDMID IS NOT NULL"
+                + "                                                 AND AIC.MDMID !=AGCM.COMPONENT_STYLECOLOR_ID"
+                + "                                         THEN 0"
+                + "                                         ELSE 1"
+                + "                                 END"
+                + "                         )"
+                + "                                        =1"
+                + "                         AND AGCM.MDMID =:groupOrin"
+                + "         )"
+                + " ORDER BY COMPONENT_TYPE DESC,"
+                + "         MDMID               ,"
+                + "         COMPLETION_DATE ";   
         
 
         LOGGER.debug("SEARCH GROUP CHILD SEARCH QUERY -- \n"
