@@ -140,57 +140,61 @@ public class XqueryConstants {
      */
     public  String getChildSKUDetails(String orinNumber) {
 
-        final String GET_CHILD_SKU_INFORMATION_XQUERY=
-
-
-                " with "
-                        +  " INPUT( ORIN) as ( "
-                        + " Select "
-
-               + " :orinNo "
-               +" ORIN FROM dual) ,"
-
-
-              + " TypeIndex(indx, typ) as ((Select 1 indx, 'Style' typ  from  dual) union (Select 2 indx, 'StyleColor' typ  from  dual) union (select 3 indx, 'SKU' typ from dual))"
-
-              +"  select aic.MDMID ORIN, ven_name VENDOR_NAME, "
-              +"          Name Style_Name, nvl(aic.PARENT_MDMID, aic.MDMID) Style, "
-              +"          colorCode COLOR_CODE, colorDesc COLOR_NAME, sizeDesc SIZE_NAME, aic.ENTRY_TYPE "
-              +"   from VENDORPORTAL.ADSE_ITEM_CATALOG aic, XMLTABLE('for $i in $XML_DATA/pim_entry/entry "
-              +"            return <out> "
-              +"                      <supplier_id>{$i//Supplier[Primary_Flag eq \"true\"]/Id}</supplier_id> "
-              +"                        <brand>{$i/Item_UDA_Spec/Brand}</brand> "
-              +"                        <colorCode>{$i/Item_SKU_Spec/Differentiators[Type eq \"COLOR\"]/Code}</colorCode>"
-              +"                    <colorDesc>{$i/Item_SKU_Spec/Differentiators[Type eq \"COLOR\"]/Vendor_Description}</colorDesc> "
-              +"                    <sizeDesc>{$i/Item_SKU_Spec/Differentiators[Type eq \"SIZE\"]/Vendor_Description}</sizeDesc>"
-              +"                  </out>' "
-              +"      passing aic.XML_DATA as \"XML_DATA\" "
-              +"      columns "
-              +"      supplier_id varchar(10) path '/out/supplier_id',"
-              +"      Brand varchar(10) path '/out/brand',"
-              +"      colorCode varchar2(10) path '/out/colorCode',"
-              +"      colorDesc varchar2(20) path '/out/colorDesc',"
-              +"      sizeDesc varchar2(20) path '/out/sizeDesc') i, VENDORPORTAL.ADSE_PET_CATALOG pet,"
-              +" XMLTABLE('for $pet in $pets/pim_entry/entry  "
-              +" return <out>   "
-              +"  <name>{$pet/Pet_Ctg_Spec/Name}</name> "
-              +"  <priority>{$pet/Pet_Ctg_Spec/PO_Number}</priority>"
-              +"  </out>' "
-              +"  passing pet.xml_data AS \"pets\" "
-              +"  Columns "
-              +"  Name VARCHAR2(20) path '/out/name',"
-              +"  priority varchar2(10) path '/out/priority') p, VENDORPORTAL.ADSE_SUPPLIER_CATALOG supplier,"
-              +"  XMLTABLE('for $supplier in $supplierCatalog/pim_entry/entry/Supplier_Ctg_Spec  let $ven_name := $supplier/Name return  <out> <ven_name>{$ven_name}</ven_name> </out>' "
-              +"  PASSING supplier.XML_DATA AS \"supplierCatalog\" "
-              +"  columns "
-              +"  ven_name VARCHAR2(80) path '/out/ven_name') s, Input inp "
-              +"  where "
-              +"  aic.MOD_DTM = '01-JAN-00 12.00.00.000000000 PM' and aic.mdmid = pet.mdmid "
-              +"  and pet.MOD_DTM = '01-JAN-00 12.00.00.000000000 PM' "
-              +"  and supplier.MOD_DTM = '01-JAN-00 12.00.00.000000000 PM' "
-              +"  and i.supplier_id = supplier.mdmid "
-              +"      and (aic.mdmid = inp.ORIN or aic.parent_mdmid = inp.ORIN)  and "
-              +"      aic.Entry_type = 'SKU'";
+        final String GET_CHILD_SKU_INFORMATION_XQUERY= 
+            " WITH INPUT( ORIN) AS " +
+            " ( SELECT :orinNo ORIN FROM dual " +
+            " ) , " +
+            " TypeIndex(indx, typ) AS ( " +
+            " (SELECT 1 indx, 'Style' typ FROM dual " +
+            " ) " +
+            " UNION " +
+            " (SELECT 2 indx, 'StyleColor' typ FROM dual " +
+            " ) " +
+            " UNION " +
+            " (SELECT 3 indx, 'SKU' typ FROM dual " +
+            " )) " +
+            " SELECT aic.MDMID ORIN, " +
+            " ven_name VENDOR_NAME, " +
+            " Name Style_Name, " +
+            " NVL(aic.PARENT_MDMID, aic.MDMID) Style, " +
+            " XMLCAST(XMLQUERY('/pim_entry/entry/Item_SKU_Spec/Differentiators[Type eq \"COLOR\"]/Code' " + 
+            " PASSING aic.xml_Data  " +
+            " RETURNING CONTENT " +
+            " ) as varchar2(1000) ) " +
+            " COLOR_CODE, " +
+            " XMLCAST(XMLQUERY('/pim_entry/entry/Item_SKU_Spec/Differentiators[Type eq \"COLOR\"]/Vendor_Description' " + 
+            " PASSING aic.xml_Data  " +
+            " RETURNING CONTENT " +
+            " ) as varchar2(1000) ) " +
+            " COLOR_NAME, " +
+            " XMLCAST(XMLQUERY('/pim_entry/entry/Item_SKU_Spec/Differentiators[Type eq \"SIZE\"]/Vendor_Description' " + 
+            " PASSING aic.xml_Data  " +
+            " RETURNING CONTENT " +
+            " ) as varchar2(1000) ) " +
+            " SIZE_NAME, " +
+            " aic.ENTRY_TYPE " +
+            " FROM VENDORPORTAL.ADSE_ITEM_CATALOG aic, " +
+            " VENDORPORTAL.ADSE_PET_CATALOG pet, " +
+            " XMLTABLE('for $pet in $pets/pim_entry/entry    " +
+            " return <out>    " +
+            " <name>{$pet/Pet_Ctg_Spec/Name}</name> " +
+            " <priority>{$pet/Pet_Ctg_Spec/PO_Number}</priority>  " +
+            " </out>' passing pet.xml_data AS \"pets\" Columns Name VARCHAR2(20) path '/out/name', " +
+            " priority VARCHAR2(10) path '/out/priority') p, " +
+            " VENDORPORTAL.ADSE_SUPPLIER_CATALOG supplier, " +
+            " XMLTABLE('for $supplier in $supplierCatalog/pim_entry/entry/Supplier_Ctg_Spec  " +
+            " let $ven_name := $supplier/Name return  <out> <ven_name>{$ven_name}</ven_name> </out>'  " +
+            " PASSING supplier.XML_DATA AS \"supplierCatalog\" columns ven_name VARCHAR2(80) path '/out/ven_name') s, " +
+            " Input inp " +
+            " WHERE aic.MOD_DTM    = '01-JAN-00 12.00.00.000000000 PM' " +
+            " AND aic.mdmid        = pet.mdmid " +
+            " AND AIC.PETEXISTS = 'Y'   " +
+            " AND pet.MOD_DTM      = '01-JAN-00 12.00.00.000000000 PM' " +
+            " AND supplier.MOD_DTM = '01-JAN-00 12.00.00.000000000 PM' " +
+            " AND  aic.primary_supplier_id = supplier.mdmid " +
+            " AND (aic.mdmid       = inp.ORIN " +
+            " OR aic.parent_mdmid  = inp.ORIN) " +
+            " AND aic.Entry_type   = 'SKU'";
 
         return GET_CHILD_SKU_INFORMATION_XQUERY;
     }
@@ -307,7 +311,7 @@ public class XqueryConstants {
                     + "    VENDOR_COLOR_CODE   varchar2(10) path '/out/colorCode',"
                     + "    VENDOR_COLOR_DESC   varchar2(40) path '/out/colorDesc',"
                     + "    VENDOR_SIZE    varchar2(10) path '/out/size') i, Input inp "
-                    + " where flag = 'false' and "
+                    + " where flag = 'false' and    aic.PETEXISTS = 'Y' AND "
                     + "  aic.MOD_DTM = '01-JAN-00 12.00.00.000000000 PM' "
                     + "     and (aic.Parent_MDMID=inp.ORIN or aic.MDMID=inp.ORIN) and "
                     + "     aic.Entry_type = 'SKU') " + "    select * from items ";
@@ -428,7 +432,7 @@ public class XqueryConstants {
                 +" <primary_flag>{$primary_flag}</primary_flag>         " 
                 +" <Long_Description>{$long_description}</Long_Description>     " 
                 +" </out>' passing item.XML_DATA AS \"XML_DATA\" columns Direct_Ship_Flag VARCHAR2(100) path '/out/Direct_Ship_Flag', Primary_Flag VARCHAR(25) Path '/out/primary_flag', Long_Description VARCHAR2(100) Path '/out/Long_Description' ) Ia " 
-                +" WHERE Pet.Mdmid = Item.Mdmid ";
+                +" WHERE Pet.Mdmid = Item.Mdmid AND item.PETEXISTS = 'Y' ";
         return GET_GLOBAL_ATTRIBUTES_XQUERY;
     }
 
@@ -469,7 +473,7 @@ public class XqueryConstants {
             +"     FROM petcatalog pc,                               "
             +"       VENDORPORTAL.ADSE_ITEM_CATALOG aic,             "
             +"       XMLTABLE( 'for $j in $XML_DATA/pim_entry/item_header/category_paths/category  let           $itemcategoryid := $j//pk,        $itemcategorydesc := $j//path,        $itemcategoryname := tokenize($j//path, \"///\")[1]        return         <category>        <pk>{$itemcategoryid}</pk>        <path>{$itemcategorydesc}</path>        <name>{$itemcategoryname}</name>       </category>' PASSING aic.XML_DATA AS \"XML_DATA\" COLUMNS ITEM_CATEGORY_ID VARCHAR(100) path '/category/pk', ITEM_CATEGORY_DESC VARCHAR(100) path '/category/path', ITEM_CATEGORY_NAME VARCHAR(100) path '/category/name') ibs "
-            +"     WHERE pc.ORIN                     = aic.MDMID                                                                "
+            +"     WHERE pc.ORIN                     = aic.MDMID  AND aic.PETEXISTS = 'Y'                                                                "
             +"     AND ( pc.ENTRY_TYPE              IS NULL                                                                     "
             +"     OR pc.ENTRY_TYPE                 IN ('Style','StyleColor','SKU', 'ComplexPack', 'PackColor' , '' ) )         "
             +"     AND ( pc.ENTRY_TYPE              IS NULL                                                                     "
@@ -840,7 +844,7 @@ public class XqueryConstants {
               +"    Columns "
               +"    Name VARCHAR2(20) path '/out/name',"
               +"    priority varchar2(10) path '/out/priority') p, Input inp "
-              +"    where  "
+              +"    where   aic.PETEXISTS = 'Y'  AND " 
               +"    aic.MOD_DTM = '01-JAN-00 12.00.00.000000000 PM' and aic.mdmid = pet.mdmid "
               +"    and pet.MOD_DTM = '01-JAN-00 12.00.00.000000000 PM' "
               +"        and aic.mdmid = inp.ORIN AND aic.Entry_Type in ('Style', 'Complex Pack') ";
@@ -932,8 +936,8 @@ public class XqueryConstants {
                 +"   passing aic2.XML_DATA AS \"XML_DATA\" columns ProductName VARCHAR2(300) path "
                 +"   '/out/prod_name', ProductDescription                    VARCHAR2(2000) path "
                 +"   '/out/prod_desc') i2 "
-                +" WHERE "
-                +"   flag                              = 'false' "
+                +" WHERE  "
+                +"   flag                              = 'false'  AND aic.PETEXISTS = 'Y' "
                 +" AND aic.MOD_DTM                     = '01-JAN-00 12.00.00.000000000 PM' "
                 +" AND aic.MDMID                       =inp.ORIN "
                 +" AND aic.Entry_type                 IN ('SKU', 'StyleColor', 'Style','Complex Pack','PackColor') "
@@ -954,6 +958,7 @@ public class XqueryConstants {
      * @param skuOrinNumber the sku orin number
      * @return the sku attributes
      */
+    
     public  String getSkuAttributes(String skuOrinNumber)
     {
         String GET_SKU_ATTRIBUTES_INFORMATION_XQUERY = "   WITH INPUT( ORIN) AS " 
@@ -1055,7 +1060,7 @@ public class XqueryConstants {
                 +"   VenId VARCHAR2(20) path 'Supplier_Ctg_Spec/VEN_Id' ) s, " 
                 +"   Input Inp " 
                 +"   Where  " 
-                +"   item.Entry_Type  = 'SKU' " 
+                +"   item.Entry_Type  = 'SKU'  AND item.PETEXISTS = 'Y' " 
                 +"   And Item.Mdmid         =Inp.Orin " 
                 +"   And I.Supplier_Id      = Sup.Mdmid " 
                 +"   And Item.Mod_Dtm       = '01-JAN-00 12.00.00.000000000 PM' " 
@@ -1434,7 +1439,7 @@ public class XqueryConstants {
             +"                                                                                                                                                          "
             +"      VENDORPORTAL.ADSE_PET_CATALOG pet,                                                                                                                  "
             +"      INPUT INP                                                                                                                                           "
-            +"    WHERE flag          = 'false' AND                                                                                                                     "
+            +"    WHERE flag          = 'false'   AND AIC.PETEXISTS = 'Y'  AND                                                                                                                   "
             +"    AIC.MDMID       =PET.MDMID                                                                                                                            "
             +"    AND pet.MOD_DTM     = '01-JAN-00 12.00.00.000000000 PM'                                                                                               "
             +"    AND aic.MOD_DTM     = '01-JAN-00 12.00.00.000000000 PM'                                                                                               "
@@ -2166,7 +2171,7 @@ public class XqueryConstants {
                     +"     passing pet.xml_data AS \"pet\"  " 
                     +"     columns  " 
                     +"     completion_date VARCHAR2(10) path '/out/completion_date') s " 
-                    +"   WHERE flag = 'false' " 
+                    +"   WHERE flag = 'false'    AND aic.PETEXISTS   = 'Y' " 
                     +"   AND pet.mdmid = aic.mdmid " 
                     +"   AND aic.MDMID = inp.ORIN " 
                     +"   AND aic.Entry_type IN ('SKU', 'Style', 'StyleColor','Complex Pack','PackColor') " 
@@ -2386,7 +2391,7 @@ public class XqueryConstants {
         queryBuffer.append("                    Image_Indicator VARCHAR2(50) Path 'Supplier_Site_Spec/Omni_Channel/Image_Certification',                                              ");
         queryBuffer.append("                    Sample_Indicator VARCHAR2(50) Path 'Supplier_Site_Spec/Omni_Channel/Return_Sample_Indicator',                                         ");
         queryBuffer.append("                    OmnichannelIndicator VARCHAR(2) path 'if (Supplier_Site_Spec/Omni_Channel/Omni_Channel_Indicator eq \"true\") then \"Y\" else \"N\"' ) (+)s ");
-        queryBuffer.append("  WHERE AGC.MDMID=:groupId");
+        queryBuffer.append("  WHERE AGC.MDMID=:groupId AND AIC.PETEXISTS = 'Y' ");
 
         
         String query = queryBuffer.toString();
@@ -2456,7 +2461,7 @@ public class XqueryConstants {
     + "      <code>{$code}</code>                                                                        "
     + "         <groupcode>{$groupcode} </groupcode>                                                     "
     + "          </category>' passing AGC.xml_data AS \"XML_DATA\" COLUMNS OMNICODE VARCHAR(100) path '/category/code', OMNIGROUPCODE VARCHAR(100) path '/category/groupcode') (+)T  "      
-    + "         WHERE AGC.MDMID = :groupingNo    "
+    + "         WHERE AGC.MDMID = :groupingNo     AND AIC.PETEXISTS = 'Y'  "
     + "         AND RF.CONTAINER   ='OmniChannelBrand' "        
     + "     AND RF.PARENT_MDMID = AIC.PRIMARY_SUPPLIER_ID "     
     + "  UNION "
@@ -2520,7 +2525,7 @@ public class XqueryConstants {
     + "       <code>{$code}</code>                                                                 "
     + "         <groupcode>{$groupcode} </groupcode>                                               "
     + "       </category>' passing AGC.xml_data AS \"XML_DATA\" COLUMNS OMNICODE VARCHAR(100) path '/category/code', OMNIGROUPCODE VARCHAR(100) path '/category/groupcode') (+)T "
-    + "         WHERE AGC.MDMID = :groupingNo                       "
+    + "         WHERE AGC.MDMID = :groupingNo      AND AIC.PETEXISTS = 'Y'    "
     + "         AND RF.CONTAINER   ='Cars_Brand_Names'          "
     + "         AND RF.PARENT_MDMID = AIC.PRIMARY_SUPPLIER_ID   "
     + "    UNION                                                "
@@ -2756,7 +2761,7 @@ public class XqueryConstants {
         queryBuffer.append("   AND (                                                                                                                                                   ");
         queryBuffer.append("     CASE                                                                                                                                                  ");
         queryBuffer.append("       WHEN AGCM.PEP_COMPONENT_TYPE ='SKU'                                                                                                                 ");
-        queryBuffer.append("       AND AIC.ENTRY_TYPE           ='Style'                                                                                                               ");
+        queryBuffer.append("       AND AIC.ENTRY_TYPE           ='Style'  AND AIC.PETEXISTS = 'Y'                                                                                                               ");
         queryBuffer.append("       AND AIC.MDMID                =AGCM.COMPONENT_STYLE_ID                                                                                               ");
         queryBuffer.append("       OR (AIC.ENTRY_TYPE           ='StyleColor'                                                                                                          ");
         queryBuffer.append("       AND AIC.MDMID                =AGCM.COMPONENT_STYLECOLOR_ID)                                                                                         ");
@@ -3031,7 +3036,7 @@ public String getComponentIDs(){
               
   }
     
-    /**
+/**
  * Modified
  * @return
  */
