@@ -231,7 +231,7 @@ public class XqueryConstants {
     workListQuery.append("                                                                                                                   ");
     workListQuery.append("    entryTypeStyleList AS                                                                                          ");
     workListQuery.append("    (                                                                                                              ");
-    workListQuery.append("      SELECT /*+ index(aic ITEM_CTG_IDX8) */                                                                       ");
+    workListQuery.append("      SELECT                                                                       ");
     workListQuery.append("        PARENT_MDMID,                                                                                              ");
     workListQuery.append("        MDMID,                                                                                                     ");
     workListQuery.append("        XML_DATA,                                                                                                  ");
@@ -281,7 +281,7 @@ public class XqueryConstants {
     workListQuery.append("        FROM                                                                                                       ");
     workListQuery.append("          entryTypeStyleList                                                                                       ");
     workListQuery.append("          UNION ALL                                                                                                ");
-    workListQuery.append("        SELECT /*+ index(aic ITEM_CTG_IDX9) */                                                                     ");
+    workListQuery.append("        SELECT                                                                      ");
     workListQuery.append("          aic.PARENT_MDMID,                                                                                        ");
     workListQuery.append("          aic.MDMID,                                                                                               ");
     workListQuery.append("          aic.XML_DATA,                                                                                            ");
@@ -340,7 +340,7 @@ public class XqueryConstants {
     workListQuery.append("        primary_flag = 'true'                                                                                      ");
     workListQuery.append("  ),                                                                                                               ");
     workListQuery.append("  styleID_DescAA AS(                                                                                               ");
-    workListQuery.append("      SELECT /*+ use_nl(pet)  index(pet PET_CTG_IDX8) */                                                           ");
+    workListQuery.append("      SELECT                                                           ");
     workListQuery.append("        sda.PARENT_MDMID,                                                                                          ");
     workListQuery.append("        sda.MDMID ORIN_NUM,                                                                                        ");
     workListQuery.append("        sda.XML_DATA,                                                                                              ");
@@ -387,7 +387,7 @@ public class XqueryConstants {
     workListQuery.append("        sda.mdmid     =pet.mdmid AND pet.PET_STATE <>'05'                                                                                   ");
     workListQuery.append("    ),                                                                                                             ");
     workListQuery.append("    finalList as (                                                                                                 ");
-    workListQuery.append("      SELECT /*+ use_nl(supplier) index(supplier SUPP_CTG_IDX4) */                                                 ");
+    workListQuery.append("      SELECT                                                  ");
     workListQuery.append("        orin.PARENT_MDMID PARENT_STYLE_ORIN,                                                                       ");
     workListQuery.append("        ORIN_NUM,                                                                                                  ");
     workListQuery.append("        orin.ENTRY_TYPE,                                                                                           ");
@@ -551,7 +551,7 @@ public class XqueryConstants {
     workListQuery.append("          FROM                                                                                                ");
     workListQuery.append("            entryTypeStyleList                                                                                ");
     workListQuery.append("      UNION ALL                                                                                               ");
-    workListQuery.append("      SELECT /*+ index(aic ITEM_CTG_IDX9) */                                                                  ");
+    workListQuery.append("      SELECT                                                                   ");
     workListQuery.append("              aic.PARENT_MDMID,                                                                               ");
     workListQuery.append("              aic.MDMID,                                                                                      ");
     workListQuery.append("              aic.XML_DATA,                                                                                   ");
@@ -610,7 +610,7 @@ public class XqueryConstants {
     workListQuery.append("        primary_flag = 'true'                                                                                 ");
     workListQuery.append("    ),                                                                                                        ");
     workListQuery.append("    styleID_DescAA AS(                                                                                        ");
-    workListQuery.append("      SELECT /*+ use_nl(pet)  index(pet PET_CTG_IDX8) */                                                      ");
+    workListQuery.append("      SELECT                                                       ");
     workListQuery.append("        sda.PARENT_MDMID,                                                                                     ");
     workListQuery.append("        sda.MDMID ORIN_NUM,                                                                                   ");
     workListQuery.append("        sda.XML_DATA,                                                                                         ");
@@ -657,7 +657,7 @@ public class XqueryConstants {
     workListQuery.append("        sda.mdmid     =pet.mdmid         and pet.PET_STATE<>'05'                                                                     ");
     workListQuery.append("    ),                                                                                                        ");
     workListQuery.append("    finalList as (                                                                                            ");
-    workListQuery.append("      SELECT /*+ use_nl(supplier) index(supplier SUPP_CTG_IDX4) */                                            ");
+    workListQuery.append("      SELECT                                             ");
     workListQuery.append("        orin.PARENT_MDMID PARENT_STYLE_ORIN,                                                                  ");
     workListQuery.append("        ORIN_NUM,                                                                                             ");
     workListQuery.append("        orin.ENTRY_TYPE,                                                                                      ");
@@ -2051,11 +2051,11 @@ public String getWorkListDisplayDataParent(boolean vendorLogin) {
         workListQuery.append("           then NUMBER_04                                                                                             ");
         workListQuery.append("          else     aic.PRIMARY_UPC                                                                                        ");
         workListQuery.append("        end PRIMARY_UPC,                                                                                              ");
-        workListQuery.append("        aic.DEPT_ID, aic.PRIMARY_SUPPLIER_ID Supplier_Id, aic.PRIMARYSUPPLIERVPN ven_style                ");
+        workListQuery.append("        aic.DEPT_ID, aic.PRIMARY_SUPPLIER_ID Supplier_Id, aic.PRIMARYSUPPLIERVPN ven_style, aic.PRODUCT_NAME                ");
         workListQuery.append("      FROM                                                                                                            ");
         workListQuery.append("        ADSE_Item_CATALOG aic,  ADSE_PET_CATALOG pet, givenInpDept d, givenInpSupplier s, Input inp                           ");
         workListQuery.append("      WHERE                                                                                                           ");
-        workListQuery.append("        aic.ENTRY_TYPE in ('Style', 'Complex Pack')                                                                       ");
+        workListQuery.append("        aic.ENTRY_TYPE in ('Style', 'Complex Pack')     AND aic.PETEXISTS = 'Y'                                                                     ");
         workListQuery.append("        AND  pet.mdmid = aic.mdmid AND  pet.PET_STATE <>'05' AND                                                                             ");
         workListQuery.append("         ((                                                                                                           ");
         workListQuery.append("             (inp.EmailId IS NULL)                                                                                    ");
@@ -2080,7 +2080,7 @@ public String getWorkListDisplayDataParent(boolean vendorLogin) {
         workListQuery.append("        sda.PRIMARY_UPC,                                                                                              ");
         workListQuery.append("        sda.Supplier_Id,                                                                                              ");
         workListQuery.append("        sda.DEPT_ID,                                                                                                  ");
-        workListQuery.append("        p.PRODUCT_NAME,                                                                                               ");
+        workListQuery.append("        sda.PRODUCT_NAME,                                                                                               ");
         workListQuery.append("        sda.ven_style,                                                                                                ");
         workListQuery.append("        pet.pet_state PETSTATUS,                                                                                      ");
         workListQuery.append("        pet.image_status ImageState,                                                                                  ");
@@ -2089,7 +2089,7 @@ public String getWorkListDisplayDataParent(boolean vendorLogin) {
         workListQuery.append("        p.req_type,                                                                                                   ");
         workListQuery.append("        pet.PET_STYLE_STATE,                                                                                          ");
         workListQuery.append("        pet.PET_STYLE_IMAGE,                                                                                          ");
-        workListQuery.append("        pet.PET_STYLE_CONTENT, pet.PET_EARLIEST_COMP_DATE, p.PRODUCT_NAME_COMPLEX, pet.EXIST_IN_GROUP, p.CFAS, p.CONVERSION_FLAG       ");
+        workListQuery.append("        pet.PET_STYLE_CONTENT, pet.PET_EARLIEST_COMP_DATE, pet.EXIST_IN_GROUP, p.CFAS, p.CONVERSION_FLAG       ");
         workListQuery.append("     from                                                                                                             ");
         workListQuery.append("        entryTypeStyleList sda,                                                                                       ");
         workListQuery.append("        ADSE_PET_CATALOG pet,                                                                                         ");
@@ -2100,18 +2100,14 @@ public String getWorkListDisplayDataParent(boolean vendorLogin) {
         workListQuery.append("        <out>                                                                                                         ");
         workListQuery.append("          <completion_date>{$completionDate}</completion_date>                                                        ");
         workListQuery.append("          <req_type>{$pets/pim_entry/entry/Pet_Ctg_Spec/SourceSystem}</req_type>                                      ");
-        workListQuery.append("          <PRODUCT_NAME>{$pets/pim_entry/entry/Ecomm_Style_Spec/Product_Name}</PRODUCT_NAME>                          ");
-        workListQuery.append("          <PRODUCT_NAME_COMPLEX>{$pets/pim_entry/entry/Ecomm_ComplexPack_Spec/Product_Name}</PRODUCT_NAME_COMPLEX>    ");
-		workListQuery.append("          <CFAS>{$pets/pim_entry/entry/Ecomm_Style_Spec/Split_Color_Eligible}</CFAS>    ");
-		workListQuery.append("          <CONVERSION_FLAG>{$pets/pim_entry/entry/Pet_Ctg_Spec/System/Pet_Information/Conversion_Flag}</CONVERSION_FLAG>    ");
+        workListQuery.append("          <CFAS>{$pets/pim_entry/entry/Ecomm_Style_Spec/Split_Color_Eligible}</CFAS>    ");
+        workListQuery.append("          <CONVERSION_FLAG>{$pets/pim_entry/entry/Pet_Ctg_Spec/System/Pet_Information/Conversion_Flag}</CONVERSION_FLAG>    ");
         workListQuery.append("        </out>'                                                                                                       ");
         workListQuery.append("        passing pet.xml_data AS \"pets\" Columns                                                                        ");
         workListQuery.append("        completion_date             VARCHAR2(10)  path  '/out/completion_date',                                       ");
         workListQuery.append("        req_type                    VARCHAR2(20)  path '/out/req_type',                                               ");
-        workListQuery.append("        PRODUCT_NAME                VARCHAR2(50)  path '/out/PRODUCT_NAME',                                           ");
-        workListQuery.append("        PRODUCT_NAME_COMPLEX                VARCHAR2(50)  path '/out/PRODUCT_NAME_COMPLEX'                            ");
-		workListQuery.append("        ,CFAS VARCHAR2(50) path '/out/CFAS'                            ");
-		workListQuery.append("        ,CONVERSION_FLAG VARCHAR2(50) path '/out/CONVERSION_FLAG'                            ");
+        workListQuery.append("        CFAS VARCHAR2(50) path '/out/CFAS'                            ");
+        workListQuery.append("        ,CONVERSION_FLAG VARCHAR2(50) path '/out/CONVERSION_FLAG'                            ");
         workListQuery.append("        ) p                                                                                                           ");
         workListQuery.append("      WHERE                                                                                                           ");
         workListQuery.append("        sda.mdmid     =pet.mdmid                                                                                      ");
@@ -2141,7 +2137,7 @@ public String getWorkListDisplayDataParent(boolean vendorLogin) {
         workListQuery.append("        orin.req_type,                                                                                                 ");
         workListQuery.append("        orin.PET_STYLE_STATE,                                                                                          ");
         workListQuery.append("        orin.PET_STYLE_IMAGE,                                                                                          ");
-        workListQuery.append("        orin.PET_STYLE_CONTENT, orin.PET_EARLIEST_COMP_DATE, orin.PRODUCT_NAME_COMPLEX, orin.EXIST_IN_GROUP, orin.CFAS, orin.CONVERSION_FLAG ");
+        workListQuery.append("        orin.PET_STYLE_CONTENT, orin.PET_EARLIEST_COMP_DATE, orin.EXIST_IN_GROUP, orin.CFAS, orin.CONVERSION_FLAG ");
         workListQuery.append("      FROM                                                                                                             ");
         workListQuery.append("        STYLEID_DESC orin,                                                                                           ");
         workListQuery.append("        ADSE_SUPPLIER_CATALOG supplier,                                                                                ");
@@ -2191,7 +2187,7 @@ public String getWorkListDisplayDataChild(boolean vendorLogin) {
      workListQuery.append("  ) ");
      workListQuery.append("  , ");
     workListQuery.append("    styleListA as(                                                                                                     ");
-    workListQuery.append("      SELECT /*+ index(aic ITEM_CTG_IDX9) */                                                                           ");
+    workListQuery.append("      SELECT                                                                           ");
     workListQuery.append("          aic.PARENT_MDMID,                                                                                            ");
     workListQuery.append("          aic.MDMID,                                                                                                   ");
     workListQuery.append("          aic.XML_DATA,                                                                                                ");
@@ -2204,13 +2200,13 @@ public String getWorkListDisplayDataChild(boolean vendorLogin) {
     workListQuery.append("           then NUMBER_04                                                                                              ");
     workListQuery.append("          else     aic.PRIMARY_UPC                                                                                     ");
     workListQuery.append("          end PRIMARY_UPC,                                                                                             ");
-    workListQuery.append("          aic.DEPT_ID, aic.PRIMARY_SUPPLIER_ID Supplier_Id, aic.PRIMARYSUPPLIERVPN ven_style                ");
+    workListQuery.append("          aic.DEPT_ID, aic.PRIMARY_SUPPLIER_ID Supplier_Id, aic.PRIMARYSUPPLIERVPN ven_style, aic.PRODUCT_NAME, aic.COLOR_NAME  COLO_DESC              ");
     workListQuery.append("        FROM                                                                                                           ");
     workListQuery.append("          ADSE_ITEM_CATALOG aic, adse_pet_catalog pet, Input inp                                                       ");
     workListQuery.append("        WHERE                                                                                                          ");
     workListQuery.append("              aic.PARENT_MDMID = inp.ORIN                                                                              ");
     workListQuery.append("           AND                                                                                                         ");
-    workListQuery.append("            aic.ENTRY_TYPE IN ('StyleColor', 'PackColor')                                                              ");
+    workListQuery.append("            aic.ENTRY_TYPE IN ('StyleColor', 'PackColor')   AND aic.PETEXISTS = 'Y'                                                              ");
     workListQuery.append("              and aic.mdmid = pet.mdmid                                                                                ");
     workListQuery.append("              and pet.pet_state='01' and PRIMARY_SUPPLIER_ID is not null                                               ");
     if(vendorLogin){
@@ -2218,56 +2214,45 @@ public String getWorkListDisplayDataChild(boolean vendorLogin) {
     }
     workListQuery.append("  ),                                                                                                                   ");
     workListQuery.append("  styleID_DescAA AS(                                                                                                   ");
-    workListQuery.append("      SELECT /*+ use_nl(pet)  index(pet PET_CTG_IDX8) */                                                               ");
+    workListQuery.append("      SELECT                                                                ");
     workListQuery.append("        sda.PARENT_MDMID,                                                                                              ");
     workListQuery.append("        sda.MDMID ORIN_NUM,                                                                                            ");
     //workListQuery.append("        sda.XML_DATA,                                                                                                  ");
     workListQuery.append("        sda.ENTRY_TYPE,                                                                                                ");
     workListQuery.append("        sda.PRIMARY_UPC,                                                                                               ");
-    workListQuery.append("        p.COLO_DESC,                                                                                                   ");
+    workListQuery.append("        sda.COLO_DESC,                                                                                                   ");
     workListQuery.append("        sda.Supplier_Id,                                                                                               ");
     workListQuery.append("        sda.DEPT_ID,                                                                                                   ");
-    workListQuery.append("        p.PRODUCT_NAME,                                                                                                ");
+    workListQuery.append("        sda.PRODUCT_NAME,                                                                                                ");
     workListQuery.append("        sda.ven_style,                                                                                                 ");
     workListQuery.append("        pet.pet_state PETSTATUS,                                                                                       ");
     workListQuery.append("        pet.image_status ImageState,                                                                                   ");
     workListQuery.append("        pet.content_status CONTENTSTATUS,                                                                              ");
     workListQuery.append("        p.completion_date,                                                                                             ");
     workListQuery.append("        p.req_type,                                                                                                    ");
-    workListQuery.append("        p.COLO_DESC_COMPLEX,                                                                                           ");
-    workListQuery.append("        p.PRODUCT_NAME_COMPLEX, p.CONVERSION_FLAG, pet.EXIST_IN_GROUP                                           ");
+    workListQuery.append("        p.CONVERSION_FLAG, pet.EXIST_IN_GROUP                                           ");
     workListQuery.append("     from                                                                                                              ");
     workListQuery.append("        /*styleID_DescA*/ styleListA sda,                                                                   ");
     workListQuery.append("        ADSE_PET_CATALOG pet,                                                                                          ");
     workListQuery.append("        XMLTABLE(                                                                                                      ");
     workListQuery.append("        'let                                                                                                           ");
-    workListQuery.append("        $completionDate := $pets/pim_entry/entry/Pet_Ctg_Spec/Completion_Date,                                         ");
-    workListQuery.append("        $colordesc:= $pets/pim_entry/entry/Ecomm_StyleColor_Spec/NRF_Color_Description,                                ");
-    workListQuery.append("        $colordescComplex:= $pets/pim_entry/entry/Ecomm_PackColor_Spec/NRF_Color_Description                           ");
+    workListQuery.append("        $completionDate := $pets/pim_entry/entry/Pet_Ctg_Spec/Completion_Date                                         ");
     workListQuery.append("        return                                                                                                         ");
     workListQuery.append("        <out>                                                                                                          ");
     workListQuery.append("          <completion_date>{$completionDate}</completion_date>                                                         ");
     workListQuery.append("          <req_type>{$pets/pim_entry/entry/Pet_Ctg_Spec/SourceSystem}</req_type>                                       ");
-    workListQuery.append("          <PRODUCT_NAME>{$pets/pim_entry/entry/Ecomm_Style_Spec/Product_Name}</PRODUCT_NAME>                           ");
-    workListQuery.append("          <PRODUCT_NAME_COMPLEX>{$pets/pim_entry/entry/Ecomm_ComplexPack_Spec/Product_Name}</PRODUCT_NAME_COMPLEX>     ");
-    workListQuery.append("            <COLO_DESC>{$colordesc}</COLO_DESC>                                                                        ");
-    workListQuery.append("            <COLO_DESC_COMPLEX>{$colordescComplex}</COLO_DESC_COMPLEX>                                                 ");
     workListQuery.append("            <CONVERSION_FLAG>{$pets/pim_entry/entry/Pet_Ctg_Spec/System/Pet_Information/Conversion_Flag}</CONVERSION_FLAG>      ");
     workListQuery.append("        </out>'                                                                                                        ");
     workListQuery.append("        passing pet.xml_data AS \"pets\" Columns                                                                         ");
     workListQuery.append("        completion_date             VARCHAR2(10)  path  '/out/completion_date',                                        ");
     workListQuery.append("        req_type                    VARCHAR2(20)  path '/out/req_type',                                                ");
-    workListQuery.append("        PRODUCT_NAME                VARCHAR2(50)  path '/out/PRODUCT_NAME',                                            ");
-    workListQuery.append("          COLO_DESC              VARCHAR2(50)  path '/out/COLO_DESC',                                                  ");
-    workListQuery.append("          COLO_DESC_COMPLEX              VARCHAR2(50)  path '/out/COLO_DESC_COMPLEX',                                  ");
-    workListQuery.append("        PRODUCT_NAME_COMPLEX                VARCHAR2(50)  path '/out/PRODUCT_NAME_COMPLEX'                             ");
-    workListQuery.append("        ,CONVERSION_FLAG VARCHAR2(50) path '/out/CONVERSION_FLAG'                             ");
+    workListQuery.append("        CONVERSION_FLAG VARCHAR2(50) path '/out/CONVERSION_FLAG'                             ");
     workListQuery.append("        ) p                                                                                                            ");
     workListQuery.append("      WHERE                                                                                                            ");
     //Changes to stop displaying deactivated PET in WorkList
     workListQuery.append("        sda.mdmid     =pet.mdmid AND pet.PET_STATE <>'05' and pet.WLIST_DISPLAY_FLAG = 'true'                                               ");
     workListQuery.append("    )                                                                                                                  ");
-    workListQuery.append("    SELECT /*+ use_nl(supplier) index(supplier SUPP_CTG_IDX4) */                                                       ");
+    workListQuery.append("    SELECT                                                        ");
     workListQuery.append("        CASE                                                                                                           ");
     workListQuery.append("          WHEN LENGTH(ORIN_NUM) > 9                                                                                    ");
     workListQuery.append("          THEN SUBSTR(ORIN_NUM,1,9)                                                                                    ");
@@ -2288,8 +2273,7 @@ public String getWorkListDisplayDataChild(boolean vendorLogin) {
     workListQuery.append("        orin.completion_date,                                                                                          ");
     workListQuery.append("        s.omniChannelIndicator,                                                                                        ");
     workListQuery.append("        orin.req_type,                                                                                                 ");
-    workListQuery.append("        orin.COLO_DESC_COMPLEX,                                                                                        ");
-    workListQuery.append("        orin.PRODUCT_NAME_COMPLEX, orin.CONVERSION_FLAG, orin.EXIST_IN_GROUP                                           ");
+    workListQuery.append("        orin.CONVERSION_FLAG, orin.EXIST_IN_GROUP                                           ");
     workListQuery.append("      FROM                                                                                                             ");
     workListQuery.append("        styleID_DescAA orin,                                                                                           ");
     workListQuery.append("        ADSE_SUPPLIER_CATALOG supplier,                                                                                ");
@@ -2437,7 +2421,7 @@ public String getAdvWorkListDisplayDataForChild(AdvanceSearch advSearch, String 
     advQueryFragment.append("  ) ");
     advQueryFragment.append("  , ");
     advQueryFragment.append("     styleListA as(                                                                                                           ");
-    advQueryFragment.append("           SELECT /*+ index(aic ITEM_CTG_IDX9) */                                                                             ");
+    advQueryFragment.append("           SELECT                                                                            ");
     advQueryFragment.append("               aic.PARENT_MDMID,                                                                                              ");
     advQueryFragment.append("               aic.MDMID,                                                                                                     ");
     advQueryFragment.append("               aic.XML_DATA,                                                                                                  ");
@@ -2454,11 +2438,11 @@ public String getAdvWorkListDisplayDataForChild(AdvanceSearch advSearch, String 
     advQueryFragment.append("               inp.classes,                                                                                                   ");
     advQueryFragment.append("               inp.CompletionFrom,inp.CompletionTo,                                                                           ");
     advQueryFragment.append("         inp.ImageStatus inpImageStatus,inp.ContentStatus inpContentStatus,                                                   ");
-    advQueryFragment.append("         inp.RequestType,inp.createdToday, inp.ORIN PARENT_ORIN, inp.PETStatus INPUTPETSTATUS                                 ");
+    advQueryFragment.append("         inp.RequestType,inp.createdToday, inp.ORIN PARENT_ORIN, inp.PETStatus INPUTPETSTATUS, aic.PRODUCT_NAME, aic.COLOR_NAME COLO_DESC                                ");
     advQueryFragment.append("             FROM                                                                                                             ");
     advQueryFragment.append("               ADSE_ITEM_CATALOG aic, adse_pet_catalog pet, Input inp                                                         ");
     advQueryFragment.append("             WHERE                                                                                                            ");
-    advQueryFragment.append("                 aic.PARENT_MDMID = inp.ORIN AND aic.ENTRY_TYPE IN ('StyleColor', 'PackColor') and aic.mdmid = pet.mdmid      ");
+    advQueryFragment.append("                 aic.PARENT_MDMID = inp.ORIN AND aic.ENTRY_TYPE IN ('StyleColor', 'PackColor')   AND aic.PETEXISTS = 'Y'  and aic.mdmid = pet.mdmid      ");
     advQueryFragment.append("              AND (classes IS NULL OR aic.CLASS_ID  IN                                                             ");
     advQueryFragment.append("                 to_char(( SELECT regexp_substr(classes,'[^,]+',1,LEVEL) FROM dual CONNECT BY regexp_substr(classes,'[^,]+',1,LEVEL) IS NOT NULL )) ");
     advQueryFragment.append("                 )                                                                                                            ");
@@ -2471,10 +2455,10 @@ public String getAdvWorkListDisplayDataForChild(AdvanceSearch advSearch, String 
     advQueryFragment.append("         sda.XML_DATA,                                                                                                           ");
     advQueryFragment.append("         sda.ENTRY_TYPE,                                                                                                         ");
     advQueryFragment.append("         sda.PRIMARY_UPC,                                                                                                        ");
-    advQueryFragment.append("         p.COLO_DESC,                                                                                                            ");
+    advQueryFragment.append("         sda.COLO_DESC,                                                                                                            ");
     advQueryFragment.append("         sda.Supplier_Id,                                                                                                        ");
     advQueryFragment.append("         sda.DEPT_ID,                                                                                                            ");
-    advQueryFragment.append("         p.PRODUCT_NAME,                                                                                                         ");
+    advQueryFragment.append("         sda.PRODUCT_NAME,                                                                                                         ");
     advQueryFragment.append("         sda.ven_style,                                                                                                          ");
     advQueryFragment.append("         sda.clsId,                                                                                                              ");
     advQueryFragment.append("         sda.INPUTPETSTATUS,                                                                                                     ");
@@ -2483,35 +2467,24 @@ public String getAdvWorkListDisplayDataForChild(AdvanceSearch advSearch, String 
     advQueryFragment.append("         p.req_type,                                                                                                             ");
     advQueryFragment.append("         pet.pet_state PETSTATUS,                                                                                                ");
     advQueryFragment.append("         pet.image_status ImageState,                                                                                            ");
-    advQueryFragment.append("         pet.content_status CONTENTSTATUS,                                                                                       ");
-    advQueryFragment.append("         p.COLO_DESC_COMPLEX,                                                                                                    ");
-    advQueryFragment.append("         p.PRODUCT_NAME_COMPLEX, p.CONVERSION_FLAG, pet.EXIST_IN_GROUP                                                         ");
+    advQueryFragment.append("         pet.content_status CONTENTSTATUS,                                                                                       ");    
+    advQueryFragment.append("         p.CONVERSION_FLAG, pet.EXIST_IN_GROUP                                                         ");
     advQueryFragment.append("   FROM                                                                                                                          ");
     advQueryFragment.append("     /*styleID_DescA*/ styleListA sda,                                                                                           ");
     advQueryFragment.append("     ADSE_PET_CATALOG pet,                                                                                                       ");
     advQueryFragment.append("     XMLTABLE(                                                                                                                   ");
     advQueryFragment.append("     'let                                                                                                                        ");
-    advQueryFragment.append("     $completionDate := $pets/pim_entry/entry/Pet_Ctg_Spec/Completion_Date,                                                      ");
-    advQueryFragment.append("     $colordesc:= $pets/pim_entry/entry/Ecomm_StyleColor_Spec/NRF_Color_Description,                                             ");
-    advQueryFragment.append("     $colordescComplex:= $pets/pim_entry/entry/Ecomm_PackColor_Spec/NRF_Color_Description                                        ");
+    advQueryFragment.append("     $completionDate := $pets/pim_entry/entry/Pet_Ctg_Spec/Completion_Date                                                      ");
     advQueryFragment.append("     return                                                                                                                      ");
     advQueryFragment.append("     <out>                                                                                                                       ");
     advQueryFragment.append("         <completion_date>{$completionDate}</completion_date>                                                                    ");
-    advQueryFragment.append("         <req_type>{$pets/pim_entry/entry/Pet_Ctg_Spec/SourceSystem}</req_type>                                                  ");
-    advQueryFragment.append("         <PRODUCT_NAME>{$pets/pim_entry/entry/Ecomm_Style_Spec/Product_Name}</PRODUCT_NAME>                                      ");
-    advQueryFragment.append("         <COLO_DESC>{$colordesc}</COLO_DESC>                                                                                     ");
-    advQueryFragment.append("         <COLO_DESC_COMPLEX>{$colordescComplex}</COLO_DESC_COMPLEX>                                                              ");
-    advQueryFragment.append("         <PRODUCT_NAME_COMPLEX>{$pets/pim_entry/entry/Ecomm_ComplexPack_Spec/Product_Name}</PRODUCT_NAME_COMPLEX>                ");
+    advQueryFragment.append("         <req_type>{$pets/pim_entry/entry/Pet_Ctg_Spec/SourceSystem}</req_type>                                                  ");           
     advQueryFragment.append("         <CONVERSION_FLAG>{$pets/pim_entry/entry/Pet_Ctg_Spec/System/Pet_Information/Conversion_Flag}</CONVERSION_FLAG>        ");
     advQueryFragment.append("     </out>'                                                                                                                     ");
     advQueryFragment.append("     passing pet.xml_data AS \"pets\" Columns                                                                                      ");
     advQueryFragment.append("         completion_date      VARCHAR2(10) path  '/out/completion_date',                                                         ");
-    advQueryFragment.append("         req_type             VARCHAR2(20) path '/out/req_type',                                                                 ");
-    advQueryFragment.append("         PRODUCT_NAME         VARCHAR2(40) path '/out/PRODUCT_NAME',                                                             ");
-    advQueryFragment.append("         COLO_DESC_COMPLEX    VARCHAR2(50)  path '/out/COLO_DESC_COMPLEX',                                                       ");
-    advQueryFragment.append("         COLO_DESC            VARCHAR2(50)  path '/out/COLO_DESC',                                                               ");
-    advQueryFragment.append("         PRODUCT_NAME_COMPLEX         VARCHAR2(40) path '/out/PRODUCT_NAME_COMPLEX'                                              ");
-    advQueryFragment.append("         ,CONVERSION_FLAG VARCHAR2(50) path '/out/CONVERSION_FLAG'                                              ");
+    advQueryFragment.append("         req_type             VARCHAR2(20) path '/out/req_type',                                                                 ");    
+    advQueryFragment.append("         CONVERSION_FLAG VARCHAR2(50) path '/out/CONVERSION_FLAG'                                              ");
     advQueryFragment.append("     )p                                                                                                                          ");
     advQueryFragment.append("   WHERE                                                                                                                         ");
     advQueryFragment.append("     sda.MDMID     =pet.mdmid                                                                                                    ");
@@ -2588,10 +2561,9 @@ public String getAdvWorkListDisplayDataForChild(AdvanceSearch advSearch, String 
     advQueryFragment.append("         orin.CONTENTSTATUS,                                                                                                     ");
     advQueryFragment.append("         orin.PETSTATUS,                                                                                                         ");
     advQueryFragment.append("         s.ven_name,                                                                                                             ");
-    advQueryFragment.append("         s.omniChannelIndicator,                                                                                                 ");
-    advQueryFragment.append("         orin.COLO_DESC_COMPLEX,                                                                                                 ");
+    advQueryFragment.append("         s.omniChannelIndicator,                                                                                                 ");    
     advQueryFragment.append("         orin.PARENT_ORIN,                                                                                                       ");
-    advQueryFragment.append("         orin.PRODUCT_NAME_COMPLEX , orin.CONVERSION_FLAG, orin.EXIST_IN_GROUP                                                                         ");
+    advQueryFragment.append("         orin.CONVERSION_FLAG, orin.EXIST_IN_GROUP                                                                         ");
     advQueryFragment.append("       FROM                                                                                                                      ");
     advQueryFragment.append("         styleID_DescAA orin,                                                                                                    ");
     advQueryFragment.append("         ADSE_SUPPLIER_CATALOG supplier,                                                                                         ");
@@ -2632,9 +2604,8 @@ public String getAdvWorkListDisplayDataForChild(AdvanceSearch advSearch, String 
     advQueryFragment.append("         sia.CONTENTSTATUS,                                                                                                      ");
     advQueryFragment.append("         sia.PETSTATUS,                                                                                                          ");
     advQueryFragment.append("         sia.ven_name,                                                                                                           ");
-    advQueryFragment.append("         sia.omniChannelIndicator,                                                                                               ");
-    advQueryFragment.append("         sia.COLO_DESC_COMPLEX,                                                                                                  ");
-    advQueryFragment.append("         sia.PRODUCT_NAME_COMPLEX, sia.CONVERSION_FLAG, sia.EXIST_IN_GROUP                                                                            ");
+    advQueryFragment.append("         sia.omniChannelIndicator,                                                                                               ");    
+    advQueryFragment.append("         sia.CONVERSION_FLAG, sia.EXIST_IN_GROUP                                                                            ");
     advQueryFragment.append("       from supplierDetails sia                                                                                                  ");
     advQueryFragment.append("       where                                                                                                                     ");
     advQueryFragment.append("           entry_type IN ('StyleColor', 'PackColor')                                                                             ");
@@ -2809,11 +2780,11 @@ public String getAdvWorkListDisplayDataForParent(AdvanceSearch advSearch) {
         advQueryFragment.append("          then NUMBER_04                                                                                                  ");
         advQueryFragment.append("         else     PRIMARY_UPC                                                                                             ");
         advQueryFragment.append("         end PRIMARY_UPC,                                                                                                 ");
-        advQueryFragment.append("         DEPT_ID, PRIMARY_SUPPLIER_ID Supplier_Id, PRIMARYSUPPLIERVPN VEN_STYLE, CLASS_ID clsId                ");
+        advQueryFragment.append("         DEPT_ID, PRIMARY_SUPPLIER_ID Supplier_Id, PRIMARYSUPPLIERVPN VEN_STYLE, CLASS_ID clsId, PRODUCT_NAME                ");
         advQueryFragment.append("       FROM                                                                                                               ");
         advQueryFragment.append("         ADSE_Item_CATALOG, Input inp                                                                                     ");
         advQueryFragment.append("       WHERE                                                                                                              ");
-        advQueryFragment.append("         ENTRY_TYPE IN ('Style', 'Complex Pack')                                                                          ");
+        advQueryFragment.append("         ENTRY_TYPE IN ('Style', 'Complex Pack')    AND PETEXISTS = 'Y'                                                                         ");
         advQueryFragment.append("         AND                                                                                                              ");
         advQueryFragment.append("         (                                                                                                                ");
         advQueryFragment.append("           inp.primaryUpc is NULL                                                                                         ");
@@ -2858,7 +2829,7 @@ public String getAdvWorkListDisplayDataForParent(AdvanceSearch advSearch) {
         advQueryFragment.append("              then NUMBER_04                                                                                              ");
         advQueryFragment.append("             else     PRIMARY_UPC                                                                                         ");
         advQueryFragment.append("             end PRIMARY_UPC,                                                                                             ");
-        advQueryFragment.append("             DEPT_ID, PRIMARY_SUPPLIER_ID Supplier_Id, PRIMARYSUPPLIERVPN VEN_STYLE, CLASS_ID clsId             ");
+        advQueryFragment.append("             DEPT_ID, PRIMARY_SUPPLIER_ID Supplier_Id, PRIMARYSUPPLIERVPN VEN_STYLE, CLASS_ID clsId, PRODUCT_NAME             ");
         advQueryFragment.append("           FROM                                                                                                           ");
         advQueryFragment.append("             ADSE_Item_CATALOG, Input inp                                                                                 ");
         advQueryFragment.append("           WHERE                                                                                                          ");
@@ -2880,7 +2851,7 @@ public String getAdvWorkListDisplayDataForParent(AdvanceSearch advSearch) {
         //advQueryFragment.append("         inp.VENDOR_STYLE VSTYLE,                                                                                         ");
         advQueryFragment.append("         inp.classes,                                                                                                     ");
         advQueryFragment.append("         inp.CompletionFrom,inp.CompletionTo,inp.ImageStatus inpImageStatus,                                              ");
-        advQueryFragment.append("         inp.ContentStatus inpContentStatus,inp.RequestType,inp.createdToday, VEN_STYLE, clsId                 ");
+        advQueryFragment.append("         inp.ContentStatus inpContentStatus,inp.RequestType,inp.createdToday, VEN_STYLE, clsId, PRODUCT_NAME                 ");
         advQueryFragment.append("       FROM                                                                                                               ");
         advQueryFragment.append("         (                                                                                                                ");
         advQueryFragment.append("           SELECT                                                                                                         ");
@@ -2890,7 +2861,7 @@ public String getAdvWorkListDisplayDataForParent(AdvanceSearch advSearch) {
         advQueryFragment.append("             ENTRY_TYPE,                                                                                                  ");
         advQueryFragment.append("             MOD_DTM,                                                                                                     ");
         advQueryFragment.append("             PRIMARY_UPC,                                                                                                 ");
-        advQueryFragment.append("             DEPT_ID, Supplier_Id, VEN_STYLE, clsId                                                            ");
+        advQueryFragment.append("             DEPT_ID, Supplier_Id, VEN_STYLE, clsId, PRODUCT_NAME                                                            ");
         advQueryFragment.append("           FROM                                                                                                           ");
         advQueryFragment.append("             entryTypeStyleList                                                                                           ");
         advQueryFragment.append("       UNION ALL                                                                                                          ");
@@ -2907,7 +2878,7 @@ public String getAdvWorkListDisplayDataForParent(AdvanceSearch advSearch) {
         advQueryFragment.append("              then NUMBER_04                                                                                              ");
         advQueryFragment.append("             else     PRIMARY_UPC                                                                                         ");
         advQueryFragment.append("             end PRIMARY_UPC,                                                                                             ");
-        advQueryFragment.append("             DEPT_ID, PRIMARY_SUPPLIER_ID Supplier_Id, PRIMARYSUPPLIERVPN VEN_STYLE, CLASS_ID clsId            ");
+        advQueryFragment.append("             DEPT_ID, PRIMARY_SUPPLIER_ID Supplier_Id, PRIMARYSUPPLIERVPN VEN_STYLE, CLASS_ID clsId, PRODUCT_NAME            ");
         advQueryFragment.append("           FROM                                                                                                           ");
         advQueryFragment.append("             ADSE_ITEM_CATALOG, Input inp1                                                                             ");
         advQueryFragment.append("           WHERE                                                                                                          ");
@@ -2925,7 +2896,7 @@ public String getAdvWorkListDisplayDataForParent(AdvanceSearch advSearch) {
         advQueryFragment.append("         sda.PRIMARY_UPC,                                                                                                         ");
         advQueryFragment.append("         sda.Supplier_Id,                                                                                                         ");
         advQueryFragment.append("         sda.DEPT_ID,                                                                                                             ");
-        advQueryFragment.append("         p.PRODUCT_NAME,                                                                                                          ");
+        advQueryFragment.append("         sda.PRODUCT_NAME,                                                                                                          ");
         advQueryFragment.append("         sda.ven_style,                                                                                                           ");
         advQueryFragment.append("         sda.clsId,                                                                                                               ");
         advQueryFragment.append("         sda.INPUTPETSTATUS,                                                                                                      ");
@@ -2937,7 +2908,7 @@ public String getAdvWorkListDisplayDataForParent(AdvanceSearch advSearch) {
         advQueryFragment.append("         pet.pet_state PETSTATUS,                                                                                                 ");
         advQueryFragment.append("         pet.image_status ImageState,                                                                                             ");
         advQueryFragment.append("         pet.content_status CONTENTSTATUS,                                                                                        ");
-        advQueryFragment.append("         pet.PET_EARLIEST_COMP_DATE, p.PRODUCT_NAME_COMPLEX, pet.EXIST_IN_GROUP, p.CFAS, p.CONVERSION_FLAG                   ");
+        advQueryFragment.append("         pet.PET_EARLIEST_COMP_DATE, pet.EXIST_IN_GROUP, p.CFAS, p.CONVERSION_FLAG                   ");
         advQueryFragment.append("   FROM                                                                                                                           ");
         advQueryFragment.append("     /*styleID_DescA*/ itemGroup sda,                                                                                  ");
         advQueryFragment.append("     ADSE_PET_CATALOG pet,                                                                                                        ");
@@ -2947,18 +2918,14 @@ public String getAdvWorkListDisplayDataForParent(AdvanceSearch advSearch) {
         advQueryFragment.append("     return                                                                                                                       ");
         advQueryFragment.append("     <out>                                                                                                                        ");
         advQueryFragment.append("         <completion_date>{$completionDate}</completion_date>                                                                     ");
-        advQueryFragment.append("         <req_type>{$pets/pim_entry/entry/Pet_Ctg_Spec/SourceSystem}</req_type>                                                   ");
-        advQueryFragment.append("         <PRODUCT_NAME>{$pets/pim_entry/entry/Ecomm_Style_Spec/Product_Name}</PRODUCT_NAME>                                       ");
-        advQueryFragment.append("         <PRODUCT_NAME_COMPLEX>{$pets/pim_entry/entry/Ecomm_ComplexPack_Spec/Product_Name}</PRODUCT_NAME_COMPLEX>                 ");
+        advQueryFragment.append("         <req_type>{$pets/pim_entry/entry/Pet_Ctg_Spec/SourceSystem}</req_type>                                                   ");        
         advQueryFragment.append("          <CFAS>{$pets/pim_entry/entry/Ecomm_Style_Spec/Split_Color_Eligible}</CFAS>                 ");
         advQueryFragment.append("          <CONVERSION_FLAG>{$pets/pim_entry/entry/Pet_Ctg_Spec/System/Pet_Information/Conversion_Flag}</CONVERSION_FLAG>                 ");
         advQueryFragment.append("     </out>'                                                                                                                      ");
         advQueryFragment.append("     passing pet.xml_data AS \"pets\" Columns                                                                                       ");
         advQueryFragment.append("         completion_date      VARCHAR2(10) path  '/out/completion_date',                                                          ");
-        advQueryFragment.append("         req_type             VARCHAR2(20) path '/out/req_type',                                                                  ");
-        advQueryFragment.append("         PRODUCT_NAME         VARCHAR2(40) path '/out/PRODUCT_NAME',                                                              ");
-        advQueryFragment.append("         PRODUCT_NAME_COMPLEX         VARCHAR2(40) path '/out/PRODUCT_NAME_COMPLEX'                                               ");
-        advQueryFragment.append("         ,CFAS VARCHAR2(50) path '/out/CFAS'                                               ");
+        advQueryFragment.append("         req_type             VARCHAR2(20) path '/out/req_type',                                                                  ");        
+        advQueryFragment.append("         CFAS VARCHAR2(50) path '/out/CFAS'                                               ");
         advQueryFragment.append("         ,CONVERSION_FLAG VARCHAR2(50) path '/out/CONVERSION_FLAG'                                               ");
         advQueryFragment.append("     )p                                                                                                                           ");
         advQueryFragment.append("   WHERE                                                                                                                          ");
@@ -3038,7 +3005,7 @@ public String getAdvWorkListDisplayDataForParent(AdvanceSearch advSearch) {
         advQueryFragment.append("         orin.PETSTATUS,                                                                                                          ");
         advQueryFragment.append("         s.ven_name,                                                                                                              ");
         advQueryFragment.append("         s.omniChannelIndicator,                                                                                                  ");
-        advQueryFragment.append("         orin.PET_EARLIEST_COMP_DATE, orin.PRODUCT_NAME_COMPLEX, orin.EXIST_IN_GROUP, orin.CFAS, orin.CONVERSION_FLAG              ");
+        advQueryFragment.append("         orin.PET_EARLIEST_COMP_DATE, orin.EXIST_IN_GROUP, orin.CFAS, orin.CONVERSION_FLAG              ");
         advQueryFragment.append("       FROM                                                                                                                       ");
         advQueryFragment.append("         styleID_DescAA orin,                                                                                                     ");
         advQueryFragment.append("         ADSE_SUPPLIER_CATALOG supplier,                                                                                          ");
@@ -3079,7 +3046,7 @@ public String getAdvWorkListDisplayDataForParent(AdvanceSearch advSearch) {
         advQueryFragment.append("         sia.PETSTATUS,                                                                                                           ");
         advQueryFragment.append("         sia.ven_name,                                                                                                            ");
         advQueryFragment.append("         sia.omniChannelIndicator,                                                                                                ");
-        advQueryFragment.append("         sia.PET_EARLIEST_COMP_DATE, sia.PRODUCT_NAME_COMPLEX , sia.EXIST_IN_GROUP, sia.CFAS, sia.CONVERSION_FLAG                  ");
+        advQueryFragment.append("         sia.PET_EARLIEST_COMP_DATE , sia.EXIST_IN_GROUP, sia.CFAS, sia.CONVERSION_FLAG                  ");
         advQueryFragment.append("       from supplierDetails sia                                                                                                   ");
         advQueryFragment.append("       where                                                                                                                      ");
         advQueryFragment.append("           (sia.Entry_Type IN ('Style','Complex Pack')                                                                            ");
@@ -3113,7 +3080,7 @@ public String getAdvWorkListDisplayDataForParent(AdvanceSearch advSearch) {
         advQueryFragment.append("         completion_date,                                                                                                         ");
         advQueryFragment.append("         omniChannelIndicator,                                                                                                    ");
         advQueryFragment.append("         req_type,                                                                                                                ");
-        advQueryFragment.append("         PET_EARLIEST_COMP_DATE, PRODUCT_NAME_COMPLEX, EXIST_IN_GROUP, CFAS, CONVERSION_FLAG                                       ");
+        advQueryFragment.append("         PET_EARLIEST_COMP_DATE, EXIST_IN_GROUP, CFAS, CONVERSION_FLAG                                       ");
         advQueryFragment.append("     FROM styleID_Desc                                                                                                            ");
         advQueryFragment.append("     WHERE                                                                                                                        ");
         advQueryFragment.append("         (                                                                                                                        ");
@@ -3750,14 +3717,14 @@ public String getAdvWorkListDisplayDataForParent(AdvanceSearch advSearch) {
         
         if(dept != null && dept.trim().length() > 0)
         {
-        	getGroupDetailsCountQueryWorkList.append(" AND ( MAPPING.COMPONENT_STYLE_ID IN (SELECT AIC.MDMID   ");
-        	getGroupDetailsCountQueryWorkList.append(" FROM ADSE_ITEM_CATALOG AIC WHERE AIC.PETEXISTS='Y'                ");
-        	getGroupDetailsCountQueryWorkList.append(" AND AIC.DEPT_ID IN (                                     ");
-        	getGroupDetailsCountQueryWorkList.append(dept);
-        	getGroupDetailsCountQueryWorkList.append(" )) OR  MAPPING.COMPONENT_GROUPING_ID IN (SELECT MDMID ");
-        	getGroupDetailsCountQueryWorkList.append(" FROM ADSE_GROUP_CATALOG WHERE DEF_DEPT_ID IN ( ");
-        	getGroupDetailsCountQueryWorkList.append(dept);
-        	getGroupDetailsCountQueryWorkList.append(" ))) ");
+            getGroupDetailsCountQueryWorkList.append(" AND ( MAPPING.COMPONENT_STYLE_ID IN (SELECT AIC.MDMID   ");
+            getGroupDetailsCountQueryWorkList.append(" FROM ADSE_ITEM_CATALOG AIC WHERE AIC.PETEXISTS='Y'                ");
+            getGroupDetailsCountQueryWorkList.append(" AND AIC.DEPT_ID IN (                                     ");
+            getGroupDetailsCountQueryWorkList.append(dept);
+            getGroupDetailsCountQueryWorkList.append(" )) OR  MAPPING.COMPONENT_GROUPING_ID IN (SELECT MDMID ");
+            getGroupDetailsCountQueryWorkList.append(" FROM ADSE_GROUP_CATALOG WHERE DEF_DEPT_ID IN ( ");
+            getGroupDetailsCountQueryWorkList.append(dept);
+            getGroupDetailsCountQueryWorkList.append(" ))) ");
         }
         
         getGroupDetailsCountQueryWorkList.append(" ORDER BY PET_SOURCE, COMPLETION_DATE DESC, GRP.MDMID   ");
@@ -3837,8 +3804,8 @@ public String getAdvWorkListDisplayDataForParent(AdvanceSearch advSearch) {
         "   AND AGCM.MDMID         = :orinNum                                                          "+
         "   UNION                                                                                      "+
         "  SELECT AIC.PARENT_MDMID,                                                                    "+
-        "     CASE WHEN AIC.ENTRY_TYPE = 'StyleColor' THEN SUBSTR(AIC.MDMID,1,9) || ' ' || SUBSTR(AIC.MDMID,10,12) || ' ' || PET_XML.COLO_DESC ELSE AIC.MDMID END MDMID,   "+
-        "     PET_XML.PRODUCT_NAME PRODUCTNAME,                                                        "+
+        "     CASE WHEN AIC.ENTRY_TYPE = 'StyleColor' THEN SUBSTR(AIC.MDMID,1,9) || ' ' || SUBSTR(AIC.MDMID,10,12) || ' ' || AIC.COLOR_NAME ELSE AIC.MDMID END MDMID,   "+
+        "     AIC.PRODUCT_NAME PRODUCTNAME,                                                        "+
         "     CASE WHEN AIC.ENTRY_TYPE = 'Style' THEN TO_CHAR(APC.PET_EARLIEST_COMP_DATE, 'YYYY-MM-DD') ELSE PET_XML.completion_date END AS completion_date,        "+
         "     APC.PET_STATE PET_STATE,                                                                 "+
         "     APC.CONTENT_STATUS CONTENT_STATE,                                                        "+
@@ -3860,16 +3827,13 @@ public String getAdvWorkListDisplayDataForParent(AdvanceSearch advSearch) {
         "   ON AIC.MDMID=APC.MDMID LEFT OUTER JOIN                                                     "+
         "   ADSE_SUPPLIER_CATALOG ASCT ON ASCT.MDMID = AIC.PRIMARY_SUPPLIER_ID,                        "+
         "     XMLTABLE( 'let                                                                           "+
-        " $completionDate := $pets/pim_entry/entry/Pet_Ctg_Spec/Completion_Date,                       "+
-        " $colordesc:= $pets/pim_entry/entry/Ecomm_StyleColor_Spec/NRF_Color_Description               "+
+        " $completionDate := $pets/pim_entry/entry/Pet_Ctg_Spec/Completion_Date                        "+
         " return                                                                                       "+                                         
         " <out>                                                                                        "+
         " <completion_date>{$completionDate}</completion_date>                                         "+
         " <req_type>{$pets/pim_entry/entry/Pet_Ctg_Spec/SourceSystem}</req_type>                       "+
-        " <PRODUCT_NAME>{$pets/pim_entry/entry/Ecomm_Style_Spec/Product_Name}</PRODUCT_NAME>           "+
-        " <COLO_DESC>{$colordesc}</COLO_DESC>                                                          "+
         " <CONVERSION_FLAG>{$pets/pim_entry/entry/Pet_Ctg_Spec/System/Pet_Information/Conversion_Flag}</CONVERSION_FLAG> "+
-        " </out>' passing APC.xml_data AS \"pets\" Columns completion_date VARCHAR2(10) path '/out/completion_date', req_type VARCHAR2(20) path '/out/req_type', PRODUCT_NAME VARCHAR2(100) path '/out/PRODUCT_NAME', COLO_DESC VARCHAR2(50) path '/out/COLO_DESC', CONVERSION_FLAG VARCHAR2(10) path '/out/CONVERSION_FLAG' ) (+)PET_XML, "+
+        " </out>' passing APC.xml_data AS \"pets\" Columns completion_date VARCHAR2(10) path '/out/completion_date', req_type VARCHAR2(20) path '/out/req_type', CONVERSION_FLAG VARCHAR2(10) path '/out/CONVERSION_FLAG' ) (+)PET_XML, "+
         " XMLTABLE('for $i in $XML_DATA/pim_entry/entry  return $i'                                      "+
         "     passing ASCT.xml_data AS \"XML_DATA\"                                                        "+
         "     COLUMNS                                                                                    "+
@@ -3880,7 +3844,7 @@ public String getAdvWorkListDisplayDataForParent(AdvanceSearch advSearch) {
         "                                                                                               "+
         "   WHERE NVL(AIC.PARENT_MDMID,AIC.MDMID) = AGCM.COMPONENT_STYLE_ID                             "+
         "   AND AGCM.PEP_COMPONENT_TYPE!              ='Group'                                              "+
-        "   AND AIC.ENTRY_TYPE                   IN ('Style','StyleColor')                              "+
+        "   AND AIC.ENTRY_TYPE                   IN ('Style','StyleColor')       AND AIC.PETEXISTS = 'Y'                          "+
         "   AND  (CASE WHEN AIC.PARENT_MDMID is NOT NULL AND  AIC.MDMID !=AGCM.COMPONENT_STYLECOLOR_ID THEN 0 ELSE 1 END) =1 "+
         "   AND ( PET_STATE = '01' OR (APC.Entry_type='Style' and  APC.PET_STYLE_STATE='Y' AND PET_STATE<>'05' ) ) "+
         "   AND AGCM.MDMID                        = :orinNum "+
