@@ -27,6 +27,7 @@ import com.belk.pep.vo.ItemPrimaryHierarchyVO;
 import com.belk.pep.vo.OmniChannelBrandVO;
 import com.belk.pep.vo.PetAttributeVO;
 import com.belk.pep.vo.ProductDetailsVO;
+import com.belk.pep.vo.RegularPetCopy;
 import com.belk.pep.vo.SkuAttributesVO;
 import com.belk.pep.vo.StyleColorFamilyVO;
 import com.belk.pep.vo.StyleInformationVO;
@@ -422,4 +423,23 @@ public interface ContentService {
 	 * @return
 	 */
 	GlobalAttributesVO getGroupGlobalAttribute(String groupingId);
+
+
+	/**
+	 * @param String
+	 * @return
+	 * @throws PEPServiceException
+	 * @throws IOException
+	 */
+	String callRegularContentCopyService(String json)
+			throws PEPServiceException, IOException;
+
+
+	/**
+	 * @param petCopy
+	 * @return
+	 * @throws PEPServiceException
+	 */
+	RegularPetCopy getRegularCopyValidation(RegularPetCopy petCopy)
+			throws PEPServiceException;
 }
