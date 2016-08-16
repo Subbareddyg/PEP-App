@@ -4483,8 +4483,9 @@ public class ContentController implements ResourceAwareController, EventAwareCon
 				styleColorVO.setVPN(found.getVPN());
 				styleColorList.add(styleColorVO);
 			}
+			
 
-			// Populate Group SKU List
+			/*// Populate Group SKU List
 			if (found.getEntryType().equalsIgnoreCase("SKU")) {
 				skuVO = new SkuVO();
 				skuVO.setStyleId(found.getStyleId());
@@ -4497,7 +4498,7 @@ public class ContentController implements ResourceAwareController, EventAwareCon
 				skuVO.setOmniChannelSizeDescription(found.getOmniChannelCodeDesc());
 				skuVO.setVPN(found.getVPN());
 				skuList.add(skuVO);
-			}
+			}*/
 
 		}
 
