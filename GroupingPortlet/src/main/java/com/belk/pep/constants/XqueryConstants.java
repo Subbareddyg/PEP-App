@@ -1355,6 +1355,10 @@ public class XqueryConstants {
 	 *  This method is used to get the existing components query for Regular/Beauty Collection Grouping.
 	 * @return String
 	 */
+	/**
+	 *  This method is used to get the existing components query for Regular/Beauty Collection Grouping.
+	 * @return String
+	 */
 	public static  final String getExistRegularBeautyDetailsQuery() {
 		LOGGER.info("Entering getExistRegularBeautyDetailsQuery() in Grouping XQueryConstant class.");
 		StringBuilder getExistRegularBeautyDetailsQuery = new StringBuilder();
@@ -1375,7 +1379,7 @@ public class XqueryConstants {
 		getExistRegularBeautyDetailsQuery.append("   ITEM.MDMID,                         ");
 		getExistRegularBeautyDetailsQuery.append("   ITEM.ENTRY_TYPE,                    ");
 		getExistRegularBeautyDetailsQuery.append("   ITEM.PRIMARYSUPPLIERVPN,            ");
-		getExistRegularBeautyDetailsQuery.append("   PET_XML.PRODUCT_NAME,               ");
+		getExistRegularBeautyDetailsQuery.append("   ITEM.PRODUCT_NAME,               ");
 		getExistRegularBeautyDetailsQuery.append("   PET_XML.COLOR_CODE,                 ");
 		getExistRegularBeautyDetailsQuery.append("   PET_XML.COLOR_DESC,                 ");
 		getExistRegularBeautyDetailsQuery.append("   ITEM.CLASS_ID,                      ");
