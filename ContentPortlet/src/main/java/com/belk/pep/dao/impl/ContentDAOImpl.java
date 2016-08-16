@@ -2180,7 +2180,8 @@ public boolean releseLockedPet(  String orin, String pepUserID,String pepFunctio
               final Properties prop =   PropertiesFileLoader.getPropertyLoader("contentDisplay.properties");                
                  if(null!= rows){                     
                      for(Object[] obj : rows){
-                         groupsFound = new GroupsFound();                    
+                         groupsFound = new GroupsFound();  
+                         if (checkNull(obj[6])!=null && !(obj[6].toString()).equals("SKU")){
                          groupsFound.setGroupId(checkNull(obj[0]).toString());
                          groupsFound.setStyleId(checkNull(obj[1]).toString());
                          groupsFound.setComponentId(checkNull(obj[2]).toString());
@@ -2201,6 +2202,7 @@ public boolean releseLockedPet(  String orin, String pepUserID,String pepFunctio
                          groupsFound.setOmniChannelCodeDesc("");
                          groupsFound.setVPN(checkNull(obj[11]).toString());
                          groupsList.add(groupsFound);
+                         }
                      }
                  }
                  
