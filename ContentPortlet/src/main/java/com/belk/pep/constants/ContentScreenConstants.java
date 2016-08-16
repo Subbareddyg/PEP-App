@@ -252,5 +252,15 @@ public class ContentScreenConstants {
 	public static final String GROUP_NAME_XPATH = "Group_Ctg_Spec/Name";
 	public static final String GROUP_DESC_XPATH = "Group_Ctg_Spec/Description";
 	public static final String COPY_CONTENT_ORIN_FAILURE_MESSAGE = "Please complete the Style Orin before copying ";
-
+	
+	public static final String REG_COPY_SUCESS_MESSGAE="regcopy.content.success.message";
+	public static final String REG_COPY_FAIL_ENTRY_TYPE_STYLE ="You cann't copy a Style to a Complex Pack.Please select a valid Source PET and try again.";
+	public static final String REG_COPY_FAIL_ENTRY_TYPE_COMPLEX_PACK ="You cann't copy a Complex Pack to a Style.Please select a valid Source PET and try again.";
+	public static final String REG_COPY_FAIL_SAME_MDMID ="You can't copy from same ORIN.Please select a valid Source PET and try again.";
+	public static final String REG_COPY_FAIL_INVALID = "Please verify the Orin/Vendor Style";
+	public static final String REG_COPY_CONTENT_SERVICE_URL = "copy.reg.content.items";
+	public static final String ENTRY_TYPE="ENTRY_TYPE";
+	public static final String MDMID="MDMID";
+	public static final String DESCRIPTION="description";
+	public static final String REG_COPY_FAIL_INVALID_PET_STATUS = "Copy cannot be applied with PET status not Initiated";
 }

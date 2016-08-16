@@ -21,6 +21,7 @@ import com.belk.pep.vo.ItemPrimaryHierarchyVO;
 import com.belk.pep.vo.OmniChannelBrandVO;
 import com.belk.pep.vo.PetAttributeVO;
 import com.belk.pep.vo.ProductDetailsVO;
+import com.belk.pep.vo.RegularPetCopy;
 import com.belk.pep.vo.SkuAttributesVO;
 import com.belk.pep.vo.StyleColorFamilyVO;
 import com.belk.pep.vo.StyleInformationVO;
@@ -372,4 +373,13 @@ public  interface ContentDAO {
 	 * @return GlobalAttributesVO
 	 */
 	GlobalAttributesVO getGroupGlobalAttribute(String groupingId);
+
+
+	/**
+	 * @param petCopy
+	 * @return
+	 * @throws PEPFetchException
+	 */
+	RegularPetCopy getRegularCopyValidation(RegularPetCopy petCopy)
+			throws PEPFetchException;
 }

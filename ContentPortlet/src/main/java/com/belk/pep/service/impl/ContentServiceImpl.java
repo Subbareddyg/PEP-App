@@ -34,11 +34,11 @@ import com.belk.pep.vo.ContentManagementVO;
 import com.belk.pep.vo.CopyAttributeVO;
 import com.belk.pep.vo.CopyAttributesVO;
 import com.belk.pep.vo.GlobalAttributesVO;
-import com.belk.pep.vo.GroupingVO;
 import com.belk.pep.vo.ItemPrimaryHierarchyVO;
 import com.belk.pep.vo.OmniChannelBrandVO;
 import com.belk.pep.vo.PetAttributeVO;
 import com.belk.pep.vo.ProductDetailsVO;
+import com.belk.pep.vo.RegularPetCopy;
 import com.belk.pep.vo.SkuAttributesVO;
 import com.belk.pep.vo.StyleColorFamilyVO;
 import com.belk.pep.vo.StyleInformationVO;
@@ -1194,6 +1194,151 @@ try{
 			return iphVo;
 		
 	}
+	
+
+	
+	
+	/**
+	 * Method to get the call copy content web service.
+	 * 
+	 * @param jsonObject
+	 *            String
+	 * @return String
+	 * @throws PEPServiceException
+	 * 
+	 *             Method added For PIM Phase 2 - Group Content Date: 06/18/2016
+	 *             Added By: Cognizant
+	 * @throws IOException 
+	 */
+	@Override
+	public String callRegularContentCopyService(final String jsonObject)
+			throws PEPServiceException, IOException {
+		LOGGER.info("Entering callRegularContentCopyService.");
+
+		String responseMsg = ContentScreenConstants.EMPTY;
+		BufferedReader responseBuffer = null;
+		HttpURLConnection httpConnection = null;
+		try {
+			final Properties prop = PropertiesFileLoader
+					.getPropertyLoader(ContentScreenConstants.MESS_PROP);
+			final String serviceURL = prop
+					.getProperty(ContentScreenConstants.REG_COPY_CONTENT_SERVICE_URL);
+			LOGGER.info("Copy Content ServiceURL-->" + serviceURL);
+
+			final URL targetUrl = new URL(serviceURL);
+			httpConnection = (HttpURLConnection) targetUrl.openConnection();
+			httpConnection.setDoOutput(true);
+			httpConnection
+					.setRequestMethod(prop
+							.getProperty(ContentScreenConstants.SERVICE_REQUEST_METHOD));
+			httpConnection
+					.setRequestProperty(
+							prop.getProperty(ContentScreenConstants.SERVICE_REQUEST_PROPERTY_CONTENT_TYPE),
+							prop.getProperty(ContentScreenConstants.SERVICE_REQUEST_PROPERTY_APPLICATION_TYPE));
+
+			LOGGER.info("callContentCopyService Service::Json Array-->"
+					+ jsonObject);
+
+			
+
+			OutputStream outputStream = httpConnection.getOutputStream();
+			outputStream.write(jsonObject
+					.getBytes(ContentScreenConstants.DEFAULT_CHARSET));
+			outputStream.flush();
+
+			responseBuffer = new BufferedReader(new InputStreamReader(
+					httpConnection.getInputStream(),
+					ContentScreenConstants.DEFAULT_CHARSET));
+			String output;
+			while ((output = responseBuffer.readLine()) != null) {
+				LOGGER.info("Copy Content Service Output-->" + output);
+
+				responseMsg = output;
+			}
+			
+			if (LOGGER.isDebugEnabled()) {
+				LOGGER.debug("Copy Content Service message-->" + responseMsg);
+			}
+
+
+			/** Extract Service message **/
+			JSONObject jsonObjectRes = null;
+			if (null != responseMsg && !(ContentScreenConstants.EMPTY).equals(responseMsg)) {
+				jsonObjectRes = new JSONObject(responseMsg);
+			}
+			String responseMsgCode="";
+			if (null != jsonObjectRes) {
+				responseMsgCode = jsonObjectRes
+						.getString(ContentScreenConstants.MSG_CODE);
+			}
+			if (LOGGER.isDebugEnabled()) {
+				LOGGER.debug("responseMsgCode-->" + responseMsgCode);
+			}
+
+			if (null != responseMsgCode
+					&& responseMsgCode.equals(ContentScreenConstants.SUCCESS_CODE)) {
+				responseMsg = prop
+						.getProperty(ContentScreenConstants.REG_COPY_SUCESS_MESSGAE);
+			} else {
+				responseMsg = jsonObjectRes
+				.getString(ContentScreenConstants.DESCRIPTION);
+			}
+
+
+		} catch (MalformedURLException e) {
+			LOGGER.error("inside malformedException-->" + e);
+			throw new PEPServiceException(e.getMessage());
+		} catch (ClassCastException e) {
+			LOGGER.error("inside ClassCastException-->" + e);
+			throw new PEPServiceException(e.getMessage());
+		} catch (IOException e) {
+			LOGGER.error("inside IOException-->" + e);
+			throw new PEPServiceException(e.getMessage());
+		} catch (JSONException e) {
+			LOGGER.error("inside JSOnException-->" + e);
+			throw new PEPServiceException(e.getMessage());
+		} catch (Exception e) {
+			LOGGER.error("inside Exception-->" + e);
+			throw new PEPServiceException(e.getMessage());
+		} finally {
+			if (null != httpConnection) {
+				httpConnection.disconnect();
+			}
+			if (responseBuffer != null) {
+					responseBuffer.close();				
+			}
+		}
+		LOGGER.info("Exiting callRegularContentCopyService");
+		return responseMsg;
+	}
+	
+	/**
+     * Method to get the copy validation from database.
+     *    
+     * @param petCopy RegularPetCopy  
+     * @return RegularPetCopy
+     * @throws PEPServiceException
+     * 
+     * Method added For PIM Phase 2
+     * Added By: Cognizant
+     */
+    @Override
+	public RegularPetCopy getRegularCopyValidation( RegularPetCopy petCopy) throws PEPServiceException {
+
+		LOGGER.info("***Entering getRegularCopyValidation() method.");
+
+		try {
+			petCopy = contentDAO.getRegularCopyValidation(petCopy);
+		} catch (final PEPFetchException fetchException) {
+			LOGGER.error("Exception in getRegularCopyValidation() method. -- "
+					+ fetchException);
+			throw new PEPServiceException(fetchException.getMessage());
+		}
+		LOGGER.info("***Exiting getRegularCopyValidation() method.");
+		return petCopy;
+	}
+	
+
 }
 
 

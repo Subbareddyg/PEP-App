@@ -40,6 +40,45 @@
   display: inherit;
   }
   </style>
+   <script type="text/javascript">
+		$(function(){
+			/** Modified For PIM Phase 2 
+				* - code to handle copy orin popup visibility 
+				* Date: 06/18/2016
+				* Modified By: Cognizant
+			*/
+			$('#btnCopyORIN').on('click', function(e){
+				if($(this).hasClass('chevron-down')){
+					$('#orin-popup').slideDown();
+					$(this).removeClass('chevron-down').addClass('chevron-up');
+				}else{
+					$('#orin-popup').slideUp();
+					$(this).addClass('chevron-down').removeClass('chevron-up');
+					//clearing the orin textbox when collapsed
+					$('#orin-popup').find('input[type=text]').val('');
+				} 
+			});
+
+			$('#doCopyOrin').on('click', function(e){
+				if($('#copyORINstyleIdTmp').val().trim() != ''){
+					$('#copyORINstyleId').val($('#copyORINstyleIdTmp').val());
+					confirmationMessage = false;
+					$('#copyORINForm').submit();
+				}else{
+					$('#copyORINstyleIdTmp').addClass('error_txt');
+				}
+			});
+			
+			$('#copyORINstyleIdTmp').on('change', function(){
+				$(this).removeClass('error_txt');
+			});
+			
+			
+			setTimeout(function(){
+				$('#formIphMappingErrorMessage').fadeOut('slow');
+			}, 10000);
+		});
+	</script>
   
     <script type="text/javascript">
     var inputChanged = true;
@@ -438,6 +477,7 @@
 	       		  $('#globalPWPId').attr("disabled", "disabled");
 	       		  $('#globalPYGId').attr("disabled", "disabled");
 	       		  $('#bopislId').attr("disabled", "disabled");
+	       		  $("#btnCopyORIN").attr("disabled", "disabled"); //disabling Copy ORIN button for a read only user
             }
             
             // disableProductAndLegacy Attributes
@@ -2042,7 +2082,9 @@ function clickListenerContent(e){
 				<portlet:param name="action" value="getChangedIPHCategoryData"/>
 		</portlet:actionURL>
 		
-		
+		<portlet:actionURL var="copyOrinContent"> 
+				<portlet:param name="action" value="copyRegularOrinContent"/>
+		</portlet:actionURL>	
 		
 		<portlet:resourceURL var="updateContentPetStyleDataStatus" id="updateContentPetStyleDataStatus"></portlet:resourceURL>
 		<portlet:resourceURL var="updateContentPetStyleColorDataStatus" id="updateContentPetStyleColorDataStatus"></portlet:resourceURL>
@@ -2053,6 +2095,13 @@ function clickListenerContent(e){
 		<div id="content">
 				<div id="main">
 
+					<form id="copyORINForm" name="copyORINForm" action="${copyOrinContent}" method="post">
+						<input type="hidden" name="toOrinType" id="hdnType" value="${contentDisplayForm.styleInformationVO.entryType}"/>
+						<input type="hidden" name="toOrin" id="hdnId" value="${contentDisplayForm.styleInformationVO.orin}"/>
+						<input type="hidden" name="toOrinPETStatus" id="hdnToOrinPETStatus" value="${contentDisplayForm.styleAndItsChildDisplay.styleList[0].petState}"/>
+						<input type="hidden" name="fromOrin" id="copyORINstyleId" value="" required />
+						
+					</form>
 					<form:form commandName="contentDisplayForm" method="post" action="${getChangedIPHCategoryData}" name="contentDisplayForm" id="contentDisplayForm">
 				
 				 
@@ -2119,8 +2168,28 @@ function clickListenerContent(e){
 								     <c:if test="${not empty  contentDisplayForm.iphMappingMessage}">	
 										     <table><tr><td><b><font size='2'><c:out value="${contentDisplayForm.iphMappingMessage}"/></font></b></td></tr></table>
 									 </c:if>
+									 <table><tr><td><b><font size='2'><c:out value="${contentCopyStatusMessage}" /></font></b></td></tr></table>
 								   </div>
-								    
+								    	<div class="orin-popup-container">
+										<input type="button" class="btn chevron-down" id="btnCopyORIN" value="Copy ORIN" style="width: 150px; padding: 6px;"/>
+										<div class="clearfix"></div>
+										<div class="orin-popup" id="orin-popup" style="display:none">
+											<div class="popup-header x-panel-header x-unselectable">Copy ORIN</div>
+											<div class="popup-body">
+												
+												<div class="form-conatiner">
+													<div class="input-area">
+														<label for="styleId">ORIN#/Vendor Style#</label>
+														<input type="text" name="fromOrin" id="copyORINstyleIdTmp" value="" required maxlength="15" />
+													</div>
+													<div class="submit-area">
+														<input type="button" id="doCopyOrin" value="Submit" class="action-button" />
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								   	
 								   	<ul class="pep_info" style="font-size: 11px; padding: 0 0 10px !important;">								   	    
 										<li class="txt_attr_name" style="width: 30%;">
 										   

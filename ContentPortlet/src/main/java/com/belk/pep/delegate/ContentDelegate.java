@@ -5,14 +5,14 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-//import org.apache.log4j.Logger;
+
+import org.json.JSONObject;
 
 import com.belk.pep.constants.ContentScreenConstants;
 import com.belk.pep.exception.checked.PEPDelegateException;
@@ -32,17 +32,15 @@ import com.belk.pep.vo.ContentManagementVO;
 import com.belk.pep.vo.CopyAttributeVO;
 import com.belk.pep.vo.CopyAttributesVO;
 import com.belk.pep.vo.GlobalAttributesVO;
-import com.belk.pep.vo.GroupingVO;
 import com.belk.pep.vo.ItemPrimaryHierarchyVO;
 import com.belk.pep.vo.OmniChannelBrandVO;
 import com.belk.pep.vo.PetAttributeVO;
 import com.belk.pep.vo.ProductDetailsVO;
+import com.belk.pep.vo.RegularPetCopy;
 import com.belk.pep.vo.SkuAttributesVO;
 import com.belk.pep.vo.StyleColorFamilyVO;
 import com.belk.pep.vo.StyleInformationVO;
-
-import org.json.JSONException;
-import org.json.JSONObject; 
+import com.google.gson.Gson;
 
 
 /**
@@ -1167,6 +1165,60 @@ public class ContentDelegate {
      }
         
      
+     /**
+      * Method to get the copy validation from database.
+      *    
+      * @param petCopy RegularPetCopy
+      * @return RegularPetCopy
+      * @throws PEPDelegateException
+      * 
+      * Method added For PIM Phase 2 - Group Content
+      * Added By: Cognizant
+      */
+ 	public RegularPetCopy getCopyOrinValidation( RegularPetCopy petCopy) throws PEPDelegateException {
+
+ 		LOGGER.info("***Entering getCopyOrinValidation() method.");
+
+ 		
+ 		try {
+ 			petCopy = contentService.getRegularCopyValidation(petCopy);
+ 		} catch (final PEPServiceException fetchException) {
+ 			throw new PEPDelegateException(fetchException.getMessage());
+ 		}
+ 		LOGGER.info("***Exiting getCopyOrinValidation() method.");
+ 		return petCopy;
+ 	}
+ 	
+ 	/**
+     * Method to get the call copy content web service.
+     *    
+     * @param petCopy RegularPetCopy  
+     * @return String
+     * @throws PEPServiceException
+     * 
+     * Method added For PIM Phase 2 - Group Content
+     * Added By: Cognizant
+     */
+	public String callCopyRegularContentService( RegularPetCopy petCopy)
+			throws PEPDelegateException {
+
+		LOGGER.info("***Entering callCopyContentService() method.");
+
+		String message = ContentScreenConstants.EMPTY;
+		try {
+			final Gson gson = new Gson();
+			// convert java object to JSON format,
+			// and returned as JSON formatted string
+			final String json = gson.toJson(petCopy);
+			message = contentService.callRegularContentCopyService(json);
+		} catch (final PEPServiceException fetchException) {
+			throw new PEPDelegateException(fetchException.getMessage());
+		} catch (IOException e) {
+			throw new PEPDelegateException(e.getMessage());
+		}
+		LOGGER.info("***Exiting callCopyContentService() method.");
+		return message;
+	}
 
      
 }

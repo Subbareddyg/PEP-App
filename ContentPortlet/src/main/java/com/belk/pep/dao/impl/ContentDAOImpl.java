@@ -44,6 +44,7 @@ import com.belk.pep.vo.ItemPrimaryHierarchyVO;
 import com.belk.pep.vo.OmniChannelBrandVO;
 import com.belk.pep.vo.PetAttributeVO;
 import com.belk.pep.vo.ProductDetailsVO;
+import com.belk.pep.vo.RegularPetCopy;
 import com.belk.pep.vo.SkuAttributesVO;
 import com.belk.pep.vo.StyleColorFamilyVO;
 import com.belk.pep.vo.StyleInformationVO;
@@ -2510,4 +2511,67 @@ public boolean releseLockedPet(  String orin, String pepUserID,String pepFunctio
         LOGGER.info("ContentDAOImp :getGroupGolbalAttribute: end" );
         return groupAttribute;
     }
+    
+    /**
+     * Method to get the copy validation from database.
+     *    
+     * @param petCopy RegularPetCopy  
+     * @return RegularPetCopy
+     * @throws PEPServiceException
+     * 
+     * Method added For PIM Phase 2 - Group Content
+     * Added By: Cognizant
+     */
+    @Override
+    public RegularPetCopy getRegularCopyValidation(RegularPetCopy petCopy)
+            throws PEPFetchException {
+
+        LOGGER.info("***Entering getRegularCopyValidation() method.");
+        Session session = null;
+        
+        List<Object> rows = null;
+        
+        try {
+            session = sessionFactory.openSession();
+            Query query = session.createSQLQuery(XqueryConstants.copyRegularContentValidationQuery());
+            if(LOGGER.isDebugEnabled())
+            {
+                LOGGER.debug("Query, in DAOImpl: " + XqueryConstants.copyRegularContentValidationQuery());
+            }
+            if (query != null) {
+                query.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
+                query.setParameter(ContentScreenConstants.STYLE_ID, petCopy.getFromMDMId());
+                rows = query.list();
+            }
+            if (rows != null && !rows.isEmpty()) {
+            
+                for (final Object rowObj : rows) {
+                    final Map row = (Map) rowObj;
+
+                    petCopy.setFromMDMId(row.get(ContentScreenConstants.MDMID).toString());
+                    petCopy.setFromOrinEntryType(row.get(ContentScreenConstants.ENTRY_TYPE).toString());
+                    petCopy.setSuccess(true);
+                    if(LOGGER.isDebugEnabled())
+                    {
+                        LOGGER.debug("From MDMID to be copied, in DAOImpl: " + petCopy.getFromMDMId());
+                    }
+                }
+            }else {
+            	petCopy.setMessageToDisplay(ContentScreenConstants.REG_COPY_FAIL_INVALID);
+            	LOGGER.debug(petCopy.getMessageToDisplay());
+            }
+            
+        } catch (Exception exception) {
+            LOGGER.error("Exception in getRegularCopyValidation() method. -- "
+                    + exception);
+            throw new PEPFetchException(exception.getMessage());
+        } finally {
+            if (session != null) {
+                session.close();
+            }
+        }
+        LOGGER.info("***Exiting getRegularCopyValidation() method.");
+        return petCopy;
+    }
+
 }
