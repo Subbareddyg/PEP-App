@@ -1040,7 +1040,7 @@ try{
 			final String groupType,
 			final String overallStatus, final String updatedBy)
 			throws PEPServiceException {
-		LOGGER.info("Entering callCopyOrinContentService.");
+		LOGGER.info("Entering callUpdateContentStatusService.");
 		String responseMsg = ContentScreenConstants.EMPTY;
 		String responseMsgCode = ContentScreenConstants.EMPTY;
 		try{
@@ -1081,15 +1081,15 @@ try{
 					.getProperty(ContentScreenConstants.UPDATE_CONTENT_STATUS_FAILURE_MESSAGE);
 		}
 		}catch(IOException e){
-			LOGGER.error("Exception in callCopyOrinContentService:IOException :"+e);
+			LOGGER.error("Exception in callUpdateContentStatusService:IOException :"+e);
 			throw new PEPServiceException(e);
 			
 		}catch(JSONException e){
-			LOGGER.error("Exception in callCopyOrinContentService:JSONException :"+e);
+			LOGGER.error("Exception in callUpdateContentStatusService:JSONException :"+e);
 			throw new PEPServiceException(e);
 			
 		}
-		LOGGER.info("Exiting callCopyOrinContentService.");
+		LOGGER.info("Exiting callUpdateContentStatusService.");
 		return responseMsg;
 	}
 
@@ -1239,51 +1239,49 @@ try{
 			LOGGER.info("callContentCopyService Service::Json Array-->"
 					+ jsonObject);
 
-			
-
-			OutputStream outputStream = httpConnection.getOutputStream();
-			outputStream.write(jsonObject
-					.getBytes(ContentScreenConstants.DEFAULT_CHARSET));
-			outputStream.flush();
-
-			responseBuffer = new BufferedReader(new InputStreamReader(
-					httpConnection.getInputStream(),
-					ContentScreenConstants.DEFAULT_CHARSET));
-			String output;
-			while ((output = responseBuffer.readLine()) != null) {
-				LOGGER.info("Copy Content Service Output-->" + output);
-
-				responseMsg = output;
-			}
-			
-			if (LOGGER.isDebugEnabled()) {
-				LOGGER.debug("Copy Content Service message-->" + responseMsg);
-			}
-
-
-			/** Extract Service message **/
-			JSONObject jsonObjectRes = null;
-			if (null != responseMsg && !(ContentScreenConstants.EMPTY).equals(responseMsg)) {
-				jsonObjectRes = new JSONObject(responseMsg);
-			}
-			String responseMsgCode="";
-			if (null != jsonObjectRes) {
-				responseMsgCode = jsonObjectRes
-						.getString(ContentScreenConstants.MSG_CODE);
-			}
-			if (LOGGER.isDebugEnabled()) {
-				LOGGER.debug("responseMsgCode-->" + responseMsgCode);
-			}
-
-			if (null != responseMsgCode
-					&& responseMsgCode.equals(ContentScreenConstants.SUCCESS_CODE)) {
-				responseMsg = prop
-						.getProperty(ContentScreenConstants.REG_COPY_SUCESS_MESSGAE);
-			} else {
-				responseMsg = jsonObjectRes
-				.getString(ContentScreenConstants.DESCRIPTION);
-			}
-
+				OutputStream outputStream = httpConnection.getOutputStream();
+				outputStream.write(jsonObject
+						.getBytes(ContentScreenConstants.DEFAULT_CHARSET));
+				outputStream.flush();
+	
+				responseBuffer = new BufferedReader(new InputStreamReader(
+						httpConnection.getInputStream(),
+						ContentScreenConstants.DEFAULT_CHARSET));
+				String output;
+				while ((output = responseBuffer.readLine()) != null) {
+					LOGGER.info("Copy Content Service Output-->" + output);
+	
+					responseMsg = output;
+				}
+				
+				if (LOGGER.isDebugEnabled()) {
+					LOGGER.debug("Copy Content Service message-->" + responseMsg);
+				}
+	
+	
+				/** Extract Service message **/
+				JSONObject jsonObjectRes = null;
+				if (null != responseMsg && !(ContentScreenConstants.EMPTY).equals(responseMsg)) {
+					jsonObjectRes = new JSONObject(responseMsg);
+				}
+				String responseMsgCode="";
+				if (null != jsonObjectRes) {
+					responseMsgCode = jsonObjectRes
+							.getString(ContentScreenConstants.MSG_CODE);
+				}
+				if (LOGGER.isDebugEnabled()) {
+					LOGGER.debug("responseMsgCode-->" + responseMsgCode);
+				}
+	
+				if (null != responseMsgCode
+						&& responseMsgCode.equals(ContentScreenConstants.SUCCESS_CODE)) {
+					responseMsg = prop
+							.getProperty(ContentScreenConstants.REG_COPY_SUCESS_MESSGAE);
+				} else {
+					responseMsg = jsonObjectRes
+					.getString(ContentScreenConstants.DESCRIPTION);
+				}
+	         
 
 		} catch (MalformedURLException e) {
 			LOGGER.error("inside malformedException-->" + e);
@@ -1308,7 +1306,7 @@ try{
 					responseBuffer.close();				
 			}
 		}
-		LOGGER.info("Exiting callRegularContentCopyService");
+		LOGGER.info("Exiting callRegularContentCopyService : responseMsg -->"+responseMsg);
 		return responseMsg;
 	}
 	

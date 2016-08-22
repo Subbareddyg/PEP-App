@@ -2534,35 +2534,43 @@ public boolean releseLockedPet(  String orin, String pepUserID,String pepFunctio
         List<Object> rows = null;
         
         try {
-            session = sessionFactory.openSession();
-            Query query = session.createSQLQuery(XqueryConstants.copyRegularContentValidationQuery());
-            if(LOGGER.isDebugEnabled())
-            {
-                LOGGER.debug("Query, in DAOImpl: " + XqueryConstants.copyRegularContentValidationQuery());
-            }
-            if (query != null) {
-                query.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
-                query.setParameter(ContentScreenConstants.STYLE_ID, petCopy.getFromMDMId());
-                rows = query.list();
-            }
-            if (rows != null && !rows.isEmpty()) {
-            
-                for (final Object rowObj : rows) {
-                    final Map row = (Map) rowObj;
-
-                    petCopy.setFromMDMId(row.get(ContentScreenConstants.MDMID).toString());
-                    petCopy.setFromOrinEntryType(row.get(ContentScreenConstants.ENTRY_TYPE).toString());
-                    petCopy.setSuccess(true);
-                    if(LOGGER.isDebugEnabled())
-                    {
-                        LOGGER.debug("From MDMID to be copied, in DAOImpl: " + petCopy.getFromMDMId());
-                    }
-                }
-            }else {
-            	petCopy.setMessageToDisplay(ContentScreenConstants.REG_COPY_FAIL_INVALID);
-            	LOGGER.debug(petCopy.getMessageToDisplay());
-            }
-            
+        	if(petCopy!=null){
+        		session = sessionFactory.openSession();
+        		Query query = session.createSQLQuery(XqueryConstants.copyRegularContentValidationQuery());
+	            if(LOGGER.isDebugEnabled())
+	            {
+	                LOGGER.debug("Query, in DAOImpl: " + XqueryConstants.copyRegularContentValidationQuery());
+	            }
+	            if (query != null) {
+	                query.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
+	                query.setParameter(ContentScreenConstants.STYLE_ID, petCopy.getFromMDMId().toUpperCase());
+	                query.setFetchSize(1);
+	                rows = query.list();
+	            }
+	            if (rows != null && !rows.isEmpty()) {
+	            
+	                for (final Object rowObj : rows) {
+	                    final Map row = (Map) rowObj;
+	
+	                    petCopy.setFromMDMId(row.get(ContentScreenConstants.MDMID).toString());
+	                    petCopy.setFromOrinEntryType(row.get(ContentScreenConstants.ENTRY_TYPE).toString());
+	                    petCopy.setSuccess(true);
+	                    if(LOGGER.isDebugEnabled())
+	                    {
+	                        LOGGER.debug("From MDMID to be copied, in DAOImpl: " + petCopy.getFromMDMId());
+	                    }
+	                    break;
+	                }
+	            }else {
+	            	petCopy.setMessageToDisplay(ContentScreenConstants.REG_COPY_FAIL_INVALID);
+	            	LOGGER.debug(petCopy.getMessageToDisplay());
+	            }
+        	}else{
+        		LOGGER.error("Pet Copy is Null");
+        		petCopy = new RegularPetCopy();
+        		petCopy.setMessageToDisplay(ContentScreenConstants.SERVICE_FAILURE);
+        	}
+	            
         } catch (Exception exception) {
             LOGGER.error("Exception in getRegularCopyValidation() method. -- "
                     + exception);

@@ -633,7 +633,20 @@
                   	var exisVal = document.getElementById("dropdownhidden_id"+(selectedDropDown)).value;
                   	document.getElementById("dropdownhidden_id"+(selectedDropDown)).value = finalVal;
                   //	alert(document.getElementById("dropdownhidden_id"+(selectedDropDown)).value);
-         	  	}
+                    //VP28 - display selected attributes -start
+                    if(list.multiple){
+                  	  var id=list.id;
+                  	  var valueDD=$("#"+id+"_value");
+                  	  valueDD.empty(); //empty current options
+                  	  $('#'+id+" option:selected").each(function(){
+                  		  valueDD.append($('<option />',{
+                  			 value:$(this).val(),
+                  			 text:$(this).text()
+                  		  }));
+                  	  });
+                    }
+                    //VP28 - end
+           	  	}
             
             //VP21
 			 var  pepUserRoleName = "";
@@ -2096,10 +2109,10 @@ function clickListenerContent(e){
 				<div id="main">
 
 					<form id="copyORINForm" name="copyORINForm" action="${copyOrinContent}" method="post">
-						<input type="hidden" name="toOrinType" id="hdnType" value="${contentDisplayForm.styleInformationVO.entryType}"/>
-						<input type="hidden" name="toOrin" id="hdnId" value="${contentDisplayForm.styleInformationVO.orin}"/>
-						<input type="hidden" name="toOrinPETStatus" id="hdnToOrinPETStatus" value="${contentDisplayForm.styleAndItsChildDisplay.styleList[0].petState}"/>
-						<input type="hidden" name="fromOrin" id="copyORINstyleId" value="" required />
+						<input type="hidden" name="destinationOrinType" id="hdnType" value="${contentDisplayForm.styleInformationVO.entryType}"/>
+						<input type="hidden" name="destinationOrin" id="hdnId" value="${contentDisplayForm.styleInformationVO.orin}"/>
+						<input type="hidden" name="destinationOrinPETStatus" id="hdnToOrinPETStatus" value="${contentDisplayForm.styleAndItsChildDisplay.styleList[0].petState}"/>
+						<input type="hidden" name="sourceOrin" id="copyORINstyleId" value="" required />
 						
 					</form>
 					<form:form commandName="contentDisplayForm" method="post" action="${getChangedIPHCategoryData}" name="contentDisplayForm" id="contentDisplayForm">
@@ -2168,7 +2181,7 @@ function clickListenerContent(e){
 								     <c:if test="${not empty  contentDisplayForm.iphMappingMessage}">	
 										     <table><tr><td><b><font size='2'><c:out value="${contentDisplayForm.iphMappingMessage}"/></font></b></td></tr></table>
 									 </c:if>
-									 <table><tr><td><b><font size='2'><c:out value="${contentCopyStatusMessage}" /></font></b></td></tr></table>
+									 <table><tr><td><b><font size='2' color="red"><c:out value="${contentCopyStatusMessage}" /></font></b></td></tr></table>
 								   </div>
 								    	<div class="orin-popup-container">
 										<input type="button" class="btn chevron-down" id="btnCopyORIN" value="Copy ORIN" style="width: 150px; padding: 6px;"/>
@@ -2972,8 +2985,14 @@ function clickListenerContent(e){
 																					 <option value="${dropDownMap.key}"  <c:out value="${stSelected}"/> ><c:out value="${dropDownMap.value}"  escapeXml="false"/></option> 
 																					 <c:set var="highlited" value="${savedDropDownMap.key}"/>
 																				</c:if>                                                     
-					                                                        							</c:forEach>
-																			  <c:if test="${fn:toUpperCase(dropDownMap.key) != fn:toUpperCase(highlited)}">
+					                                                        </c:forEach>
+                                                    							<%--VP22 - default value as NA  - start --%>
+                                                    							<c:if test="${empty categoryDisplayList.savedDropDownValuesMap && dropDownMap.key == 0 }">
+                                                    								<option value="${dropDownMap.key}"  selected='selected' > <c:out value="${dropDownMap.value}"  escapeXml="false"/></option> 
+												 									<c:set var="highlited" value="${dropDownMap.key}"/>
+                                                    							</c:if>
+                                                    							<%--VP22 - end --%>
+													 						 <c:if test="${fn:toUpperCase(dropDownMap.key) != fn:toUpperCase(highlited)}">
 																			  	<option value="${dropDownMap.key}" /> <c:out value="${dropDownMap.value}"  escapeXml="false"/></option>
 																			</c:if>			
 																		</c:forEach>														
@@ -2993,11 +3012,31 @@ function clickListenerContent(e){
 																					 <c:set var="highlited" value="${savedDropDownMap.key}"/>
 																				</c:if>                                                     
 					                                                        </c:forEach>
+					                                                        <%--VP22 - default value as NA  - start --%>
+					                                                        							<c:if test="${empty categoryDisplayList.savedDropDownValuesMap && dropDownMap.key == 0 }">
+					                                                        								<option value="${dropDownMap.key}"  selected='selected' > <c:out value="${dropDownMap.value}"  escapeXml="false"/></option> 
+																					 						<c:set var="highlited" value="${dropDownMap.key}"/>
+					                                                        							</c:if>
+					                                                        							<%--VP22 - end --%>
 																			  <c:if test="${fn:toUpperCase(dropDownMap.key) != fn:toUpperCase(highlited)}">
 																			  	<option value="${dropDownMap.key}"/> <c:out value="${dropDownMap.value}"  escapeXml="false"/></option>
 																			</c:if>			
 																		</c:forEach>														
 															        	</select>
+															        	<%-- VP-28 display selected values  - start--%>	
+															        	<select style="width:250px;height:80px;" multiple disabled id="dropDownsId_id<%= i %>_value">
+															        		<c:forEach  var="savedDropDownMap"  items="${categoryDisplayList.savedDropDownValuesMap}" >
+																				 <option value="${savedDropDownMap.key}"  escapeXml="false"><c:out value="${savedDropDownMap.value}"  escapeXml="false"/></option> 
+					                                                        </c:forEach>
+					                                                        <c:if test="${empty categoryDisplayList.savedDropDownValuesMap }">
+					                                                        	<c:forEach var="dropDownMap" items="${categoryDisplayList.dropDownValuesMap}" begin="0" end="0">
+					                                                        		<c:if test="${dropDownMap.key eq 0 }">
+					                                                        			<option value="0"  > <c:out value="N/A"  escapeXml="false"/></option>
+					                                                        		</c:if>
+					                                                        	</c:forEach>
+					                                                        </c:if>
+															        	</select>
+															        	<%-- VP-28 display selected values - end --%>	
 																	</c:if>
 																	<!-- Change for Multi/Single Drop Down Ends -->																	
 														        		</td>															

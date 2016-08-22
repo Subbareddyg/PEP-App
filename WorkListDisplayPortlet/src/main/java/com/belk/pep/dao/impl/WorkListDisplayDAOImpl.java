@@ -1186,7 +1186,7 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
     String orinNumber, String deptId, String supplierId,String productName, String entryType,String primaryUPC,String classId,
     String vendorName, String vendorStyle, String imageState,
     String contentState, String petStatus, String completionDate, PetsFound pet, 
-    String omniChannelIndicator,String req_Type, String colorCode, String earliestCompletionDate, String existsInGroup, String cFAS) {
+    String omniChannelIndicator,String req_Type, String colorCode, String earliestCompletionDate, String existsInGroup, String cFAS, String petStyleState) {
     pet = new PetsFound();
     pet.setParentStyleOrin(parentStyleORIN);
     pet.setOrinNumber(orinNumber);
@@ -1217,6 +1217,7 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
     
     pet.setColorDesc(colorCode);
     pet.setEarliestComplitionDate(earliestCompletionDate);
+    pet.setPetStyleState(petStyleState);
     
     return pet; 
     
@@ -1565,7 +1566,15 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
                petStatus = prop.getProperty(pet.getPetStatus());
                pet.setImageState(imageStatus);
                pet.setContentState(contentStatus);
+               // Changes for PET Overall Status Change - Cognizant 08/17
+               if("Style".equals(pet.getEntryType()) || "Complex Pack".equals(pet.getEntryType())){
+            	   if(!"01".equals(pet.getPetStatus())&& !"05".equals(pet.getPetStatus()) && "Y".equals(pet.getPetStyleState())){
+            		   petStatus =WorkListDisplayConstants.IN_PROGRESS;
+            	   }
+               }
                pet.setPetStatus(petStatus);
+               //Changes End
+               
                petListNew.add(pet);
            }
         return petListNew;
@@ -2239,12 +2248,14 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
                            req_Type = req_Type + ":C";
                        }
                        String productName = (productNameStyle != null) ? productNameStyle : "";
+                       
+                       String petStyleState =row[20]!=null?row[20].toString():"";
 
                        pet  = mapAdseDbPetsToPortalAdvSearch(parentStyleORIN, orinNumber, 
                            deptId, supplierId, productName, entryType, primaryUPC, 
                            classId, vendorName, vendorStyle, imageState, contentState, 
                            petStatus, completionDate, pet, omniChannelIndicator, 
-                           req_Type, "", earliestCompletionDate, existsInGroup, cfas);  
+                           req_Type, "", earliestCompletionDate, existsInGroup, cfas,petStyleState);  
                        
                        petList.add(pet);
                    }
@@ -2333,7 +2344,7 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
                            deptId, supplierId, productName, entryType, primaryUPC, 
                            classId, vendorName, vendorStyle, imageState, contentState, 
                            petStatus, completionDate, pet, omniChannelIndicator, 
-                           req_Type, origincalColorDesc, "", existInGroup, "");  
+                           req_Type, origincalColorDesc, "", existInGroup, "", "");  
                        
                        petList.add(pet);
                    }
@@ -2733,6 +2744,12 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
                                 .equalsIgnoreCase(WorkListDisplayConstants.CHILD_GROUP_O)) {
                             workFlow
                                 .setIsChildPresent(WorkListDisplayConstants.YES_Y);
+                            //Change for Style LevelPet Display Change
+                            if(WorkListDisplayConstants.COMPLETED.equals(workFlow.getPetStatus()) &&
+                            		row.get(WorkListDisplayConstants.CHILD_GROUP).toString()
+                            		.equalsIgnoreCase(WorkListDisplayConstants.CHILD_GROUP_O)){                            	
+                            	
+                            }
                         }
                         else {
                             workFlow
@@ -2754,6 +2771,15 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
                             workFlow.setCompletionDate(completionDate);
                         }
                         workFlow.setIsGroup(WorkListDisplayConstants.YES_Y);
+                        //Change for Style/Group level over all status change -08/19
+                        if((WorkListDisplayConstants.COMPLETED.equals(workFlow.getPetStatus()) ||
+                        	WorkListDisplayConstants.WAITING_TO_BE_CLOSED.equals(workFlow.getPetStatus()) ||
+                        	WorkListDisplayConstants.CLOSED.equals(workFlow.getPetStatus() )||
+                        	WorkListDisplayConstants.PUBLISH_TO_WEB.equals(workFlow.getPetStatus())) &&
+                        		WorkListDisplayConstants.YES_Y.equalsIgnoreCase(workFlow.getIsChildPresent())){                            	
+                        	workFlow.setPetStatus(WorkListDisplayConstants.IN_PROGRESS);
+                        }
+                        //Change end
                         /*if (LOGGER.isDebugEnabled()) {
                             LOGGER
                                 .debug("Grouping Attribute Values -- \nGROUP ID: "
@@ -2934,6 +2960,16 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
                         workFlow.setCompletionDate(completionDate);
                     }
                     workFlow.setIsGroup(WorkListDisplayConstants.YES_Y);
+                    
+                    //Change for Style/Group level over all status change -08/19
+                    if((WorkListDisplayConstants.COMPLETED.equals(workFlow.getPetStatus()) ||
+                    	WorkListDisplayConstants.WAITING_TO_BE_CLOSED.equals(workFlow.getPetStatus()) ||
+                    	WorkListDisplayConstants.CLOSED.equals(workFlow.getPetStatus() )||
+                    	WorkListDisplayConstants.PUBLISH_TO_WEB.equals(workFlow.getPetStatus())) &&
+                    		WorkListDisplayConstants.YES_Y.equalsIgnoreCase(workFlow.getIsChildPresent())){                            	
+                    	workFlow.setPetStatus(WorkListDisplayConstants.IN_PROGRESS);
+                    }
+                    //Change end
                     if (LOGGER.isDebugEnabled()) {
                         LOGGER
                             .debug("Grouping Attribute Values -- \nGROUP ID: "
@@ -3045,6 +3081,16 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
                             workFlow
                                 .setIsChildPresent(WorkListDisplayConstants.NO_N);
                         }
+                        
+                        //Change for Style/Group level over all status change -08/19
+                        if((WorkListDisplayConstants.COMPLETED.equals(workFlow.getPetStatus()) ||
+                        	WorkListDisplayConstants.WAITING_TO_BE_CLOSED.equals(workFlow.getPetStatus()) ||
+                        	WorkListDisplayConstants.CLOSED.equals(workFlow.getPetStatus() )||
+                        	WorkListDisplayConstants.PUBLISH_TO_WEB.equals(workFlow.getPetStatus())) &&
+                        		WorkListDisplayConstants.YES_Y.equalsIgnoreCase(workFlow.getIsChildPresent())){                            	
+                        	workFlow.setPetStatus(WorkListDisplayConstants.IN_PROGRESS);
+                        }
+                        //Change end
                     }
                     else {
                         workFlow
@@ -3059,6 +3105,8 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
                             .equalsIgnoreCase(WorkListDisplayConstants.STYLE)) {
                             workFlow
                                 .setIsChildPresent(WorkListDisplayConstants.YES_Y);
+                            
+                            
                         }
                         else {
                             workFlow
@@ -3168,6 +3216,23 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
                     }
                     else {
                         workFlow.setCompletionDate(completionDate);
+                    }
+                    
+                    if (componentType
+                            .equalsIgnoreCase(WorkListDisplayConstants.STYLE)){
+                    	String petState = row
+                        .get(WorkListDisplayConstants.PET_STYLE_STATE) == null ? WorkListDisplayConstants.EMPTY_STRING : 
+                        	row.get(WorkListDisplayConstants.PET_STYLE_STATE).toString();
+                    	//Change for Style/Group level over all status change -08/19
+                        if((WorkListDisplayConstants.COMPLETED.equals(workFlow.getPetStatus()) ||
+                        	WorkListDisplayConstants.WAITING_TO_BE_CLOSED.equals(workFlow.getPetStatus()) ||
+                        	WorkListDisplayConstants.CLOSED.equals(workFlow.getPetStatus() )||
+                        	WorkListDisplayConstants.PUBLISH_TO_WEB.equals(workFlow.getPetStatus())) &&
+                        		WorkListDisplayConstants.YES_Y.equalsIgnoreCase(petState)){                            	
+                        	workFlow.setPetStatus(WorkListDisplayConstants.IN_PROGRESS);
+                        }
+                            
+                    	
                     }
 
                     if (LOGGER.isDebugEnabled()) {
@@ -3345,6 +3410,16 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
                         ? WorkListDisplayConstants.EMPTY_STRING : row.get(
                             WorkListDisplayConstants.ENTRY_TYPE).toString()));
                     workFlow.setIsGroup(WorkListDisplayConstants.YES_Y);
+                    
+                    workFlow
+                    .setPetStatus(row
+                        .get(WorkListDisplayConstants.GROUP_OVERALL_STATUS_CODE) == null
+                        ? WorkListDisplayConstants.EMPTY_STRING
+                        : row
+                            .get(
+                                WorkListDisplayConstants.GROUP_OVERALL_STATUS_CODE)
+                            .toString());
+                    
                     if ((row.get(WorkListDisplayConstants.CHILD_GROUP) == null
                         ? WorkListDisplayConstants.EMPTY_STRING : row.get(
                             WorkListDisplayConstants.CHILD_GROUP).toString())
@@ -3356,6 +3431,7 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
                             .equalsIgnoreCase(WorkListDisplayConstants.CHILD_GROUP_O)) {
                         workFlow
                             .setIsChildPresent(WorkListDisplayConstants.YES_Y);
+                      
                     }
                     else {
                         workFlow
@@ -3370,14 +3446,7 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
                         .get(WorkListDisplayConstants.GROUP_NAME) == null
                         ? WorkListDisplayConstants.EMPTY_STRING : row.get(
                             WorkListDisplayConstants.GROUP_NAME).toString());
-                    workFlow
-                        .setPetStatus(row
-                            .get(WorkListDisplayConstants.GROUP_OVERALL_STATUS_CODE) == null
-                            ? WorkListDisplayConstants.EMPTY_STRING
-                            : row
-                                .get(
-                                    WorkListDisplayConstants.GROUP_OVERALL_STATUS_CODE)
-                                .toString());
+
 
                     workFlow.setDeptId(row
                         .get(WorkListDisplayConstants.DEF_DEPT_ID) == null
@@ -3425,6 +3494,16 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
                     else {
                         workFlow.setCompletionDate(completionDate);
                     }
+                    
+                    //Change for Style/Group level over all status change -08/19
+                    if((WorkListDisplayConstants.COMPLETED.equals(workFlow.getPetStatus()) ||
+                    	WorkListDisplayConstants.WAITING_TO_BE_CLOSED.equals(workFlow.getPetStatus()) ||
+                    	WorkListDisplayConstants.CLOSED.equals(workFlow.getPetStatus() )||
+                    	WorkListDisplayConstants.PUBLISH_TO_WEB.equals(workFlow.getPetStatus())) &&
+                    		WorkListDisplayConstants.YES_Y.equalsIgnoreCase(workFlow.getIsChildPresent())){                            	
+                    	workFlow.setPetStatus(WorkListDisplayConstants.IN_PROGRESS);
+                    }
+                    //Change end
 
                     if (LOGGER.isDebugEnabled()) {
                         LOGGER
@@ -3607,6 +3686,15 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
                             workFlow
                                 .setIsChildPresent(WorkListDisplayConstants.NO_N);
                         }
+                        //Change for Style/Group level over all status change -08/19
+                        if((WorkListDisplayConstants.COMPLETED.equals(workFlow.getPetStatus()) ||
+                        	WorkListDisplayConstants.WAITING_TO_BE_CLOSED.equals(workFlow.getPetStatus()) ||
+                        	WorkListDisplayConstants.CLOSED.equals(workFlow.getPetStatus() )||
+                        	WorkListDisplayConstants.PUBLISH_TO_WEB.equals(workFlow.getPetStatus())) &&
+                        		WorkListDisplayConstants.YES_Y.equalsIgnoreCase(workFlow.getIsChildPresent())){                            	
+                        	workFlow.setPetStatus(WorkListDisplayConstants.IN_PROGRESS);
+                        }
+                        //Change end
                     }
                     else {
                         workFlow
@@ -3731,6 +3819,17 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
                     else {
                         workFlow.setCompletionDate(completionDate);
                     }
+                    
+                    //Change for Style/Group level over all status change -08/19
+                    if((WorkListDisplayConstants.COMPLETED.equals(workFlow.getPetStatus()) ||
+                    	WorkListDisplayConstants.WAITING_TO_BE_CLOSED.equals(workFlow.getPetStatus()) ||
+                    	WorkListDisplayConstants.CLOSED.equals(workFlow.getPetStatus() )||
+                    	WorkListDisplayConstants.PUBLISH_TO_WEB.equals(workFlow.getPetStatus())) &&
+                    		WorkListDisplayConstants.YES_Y.equalsIgnoreCase(workFlow.getIsChildPresent())){                            	
+                    	workFlow.setPetStatus(WorkListDisplayConstants.IN_PROGRESS);
+                    }
+                    //Change end
+
                     if (LOGGER.isDebugEnabled()) {
                         LOGGER
                             .debug("Grouping Attribute Values -- \nGROUP ID: "
