@@ -443,7 +443,14 @@ function dialogApproveHideonOk(){
 function dialogApproveShow(){		
 	//$("#overlay_Upload").show();
 	//$("#dialog_submitApprove").show();
-	
+	/* VP23 */
+	var rowCount=$('#vImage tr').length;
+	if(rowCount ==1){
+		$('#zeroImageWarning').css('display','inline');
+	}else {
+		$('#zeroImageWarning').css('display','none');
+	}
+	/* VP23 */
 	jq('#dialog_submitApprove').dialog('open');
 }
 
@@ -1208,6 +1215,7 @@ function releseLockedPet(loggedInUser,releseLockedPetURL){
 			<div class="ui-widget">
 							<div class="ui-state-error ui-corner-all" style="padding: 0 .7em;">
 								<p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>
+								<%-- VP23 --%><strong id="zeroImageWarning" style="display:none;">No image has been attached.</strong><%-- VP23 --%>
 								<strong>Are you sure you want to Approve?</strong></p>
 							</div>
 						</div>
