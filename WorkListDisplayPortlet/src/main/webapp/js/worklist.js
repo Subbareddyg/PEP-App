@@ -29,12 +29,14 @@ function repalceDeptTable(responseText){
 $(document).ready(function() {
 	
 	
-	
-	$('.tree').treegrid();
+	/**
+	* commented and made inactive after js optimization and cleanup
+	*/
+	/* $('.tree').treegrid();
 	$('.tree2').treegrid({
 		expanderExpandedClass: 'icon-minus-sign',
 		expanderCollapsedClass: 'icon-plus-sign'
-	});
+	}); */
 
 
 $("#deptNo").keyup(function (event) {
@@ -109,12 +111,15 @@ function columnsorting(selectedColumn)
 						
 						bindDeptDialog();
 						
-						$('.tree').treegrid();
+						/**
+						* commented and made inactive after js optimization and cleanup
+						*/
+						/*  $('.tree').treegrid();
 							$('.tree2').treegrid({
 								expanderExpandedClass: 'icon-minus-sign',
 								expanderCollapsedClass: 'icon-plus-sign'
 							});
-							
+						*/	
 							$('#selectAllRow').click(function(event) {  //on click 
 							    if(this.checked) { // check select status
 							        $('.checkbox1').each(function() { //loop through each checkbox
@@ -163,11 +168,15 @@ function getThePageContent(pageNumber){
 						
 						bindDeptDialog();
 						
-						$('.tree').treegrid();
+						/**
+						* commented and made inactive after js optimization and cleanup
+						*/
+						/* $('.tree').treegrid();
 						$('.tree2').treegrid({
 							expanderExpandedClass: 'icon-minus-sign',
 							expanderCollapsedClass: 'icon-plus-sign'
 						});
+						*/
 						$('#selectAllRow').click(function(event) {  //on click 
 						    if(this.checked) { // check select status
 						        $('.checkbox1').each(function() { //loop through each checkbox
@@ -397,12 +406,14 @@ var dept_validation = [];
 										
 				                        
 										$("#petTable").html(responseText);         
-										
-										$('.tree').treegrid();
+										/**
+										* commented and made inactive after js optimization and cleanup
+										*/
+										/* $('.tree').treegrid();
 										$('.tree2').treegrid({
 											expanderExpandedClass: 'icon-minus-sign',
 											expanderCollapsedClass: 'icon-plus-sign'
-										});
+										}); */
 										$('#selectAllRow').click(function(event) {  //on click 
 										    if(this.checked) { // check select status
 										        $('.checkbox1').each(function() { //loop through each checkbox
@@ -863,12 +874,15 @@ function searchSearch()
 											$('div.dlg-advSearch').remove(); //fix for ui dlg
 											
 											responseText = repalcePetTable(responseText);
-					                        $("#petTable").html(responseText);         
-											$('.tree').treegrid();
+					                        $("#petTable").html(responseText);
+											/**
+											* commented and made inactive after js optimization and cleanup
+											*/
+											/* $('.tree').treegrid();
 											$('.tree2').treegrid({
 												expanderExpandedClass: 'icon-minus-sign',
 												expanderCollapsedClass: 'icon-plus-sign'
-											});
+											}); */
 											//$("#overlay_Dept").css("display","none");
 											//$("#dialog_Dept").css("display","none");
 											
@@ -944,12 +958,14 @@ function searchSearch()
 											responseText = repalcePetTable(responseText);
 					                        $("#petTable").html(responseText);
 											
-											
-											$('.tree').treegrid();
+											/**
+											* commented and made inactive after js optimization and cleanup
+											*/
+											/* $('.tree').treegrid();
 											$('.tree2').treegrid({
 												expanderExpandedClass: 'icon-minus-sign',
 												expanderCollapsedClass: 'icon-plus-sign'
-											});
+											}); */
 											//$("#overlay_Dept").css("display","none");
 											//$("#dialog_Dept").css("display","none");
 											
@@ -1699,6 +1715,9 @@ function inactivateAjaxCall(){
 				else if(parentStyle[1]=='Waiting_To_Be_Closed'){
 					parentActiveFlag='yes';
 				}
+				else if(parentStyle[1]=='In_Progress'){
+					parentActiveFlag='yes';
+				}
 			});
 			
 			$.each($("input[name='selectedStyles']:checked"), function(){  
@@ -1865,6 +1884,8 @@ function activateAjaxCall(){
 					parentDeactiveFlag='yes';
 				}
 				else if(parentStyle[1]=='Waiting_To_Be_Closed'){
+					parentDeactiveFlag='yes';
+				}else if(parentStyle[1]=='In_Progress'){
 					parentDeactiveFlag='yes';
 				}
 				
@@ -2182,13 +2203,17 @@ function invokeAjaxCallForCompletionDate(completionDate, completionDateBackup, o
 var url = $("#ajaxaction").val();
 $.get(url,{completionDate:completionDate,orinNumber:orinNumber,styleorinNumber:styleorinNumber,isCmpDateEarlier:isCmpDateEarlier,parentCompletionDateNullValue:parentCompletionDateNullValue,parentCompletionDateVal:parentCompletionDateVal},function(responseText) {	
        responseText = repalcePetTable(responseText);
-       $("#petTable").html(responseText);         
-		$('.tree').treegrid();
+       $("#petTable").html(responseText);  
+		
+		/**
+		* commented and made inactive after js optimization and cleanup
+		*/
+		/* $('.tree').treegrid();
 			$('.tree2').treegrid({
 				expanderExpandedClass: 'icon-minus-sign',
 				expanderCollapsedClass: 'icon-plus-sign'
 			});
-			
+		*/	
 			$('#selectAllRow').click(function(event) {  //on click 
 			    if(this.checked) { // check select status
 			        $('.checkbox1').each(function() { //loop through each checkbox
@@ -2301,7 +2326,8 @@ function populateChildData(jsonArray, orinNum, showHideFlag, isGroup, uniqueIden
 			$(jsonArray).each(function(i,val){
 			var tempTr = document.createElement('tr');
 			$(tempTr).attr('name','child_'+orinNum);
-			$(tempTr).attr('id','child_'+val.styleOrinNum);
+			
+			var tempHtml = '';
 			
 			if(showHideFlag !== undefined && showHideFlag == false){
 				$(tempTr).css({display: 'none'});
@@ -2309,135 +2335,146 @@ function populateChildData(jsonArray, orinNum, showHideFlag, isGroup, uniqueIden
 			}else
 				$(parentTr).attr('displayChild','Y');
 			
-			var tempHtml = templateTr.innerHTML; 
-			
-					
-			tempHtml = tempHtml.replace("#CHBOX_PARENTORIN", orinNum);
-			tempHtml = tempHtml.replace("#CH_STYLE_ORIN", val.styleOrinNum);
-			tempHtml = tempHtml.replace("#CH_STYLE_PETSTATUS", val.petStatus);
-			tempHtml = tempHtml.replace("#CHBOXONCLK_PETSTATUS", val.petStatus);
-			
-			tempHtml = tempHtml.replace("#TD_ORIN", val.styleOrinNum); 
-			tempHtml = tempHtml.replace("#TD_DEPT_NUM", val.deptId); 
-			tempHtml = tempHtml.replace("#TD_VENDOR_NAME", val.vendorName); 
-			
-			tempHtml = tempHtml.replace("#STYLE_ORIN_NUMBER", val.styleOrinNum); 
-			var vendorStyle = $("#"+orinNum+"_vendorStyle").val();
-			if(vendorStyle){
-				tempHtml = tempHtml.replace("#TD_VENDOR_STYLE", vendorStyle);
-			}else{
-				tempHtml = tempHtml.replace("#TD_VENDOR_STYLE", "");
-			}
-			
-			var productName = $("#"+orinNum+"_productName").val();
-			if(productName){
-				tempHtml = tempHtml.replace("#TD_PRODUCT_NAME", productName);
-			}else{
-				tempHtml = tempHtml.replace("#TD_PRODUCT_NAME", "");
-			}		
-			
-
-			/*<a href="#" onclick="contentStatus('#CONTENT_STATUS','#CON_PARENT_ORIN')">#TD_CONTENT_STATUS</a>		*/
-			tempHtml = tempHtml.replace("#CONTENT_STATUS", val.contentStatus);
-			tempHtml = tempHtml.replace("#CON_PARENT_ORIN", orinNum);
-			tempHtml = tempHtml.replace("#TD_CONTENT_STATUS", val.contentStatus);
-			
-			if("yes" == hidden_roleEditable || "yes" == hidden_readOnlyUser){
-				tempHtml = tempHtml.replace("#CONTENT_DISPLAY_STATUS", "");
-				tempHtml = tempHtml.replace("#TD_CONTENT_STATUS_NOTEDITABLE", "");
-			}else{
-				tempHtml = tempHtml.replace("#CONTENT_DISPLAY_STATUS", "none");
-				tempHtml = tempHtml.replace("#TD_CONTENT_STATUS_NOTEDITABLE", val.contentStatus);
-			}
-			
-			/*<a href="#" onclick="imageStatus('#IMAGE_STATUS','#PARENT_ORIN','#PET_STATUS')">#TD_IMAGE_STATUS</a>*/
-			
-			tempHtml = tempHtml.replace("#TD_IMAGE_STATUS", val.imageStatus);
-			tempHtml = tempHtml.replace("#IMAGE_STATUS", val.imageStatus);
-			tempHtml = tempHtml.replace("#IMG_PARENT_ORIN", orinNum);
-			tempHtml = tempHtml.replace("#PET_STATUS", val.petStatus);
-			
-			if("yes" == hidden_roleEditable || "yes" == hidden_readOnlyUser){
-				tempHtml = tempHtml.replace("#IMAGE_DISPLAY_STATUS", "");
-				tempHtml = tempHtml.replace("#TD_IMAGE_STATUS_NOTEDITABLE", "");
-			}else{
-				tempHtml = tempHtml.replace("#IMAGE_DISPLAY_STATUS", "none");
-				tempHtml = tempHtml.replace("#TD_IMAGE_STATUS_NOTEDITABLE", val.imageStatus);
-			}
-			
-			tempHtml = tempHtml.replace("#TD_COMPLETION_DATE", val.completionDate);
-			
-			var random_subcount = ""+Math.random();
-			random_subcount = random_subcount.substring(2,10)	;
-			
-			tempHtml = tempHtml.replace("#CMP_TXT_CMP_DT", val.completionDate);
-			tempHtml = tempHtml.replace("#SUBCOUNT_RANDOM", random_subcount);
-			tempHtml = tempHtml.replace("#SUBCOUNT_RANDOM", random_subcount);
-			tempHtml = tempHtml.replace("#SUBCOUNT_RANDOM", random_subcount);
-			tempHtml = tempHtml.replace("#SUBCOUNT_RANDOM", random_subcount);
-			tempHtml = tempHtml.replace("#SUBCOUNT_RANDOM", random_subcount);
-			tempHtml = tempHtml.replace("#SUBCOUNT_RANDOM", random_subcount);
-			tempHtml = tempHtml.replace("#SUBCOUNT_RANDOM", random_subcount);
-			tempHtml = tempHtml.replace("#SUBCOUNT_RANDOM", random_subcount);
-			tempHtml = tempHtml.replace("#SUBCOUNT_RANDOM", random_subcount);		
-			
-			//tempHtml = tempHtml.replace("#CMP_INPUT_HIDDEN_ID_SUBCOUNT", random_subcount);
-			//tempHtml = tempHtml.replace("#CMP_INPUT_HIDDEN_NAME_SUBCOUNT", random_subcount);
-			tempHtml = tempHtml.replace("#CMP_HIDDEN_STYLE_CMP_DT", val.completionDate);
-			tempHtml = tempHtml.replace("#CMP_PARENT_ORIN", orinNum);
-			//tempHtml = tempHtml.replace("#CMP_HIDDEN_ID_SUBCOUNT", random_subcount);
-			//tempHtml = tempHtml.replace("#CMP_HIDDEN_NAME_SUBCOUNT", random_subcount);
-			tempHtml = tempHtml.replace("#CMP_HIDDEN_PARENT_ORIN", orinNum);
-			//tempHtml = tempHtml.replace("#CMP_HIDDENSTYLE_ID_SUBCOUNT", random_subcount);
-			//tempHtml = tempHtml.replace("#CMP_HIDDENSTYLE_NAME_SUBCOUNT", random_subcount);
-			tempHtml = tempHtml.replace("#CMP_HIDDEN_STYLE_ORIN", val.styleOrinNum);
-			
-			
-			//<c:when test="${workflowForm.roleName =='dca' &&  style.petStatus == 'Initiated' && workflowForm.readOnlyUser !='yes' }" >
-			//var chldOrinNo = val.styleOrinNum.replace('/','');
-			var chldOrinNo = val.styleOrinNum.split(' ');
-			chldOrinNo = chldOrinNo.join('');
-			chldOrinNo = chldOrinNo.length >=12 ? chldOrinNo.substring(0, 12) : chldOrinNo;
-			
-			tempHtml = tempHtml.replace("editable-cc-date-#CON_CHILD_ORIN", "editable-cc-date-"+ chldOrinNo);
-			tempHtml = tempHtml.replace("readonly-cc-date-#CON_CHILD_ORIN", "readonly-cc-date-"+ chldOrinNo);
-			
-			if("dca" == hidden_roleName && "Initiated" == val.petStatus && "yes" != hidden_readOnlyUser){
-				setTimeout(function(){
-					$('.editable-cc-date-' + chldOrinNo).css({display: 'inline'});
-					$('.readonly-cc-date-' + chldOrinNo).css({display: 'none'});
-				}, 3);
-				
-			}else if("Deactivated" != val.petStatus){
-				setTimeout(function(){
-					$('.editable-cc-date-' + chldOrinNo).css({display: 'none'});
-					$('.readonly-cc-date-' + chldOrinNo).css({display: 'inline'});
-				}, 3);
-			}else{
-				 if("Deactivated" == val.petStatus){
-					setTimeout(function(){
-						$('.readonly-cc-date-' + chldOrinNo).css({display: 'none'});
-						$('.editable-cc-date-' + chldOrinNo).css({display: 'none'});
-					}, 3); 
-				 }else{
-					setTimeout(function(){
-						$('.readonly-cc-date-' + chldOrinNo).css({display: 'none'});
-					}, 3); 
-				 }
-				
-			}
-		
-			tempHtml = tempHtml.replace("#TD_SOURCE_TYPE", val.petSourceType);
-			
-			tempHtml = tempHtml.replace("#TD_PET_STATUS", val.petStatus);
-			
-			/** Modified For PIM Phase 2 
-				* - adding group flag for child item
-				* Date: 06/14/2016
-				* Modified By: Cognizant
+			/**
+			* code to handle no child message and display it accordingly
 			*/
+			if(val.noChildMessage){
+				tempHtml = ''
+					+ '<td>&nbsp;</td>'
+					+ '<td colspan="10"><strong>' + val.noChildMessage +  '</strong></td>';
+			}else{
+				tempHtml = templateTr.innerHTML;
+				
+				$(tempTr).attr('id','child_'+val.styleOrinNum);
+						
+				tempHtml = tempHtml.replace("#CHBOX_PARENTORIN", orinNum);
+				tempHtml = tempHtml.replace("#CH_STYLE_ORIN", val.styleOrinNum);
+				tempHtml = tempHtml.replace("#CH_STYLE_PETSTATUS", val.petStatus);
+				tempHtml = tempHtml.replace("#CHBOXONCLK_PETSTATUS", val.petStatus);
+				
+				tempHtml = tempHtml.replace("#TD_ORIN", val.styleOrinNum); 
+				tempHtml = tempHtml.replace("#TD_DEPT_NUM", val.deptId); 
+				tempHtml = tempHtml.replace("#TD_VENDOR_NAME", val.vendorName); 
+				
+				tempHtml = tempHtml.replace("#STYLE_ORIN_NUMBER", val.styleOrinNum); 
+				var vendorStyle = $("#"+orinNum+"_vendorStyle").val();
+				if(vendorStyle){
+					tempHtml = tempHtml.replace("#TD_VENDOR_STYLE", vendorStyle);
+				}else{
+					tempHtml = tempHtml.replace("#TD_VENDOR_STYLE", "");
+				}
+				
+				var productName = $("#"+orinNum+"_productName").val();
+				if(productName){
+					tempHtml = tempHtml.replace("#TD_PRODUCT_NAME", productName);
+				}else{
+					tempHtml = tempHtml.replace("#TD_PRODUCT_NAME", "");
+				}		
+				
+
+				/*<a href="#" onclick="contentStatus('#CONTENT_STATUS','#CON_PARENT_ORIN')">#TD_CONTENT_STATUS</a>		*/
+				tempHtml = tempHtml.replace("#CONTENT_STATUS", val.contentStatus);
+				tempHtml = tempHtml.replace("#CON_PARENT_ORIN", orinNum);
+				tempHtml = tempHtml.replace("#TD_CONTENT_STATUS", val.contentStatus);
+				
+				if("yes" == hidden_roleEditable || "yes" == hidden_readOnlyUser){
+					tempHtml = tempHtml.replace("#CONTENT_DISPLAY_STATUS", "");
+					tempHtml = tempHtml.replace("#TD_CONTENT_STATUS_NOTEDITABLE", "");
+				}else{
+					tempHtml = tempHtml.replace("#CONTENT_DISPLAY_STATUS", "none");
+					tempHtml = tempHtml.replace("#TD_CONTENT_STATUS_NOTEDITABLE", val.contentStatus);
+				}
+				
+				/*<a href="#" onclick="imageStatus('#IMAGE_STATUS','#PARENT_ORIN','#PET_STATUS')">#TD_IMAGE_STATUS</a>*/
+				
+				tempHtml = tempHtml.replace("#TD_IMAGE_STATUS", val.imageStatus);
+				tempHtml = tempHtml.replace("#IMAGE_STATUS", val.imageStatus);
+				tempHtml = tempHtml.replace("#IMG_PARENT_ORIN", orinNum);
+				tempHtml = tempHtml.replace("#PET_STATUS", val.petStatus);
+				
+				if("yes" == hidden_roleEditable || "yes" == hidden_readOnlyUser){
+					tempHtml = tempHtml.replace("#IMAGE_DISPLAY_STATUS", "");
+					tempHtml = tempHtml.replace("#TD_IMAGE_STATUS_NOTEDITABLE", "");
+				}else{
+					tempHtml = tempHtml.replace("#IMAGE_DISPLAY_STATUS", "none");
+					tempHtml = tempHtml.replace("#TD_IMAGE_STATUS_NOTEDITABLE", val.imageStatus);
+				}
+				
+				tempHtml = tempHtml.replace("#TD_COMPLETION_DATE", val.completionDate);
+				
+				var random_subcount = ""+Math.random();
+				random_subcount = random_subcount.substring(2,10)	;
+				
+				tempHtml = tempHtml.replace("#CMP_TXT_CMP_DT", val.completionDate);
+				tempHtml = tempHtml.replace("#SUBCOUNT_RANDOM", random_subcount);
+				tempHtml = tempHtml.replace("#SUBCOUNT_RANDOM", random_subcount);
+				tempHtml = tempHtml.replace("#SUBCOUNT_RANDOM", random_subcount);
+				tempHtml = tempHtml.replace("#SUBCOUNT_RANDOM", random_subcount);
+				tempHtml = tempHtml.replace("#SUBCOUNT_RANDOM", random_subcount);
+				tempHtml = tempHtml.replace("#SUBCOUNT_RANDOM", random_subcount);
+				tempHtml = tempHtml.replace("#SUBCOUNT_RANDOM", random_subcount);
+				tempHtml = tempHtml.replace("#SUBCOUNT_RANDOM", random_subcount);
+				tempHtml = tempHtml.replace("#SUBCOUNT_RANDOM", random_subcount);		
+				
+				//tempHtml = tempHtml.replace("#CMP_INPUT_HIDDEN_ID_SUBCOUNT", random_subcount);
+				//tempHtml = tempHtml.replace("#CMP_INPUT_HIDDEN_NAME_SUBCOUNT", random_subcount);
+				tempHtml = tempHtml.replace("#CMP_HIDDEN_STYLE_CMP_DT", val.completionDate);
+				tempHtml = tempHtml.replace("#CMP_PARENT_ORIN", orinNum);
+				//tempHtml = tempHtml.replace("#CMP_HIDDEN_ID_SUBCOUNT", random_subcount);
+				//tempHtml = tempHtml.replace("#CMP_HIDDEN_NAME_SUBCOUNT", random_subcount);
+				tempHtml = tempHtml.replace("#CMP_HIDDEN_PARENT_ORIN", orinNum);
+				//tempHtml = tempHtml.replace("#CMP_HIDDENSTYLE_ID_SUBCOUNT", random_subcount);
+				//tempHtml = tempHtml.replace("#CMP_HIDDENSTYLE_NAME_SUBCOUNT", random_subcount);
+				tempHtml = tempHtml.replace("#CMP_HIDDEN_STYLE_ORIN", val.styleOrinNum);
+				
+				
+				//<c:when test="${workflowForm.roleName =='dca' &&  style.petStatus == 'Initiated' && workflowForm.readOnlyUser !='yes' }" >
+				//var chldOrinNo = val.styleOrinNum.replace('/','');
+				var chldOrinNo = val.styleOrinNum ? val.styleOrinNum.split(' ') : null;
+				chldOrinNo = chldOrinNo ? chldOrinNo.join('') : '';
+				
+				chldOrinNo = chldOrinNo.length >=12 ? chldOrinNo.substring(0, 12) : chldOrinNo;
+				
+				tempHtml = tempHtml.replace("editable-cc-date-#CON_CHILD_ORIN", "editable-cc-date-"+ chldOrinNo);
+				tempHtml = tempHtml.replace("readonly-cc-date-#CON_CHILD_ORIN", "readonly-cc-date-"+ chldOrinNo);
+				
+				if("dca" == hidden_roleName && "Initiated" == val.petStatus && "yes" != hidden_readOnlyUser){
+					setTimeout(function(){
+						$('.editable-cc-date-' + chldOrinNo).css({display: 'inline'});
+						$('.readonly-cc-date-' + chldOrinNo).css({display: 'none'});
+					}, 3);
+					
+				}else if("Deactivated" != val.petStatus){
+					setTimeout(function(){
+						$('.editable-cc-date-' + chldOrinNo).css({display: 'none'});
+						$('.readonly-cc-date-' + chldOrinNo).css({display: 'inline'});
+					}, 3);
+				}else{
+					 if("Deactivated" == val.petStatus){
+						setTimeout(function(){
+							$('.readonly-cc-date-' + chldOrinNo).css({display: 'none'});
+							$('.editable-cc-date-' + chldOrinNo).css({display: 'none'});
+						}, 3); 
+					 }else{
+						setTimeout(function(){
+							$('.readonly-cc-date-' + chldOrinNo).css({display: 'none'});
+						}, 3); 
+					 }
+					
+				}
 			
-			tempHtml = tempHtml.replace("#GROUP_FLAG", val.isGroup);
+				tempHtml = tempHtml.replace("#TD_SOURCE_TYPE", val.petSourceType);
+				
+				tempHtml = tempHtml.replace("#TD_PET_STATUS", val.petStatus);
+				
+				/** Modified For PIM Phase 2 
+					* - adding group flag for child item
+					* Date: 06/14/2016
+					* Modified By: Cognizant
+				*/
+				
+				tempHtml = tempHtml.replace("#GROUP_FLAG", val.isGroup);
+			}
 			
 			$(tempTr).html(tempHtml);
 			$(tempTr).insertAfter($(parentTr));

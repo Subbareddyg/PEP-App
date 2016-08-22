@@ -2908,7 +2908,7 @@ public String getAdvWorkListDisplayDataForParent(AdvanceSearch advSearch) {
         advQueryFragment.append("         pet.pet_state PETSTATUS,                                                                                                 ");
         advQueryFragment.append("         pet.image_status ImageState,                                                                                             ");
         advQueryFragment.append("         pet.content_status CONTENTSTATUS,                                                                                        ");
-        advQueryFragment.append("         pet.PET_EARLIEST_COMP_DATE, pet.EXIST_IN_GROUP, p.CFAS, p.CONVERSION_FLAG                   ");
+        advQueryFragment.append("         pet.PET_EARLIEST_COMP_DATE, pet.EXIST_IN_GROUP, p.CFAS, p.CONVERSION_FLAG, pet.PET_STYLE_STATE                  ");
         advQueryFragment.append("   FROM                                                                                                                           ");
         advQueryFragment.append("     /*styleID_DescA*/ itemGroup sda,                                                                                  ");
         advQueryFragment.append("     ADSE_PET_CATALOG pet,                                                                                                        ");
@@ -3005,7 +3005,7 @@ public String getAdvWorkListDisplayDataForParent(AdvanceSearch advSearch) {
         advQueryFragment.append("         orin.PETSTATUS,                                                                                                          ");
         advQueryFragment.append("         s.ven_name,                                                                                                              ");
         advQueryFragment.append("         s.omniChannelIndicator,                                                                                                  ");
-        advQueryFragment.append("         orin.PET_EARLIEST_COMP_DATE, orin.EXIST_IN_GROUP, orin.CFAS, orin.CONVERSION_FLAG              ");
+        advQueryFragment.append("         orin.PET_EARLIEST_COMP_DATE, orin.EXIST_IN_GROUP, orin.CFAS, orin.CONVERSION_FLAG,orin.PET_STYLE_STATE              ");
         advQueryFragment.append("       FROM                                                                                                                       ");
         advQueryFragment.append("         styleID_DescAA orin,                                                                                                     ");
         advQueryFragment.append("         ADSE_SUPPLIER_CATALOG supplier,                                                                                          ");
@@ -3046,7 +3046,7 @@ public String getAdvWorkListDisplayDataForParent(AdvanceSearch advSearch) {
         advQueryFragment.append("         sia.PETSTATUS,                                                                                                           ");
         advQueryFragment.append("         sia.ven_name,                                                                                                            ");
         advQueryFragment.append("         sia.omniChannelIndicator,                                                                                                ");
-        advQueryFragment.append("         sia.PET_EARLIEST_COMP_DATE , sia.EXIST_IN_GROUP, sia.CFAS, sia.CONVERSION_FLAG                  ");
+        advQueryFragment.append("         sia.PET_EARLIEST_COMP_DATE , sia.EXIST_IN_GROUP, sia.CFAS, sia.CONVERSION_FLAG, sia.PET_STYLE_STATE                  ");
         advQueryFragment.append("       from supplierDetails sia                                                                                                   ");
         advQueryFragment.append("       where                                                                                                                      ");
         advQueryFragment.append("           (sia.Entry_Type IN ('Style','Complex Pack')                                                                            ");
@@ -3080,7 +3080,7 @@ public String getAdvWorkListDisplayDataForParent(AdvanceSearch advSearch) {
         advQueryFragment.append("         completion_date,                                                                                                         ");
         advQueryFragment.append("         omniChannelIndicator,                                                                                                    ");
         advQueryFragment.append("         req_type,                                                                                                                ");
-        advQueryFragment.append("         PET_EARLIEST_COMP_DATE, EXIST_IN_GROUP, CFAS, CONVERSION_FLAG                                       ");
+        advQueryFragment.append("         PET_EARLIEST_COMP_DATE, EXIST_IN_GROUP, CFAS, CONVERSION_FLAG,PET_STYLE_STATE                                       ");
         advQueryFragment.append("     FROM styleID_Desc                                                                                                            ");
         advQueryFragment.append("     WHERE                                                                                                                        ");
         advQueryFragment.append("         (                                                                                                                        ");
@@ -3388,7 +3388,7 @@ public String getAdvWorkListDisplayDataForParent(AdvanceSearch advSearch) {
                 + "         OmnichannelIndicator           ,"
                 + "         CREATED_DTM                    ,"
                 + "         EXIST_IN_GROUP                 ,"
-                + "         CONVERSION_FLAG"
+                + "         CONVERSION_FLAG , PET_STYLE_STATE "
                 + " FROM"
                 + "         ("
                 + "                 SELECT  NULL PARENT_MDMID                                        ,"
@@ -3409,7 +3409,7 @@ public String getAdvWorkListDisplayDataForParent(AdvanceSearch advSearch) {
                 + "                         ''    OmnichannelIndicator                    ,"
                 + "                         AGC.CREATED_DTM                                          ,"
                 + "                         AGC.EXIST_IN_GROUP                                       ,"
-                + "                         NULL CONVERSION_FLAG"
+                + "                         NULL CONVERSION_FLAG, NULL PET_STYLE_STATE"
                 + "                 FROM    ADSE_GROUP_CATALOG AGC"
                 + "                         LEFT OUTER JOIN ADSE_SUPPLIER_CATALOG ASCT"
                 + "                         ON      ASCT.MDMID = AGC.DEF_PRIMARY_SUPPLIER_ID                                                                                                                                                                                                                                                                                                                                                                    ,"
@@ -3439,7 +3439,7 @@ public String getAdvWorkListDisplayDataForParent(AdvanceSearch advSearch) {
                 + "                         ''  OmnichannelIndicator   ,"
                 + "                         APC.CREATED_DTM                       ,"
                 + "                         APC.EXIST_IN_GROUP                    ,"
-                + "                          XMLCAST( (XMLQUERY('/pim_entry/entry/Pet_Ctg_Spec/System/Pet_Information/Conversion_Flag' PASSING apc.xml_Data RETURNING CONTENT ) ) AS VARCHAR2(1000) ) CONVERSION_FLAG"
+                + "                          XMLCAST( (XMLQUERY('/pim_entry/entry/Pet_Ctg_Spec/System/Pet_Information/Conversion_Flag' PASSING apc.xml_Data RETURNING CONTENT ) ) AS VARCHAR2(1000) ) CONVERSION_FLAG, APC.PET_STYLE_STATE"
                 + "                 FROM    ADSE_GROUP_CHILD_MAPPING AGCM,"
                 + "                         ADSE_ITEM_CATALOG AIC"
                 + "                         INNER JOIN ADSE_PET_CATALOG APC"
@@ -3491,7 +3491,7 @@ public String getAdvWorkListDisplayDataForParent(AdvanceSearch advSearch) {
                 + "                         '' OmnichannelIndicator   ,"
                 + "                         APC.CREATED_DTM                       ,"
                 + "                         APC.EXIST_IN_GROUP                    ,"
-                + "                         XMLCAST( (XMLQUERY('/pim_entry/entry/Pet_Ctg_Spec/System/Pet_Information/Conversion_Flag' PASSING apc.xml_Data RETURNING CONTENT ) ) AS VARCHAR2(1000) ) CONVERSION_FLAG"
+                + "                         XMLCAST( (XMLQUERY('/pim_entry/entry/Pet_Ctg_Spec/System/Pet_Information/Conversion_Flag' PASSING apc.xml_Data RETURNING CONTENT ) ) AS VARCHAR2(1000) ) CONVERSION_FLAG, APC.PET_STYLE_STATE"
                 + "           "
                 + "                 FROM    ADSE_GROUP_CHILD_MAPPING AGCM,"
                 + "                         ADSE_ITEM_CATALOG AIC"

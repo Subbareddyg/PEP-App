@@ -3152,7 +3152,7 @@ public String getGroupingComponents() {
 public static String copyRegularContentValidationQuery(){
 	
 	 final String query = "SELECT MDMID,ENTRY_TYPE FROM ADSE_ITEM_CATALOG WHERE PETEXISTS='Y' AND DELETED_FLAG='false' " +
-			"AND ENTRY_TYPE IN ('Style','Complex Pack','ComplexPack') AND (MDMID= :styleId OR PRIMARYSUPPLIERVPN = UPPER(:styleId) )";
+			"AND ENTRY_TYPE IN ('Style','Complex Pack','ComplexPack') AND (MDMID= :styleId OR PRIMARYSUPPLIERVPN = :styleId )";
 	
 	return query;
 	

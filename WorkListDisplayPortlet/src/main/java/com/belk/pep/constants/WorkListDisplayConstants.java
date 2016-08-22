@@ -347,5 +347,7 @@ public static final String CONVERSION_FLAG = "CONVERSION_FLAG";
 
 public static final String HASH_SIGN = "##";
 public static final String MODEL_VIEW_LOGIN_PAGE = "loginPage" ;
+public static final String IN_PROGRESS = "In_Progress";
+public static final String PET_STYLE_STATE = "PET_STYLE_STATE";
 
 }

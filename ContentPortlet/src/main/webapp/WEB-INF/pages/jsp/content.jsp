@@ -2109,10 +2109,10 @@ function clickListenerContent(e){
 				<div id="main">
 
 					<form id="copyORINForm" name="copyORINForm" action="${copyOrinContent}" method="post">
-						<input type="hidden" name="toOrinType" id="hdnType" value="${contentDisplayForm.styleInformationVO.entryType}"/>
-						<input type="hidden" name="toOrin" id="hdnId" value="${contentDisplayForm.styleInformationVO.orin}"/>
-						<input type="hidden" name="toOrinPETStatus" id="hdnToOrinPETStatus" value="${contentDisplayForm.styleAndItsChildDisplay.styleList[0].petState}"/>
-						<input type="hidden" name="fromOrin" id="copyORINstyleId" value="" required />
+						<input type="hidden" name="destinationOrinType" id="hdnType" value="${contentDisplayForm.styleInformationVO.entryType}"/>
+						<input type="hidden" name="destinationOrin" id="hdnId" value="${contentDisplayForm.styleInformationVO.orin}"/>
+						<input type="hidden" name="destinationOrinPETStatus" id="hdnToOrinPETStatus" value="${contentDisplayForm.styleAndItsChildDisplay.styleList[0].petState}"/>
+						<input type="hidden" name="sourceOrin" id="copyORINstyleId" value="" required />
 						
 					</form>
 					<form:form commandName="contentDisplayForm" method="post" action="${getChangedIPHCategoryData}" name="contentDisplayForm" id="contentDisplayForm">
@@ -2181,7 +2181,7 @@ function clickListenerContent(e){
 								     <c:if test="${not empty  contentDisplayForm.iphMappingMessage}">	
 										     <table><tr><td><b><font size='2'><c:out value="${contentDisplayForm.iphMappingMessage}"/></font></b></td></tr></table>
 									 </c:if>
-									 <table><tr><td><b><font size='2'><c:out value="${contentCopyStatusMessage}" /></font></b></td></tr></table>
+									 <table><tr><td><b><font size='2' color="red"><c:out value="${contentCopyStatusMessage}" /></font></b></td></tr></table>
 								   </div>
 								    	<div class="orin-popup-container">
 										<input type="button" class="btn chevron-down" id="btnCopyORIN" value="Copy ORIN" style="width: 150px; padding: 6px;"/>

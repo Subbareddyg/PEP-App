@@ -2917,7 +2917,7 @@ public JSONObject populateReInitiateJson(String petId,String updatedBy) {
 		LOGGER.info("Entering petStatusCodeToService.. Controller::");
 		if ("Initiated".equalsIgnoreCase(petStatus)) {
 			petStatusCode = "01";
-		} else if ("Completed".equalsIgnoreCase(petStatus)) {
+		} else if ("Completed".equalsIgnoreCase(petStatus) || WorkListDisplayConstants.IN_PROGRESS.equalsIgnoreCase(petStatus)) { //  for Style Level Pet Status changed
 			petStatusCode = "02";
 		} else if ("Approved".equalsIgnoreCase(petStatus)) {
 			petStatusCode = "03";
@@ -2925,7 +2925,7 @@ public JSONObject populateReInitiateJson(String petId,String updatedBy) {
 			petStatusCode = "04";
 		} else if ("Deactivated".equalsIgnoreCase(petStatus)) {
 			petStatusCode = "05";
-		} else if ("Closed".equalsIgnoreCase(petStatus)) {
+		} else if ("Closed".equalsIgnoreCase(petStatus) ) {
 			petStatusCode = "06";
 		} else if ("Waiting_To_Be_Closed".equalsIgnoreCase(petStatus)) {
 			petStatusCode = "07";

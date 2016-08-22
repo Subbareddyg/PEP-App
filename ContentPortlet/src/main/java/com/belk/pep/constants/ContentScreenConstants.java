@@ -263,4 +263,6 @@ public class ContentScreenConstants {
 	public static final String MDMID="MDMID";
 	public static final String DESCRIPTION="description";
 	public static final String REG_COPY_FAIL_INVALID_PET_STATUS = "Copy cannot be applied with PET status not Initiated";
+	public static final String INITIATED = "Initiated";
+	public static final String SERVICE_FAILURE="Technical Failure. Please Contact System Administartor";
 }

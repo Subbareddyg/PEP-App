@@ -4627,84 +4627,86 @@ public class ContentController implements ResourceAwareController, EventAwareCon
      *            the request
      * @param response
      *            the response
-     * @throws Exception
-     *             the exception
      */
     @ActionMapping(params={"action=copyRegularOrinContent"})
     public void contentCopyRegular(ActionRequest request,
-            ActionResponse response) throws Exception {
+            ActionResponse response) {
         LOGGER.info("ContentPortlet:handleActionRequest:copyRegularOrinContent:Enter");
-
-        String sessionDataKey = (String) request.getPortletSession()
-                .getAttribute(ContentScreenConstants.SESSIONDATAKEY);
-        String user = ContentScreenConstants.EMPTY;
-        if(sessionDataKey != null 
-                && sessionDataKey.length() > 0)
-        {
-            if(sessionDataKey.length() >= 7)
-            {
-                user = sessionDataKey.substring(sessionDataKey.length() - 7, sessionDataKey.length());
-            }
-            else
-            {
-                user = sessionDataKey;
-            }
-        }
-
         String finalStatus = ContentScreenConstants.EMPTY;
-        String fromOrin = (String) request.getParameter("fromOrin");
-        String toOrin = (String) request.getParameter("toOrin");
-        String toOrinType = (String) request.getParameter("toOrinType");
-        String toOrinPETStatus =(String) request.getParameter("toOrinPETStatus");
-        LOGGER.info("Source Orin:------- " + fromOrin);
-        LOGGER.info("Destination Orin:------- " + toOrin);
 
-        
-        if("Initiated".equals(toOrinPETStatus)){
-            if (StringUtils.isNotBlank(toOrin) && StringUtils.isNotBlank(fromOrin)) {
-    
-                RegularPetCopy petCopy = new RegularPetCopy();
-                petCopy.setFromMDMId(fromOrin.trim());
-                petCopy.setToMDMId(toOrin.trim());
-                petCopy.setToOrinEntryType(toOrinType);
-                petCopy.setType(toOrinType);
-                petCopy.setModifiedBy(user);
-                // Get Group number confirmation
-                petCopy = contentDelegate.getCopyOrinValidation(petCopy);
-                
-                if (petCopy.isSuccess()) {
-                    if (petCopy.getFromOrinEntryType().equals(petCopy.getToOrinEntryType())
-                            && !petCopy.getFromMDMId().equals(petCopy.getToMDMId())){
-                    // call web service
-                        finalStatus = contentDelegate.callCopyRegularContentService(petCopy);
-                    }else{
-                        if(petCopy.getFromMDMId().equals(petCopy.getToMDMId())){
-                            finalStatus = ContentScreenConstants.REG_COPY_FAIL_SAME_MDMID;
-                        }else if("Style".equals(petCopy.getToOrinEntryType())){
-                            finalStatus = ContentScreenConstants.REG_COPY_FAIL_ENTRY_TYPE_COMPLEX_PACK;
-                        }else{
-                            finalStatus = ContentScreenConstants.REG_COPY_FAIL_ENTRY_TYPE_STYLE;
-                        }
-                    }
-                }else{
-                    // send error message 
-                    finalStatus = petCopy.getMessageToDisplay();
-                }
-            } else {
-                finalStatus = ContentScreenConstants.REG_COPY_FAIL_INVALID;
-            }
-        } else{
-            finalStatus = ContentScreenConstants.REG_COPY_FAIL_INVALID_PET_STATUS;
-        }
-        
-        if(LOGGER.isDebugEnabled()){
-            LOGGER.debug("Final status : "+ finalStatus);
+        try{
+	        String sessionDataKey = (String) request.getPortletSession()
+	                .getAttribute(ContentScreenConstants.SESSIONDATAKEY);
+	        String user = ContentScreenConstants.EMPTY;
+	        if(sessionDataKey != null 
+	               && sessionDataKey.length() >= 7)
+	        {
+	            user = sessionDataKey.substring(sessionDataKey.length() - 7, sessionDataKey.length());
+	        }
+	        else
+	        {
+	            user = sessionDataKey;
+	        }
+	        
+	
+	       
+	        String sourceOrin = (String) request.getParameter("sourceOrin");
+	        String destinationOrin = (String) request.getParameter("destinationOrin");
+	        String destinationOrinType = (String) request.getParameter("destinationOrinType");
+	        String destinationOrinPETStatus =(String) request.getParameter("destinationOrinPETStatus");
+	        LOGGER.info("Source Orin:------- " + sourceOrin);
+	        LOGGER.info("Destination Orin:------- " + destinationOrinPETStatus);
+	
+	        
+	        if(ContentScreenConstants.INITIATED.equals(destinationOrinPETStatus)){
+	            if (StringUtils.isNotBlank(destinationOrin) && StringUtils.isNotBlank(sourceOrin)) {
+	    
+	                RegularPetCopy petCopy = new RegularPetCopy();
+	                petCopy.setFromMDMId(sourceOrin.trim());
+	                petCopy.setToMDMId(destinationOrin.trim());
+	                petCopy.setToOrinEntryType(destinationOrinType);
+	                petCopy.setType(destinationOrinType);
+	                petCopy.setModifiedBy(user);
+	                // Get Group number confirmation
+	                petCopy = contentDelegate.getCopyOrinValidation(petCopy);
+	                
+	                if (petCopy.isSuccess()) {
+	                    if (petCopy.getFromOrinEntryType().equals(petCopy.getToOrinEntryType())
+	                            && !petCopy.getFromMDMId().equals(petCopy.getToMDMId())){
+	                    // call web service
+	                        finalStatus = contentDelegate.callCopyRegularContentService(petCopy);
+	                    }else{
+	                        if(petCopy.getFromMDMId().equals(petCopy.getToMDMId())){
+	                            finalStatus = ContentScreenConstants.REG_COPY_FAIL_SAME_MDMID;
+	                        }else if("Style".equals(petCopy.getToOrinEntryType())){
+	                            finalStatus = ContentScreenConstants.REG_COPY_FAIL_ENTRY_TYPE_COMPLEX_PACK;
+	                        }else{
+	                            finalStatus = ContentScreenConstants.REG_COPY_FAIL_ENTRY_TYPE_STYLE;
+	                        }
+	                    }
+	                }else{
+	                    // send error message 
+	                    finalStatus = petCopy.getMessageToDisplay();
+	                }
+	            } else {
+	                finalStatus = ContentScreenConstants.REG_COPY_FAIL_INVALID;
+	            }
+	        } else{
+	            finalStatus = ContentScreenConstants.REG_COPY_FAIL_INVALID_PET_STATUS;
+	        }
+	        
+	        if(LOGGER.isDebugEnabled()){
+	            LOGGER.debug("Final status : "+ finalStatus);
+	        }
+	       
+        }catch(Exception e){
+        	LOGGER.error("ContentPortlet:handleActionRequest:copyRegularOrinContent : Exception "+e);
+        	finalStatus = ContentScreenConstants.SERVICE_FAILURE;
         }
         request.getPortletSession()
-                .setAttribute(
-                        ContentScreenConstants.CONTENT_COPY_STATUS_MESSAGE,
-                        finalStatus);
-
-        LOGGER.info("ContentPortlet:handleActionRequest:copyRegularOrinContent:Exit]");
+        .setAttribute(
+                ContentScreenConstants.CONTENT_COPY_STATUS_MESSAGE,
+                finalStatus);
+        LOGGER.info("ContentPortlet:handleActionRequest:copyRegularOrinContent:Exit");
     }
 }
