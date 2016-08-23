@@ -2391,7 +2391,7 @@ public class XqueryConstants {
         queryBuffer.append("                    Image_Indicator VARCHAR2(50) Path 'Supplier_Site_Spec/Omni_Channel/Image_Certification',                                              ");
         queryBuffer.append("                    Sample_Indicator VARCHAR2(50) Path 'Supplier_Site_Spec/Omni_Channel/Return_Sample_Indicator',                                         ");
         queryBuffer.append("                    OmnichannelIndicator VARCHAR(2) path 'if (Supplier_Site_Spec/Omni_Channel/Omni_Channel_Indicator eq \"true\") then \"Y\" else \"N\"' ) (+)s ");
-        queryBuffer.append("  WHERE AGC.MDMID=:groupId AND AIC.PETEXISTS = 'Y' ");
+        queryBuffer.append("  WHERE AGC.MDMID=:groupId ");
 
         
         String query = queryBuffer.toString();
