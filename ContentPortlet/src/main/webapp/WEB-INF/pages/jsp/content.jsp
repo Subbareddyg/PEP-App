@@ -2264,13 +2264,13 @@ function clickListenerContent(e){
 													 <c:if test="${contentDisplayForm.lstCarBrandVO.size() == 1}">
 													 <option id="-1" value="-1">Please Select</option>   
 											        <c:forEach var="carbrandList" items="${contentDisplayForm.lstCarBrandVO}">												
-														<option id="${carbrandList.carBrandDesc}" value="${carbrandList.carBrandDesc}" selected="selected"> ${carbrandList.carBrandDesc}</option>               
+														<option id="${carbrandList.carBrandCode}" value="${carbrandList.carBrandCode}" selected="selected"> ${carbrandList.carBrandDesc}</option>               
 													</c:forEach>	
 													</c:if>			
 													 <c:if test="${contentDisplayForm.lstCarBrandVO.size() == 0 || contentDisplayForm.lstCarBrandVO.size() > 1}">
 													 <option id="-1" value="-1">Please Select</option>   
 											        <c:forEach var="carbrandList" items="${contentDisplayForm.lstCarBrandVO}">												
-														<option id="${carbrandList.carBrandDesc}" value="${carbrandList.carBrandDesc}"> ${carbrandList.carBrandDesc}</option>               
+														<option id="${carbrandList.carBrandCode}" value="${carbrandList.carBrandCode}"> ${carbrandList.carBrandDesc}</option>               
 													</c:forEach>	
 													</c:if>												
 										</select>

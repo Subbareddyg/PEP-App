@@ -2349,31 +2349,33 @@ public class ContentController implements ResourceAwareController, EventAwareCon
                 // Get the IPH Categories to display on the screen;
                 String mappedCategoryId = displayIPHCategories(orinNumber, contentDisplayForm, request, response);
 
-                if (mappedCategoryId != null && request.getAttribute("dynamicCategoryId") == null) {
-                    LOGGER.info("Inside mapped IPH Category..............................  ");
-                    displayAttributesOnLoad(request, response, contentDisplayForm, orinNumber, mappedCategoryId);
-                    if ((lstCarBrands != null) && (lstCarBrands.size() > 0)) {
-                        String selectedBrand = lstCarBrands.get(0).getSelectedBrand();
-                        LOGGER.info("selectedBrand:" + selectedBrand); // JIRA
-                                                                        // VP9
-                        if (selectedBrand != null && !selectedBrand.trim().equalsIgnoreCase("")) {
-                            request.setAttribute("selectedCarbrand", selectedBrand);
-                        }
-                    } else {
-                        request.setAttribute("selectedCarbrand", "-1");
-                    }
+				if (mappedCategoryId != null && request.getAttribute("dynamicCategoryId") == null) {
+					LOGGER.info("Inside mapped IPH Category..............................  ");
+					displayAttributesOnLoad(request, response, contentDisplayForm, orinNumber, mappedCategoryId);
+					
+					if ((lstCarBrands != null) && (lstCarBrands.size() > 0)) {
+						String selectedBrand = lstCarBrands.get(0).getSelectedBrand();
+						LOGGER.info("selectedBrand:" + selectedBrand); 
+						String selectedCarBrandCode = lstCarBrands.get(0).getSelectedCarBrandCode(); //VP34
+						LOGGER.info("selectedCarBrandCode:" + selectedCarBrandCode); //VP34
+						if (selectedCarBrandCode != null && !selectedCarBrandCode.trim().equalsIgnoreCase("")) { //VP34
+							request.setAttribute("selectedCarbrand", selectedCarBrandCode); //VP34
+						}
+					} else {
+						request.setAttribute("selectedCarbrand", "-1");
+					}
 
-                    if ((lstOmniBrands != null) && (lstOmniBrands.size() > 0)) {
-                        String selectedOmni = lstOmniBrands.get(0).getSelectedBrand();
-                        LOGGER.info("selectedOmni:" + selectedOmni); // JIRA VP9
-                        if (selectedOmni != null && !selectedOmni.trim().equalsIgnoreCase("")) {
-                            // request.setAttribute("selectedOmnichannelbrand",
-                            // (lstOmniBrands.get(0).getSelectedBrand().split("-"))[0]);
-                            request.setAttribute("selectedOmnichannelbrand", (lstOmniBrands.get(0).getSelectedBrand()));
-                        }
-                    } else {
-                        request.setAttribute("selectedOmnichannelbrand", "-1");
-                    }
+					if ((lstOmniBrands != null) && (lstOmniBrands.size() > 0)) {
+						String selectedOmni = lstOmniBrands.get(0).getSelectedBrand();
+						LOGGER.info("selectedOmni:" + selectedOmni); //VP34
+						if (selectedOmni != null && !selectedOmni.trim().equalsIgnoreCase("")) {
+							// request.setAttribute("selectedOmnichannelbrand",
+							// (lstOmniBrands.get(0).getSelectedBrand().split("-"))[0]);
+							request.setAttribute("selectedOmnichannelbrand", (lstOmniBrands.get(0).getSelectedBrand()));
+						}
+					} else {
+						request.setAttribute("selectedOmnichannelbrand", "-1");
+					}
 
                     if (styleAttributes != null) {
                         if (styleAttributes.getBelkExclusive() != null
@@ -3492,15 +3494,27 @@ public class ContentController implements ResourceAwareController, EventAwareCon
             final String pYGValue = request.getParameter("PYGValue");
             final String channelExclusive = request.getParameter("channelExclusive");
             final String bopisValue = request.getParameter("bopisSelectedValue");
+			//START VP34
+			String carBrandDesc = "";
+			String formSessionKey1 = (String) request.getPortletSession().getAttribute("formSessionKey"); 
+			ContentForm contentDisplayForm1 = (ContentForm) request.getPortletSession().getAttribute(formSessionKey1); //VP34
 
-            LOGGER.info("omniBrandCode:" + omniBrandCode); // JIRA VP9
-            LOGGER.info("carsBrandCode:" + carsBrandCode); // JIRA VP9
-            String carsBrandCodeEncoded = StringEscapeUtils.escapeHtml4(carsBrandCode); // JIRA
-                                                                                        // VP9
-            LOGGER.info("carsBrandCodeEncoded:" + carsBrandCodeEncoded); // JIRA
-                                                                            // VP9
-
-            if (StringUtils.isNotBlank(styleReq) && styleReq.equalsIgnoreCase("Style")) {
+			List<CarBrandVO> lstCarBrands = contentDisplayForm1.getLstCarBrandVO();
+			LOGGER.info("lstCarBrands.size():" + lstCarBrands.size());
+			
+			for(CarBrandVO carBrand: lstCarBrands)
+            {
+				//LOGGER.info("Selected carsBrandCode:"+carsBrandCode);
+                //LOGGER.info("Existing carBrand.getCarBrandCode():"+carBrand.getCarBrandCode());
+                if(carsBrandCode.equals(carBrand.getCarBrandCode())){
+                	carBrandDesc = carBrand.getCarBrandDesc();
+                }
+            }
+			LOGGER.info("omniBrandCode:" + omniBrandCode); 
+			LOGGER.info("carBrandDesc:" + carBrandDesc); 
+			//END VP34
+			
+			if (StringUtils.isNotBlank(styleReq) && styleReq.equalsIgnoreCase("Style")) {
 
                 final String productNameXpath = ContentScreenConstants.PRODUCT_NAME_XPATH;
                 final String productDescriptionXpath = ContentScreenConstants.PRODUCT_DESCRIPTION_XPATH;
@@ -3547,12 +3561,9 @@ public class ContentController implements ResourceAwareController, EventAwareCon
                     final AttributesBean attributesOmniBrand = new AttributesBean(omniChannelBrandXpath, (omniBrandCode));
                     beanList.add(attributesOmniBrand);
                 }
-                if (( carsBrandCodeEncoded!= null) && StringUtils.isNotBlank(carsBrandCodeEncoded)
-                        && !carsBrandCodeEncoded.equalsIgnoreCase("-1")) { // JIRA
-                                                                            // VP9
-                    final AttributesBean attributeCarsBrandCode = new AttributesBean(carsBrandXpath, (carsBrandCodeEncoded)); // JIRA
-                                                                                                                                // VP9
-                    beanList.add(attributeCarsBrandCode);
+				if (( carBrandDesc!= null) && StringUtils.isNotBlank(carBrandDesc) && !carBrandDesc.equalsIgnoreCase("-1")) { 
+					final AttributesBean attributeCarsBrandCode = new AttributesBean(carsBrandXpath, (carBrandDesc)); 
+					beanList.add(attributeCarsBrandCode);
                 }
 
             } else if (StringUtils.isNotBlank(complexPackReq) && complexPackReq.equalsIgnoreCase("Complex Pack")) {
@@ -3600,30 +3611,27 @@ public class ContentController implements ResourceAwareController, EventAwareCon
                     final AttributesBean attributesBeanpYGValue = new AttributesBean(pYGValueXpath, pYGValue);
                     beanList.add(attributesBeanpYGValue);
                 }
-                // Added by Sriharsha
-                if ((omniBrandCode != null) && StringUtils.isNotBlank(omniBrandCode) && !omniBrandCode.equalsIgnoreCase("-1")) {
-                    final AttributesBean attributesOmniBrand = new AttributesBean(omniChannelBrandXpath, (omniBrandCode));
-                    beanList.add(attributesOmniBrand);
-                }
-                if ((carsBrandCodeEncoded != null) && StringUtils.isNotBlank(carsBrandCodeEncoded)
-                        && !carsBrandCodeEncoded.equalsIgnoreCase("-1")) { // JIRA
-                                                                            // VP9
-                    final AttributesBean attributeCarsBrandCode = new AttributesBean(carsBrandXpath, (carsBrandCodeEncoded)); // JIRA
-                                                                                                                                // VP9
-                    beanList.add(attributeCarsBrandCode);
-                }
-            }
-            // Added for Grouping Save 
-            else{
-                //Setting the message as blank
-                String formSessionKey = (String) request.getPortletSession().getAttribute("formSessionKey");
-                ContentForm contentDisplayForm = (ContentForm) request.getPortletSession().getAttribute(formSessionKey);
-                if(contentDisplayForm!=null){
-                    contentDisplayForm.setIphMappingMessage("");
-                    contentDisplayForm.setCopyContentMessage("");
-                }
-                request.getPortletSession().setAttribute(formSessionKey, contentDisplayForm);
-                
+				
+				if ((omniBrandCode != null) && StringUtils.isNotBlank(omniBrandCode) && !omniBrandCode.equalsIgnoreCase("-1")) {
+					final AttributesBean attributesOmniBrand = new AttributesBean(omniChannelBrandXpath, (omniBrandCode));
+					beanList.add(attributesOmniBrand);
+				}
+				if ((carBrandDesc != null) && StringUtils.isNotBlank(carBrandDesc) && !carBrandDesc.equalsIgnoreCase("-1")) { 
+					final AttributesBean attributeCarsBrandCode = new AttributesBean(carsBrandXpath, (carBrandDesc)); 
+					beanList.add(attributeCarsBrandCode);
+				}
+			}
+			// Added for Grouping Save 
+			else{
+				//Setting the message as blank
+				String formSessionKey = (String) request.getPortletSession().getAttribute("formSessionKey");
+				ContentForm contentDisplayForm = (ContentForm) request.getPortletSession().getAttribute(formSessionKey);
+				if(contentDisplayForm!=null){
+					contentDisplayForm.setIphMappingMessage("");
+					contentDisplayForm.setCopyContentMessage("");
+				}
+				request.getPortletSession().setAttribute(formSessionKey, contentDisplayForm);
+				
 
                 final String omniChannelBrandXpath = ContentScreenConstants.OMNICHANNEL_BRAND_XPATH;
                 final String carsBrandXpath = ContentScreenConstants.CARS_BRAND_XPATH;
@@ -3681,16 +3689,13 @@ public class ContentController implements ResourceAwareController, EventAwareCon
                     }
                     beanList.add(attributesOmniBrand);
                 }
-                if ((carsBrandCodeEncoded != null) && StringUtils.isNotBlank(carsBrandCodeEncoded)
-                        && !carsBrandCodeEncoded.equalsIgnoreCase("-1")) { 
-                    if(contentDisplayForm!=null && !ContentScreenConstants.CONSOLIDATED_PRODUCT_GROUP_TYPE.equals(contentDisplayForm.getGroupingType())){
-                        
-                        attributeCarsBrandCode = new AttributesBean(carsGroupBrandXpath, (carsBrandCodeEncoded));
-                    }else{
-                        attributeCarsBrandCode = new AttributesBean(carsBrandXpath, (carsBrandCodeEncoded));
-                    }
-                    
-                    beanList.add(attributeCarsBrandCode);
+				if ((carBrandDesc != null) && StringUtils.isNotBlank(carBrandDesc) && !carBrandDesc.equalsIgnoreCase("-1")) { 
+					if(contentDisplayForm!=null && !ContentScreenConstants.CONSOLIDATED_PRODUCT_GROUP_TYPE.equals(contentDisplayForm.getGroupingType())){
+						attributeCarsBrandCode = new AttributesBean(carsGroupBrandXpath, (carBrandDesc));
+					}else{
+						attributeCarsBrandCode = new AttributesBean(carsBrandXpath, (carBrandDesc));
+					}
+					beanList.add(attributeCarsBrandCode);
                 }
             }
 
