@@ -2732,24 +2732,18 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
                                 : row.get(
                                     WorkListDisplayConstants.EXIST_IN_GROUP)
                                     .toString());
-                        if ((row.get(WorkListDisplayConstants.CHILD_GROUP) == null
+                      //Change for Style LevelPet Display Change
+                        String  strPetDisplayFlag = row.get(WorkListDisplayConstants.CHILD_GROUP) == null
                             ? WorkListDisplayConstants.EMPTY_STRING : row.get(
                                 WorkListDisplayConstants.CHILD_GROUP)
-                                .toString())
-                            .equalsIgnoreCase(WorkListDisplayConstants.CHILD_GROUP_C)
-                            || (row.get(WorkListDisplayConstants.CHILD_GROUP) == null
-                                ? WorkListDisplayConstants.EMPTY_STRING : row
-                                    .get(WorkListDisplayConstants.CHILD_GROUP)
-                                    .toString())
-                                .equalsIgnoreCase(WorkListDisplayConstants.CHILD_GROUP_O)) {
+                                .toString();
+                        
+                        if (strPetDisplayFlag.equalsIgnoreCase(WorkListDisplayConstants.CHILD_GROUP_C)
+                            || strPetDisplayFlag.equalsIgnoreCase(WorkListDisplayConstants.CHILD_GROUP_O)) {
+                        	//End- Change for Style LevelPet Display Change
                             workFlow
-                                .setIsChildPresent(WorkListDisplayConstants.YES_Y);
-                            //Change for Style LevelPet Display Change
-                            if(WorkListDisplayConstants.COMPLETED.equals(workFlow.getPetStatus()) &&
-                            		row.get(WorkListDisplayConstants.CHILD_GROUP).toString()
-                            		.equalsIgnoreCase(WorkListDisplayConstants.CHILD_GROUP_O)){                            	
-                            	
-                            }
+                                .setIsChildPresent(WorkListDisplayConstants.YES_Y);                            
+                           
                         }
                         else {
                             workFlow
@@ -2776,7 +2770,7 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
                         	WorkListDisplayConstants.WAITING_TO_BE_CLOSED.equals(workFlow.getPetStatus()) ||
                         	WorkListDisplayConstants.CLOSED.equals(workFlow.getPetStatus() )||
                         	WorkListDisplayConstants.PUBLISH_TO_WEB.equals(workFlow.getPetStatus())) &&
-                        		WorkListDisplayConstants.YES_Y.equalsIgnoreCase(workFlow.getIsChildPresent())){                            	
+                        	strPetDisplayFlag.equalsIgnoreCase(WorkListDisplayConstants.CHILD_GROUP_O)){                            	
                         	workFlow.setPetStatus(WorkListDisplayConstants.IN_PROGRESS);
                         }
                         //Change end
