@@ -93,7 +93,6 @@ public class ContentDAOImpl implements ContentDAO{
             throws PEPFetchException {
         LOGGER.info("---inside getCardsBrandList---");
         Session session = null;
-        
         List<CarBrandVO> listCarBrandVO=null;
         CarBrandVO carBrandVO = null;
         List<Object[]> rows=null;
@@ -110,20 +109,14 @@ public class ContentDAOImpl implements ContentDAO{
                 query.setParameter("supplier", supplierId);
                 query.setFetchSize(20);
                 rows = query.list();
-               
             }
-            
-            /**
-             * MODIIFIED BY AFUAXK4
-             * DATE: 02/05/2016
-             */
-        
-            
+
             if(rows!=null)
             {
                 listCarBrandVO = new ArrayList<CarBrandVO>();
                 List<CarBrandVO> listCarBrandVOFinal = new ArrayList<CarBrandVO>();
                 String selectedBrand = "";
+                String dbSelectedCarBrandCode = ""; //VP34
                 int i=0; 
                 for (final Object[] row : rows) 
                 {  
@@ -137,9 +130,6 @@ public class ContentDAOImpl implements ContentDAO{
                     carBrandVO.setCarBrandCode(omniBrandCode);
                     carBrandVO.setCarBrandDesc(omniBrandDesc);
                     
-                   // if(omniBrandDesc.equals(selectedBrandStyle)
-                     //    || omniBrandDesc.equals(selectedBrandComplexPack))
-                  //  {
                     if(i==0){
                         if(entryType.equals("Style"))
                         {
@@ -147,24 +137,28 @@ public class ContentDAOImpl implements ContentDAO{
                         }
                         else if(entryType.equals("ComplexPack"))
                         {
-                            selectedBrand = selectedBrandComplexPack;                                         
+                            selectedBrand = selectedBrandComplexPack;                                           
                         }
-                    }                                          
+                        LOGGER.info("selectedCarBrandDesc-->"+selectedBrand);
+                    }  
+                    //START VP34
+                    if(selectedBrand.equals(carBrandVO.getCarBrandDesc())){
+                    	dbSelectedCarBrandCode = carBrandVO.getCarBrandCode();
+                    	LOGGER.info("database CarBrandCode-->"+dbSelectedCarBrandCode);
+                    }
+                   //END VP34
                     listCarBrandVO.add(carBrandVO);
                     i++;
                 }
-                LOGGER.info("selectedBrand:"+selectedBrand);  //JIRA VP9
+                
                 for(CarBrandVO carBrand: listCarBrandVO)
                 {
-                    carBrand.setSelectedBrand(StringEscapeUtils.unescapeHtml4(selectedBrand)); //JIRA VP9
+                    carBrand.setSelectedBrand(selectedBrand); 
+                    carBrand.setSelectedCarBrandCode(dbSelectedCarBrandCode); //VP34
                     listCarBrandVOFinal.add(carBrand);
                 }
                 listCarBrandVO = listCarBrandVOFinal;
             }
-            /**
-             * MODIFICATION END AFUAXK4
-             * DATE: 02/05/2016
-             */
         }catch(final Exception e) {
             throw new PEPFetchException(e);
         }

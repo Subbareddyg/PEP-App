@@ -14,8 +14,18 @@ public class CarBrandVO {
     
     /** The selected brand. */
     private String selectedBrand;
+    
+    private String selectedCarBrandCode; //VP34
+    
+    public String getSelectedCarBrandCode() {
+		return selectedCarBrandCode;
+	}
 
-    /**
+	public void setSelectedCarBrandCode(String selectedCarBrandCode) {
+		this.selectedCarBrandCode = selectedCarBrandCode;
+	}
+
+	/**
      * Gets the car brand code.
      *
      * @return the car brand code
