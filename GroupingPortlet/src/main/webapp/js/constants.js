@@ -8,7 +8,7 @@ var app = app || {};
 			minGroupDescChars: 40,
 			maxGroupDescChars: 2000,			
 			pageTimeOutMS: 1800000,  //time in MS for pageTimeout
-			logOutTimeoutMS: 3600000,   //time in MS for total Logout			
+			logOutTimeoutMS: 3600000,   //time in MS for total Logout
 		},
 		
 		constants: {
@@ -22,6 +22,7 @@ var app = app || {};
 				GROUP_CREATED_WITH_COMPONENT_CPG: 206,
 				GROUP_CREATED_WITH_OUT_COMPONENT_CPG: 207,
 			},
+			BCGEntryTypes: 'CPG|SCG|SSG',
 		},
 	}
 })();

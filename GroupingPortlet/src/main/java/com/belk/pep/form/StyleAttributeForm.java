@@ -38,6 +38,7 @@ public class StyleAttributeForm {
     private String isGroup;
     private String priority;
     private String haveChildGroup;
+    private String defaultColor;
     
 	/**
 	 * @return the haveChildGroup
@@ -258,6 +259,33 @@ public class StyleAttributeForm {
 		this.isAlreadyInSameGroup = isAlreadyInSameGroup;
 	}
     
+	private List <StyleAttributeForm> styleAttributeFormList;
+
+	/**
+	 * @return the styleAttributeFormList
+	 */
+	public List<StyleAttributeForm> getStyleAttributeFormList() {
+		return styleAttributeFormList;
+	}
+	/**
+	 * @param styleAttributeFormList the styleAttributeFormList to set
+	 */
+	public void setStyleAttributeFormList(
+			List<StyleAttributeForm> styleAttributeFormList) {
+		this.styleAttributeFormList = styleAttributeFormList;
+	}
+	/**
+	 * @return the defaultColor
+	 */
+	public String getDefaultColor() {
+		return defaultColor;
+	}
+	/**
+	 * @param defaultColor the defaultColor to set
+	 */
+	public void setDefaultColor(String defaultColor) {
+		this.defaultColor = defaultColor;
+	}
     
     
   }

@@ -1039,11 +1039,15 @@ public class GroupingController {
 				LOGGER.info("get Child for RCG BCG ResourceRequest:Enter------------>.");
 
 				String groupId = request.getParameter(GroupingConstants.GROUP_ID);
+				String parentGroupId = request.getParameter(GroupingConstants.PARENT_GROUP_ID);
+				String groupLevel = GroupingUtil.checkNull(request.getParameter(GroupingConstants.GROUP_LEVEL));
 				if (LOGGER.isDebugEnabled()) {
 					LOGGER.debug("groupId----------------->" + groupId);
+					LOGGER.debug("parentGroupId----------------->" + parentGroupId);
+					LOGGER.debug("groupLevel----------------->" + groupLevel);
 				}
 				String message = GroupingConstants.EMPTY;
-				List<StyleAttributeForm> childList = groupingService.getRegularBeautyChildDetails(groupId);
+				List<StyleAttributeForm> childList = groupingService.getRegularBeautyChildDetails(groupId, parentGroupId);
 				if (childList.isEmpty()) {
 					message = "No child data found.";
 				}
@@ -1051,7 +1055,7 @@ public class GroupingController {
 						GroupingConstants.EMPTY, childList, GroupingConstants.EMPTY,
 						GroupingConstants.EMPTY, GroupingConstants.EMPTY, GroupingConstants.EMPTY, 
 						GroupingConstants.EMPTY, GroupingConstants.EMPTY, GroupingConstants.EMPTY,
-						GroupingConstants.EMPTY, GroupingConstants.EMPTY);
+						GroupingConstants.EMPTY, GroupingConstants.EMPTY, parentGroupId, groupLevel);
 
 				response.getWriter().write(json.toString());
 
@@ -1401,7 +1405,7 @@ public class GroupingController {
 				jsonObj = getRegularBeautyGrpJsonResponse(message, totalRecordCount, defaultSortCol, defaultSortOrder,
 						existRegularBeautyDetails, GroupingConstants.EMPTY, GroupingConstants.EMPTY, GroupingConstants.EMPTY,
 						GroupingConstants.EMPTY, GroupingConstants.EMPTY, GroupingConstants.EMPTY, GroupingConstants.EMPTY,
-						GroupingConstants.EMPTY, GroupingConstants.EMPTY);
+						GroupingConstants.EMPTY, GroupingConstants.EMPTY, groupId, GroupingConstants.EMPTY);
 			}
 
 			if (LOGGER.isDebugEnabled()) {
@@ -1736,7 +1740,7 @@ public class GroupingController {
 				JSONObject jsonObj = getRegularBeautyGrpJsonResponse(message, totalRecords, 
 						sortCol, sortOrder, getSearchResultList, String.valueOf(recordsPerPageSelected), 
 						vendorStyleNo, styleOrin, deptNoSearch, classNoSearch, supplierSiteIdSearch, upcNoSearch,
-						groupIdSearch, groupNameSearch);
+						groupIdSearch, groupNameSearch, groupId, GroupingConstants.EMPTY);
 				response.getWriter().write(jsonObj.toString());
 
 				modelAndView = new ModelAndView(null);
@@ -1901,14 +1905,41 @@ public class GroupingController {
 				if (LOGGER.isDebugEnabled()) {
 					LOGGER.debug("All RCG Attribute List Size()-->" + getRCGBCGDetailsList.size());
 				}
+				String selectedGroup = "";
 				if (GroupingConstants.GROUP_TYPE_REGULAR_COLLECTION.equals(groupType)) {
 					getSelectedAttrbuteList = groupingService.getSelectedRCGAttributeList(getRCGBCGDetailsList, selectedItemsArr);
 				} else {
-					getSelectedAttrbuteList = groupingService.getSelectedBCGAttributeList(getRCGBCGDetailsList, selectedItemsArr);
+					
+					for (int l = 0; l < selectedItemsArr.length; l++) {
+						String selectedOrinGrpNo = GroupingUtil.checkNull(selectedItemsArr[l]);
+						
+						if(selectedOrinGrpNo.indexOf("_") != -1)
+						{
+							if(selectedOrinGrpNo.length() == 8)
+							{
+								selectedGroup = selectedOrinGrpNo.substring(0, selectedOrinGrpNo.indexOf("_"));
+							}
+						}
+						else if (selectedOrinGrpNo.length() == 7)
+						{
+							selectedGroup = selectedOrinGrpNo;
+						}
+					}
+					if(selectedGroup.isEmpty()) {
+						getSelectedAttrbuteList = groupingService.getSelectedBCGAttributeList(getRCGBCGDetailsList, selectedItemsArr);						
+					}
 				}
-
-				/* Call Service to add attribute */
-				createGroupForm = groupingService.addRCGBCGComponentToGroup(groupId, updatedBy, groupType, getSelectedAttrbuteList);
+				if(selectedGroup.isEmpty()) {
+					/* Call Service to add attribute */
+					createGroupForm = groupingService.addRCGBCGComponentToGroup(groupId, updatedBy, groupType, getSelectedAttrbuteList);
+				}
+				else
+				{
+					createGroupForm.setGroupId(groupId);
+					createGroupForm.setGroupType(groupType);
+					createGroupForm.setGroupCretionMsg("All colors under Group " + selectedGroup + " already added");
+					createGroupForm.setGroupCreationStatus("203");
+				}
 			}
 
 			// Call Service to add attribute
@@ -2038,6 +2069,7 @@ public class GroupingController {
 		String sessionDataKey = (String) request.getPortletSession().getAttribute("sessionDataKey");
 		UserData custuser = (UserData) request.getPortletSession().getAttribute(sessionDataKey);
 		String pepUserId = custuser.getBelkUser().getLanId();
+		String defaultResCode = GroupingConstants.EMPTY;
 		String color;
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("This is from Reneder Internal User--------------------->" + pepUserId);
@@ -2055,15 +2087,19 @@ public class GroupingController {
 			LOGGER.info("handleDefaultValueRequest.resourceType.groupId-->" + groupId + " groupType-->" + groupType);
 		}
 		try {
-			/** Start to set Priority **/
-			if (GroupingConstants.RESOURCE_TYPE_FOR_SET_PRIORITY.equals(resourceType)) {
-				LOGGER.info("set Priority of the existing component from Grouping Controller");
-				
+			
+
+			/** Start to set Priority and set Default color for BCG **/
+			if (GroupingConstants.RESOURCE_TYPE_FOR_SET_PRIORITY.equals(resourceType) 
+					&& GroupingConstants.GROUP_TYPE_BEAUTY_COLLECTION.equals(groupType)) { // TODO Partha
+				LOGGER.info("set Priority and Default Color of the BCG existing component from Grouping Controller");
+				Properties prop = null;
+				/** Start set BCG Priority **/
 				JSONArray componentList = new JSONArray();
 				String componentStr = GroupingUtil.checkNull(request.getParameter(GroupingConstants.PRIORITY_LIST));
+				LOGGER.info("number of cmpt-prioroty--> " + componentStr);
 				if (null != componentStr) {
 					String[] compPair = componentStr.split(",");
-					LOGGER.info("number of cmpt-prioroty pair" + compPair.length);
 					for (String compo_prio : compPair) {
 						JSONObject jsonObjectComponent = new JSONObject();
 						String[] arr = compo_prio.split(":");
@@ -2078,84 +2114,178 @@ public class GroupingController {
 				jsonObject.put(GroupingConstants.MODIFIED_BY, pepUserId);
 				jsonObject.put(GroupingConstants.COMPONENT_LIST, componentList);
 				String resp = groupingService.setComponentPriority(jsonObject);
-				Properties prop = PropertyLoader.getPropertyLoader(GroupingConstants.MESS_PROP);
+				prop = PropertyLoader.getPropertyLoader(GroupingConstants.MESS_PROP);
 
 				JSONObject responseObj = new JSONObject(resp);
-				String code = responseObj.getString(GroupingConstants.MSG_CODE);
-				String message;
-				if (code.equalsIgnoreCase(GroupingConstants.SUCCESS_CODE)) {
-					 message = prop.getProperty(GroupingConstants.PRIORITY_COMPNT_SUCCESS);
-				} else {
-					message = prop.getProperty(GroupingConstants.PRIORITY_COMPNT_FAILURE);
-				}
-				if (LOGGER.isDebugEnabled()) {
-					LOGGER.debug("set Priority Message-->" + message);
-				}
+				String priorityResCode = GroupingUtil.checkNull(responseObj.getString(GroupingConstants.MSG_CODE));
+				/** End set BCG Priority **/
 				
-				responseObj.put(GroupingConstants.DEFAULT_VALUE_STATUS_MESSAGE, message);
-				response.getWriter().write(responseObj.toString());
-			}
-			/** End to set Priority **/
-			/** Start to set Default **/
-			else if (GroupingConstants.RESOURCE_TYPE_FOR_SET_DEFAULT.equals(resourceType)) {
-				LOGGER.info("Change Default Component of the Existing COmponent from Grouping Controller");
-				
-				@SuppressWarnings("unchecked")
-				List<GroupAttributeForm> attributeList = (List<GroupAttributeForm>) request.getPortletSession().getAttribute(
-						GroupingConstants.EXISTING_ATTRIBUTE_LIST);
+				/** Start set BCG Default Color **/
+				String colorSize = GroupingUtil.checkNull(request.getParameter(GroupingConstants.BCG_COMPONENT_DEFAULT_COLOR));
+				LOGGER.info("Default Color--> " + colorSize);
+				if(null != colorSize){
+					// BCGDefaultColor:100003396003_003,1002005_100035880161_161
+					
+					String[] defaultColorList = colorSize.split(",");
+					for(int i = 0; i < defaultColorList.length; i++){
+						LOGGER.info("Default Color defaultColorList[i]--> " + defaultColorList[i]);
+						
+						String childCompId = GroupingConstants.EMPTY;
+						String colorId = GroupingConstants.EMPTY;
+						
+						if (GroupingUtil.checkNull(defaultColorList[i]).contains("_")) {
+							String colorSizeArray[] = defaultColorList[i].split("_");
+							if(colorSizeArray.length == 2) {
+								childCompId = GroupingUtil.checkNull(colorSizeArray[0]);
+								if(childCompId.length() == 12){
+									childCompId = childCompId.substring(0, 9);
+								}
+								colorId = colorSizeArray[1];
+							} else {
+								childCompId = colorSizeArray[0];
+								colorId = colorSizeArray[2];
+							}
+						}
 
-				String colorSize = GroupingUtil.checkNull(request.getParameter(GroupingConstants.COMPONENT_DEFAULT_COLOR));
-				
-				String size = GroupingConstants.EMPTY;
-				String childOrinId = GroupingConstants.EMPTY;
-				String colorId = GroupingConstants.EMPTY;
-				
-				if (GroupingUtil.checkNull(colorSize).contains("_")) {
-					String colorSizeArray[] = colorSize.split("_");
-					color = colorSizeArray[0];
-					size = colorSizeArray[1];
-				} else {
-					color = colorSize;
-				}
 
-				for (GroupAttributeForm groupAttributeForm : attributeList) {
-					if (groupAttributeForm.getColorCode().equals(color)) {
-						colorId = color;
-						if (!groupAttributeForm.getSize().equals(GroupingConstants.EMPTY) && groupAttributeForm.getSize().equals(size)) {
-							childOrinId = groupAttributeForm.getOrinNumber();
-						} else if (groupAttributeForm.getSize().equals(GroupingConstants.EMPTY)) {
-							childOrinId = groupAttributeForm.getOrinNumber();
+						if (LOGGER.isDebugEnabled()) {
+							LOGGER.debug("colorId------->" + colorId + " childCompId---------->" + childCompId);
+						}
+
+						if (null != groupId) {
+							defaultResCode = GroupingUtil.checkNull(groupingService.setDefaultColorSize(groupId, groupType, colorId, childCompId, pepUserId));
+							if (LOGGER.isDebugEnabled()) {
+								LOGGER.debug("setDefaultColorSize.defaultResCode-->" + defaultResCode);
+							}
 						}
 					}
 				}
-
+				/** End set BCG Default Color **/
+				// Start set common message
 				if (LOGGER.isDebugEnabled()) {
-					LOGGER.debug("colorId------->" + colorId + " \nchildOrinId---------->" + childOrinId);
-				}
-
-				String responseMesage = GroupingConstants.EMPTY;
-				if (null != groupId) {
-					responseMesage = groupingService.setDefaultColorSize(groupId, groupType, colorId, childOrinId, pepUserId);
-					if (LOGGER.isDebugEnabled()) {
-						LOGGER.debug("setDefaultColorSize.responseMesage-->" + responseMesage);
-					}
+					LOGGER.debug("set Default Component response code-->" +  defaultResCode + " and Priority for BCG Response Code-->" + priorityResCode);
 				}
 				String responseMsg;
-				String status;
-				Properties prop = PropertyLoader.getPropertyLoader(GroupingConstants.MESS_PROP);
-				if (null != responseMesage && responseMesage.equals(GroupingConstants.SUCCESS_CODE)) {
-					responseMsg = prop.getProperty(GroupingConstants.DEFAULT_COMPNT_SUCCESS);
-					status = GroupingConstants.SUCCESS;
+				if (defaultResCode.equalsIgnoreCase(GroupingConstants.SUCCESS_CODE) && priorityResCode.equals(GroupingConstants.SUCCESS_CODE)) {
+					responseMsg = prop.getProperty(GroupingConstants.BCG_DEFAULTCOLOR_PRIORITY_SUCCESS);
+				} else if (defaultResCode.equalsIgnoreCase(GroupingConstants.SUCCESS_CODE) && !priorityResCode.equals(GroupingConstants.SUCCESS_CODE)) {
+					responseMsg = prop.getProperty(GroupingConstants.BCG_DEFAULTCOLOR_SUCCESS_PRIORITY_FAILURE);
+				} else if (!defaultResCode.equalsIgnoreCase(GroupingConstants.SUCCESS_CODE) && priorityResCode.equals(GroupingConstants.SUCCESS_CODE)) {
+					responseMsg = prop.getProperty(GroupingConstants.BCG_DEFAULTCOLOR_FAILURE_PRIORITY_SUCCESS);
 				} else {
-					responseMsg = prop.getProperty(GroupingConstants.DEFAULT_COMPNT_FAILURE);
-					status = GroupingConstants.FAIL;
+					responseMsg = prop.getProperty(GroupingConstants.BCG_DEFAULTCOLOR_PRIORITY_FAILURE);
 				}
-				JSONObject json = new JSONObject();
-				json.put(GroupingConstants.STATUS, status);
-				json.put(GroupingConstants.DEFAULT_VALUE_STATUS_MESSAGE, responseMsg);
-				response.getWriter().write(json.toString());
+				if (LOGGER.isDebugEnabled()) {
+					LOGGER.debug("set Default Component and Priority for BCG Response Message-->" + responseMsg);
+				}
+				responseObj.put(GroupingConstants.DEFAULT_VALUE_STATUS_MESSAGE, responseMsg);
+				response.getWriter().write(responseObj.toString());
+				// End set common message
 			}
-			/** End to set Default **/
+			/** End to set Priority and set Default color for BCG **/
+			else {
+				/** Start to set Priority **/
+				if (GroupingConstants.RESOURCE_TYPE_FOR_SET_PRIORITY.equals(resourceType)) {
+					LOGGER.info("set Priority of the existing component from Grouping Controller");
+					
+					JSONArray componentList = new JSONArray();
+					String componentStr = GroupingUtil.checkNull(request.getParameter(GroupingConstants.PRIORITY_LIST));
+					if (null != componentStr) {
+						String[] compPair = componentStr.split(",");
+						LOGGER.info("number of cmpt-prioroty pair" + compPair.length);
+						for (String compo_prio : compPair) {
+							JSONObject jsonObjectComponent = new JSONObject();
+							String[] arr = compo_prio.split(":");
+							jsonObjectComponent.put(GroupingConstants.COMPONENT_ATTR, GroupingUtil.checkNull(arr[0]));
+							jsonObjectComponent.put(GroupingConstants.ORDER, GroupingUtil.checkNull(arr[1]));
+							componentList.put(jsonObjectComponent);
+						}
+					}
+					JSONObject jsonObject = new JSONObject();
+					jsonObject.put(GroupingConstants.GROUP_ID, groupId);
+					jsonObject.put(GroupingConstants.GROUP_TYPE, groupType);
+					jsonObject.put(GroupingConstants.MODIFIED_BY, pepUserId);
+					jsonObject.put(GroupingConstants.COMPONENT_LIST, componentList);
+					String resp = groupingService.setComponentPriority(jsonObject);
+					Properties prop = PropertyLoader.getPropertyLoader(GroupingConstants.MESS_PROP);
+	
+					JSONObject responseObj = new JSONObject(resp);
+					String code = responseObj.getString(GroupingConstants.MSG_CODE);
+					String message;
+					if (code.equalsIgnoreCase(GroupingConstants.SUCCESS_CODE)) {
+						 message = prop.getProperty(GroupingConstants.PRIORITY_COMPNT_SUCCESS);
+					} else {
+						message = prop.getProperty(GroupingConstants.PRIORITY_COMPNT_FAILURE);
+					}
+					if (LOGGER.isDebugEnabled()) {
+						LOGGER.debug("set Priority Message-->" + message);
+					}
+					
+					responseObj.put(GroupingConstants.DEFAULT_VALUE_STATUS_MESSAGE, message);
+					response.getWriter().write(responseObj.toString());
+				}
+				/** End to set Priority **/
+				/** Start to set Default **/
+				else if (GroupingConstants.RESOURCE_TYPE_FOR_SET_DEFAULT.equals(resourceType)) {
+					LOGGER.info("Change Default Component of the Existing COmponent from Grouping Controller");
+					
+					@SuppressWarnings("unchecked")
+					List<GroupAttributeForm> attributeList = (List<GroupAttributeForm>) request.getPortletSession().getAttribute(
+							GroupingConstants.EXISTING_ATTRIBUTE_LIST);
+	
+					String colorSize = GroupingUtil.checkNull(request.getParameter(GroupingConstants.COMPONENT_DEFAULT_COLOR));
+					
+					String size = GroupingConstants.EMPTY;
+					String childOrinId = GroupingConstants.EMPTY;
+					String colorId = GroupingConstants.EMPTY;
+					
+					if (GroupingUtil.checkNull(colorSize).contains("_")) {
+						String colorSizeArray[] = colorSize.split("_");
+						color = colorSizeArray[0];
+						size = colorSizeArray[1];
+					} else {
+						color = colorSize;
+					}
+	
+					for (GroupAttributeForm groupAttributeForm : attributeList) {
+						if (groupAttributeForm.getColorCode().equals(color)) {
+							colorId = color;
+							if (!groupAttributeForm.getSize().equals(GroupingConstants.EMPTY) && groupAttributeForm.getSize().equals(size)) {
+								childOrinId = groupAttributeForm.getOrinNumber();
+							} else if (groupAttributeForm.getSize().equals(GroupingConstants.EMPTY)) {
+								childOrinId = groupAttributeForm.getOrinNumber();
+							}
+						}
+					}
+	
+					if (LOGGER.isDebugEnabled()) {
+						LOGGER.debug("colorId------->" + colorId + " \nchildOrinId---------->" + childOrinId);
+					}
+	
+					String responseMesage = GroupingConstants.EMPTY;
+					if (null != groupId) {
+						responseMesage = groupingService.setDefaultColorSize(groupId, groupType, colorId, childOrinId, pepUserId);
+						if (LOGGER.isDebugEnabled()) {
+							LOGGER.debug("setDefaultColorSize.responseMesage-->" + responseMesage);
+						}
+					}
+					String responseMsg;
+					String status;
+					Properties prop = PropertyLoader.getPropertyLoader(GroupingConstants.MESS_PROP);
+					if (null != responseMesage && responseMesage.equals(GroupingConstants.SUCCESS_CODE)) {
+						responseMsg = prop.getProperty(GroupingConstants.DEFAULT_COMPNT_SUCCESS);
+						status = GroupingConstants.SUCCESS;
+					} else {
+						responseMsg = prop.getProperty(GroupingConstants.DEFAULT_COMPNT_FAILURE);
+						status = GroupingConstants.FAIL;
+					}
+					JSONObject json = new JSONObject();
+					json.put(GroupingConstants.STATUS, status);
+					json.put(GroupingConstants.DEFAULT_VALUE_STATUS_MESSAGE, responseMsg);
+					response.getWriter().write(json.toString());
+				}
+				/** End to set Default **/
+			}
 		} catch (IOException e) {
 			LOGGER.error("handleDefaultValueRequest ResourceRequest:IOException------------>" + e);
 		} catch (Exception e) {
@@ -2175,12 +2305,15 @@ public class GroupingController {
 	 * @param defaultSortOrder
 	 * @param searchResultList
 	 * @param recordsPerPage
+	 * @param parentGroupId
+	 * @param searchLevel
 	 * @return JSONObject
 	 */
 	public final JSONObject getRegularBeautyGrpJsonResponse(final String message, final int totalRecords, final String defaultSortCol,
 			final String defaultSortOrder, final List<StyleAttributeForm> searchResultList, final String recordsPerPage,
 			final String vendorStyleNo, final String styleOrin, final String deptNoSearch, final String classNoSearch, 
-			final String supplierSiteIdSearch, final String upcNoSearch, final String groupIdSearch, final String groupNameSearch) {
+			final String supplierSiteIdSearch, final String upcNoSearch, final String groupIdSearch, final String groupNameSearch,
+			final String parentGroupId, final String searchLevel) {
 		LOGGER.info("Enter getRegularBeautyGrpJsonResponse-->.");
 		String vendorStyleNoSearch = "";
 		String styleOrinNoSearch = "";
@@ -2207,26 +2340,34 @@ public class GroupingController {
 				jsonObjComponent.put(GroupingConstants.PRODUCT_NAME, styleAttributeForm.getProdName());
 				jsonObjComponent.put(GroupingConstants.COLOR_CODE, styleAttributeForm.getColorCode());
 				jsonObjComponent.put(GroupingConstants.COLOR_NAME, styleAttributeForm.getColorName());
-
+				
 				String isAlreadyInSameGroup = styleAttributeForm.getIsAlreadyInSameGroup();
-				isAlreadyInSameGroup = null == isAlreadyInSameGroup ? "No" : ("").equalsIgnoreCase(isAlreadyInSameGroup.trim()) ? "No"
-						: ("N").equalsIgnoreCase(isAlreadyInSameGroup.trim()) ? "No"
-								: ("Y").equalsIgnoreCase(isAlreadyInSameGroup.trim()) ? "Yes" : "No";
-
-				jsonObjComponent.put(GroupingConstants.ALREADY_IN_SAME_GROUP, isAlreadyInSameGroup);
+				isAlreadyInSameGroup = null == isAlreadyInSameGroup ? GroupingConstants.NO : (GroupingConstants.EMPTY).equalsIgnoreCase(isAlreadyInSameGroup.trim()) ? GroupingConstants.NO
+						: ("N").equalsIgnoreCase(isAlreadyInSameGroup.trim()) ? GroupingConstants.NO
+								: ("Y").equalsIgnoreCase(isAlreadyInSameGroup.trim()) ? GroupingConstants.YES : GroupingConstants.NO;			
 
 				// Start modification for Defect#3037
 				String isAlreadyInGroup = styleAttributeForm.getIsAlreadyInGroup();
-				isAlreadyInGroup = null == isAlreadyInGroup ? "No" : ("").equalsIgnoreCase(isAlreadyInGroup.trim()) ? "No" : ("N")
-						.equalsIgnoreCase(isAlreadyInGroup.trim()) ? "No" : ("Y").equalsIgnoreCase(isAlreadyInGroup.trim()) ? "Yes" : "No";
+				isAlreadyInGroup = null == isAlreadyInGroup ? GroupingConstants.NO : (GroupingConstants.EMPTY).equalsIgnoreCase(isAlreadyInGroup.trim()) ? GroupingConstants.NO : ("N")
+						.equalsIgnoreCase(isAlreadyInGroup.trim()) ? GroupingConstants.NO : ("Y").equalsIgnoreCase(isAlreadyInGroup.trim()) ? GroupingConstants.YES : GroupingConstants.NO;
 				jsonObjComponent.put(GroupingConstants.ALREADY_IN_GROUP, isAlreadyInGroup);
 				// End modification for Defect#3037
 
+				if(GroupingUtil.checkNull(parentGroupId).equals(GroupingUtil.checkNull(styleOrinNoSearch)))
+				{
+					jsonObjComponent.put(GroupingConstants.IS_SAME_GROUP, GroupingConstants.YES);
+				}
+				else
+				{
+					jsonObjComponent.put(GroupingConstants.IS_SAME_GROUP, GroupingConstants.NO);
+				}
 				jsonObjComponent.put(GroupingConstants.IS_GROUP, styleAttributeForm.getIsGroup());
 				jsonObjComponent.put(GroupingConstants.PRIORITY, styleAttributeForm.getPriority());
 				jsonObjComponent.put(GroupingConstants.HAVE_CHILD_GROUP, styleAttributeForm.getHaveChildGroup());
+				jsonObjComponent.put(GroupingConstants.COMPONENT_DEFAULT_COLOR, styleAttributeForm.getDefaultColor());
+				jsonObjComponent.put(GroupingConstants.ENTRY_TYPE, styleAttributeForm.getEntryType());
 				groupAttributeFormList = styleAttributeForm.getGroupAttributeFormList();
-
+				int count = 0;
 				for (int j = 0; j < groupAttributeFormList.size(); j++) {
 					jsonObjComponentSub = new JSONObject();
 					groupAttributeForm = groupAttributeFormList.get(j);
@@ -2242,8 +2383,36 @@ public class GroupingController {
 					jsonObjComponentSub.put(GroupingConstants.IS_GROUP, groupAttributeForm.getIsGroup());
 					jsonObjComponentSub.put(GroupingConstants.PRIORITY, groupAttributeForm.getPriority());
 					jsonObjComponentSub.put(GroupingConstants.HAVE_CHILD_GROUP, groupAttributeForm.getHaveChildGroup());
+					jsonObjComponentSub.put(GroupingConstants.COMPONENT_DEFAULT_COLOR, groupAttributeForm.getDefaultColor());
+					jsonObjComponentSub.put(GroupingConstants.ENTRY_TYPE, groupAttributeForm.getEntryType());
+					String isAlreadyInSameGroupChild = groupAttributeForm.getIsAlreadyInSameGroup();
+					isAlreadyInSameGroupChild = null == isAlreadyInSameGroupChild ? GroupingConstants.NO : (GroupingConstants.EMPTY).equalsIgnoreCase(isAlreadyInSameGroupChild.trim()) ? GroupingConstants.NO
+							: ("N").equalsIgnoreCase(isAlreadyInSameGroupChild.trim()) ? GroupingConstants.NO
+									: ("Y").equalsIgnoreCase(isAlreadyInSameGroupChild.trim()) ? GroupingConstants.YES : GroupingConstants.NO;
+					if(isAlreadyInSameGroupChild.equals(GroupingConstants.YES))
+					{
+						count++;
+					}
+					jsonObjComponentSub.put(GroupingConstants.ALREADY_IN_SAME_GROUP, isAlreadyInSameGroupChild);
+					jsonObjComponentSub.put(GroupingConstants.EXIST_IN_GROUP, isAlreadyInSameGroupChild);
 					jsonArraySub.put(jsonObjComponentSub);
 				}
+				if(isAlreadyInSameGroup.equals(GroupingConstants.YES) || (count > 0 && (count == groupAttributeFormList.size())))
+				{
+					jsonObjComponent.put(GroupingConstants.ALREADY_IN_SAME_GROUP, GroupingConstants.YES);
+				}
+				else
+				{
+					jsonObjComponent.put(GroupingConstants.ALREADY_IN_SAME_GROUP, GroupingConstants.NO);
+				}
+				if(isAlreadyInSameGroup.equals(GroupingConstants.YES) || (groupAttributeFormList.size() > 0 && count > 0))
+				{
+					jsonObjComponent.put(GroupingConstants.EXIST_IN_GROUP, GroupingConstants.YES);
+				} 
+				else
+				{
+					jsonObjComponent.put(GroupingConstants.EXIST_IN_GROUP, GroupingConstants.NO);
+				}				
 				jsonObjComponent.put(GroupingConstants.COMPONENT_LIST_SUB, jsonArraySub);
 				jsonArray.put(jsonObjComponent);
 			}
@@ -2264,6 +2433,7 @@ public class GroupingController {
 			jsonObj.put(GroupingConstants.GROUP_ID_SEARCH, groupIdSearch);
 			jsonObj.put(GroupingConstants.GROUP_NAME_SEARCH, groupNameSearch);
 			jsonObj.put(GroupingConstants.RECORDS_PER_PAGE, recordsPerPage);
+			jsonObj.put(GroupingConstants.GROUP_LEVEL, searchLevel);
 			jsonObj.put(GroupingConstants.COMPONENT_LIST, jsonArray);
 			if (LOGGER.isDebugEnabled()) {
 				LOGGER.debug("JSON getRegularBeautyGrpJsonResponse-->" + jsonObj);
@@ -2459,6 +2629,10 @@ public class GroupingController {
 						groupAttributeForm.getHaveChildGroup());
 				jsonObjComponentSub.put(GroupingConstants.ALREADY_IN_SAME_GROUP,
 						groupAttributeForm.getIsAlreadyInSameGroup());
+				jsonObjComponentSub.put(GroupingConstants.COMPONENT_DEFAULT_COLOR,
+						groupAttributeForm.getDefaultColor());
+				jsonObjComponentSub.put(GroupingConstants.ENTRY_TYPE,
+						groupAttributeForm.getEntryType());
 				jsonArraySub.put(jsonObjComponentSub);
 			}
 			jsonObject.put(GroupingConstants.MESSAGE, message);

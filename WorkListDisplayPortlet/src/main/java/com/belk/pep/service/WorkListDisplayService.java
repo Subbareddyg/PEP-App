@@ -166,12 +166,13 @@ public boolean lockPET(  String orin, String pepUserID, String pepfunction)throw
      * 
      * @param groupId String
      * @param advanceSearch AdvanceSearch
+     * @param parengGroupId String
      * @return List<WorkFlow>
      * 
      *         Method added For PIM Phase 2 - Search Pet Date: 06/06/2016 Added
      *         By: Cognizant
      */
-    List<WorkFlow> getChildForGroup(String groupId, AdvanceSearch advanceSearch);
+    List<WorkFlow> getChildForGroup(String groupId, AdvanceSearch advanceSearch, String parengGroupId);
     
     /**
      * Method to get the groups for worklist display count.
@@ -202,12 +203,13 @@ public boolean lockPET(  String orin, String pepUserID, String pepfunction)throw
      * Method to get the child for group for Worklist.
      * 
      * @param groupId String
+     * @param parentGroupId String
      * @return List<WorkFlow>
      * 
      *         Method added For PIM Phase 2 - Worklist Group Date: 06/06/2016 Added
      *         By: Cognizant
      */
-    List<WorkFlow> getChildForGroupWorklist(String groupId);
+    List<WorkFlow> getChildForGroupWorklist(String groupId, String parentGroupId);
     
     /**
      * This method will inactivate the group selected

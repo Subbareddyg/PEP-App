@@ -1671,7 +1671,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 					final String isDefaultAttr = rowMap.get("COMPONENT_DEFAULT") != null ? rowMap.get("COMPONENT_DEFAULT").toString() : "";
 					final String classId = rowMap.get("CLASS_ID") != null ? rowMap.get("CLASS_ID").toString() : "";
 					final String priority = rowMap.get("DISPLAY_SEQUENCE") != null ? rowMap.get("DISPLAY_SEQUENCE").toString() : "";
-
+					final String defaultColor = rowMap.get("DEFAULT_COLOR") != null ? rowMap.get("DEFAULT_COLOR").toString() : "";
 					if (!("Style").equals(entryType) && !("StyleColor").equals(entryType)) {
 						groupAttributeFormList = new ArrayList<>();
 						styleAttributeForm.setOrinNumber(mdmid);
@@ -1689,6 +1689,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 						styleAttributeForm.setClassId(classId);
 						styleAttributeForm.setIsGroup("Y");
 						styleAttributeForm.setPriority(priority);
+						styleAttributeForm.setDefaultColor(defaultColor);
 						styleAttributeFormList.add(styleAttributeForm);
 					} else if (("Style").equals(entryType)) {
 						groupAttributeFormList = new ArrayList<>();
@@ -1707,6 +1708,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 						styleAttributeForm.setClassId(classId);
 						styleAttributeForm.setIsGroup("N");
 						styleAttributeForm.setPriority(priority);
+						styleAttributeForm.setDefaultColor(defaultColor);
 						styleAttributeFormList.add(styleAttributeForm);
 					} else if (("StyleColor").equals(entryType)) {
 						groupAttributeForm.setOrinNumber(mdmid);
@@ -1721,7 +1723,8 @@ public class GroupingDAOImpl implements GroupingDAO {
 						groupAttributeForm.setParentMdmid(parentMdmid);
 						groupAttributeForm.setIsDefault(isDefaultAttr);
 						groupAttributeForm.setClassId(classId);
-						styleAttributeForm.setIsGroup("N");
+						groupAttributeForm.setIsGroup("N");
+						groupAttributeForm.setDefaultColor(defaultColor);
 						styleAttributeForm.setPriority(priority);
 
 						for (int i = 0; i < styleAttributeFormList.size(); i++) {
@@ -1755,13 +1758,15 @@ public class GroupingDAOImpl implements GroupingDAO {
 	 * details from Database.
 	 * 
 	 * @param groupId
+	 * @param parentGroupId
 	 * @return List<StyleAttributeForm>
 	 */
 	@Override
-	public List<StyleAttributeForm> getRegularBeautyChildDetails(final String groupId) throws PEPFetchException {
+	public List<StyleAttributeForm> getRegularBeautyChildDetails(final String groupId, final String parentGroupId) throws PEPFetchException {
 		LOGGER.info("getRegularBeautyChildDetails-->Start.");
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("groupId-->" + groupId);
+			LOGGER.debug("parentGroupId-->" + parentGroupId);
 		}
 		Session session = null;
 		GroupAttributeForm groupAttributeForm = null;
@@ -1776,7 +1781,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 			final Query query = session.createSQLQuery(XqueryConstants.getRegularBeautyDetailsChildQuery());
 
 			query.setParameter("groupId", groupId);
-			query.setParameter("groupId", groupId);
+			query.setParameter("parentGroupId", parentGroupId);
 			LOGGER.info("Query-->getRegularBeautyChildDetails-->" + query);
 
 			styleAttributeFormList = new ArrayList<>();
@@ -1802,6 +1807,8 @@ public class GroupingDAOImpl implements GroupingDAO {
 					final String colorDesc = rowMap.get("COLO_DESC") != null ? rowMap.get("COLO_DESC").toString() : "";
 					final String entryType = rowMap.get("ENTRY_TYPE") != null ? rowMap.get("ENTRY_TYPE").toString() : "";
 					final String parentMdmid = rowMap.get("PARENT_MDMID") != null ? rowMap.get("PARENT_MDMID").toString() : "";
+					final String existInSameGroup = rowMap.get("EXIST_IN_SAME_GROUP") != null ? rowMap.get("EXIST_IN_SAME_GROUP").toString() : "";
+					final String defaultColor = rowMap.get("DEFAULT_COLOR") != null ? rowMap.get("DEFAULT_COLOR").toString() : "";	
 
 					if (!("Style").equals(entryType) && !("StyleColor").equals(entryType)) {
 						groupAttributeFormList = new ArrayList<>();
@@ -1817,6 +1824,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 						styleAttributeForm.setParentMdmid(parentMdmid);
 						styleAttributeForm.setGroupAttributeFormList(groupAttributeFormList);
 						styleAttributeForm.setIsGroup("Y");
+						styleAttributeForm.setDefaultColor(defaultColor);
 						styleAttributeFormList.add(styleAttributeForm);
 					} else if (("Style").equals(entryType)) {
 						groupAttributeFormList = new ArrayList<>();
@@ -1832,6 +1840,8 @@ public class GroupingDAOImpl implements GroupingDAO {
 						styleAttributeForm.setParentMdmid(parentMdmid);
 						styleAttributeForm.setGroupAttributeFormList(groupAttributeFormList);
 						styleAttributeForm.setIsGroup("N");
+						styleAttributeForm.setDefaultColor(defaultColor);
+						styleAttributeForm.setIsAlreadyInSameGroup(existInSameGroup);
 						styleAttributeFormList.add(styleAttributeForm);
 					} else if (("StyleColor").equals(entryType)) {
 						groupAttributeForm.setOrinNumber(mdmid);
@@ -1844,8 +1854,9 @@ public class GroupingDAOImpl implements GroupingDAO {
 						groupAttributeForm.setPetStatus("");
 						groupAttributeForm.setEntryType(entryType);
 						groupAttributeForm.setParentMdmid(parentMdmid);
-						styleAttributeForm.setIsGroup("N");
-
+						groupAttributeForm.setIsGroup("N");
+						groupAttributeForm.setDefaultColor(defaultColor);
+						groupAttributeForm.setIsAlreadyInSameGroup(existInSameGroup);
 						for (int i = 0; i < styleAttributeFormList.size(); i++) {
 							StyleAttributeForm styleAttributeFormSub = styleAttributeFormList.get(i);
 
@@ -1853,7 +1864,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 
 								groupAttributeForm.setProdName(styleAttributeFormSub.getProdName());
 								groupAttributeFormList = styleAttributeFormSub.getGroupAttributeFormList();
-								groupAttributeFormList.add(groupAttributeForm);
+								groupAttributeFormList.add(groupAttributeForm);								
 								break;
 							}
 						}
@@ -2068,7 +2079,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 					final String classId = rowMap.get("CLASS_ID") != null ? rowMap.get("CLASS_ID").toString() : "";
 					final String isAlreadyInGroup = rowMap.get("ALREADY_IN_GROUP") != null ? rowMap.get("ALREADY_IN_GROUP").toString() : "";
 					final String isAlreadyInSameGroup = rowMap.get("EXIST_IN_SAME_GROUP") != null ? rowMap.get("EXIST_IN_SAME_GROUP")
-							.toString() : "";
+							.toString() : "";					
 
 
 					if (("StyleColor").equals(entryType)) {
@@ -2091,7 +2102,7 @@ public class GroupingDAOImpl implements GroupingDAO {
 						groupAttributeForm.setParentMdmid(parentMdmid);
 						groupAttributeForm.setComponentStyleId(componentStyleId);						
 						groupAttributeForm.setClassId(classId);
-						groupAttributeForm.setIsGroup("N");
+						groupAttributeForm.setIsGroup("N");						
 						groupAttributeFormList.add(groupAttributeForm);
 					}
 				}
@@ -2208,4 +2219,51 @@ public class GroupingDAOImpl implements GroupingDAO {
 		return componentList;
 	}
 
+
+	/**
+	 * This method is used to get Group Component priority available in DB for a particular Group.
+	 * @param groupId
+	 * @return int
+	 */
+	@Override
+	public int getGroupPriorityFromDB(final String groupId, final String componentGroupId) {
+		LOGGER.info("GroupinDAOIMP :getGroupPriorityFromDB-->Start.");
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("groupId-->" + groupId + " componentGroupId-->" + componentGroupId);
+		}
+		Session session = null;
+		int maxCount =0;
+		try {
+			session = sessionFactory.openSession();
+			final Query query = session.createSQLQuery(XqueryConstants.getGroupPriorityFromDB());
+			query.setParameter("groupingId", groupId);
+			query.setParameter("componentGroupId", componentGroupId);
+			
+			if (LOGGER.isDebugEnabled()) {
+				LOGGER.debug("getGroupPriorityFromDB Query-->" + XqueryConstants.getGroupPriorityFromDB());
+			}
+
+			// execute select SQL statement
+			query.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
+			
+			@SuppressWarnings("unchecked")
+			final List<Object> rows = query.list();
+			if (rows != null) {
+				
+
+				for (final Object row : rows) {					
+					@SuppressWarnings("rawtypes")
+					final Map rowMap = (Map) row;		
+					maxCount = rowMap.get("MAX_PRIORITY") != null ? Integer.valueOf(rowMap.get("MAX_PRIORITY").toString()) : 0;					
+				}
+			}
+		} finally {
+			if (session != null) {
+				session.close();
+			}
+		}
+		LOGGER.info("GroupinDAOIMP :getGroupPriorityFromDB-->End. " + maxCount);
+		return maxCount;
+	}
+	
 }

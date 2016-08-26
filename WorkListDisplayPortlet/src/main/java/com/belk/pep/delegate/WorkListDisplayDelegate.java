@@ -286,15 +286,17 @@ public class WorkListDisplayDelegate {
      * 
      * @param groupId String
      * @param advanceSearch AdvanceSearch
+     * @param parengGroupId String
      * @return List<WorkFlow>
      * 
      *         Method added For PIM Phase 2 - Search Pet Date: 06/06/2016 Added
      *         By: Cognizant
      */
-    public List<WorkFlow> getChildForGroup(final String groupId, final AdvanceSearch advanceSearch) {
+    public List<WorkFlow> getChildForGroup(final String groupId, final AdvanceSearch advanceSearch,
+    		final String parengGroupId) {
         LOGGER.info("WorkListDisplayDelegate getChildForGroup Start");
         List<WorkFlow> workFlowList = null;
-        workFlowList = workListDisplayService.getChildForGroup(groupId, advanceSearch);
+        workFlowList = workListDisplayService.getChildForGroup(groupId, advanceSearch, parengGroupId);
         LOGGER.info("WorkListDisplayDelegate getChildForGroup End");
         return workFlowList;
     }
@@ -340,15 +342,16 @@ public class WorkListDisplayDelegate {
      * Method to get the child for group for Worklist.
      * 
      * @param groupId String
+     * @param parentGroupId String
      * @return List<WorkFlow>
      * 
      *         Method added For PIM Phase 2 - Worklist Date: 06/09/2016 Added
      *         By: Cognizant
      */
-    public List<WorkFlow> getChildForGroupWorklist(final String groupId) {
+    public List<WorkFlow> getChildForGroupWorklist(final String groupId, final String parentGroupId) {
         LOGGER.info("WorkListDisplayDelegate getChildForGroupWorklist Start");
         List<WorkFlow> workFlowList = null;
-        workFlowList = workListDisplayService.getChildForGroupWorklist(groupId);
+        workFlowList = workListDisplayService.getChildForGroupWorklist(groupId, parentGroupId);
         LOGGER.info("WorkListDisplayDelegate getChildForGroupWorklist End");
         return workFlowList;
     }

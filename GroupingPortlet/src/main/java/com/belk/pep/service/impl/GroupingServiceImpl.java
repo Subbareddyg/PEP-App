@@ -794,11 +794,18 @@ public class GroupingServiceImpl implements GroupingService {
 		JSONObject jsonObj = new JSONObject();
 		GroupAttributeForm groupAttributeForm = null;
 		StyleAttributeForm styleAttributeForm = null;
+		GroupAttributeForm colorAttributeForm = null;
 		JSONArray jsonArrayComponentList = new JSONArray();
 		JSONObject jsonObjStyleGrp = null;
 		JSONObject jsonObjColor = null;
 		JSONArray jsonArrayColorList = null;
+		JSONArray jsonArrayStyleList = null;
+		JSONArray jsonArrayStyleColorList = null;
+		JSONObject jsonObjStyle = null;
+		JSONObject jsonObjStyleColor = null;
 		List<GroupAttributeForm> groupAttributeFormList = new ArrayList<>();
+		List<StyleAttributeForm> styleAttributeFormList = new ArrayList<>();
+		List<GroupAttributeForm> colorAttributeFormList = new ArrayList<>();
 
 		try {
 
@@ -806,16 +813,45 @@ public class GroupingServiceImpl implements GroupingService {
 				jsonObjStyleGrp = new JSONObject();
 				styleAttributeForm = getRCGSelectedAttrbuteList.get(i);
 				String styleOrGrpNo = GroupingUtil.checkNull(styleAttributeForm.getOrinNumber());
-				groupAttributeFormList = styleAttributeForm.getGroupAttributeFormList();
+				
 
 				if (styleOrGrpNo.length() == 7) {
 					// Group
 					jsonObjStyleGrp.put(GroupingConstants.COMPONENT_ID, styleOrGrpNo);
 					jsonObjStyleGrp.put(GroupingConstants.COMPONENT_TYPE, styleAttributeForm.getEntryType());
+					
+					styleAttributeFormList = styleAttributeForm.getStyleAttributeFormList();
+					jsonArrayStyleList = new JSONArray();
+					
+					if (GroupingConstants.GROUP_TYPE_BEAUTY_COLLECTION.equals(groupType) && null != styleAttributeFormList
+							&& !styleAttributeFormList.isEmpty()) {
+						for(int k = 0; k < styleAttributeFormList.size(); k++)
+						{
+							jsonObjStyle = new JSONObject();
+							jsonArrayStyleColorList = new JSONArray();
+							colorAttributeFormList = styleAttributeFormList.get(k).getGroupAttributeFormList();
+							jsonObjStyle.put(GroupingConstants.COMPONENT_STYLE, styleAttributeFormList.get(k).getOrinNumber());
+							jsonObjStyle.put(GroupingConstants.COMPONENT_TYPE, GroupingConstants.COMPONENT_TYPE_STYLE);
+							// if ColorList is available add here with in a new json
+							// array
+							if (null != colorAttributeFormList	&& !colorAttributeFormList.isEmpty()) {
+								for (int j = 0; j < colorAttributeFormList.size(); j++) {
+									colorAttributeForm = colorAttributeFormList.get(j);
+									jsonObjStyleColor = new JSONObject();
+									jsonObjStyleColor.put(GroupingConstants.COMPONENT_COLOR, colorAttributeForm.getColorCode());
+									jsonArrayStyleColorList.put(jsonObjStyleColor);
+								}
+								jsonObjStyle.put(GroupingConstants.COMPONENT_COLOR_LIST, jsonArrayStyleColorList);
+							}
+							jsonArrayStyleList.put(jsonObjStyle);
+						}
+					}
+					jsonObjStyleGrp.put(GroupingConstants.COMPONENT, jsonArrayStyleList);
+					
 				} else {
 					// Style
 					jsonArrayColorList = new JSONArray();
-
+					groupAttributeFormList = styleAttributeForm.getGroupAttributeFormList();
 					jsonObjStyleGrp.put(GroupingConstants.COMPONENT_ID, styleOrGrpNo);
 					jsonObjStyleGrp.put(GroupingConstants.COMPONENT_TYPE, GroupingConstants.COMPONENT_TYPE_STYLE);
 					// if ColorList is available add here with in a new json
@@ -1172,12 +1208,20 @@ public class GroupingServiceImpl implements GroupingService {
 
 		LOGGER.info("*Enter-->calling getSelectedBCGAttributeList from GroupingServiceImpl.-->" + selectedItemsArr);
 		List<StyleAttributeForm> selectedRCGAttributeList = new ArrayList<>();
-		StyleAttributeForm styleAttributeForm;		
+		StyleAttributeForm styleAttributeForm;	
+		StyleAttributeForm styleForm;
 		List<GroupAttributeForm> groupAttributeFormListNew;
+		List<GroupAttributeForm> groupAttributeFormList;
 		GroupAttributeForm groupAttributeForm;
+		GroupAttributeForm groupForm;
 		String styleOrinGrpNo;
+		List<StyleAttributeForm> selectedStyleList = new ArrayList<>();;
+		StyleAttributeForm groupSelected;
 		
 		String[] selectedItemsColorArr;
+		String[] selectedItemsStyleArr;
+		String[] selectedColorArr;
+		
 		for (int i = 0; i < getRCGDetailsList.size(); i++) {
 			styleAttributeForm = getRCGDetailsList.get(i);
 			styleOrinGrpNo = GroupingUtil.checkNull(styleAttributeForm.getOrinNumber());			
@@ -1185,12 +1229,53 @@ public class GroupingServiceImpl implements GroupingService {
 			for (int j = 0; j < selectedItemsArr.length; j++) {
 				
 				String selectedOrinGrpNo = GroupingUtil.checkNull(selectedItemsArr[j]);
-				if (selectedOrinGrpNo.indexOf(":") != -1) {
+				
+				if(selectedOrinGrpNo.indexOf("_") != -1)
+				{
 					
-					String selectedOrinGrp = selectedOrinGrpNo.substring(0, selectedOrinGrpNo.indexOf(":"));
+					String selectedGroup = selectedOrinGrpNo.substring(0, selectedOrinGrpNo.indexOf("_"));					
+					String styleAndColorList = GroupingUtil.checkNull(selectedOrinGrpNo.substring(selectedOrinGrpNo.indexOf("_") + 1));					
+					selectedItemsStyleArr = styleAndColorList.split("#");
 					
-					String colorList = GroupingUtil.checkNull(selectedOrinGrpNo.substring(selectedOrinGrpNo.indexOf(":") + 1));
-		
+					if (selectedGroup.equals(styleOrinGrpNo)) {
+						groupSelected = new StyleAttributeForm();
+						for (int l = 0; l < selectedItemsStyleArr.length; l++) {
+							styleForm = new StyleAttributeForm();
+							if (selectedItemsStyleArr[l].indexOf(":") != -1) {
+								
+								String selectedStyle = selectedItemsStyleArr[l].substring(0, selectedItemsStyleArr[l].indexOf(":"));
+								
+								String colorListSelected = GroupingUtil.checkNull(
+										selectedItemsStyleArr[l].substring(selectedItemsStyleArr[l].indexOf(":") + 1));
+					
+								selectedColorArr = colorListSelected.split("-");
+								
+								groupAttributeFormList = new ArrayList<>();
+															
+								for (int k = 0; k < selectedColorArr.length; k++) {
+									if (selectedColorArr[k].length() == 12) {
+										groupForm = new GroupAttributeForm();
+										groupForm.setColorCode(selectedColorArr[k].substring(9, 12));
+										groupForm.setOrinNumber(selectedColorArr[k]);
+										groupAttributeFormList.add(groupForm);
+									}
+								}
+								styleForm.setOrinNumber(selectedStyle);
+								styleForm.setGroupAttributeFormList(groupAttributeFormList);
+								selectedStyleList.add(styleForm);														
+							}
+						}
+						groupSelected.setOrinNumber(selectedGroup);
+						groupSelected.setEntryType(styleAttributeForm.getEntryType());
+						groupSelected.setStyleAttributeFormList(selectedStyleList);
+						selectedRCGAttributeList.add(groupSelected);
+					}
+					
+					
+				} else if (selectedOrinGrpNo.indexOf(":") != -1) {
+					
+					String selectedOrinGrp = selectedOrinGrpNo.substring(0, selectedOrinGrpNo.indexOf(":"));					
+					String colorList = GroupingUtil.checkNull(selectedOrinGrpNo.substring(selectedOrinGrpNo.indexOf(":") + 1));		
 					selectedItemsColorArr = colorList.split("-");
 					
 					groupAttributeFormListNew = new ArrayList<>();
@@ -2093,7 +2178,13 @@ public class GroupingServiceImpl implements GroupingService {
 					if (styleOrGrpNo.length() == 7) {
 						// Group
 						jsonObjectComponent.put(GroupingConstants.COMPONENT_ATTR, styleOrGrpNo);
-						jsonObjectComponent.put(GroupingConstants.ORDER, maxPriority + i + 1);
+						//jsonObjectComponent.put(GroupingConstants.ORDER, maxPriority + i + 1);
+						if(existingComponentList.contains(styleOrGrpNo)){
+							int groupCOmponentPriority =groupingDAO.getGroupPriorityFromDB(groupId, styleOrGrpNo);
+							jsonObjectComponent.put(GroupingConstants.ORDER, groupCOmponentPriority);
+						} else {
+							jsonObjectComponent.put(GroupingConstants.ORDER, maxPriority + i + 1);
+						}
 						componentList.put(jsonObjectComponent);
 					} else {
 						// Style
@@ -2675,16 +2766,17 @@ public class GroupingServiceImpl implements GroupingService {
 	 * details.
 	 * 
 	 * @param groupId
+	 * @param parentGroupId
 	 * @return List<StyleAttributeForm>
 	 * @throws PEPServiceException
 	 */
 	@Override
-	public final List<StyleAttributeForm> getRegularBeautyChildDetails(final String groupId) throws PEPServiceException {
+	public final List<StyleAttributeForm> getRegularBeautyChildDetails(final String groupId, final String parentGroupId) throws PEPServiceException {
 		LOGGER.info("Enter-->calling getRegularBeautyChildDetails from GroupingServiceImpl.");
 
 		List<StyleAttributeForm> styleAttributeFormList = null;
 		try {
-			styleAttributeFormList = groupingDAO.getRegularBeautyChildDetails(groupId);
+			styleAttributeFormList = groupingDAO.getRegularBeautyChildDetails(groupId, parentGroupId);
 		} catch (Exception e) {
 			LOGGER.error("Exception occurred at the getRegularBeautyChildDetails().Service Implementation Layer-->" + e);
 			throw new PEPServiceException(e.getMessage());

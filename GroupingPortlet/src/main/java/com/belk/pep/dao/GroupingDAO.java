@@ -222,7 +222,7 @@ public interface GroupingDAO {
 	 *  This method is used to get the group child query for Regular/Beauty Collection Grouping.
 	 * @return String
 	 */
-	List<StyleAttributeForm> getRegularBeautyChildDetails(String groupId)
+	List<StyleAttributeForm> getRegularBeautyChildDetails(String groupId, String parentGroupId)
 			throws PEPFetchException;
 
 	/**
@@ -289,4 +289,12 @@ public interface GroupingDAO {
 	 */
 	List getComponentList(String groupId);
 	
+
+	/**
+	 * This method is used to get Group Component priority available in DB for a particular Group.
+	 * @param groupId
+	 * @param componentGroupId
+	 * @return
+	 */
+	int getGroupPriorityFromDB(final String groupId, final String componentGroupId);
 }

@@ -3201,7 +3201,15 @@ public String ConvertDate(String completionDate){
         
         try {
             LOGGER.info("email try:: "+email);
-            
+            String parentGroupId = WorkListDisplayConstants.EMPTY_STRING;
+        	if(request
+                    .getParameter(WorkListDisplayConstants.PARENT_GROUP_ID) != null 
+                    && !request
+                    .getParameter(WorkListDisplayConstants.PARENT_GROUP_ID).trim()
+                    .equals(WorkListDisplayConstants.EMPTY_STRING))
+        	{
+        		parentGroupId = request.getParameter(WorkListDisplayConstants.PARENT_GROUP_ID);
+        	}
             //getPetDetailsByAdvSearchForChild 
             if("yes".equalsIgnoreCase(advSearchClick)){ 
                 setAdvanceSearchfieldsFromAjax(request);
@@ -3209,10 +3217,11 @@ public String ConvertDate(String completionDate){
                 LOGGER.info("**************If block Calling workListDisplayDelegate.getPetDetailsByDepNosForChil getChildData() method " + "email:::"+email+"orinNum::"+orinNum);
                 if (WorkListDisplayConstants.GET_CHILD_GROUP
                     .equalsIgnoreCase(request
-                        .getParameter(WorkListDisplayConstants.CALL_TYPE_PARAMETER))) {
+                       .getParameter(WorkListDisplayConstants.CALL_TYPE_PARAMETER))) {                	
+                            
                     groupChildList =
                         workListDisplayDelegate.getChildForGroup(orinNum,
-                            advanceSearch);
+                            advanceSearch, parentGroupId);
                 }
                 else {
                     childPETList =
@@ -3232,7 +3241,7 @@ public String ConvertDate(String completionDate){
                         .getParameter(WorkListDisplayConstants.CALL_TYPE_PARAMETER))) {
                     groupChildList =
                         workListDisplayDelegate
-                            .getChildForGroupWorklist(orinNum);
+                            .getChildForGroupWorklist(orinNum, parentGroupId);
                 }
                 else {
                     childPETList =
