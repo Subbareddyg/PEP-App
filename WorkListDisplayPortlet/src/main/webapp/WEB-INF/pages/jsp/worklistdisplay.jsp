@@ -1106,10 +1106,18 @@ lockClearOnBack.value='1';
 		<td>{{=item.vendorStyle}}</td>
 		<td>{{=item.productName}}</td>
 		<td>
-		<a href="#" onclick="contentStatus('{{=item.contentStatus}}','{{=item.styleOrinNum}}')">{{=item.contentStatus}}</a>
+		{{ if(item.vendorStyle != 'Consolidated Product Grouping' && item.vendorStyle != 'Split SKU Grouping' && item.vendorStyle != 'Split Color Grouping') { }}
+			<a href="#" onclick="contentStatus('{{=item.contentStatus}}','{{=item.styleOrinNum}}')">{{=item.contentStatus}}</a>
+		{{ }else{ }}
+			{{=item.contentStatus}}
+		{{ } }}
 		</td>
 		<td>
+		{{ if(item.vendorStyle != 'Consolidated Product Grouping' && item.vendorStyle != 'Split SKU Grouping' && item.vendorStyle != 'Split Color Grouping') { }}
 		<a href="#" onclick="imageStatus('{{=item.imageStatus}}','{{=item.styleOrinNum}}','{{=item.petStatus}}')">{{=item.imageStatus}}</a>
+		{{ }else{ }}
+			{{=item.imageStatus}}
+		{{ } }}
 		</td>
 		<td>{{=item.petStatus}}
 			<input type="hidden" id="{{=orinNum}}_petStatus" value="{{=item.petStatus}}"/>
@@ -1157,10 +1165,18 @@ lockClearOnBack.value='1';
 						<td>{{=childItem.vendorStyle}}</td>
 						<td>{{=item.productName}}</td>
 						<td>
-						<a href="#" onclick="contentStatus('{{=childItem.contentStatus}}','{{=item.styleOrinNum}}')">{{=childItem.contentStatus}}</a>
+						{{ if(childItem.vendorStyle != 'Consolidated Product Grouping' && childItem.vendorStyle != 'Split SKU Grouping' && childItem.vendorStyle != 'Split Color Grouping') { }}
+							<a href="#" onclick="contentStatus('{{=childItem.contentStatus}}','{{=item.styleOrinNum}}')">{{=childItem.contentStatus}}</a>
+						{{ }else{ }}
+							{{=childItem.contentStatus}}
+						{{ } }}
 						</td>
 						<td>
-						<a href="#" onclick="imageStatus('{{=childItem.imageStatus}}','{{=item.styleOrinNum}}','{{=childItem.petStatus}}')">{{=childItem.imageStatus}}</a>
+						{{ if(childItem.vendorStyle != 'Consolidated Product Grouping' && childItem.vendorStyle != 'Split SKU Grouping' && childItem.vendorStyle != 'Split Color Grouping') { }}
+							<a href="#" onclick="imageStatus('{{=childItem.imageStatus}}','{{=item.styleOrinNum}}','{{=childItem.petStatus}}')">{{=childItem.imageStatus}}</a>
+						{{ }else{ }}
+							{{=childItem.imageStatus}}
+						{{ } }}
 						</td>
 						<td>{{=childItem.petStatus}}
 							<input type="hidden" id="{{=item.styleOrinNum}}_petStatus" value="{{=childItem.petStatus}}"/>

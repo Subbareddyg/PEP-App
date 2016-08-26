@@ -1406,7 +1406,9 @@ function advSearch() {
 	var url = $("#ajaxaction").val();
 	//$("#dialog_ASearch").css("display","none");
 	$("#overlay_pageLoading").show();
-	 $.get(url,{advSearchPopUp:'advSearchPopUp',
+	$.ajax({
+		url: url,
+		data:{advSearchPopUp:'advSearchPopUp',
 				defaultDeptNos: deptNos,
 				advSearchDept:advSelectedDepartments,
 			completionDateFrom:completionDateFrom,
@@ -1432,7 +1434,9 @@ function advSearch() {
 					groupingID: $('#groupingID').val(),
 					groupingName: $('#groupingName').val(),
 					 
-               },function(responseText) {					
+               },
+		async: false,
+		success: function(responseText) {					
 					responseText = repalceAdvPetTable(responseText);
 					  $("#advanceSearchDiv").html(responseText);
 					  //$("#overlay_Image_advSearch").css("display","block");					
@@ -1465,7 +1469,8 @@ function advSearch() {
 						$("#overlay_pageLoading").hide();
 
 						$('#advanceSearchDiv').dialog('open');
-                  });
+                  }
+	});
 }
 
 
