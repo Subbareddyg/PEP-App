@@ -90,6 +90,7 @@ public class GroupingConstants {
 	public static final String ALREADY_IN_GROUP = "alreadyInGroup";
 	public static final String ALREADY_IN_SAME_GROUP = "alreadyInSameGroup";
 	public static final String COMPONENT_DEFAULT_COLOR = "defaultColor";
+	public static final String BCG_COMPONENT_DEFAULT_COLOR = "BCGDefaultColor";
 	public static final String COMPONENT_SELECTED_ITEMS = "selectedItems";
 	public static final String CARS_GROUPING_TYPE = "carsGroupType";
 	public static final String MESSAGE = "message";
@@ -282,4 +283,20 @@ public class GroupingConstants {
 	public static final String LOCKED_FUNCTION_RELEASE_LOCK = "releaseLock";
 	
 	public static final String PARENT_STYLE_ORIN = "parentStyleOrin";
+	
+	public static final String COMPONENT= "component";
+	public static final String COMPONENT_STYLE= "styleId";
+	public static final String PARENT_GROUP_ID = "parentGroupId";
+	public static final String EXIST_IN_GROUP = "existInGroup";
+	public static final String IS_SAME_GROUP = "isSameGroup";
+	public static final String YES = "Yes";
+	public static final String NO = "No";
+	public static final String ENTRY_TYPE = "entryType";
+	public static final String GROUP_LEVEL = "disableFlag";
+	
+	// BCG Default Color
+	public static final String BCG_DEFAULTCOLOR_PRIORITY_SUCCESS="bcg.defaultcolor.priority.success.message";
+	public static final String BCG_DEFAULTCOLOR_PRIORITY_FAILURE="bcg.defaultcolor.priority.failure.message";
+	public static final String BCG_DEFAULTCOLOR_SUCCESS_PRIORITY_FAILURE="bcg.defaultcolor.success.priority.failure.message";
+	public static final String BCG_DEFAULTCOLOR_FAILURE_PRIORITY_SUCCESS="bcg.defaultcolor.failure.priority.success.message";
 }

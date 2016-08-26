@@ -85,7 +85,7 @@ var app = app || {} ;
 								dtTableConfig = $.extend(
 									dtTableConfig, {
 										dfdChildrenUrl: app.URLFactory.getURL('groupSearchUrl'), 
-										dfdChildrenParams: {resourceType: 'getChildRCGBCG'}
+										dfdChildrenParams: {resourceType: 'getChildRCGBCG', parentGroupId: $('#groupId').val().trim()}
 									}
 								);
 							}
@@ -114,9 +114,7 @@ var app = app || {} ;
 							
 							//setting total existing components
 							_super.totalExistingComponents = dtTable.getTotalRecords();
-							
-							if($('#BCGDefaultColor').length)
-								$('#BCGDefaultColor').val($('#existingComponentForm').find('input[name=defaultColor]:checked').val());
+								
 						}
 					}).complete(function(){
 						$('.overlay_pageLoading').addClass('hidden');
@@ -200,15 +198,51 @@ var app = app || {} ;
 						
 						//logic for concatening different types components for various group types	
 						if($('#groupType').val().trim() == 'RCG' || $('#groupType').val().trim() == 'BCG'){
-							//iterating through all selected checkboxes
+							//iterating through all selected check boxes
 							$('.item-check:checked').each(function(){
 								var alreadyInGroupData = $(this).data('alreadyingroup') || null; 
 								if(alreadyInGroupData == 'Yes')
 									alreadyInGroupItems.push($(this).val());
 								
+								groupComponents.push($(this).val()); //code to stack group to show CARS warning for groupings
+								
 								if($(this).data('item-type') == 'G'){ //case when group is found
-									checkString.push($(this).val());
-									groupComponents.push($(this).val());
+									if($('#groupType').val().trim() == 'BCG'){
+										//logic to scan for dfd children if any then include them based on their selection
+										if($('tr[class^=dfd-children-' + $(this).val() +']').length){
+											//getting style color and wrapping them with styles
+											var dfdGroupstyleColors = {};
+											$('tr[class^=dfd-children-' + $(this).val() +']').each(function(){
+												var chkItem = $(this).find('input[type=checkbox]:checked').not(':disabled');
+												if($(this).hasClass('hidden-child') && chkItem.length){
+													var parentStyle = $(this).data('parent-id') || '';
+													parentStyle = (parentStyle.length && parentStyle.indexOf('_') >=0) ? parentStyle.split('_')[0] : null;
+													if(parentStyle && parentStyle.length){
+														if(dfdGroupstyleColors[parentStyle] === undefined)
+															dfdGroupstyleColors[parentStyle] =  [chkItem.val()];
+														else{
+															dfdGroupstyleColors[parentStyle].push(chkItem.val());
+														}
+															
+													}
+												}else if(chkItem.length && chkItem.val().length){
+													dfdGroupstyleColors[chkItem.val()] = [];
+												}
+											});
+											//console.log(dfdGroupstyleColors);
+											//now building dfd components list
+											var styleAndColorList = '';
+											$.each(dfdGroupstyleColors, function(style, color){
+												styleAndColorList += style + ':' + color.join('-') + '#'
+											});
+											styleAndColorList = styleAndColorList.length ? styleAndColorList.substring(0, styleAndColorList.length - 1) 
+												: styleAndColorList;
+											//console.log($(this).val() + '_' + styleAndColorList);
+											checkString.push($(this).val() + '_' + styleAndColorList);
+										}
+									}else{
+										checkString.push($(this).val());
+									}
 								}else if($(this).data('item-type') == 'S'){
 									//getting its all selected children color
 									var nodeChkId = $(this).data('chknode-id');
@@ -398,7 +432,6 @@ var app = app || {} ;
 							return;
 						} //CR ALM 3520 Ends
 						
-						
 						if(!$('#fromHeaderEdit')[0].checkValidity()){
 							$(this).attr('type', 'submit');
 							//$(this).click();
@@ -429,14 +462,13 @@ var app = app || {} ;
 							*/
 							if($('#groupType').val().trim() == 'BCG'){
 								if(!$('#startDate').val().trim().length){
-									console.log($('#startDate').val().trim().length);
 									$('#error-massege').html("Are you sure that you would like to continue without adding a Launch Date?");
 									$('#errorBox').dialog({
 									   autoOpen: true, 
 									   modal: true,
 									   resizable: false,
 									   dialogClass: "dlg-custom",
-									   title: 'Create Grouping',
+									   title: 'Edit Grouping',
 									   buttons: {
 											"No": function() {
 												$(this).dialog("close");
@@ -666,24 +698,31 @@ var app = app || {} ;
 
 				//handler to save component selection
 				$('#save-existing-group').on('click', function(){
+					/**
+					* Case for BCG where priority and default color both will be sent
+					*/
+					if($('#groupType').val().trim() == 'BCG'){
+						/* var savedDefaultColor = $('#existingComponentForm').find('input[name=defaultColor]:checked').val();
+						
+						if($('#BCGDefaultColor').val() != savedDefaultColor)
+							params += '&setDefaultColor=true';
+						*/
+						if($('#BCGDefaultColor').length){
+							var BCGDefaultColors = [];
+							$('#existingComponentForm').find('input[name$=_defaultColor]:checked')
+								.each(function(){
+									BCGDefaultColors.push($(this).val());
+								});
+							$('#BCGDefaultColor').val(BCGDefaultColors.toString());
+							console.log(BCGDefaultColors.toString());
+						}
+					}
+					
 					var params = $('#existingComponentForm').serialize();
 					
 					//grouping specific params
 					if($('#groupType').val().trim() == 'BCG' || $('#groupType').val().trim() == 'RCG' || $('#groupType').val().trim() == 'GSG'){
 						params += '&resourceType=priorityValueSave';
-						
-						/**
-						* Case for BCG where priority and default color both will present
-						* for this scenario checking whether default color has been changed
-						* (not applicable for DFD items under children group) to set necessary flag
-						*/
-						if($('#groupType').val().trim() == 'BCG'){
-							var savedDefaultColor = $('#existingComponentForm').find('input[name=defaultColor]:checked').val();
-							
-							if($('#BCGDefaultColor').val() != savedDefaultColor)
-								params += '&setDefaultColor=true';
-						}
-						 
 						
 						/**
 						* code to check all priorities have valid values before saving
@@ -886,7 +925,4 @@ var app = app || {} ;
 			}
 			
 		}
-	
-	
-	
 })(jQuery);

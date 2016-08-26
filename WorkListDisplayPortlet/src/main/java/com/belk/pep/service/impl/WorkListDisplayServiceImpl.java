@@ -889,16 +889,18 @@ public List<WorkFlow> getAdvWorklistGroupingData(AdvanceSearch adSearch,
      * 
      * @param groupId String
      * @param advanceSearch AdvanceSearch
+     * @param parengGroupId String
      * @return List<WorkFlow>
      * 
      *         Method added For PIM Phase 2 - Search Pet Date: 06/06/2016 Added
      *         By: Cognizant
      */
     @Override
-    public List<WorkFlow> getChildForGroup(final String groupId, final AdvanceSearch advanceSearch) {
+    public List<WorkFlow> getChildForGroup(final String groupId, final AdvanceSearch advanceSearch,
+    		final String parengGroupId) {
         LOGGER.info("WorkListDisplayServiceImpl getChildForGroup Start");
         List<WorkFlow> workFlowList = null;
-        workFlowList = workListDisplayDAO.getChildForGroup(groupId, advanceSearch);
+        workFlowList = workListDisplayDAO.getChildForGroup(groupId, advanceSearch, parengGroupId);
         LOGGER.info("WorkListDisplayServiceImpl getChildForGroup End");
         return workFlowList;
     }
@@ -947,16 +949,17 @@ public List<WorkFlow> getAdvWorklistGroupingData(AdvanceSearch adSearch,
      * Method to get the child for group for Worklist.
      * 
      * @param groupId String
+     * @param parentGroupId String
      * @return List<WorkFlow>
      * 
      *         Method added For PIM Phase 2 - Worklist Group Date: 06/09/2016 Added
      *         By: Cognizant
      */
     @Override
-    public List<WorkFlow> getChildForGroupWorklist(final String groupId){
+    public List<WorkFlow> getChildForGroupWorklist(final String groupId, final String parentGroupId){
         LOGGER.info("WorkListDisplayServiceImpl getChildForGroupWorklist Start");
         List<WorkFlow> workFlowList = null;
-        workFlowList = workListDisplayDAO.getChildForGroupWorklist(groupId);
+        workFlowList = workListDisplayDAO.getChildForGroupWorklist(groupId, parentGroupId);
         LOGGER.info("WorkListDisplayServiceImpl getChildForGroupWorklist End");
         return workFlowList;
     }

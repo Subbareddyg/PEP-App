@@ -1526,7 +1526,7 @@ function createmannualpet(){
 
 	
 //Method to get child data	
-function getChildData(orinNum, showHideFlag, isGroup, uniqueIdentifier){
+function getChildData(orinNum, showHideFlag, isGroup, uniqueIdentifier, parentGroupId){
 	var url = $("#ajaxaction").val(); 
 	var petLockedStatus = '';
 	var petLockedUser ='';
@@ -1538,7 +1538,8 @@ function getChildData(orinNum, showHideFlag, isGroup, uniqueIdentifier){
 		         type: 'GET',
 		         datatype:'json',
 		         data: {"orinNum" : orinNum,
-				        "callType": isGroup == 'Y' ? 'getChildgroup' : 'getChildData'
+				        "callType": isGroup == 'Y' ? 'getChildgroup' : 'getChildData',
+						parentGroupId: parentGroupId,
 					   },
 			         success: function(data){
 						 /** Modified For PIM Phase 2 
@@ -2501,7 +2502,7 @@ function populateChildData(jsonArray, orinNum, showHideFlag, isGroup, uniqueIden
 	}
 }
 
-function expandCollapse(orinNum, searchClicked, isGroup, uniqueIdentifier){
+function expandCollapse(orinNum, searchClicked, isGroup, uniqueIdentifier, parentGroupId){
 	/** Modified For PIM Phase 2 
 	* - change to make multiple parent child unique as 
 	* - it is not valid as same orin can be in many places
@@ -2579,16 +2580,16 @@ function expandCollapse(orinNum, searchClicked, isGroup, uniqueIdentifier){
 		
 		if("yes" == searchClicked){//Call child for Advance search query
 			if(uniqueIdentifier != undefined && uniqueIdentifier != '')
-				searchSearchForChild(orinNum, true, isGroup, uniqueIdentifier);
+				searchSearchForChild(orinNum, true, isGroup, uniqueIdentifier, parentGroupId);
 			else
-				searchSearchForChild(orinNum, true, isGroup);
+				searchSearchForChild(orinNum, true, isGroup, undefined, parentGroupId);
 			$(expand).hide();
 			$(collapsed).show();
 		}else{
 			if(uniqueIdentifier != undefined && uniqueIdentifier != '')
-				getChildData(orinNum, true, isGroup, uniqueIdentifier);
+				getChildData(orinNum, true, isGroup, uniqueIdentifier, parentGroupId);
 			else
-				getChildData(orinNum, true, isGroup);
+				getChildData(orinNum, true, isGroup, undefined, parentGroupId);
 			
 			$(expand).hide();
 			$(collapsed).show();
@@ -2621,7 +2622,7 @@ function expandStyleColorCollapse(orin, uniqueIdentifier){
 }
 
 
-function searchSearchForChild(parentOrin, showHideFlag, isGroup, uniqueIdentifier)
+function searchSearchForChild(parentOrin, showHideFlag, isGroup, uniqueIdentifier, parentGroupId)
 {	
 	
 	document.getElementById("searchClicked").value = 'yes';
@@ -2788,7 +2789,6 @@ function searchSearchForChild(parentOrin, showHideFlag, isGroup, uniqueIdentifie
 	var groupingName = $('#groupingName').val();
 	 
 	 if($('tr[name=child_' + parentOrin + ']').length <= 0){
-	
 		$("#overlay_pageLoading").show();
        $.ajax({
 		         url: url ,
@@ -2821,6 +2821,7 @@ function searchSearchForChild(parentOrin, showHideFlag, isGroup, uniqueIdentifie
 								searchResults:searchResults,
 								groupID: isGroup == 'Y' ? parentOrin: '',
 								groupingName: groupingName,
+								parentGroupId: parentGroupId,
 					   },
 			         success: function(data){
 						/** Modified For PIM Phase 2 

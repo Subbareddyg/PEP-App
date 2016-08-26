@@ -477,7 +477,7 @@ public interface GroupingService {
 	 * 
 	 * @return String
 	 */
-	List<StyleAttributeForm> getRegularBeautyChildDetails(String groupId) throws PEPServiceException;
+	List<StyleAttributeForm> getRegularBeautyChildDetails(String groupId, String parentGroupId) throws PEPServiceException;
 
 	/**
 	 * This method is used check the LOCK status of a pet.

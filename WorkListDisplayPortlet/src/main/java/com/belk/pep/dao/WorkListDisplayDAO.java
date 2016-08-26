@@ -169,12 +169,13 @@ public boolean lockPET(  String orin, String pepUserID,String pepfunction)throws
      * @param groupId String
      * @param pageNumber int
      * @param advanceSearch AdvanceSearch
+     * @param parentGroupId String
      * @return List<WorkFlow>
      * 
      *         Method added For PIM Phase 2 - Search Pet Date: 06/06/2016 Added
      *         By: Cognizant
      */
-    public List<WorkFlow> getChildForGroup(String groupId, AdvanceSearch advanceSearch);
+    public List<WorkFlow> getChildForGroup(String groupId, AdvanceSearch advanceSearch, String parentGroupId);
 
     /**
      * Method to get the child of Groups for search pet.
@@ -206,10 +207,11 @@ public boolean lockPET(  String orin, String pepUserID,String pepfunction)throws
      * Method to get the child of Groups for Worklist.
      * 
      * @param groupId String
+     * @param parentGroupId String
      * @return List<WorkFlow>
      * 
      *         Method added For PIM Phase 2 - Group Worklist Date: 06/09/2016 Added
      *         By: Cognizant
      */
-    List<WorkFlow> getChildForGroupWorklist(String groupId);
+    List<WorkFlow> getChildForGroupWorklist(String groupId, String parentGroupId);
 }

@@ -350,4 +350,9 @@ public static final String MODEL_VIEW_LOGIN_PAGE = "loginPage" ;
 public static final String IN_PROGRESS = "In_Progress";
 public static final String PET_STYLE_STATE = "PET_STYLE_STATE";
 
+public static final String PARENT_GROUP_ID = "parentGroupId";
+public static final String EXIST_IN_SAME_GROUP = "EXIST_IN_SAME_GROUP";
+public static final String VALUE_YES = "Yes";
+public static final String VALUE_NO = "No";
+
 }

@@ -4,7 +4,7 @@
 				<thead>
 					<tr>
 						<th width="8%"><label><input type="checkbox" class="select-all" /> Select All</label></th>
-						<th width="10%"><a href="javascript:;" class="sortable" data-sort-column="orinNumber" data-sorted-by="">ORIN/Grouping#</a></th>
+						<th width="12%"><a href="javascript:;" class="sortable" data-sort-column="orinNumber" data-sorted-by="">ORIN/Grouping#</a></th>
 						<th width="10%"><a href="javascript:;" class="sortable" data-sort-column="vendorStyle" data-sorted-by="">Style Number</a></th>
 						<th width="15%"><a href="javascript:;" class="sortable" data-sort-column="productName" data-sorted-by="">Name</a></th>
 						<th width="10%"><a href="javascript:;" class="sortable" data-sort-column="colorCode" data-sorted-by="">Color Code</a></th>
@@ -21,12 +21,12 @@
 		{{ var key = Math.random().toString(); key= key.substring(key.indexOf('.')+1, 10) }}
 		<tr>
 			<td>
-				<input type="checkbox" name="selectedItem[]" value="{{=row.StyleOrinNo}}" class="item-check {{=row.isGroup != 'Y' ? 'styles' : ''}}" style="margin-left:17px" 
-					{{=(row.alreadyInSameGroup == 'Yes' || row.haveChildGroup == 'Y') ? 'disabled="disabled"' : ''}} data-item-type="{{=row.isGroup == 'Y' ? 'G' : 'S'}}" data-chknode-id="{{=(row.StyleOrinNo + '_' + key)}}" data-alreadyingroup="{{=row.alreadyInGroup}}" />
+				<input type="checkbox" name="selectedItem[]" value="{{=row.StyleOrinNo}}" class="item-check {{=row.isGroup != 'Y' ? 'styles' : 'groups'}}" style="margin-left:17px" 
+					{{=((row.isGroup == 'Y' && 'CPG|SCG|SSG'.indexOf(row.entryType) < 0) || (row.isGroup == 'Y' && row.isSameGroup == 'Yes') || (row.isGroup != 'Y'  && (row.alreadyInSameGroup == 'Yes' || row.haveChildGroup == 'Y'))) ? 'disabled="disabled"' : ''}} data-item-type="{{=row.isGroup == 'Y' ? 'G' : 'S'}}" data-chknode-id="{{=(row.StyleOrinNo + '_' + key)}}" data-alreadyingroup="{{=row.alreadyInGroup}}" />
 			</td>
 			<td>
 				{{ if(row.isGroup == 'Y'){ }}
-					<div class="icon-tree parent-node-expand-ajax" data-level="1" data-parentnode-id="{{=row.StyleOrinNo}}" data-node-id="{{=(row.StyleOrinNo + '_' + key)}}">
+					<div class="icon-tree parent-node-expand-ajax" data-level="1" data-parentnode-id="{{=row.StyleOrinNo}}" data-node-id="{{=(row.StyleOrinNo + '_' + key)}}"  data-entry-type="{{=row.entryType}}">
 						&nbsp;
 					</div>
 				{{ }else{ }}
@@ -44,7 +44,8 @@
 	{{ }) }}	
 {{ }else{ }}
 	<tr>
-		<td colspan="6" align="center"><strong>{{=dataHeader.message ? dataHeader.message : 'No record Found!'}}</strong></td>
+		<td>&nbsp;</td>
+		<td colspan="5"><strong>{{=dataHeader.message ? dataHeader.message : 'No record Found!'}}</strong></td>
 	</tr>
 {{ } }}
 </script>
@@ -66,7 +67,8 @@
 	{{ }) }}
 {{ }else{ }}
 	<tr class="hidden-child" data-parent-id="{{=parentStyleORIN}}_{{=parentKey}}">
-		<td colspan="4" align="center"><strong>{{=dataHeader.message ? dataHeader.message : 'No record Found!'}}</strong></td>
+		<td>&nbsp;</td>
+		<td colspan="5"><strong>{{=dataHeader.message ? dataHeader.message : 'No record Found!'}}</strong></td>
 	</tr>
 {{ } }}
 </script>
@@ -75,11 +77,11 @@
 	{{_.each(data, function(row, key){ }}
 		{{ var random = Math.random().toString(); random= random.substring(random.indexOf('.')+1, 10) }}
 		{{ key = random + '_' + key }}
-		<tr class="dfd-children-{{=parentNode}}">
-			<td><input type="checkbox" name="selectedItem[]" value="{{=row.StyleOrinNo}}" class="item-check chk-level{{=level}}" disabled="disabled" /></td>
+		<tr class="dfd-children-{{=parentNode}} {{=(doShow !== undefined && doShow === false) ? 'hidden direct-' + parentNode : ''}}">
+			<td><input type="checkbox" name="selectedItem[]" value="{{=row.StyleOrinNo}}" class="item-check group-style chk-level{{=level}}" data-parent-group="{{=parentNode}}" {{=(dataHeader.disableFlag == 'true' || row.alreadyInSameGroup == 'Yes') ? 'disabled="disabled"' : ''}} /></td>
 			<td>
 				{{ if(row.isGroup == 'Y'){ }}
-					<div class="icon-tree parent-node-expand-ajax mar-level{{=level}}" data-level="2" data-parentnode-id="{{=row.StyleOrinNo}}" data-node-id="{{=(row.StyleOrinNo + '_' + key)}}">
+					<div class="icon-tree parent-node-expand-ajax mar-level{{=level}}" data-level="2" data-parentnode-id="{{=row.StyleOrinNo}}" data-node-id="{{=(row.StyleOrinNo + '_' + key)}}" data-children-disable="{{=groupChildrenDisableFlag}}">
 						&nbsp;
 					</div>
 				{{ }else if(row.childList && row.childList.length){ }}
@@ -103,7 +105,7 @@
 				{{ var random = Math.random().toString(); random= random.substring(random.indexOf('.')+1, 10) }}
 				{{ childKey = random + '_' + childKey }}
 				<tr class="dfd-children-{{=parentNode}} hidden-child" data-parent-id="{{=(row.StyleOrinNo + '_' + key) }}">
-					<td><input type="checkbox" name="selectedChildItem_{{=key}}" value="{{=childRow.StyleOrinNo}}" class="item-check chk-level{{=(level+1)}}"  disabled="disabled"/></td>
+					<td><input type="checkbox" name="selectedChildItem_{{=key}}" data-parent-style="{{=row.StyleOrinNo}}" data-parent-group="{{=parentNode}}" value="{{=childRow.StyleOrinNo}}" class="item-check group-style-color chk-level{{=(level+1)}}" {{=(dataHeader.disableFlag == 'true' || childRow.alreadyInSameGroup == 'Yes') ? 'disabled="disabled"' : ''}} /></td>
 					<td>
 						<div class="icon-tree leaf-node pad-level{{=level}}" data-node-id="{{=(childRow.StyleOrinNo + '_' + childKey)}}">
 						&nbsp;
@@ -119,7 +121,8 @@
 	{{ }) }}	
 {{ }else{ }}
 	<tr class="dfd-children-{{=parentNode}}">
-		<td colspan="6" align="center"><strong>{{=dataHeader.message ? dataHeader.message : 'No record Found!'}}</strong></td>
+		<td>&nbsp;</td>
+		<td colspan="5"><strong>{{=dataHeader.message ? dataHeader.message : 'No record Found!'}}</strong></td>
 	</tr>
 {{ } }}
 </script>

@@ -593,6 +593,7 @@ lockClearOnBack.value='1';
 																			
 																		</tr>
 															 </c:forEach>	
+
 															 
 															 <c:forEach items="${workflowForm.searchedDeptdetailsFromADSE}" var="sddfa"
 																					varStatus="status">
@@ -1078,9 +1079,9 @@ lockClearOnBack.value='1';
 		<td style="width:56px">
 			<div style="padding-left: 13px;">
 			{{ if(item.isGroup == 'Y'){  }}
-				<img id="parentSpan_{{=item.styleOrinNum}}_expand" onclick="expandCollapse('{{=item.styleOrinNum}}', '{{=item.advSearchClicked}}', '{{=item.isGroup}}', '{{=uniqueIdentifier===undefined ? '' : uniqueIdentifier}}')" src="${contextpath}${imagemidpath}expand.png"  
+				<img id="parentSpan_{{=item.styleOrinNum}}_expand" onclick="expandCollapse('{{=item.styleOrinNum}}', '{{=item.advSearchClicked}}', '{{=item.isGroup}}', '{{=uniqueIdentifier===undefined ? '' : uniqueIdentifier}}', '{{=orinNum}}')" src="${contextpath}${imagemidpath}expand.png"  
 					style="cursor:pointer;border:0;" width="14" rel="parentSpan_{{=item.styleOrinNum}}_{{=random}}_expand" />
-				<img id="parentSpan_{{=item.styleOrinNum}}_collapsed" onclick="expandCollapse('{{=item.styleOrinNum}}','{{=item.advSearchClicked}}', '{{=item.isGroup}}', '{{=uniqueIdentifier===undefined ? '' : uniqueIdentifier}}')" src="${contextpath}${imagemidpath}collapsed.png"  
+				<img id="parentSpan_{{=item.styleOrinNum}}_collapsed" onclick="expandCollapse('{{=item.styleOrinNum}}','{{=item.advSearchClicked}}', '{{=item.isGroup}}', '{{=uniqueIdentifier===undefined ? '' : uniqueIdentifier}}', '{{=orinNum}}')" src="${contextpath}${imagemidpath}collapsed.png"  
 					style="display:none;cursor:pointer" style="cursor:pointer;border:0;" width="14" rel="parentSpan_{{=item.styleOrinNum}}_{{=random}}_collapsed" />
 					
 					<input type="checkbox" name="styleItem" id="styleItem" class="checkbox1" value="{{=item.styleOrinNum}}_{{=item.petStatus}}##{{=item.ENTRY_TYPE}}" onclick="getPetStatValue('{{=item.petStatus}}')" style="margin:0;" data-group="{{=item.isGroup}}"/>

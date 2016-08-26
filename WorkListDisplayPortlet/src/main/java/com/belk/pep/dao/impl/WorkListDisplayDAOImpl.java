@@ -3004,6 +3004,7 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
      *            String
      * @param advanceSearch
      *            AdvanceSearch
+     * @param parentGroupId String
      * @return List<WorkFlow>
      * 
      *         Method added For PIM Phase 2 - Search Pet Date: 06/06/2016 Added
@@ -3013,7 +3014,7 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
      */
     @Override
     public List<WorkFlow> getChildForGroup(final String groupId,
-        final AdvanceSearch advanceSearch) {
+        final AdvanceSearch advanceSearch, final String parentGroupId) {
 
         LOGGER.info("Entering WorkListDAO.getChildForGroup() method.");
         LOGGER.info("Group ID: " + groupId);
@@ -3029,10 +3030,13 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
             session = sessionFactory.openSession();
             final Query query =
                 session.createSQLQuery(xqueryConstants
-                    .getChildForGroupQuery(groupId));
+                    .getChildForGroupQuery(parentGroupId));
             query.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
             query.setParameter(WorkListDisplayConstants.GROUP_ORIN, groupId);
-            query.setParameter(WorkListDisplayConstants.GROUP_ORIN, groupId);
+            if(!StringUtils.isBlank(parentGroupId))
+            {
+            	query.setParameter(WorkListDisplayConstants.PARENT_GROUP_ID, parentGroupId);
+            }
             rows = query.list();
 
             if (rows != null) {
@@ -3613,13 +3617,14 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
      * 
      * @param groupId
      *            String
+     * @param parentGroupId String
      * @return List<WorkFlow>
      * 
      *         Method added For PIM Phase 2 - Group Worklist Date: 06/09/2016
      *         Added By: Cognizant
      */
     @Override
-    public List<WorkFlow> getChildForGroupWorklist(final String groupId) {
+    public List<WorkFlow> getChildForGroupWorklist(final String groupId, final String parentGroupId) {
 
         LOGGER.info("Entering WorkListDAO.getChildForGroupWorklist() method.");
         Session session = null;
@@ -3634,10 +3639,13 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
             session = sessionFactory.openSession();
             final Query query =
                 session.createSQLQuery(xqueryConstants
-                    .getChildForGroupWorklistQuery(groupId));
+                    .getChildForGroupWorklistQuery(parentGroupId));
             query.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
             query.setParameter(WorkListDisplayConstants.ORIN_NUM, groupId);
-            query.setParameter(WorkListDisplayConstants.ORIN_NUM, groupId);
+            if(!StringUtils.isBlank(parentGroupId))
+            {
+            	query.setParameter(WorkListDisplayConstants.PARENT_GROUP_ID, parentGroupId);
+            }
             rows = query.list();
 
             if (rows != null) {

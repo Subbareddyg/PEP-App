@@ -35,7 +35,7 @@ public class GroupAttributeForm {
     private String isGroup;
     private String priority;
     private String haveChildGroup;
-    
+    private String defaultColor;
 	/**
 	 * @return the haveChildGroup
 	 */
@@ -253,6 +253,18 @@ public class GroupAttributeForm {
 	 */
 	public void setSizeCode(String sizeCode) {
 		this.sizeCode = sizeCode;
+	}
+	/**
+	 * @return the defaultColor
+	 */
+	public String getDefaultColor() {
+		return defaultColor;
+	}
+	/**
+	 * @param defaultColor the defaultColor to set
+	 */
+	public void setDefaultColor(String defaultColor) {
+		this.defaultColor = defaultColor;
 	}
     
   }

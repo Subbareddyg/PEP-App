@@ -69,9 +69,10 @@
 		},
 		
 		//method to call the impl service which returns dfd children via an ajax call
-		getDfdChildren: function(parentId){
+		getDfdChildren: function(parentId, disableFlag){
 			if(this.config.dfdChildrenUrl && this.config.dfdChildrenParams){
 				this.config.dfdChildrenParams['groupId'] = parentId;
+				this.config.dfdChildrenParams['disableFlag'] = disableFlag;
 				return this.$.get(this.config.dfdChildrenUrl, this.config.dfdChildrenParams)
 					.error(function(jqXHR, testStatus, errorThrown){
 						console.log(jqXHR.status + " : " + testStatus  + " : " + errorThrown);
@@ -147,13 +148,51 @@
 			});
 			
 			//delegate to handle and fetch children via deferred ajax call
-			_super.$(this.config.dtContainer).on('click', '.parent-node-expand-ajax', function(){
+			_super.$(this.config.dtContainer).on('click', '.parent-node-expand-ajax', function(e, eventInfo){
 				var _that = _super.$(this);
+				var entryType = _that.data('entry-type') || '';
+				var parentNodeId = _that.data('parentnode-id');
+				var childrenDisableFlag = _that.data('children-disable') || false;
+				var nodeID = _that.data('node-id');
+				var level = _that.data('level');
+				var totChildrenCount = _super.$(_super.config.dtContainer)
+					.find('input[type=checkbox][data-parent-group ^= ' + parentNodeId + '_]')
+					.length;
 				
 				//changing display state to show working to get dfd children
 				_that.removeClass('parent-node-expand-ajax').addClass('parent-node-expanding-ajax');
 				
-				_super.getDfdChildren(_that.data('parentnode-id'))
+				if(totChildrenCount){
+					if(eventInfo !== undefined && eventInfo.doCheckAll == true){
+						_super.$(_super.config.dtContainer)
+						.find('input[type=checkbox][data-parent-group ^= ' + parentNodeId + '_]')
+						.not(':disabled')
+						.prop('checked', true);
+					}
+					
+					if(eventInfo === undefined || eventInfo.doShow == true){
+						_super.$('tr.direct-' + nodeID).fadeIn('fast');
+						_super.$('tr[data-parent-id=' + nodeID + ']').fadeIn('fast');
+						_that.removeClass('parent-node-expanding-ajax').addClass('parent-node-collapse-ajax');
+					}
+					
+					/**
+					* counting enabled children from all the children
+					* if all the items are disabled making parent group check box disabled itself
+					*/
+					var totChildren = _super.$(_super.config.dtContainer)
+						.find('input[type=checkbox][data-parent-group ^= ' + parentNodeId + '_]');
+					var enabledChildren = totChildren.not(':disabled');
+					
+					
+					if(eventInfo === undefined && !enabledChildren.length){console.log()
+						_that.parent().prev('td').find('.groups').prop('checked', false).prop('disabled', true);
+					}
+					
+					return;
+				}
+				
+				_super.getDfdChildren(_that.data('parentnode-id'), childrenDisableFlag)
 					.done(function(result){
 						//console.log(result);
 						if(!result.length /* || (result.charAt(0) != '[' || result.charAt(0) != '{')*/){
@@ -164,20 +203,45 @@
 						var response = _super.$.parseJSON(result);
 						
 						if(response.componentList){
-							var nodeID = _that.data('node-id');
-							var level = _that.data('level');
-							
-							_super.$('tr[data-parent-id=' + nodeID + ']').fadeIn('fast');
-							_that.removeClass('parent-node-expanding-ajax').addClass('parent-node-collapse-ajax');
-							
 							var componentList = response.componentList;
 							//deleting componentList to pass only header
 							delete response.componentList;
 							
 							//generating children and appending
-							var html = _super.dfdTemplate({data: componentList, dataHeader: response, parentNode: nodeID, level: level});
+							var html = _super.dfdTemplate({data: componentList, dataHeader: response, parentNode: nodeID, level: level, doShow: (eventInfo === undefined || eventInfo.doShow) ? true: false, groupChildrenDisableFlag: (entryType.length && app.Global.constants.BCGEntryTypes.indexOf(entryType) < 0) ? true : false});
+							
 							_that.parent().parent().after(html);
-												
+							
+							/**
+							* counting enabled children from all the children
+							* if all the items are disabled making parent group check box disabled itself
+							*/
+							var totChildren = _super.$(_super.config.dtContainer)
+								.find('input[type=checkbox][data-parent-group ^= ' + parentNodeId + '_]');
+							var enabledChildren = totChildren.not(':disabled');
+							
+							if(eventInfo === undefined && !enabledChildren.length){
+								_that.parent().prev('td').find('.groups').prop('checked', false).prop('disabled', true);
+							}
+							
+							if(eventInfo !== undefined && eventInfo.doCheckAll == true){
+								_super.$(_super.config.dtContainer)
+								.find('input[type=checkbox][data-parent-group ^= ' + parentNodeId + '_]')
+								.not(':disabled')
+								.prop('checked', true);
+							}
+							
+							//if the parent entry type is not in the allowed list then disable all children
+							if(entryType.length && app.Global.constants.BCGEntryTypes.indexOf(entryType) < 0){
+								totChildren.prop('disabled', true);
+							}
+							
+							if(eventInfo === undefined || eventInfo.doShow == true){
+								_super.$('tr[data-parent-id=' + nodeID + ']').fadeIn('fast');
+								_that.removeClass('parent-node-expanding-ajax').addClass('parent-node-collapse-ajax');
+							}else{
+								_that.removeClass('parent-node-expanding-ajax').addClass('parent-node-expand-ajax');
+							}					
 						}else{
 							console.warn('Invalid Response JSON returned from server');
 						}
@@ -203,6 +267,8 @@
 					_that.removeClass('parent-node-collapse-ajax').addClass('parent-node-expand-ajax');
 					_super.$('tr.dfd-children-'+nodeID).remove();
 				});
+				
+				_that.parent().prev('td').find('input.item-check').prop('checked', false);
 			});
 			
 			//delegate to select all the items						
@@ -265,6 +331,78 @@
 					_super.$(_super.config.dtContainer).find('.select-all').prop('checked', false);
 				}
 			});
+			
+			//delegate to handle automatic parent style select/deselect based on style color selection for group children
+			_super.$(this.config.dtContainer).on('click', '.group-style-color', function(e){
+				var parentGroupID = _super.$(this).data('parent-group');
+				var parentStyleORIN = _super.$(this).data('parent-style');
+				
+				if(_super.$(this).is(':checked')){
+					_super.$(_super.config.dtContainer).find('tr.dfd-children-' + parentGroupID).find('input[type=checkbox][value=' + parentStyleORIN + ']')
+						.prop('checked', true);
+				}else{
+					if(!_super.$(_super.config.dtContainer).find('tr.dfd-children-' + parentGroupID).find('input[type=checkbox][data-parent-style=' + parentStyleORIN + ']:checked').length)
+						_super.$(_super.config.dtContainer).find('tr.dfd-children-' + parentGroupID).find('input[type=checkbox][value=' + parentStyleORIN + ']')
+						.prop('checked', false);
+				}
+				
+				_super.$(this).trigger('group.childrenSelected', {parentGroupID: parentGroupID, checked: _super.$(this).is(':checked')});
+			});
+			
+			//delegate to handle automatic parent style select/deselect based on style color selection for group children
+			_super.$(this.config.dtContainer).on('click', '.group-style', function(e){
+				var parentGroupID = _super.$(this).data('parent-group');
+				var styleOrin = _super.$(this).val();
+				
+				if(_super.$(this).is(':checked')){
+					_super.$(_super.config.dtContainer).find('tr.dfd-children-' + parentGroupID)
+						.find('input[type=checkbox][data-parent-style=' + styleOrin + ']')
+						.not(':disabled')
+						.prop('checked', true);
+				}else{
+					_super.$(_super.config.dtContainer).find('tr.dfd-children-' + parentGroupID)
+						.find('input[type=checkbox][data-parent-style=' + styleOrin + ']')
+						.prop('checked', false);
+				}
+				
+				_super.$(this).trigger('group.childrenSelected', {parentGroupID: parentGroupID, checked: _super.$(this).is(':checked')});
+			});
+			
+			_super.$(this.config.dtContainer).on('group.childrenSelected', '.group-style, .group-style-color', function(e, info){
+				//console.log(info);
+				if(info && info.parentGroupID && info.parentGroupID.length){
+					var parentGroupId = info.parentGroupID.indexOf('_') >=0 ? info.parentGroupID.split('_')[0] : null;
+					
+					if(parentGroupId && info.checked === true){
+						_super.$(_super.config.dtContainer).find('input[type=checkbox][value=' + parentGroupId + ']')
+							.not(':disabled')
+							.prop('checked', info.checked);
+					}else if(parentGroupId && info.checked === false){
+						if(!_super.$(_super.config.dtContainer).find('input[type=checkbox][data-parent-group ^=' +  parentGroupId + '_]:checked').length)
+							_super.$(_super.config.dtContainer).find('input[type=checkbox][value=' + parentGroupId + ']').prop('checked', false);
+					}
+				}
+			});
+			
+			_super.$(this.config.dtContainer).on('click', '.groups', function(e){
+				var groupId = _super.$(this).val() || '';
+				var domItem = _super.$(this).parent().parent().find('div.icon-tree');
+				
+				
+				var totChildren = _super.$(_super.config.dtContainer)
+						.find('input[type=checkbox][data-parent-group ^= ' + groupId + '_]');
+				var enabledChildren = totChildren.not(':disabled');
+				
+				if(_super.$(this).is(':checked')){
+					if(domItem.hasClass('parent-node-expand-ajax')){
+						domItem.trigger('click', {doShow: false, doCheckAll: true});
+					}else if(domItem.hasClass('parent-node-collapse-ajax')){
+						enabledChildren.prop('checked', true);
+					}	
+				}else{
+					totChildren.prop('checked', false);	
+				}
+			})
 			
 			//delegate to handle sorting by attrubutes
 			_super.$(this.config.dtContainer).on('click', '.sortable', function(e){

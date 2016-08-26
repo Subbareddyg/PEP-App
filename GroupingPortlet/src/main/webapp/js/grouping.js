@@ -1080,7 +1080,7 @@ var app = app || {};
 							if($('#groupType').val().trim() == 'RCG' || $('#groupType').val().trim() == 'BCG'){
 								var config = {
 									dfdChildrenUrl: app.URLFactory.getURL('groupSearchUrl'), 
-									dfdChildrenParams: {resourceType: 'getChildRCGBCG'},
+									dfdChildrenParams: {resourceType: 'getChildRCGBCG', parentGroupId: $('#groupId').val().trim()},
 									dfdChildrenStyleColorParams: {resourceType: 'getChildRCGBCGCPGStyleChild'},
 									dfdStyleColorTemplate: '#row-template-style-color',
 									dataServiceFunc: _super.componentDataSearchService.bind(this, boradCastRefreshEvent)
