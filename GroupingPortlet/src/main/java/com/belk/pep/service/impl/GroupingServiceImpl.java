@@ -2178,7 +2178,6 @@ public class GroupingServiceImpl implements GroupingService {
 					if (styleOrGrpNo.length() == 7) {
 						// Group
 						jsonObjectComponent.put(GroupingConstants.COMPONENT_ATTR, styleOrGrpNo);
-						//jsonObjectComponent.put(GroupingConstants.ORDER, maxPriority + i + 1);
 						if(existingComponentList.contains(styleOrGrpNo)){
 							int groupCOmponentPriority =groupingDAO.getGroupPriorityFromDB(groupId, styleOrGrpNo);
 							jsonObjectComponent.put(GroupingConstants.ORDER, groupCOmponentPriority);

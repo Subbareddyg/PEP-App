@@ -1910,19 +1910,21 @@ public class GroupingController {
 					getSelectedAttrbuteList = groupingService.getSelectedRCGAttributeList(getRCGBCGDetailsList, selectedItemsArr);
 				} else {
 					
-					for (int l = 0; l < selectedItemsArr.length; l++) {
-						String selectedOrinGrpNo = GroupingUtil.checkNull(selectedItemsArr[l]);
-						
-						if(selectedOrinGrpNo.indexOf("_") != -1)
-						{
-							if(selectedOrinGrpNo.length() == 8)
+					if(selectedItemsArr != null) {
+						for (int l = 0; l < selectedItemsArr.length; l++) {
+							String selectedOrinGrpNo = GroupingUtil.checkNull(selectedItemsArr[l]);
+							
+							if(selectedOrinGrpNo.indexOf("_") != -1)
 							{
-								selectedGroup = selectedOrinGrpNo.substring(0, selectedOrinGrpNo.indexOf("_"));
+								if(selectedOrinGrpNo.length() == 8)
+								{
+									selectedGroup = selectedOrinGrpNo.substring(0, selectedOrinGrpNo.indexOf("_"));
+								}
 							}
-						}
-						else if (selectedOrinGrpNo.length() == 7)
-						{
-							selectedGroup = selectedOrinGrpNo;
+							else if (selectedOrinGrpNo.length() == 7)
+							{
+								selectedGroup = selectedOrinGrpNo;
+							}
 						}
 					}
 					if(selectedGroup.isEmpty()) {
@@ -2093,7 +2095,7 @@ public class GroupingController {
 			if (GroupingConstants.RESOURCE_TYPE_FOR_SET_PRIORITY.equals(resourceType) 
 					&& GroupingConstants.GROUP_TYPE_BEAUTY_COLLECTION.equals(groupType)) { // TODO Partha
 				LOGGER.info("set Priority and Default Color of the BCG existing component from Grouping Controller");
-				Properties prop = null;
+				Properties prop;
 				/** Start set BCG Priority **/
 				JSONArray componentList = new JSONArray();
 				String componentStr = GroupingUtil.checkNull(request.getParameter(GroupingConstants.PRIORITY_LIST));
@@ -2405,7 +2407,7 @@ public class GroupingController {
 				{
 					jsonObjComponent.put(GroupingConstants.ALREADY_IN_SAME_GROUP, GroupingConstants.NO);
 				}
-				if(isAlreadyInSameGroup.equals(GroupingConstants.YES) || (groupAttributeFormList.size() > 0 && count > 0))
+				if(isAlreadyInSameGroup.equals(GroupingConstants.YES) || ((!groupAttributeFormList.isEmpty()) && count > 0))
 				{
 					jsonObjComponent.put(GroupingConstants.EXIST_IN_GROUP, GroupingConstants.YES);
 				} 
