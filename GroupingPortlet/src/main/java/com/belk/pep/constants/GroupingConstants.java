@@ -299,4 +299,6 @@ public class GroupingConstants {
 	public static final String BCG_DEFAULTCOLOR_PRIORITY_FAILURE="bcg.defaultcolor.priority.failure.message";
 	public static final String BCG_DEFAULTCOLOR_SUCCESS_PRIORITY_FAILURE="bcg.defaultcolor.success.priority.failure.message";
 	public static final String BCG_DEFAULTCOLOR_FAILURE_PRIORITY_SUCCESS="bcg.defaultcolor.failure.priority.success.message";
+	
+	public static final String GROUP_NOT_CREATED_FOR_CHARACTER = "Group description length more than 2000";
 }

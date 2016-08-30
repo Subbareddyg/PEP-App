@@ -416,28 +416,29 @@ var app = app || {} ;
 							$(this).val($(this).val().trim());
 						});
 						
-						// CR ALM 3520, Start Date is not mandatory unless end date is filled up
-						if($('#endDate').length && $('#startDate').length && $('#endDate').val().trim().length && !$('#startDate').val().trim().length){
-							$('#error-massege').html("Please enter start date.");
-							$('#errorBox').dialog({
-							   autoOpen: true, 
-							   modal: true,
-							   resizable: false,
-							   title : 'Group Header',
-							   dialogClass: "dlg-custom",
-							   buttons: {
-								  OK: function() {$(this).dialog("close");}
-							   },
-							});
-							return;
-						} //CR ALM 3520 Ends
-						
 						if(!$('#fromHeaderEdit')[0].checkValidity()){
 							$(this).attr('type', 'submit');
 							//$(this).click();
-							e.preventDefault();
+							//e.preventDefault();
+							return;
 						}else{
 							$(this).attr('type', 'button');
+							
+							// CR ALM 3520, Start Date is not mandatory unless end date is filled up
+							if($('#endDate').length && $('#startDate').length && $('#endDate').val().trim().length && !$('#startDate').val().trim().length){
+								$('#error-massege').html("Please enter start date.");
+								$('#errorBox').dialog({
+								   autoOpen: true, 
+								   modal: true,
+								   resizable: false,
+								   title : 'Group Header',
+								   dialogClass: "dlg-custom",
+								   buttons: {
+									  OK: function() {$(this).dialog("close");}
+								   },
+								});
+								return;
+							} //CR ALM 3520 Ends
 							
 							if($('#groupDesc').val().trim().length < app.Global.defaults.minGroupDescChars){
 								$('#error-massege').html("Please enter at least " + app.Global.defaults.minGroupDescChars + " characters in description field.");
@@ -617,7 +618,7 @@ var app = app || {} ;
 							if(response.status == 'SUCCESS'){
 								message = app.GroupLandingApp.buildMessage(response.description ? response.description : 'Update Success', 'success');
 							}else{
-								message= app.GroupLandingApp.buildMessage(response.description ? response.description : 'Update Error', 'success');
+								message= app.GroupLandingApp.buildMessage(response.description ? response.description : 'Update Error', 'error');
 							}
 						}
 						

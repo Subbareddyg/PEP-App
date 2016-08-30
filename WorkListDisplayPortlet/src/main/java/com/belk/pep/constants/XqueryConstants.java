@@ -767,10 +767,9 @@ public  String getAllDepartmentDetailsLatest(String searchString, String emailId
              
 /**
  * Gets the all Class details  By DepartmentId/Ids.
- * @param deptids
  * @return
  */
-public  String getClassDetailsUsingDeptnumbers(String deptids) {  
+public  String getClassDetailsUsingDeptnumbers() {  
     
     /**
      * Modified by AFUAXK4
@@ -779,11 +778,12 @@ public  String getClassDetailsUsingDeptnumbers(String deptids) {
     
 
     StringBuilder  queryfragment = new StringBuilder();
-    queryfragment.append("WITH Input(Depts) AS ");
+    /*queryfragment.append("WITH Input(Depts) AS ");
     queryfragment.append("  (SELECT ");
     queryfragment.append(":deptids");
     queryfragment.append(" Depts ");    
-    queryfragment.append("  FROM dual) ");
+    queryfragment.append("  FROM dual) ");*/
+
 
     queryfragment.append("  SELECT CLS_NAME.ClsId, CLS_NAME.ClsName Cls, CLS_NAME.Removal_Flag  ");
     queryfragment.append("  FROM ADSE_MERCHANDISE_HIERARCHY cls,                                                                              ");
@@ -800,13 +800,13 @@ public  String getClassDetailsUsingDeptnumbers(String deptids) {
     queryfragment.append("      ClsName VARCHAR2(64) path '/out/cls_name',                                                                    ");
     queryfragment.append("      ClsId VARCHAR2(64) path '/out/cls_id',                                                                        ");
     queryfragment.append("      DeptId VARCHAR2(10) path '/out/dept_id',                                                                      ");
-    queryfragment.append("      Removal_Flag VARCHAR2(10) path '/out/Removal_Flag') CLS_NAME,                                                 ");
-    queryfragment.append("    Input inp                                                                                                       ");
+    queryfragment.append("      Removal_Flag VARCHAR2(10) path '/out/Removal_Flag') CLS_NAME                                                ");
+    //queryfragment.append("    ,Input inp                                                                                                       ");
     queryfragment.append("  WHERE cls.ENTRY_TYPE = 5                                                                                          ");
     queryfragment.append("  AND (CLS_NAME.Removal_Flag = 'false' or CLS_NAME.Removal_Flag is null)                                            ");
-    queryfragment.append("  AND deptId in ( ");
-    queryfragment.append(getDeptNumbersFormatted(deptids));
-    queryfragment.append("  )                                                                                       ");
+    queryfragment.append("  AND deptId in (:deptIdListSql) ");
+    //queryfragment.append(getDeptNumbersFormatted(deptids));
+    //queryfragment.append("  )                                                                                       "); // 08292016
     queryfragment.append("  ORDER BY ClsId                                                                                                    ");
     
     /**

@@ -562,7 +562,7 @@ public class XqueryConstants {
 	 * 
 	 * @param deptids
 	 * @return String */
-	public static  final String getClassDetailsUsingDeptnumbers(final String deptids) {
+	public static  final String getClassDetailsUsingDeptnumbers() {
 		LOGGER.info("Entering getClassDetailsUsingDeptnumbers() in Grouping XQueryConstant class.");
 		final StringBuilder queryfragment = new StringBuilder();
 
@@ -601,9 +601,7 @@ public class XqueryConstants {
 		.append("  WHERE cls.ENTRY_TYPE = '5'                                                                                         ");
 		queryfragment
 		.append("  AND (CLS_NAME.Removal_Flag = 'false' or CLS_NAME.Removal_Flag is null)                                            ");
-		queryfragment.append("  AND deptId in ( ");
-		queryfragment.append(getNumbersInCorrectFormat(deptids));
-		queryfragment.append("  )                                                                                       ");
+		queryfragment.append("  AND deptId in (:deptIdListSql) ");
 		queryfragment
 		.append("  ORDER BY ClsId                                                                                                    ");
 
