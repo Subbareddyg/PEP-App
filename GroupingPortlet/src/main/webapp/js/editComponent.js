@@ -617,6 +617,7 @@ var app = app || {} ;
 						if(response.status){
 							if(response.status == 'SUCCESS'){
 								message = app.GroupLandingApp.buildMessage(response.description ? response.description : 'Update Success', 'success');
+								$('#cancel-edit-header').trigger('save.success');
 							}else{
 								message= app.GroupLandingApp.buildMessage(response.description ? response.description : 'Update Error', 'error');
 							}
@@ -625,8 +626,6 @@ var app = app || {} ;
 						$('#group-header-message-area').html(message).fadeIn();
 						
 						app.GroupLandingApp.cleanupMessage($('#group-header-message-area'));
-						
-						$('#cancel-edit-header').trigger('save.success');
 						
 					}).error(function(jqXHR, textStatus, errorThrown){
 						$('#group-header-message-area').html(
