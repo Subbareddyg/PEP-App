@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.sql.Clob;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -994,7 +995,6 @@ public class GroupingDAOImpl implements GroupingDAO {
 	/**
 	 * Method to get the classes for search group.
 	 * 
-	 * @param departmentNumbers String
 	 * @return List
 	 * 
 	 *         Method added For PIM Phase 2 - groupSearch Date: 05/25/2016 Added
@@ -1006,19 +1006,34 @@ public class GroupingDAOImpl implements GroupingDAO {
 		LOGGER.info("Entering getClassDetailsByDepNos() in GroupingDAOImpl class..");
 		Session session = null;
 		final List<ClassDetails> classDetailsList = new ArrayList<>();
+		List<String> deptArrList = new ArrayList<String>();
 		try {
+			String[] deptArr = departmentNumbers.split(",");
+			deptArrList = Arrays.asList(deptArr);			
+			
+			//LOGGER.debug(departmentNumbers+"<--deptArrList-->"+deptArrList.size());
 			session = sessionFactory.openSession();
-			final Query query = session.createSQLQuery(XqueryConstants.getClassDetailsUsingDeptnumbers(departmentNumbers));
+			final Query query = session.createSQLQuery(XqueryConstants.getClassDetailsUsingDeptnumbers());
+			query.setParameterList("deptIdListSql", deptArrList); // 08292016
+			
+			if(LOGGER.isDebugEnabled()){
+				LOGGER.debug("departmentNumbers-->"+XqueryConstants.getNumbersInCorrectFormat(departmentNumbers));
+			}
+			LOGGER.info("Query-->getClassDetailsByDepNos-->" + query);
+			
 			query.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
 			@SuppressWarnings("unchecked")
 			final List<Object> rows = query.list();
-			for (final Object row : rows) {
-				@SuppressWarnings("rawtypes")
-				final Map rowObj = (Map) row;
-				final ClassDetails classDetails = new ClassDetails();
-				classDetails.setId(rowObj.get("CLASS_ID") == null ? "" : rowObj.get("CLASS_ID").toString());
-				classDetails.setDesc(rowObj.get("CLASS_NAME") == null ? "" : rowObj.get("CLASS_NAME").toString());
-				classDetailsList.add(classDetails);
+			if (rows != null) {
+				LOGGER.info("recordsFetched..." + rows.size());
+				for (final Object row : rows) {
+					@SuppressWarnings("rawtypes")
+					final Map rowObj = (Map) row;
+					final ClassDetails classDetails = new ClassDetails();
+					classDetails.setId(rowObj.get("CLASS_ID") == null ? "" : rowObj.get("CLASS_ID").toString());
+					classDetails.setDesc(rowObj.get("CLASS_NAME") == null ? "" : rowObj.get("CLASS_NAME").toString());
+					classDetailsList.add(classDetails);
+				}
 			}
 		} finally {
 			if (session != null) {

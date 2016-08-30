@@ -834,7 +834,26 @@ public class GroupingController {
 			LOGGER.error("inside catch for createGroup()-->controller-->" + e);
 		}
 		try {
-			createGroupFormRes = groupingService.saveGroupHeaderDetails(jsonStyle, updatedBy, createGroupForm.getGroupAttributeFormList());
+			if(createGroupForm.getGroupDesc().length() <= 2000)
+			{
+				createGroupFormRes = groupingService.saveGroupHeaderDetails(jsonStyle, updatedBy, createGroupForm.getGroupAttributeFormList());
+			}				
+			else
+			{
+				createGroupFormRes = new CreateGroupForm();
+				createGroupFormRes.setGroupId(createGroupForm.getGroupId());
+				createGroupFormRes.setGroupName(createGroupForm.getGroupName());
+				createGroupFormRes.setGroupType(createGroupForm.getGroupType());
+				createGroupFormRes.setGroupDesc(createGroupForm.getGroupDesc());
+				createGroupFormRes.setGroupLaunchDate(createGroupForm.getGroupLaunchDate());
+				createGroupFormRes.setEndDate(createGroupForm.getEndDate());
+				createGroupFormRes.setGroupCretionMsg(GroupingConstants.GROUP_NOT_CREATED_FOR_CHARACTER);
+				createGroupFormRes.setGroupAttributeFormList(createGroupForm.getGroupAttributeFormList());
+				createGroupFormRes.setGroupCreationStatus(GroupingConstants.GROUP_NOT_CREATED);
+				createGroupFormRes.setGroupStatus(createGroupForm.getGroupStatus());
+				createGroupFormRes.setCarsGroupType(createGroupForm.getCarsGroupType());
+				createGroupFormRes.setIsAlreadyInGroup(createGroupForm.getIsAlreadyInGroup());
+			}
 
 			LOGGER.info("responseMsg_code Controller createGroup-->" + createGroupFormRes.getGroupCretionMsg());
 		} catch (Exception e) {
@@ -1989,9 +2008,20 @@ public class GroupingController {
 		String modifiedBy = request.getParameter(GroupingConstants.MODIFIED_BY);
 		createGroupForm.setGroupType(request.getParameter(GroupingConstants.GROUP_TYPE));
 		String resp = "";
-		try {
-			resp = groupingService.updateGroupHeaderDetails(createGroupForm, modifiedBy);
-			response.getWriter().write(resp);
+		try {			
+			if(createGroupForm.getGroupDesc() != null && createGroupForm.getGroupDesc().length() <= 2000)
+			{
+				resp = groupingService.updateGroupHeaderDetails(createGroupForm, modifiedBy);
+				response.getWriter().write(resp);
+			}
+			else
+			{
+				JSONObject jsonGroup = new JSONObject();
+				jsonGroup.put(GroupingConstants.GROUP_STATUS, GroupingConstants.FAIL);
+				jsonGroup.put(GroupingConstants.MSG_CODE, GroupingConstants.FAILURE_CODE);
+				jsonGroup.put(GroupingConstants.DESCRIPTION_ATTR, GroupingConstants.GROUP_NOT_CREATED_FOR_CHARACTER);
+				response.getWriter().write(jsonGroup.toString());
+			}
 
 		} catch (Exception e) {
 			LOGGER.error("GroupingControlle:saveEditedGroup ResourceRequest:Exception------------>" + e);

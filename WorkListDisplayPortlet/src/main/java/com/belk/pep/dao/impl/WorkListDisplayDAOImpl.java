@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -915,36 +916,40 @@ public List<ClassDetails> getClassDetailsByDepNos(String departmentNumbers)
 
 
 private List<ClassDetails> getClassDetails(String departmentNumbers)throws PEPFetchException {
-    LOGGER.info("This is from getClassDetails...Enter");
-    Session session = null;
-    Transaction tx = null;
-    List<ClassDetails> classDetailsList = new ArrayList<ClassDetails>();
-    try{
-    session = sessionFactory.openSession();
-    tx = session.beginTransaction();            
-    LOGGER.info("This is from getClassDetails..."+departmentNumbers);
-   //Hibernate provides a createSQLQuery method to let you call your native SQL statement directly.   
-    //Query query = session.createSQLQuery(xqueryConstants.getClassDetailsUsingDeptnumbers(departmentNumbers));
-    /****Newly added for DE795,796 ******/
-    Query query = session.createSQLQuery(xqueryConstants.getClassDetailsUsingDeptnumbers(departmentNumbers));
-    query.setParameter("deptids", departmentNumbers);
-    query.setFetchSize(500);
-    /****END ******/
-    List<Object[]> rows = query.list();
-    for(Object[] row : rows){      
-        ClassDetails classDetails = new ClassDetails();
-        classDetails.setId(row[0].toString());
-        classDetails.setDesc(row[1].toString());   
-        classDetailsList.add(classDetails);          
-    }       
-    
-    }finally{
-     session.flush();   
-     tx.commit();
-     session.close();
-    }
-    LOGGER.info("This is from getClassDetails...Exit");
-    return classDetailsList; 
+	LOGGER.info("This is from getClassDetails...Enter");
+	Session session = null;
+	Transaction tx = null;
+	List<ClassDetails> classDetailsList = new ArrayList<ClassDetails>();
+	List<String> deptArrList = new ArrayList<String>();
+	try{
+		String[] deptArr = departmentNumbers.split(",");
+		deptArrList = Arrays.asList(deptArr);		
+		
+		session = sessionFactory.openSession();
+		tx = session.beginTransaction();            
+		LOGGER.info("This is from getClassDetails..."+departmentNumbers);
+		//Hibernate provides a createSQLQuery method to let you call your native SQL statement directly.   
+		//Query query = session.createSQLQuery(xqueryConstants.getClassDetailsUsingDeptnumbers(departmentNumbers));
+		/****Newly added for DE795,796 ******/
+		Query query = session.createSQLQuery(xqueryConstants.getClassDetailsUsingDeptnumbers());
+		query.setParameterList("deptIdListSql", deptArrList); // 08292016
+		query.setFetchSize(500);
+		/****END ******/
+		List<Object[]> rows = query.list();
+		for(Object[] row : rows){      
+			ClassDetails classDetails = new ClassDetails();
+			classDetails.setId(row[0].toString());
+			classDetails.setDesc(row[1].toString());   
+			classDetailsList.add(classDetails);          
+		}       
+
+	}finally{
+		session.flush();   
+		tx.commit();
+		session.close();
+	}
+	LOGGER.info("This is from getClassDetails...Exit");
+	return classDetailsList; 
 }
 
 /**

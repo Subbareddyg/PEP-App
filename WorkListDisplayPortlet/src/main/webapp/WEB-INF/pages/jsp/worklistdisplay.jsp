@@ -1106,7 +1106,7 @@ lockClearOnBack.value='1';
 		<td>{{=item.vendorStyle}}</td>
 		<td>{{=item.productName}}</td>
 		<td>
-		{{ if(item.vendorStyle != 'Consolidated Product Grouping' && item.vendorStyle != 'Split SKU Grouping' && item.vendorStyle != 'Split Color Grouping') { }}
+		{{ if(item.vendorStyle != 'Split SKU Grouping' && item.vendorStyle != 'Split Color Grouping') { }}
 			<a href="#" onclick="contentStatus('{{=item.contentStatus}}','{{=item.styleOrinNum}}')">{{=item.contentStatus}}</a>
 		{{ }else{ }}
 			{{=item.contentStatus}}
@@ -1165,7 +1165,7 @@ lockClearOnBack.value='1';
 						<td>{{=childItem.vendorStyle}}</td>
 						<td>{{=item.productName}}</td>
 						<td>
-						{{ if(childItem.vendorStyle != 'Consolidated Product Grouping' && childItem.vendorStyle != 'Split SKU Grouping' && childItem.vendorStyle != 'Split Color Grouping') { }}
+						{{ if(childItem.vendorStyle != 'Split SKU Grouping' && childItem.vendorStyle != 'Split Color Grouping') { }}
 							<a href="#" onclick="contentStatus('{{=childItem.contentStatus}}','{{=item.styleOrinNum}}')">{{=childItem.contentStatus}}</a>
 						{{ }else{ }}
 							{{=childItem.contentStatus}}
