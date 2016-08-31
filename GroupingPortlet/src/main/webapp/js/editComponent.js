@@ -204,9 +204,8 @@ var app = app || {} ;
 								if(alreadyInGroupData == 'Yes')
 									alreadyInGroupItems.push($(this).val());
 								
-								groupComponents.push($(this).val()); //code to stack group to show CARS warning for groupings
-								
 								if($(this).data('item-type') == 'G'){ //case when group is found
+									groupComponents.push($(this).val()); //code to stack group to show CARS warning for groupings
 									if($('#groupType').val().trim() == 'BCG'){
 										//logic to scan for dfd children if any then include them based on their selection
 										if($('tr[class^=dfd-children-' + $(this).val() +']').length){
