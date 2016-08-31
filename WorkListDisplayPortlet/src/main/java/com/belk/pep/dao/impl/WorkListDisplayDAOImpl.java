@@ -943,7 +943,13 @@ private List<ClassDetails> getClassDetails(String departmentNumbers)throws PEPFe
 			classDetailsList.add(classDetails);          
 		}       
 
-	}finally{
+	}catch (Exception e) {
+        e.printStackTrace();
+        LOGGER.info(" Exception in getting the class details in method -getClassDetails() ",e);
+       
+    }
+	
+	finally{
 		session.flush();   
 		tx.commit();
 		session.close();
