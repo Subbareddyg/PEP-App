@@ -1406,9 +1406,10 @@ function advSearch() {
 	var url = $("#ajaxaction").val();
 	//$("#dialog_ASearch").css("display","none");
 	$("#overlay_pageLoading").show();
-	$.ajax({
-		url: url,
-		data:{advSearchPopUp:'advSearchPopUp',
+	setTimeout(function(){
+		$.ajax({
+			url: url,
+			data:{advSearchPopUp:'advSearchPopUp',
 				defaultDeptNos: deptNos,
 				advSearchDept:advSelectedDepartments,
 			completionDateFrom:completionDateFrom,
@@ -1435,8 +1436,8 @@ function advSearch() {
 					groupingName: $('#groupingName').val(),
 					 
                },
-		async: false,
-		success: function(responseText) {					
+			async: false,
+			success: function(responseText) {					
 					responseText = repalceAdvPetTable(responseText);
 					  $("#advanceSearchDiv").html(responseText);
 					  //$("#overlay_Image_advSearch").css("display","block");					
@@ -1470,7 +1471,8 @@ function advSearch() {
 
 						$('#advanceSearchDiv').dialog('open');
                   }
-	});
+		});
+	}, 1000);
 }
 
 
