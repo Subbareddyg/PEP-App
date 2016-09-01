@@ -3,6 +3,7 @@ package com.belk.pep.dao.impl;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.sql.Clob;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -16,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 //import java.util.logging.Logger;
+import com.belk.pep.model.*;
 import org.apache.log4j.Logger;
 
 import org.apache.commons.lang.StringUtils;
@@ -24,6 +26,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.type.IntegerType;
 
 import com.belk.pep.constants.WorkListDisplayConstants;
 import com.belk.pep.constants.XqueryConstants;
@@ -120,7 +123,7 @@ public class WorkListDisplayDAOImpl implements WorkListDisplayDAO{
             }
            
          }catch(Exception e) {
-             e.printStackTrace();
+        	 LOGGER.error("Exception occurred!", e);
          }
          finally{
              session.flush();
@@ -148,8 +151,6 @@ public class WorkListDisplayDAOImpl implements WorkListDisplayDAO{
         
         try {
                 LOGGER.info("getPetDetailsByDepNos....Enter");
-                System.out.println("\n--->> departmentNumbers " + departmentNumbers);
-                System.out.println("\n--->> email " + email);
                 StringBuffer depNumbers= new StringBuffer();
                 
                 if(departmentNumbers!=null) {
@@ -201,18 +202,17 @@ public class WorkListDisplayDAOImpl implements WorkListDisplayDAO{
                     workFlowList = workListDisplay.getWorkListDisplay();
                 }
                 catch (SQLException e) {
-                    e.printStackTrace();
-                   throw new PEPPersistencyException("SQL Exception cought from getPetDetailsByDepNos");
+                	LOGGER.error("Exception occurred!", e);
+                    throw new PEPPersistencyException("SQL Exception cought from getPetDetailsByDepNos");
                    
                 }
                 catch (ParseException e) {
-                  
-                    e.printStackTrace();
+                	LOGGER.error("Exception occurred!", e);
                     throw new PEPPersistencyException("Parse Exception cought from getPetDetailsByDepNos");
                 }
                 
         } catch(Exception e)    {
-            e.printStackTrace();
+        	LOGGER.error("Exception occurred!", e);
         }
         return workFlowList;
     }
@@ -416,7 +416,7 @@ public class WorkListDisplayDAOImpl implements WorkListDisplayDAO{
             
         }
         catch (PEPFetchException e) {
-            e.printStackTrace();
+        	LOGGER.error("Exception occurred!", e);
             throw new PEPPersistencyException("Exception while getting Dept Details from ADSE");
         }
         LOGGER.info("This is from getDeptDetailsByDepNoFromADSE...Exit");
@@ -472,11 +472,11 @@ public class WorkListDisplayDAOImpl implements WorkListDisplayDAO{
             workFlowList = workListDisplay.getWorkListDisplay();
          }
          catch (SQLException e) {
-             e.printStackTrace();
+        	 LOGGER.error("Exception occurred!", e);
              throw new PEPPersistencyException("SQLException from getPetDetailsByVendor");
          }
          catch (ParseException e) {
-             e.printStackTrace();
+        	 LOGGER.error("Exception occurred!", e);
              throw new PEPPersistencyException("ParseException from getPetDetailsByVendor");
          }
          LOGGER.info("This is from getPetDetailsByVendor...End");
@@ -497,7 +497,7 @@ public ArrayList getDepartmentDetailsForExternalFirstTimeLogin(
         searchedDepartmentDetails = getDepartmentDetailsForExternalUserFirstTimeLogin(userEmailAddress);
     }
     catch (PEPFetchException e) {
-        e.printStackTrace();
+    	LOGGER.error("Exception occurred!", e);
         throw new PEPPersistencyException("Exception While getting the Department Details");
     }
     LOGGER.info("This is from getDepartmentDetailsForExternalFirstTimeLogin...End");
@@ -724,7 +724,7 @@ public List<PetsFound> getWorkListDisplayData(String depts,String email,String p
         
      
   }catch(Exception e){
-      e.printStackTrace();
+	  LOGGER.error("Exception occurred!", e);
     
  }
   finally
@@ -807,7 +807,7 @@ public List<PetsFound> getWorkListDisplayDataComplexPack(String depts,String ema
         
      
   }catch(Exception e){
-      e.printStackTrace();
+	  LOGGER.error("Exception occurred!", e);
     
  }
   finally
@@ -899,7 +899,7 @@ public List<ClassDetails> getClassDetailsByDepNos(String departmentNumbers)
         
     }
     catch (PEPFetchException e) {
-        e.printStackTrace();
+    	LOGGER.error("Exception occurred!", e);
         throw new PEPPersistencyException("Exception while getting Class Details from ADSE");
     }
     LOGGER.info("This is from getDeptDetailsByDepNoFromADSE...Exit");
@@ -944,7 +944,7 @@ private List<ClassDetails> getClassDetails(String departmentNumbers)throws PEPFe
 		}       
 
 	}catch (Exception e) {
-        e.printStackTrace();
+		LOGGER.error("Exception occurred!", e);
         LOGGER.info(" Exception in getting the class details in method -getClassDetails() ",e);
        
     }
@@ -1002,12 +1002,12 @@ public List<WorkFlow> getPetDetailsByAdvSearch(AdvanceSearch advanceSearch,List<
         LOGGER.info("getPetDetailsByAdvSearch DAO........Enter919" +workFlowList.size());
     }
     catch (SQLException e) {
-        e.printStackTrace(System.out);
+    	LOGGER.error("Exception occurred!", e);
        throw new PEPPersistencyException("SQL Exception cought from getPetDetailsByAdvSearch923");
        
     }
     catch (ParseException e) {
-        e.printStackTrace(System.out);
+    	LOGGER.error("Exception occurred!", e);
         throw new PEPPersistencyException("Parse Exception cought from getPetDetailsByAdvSearch930");
     }
     return workFlowList;
@@ -1088,7 +1088,7 @@ private List<PetsFound> getAdvWorkListDisplayData(AdvanceSearch advanceSearch)th
             LOGGER.info("End of try874.." +rows.size()+"==========" +petList.size());
       }catch(Exception e){
           LOGGER.info("inside catch dao in search");
-          e.printStackTrace(System.out);        
+          LOGGER.error("Exception occurred!", e);       
      }
       finally
       {
@@ -1175,7 +1175,7 @@ private List<PetsFound> getAdvWorkListDisplayDataComplexPack(AdvanceSearch advan
       } 
   }catch(Exception e){
       LOGGER.info("inside catch dao in search in adv complex pack");
-      e.printStackTrace(System.out);        
+      LOGGER.error("Exception occurred!", e);     
  }
   finally
   {
@@ -1473,7 +1473,7 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
                   
             
          }catch(Exception e) {
-             e.printStackTrace();
+        	 LOGGER.error("Exception occurred!", e);
          }
          finally{
              session.flush();
@@ -1598,7 +1598,8 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
         * @throws SQLException 
         * @throws ParseException 
         */
-       public List<PetsFound> getWorkListDisplayDataForParent(String depts,String email,String pepId,String supplierId, boolean vendorLogin) throws SQLException, ParseException {
+       public List<PetsFound> getWorkListDisplayDataForParent(String depts,String email,String pepId,String supplierId, 
+    		   int startIndex, int maxResults, String sortColumn, String sortOrder, boolean vendorLogin) throws SQLException, ParseException {
            LOGGER.info("This is from getWorkListDisplayDataForParent..Start" );
            LOGGER.info("depts:"+depts+",email:"+email+", pepId:"+pepId+", supplierId:"+supplierId+", vendorLogin:"+vendorLogin);
            List<PetsFound> petList = new ArrayList<PetsFound>();                                 
@@ -1611,14 +1612,16 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
                session = sessionFactory.openSession();
                tx = session.beginTransaction();      
                
-               Query query = session.createSQLQuery(xqueryConstants.getWorkListDisplayDataParent(vendorLogin));
+               Query query = session.createSQLQuery(xqueryConstants.getWorkListDisplayDataParent(vendorLogin,sortColumn,sortOrder));
 
                query.setString("email", email);
                query.setString("pepId", pepId);
                query.setString("depts", depts);
                query.setString("supplierId", supplierId);
                
-               query.setFetchSize(500);
+               //query.setFetchSize(500);
+               query.setFirstResult(startIndex);
+               query.setMaxResults(maxResults);
                
                LOGGER.info("getWorkListDisplayDataForParent...Query--->" + query);
               
@@ -1669,10 +1672,10 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
                        petList.add(pet);
                    }
                    petList = petStatusMapping(petList);
-                   Collections.sort(petList);
+                   //Collections.sort(petList);
              } 
          }catch(Exception e){
-             e.printStackTrace();
+        	 LOGGER.error("Exception occurred!", e);
         }
          finally
          {
@@ -1762,7 +1765,7 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
                    //Collections.sort(petList);
              } 
          }catch(Exception e){
-             e.printStackTrace();
+        	 LOGGER.error("Exception occurred!", e);
         }
          finally
          {
@@ -1784,7 +1787,8 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
         * @throws PEPPersistencyException
         */
        
-       public List<WorkFlow> getPetDetailsByDepNosForParent(ArrayList departmentNumbers,String email,List<String> supplierIdList)
+       public List<WorkFlow> getPetDetailsByDepNosForParent(List departmentNumbers,String email,List<String> supplierIdList,
+    		   int startIndex, int maxResults, String sortColumn, String sortOrder)
            throws PEPPersistencyException {
            
            ArrayList pepDetails = null;
@@ -1792,8 +1796,6 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
            
            try {
                    LOGGER.info("getPetDetailsByDepNosForParent....Enter");
-                   System.out.println("\n--->> departmentNumbers " + departmentNumbers);
-                   System.out.println("\n--->> email " + email);
                    StringBuffer depNumbers= new StringBuffer();
                    
                    if(departmentNumbers!=null) {
@@ -1830,29 +1832,28 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
                        }
                        LOGGER.info("Vendor id===="+vendorId);
                        
-                       
-                       
-                       List<PetsFound> petList = getWorkListDisplayDataForParent(depNumbers.toString(),email,null,vendorId,vendorLoginFlag);   // TODO 
+                       List<PetsFound> petList = getWorkListDisplayDataForParent(depNumbers.toString(),email,null,vendorId,
+                    		   startIndex,maxResults, sortColumn, sortOrder, vendorLoginFlag);   // TODO 
                        
                        //Get it ordered
-                       petList = orderPetDetailsList(petList);
+                       //petList = orderPetDetailsList(petList);
                        
                        WorkListDisplay workListDisplay = getFormatedPetDetailsForParent(petList, vendorLoginFlag);
                        workFlowList = workListDisplay.getWorkListDisplay();
                    }
                    catch (SQLException e) {
-                       e.printStackTrace();
+                	   LOGGER.error("Exception occurred!", e);
                       throw new PEPPersistencyException("SQL Exception cought from getPetDetailsByDepNosForParent");
                       
                    }
                    catch (ParseException e) {
                      
-                       e.printStackTrace();
+                	   LOGGER.error("Exception occurred!", e);
                        throw new PEPPersistencyException("Parse Exception cought from getPetDetailsByDepNosForParent");
                    }
                    
            } catch(Exception e)    {
-               e.printStackTrace();
+        	   LOGGER.error("Exception occurred!", e);
            }
            return workFlowList;
        }
@@ -1871,9 +1872,7 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
            List<StyleColor> styleColorList = new ArrayList<StyleColor>();
            
            try {
-                   LOGGER.info("getPetDetailsByDepNosForChild....Enter");
-                   System.out.println("\n--->> parentOrin " + parentOrin);
-                   System.out.println("\n--->> email " + email);                  
+                   LOGGER.info("getPetDetailsByDepNosForChild....Enter");                
                    
                    boolean vendorLoginFlag = false;
                    if(null != email)
@@ -1886,12 +1885,12 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
                    styleColorList = getFormatedPetDetailsForChild(petList);
                }
                catch (SQLException e) {
-                   e.printStackTrace();
+            	   LOGGER.error("Exception occurred!", e);
                    throw new PEPPersistencyException("SQL Exception cought from getPetDetailsByDepNosForChild");
                   
                }
                catch(Exception e) {
-                   e.printStackTrace();
+            	   LOGGER.error("Exception occurred!", e);
                    throw new PEPPersistencyException("Exception cought from getPetDetailsByDepNosForChild");
                }
            return styleColorList;
@@ -2205,7 +2204,11 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
         * @throws ParseException
         */
 
-       private List<PetsFound> getAdvWorkListDisplayDataForParent(AdvanceSearch advanceSearch)throws SQLException, ParseException  {
+
+       private List<PetsFound> getAdvWorkListDisplayDataForParent(AdvanceSearch advanceSearch,
+                                                                  int startIndex, int maxResults,
+                                                                  String sortColumn, String sortOrder)
+               throws SQLException, ParseException  {
            
            LOGGER.info("This is from getAdvWorkListDisplayDataForParent..Start" );
            List<PetsFound> petList = new ArrayList<PetsFound>();
@@ -2213,15 +2216,17 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
            XqueryConstants xqueryConstants= new XqueryConstants();
            
              Session session = null;
-             Transaction tx =  null;
-               
-             try{
+             try {
+
                session = sessionFactory.openSession();
-               tx = session.beginTransaction();      
-              //Hibernate provides a createSQLQuery method to let you call your native SQL statement directly.   
-               Query query = session.createSQLQuery(xqueryConstants.getAdvWorkListDisplayDataForParent(advanceSearch));  
+               //Hibernate provides a createSQLQuery method to let you call your native SQL statement directly.
+               Query query = session.createSQLQuery(
+            		   xqueryConstants.getAdvWorkListDisplayDataForParent(advanceSearch, sortColumn, sortOrder));  
                LOGGER.info("getAdvWorkListDisplayDataForParent Query.." + query);
                // execute delete SQL statement
+                 query.setFirstResult(startIndex).setMaxResults(maxResults);
+
+
                List<Object[]> rows = query.list();
                if (rows != null) {
                    LOGGER.info("recordsFetched..." + rows);
@@ -2276,14 +2281,13 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
              } 
          }catch(Exception e){
              LOGGER.info("inside catch dao in getAdvWorkListDisplayDataForParent");
-             e.printStackTrace(System.out);        
+             LOGGER.error("Exception occurred!", e);    
          }
          finally
          {
              LOGGER.info("recordsFetched. getAdvWorkListDisplayDataForParent finally block.." );
              session.flush();   
-             tx.commit();
-             session.close();                
+             session.close();
          }
 
          LOGGER.info("This is from getAdvWorkListDisplayDataForParent..End" );
@@ -2364,7 +2368,7 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
              } 
          }catch(Exception e){
              LOGGER.info("inside catch dao in getAdvWorkListDisplayDataForChild");
-             e.printStackTrace(System.out);        
+             LOGGER.error("Exception occurred!", e); 
          }
          finally
          {
@@ -2382,14 +2386,17 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
         * This method will fetch the WorkList Details for Parent on base of the Advance search.
         */
        
-       public List<WorkFlow> getPetDetailsByAdvSearchForParent(AdvanceSearch advanceSearch,List<String> supplierIdList,String vendorEmail)
+       public List<WorkFlow> getPetDetailsByAdvSearchForParent(AdvanceSearch advanceSearch,
+                                                               List<String> supplierIdList,String vendorEmail,
+                                                               int startIndex, int maxResults,
+                                                               String sortColumn, String sortOrder)
            throws PEPPersistencyException {
 
-           LOGGER.info("getPetDetailsByAdvSearchForParent....Enter");
+           LOGGER.info("getPetDetailsByAdvSearchForParent....Enter " + startIndex + " and end index " + maxResults);
            List<WorkFlow> workFlowList = null;
          
            try {
-               List<PetsFound> petList = getAdvWorkListDisplayDataForParent(advanceSearch);
+               List<PetsFound> petList = getAdvWorkListDisplayDataForParent(advanceSearch, startIndex, maxResults, sortColumn, sortOrder);
                LOGGER.info("getPetDetailsByAdvSearchForParent...." +petList.size());                            
                
                if(null != vendorEmail)  {  
@@ -2407,23 +2414,23 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
                petList = petList1;
                LOGGER.info("Vendor Logged in  --- petlist size bottom " + petList.size());
                }
-               petList = orderPetDetailsListAdvanceParent(petList);
-               
+               //petList = orderPetDetailsListAdvanceParent(petList);
+               LOGGER.info("advanced search --- petlist size bottom " + petList.size());
                WorkListDisplay workListDisplay = getFormatedPetDetailsForSearchPetParent(petList, false); // TODO
                workFlowList = workListDisplay.getWorkListDisplay();
                LOGGER.info("getPetDetailsByAdvSearchForParent DAO........" +workFlowList.size());
            }
            catch (SQLException e) {
-               e.printStackTrace(System.out);
+        	   LOGGER.error("Exception occurred!", e);
               throw new PEPPersistencyException("SQL Exception cought from getPetDetailsByAdvSearchForParent");
               
            }
            catch (ParseException e) {             
-               e.printStackTrace(System.out);
+        	   LOGGER.error("Exception occurred!", e);
                throw new PEPPersistencyException("Parse Exception cought from getPetDetailsByAdvSearchForParent");
            }
            catch (Exception e) {             
-               e.printStackTrace(System.out);
+        	   LOGGER.error("Exception occurred!", e);
                throw new PEPPersistencyException("Exception cought from getPetDetailsByAdvSearchForParent");
            }
            return workFlowList;
@@ -2446,16 +2453,16 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
                LOGGER.info("getPetDetailsByAdvSearchForChild DAO........" +styleColorList.size());
            }
            catch (SQLException e) {
-               e.printStackTrace(System.out);
+        	   LOGGER.error("Exception occurred!", e);
               throw new PEPPersistencyException("SQL Exception cought from getPetDetailsByAdvSearchForChild");
               
            }
            catch (ParseException e) {             
-               e.printStackTrace(System.out);
+        	   LOGGER.error("Exception occurred!", e);
                throw new PEPPersistencyException("Parse Exception cought from getPetDetailsByAdvSearchForChild");
            }
            catch (Exception e) {             
-               e.printStackTrace(System.out);
+        	   LOGGER.error("Exception occurred!", e);
                throw new PEPPersistencyException("Exception cought from getPetDetailsByAdvSearchForChild");
            }
            return styleColorList;
@@ -2625,8 +2632,8 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
      */
     @Override
     public List<WorkFlow> getAdvWorklistGroupingData(
-        final AdvanceSearch adSearch, final List<String> supplierIdList,
-        final String vendorEmail, final List<String> styleOrinList) {
+        final AdvanceSearch adSearch, final List<String> supplierIdList, final String vendorEmail, 
+        final List<String> styleOrinList, int startIndex, int maxResults, String sortColumn, String sortOrder) {
         LOGGER.info("in DAO getAdvWorklistGroupingData");
         List<WorkFlow> workFlowList = new ArrayList<WorkFlow>();
         Session session = null;
@@ -2637,7 +2644,7 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
             PropertyLoader
                 .getPropertyLoader(WorkListDisplayConstants.WORK_LIST_DISPLAY_PROPERTIES_FILE_NAME);
         if (xqueryConstants.getGroupSearchQueryForAdvSearch(adSearch,
-            styleOrinList).contains("AND")) {
+            styleOrinList, sortColumn, sortOrder).contains("AND")) {
 
             try {
                 session = sessionFactory.openSession();
@@ -2645,9 +2652,10 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
                 Query query =
                     session.createSQLQuery(xqueryConstants
                         .getGroupSearchQueryForAdvSearch(adSearch,
-                            styleOrinList));
+                            styleOrinList, sortColumn, sortOrder));
                 LOGGER.info("Grouping Query:- " + query);
 
+                query.setFirstResult(startIndex).setMaxResults(maxResults);
                 query.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
                 List<Object> rowList = query.list();
 
@@ -3361,7 +3369,7 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
      */
     @Override
     public List<WorkFlow> getWorklistGroupData(
-        final ArrayList departmentNumbers, int pageNumber, String sortColumn,
+        final List departmentNumbers, int startIndex, int maxResult, String sortColumn,
         String sortOrder) {
 
         LOGGER.info("Entering WorkListDAO.getWorklistGroupData() method.");
@@ -3373,9 +3381,6 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
         Properties prop =
             PropertyLoader
                 .getPropertyLoader(WorkListDisplayConstants.WORK_LIST_DISPLAY_PROPERTIES_FILE_NAME);
-        String recordsPerPage =
-            prop.getProperty(WorkListDisplayConstants.PAGE_LIMIT);
-        int recordInPage = Integer.parseInt(recordsPerPage);
         LOGGER.info("Department Numbers -- " + departmentNumbers);
         StringBuffer depNumbers = new StringBuffer();
 
@@ -3405,8 +3410,8 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
                 session.createSQLQuery(xqueryConstants.getWorkListGroupQuery(
                     depNumbers.toString(), sortColumn, sortOrder));
             query.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
-            query.setFirstResult(((pageNumber - 1) * recordInPage));
-            query.setMaxResults(recordInPage);
+            query.setFirstResult(startIndex);
+            query.setMaxResults(maxResult);
             rows = query.list();
 
             if (rows != null) {
@@ -3560,7 +3565,7 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
      *         Added By: Cognizant
      */
     @Override
-    public int groupWorklistSearchCount(final ArrayList departmentNumbers) {
+    public int groupWorklistSearchCount(final List departmentNumbers) {
 
         LOGGER.info("Entering WorkListDAO.groupWorklistSearchCount() method.");
         Session session = null;

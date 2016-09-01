@@ -186,17 +186,19 @@ lockClearOnBack.value='1';
 						</select>
 				</c:if>
 				<input type="hidden" id="updateDateMessage" name="updateDateMessage" value="${workflowForm.updateCompletionDateMsg}"/>
-				<c:if test="${workflowForm.totalNumberOfPets ne '0'}">
+				<!--<c:if test="${workflowForm.totalNumberOfPets ne '0'}">
 				<span class="pagebanner">&nbsp;<c:out value="${workflowForm.totalNumberOfPets}"/>
 				
 					 <fmt:message key="worklist.pets.found.displaying.label"/> 					
 					
 					 
 				
-					<c:out value="${workflowForm.startIndex}"/>&nbsp;to&nbsp;<c:out value="${workflowForm.endIndex}"/>&nbsp;of&nbsp;<c:out value="${workflowForm.totalNumberOfPets}"/>
+					<c:out value="${workflowForm.startIndex}"/>&nbsp;to&nbsp;<c:out value="${workflowForm.endIndex}"/>&nbsp;of&nbsp;<c:out value="${workflowForm.totalNumberOfPets}"/>-->
 				 <c:if test="${workflowForm.displayPagination == 'yes'}">
-				<fmt:message key="worklist.pagination.left.sq.bracket.label"/>
-							<c:choose>
+				 <fmt:message key="worklist.pagination.page.label" />
+				 	<c:out value="${workflowForm.selectedPage}" />,&nbsp;&nbsp;
+				<fmt:message key="worklist.pagination.left.sq.bracket.label"/>&nbsp;
+							<!--<c:choose>
 								<c:when test="${workflowForm.selectedPage ne '1' }" >
 								 <a href="#" onclick="getThePageContent('1')"><fmt:message key="worklist.pagination.first.label"/></a>
 								</c:when>
@@ -204,7 +206,7 @@ lockClearOnBack.value='1';
 								<fmt:message key="worklist.pagination.first.label"/>
 								</c:otherwise>
 							</c:choose>
-				<fmt:message key="worklist.pagination.left.slash.label"/>
+				<fmt:message key="worklist.pagination.left.slash.label"/>-->
 							
 							<c:choose>
 								<c:when test="${workflowForm.selectedPage ne '1' }" >
@@ -214,9 +216,9 @@ lockClearOnBack.value='1';
 								<fmt:message key="worklist.pagination.prev.label"/>
 								</c:otherwise>
 							</c:choose>
-				<fmt:message key="worklist.pagination.right.sq.bracket.label"/>
-				
-				<c:forEach items="${workflowForm.pageNumberList}" var="pageNumber"
+				<!--<fmt:message key="worklist.pagination.right.sq.bracket.label"/>-->
+				 | 
+				<!--<c:forEach items="${workflowForm.pageNumberList}" var="pageNumber"
 							varStatus="status">
 							<c:choose>
 								<c:when test="${pageNumber == workflowForm.selectedPage}" >
@@ -228,17 +230,17 @@ lockClearOnBack.value='1';
 							</c:choose>
 							<c:if test="${pageNumber ne workflowForm.totalPageno}"> ,</c:if>
 							
-				</c:forEach>
-				<fmt:message key="worklist.pagination.left.sq.bracket.label"/>
+				</c:forEach>-->
+				<!--<fmt:message key="worklist.pagination.left.sq.bracket.label"/>-->
 							<c:choose>
-								<c:when test="${workflowForm.selectedPage ne workflowForm.totalPageno }" >
+								<c:when test="${workflowForm.selectedPage < workflowForm.totalPageno }" >
 								 <a href="#" onclick="getThePageContent('${workflowForm.nextCount}')"><fmt:message key="worklist.pagination.next.label"/></a>
 								</c:when>
 								<c:otherwise>
 								<fmt:message key="worklist.pagination.next.label"/>
 								</c:otherwise>
 							</c:choose>
-				<fmt:message key="worklist.pagination.left.slash.label"/>
+				<!--<fmt:message key="worklist.pagination.left.slash.label"/>
 							
 							<c:choose>
 								<c:when test="${workflowForm.selectedPage ne workflowForm.totalPageno }" >
@@ -247,8 +249,8 @@ lockClearOnBack.value='1';
 								<c:otherwise>
 								<fmt:message key="worklist.pagination.last.label"/>
 								</c:otherwise>
-							</c:choose>
-				<fmt:message key="worklist.pagination.right.sq.bracket.label"/>
+							</c:choose>-->
+				&nbsp;<fmt:message key="worklist.pagination.right.sq.bracket.label"/>
 							
 				</span>
 				</c:if>

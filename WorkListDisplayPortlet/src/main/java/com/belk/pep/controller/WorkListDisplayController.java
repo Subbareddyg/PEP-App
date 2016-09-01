@@ -6,15 +6,11 @@ import java.io.Serializable;
 
 import com.belk.pep.util.DateUtil;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
+
 import org.apache.log4j.Logger;
 import com.belk.pep.model.StyleColor;
+
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
 import javax.portlet.Event;
@@ -46,6 +42,7 @@ import com.belk.pep.domain.PepDepartmentPK;
 import com.belk.pep.domain.PetLock;
 import com.belk.pep.exception.checked.PEPFetchException;
 import com.belk.pep.exception.checked.PEPPersistencyException;
+import com.belk.pep.exception.checked.PEPServiceException;
 import com.belk.pep.form.WorkListDisplayForm;
 import com.belk.pep.model.AdvanceSearch;
 import com.belk.pep.model.ContentStatusDropValues;
@@ -314,6 +311,7 @@ public class WorkListDisplayController implements Controller,EventAwareControlle
         List<WorkFlow> workFlowListSri = null;
         WorkListDisplayForm  renderForm = null;
         Properties prop= PropertiesFileLoader.getExternalLoginProperties();       
+        int maxResults=Integer.parseInt(prop.getProperty(WorkListDisplayConstants.PAGE_LIMIT));
         getUserDetailsFromLoginScreen(request);
         ArrayList departmentDetailsListToLoadPet = new ArrayList();
         
@@ -424,33 +422,25 @@ public class WorkListDisplayController implements Controller,EventAwareControlle
                         LOGGER.info("<<<< Line 371 >>>>>");
                         renderForm.setFirstTimesearchedDeptdetailsFromADSE(firstTimedeptdetailsFromADSE);
                     }
-                    //getting the PET details on base of supplier id(vendorID) from ADSE table.
-                    //MultiSupplierID Changes start
-                    //workFlowListSri =  workListDisplayDelegate.getPetDetailsByVendor(custuser.getVpUser().getUserEmailAddress(),custuser.getVpUser().getSupplierIdsList());
-                    //Santanu afuszr6 commented above line
-                    workFlowListSri =  workListDisplayDelegate.getPetDetailsByDepNosForParent(departmentDetailsListToLoadPet,custuser.getVpUser().getUserEmailAddress(),custuser.getVpUser().getSupplierIdsList());
-                     //workFlowList = workFlowListSri;
-                     //MultiSupplierID Changes end
-                     if(workFlowListSri != null && workFlowListSri.size() > 0){
+                    
+                    //Default Pagination
+                    int selectedPageNumber = 1;
+                    if(null!=request.getParameter(WorkListDisplayConstants.CURRENT_PAGE_NUMBER)){
+                        selectedPageNumber = Integer.valueOf(request.getParameter(WorkListDisplayConstants.CURRENT_PAGE_NUMBER)); 
+                    }
+                    
+                    // Added for Pagination Perf Enhancements
+                    String workListType = (String) request.getPortletSession().getAttribute(WorkListDisplayConstants.GROUP_WORKLIST_SESSION);
+                    workFlowListSri = getWorkFlowListFromDB(renderForm, workListType, departmentDetailsListToLoadPet, 
+                    		custuser.getVpUser().getUserEmailAddress(), custuser.getVpUser().getSupplierIdsList(), selectedPageNumber, maxResults);
+                    
+                    if(workFlowListSri != null && workFlowListSri.size() > 0){
                          LOGGER.info("<<<< Line 382 >>>>>");
-                    //LOGGER.info("setAdvanceSearchfieldsFromAjax 410 fullWorkList2:"+renderForm.getFullWorkFlowlist().size()+" workFlowlist2:"+renderForm.getWorkFlowlist().size());    
-                     renderForm.setWorkFlowlist(workFlowListSri);
-                     renderForm.setFullWorkFlowlist(workFlowListSri);//fix for 496
-                     //LOGGER.info("setAdvanceSearchfieldsFromAjax 413 fullWorkList2:"+renderForm.getFullWorkFlowlist().size()+" workFlowlist2:"+renderForm.getWorkFlowlist().size());
-                    // workListDisplayForm.setWorkFlowlist(workFlowList);
-                     mv.addObject(WorkListDisplayConstants.IS_PET_AVAILABLE,WorkListDisplayConstants.YES_VALUE);
-                     //Handling sorting and Pagination
-                     //Default sorting. needs to remove if the sorted list is coming from SQL quey
-                     String selectedColumn=WorkListDisplayConstants.COMPLETION_DATE;
-                     //Commented by AFUAXK4 
-                     //handlingSortingRender(selectedColumn,renderForm,workFlowListSri);
-                   //Default Pagination  
-                     int selectedPageNumber = 1;
-                     if(null!=request.getParameter(WorkListDisplayConstants.CURRENT_PAGE_NUMBER)){
-                         selectedPageNumber = Integer.valueOf(request.getParameter(WorkListDisplayConstants.CURRENT_PAGE_NUMBER)); 
-                     }
-                     handlingPaginationRender(selectedPageNumber,renderForm,workFlowListSri);
-                     renderForm.setSelectedPage(String.valueOf(selectedPageNumber));
+                         renderForm.setWorkFlowlist(workFlowListSri);
+	                     mv.addObject(WorkListDisplayConstants.IS_PET_AVAILABLE,WorkListDisplayConstants.YES_VALUE);
+	                   
+	                     handlingPaginationRender(selectedPageNumber,renderForm,workFlowListSri);
+	                     renderForm.setSelectedPage(String.valueOf(selectedPageNumber));
                     }else{
                         LOGGER.info("workFlowList.size == 0 On default Load");
                         mv.addObject(WorkListDisplayConstants.IS_PET_AVAILABLE,WorkListDisplayConstants.YES_VALUE);
@@ -495,53 +485,24 @@ public class WorkListDisplayController implements Controller,EventAwareControlle
                 }
                 
                 String workListType =
-                    (String) request.getPortletSession().getAttribute(
-                        WorkListDisplayConstants.GROUP_WORKLIST_SESSION);
-                int totalRecords = 0;
+                    (String) request.getPortletSession().getAttribute(WorkListDisplayConstants.GROUP_WORKLIST_SESSION);
                 renderForm.setWorkListType(workListType);
-                if (WorkListDisplayConstants.GROUPINGS
-                    .equalsIgnoreCase(workListType)) {
-                    workFlowListSri =
-                        workListDisplayDelegate.getGroupWorkListDetails(
-                            departmentDetailsListToLoadPet, selectedPageNumber,
-                            WorkListDisplayConstants.EMPTY_STRING, WorkListDisplayConstants.ASCENDING);
-                    totalRecords =
-                        workListDisplayDelegate
-                            .getGroupWorkListCountDetails(departmentDetailsListToLoadPet);
-                }
-                else {
-                    workFlowListSri =
-                        workListDisplayDelegate.getPetDetailsByDepNosForParent(
-                            departmentDetailsListToLoadPet, email,
-                            supplierIdList);
-                }
+                
+                workFlowListSri = getWorkFlowListFromDB(renderForm, workListType, departmentDetailsListToLoadPet, 
+                		email, supplierIdList, selectedPageNumber, maxResults);
                 renderForm.setWorkFlowlist(workFlowListSri); 
-                renderForm.setFullWorkFlowlist(workFlowListSri);//fix for 496
                 
                 //Changes for multi supplier id end
                 if(workFlowListSri!=null && workFlowListSri.size()>0){
                     renderForm.setPetNotFound(null);
-                    String selectedColumn=WorkListDisplayConstants.COMPLETION_DATE;                
-                    if (WorkListDisplayConstants.GROUPINGS
-                        .equalsIgnoreCase(workListType)) {
-                        handlingPaginationRenderGroups(selectedPageNumber,
-                            renderForm, workFlowListSri, totalRecords);
-                    }
-                    else {
-                        handlingPaginationRender(selectedPageNumber,
-                            renderForm, workFlowListSri);
-                    }
+                    handlingPaginationRender(selectedPageNumber,renderForm, workFlowListSri);
                     renderForm.setSelectedPage(String.valueOf(selectedPageNumber));
                 }else{//There is no PET for searched content
                     LOGGER.info(" <<<< Line 457 >>>>>");
                     renderForm.setPetNotFound(prop.getProperty(WorkListDisplayConstants.PET_NOT_FOUND));
                     renderForm.setTotalNumberOfPets("0");
                 }
-            }/*else{//There is no PET for searched content
-                LOGGER.info("Line 458");
-                renderForm.setPetNotFound(prop.getProperty(WorkListDisplayConstants.PET_NOT_FOUND));
-                renderForm.setTotalNumberOfPets("0");
-            }*/
+            }
 
             populatingAdvanceSearchDefaultValues(renderForm); 
             
@@ -702,68 +663,36 @@ public class WorkListDisplayController implements Controller,EventAwareControlle
     private void handlingPaginationRender(int selectedPageNumber, WorkListDisplayForm renderForm, List<WorkFlow> workFlowListSri) throws IOException {
         LOGGER.info("WorkListDisplayController:handlingPagination:Enter");
         if(workFlowListSri != null){
-            //fix for 496 start
-            int numberOfPets = renderForm.getFullWorkFlowlist().size();
-            workFlowListSri = renderForm.getFullWorkFlowlist();
-            if(null!=renderForm){
-                if(null!=renderForm.getTotalNumberOfPets()){
-                    numberOfPets = Integer.parseInt(renderForm.getTotalNumberOfPets().toString());
-                    
-                }
+            //fix for 496 start\
+        	if(null!=renderForm){
+        		workFlowListSri = renderForm.getWorkFlowlist();
             }
+        	int numberOfPets = workFlowListSri.size();
             renderForm.setTotalNumberOfPets(String.valueOf(numberOfPets));
             //Setting the limit
             Properties prop= PropertiesFileLoader.getExternalLoginProperties();
             renderForm.setPageLimit(prop.getProperty(WorkListDisplayConstants.PAGE_LIMIT));
             //Setting the number of pages            
             int numberOfPages = 1;
+            
             double numPage = 1;
             int pageLimit = Integer.parseInt(prop.getProperty(WorkListDisplayConstants.PAGE_LIMIT));
-            if(numberOfPets>pageLimit){
-                   double pageLimeiDoub = Double.parseDouble(String.valueOf(pageLimit));
-                   numPage = numberOfPets/pageLimeiDoub;
-                   numPage = Math.ceil(Double.parseDouble(String.valueOf(numPage)));
-                }
-                   numberOfPages = (int) numPage;
+            if(numberOfPets>=pageLimit){ 
+            	// Pagination Enhancements - if numberOfPets >= pageLimit, assume next page is needed
+            	numPage = selectedPageNumber+1;
+            }
+            numberOfPages = (int) numPage;
             
-            //Setting the page list
-            ArrayList<String> pageNumberList = new ArrayList();
-            for(int i=0;i<numberOfPages;i++){
-                pageNumberList.add(String.valueOf(i+1)); 
-            }
-            renderForm.setPageNumberList(pageNumberList);
-            //Setting the first page Default
-            LOGGER.info("Selected Page number is=="+selectedPageNumber);
-            int startindex= 0;
-            int endIndex= 9;
-            startindex= (selectedPageNumber * pageLimit) - pageLimit;
-            endIndex= (selectedPageNumber * pageLimit) - 1;
-            //Logic for last page
-            if(selectedPageNumber==numberOfPages  ){
-                endIndex =  numberOfPets;  
-            }
-            //fix for 496 end
-            LOGGER.info("Start index is =="+startindex+"endIndex is =="+endIndex);
-            LOGGER.info("workFlowListSri size:" + workFlowListSri.size());
-            List currentPageworkFlowList = workFlowListSri.subList(startindex, endIndex);
             renderForm.setSelectedPage(String.valueOf(selectedPageNumber));
             renderForm.setTotalPageno(String.valueOf(numberOfPages));
             renderForm.setPreviousCount(String.valueOf(selectedPageNumber-1));
             renderForm.setNextCount(String.valueOf(selectedPageNumber+1));
-            renderForm.setWorkFlowlist(currentPageworkFlowList);
-            renderForm.setFullWorkFlowlist(workFlowListSri);
-            if(numberOfPages>1) {
+            
+            if(numberOfPages>1 || selectedPageNumber>1) {
                 renderForm.setDisplayPagination("yes");
-                renderForm.setStartIndex(String.valueOf(startindex+1));
-                renderForm.setEndIndex(String.valueOf(endIndex+1));
-                if(selectedPageNumber==numberOfPages  ){
-                    renderForm.setEndIndex(String.valueOf(endIndex));  
-                }
-
-            } else {
+            } 
+            else {
                 renderForm.setDisplayPagination("no");
-                renderForm.setStartIndex(String.valueOf(startindex+1));
-                renderForm.setEndIndex(String.valueOf(endIndex));
             }
         }
         
@@ -1476,6 +1405,7 @@ private void assignRole(WorkListDisplayForm workListDisplayForm2,
     public ModelAndView handleResourceRequest(ResourceRequest request,
         ResourceResponse response) throws Exception {
         Properties prop= PropertiesFileLoader.getExternalLoginProperties();
+        int maxResults=Integer.parseInt(prop.getProperty(WorkListDisplayConstants.PAGE_LIMIT));
         
         if((String)request.getPortletSession().getAttribute("formSessionKey")!=null)
         {
@@ -1520,64 +1450,17 @@ private void assignRole(WorkListDisplayForm workListDisplayForm2,
             setUserDataToForm(resourceForm, custuser);
         }
         
-      //Pagination flow
-        String pageNoGroup ="1";
-        if(null!=request.getParameter(WorkListDisplayConstants.AJAX_PAGE_NO)&& request.getParameter(WorkListDisplayConstants.AJAX_PAGE_NO).length()>0){
-            pageNoGroup = request.getParameter(WorkListDisplayConstants.AJAX_PAGE_NO);
-            LOGGER.info("Page Number Group="+pageNoGroup);
-        }
         //Get the Worklist 
-        List workFlowList = new ArrayList();
-        List fullWorkList = new ArrayList();
         String workListType =
-            (String) request.getPortletSession().getAttribute(
-                WorkListDisplayConstants.GROUP_WORKLIST_SESSION);
-        int totalRecords = 0;
-        ArrayList deptList =
-            (ArrayList) resourceForm.getSelectedDepartmentFromDB();
-        if (WorkListDisplayConstants.GROUPINGS.equalsIgnoreCase(workListType)
-            && !WorkListDisplayConstants.GET_CHILD_GROUP
-                .equalsIgnoreCase(callType)) {
-            String selectedColumnName =
-                request.getParameter(WorkListDisplayConstants.SELECTED_COLUMN_NAME);
-            String fromPage = request.getParameter(WorkListDisplayConstants.FROM_PAGE);
-            LOGGER.info("Selected Column Name is=" + selectedColumnName);
-
-            String ascDescOrder = WorkListDisplayConstants.ASCENDING;
-            if (fromPage != null && fromPage.equals(WorkListDisplayConstants.PAGINATION)) {
-                if (acendingList != null && acendingList.size() > 0) {
-                    ascDescOrder = WorkListDisplayConstants.ASCENDING;
-                }
-                else if (decendingList != null && decendingList.size() > 0) {
-                    ascDescOrder = WorkListDisplayConstants.DESCENDING;
-                }
-            }
-            else {
-                findTypeOfSortingRender(selectedColumnName, resourceForm);
-                if (resourceForm.getSortingAscending().equals(
-                    WorkListDisplayConstants.FALSE_VALUE)) {
-                    ascDescOrder = WorkListDisplayConstants.DESCENDING;
-                }
-            }
-            LOGGER.info("Ascending: " + ascDescOrder);
-            workFlowList =
-                workListDisplayDelegate.getGroupWorkListDetails(deptList,
-                    Integer.parseInt(pageNoGroup), selectedColumnName,
-                    ascDescOrder);
-            fullWorkList = workFlowList;
-            totalRecords =
-                workListDisplayDelegate.getGroupWorkListCountDetails(deptList);
-            resourceForm.setSelectedColumn(selectedColumnName);
-        }
-        else {
-            workFlowList = resourceForm.getWorkFlowlist();
-            fullWorkList = resourceForm.getFullWorkFlowlist();
-        }
+            (String) request.getPortletSession().getAttribute(WorkListDisplayConstants.GROUP_WORKLIST_SESSION);
+        ArrayList deptList = (ArrayList) resourceForm.getSelectedDepartmentFromDB();
+        String fromPage = request.getParameter(WorkListDisplayConstants.FROM_PAGE);
+        
+        List workFlowList = resourceForm.getWorkFlowlist();
         resourceForm.setWorkFlowlist(workFlowList);
-        resourceForm.setFullWorkFlowlist(fullWorkList);
+        
         //Inactivate and Activate flow
         String statusParameter = request.getParameter(WorkListDisplayConstants.PET_STATUS_PARAMETER);
-        
         
         //PET LOCKING FUNCTIONALITY.
         String lockedPet = request.getParameter("lockedPet");
@@ -1587,8 +1470,6 @@ private void assignRole(WorkListDisplayForm workListDisplayForm2,
          isPetLocked( request,
               response,lockedPet,lockedPettype);
         }
-        
-        
         
         LOGGER.info("statusParameter:::"+ statusParameter);
         LOGGER.info("Search flag for inactivation::: "+request
@@ -1649,69 +1530,106 @@ private void assignRole(WorkListDisplayForm workListDisplayForm2,
         }
         
         
+        
         //Pagination flow
         String pageNo ="1";
-        int count = 0;
-        if(null!=request.getParameter(WorkListDisplayConstants.AJAX_PAGE_NO)&& request.getParameter(WorkListDisplayConstants.AJAX_PAGE_NO).length()>0){
+        //int count = 0;
+        if(fromPage != null && fromPage.equals(WorkListDisplayConstants.PAGINATION) && null!=request.getParameter(WorkListDisplayConstants.AJAX_PAGE_NO) 
+        		&& request.getParameter(WorkListDisplayConstants.AJAX_PAGE_NO).length()>0){
             pageNo = request.getParameter(WorkListDisplayConstants.AJAX_PAGE_NO);
             LOGGER.info("Page Number="+pageNo);
-            count = 1;
-            if (WorkListDisplayConstants.GROUPINGS
-                .equalsIgnoreCase(workListType)) {
-                handlingPaginationRenderGroups(Integer.parseInt(pageNo),
-                    resourceForm, fullWorkList, totalRecords);
+            int selectedPageNumber = Integer.parseInt(pageNo);
+            
+            // Handling pagination for advanced search results scenario to retain the earlier captured parameters for
+            // advanced search.
+            boolean isAdvSearchUsed = 
+            		WorkListDisplayConstants.TRUE_VALUE.equals(request.getPortletSession().getAttribute("isAdvSearchUsed")) ? true : false;
+            LOGGER.debug("Advanced search property from form " + resourceForm.getAdvSearchClicked() + " session parameter " + isAdvSearchUsed);
+            if (resourceForm.getAdvSearchClicked() != null
+                    && resourceForm.getAdvSearchClicked().equals(WorkListDisplayConstants.YES_VALUE) || isAdvSearchUsed) {
+            	workFlowList = getWorkFlowListForAdvSearchFromDB(resourceForm, callType, resourceForm.getAdvanceSearch(), 
+            			resourceForm.getVendorEmail(), supplierIdList, selectedPageNumber, maxResults);
+                resourceForm.setSearchClicked(WorkListDisplayConstants.YES_VALUE);
+                resourceForm.setAdvSearchClicked(WorkListDisplayConstants.YES_VALUE);
+                request.getPortletSession().setAttribute("isAdvSearchUsed", WorkListDisplayConstants.TRUE_VALUE);
+            } else {
+            	workFlowList = getWorkFlowListFromDB(resourceForm, workListType, resourceForm.getSelectedDepartmentFromDB(), 
+                		resourceForm.getVendorEmail(), supplierIdList, selectedPageNumber, maxResults);
             }
-            else {
-                handlingPaginationRender(Integer.parseInt(pageNo),
-                    resourceForm, fullWorkList);
-            }           
+            resourceForm.setWorkFlowlist(workFlowList);
+            
+            //Changes for multi Supplier id end
+            if(workFlowList != null && workFlowList.size()>0){
+                resourceForm.setPetNotFound(null); 
+            }else{//There is no PET for searched content
+                resourceForm.setPetNotFound(prop.getProperty(WorkListDisplayConstants.PET_NOT_FOUND)); 
+                resourceForm.setTotalNumberOfPets("0");//Setting the pet count to Zero
+            }
+            
+             //Fix for Defect 218 & 263 Start
+            resourceForm.setTotalNumberOfPets(String.valueOf(workFlowList.size()));
+            handlingPaginationRender(selectedPageNumber,resourceForm, workFlowList);// fix for 496                     
+            resourceForm.setSelectedPage(String.valueOf(selectedPageNumber));        
         }
+        
         //Sorting Flow
-        String selectedColumn = WorkListDisplayConstants.COMPLETION_DATE;
-        if(null!=request.getParameter(WorkListDisplayConstants.AJAX_SELECTED_COLUMN_NAME) 
-                && request.getParameter(WorkListDisplayConstants.AJAX_SELECTED_COLUMN_NAME).length()>0
-                && count == 0)
-        {
-            selectedColumn = request.getParameter(WorkListDisplayConstants.AJAX_SELECTED_COLUMN_NAME);
+        else if(null!=request.getParameter(WorkListDisplayConstants.AJAX_SELECTED_COLUMN_NAME) 
+                && request.getParameter(WorkListDisplayConstants.AJAX_SELECTED_COLUMN_NAME).length()>0) {
+            String selectedColumn = request.getParameter(WorkListDisplayConstants.AJAX_SELECTED_COLUMN_NAME);
             LOGGER.info("Selected Column is="+selectedColumn);
-            LOGGER.info("Worklist Type is=" + workListType);
-            if (WorkListDisplayConstants.GROUPINGS
-                .equalsIgnoreCase(workListType)) {
-                resourceForm.setWorkFlowlist(workFlowList);
-                resourceForm.setFullWorkFlowlist(workFlowList);
-                resourceForm.setSelectedColumn(selectedColumn);
-                String fromPageSource = request.getParameter(WorkListDisplayConstants.FROM_PAGE);
-                if (fromPageSource == null
-                    || !fromPageSource.equals(WorkListDisplayConstants.PAGINATION)) {
-                    handlingPaginationRenderGroups(1, resourceForm,
-                        workFlowList, totalRecords);
-                }
+            
+            handlingSortingRender(selectedColumn, resourceForm, workFlowList);
+            
+            LOGGER.info("Selected Column is="+selectedColumn);
+            
+            int selectedPageNumber = Integer.parseInt(pageNo);
+            
+            // Handling sorting for advanced search results scenario to retain the earlier captured parameters for
+            // advanced search.
+            boolean isAdvSearchUsed = 
+            		WorkListDisplayConstants.TRUE_VALUE.equals(request.getPortletSession().getAttribute("isAdvSearchUsed")) ? true : false;
+            LOGGER.debug("Advanced search property from form " + resourceForm.getAdvSearchClicked() + " session parameter " + isAdvSearchUsed);
+            if (resourceForm.getAdvSearchClicked() != null
+                    && resourceForm.getAdvSearchClicked().equals(WorkListDisplayConstants.YES_VALUE) || isAdvSearchUsed) {
+            	
+            	workFlowList = getWorkFlowListForAdvSearchFromDB(resourceForm, callType, resourceForm.getAdvanceSearch(), 
+            			resourceForm.getVendorEmail(), supplierIdList, selectedPageNumber, maxResults);
+                resourceForm.setSearchClicked(WorkListDisplayConstants.YES_VALUE);
+                resourceForm.setAdvSearchClicked(WorkListDisplayConstants.YES_VALUE);
+                request.getPortletSession().setAttribute("isAdvSearchUsed", WorkListDisplayConstants.TRUE_VALUE);
+                
+            } else {
+            	workFlowList = getWorkFlowListFromDB(resourceForm, workListType, resourceForm.getSelectedDepartmentFromDB(), 
+                		resourceForm.getVendorEmail(), supplierIdList, selectedPageNumber, maxResults);
             }
-            else {
-                /**
-                 * 031916 afuszr6 for 1012
-                 */
-                // handlingSortingRender(selectedColumn, resourceForm,
-                // workFlowList);
-                handlingSortingRender(selectedColumn, resourceForm,
-                    fullWorkList);
-                handlingPaginationRender(1, resourceForm, fullWorkList);// fix
-                                                                        // for
-                                                                        // 496
+            resourceForm.setWorkFlowlist(workFlowList);
+            
+            //Changes for multi Supplier id end
+            if(workFlowList != null && workFlowList.size()>0){
+                resourceForm.setPetNotFound(null); 
+            }else{//There is no PET for searched content
+                resourceForm.setPetNotFound(prop.getProperty(WorkListDisplayConstants.PET_NOT_FOUND)); 
+                resourceForm.setTotalNumberOfPets("0");//Setting the pet count to Zero
             }
+            
+            //Fix for Defect 218 & 263 Start
+            resourceForm.setTotalNumberOfPets(String.valueOf(workFlowList.size()));
+            handlingPaginationRender(selectedPageNumber,resourceForm, workFlowList);// fix for 496    
+            resourceForm.setSelectedPage(String.valueOf(selectedPageNumber));
         }
+        
         // Department Flow
-        String departmentOperation = null;
-        String selectedDepartments = null;
-        if(null!=request.getParameter(WorkListDisplayConstants.AJAX_DEPARTMENT_OPERATION) 
+        else if(null!=request.getParameter(WorkListDisplayConstants.AJAX_DEPARTMENT_OPERATION) 
                 && request.getParameter(WorkListDisplayConstants.AJAX_DEPARTMENT_OPERATION).length()>0){
-            departmentOperation = request.getParameter(WorkListDisplayConstants.AJAX_DEPARTMENT_OPERATION);
+        	String departmentOperation = request.getParameter(WorkListDisplayConstants.AJAX_DEPARTMENT_OPERATION);
             // Department save and close Flow
                 if(WorkListDisplayConstants.DEP_SAVE_CLOSE.equalsIgnoreCase(departmentOperation)){
                     LOGGER.info("Handling Save and Close operation.operation..." + departmentOperation+" advSearchClick:"+request.getParameter(WorkListDisplayConstants.SEARCH_CLICKED));
-                    resourceForm.setSearchClicked("no");
+                    resourceForm.setSearchClicked(WorkListDisplayConstants.NO_VALUE);
+                    resourceForm.setAdvSearchClicked(WorkListDisplayConstants.NO_VALUE);
+                    request.getPortletSession().setAttribute("isAdvSearchUsed", WorkListDisplayConstants.FALSE_VALUE);
                     if(null!=request.getParameter("selectedDepartments")&& request.getParameter("selectedDepartments").length()>0){
-                    selectedDepartments =  request.getParameter("selectedDepartments"); 
+                    String selectedDepartments =  request.getParameter("selectedDepartments"); 
                     LOGGER.info("Departmentts.." + selectedDepartments);
                     //Get the department details array by using comma separator
                     
@@ -1829,22 +1747,12 @@ private void assignRole(WorkListDisplayForm workListDisplayForm2,
                         if(custuser!=null && custuser.getVpUser()!=null){
                            supplierIdList =  custuser.getVpUser().getSupplierIdsList(); 
                         }
-                        if (WorkListDisplayConstants.GROUPINGS.equalsIgnoreCase(workListType)) {                                
-                                workFlowList =
-                                    workListDisplayDelegate.getGroupWorkListDetails(updatedDepartmentFromDB,
-                                        Integer.parseInt(pageNoGroup), WorkListDisplayConstants.EMPTY_STRING,
-                                        WorkListDisplayConstants.ASCENDING);
-                                totalRecords =
-                                    workListDisplayDelegate.getGroupWorkListCountDetails(updatedDepartmentFromDB);
-                        }
-                        else {
-                            workFlowList =
-                                workListDisplayDelegate
-                                    .getPetDetailsByDepNosForParent(
-                                        updatedDepartmentFromDB,
-                                        resourceForm.getVendorEmail(),
-                                        supplierIdList);
-                        }
+                        
+                        int selectedPageNumber = Integer.parseInt(pageNo);
+                        workFlowList = getWorkFlowListFromDB(resourceForm, workListType, updatedDepartmentFromDB, 
+                        		resourceForm.getVendorEmail(), supplierIdList, selectedPageNumber, maxResults);
+                        resourceForm.setWorkFlowlist(workFlowList);
+                        
                         //Changes for multi Supplier id end
                         if(workFlowList != null && workFlowList.size()>0){
                             resourceForm.setPetNotFound(null); 
@@ -1852,27 +1760,12 @@ private void assignRole(WorkListDisplayForm workListDisplayForm2,
                             resourceForm.setPetNotFound(prop.getProperty(WorkListDisplayConstants.PET_NOT_FOUND)); 
                             resourceForm.setTotalNumberOfPets("0");//Setting the pet count to Zero
                         }
-                        resourceForm.setWorkFlowlist(workFlowList);
-                        resourceForm.setFullWorkFlowlist(workFlowList);
+                        
                          //Fix for Defect 218 & 263 Start
                         resourceForm.setTotalNumberOfPets(String.valueOf(workFlowList.size()));
-                        int selectedPageNumber = 1;
-                        if(null!=request.getParameter(WorkListDisplayConstants.CURRENT_PAGE_NUMBER)){
-                            selectedPageNumber = Integer.valueOf(request.getParameter(WorkListDisplayConstants.CURRENT_PAGE_NUMBER)); 
-                        }
-                        if (WorkListDisplayConstants.GROUPINGS
-                            .equalsIgnoreCase(workListType)) {
-                            handlingPaginationRenderGroups(selectedPageNumber,
-                                resourceForm, fullWorkList, totalRecords);
-                        }
-                        else {
-                            handlingPaginationRender(selectedPageNumber,
-                                resourceForm, fullWorkList);// fix for 496
-                        }                       
+                        handlingPaginationRender(selectedPageNumber,resourceForm, workFlowList);// fix for 496                    
                         resourceForm.setSelectedPage(String.valueOf(selectedPageNumber));
                         //Fix for Defect 218 & 263 Start Ends
-
-                        
                     }else{
                         LOGGER.info("Table is not updated");
                     }
@@ -1961,285 +1854,256 @@ private void assignRole(WorkListDisplayForm workListDisplayForm2,
                     List closeSearchedDeptdetailsFromADSE = new ArrayList();
                     resourceForm.setSearchedDeptdetailsFromADSE(closeSearchedDeptdetailsFromADSE);
                     resourceForm.setDeptSearchResult("");
-                    
-                   }
-        }
-        
-        LOGGER.info("Advance Search Operation" + request.getParameter(WorkListDisplayConstants.ADV_SEARCH_OPERATION_PARAM));
-        
-        //Fix for Defect 748 Issue 1 Start AFUSZR6
-        if(null!=request.getParameter("advSearchPopUp")){
-            LOGGER.info("Call Class Details block::");
-            
-            String departDetails = request.getParameter("defaultDeptNos");
-            String advDepartDetails = request.getParameter("advSearchDept");
-            String dateFrom = request.getParameter("completionDateFrom");
-            String dateTo = request.getParameter("completionDateTo");
-            String imageStatus = request.getParameter("imageStatus");
-            String contentStatus = request.getParameter("contentStatus");
-            String petStatus =  request.getParameter("petStatus");
-            String requestType =  request.getParameter("requestType");
-           
-            AdvanceSearch adSearch = resourceForm.getAdvanceSearch();
-            if(null!=adSearch){
-                if(null!=adSearch.getDeptNumbers() && !adSearch.getDeptNumbers().equals("")){
-                    adSearch.setDeptNumbers(advDepartDetails);                    
-                    resourceForm.setAdvanceSearch(adSearch);
+
                 }
             }
-            LOGGER.info("departDetails:::" + departDetails);
-            
-            
-            resourceForm.getAdvanceSearch().setDateFrom(dateFrom);
-            resourceForm.getAdvanceSearch().setDateTo(dateTo);
-            resourceForm.getAdvanceSearch().setImageStatus(imageStatus);
-            resourceForm.getAdvanceSearch().setContentStatus(contentStatus);
-            resourceForm.getAdvanceSearch().setActive(petStatus);
-            resourceForm.getAdvanceSearch().setRequestType(requestType);
-            List<ClassDetails> classDetailsList1 = new ArrayList<ClassDetails>();
-            classDetailsList1 = workListDisplayDelegate.getClassDetailsByDepNos(departDetails);
-            populateClassDetailsInAdvanceSearch(classDetailsList1, resourceForm);
-        }//Fix for Defect 748 Issue 1 End AFUSZR6
-        
-        //Advance Search Flow
-        if(null!=request.getParameter(WorkListDisplayConstants.ADV_SEARCH_OPERATION_PARAM) 
-                && request.getParameter(WorkListDisplayConstants.ADV_SEARCH_OPERATION_PARAM).length()>0){
-            String advSearchOperation=request.getParameter(WorkListDisplayConstants.ADV_SEARCH_OPERATION_PARAM);
-            LOGGER.info("This is from Advance Search Operation" + advSearchOperation);   
-            if(WorkListDisplayConstants.ADV_SEARCH_OPERATION_RESET.equals(advSearchOperation)){
-                LOGGER.info("This is from Advance Search Reset operation");
-                populatingAdvanceSearchDefaultValues(resourceForm);
-            }
-            if(WorkListDisplayConstants.ADV_SEARCH_OPERATION_SAVEANDCLOSE.equals(advSearchOperation)){
-                LOGGER.info("This is from Advance Search Save and Close operation");
-                String departmentDetails = request.getParameter("advSelectedDepartments");
-                LOGGER.info("Department Details  Advance Search and close operation"+departmentDetails);
-                //--------------------------574 Start ----------------------------------------//
-                
-                String[] selectedDeptArray = departmentDetails.split(",");
-                LOGGER.info("-----------selectedDeptArray Length in ADVSEACRH-----------" + selectedDeptArray.length);
-                List <PepDepartment> updatedPePDetailsToDb = new ArrayList();
-                //Getting the department details using id if existing in the current DB and to add new Department details
-                if(workFlowList!=null) {
-                    resourceForm.setTotalNumberOfPets(String.valueOf(workFlowList.size()));
-                } else {
-                    resourceForm.setTotalNumberOfPets("0");
-                }
-                
-                boolean skipIfFoundExistingDept1 = false;
-                boolean skipIfFoundSecondSection1 = false;
-                for(int i=0;i<selectedDeptArray.length;i++){
-                    skipIfFoundExistingDept1 = false;
-                    skipIfFoundSecondSection1 = false;
-                    LOGGER.info("Departmentts. in for.ADVSEARCH" + selectedDeptArray[i]);
-                    if(null!=resourceForm.getSelectedPepDepartmentFromDB()){
-                        LOGGER.info("Department is from PEP details from DB in ADVSEACH********************" );
-                        for(int j=0;j<resourceForm.getSelectedPepDepartmentFromDB().size();j++){
-                            PepDepartment pepdetails =resourceForm.getSelectedPepDepartmentFromDB().get(j);
-                            if(pepdetails.getId().getDeptId().equalsIgnoreCase(selectedDeptArray[i].trim())){
-                                updatedPePDetailsToDb.add(pepdetails);  
-                                LOGGER.info("Adding PepDept details in AdvSeach::::::"+pepdetails.getId().getDeptId());
-                                skipIfFoundExistingDept1 = true; 
-                            }
-                           
-                        }
-                    }
-                    // Adding the newly added Department details
-                    if(!skipIfFoundExistingDept1){
-                    if(null!=resourceForm.getSearchedDeptdetailsFromADSE()){
-                        LOGGER.info("Department is from PEP details ----ADVSEACR---Search********************" );
-                        for(int k=0;k<resourceForm.getSearchedDeptdetailsFromADSE().size();k++){
-                            DepartmentDetails deptDetails =resourceForm.getSearchedDeptdetailsFromADSE().get(k);
-                            if(deptDetails.getId().equalsIgnoreCase(selectedDeptArray[i].trim())){
-                                //Creating new PepDepartmentDetails to update in DB
-                                PepDepartment pepDetails = new PepDepartment();
-                                pepDetails.setDeptName(deptDetails.getDesc());
-                                PepDepartmentPK pepDepartmentPk= new PepDepartmentPK();
-                                pepDepartmentPk.setDeptId(deptDetails.getId());
-                                pepDepartmentPk.setPepUserId(resourceForm.getPepUserID());
-                                pepDetails.setId(pepDepartmentPk);
-                                updatedPePDetailsToDb.add(pepDetails);  
-                                LOGGER.info("Adding PepDept details"+pepDetails.getId().getDeptId());
-                                skipIfFoundSecondSection1 = true;
-                             }
-                       }
-                     }
-                    
-                  //Adding the Searched Department for Initial time login added
-                    if(!skipIfFoundSecondSection1){
-                        if(null!=resourceForm.getFirstTimesearchedDeptdetailsFromADSE()){
-                            LOGGER.info("Department is from PEP details first time *******************" );
-                            for(int k=0;k<resourceForm.getFirstTimesearchedDeptdetailsFromADSE().size();k++){
-                                DepartmentDetails deptDetails =resourceForm.getFirstTimesearchedDeptdetailsFromADSE().get(k);
-                                if(deptDetails.getId().equalsIgnoreCase(selectedDeptArray[i].trim())){
-                                    //Creating new PepDepartmentDetails to update in DB
-                                    PepDepartment pepDetails = new PepDepartment();
-                                    pepDetails.setDeptName(deptDetails.getDesc());
-                                    PepDepartmentPK pepDepartmentPk= new PepDepartmentPK();
-                                    pepDepartmentPk.setDeptId(deptDetails.getId());
-                                    pepDepartmentPk.setPepUserId(resourceForm.getPepUserID());
-                                    pepDetails.setId(pepDepartmentPk);
-                                    updatedPePDetailsToDb.add(pepDetails);  
-                                    LOGGER.info("-----Adding PepDept details in ADVSEACRH-----"+pepDetails.getId().getDeptId());
-                                 }
-                           }
-                         }
-                        }
+
+
+
+            //Fix for Defect 748 Issue 1 Start AFUSZR6
+            else if(null!=request.getParameter("advSearchPopUp")){
+                LOGGER.info("Advance Search Operation" + request.getParameter(WorkListDisplayConstants.ADV_SEARCH_OPERATION_PARAM));
+                LOGGER.info("Call Class Details block::");
+
+                String departDetails = request.getParameter("defaultDeptNos");
+                String advDepartDetails = request.getParameter("advSearchDept");
+                String dateFrom = request.getParameter("completionDateFrom");
+                String dateTo = request.getParameter("completionDateTo");
+                String imageStatus = request.getParameter("imageStatus");
+                String contentStatus = request.getParameter("contentStatus");
+                String petStatus =  request.getParameter("petStatus");
+                String requestType =  request.getParameter("requestType");
+
+                AdvanceSearch adSearch = resourceForm.getAdvanceSearch();
+                if(null!=adSearch){
+                    if(null!=adSearch.getDeptNumbers() && !adSearch.getDeptNumbers().equals("")){
+                        adSearch.setDeptNumbers(advDepartDetails);
+                        resourceForm.setAdvanceSearch(adSearch);
                     }
                 }
-                
-               //Sending the updated pepdetails list to DB layer for update operation
-                boolean isPepDeptUpdated = workListDisplayDelegate.updatePepDeptDetails(updatedPePDetailsToDb,resourceForm.getPepUserID());
-                LOGGER.info("isPepDeptUpdated="+isPepDeptUpdated);
-                if(isPepDeptUpdated){//Table is updated
-                    //Setting the PepDepartment details into the FORM
-                    resourceForm.setSelectedPepDepartmentFromDB(updatedPePDetailsToDb);
-                  //updating the new Department details to display in department filter
-                    LOGGER.info("---------------After Table update in ADVSEARCH----------------");
-                    ArrayList updatedDepartmentFromDB = new ArrayList();
-                    for(int i=0;i<updatedPePDetailsToDb.size();i++){
-                        DepartmentDetails depDetails = new DepartmentDetails();  
-                        depDetails.setId(updatedPePDetailsToDb.get(i).getId().getDeptId());
-                        depDetails.setDesc(updatedPePDetailsToDb.get(i).getDeptName());
-                        updatedDepartmentFromDB.add(depDetails);
-                    }
-                    LOGGER.info("-------updatedDepartmentFromDB size in ADVSEARCH-------"+updatedDepartmentFromDB.size());
-                    resourceForm.setSelectedDepartmentFromDB(updatedDepartmentFromDB);
-                    //Clearing the Search result operation from Form
-                    List closeSearchedDeptdetailsFromADSE = new ArrayList();
-                    resourceForm.setSearchedDeptdetailsFromADSE(closeSearchedDeptdetailsFromADSE);
-                    
-                  //Clearing the first time Search result operation from Form
-                    List closeFirstSearchedDeptdetailsFromADSE = new ArrayList();
-                    resourceForm.setFirstTimesearchedDeptdetailsFromADSE(closeFirstSearchedDeptdetailsFromADSE);
-                    // Clearing if there is result not found is there
-                    resourceForm.setDeptSearchResult("");
+                LOGGER.info("departDetails:::" + departDetails);
+
+
+                resourceForm.getAdvanceSearch().setDateFrom(dateFrom);
+                resourceForm.getAdvanceSearch().setDateTo(dateTo);
+                resourceForm.getAdvanceSearch().setImageStatus(imageStatus);
+                resourceForm.getAdvanceSearch().setContentStatus(contentStatus);
+                resourceForm.getAdvanceSearch().setActive(petStatus);
+                resourceForm.getAdvanceSearch().setRequestType(requestType);
+                List<ClassDetails> classDetailsList1 = new ArrayList<ClassDetails>();
+                classDetailsList1 = workListDisplayDelegate.getClassDetailsByDepNos(departDetails);
+                populateClassDetailsInAdvanceSearch(classDetailsList1, resourceForm);
+            }//Fix for Defect 748 Issue 1 End AFUSZR6
+
+            //Advance Search Flow
+            else if(null!=request.getParameter(WorkListDisplayConstants.ADV_SEARCH_OPERATION_PARAM)
+                    && request.getParameter(WorkListDisplayConstants.ADV_SEARCH_OPERATION_PARAM).length()>0){
+                String advSearchOperation=request.getParameter(WorkListDisplayConstants.ADV_SEARCH_OPERATION_PARAM);
+                LOGGER.info("This is from Advance Search Operation" + advSearchOperation);
+                if(WorkListDisplayConstants.ADV_SEARCH_OPERATION_RESET.equals(advSearchOperation)){
+                    LOGGER.info("This is from Advance Search Reset operation");
+                    populatingAdvanceSearchDefaultValues(resourceForm);
                 }
-                //--------------------------574 End -----------------------------------------//
-                List<ClassDetails> classDetailsList = new ArrayList<ClassDetails>();
-                classDetailsList = workListDisplayDelegate.getClassDetailsByDepNos(departmentDetails);
-                populateClassDetailsInAdvanceSearch(classDetailsList, resourceForm);
-                //Retaining already selected values
-                setAdvanceSearchfieldsFromAjax(request);
-            }
-            if(WorkListDisplayConstants.ADV_SEARCH_OPERATION_SEARCH.equals(advSearchOperation)){
-                //Retaining already selected values
-                setAdvanceSearchfieldsFromAjax(request);
-                //Getting the PET details on base of the Advance search selections
-                 
-                mv.addObject(WorkListDisplayConstants.IS_PET_AVAILABLE,WorkListDisplayConstants.YES_VALUE);
-                   if(null!=resourceForm.getAdvanceSearch() && !resourceForm.getAdvanceSearch().isAllFieldEmpty()){
-                       System.out.println("CALL TYPE>>>>>>>>>>>>>>>>>" +callType);
-                       // Condition for grouping search
-                    if (WorkListDisplayConstants.ADV_SEARCH_CALLTYPE_GROUPINGSEARCH
-                        .equals(callType)) {
-                        workFlowList =
-                            workListDisplayDelegate.getAdvWorklistGroupingData(
-                                resourceForm.getAdvanceSearch(),
-                                supplierIdList, resourceForm.getVendorEmail());
-                        LOGGER.info("Controller List Size: "
-                            + workFlowList.size());
-                        if (workFlowList.size() == 0) {
-                            resourceForm
-                                .setPetNotFound(WorkListDisplayConstants.NO_GROUP_FOUND_FOR_GROUP_SEARCH);
-                        }
-                        resourceForm.setSearchClicked(WorkListDisplayConstants.YES);
-                        request.getPortletSession().setAttribute("groupWorklistSession", "Regular PET");
-                        resourceForm.setWorkListType("Regular PET");
-                        resourceForm.setWorkFlowlist(workFlowList);
+                if(WorkListDisplayConstants.ADV_SEARCH_OPERATION_SAVEANDCLOSE.equals(advSearchOperation)){
+                    LOGGER.info("This is from Advance Search Save and Close operation");
+                    String departmentDetails = request.getParameter("advSelectedDepartments");
+                    LOGGER.info("Department Details  Advance Search and close operation"+departmentDetails);
+                    //--------------------------574 Start ----------------------------------------//
+
+                    String[] selectedDeptArray = departmentDetails.split(",");
+                    LOGGER.info("-----------selectedDeptArray Length in ADVSEACRH-----------" + selectedDeptArray.length);
+                    List <PepDepartment> updatedPePDetailsToDb = new ArrayList();
+                    //Getting the department details using id if existing in the current DB and to add new Department details
+                    if(workFlowList!=null) {
+                        resourceForm.setTotalNumberOfPets(String.valueOf(workFlowList.size()));
+                    } else {
+                        resourceForm.setTotalNumberOfPets("0");
                     }
-                    else {
-                        // 57 Search
-                        if (!"getChildData".equalsIgnoreCase(callType)
-                            && !WorkListDisplayConstants.GET_CHILD_GROUP
-                                .equalsIgnoreCase(callType)) {
-                            if (null != resourceForm.getVendorEmail()) {
-                                LOGGER
-                                    .info("Line 1849 Vendor in Search Controller:: Calling workListDisplayDelegate.getPetDetailsByAdvSearchForParent");
-                                workFlowList =
-                                    workListDisplayDelegate
-                                        .getPetDetailsByAdvSearchForParent(
-                                            resourceForm.getAdvanceSearch(),
-                                            supplierIdList,
-                                            resourceForm.getVendorEmail());
-                                resourceForm.setSearchClicked("yes");
-                            }
-                            else {
-                                LOGGER
-                                    .info("Line 1854 Vendor in Search Controller:: Calling workListDisplayDelegate.getPetDetailsByAdvSearchForParent");
-                                workFlowList =
-                                    workListDisplayDelegate
-                                        .getPetDetailsByAdvSearchForParent(
-                                            resourceForm.getAdvanceSearch(),
-                                            supplierIdList,
-                                            resourceForm.getVendorEmail());
-                                resourceForm.setSearchClicked("yes");
-                            }
-                        }
-                    }
-                            
-                                if(workFlowList != null && workFlowList.size()>0){
-                                //Default sorting. needs to remove if the sorted list is coming from SQL query
-                                    resourceForm.setPetNotFound(null);
-                                String advSelectedColumn=WorkListDisplayConstants.COMPLETION_DATE;
-                                //handlingSortingRender(advSelectedColumn,resourceForm,workFlowList); //Commented By AFUSZR6
-                              //Default Pagination  
-                                int selectedPageNumber = 1;
-                                if(null!=request.getParameter(WorkListDisplayConstants.CURRENT_PAGE_NUMBER)){
-                                    selectedPageNumber = Integer.valueOf(request.getParameter(WorkListDisplayConstants.CURRENT_PAGE_NUMBER)); 
+
+                    boolean skipIfFoundExistingDept1 = false;
+                    boolean skipIfFoundSecondSection1 = false;
+                    for(int i=0;i<selectedDeptArray.length;i++){
+                        skipIfFoundExistingDept1 = false;
+                        skipIfFoundSecondSection1 = false;
+                        LOGGER.info("Departmentts. in for.ADVSEARCH" + selectedDeptArray[i]);
+                        if(null!=resourceForm.getSelectedPepDepartmentFromDB()){
+                            LOGGER.info("Department is from PEP details from DB in ADVSEACH********************" );
+                            for(int j=0;j<resourceForm.getSelectedPepDepartmentFromDB().size();j++){
+                                PepDepartment pepdetails =resourceForm.getSelectedPepDepartmentFromDB().get(j);
+                                if(pepdetails.getId().getDeptId().equalsIgnoreCase(selectedDeptArray[i].trim())){
+                                    updatedPePDetailsToDb.add(pepdetails);
+                                    LOGGER.info("Adding PepDept details in AdvSeach::::::"+pepdetails.getId().getDeptId());
+                                    skipIfFoundExistingDept1 = true;
                                 }
+
+                            }
+                        }
+                        // Adding the newly added Department details
+                        if(!skipIfFoundExistingDept1){
+                            if(null!=resourceForm.getSearchedDeptdetailsFromADSE()){
+                                LOGGER.info("Department is from PEP details ----ADVSEACR---Search********************" );
+                                for(int k=0;k<resourceForm.getSearchedDeptdetailsFromADSE().size();k++){
+                                    DepartmentDetails deptDetails =resourceForm.getSearchedDeptdetailsFromADSE().get(k);
+                                    if(deptDetails.getId().equalsIgnoreCase(selectedDeptArray[i].trim())){
+                                        //Creating new PepDepartmentDetails to update in DB
+                                        PepDepartment pepDetails = new PepDepartment();
+                                        pepDetails.setDeptName(deptDetails.getDesc());
+                                        PepDepartmentPK pepDepartmentPk= new PepDepartmentPK();
+                                        pepDepartmentPk.setDeptId(deptDetails.getId());
+                                        pepDepartmentPk.setPepUserId(resourceForm.getPepUserID());
+                                        pepDetails.setId(pepDepartmentPk);
+                                        updatedPePDetailsToDb.add(pepDetails);
+                                        LOGGER.info("Adding PepDept details"+pepDetails.getId().getDeptId());
+                                        skipIfFoundSecondSection1 = true;
+                                    }
+                                }
+                            }
+
+                            //Adding the Searched Department for Initial time login added
+                            if(!skipIfFoundSecondSection1){
+                                if(null!=resourceForm.getFirstTimesearchedDeptdetailsFromADSE()){
+                                    LOGGER.info("Department is from PEP details first time *******************" );
+                                    for(int k=0;k<resourceForm.getFirstTimesearchedDeptdetailsFromADSE().size();k++){
+                                        DepartmentDetails deptDetails =resourceForm.getFirstTimesearchedDeptdetailsFromADSE().get(k);
+                                        if(deptDetails.getId().equalsIgnoreCase(selectedDeptArray[i].trim())){
+                                            //Creating new PepDepartmentDetails to update in DB
+                                            PepDepartment pepDetails = new PepDepartment();
+                                            pepDetails.setDeptName(deptDetails.getDesc());
+                                            PepDepartmentPK pepDepartmentPk= new PepDepartmentPK();
+                                            pepDepartmentPk.setDeptId(deptDetails.getId());
+                                            pepDepartmentPk.setPepUserId(resourceForm.getPepUserID());
+                                            pepDetails.setId(pepDepartmentPk);
+                                            updatedPePDetailsToDb.add(pepDetails);
+                                            LOGGER.info("-----Adding PepDept details in ADVSEACRH-----"+pepDetails.getId().getDeptId());
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    //Sending the updated pepdetails list to DB layer for update operation
+                    boolean isPepDeptUpdated = workListDisplayDelegate.updatePepDeptDetails(updatedPePDetailsToDb,resourceForm.getPepUserID());
+                    LOGGER.info("isPepDeptUpdated="+isPepDeptUpdated);
+                    if(isPepDeptUpdated){//Table is updated
+                        //Setting the PepDepartment details into the FORM
+                        resourceForm.setSelectedPepDepartmentFromDB(updatedPePDetailsToDb);
+                        //updating the new Department details to display in department filter
+                        LOGGER.info("---------------After Table update in ADVSEARCH----------------");
+                        ArrayList updatedDepartmentFromDB = new ArrayList();
+                        for(int i=0;i<updatedPePDetailsToDb.size();i++){
+                            DepartmentDetails depDetails = new DepartmentDetails();
+                            depDetails.setId(updatedPePDetailsToDb.get(i).getId().getDeptId());
+                            depDetails.setDesc(updatedPePDetailsToDb.get(i).getDeptName());
+                            updatedDepartmentFromDB.add(depDetails);
+                        }
+                        LOGGER.info("-------updatedDepartmentFromDB size in ADVSEARCH-------"+updatedDepartmentFromDB.size());
+                        resourceForm.setSelectedDepartmentFromDB(updatedDepartmentFromDB);
+                        //Clearing the Search result operation from Form
+                        List closeSearchedDeptdetailsFromADSE = new ArrayList();
+                        resourceForm.setSearchedDeptdetailsFromADSE(closeSearchedDeptdetailsFromADSE);
+
+                        //Clearing the first time Search result operation from Form
+                        List closeFirstSearchedDeptdetailsFromADSE = new ArrayList();
+                        resourceForm.setFirstTimesearchedDeptdetailsFromADSE(closeFirstSearchedDeptdetailsFromADSE);
+                        // Clearing if there is result not found is there
+                        resourceForm.setDeptSearchResult("");
+                    }
+                    //--------------------------574 End -----------------------------------------//
+                    List<ClassDetails> classDetailsList = new ArrayList<ClassDetails>();
+                    classDetailsList = workListDisplayDelegate.getClassDetailsByDepNos(departmentDetails);
+                    populateClassDetailsInAdvanceSearch(classDetailsList, resourceForm);
+                    //Retaining already selected values
+                    setAdvanceSearchfieldsFromAjax(request);
+                }
+                if(WorkListDisplayConstants.ADV_SEARCH_OPERATION_SEARCH.equals(advSearchOperation)){
+                    //Retaining already selected values
+                    setAdvanceSearchfieldsFromAjax(request);
+                    //Getting the PET details on base of the Advance search selections
+
+                    String currentPageNumber = request.getParameter(WorkListDisplayConstants.CURRENT_PAGE_NUMBER);
+                    if (currentPageNumber == null) {
+                        currentPageNumber = "1";
+                    }
+                    int selectedPageNumber = Integer.valueOf(currentPageNumber);
+                    
+                    mv.addObject(WorkListDisplayConstants.IS_PET_AVAILABLE,WorkListDisplayConstants.YES_VALUE);
+                    if(null!=resourceForm.getAdvanceSearch() && !resourceForm.getAdvanceSearch().isAllFieldEmpty()){
+                        System.out.println("CALL TYPE>>>>>>>>>>>>>>>>>" +callType);
+                        workFlowList = getWorkFlowListForAdvSearchFromDB(resourceForm, callType, resourceForm.getAdvanceSearch(),
+                    			resourceForm.getVendorEmail(), supplierIdList, selectedPageNumber, maxResults);
+                        // Condition for grouping search
+                        if (WorkListDisplayConstants.ADV_SEARCH_CALLTYPE_GROUPINGSEARCH
+                                .equals(callType)) {
+                            LOGGER.info("Controller List Size: " + workFlowList.size());
+                            if (workFlowList.size() == 0) {
+                                resourceForm
+                                        .setPetNotFound(WorkListDisplayConstants.NO_GROUP_FOUND_FOR_GROUP_SEARCH);
+                            }
+                            resourceForm.setSearchClicked(WorkListDisplayConstants.YES_VALUE);
+                            request.getPortletSession().setAttribute("groupWorklistSession", "Regular PET");
+                            resourceForm.setWorkListType("Regular PET");
+                            resourceForm.setWorkFlowlist(workFlowList);
+                            resourceForm.setAdvSearchClicked(WorkListDisplayConstants.YES_VALUE);
+                            request.getPortletSession().setAttribute("isAdvSearchUsed", WorkListDisplayConstants.TRUE_VALUE);
+                        }
+                        else {
+                            // 57 Search
+                            resourceForm.setSearchClicked(WorkListDisplayConstants.YES_VALUE);
+                            resourceForm.setAdvSearchClicked("yes");
+                            request.getPortletSession().setAttribute("isAdvSearchUsed", "true");
+                        }
+
+                        if(workFlowList != null && workFlowList.size()>0){
+                            //Default sorting. needs to remove if the sorted list is coming from SQL query
+                            resourceForm.setPetNotFound(null);
+                            String advSelectedColumn = WorkListDisplayConstants.COMPLETION_DATE;
+                            //handlingSortingRender(advSelectedColumn,resourceForm,workFlowList); //Commented By AFUSZR6
+                            //Default Pagination
+                            if(!"getChildData".equalsIgnoreCase(callType)){
+                                if(!WorkListDisplayConstants.GET_CHILD_GROUP.equals(callType))
+                                {
+                                    resourceForm.setWorkFlowlist(workFlowList);
+                                    resourceForm.setTotalNumberOfPets(String.valueOf(workFlowList.size()));
+                                }
+                            }
+                            //Fix for 835 Start
+//                                if(null != resourceForm.getFullWorkFlowlist()){
+//                                    LOGGER.info("1789 : resourceForm:"+resourceForm.getFullWorkFlowlist().size());
+//                                    fullWorkList = resourceForm.getFullWorkFlowlist();
+//                                }
+                            //Fix for 835 End
+                            //For 496 End
+                            handlingPaginationRender(selectedPageNumber,resourceForm,workFlowList);//fix for 496
+                            resourceForm.setSelectedPage(String.valueOf(selectedPageNumber));
+                            LOGGER.debug("Advanced search controller size " + workFlowList.size());
+                        }else{//There is no PET for searched content
+                            //Fix for Defect 177
+                            if(setAdvanceSearchfieldsForVendorStyleAjax(request)){
+                            	workFlowList = getWorkFlowListForAdvSearchFromDB(resourceForm, callType, resourceForm.getAdvanceSearch(), 
+                            			resourceForm.getVendorEmail(), supplierIdList, selectedPageNumber, maxResults);
+                                resourceForm.setSearchClicked(WorkListDisplayConstants.YES_VALUE);
                                 
-                                if(!"getChildData".equalsIgnoreCase(callType)){ 
-                                    if(!WorkListDisplayConstants.GET_CHILD_GROUP.equals(callType))
-                                    {
-                                        resourceForm.setFullWorkFlowlist(workFlowList);
-                                        resourceForm.setTotalNumberOfPets(String.valueOf(workFlowList.size()));                                        
-                                    }
-                                }
-                                //Fix for 835 Start
-                                if(null != resourceForm.getFullWorkFlowlist()){
-                                    LOGGER.info("1789 : resourceForm:"+resourceForm.getFullWorkFlowlist().size());
-                                    fullWorkList = resourceForm.getFullWorkFlowlist();
-                                }
-                               //Fix for 835 End
-                                //For 496 End                        
-                                handlingPaginationRender(selectedPageNumber,resourceForm,fullWorkList);//fix for 496
-                                resourceForm.setSelectedPage(String.valueOf(selectedPageNumber));
-                                }else{//There is no PET for searched content
-                                    //Fix for Defect 177
-                                    if(setAdvanceSearchfieldsForVendorStyleAjax(request)){
-                                        
-                                        if(!"getChildData".equalsIgnoreCase(callType)){
-                                        if(null != resourceForm.getVendorEmail()){
-                                            LOGGER.info("Line 1885 Vendor in Search Controller:: Calling workListDisplayDelegate.getPetDetailsByAdvSearchForParent");
-                                            workFlowList =  workListDisplayDelegate.getPetDetailsByAdvSearchForParent(resourceForm.getAdvanceSearch(),supplierIdList,resourceForm.getVendorEmail());
-                                            resourceForm.setSearchClicked("yes");
-                                        }else{
-                                            LOGGER.info("Line 1890 DCA  Vendor in Search Controller:: Calling workListDisplayDelegate.getPetDetailsByAdvSearchForParent");
-                                            workFlowList =  workListDisplayDelegate.getPetDetailsByAdvSearchForParent(resourceForm.getAdvanceSearch(),supplierIdList,resourceForm.getVendorEmail());
-                                            resourceForm.setSearchClicked("yes");
-                                        }
-                                        }
-                                        if(workFlowList != null && workFlowList.size()==0){
-                                            
-                                            LOGGER.info("venstyle***** no pet found" +resourceForm.getAdvanceSearch().getVendorStyle());
-                                            List<WorkFlow> emptystyleListForWorkListDisplayforVendorStyle = new ArrayList<WorkFlow>();
-                                            resourceForm.setPetNotFound(prop.getProperty(WorkListDisplayConstants.NO_PET_FOUND_FOR_VENDOR_STYLE));
-                                            LOGGER.info("Vendor--------::" +resourceForm.getPetNotFound());
-                                            resourceForm.setTotalNumberOfPets("0");
-                                            resourceForm.setWorkFlowlist(emptystyleListForWorkListDisplayforVendorStyle); 
-                                        }//177 End
-                                    }else{
-                                        LOGGER.info("Line 1439..");
-                                        List<WorkFlow> emptystyleListForWorkListDisplay = new ArrayList<WorkFlow>();
-                                        resourceForm.setPetNotFound(prop.getProperty(WorkListDisplayConstants.PET_NOT_FOUND));
-                                        resourceForm.setTotalNumberOfPets("0");
-                                        resourceForm.setWorkFlowlist(emptystyleListForWorkListDisplay);
-                                    }
-                                }
-                       
-                       
-                    
+                                if(workFlowList != null && workFlowList.size()==0){
+                                    LOGGER.info("venstyle***** no pet found" +resourceForm.getAdvanceSearch().getVendorStyle());
+                                    List<WorkFlow> emptystyleListForWorkListDisplayforVendorStyle = new ArrayList<WorkFlow>();
+                                    resourceForm.setPetNotFound(prop.getProperty(WorkListDisplayConstants.NO_PET_FOUND_FOR_VENDOR_STYLE));
+                                    LOGGER.info("Vendor--------::" +resourceForm.getPetNotFound());
+                                    resourceForm.setTotalNumberOfPets("0");
+                                    resourceForm.setWorkFlowlist(emptystyleListForWorkListDisplayforVendorStyle);
+                                }//177 End
+                            }
+                            else{
+                                LOGGER.info("Line 1439..");
+                                List<WorkFlow> emptystyleListForWorkListDisplay = new ArrayList<WorkFlow>();
+                                resourceForm.setPetNotFound(prop.getProperty(WorkListDisplayConstants.PET_NOT_FOUND));
+                                resourceForm.setTotalNumberOfPets("0");
+                                resourceForm.setWorkFlowlist(emptystyleListForWorkListDisplay);
+                            }
+                        }
+
+
+
                     }else
                     {//No Criteria selected
                         LOGGER.info("Line 1448..");
@@ -3826,5 +3690,100 @@ public String ConvertDate(String completionDate){
             LOGGER.info("invalidateUserSession", e);
         }
 
+    }
+    
+    /**
+     * Method added for Pagination Perf Enhancements
+     * 
+     * Perform query and return the subset list of PETs based on 
+     * given conditions set in the WorklistDisplayForm and selected page.
+     * 
+     * @param renderForm
+     * @param departmentDetailsList
+     * @param email
+     * @param supplierIdList
+     * @param selectedPageNumber
+     * @param maxResult
+     * @return
+     * @throws PEPPersistencyException
+     * @throws PEPServiceException
+     */
+    public List<WorkFlow> getWorkFlowListFromDB(WorkListDisplayForm renderForm, String workListType, 
+    		List departmentDetailsList, String email, List supplierIdList, int selectedPageNumber, int maxResults) 
+			throws PEPPersistencyException, PEPServiceException {
+        
+        int startIndex=0;
+        if (selectedPageNumber>1) {
+        	startIndex = (selectedPageNumber-1)*maxResults;
+        }
+        
+        String sortColumn = WorkListDisplayConstants.EMPTY_STRING;
+        String sortOrder = WorkListDisplayConstants.ASCENDING;
+        if (renderForm.getSelectedColumn()!=null) {
+        	sortColumn = renderForm.getSelectedColumn();
+        	if (WorkListDisplayConstants.FALSE_VALUE.equals(renderForm.getSortingAscending())) {
+        		sortOrder = WorkListDisplayConstants.DESCENDING;
+        	}
+        }
+        
+        if (WorkListDisplayConstants.GROUPINGS.equalsIgnoreCase(workListType)) {
+        	return workListDisplayDelegate.getGroupWorkListDetails(
+        			departmentDetailsList, startIndex,maxResults,sortColumn,sortOrder);
+        }
+        else {
+            return workListDisplayDelegate.getPetDetailsByDepNosForParent(departmentDetailsList,
+            		email,supplierIdList,startIndex, maxResults,sortColumn,sortOrder);
+        }
+    }
+    
+    /**
+     * Method added for Pagination Perf Enhancements
+     * 
+     * Perform query for Advance Search and return the subset list of PETs 
+     * based on given conditions set in the WorklistDisplayForm and selected page.
+     * 
+     * @param renderForm
+     * @param callType
+     * @param advanceSearch
+     * @param email
+     * @param supplierIdList
+     * @param selectedPageNumber
+     * @param maxResults
+     * @return
+     * @throws PEPServiceException
+     * @throws PEPPersistencyException
+     */
+    public List<WorkFlow> getWorkFlowListForAdvSearchFromDB(WorkListDisplayForm renderForm,
+    		String callType, AdvanceSearch advanceSearch, String email, List supplierIdList, 
+    		int selectedPageNumber, int maxResults) 
+			throws PEPServiceException, PEPPersistencyException {
+    	List<WorkFlow> workFlowList = new ArrayList<WorkFlow>();
+    	int startIndex=0;
+        if (selectedPageNumber>1) {
+        	startIndex = (selectedPageNumber-1)*maxResults;
+        }
+        
+        String sortColumn = WorkListDisplayConstants.EMPTY_STRING;
+        String sortOrder = WorkListDisplayConstants.ASCENDING;
+        if (renderForm.getSelectedColumn()!=null) {
+        	sortColumn = renderForm.getSelectedColumn();
+        	if (WorkListDisplayConstants.FALSE_VALUE.equals(renderForm.getSortingAscending())) {
+        		sortOrder = WorkListDisplayConstants.DESCENDING;
+        	}
+        }
+        
+        if (WorkListDisplayConstants.ADV_SEARCH_CALLTYPE_GROUPINGSEARCH.equals(callType)) {
+        	workFlowList = workListDisplayDelegate.getAdvWorklistGroupingData(
+        			advanceSearch,supplierIdList,email,startIndex,maxResults,sortColumn,sortOrder);
+        }
+        else {
+        	if (!"getChildData".equalsIgnoreCase(callType)
+                    && !WorkListDisplayConstants.GET_CHILD_GROUP.equalsIgnoreCase(callType)) {
+        		workFlowList = workListDisplayDelegate.
+                		getPetDetailsByAdvSearchForParent(advanceSearch,supplierIdList, 
+                				email,startIndex,maxResults,sortColumn,sortOrder);
+        	}
+        }
+        return workFlowList;
     }
 }
