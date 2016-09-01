@@ -67,9 +67,10 @@ public class WorkListDisplayDelegate {
         return workListDisplayService.getPetDetailsByDepNos(departmentNumbers,email,supplierIdList);  
     }
     
-    public List<WorkFlow> getPetDetailsByDepNosForParent(ArrayList departmentNumbers,String email,List<String> supplierIdList)
+    public List<WorkFlow> getPetDetailsByDepNosForParent(List departmentNumbers,String email,List<String> supplierIdList,
+    		int startIndex, int maxResults, String sortColumn,String sortOrder)
     throws PEPPersistencyException,PEPServiceException {
-        return workListDisplayService.getPetDetailsByDepNosForParent(departmentNumbers,email,supplierIdList);  
+        return workListDisplayService.getPetDetailsByDepNosForParent(departmentNumbers,email,supplierIdList, startIndex, maxResults, sortColumn, sortOrder);  
     }
     
     public List<StyleColor> getPetDetailsByDepNosForChild(String email,String parentOrin)
@@ -151,8 +152,11 @@ public class WorkListDisplayDelegate {
         return workListDisplayService.getPetDetailsByAdvSearch(advanceSearch,supplierIdList,vendorEmail);  
     }
     
-    public List<WorkFlow> getPetDetailsByAdvSearchForParent(AdvanceSearch advanceSearch,List<String> supplierIdList,String vendorEmail) throws PEPServiceException, PEPPersistencyException  {
-        return workListDisplayService.getPetDetailsByAdvSearchForParent(advanceSearch,supplierIdList,vendorEmail);  
+    public List<WorkFlow> getPetDetailsByAdvSearchForParent(AdvanceSearch advanceSearch,List<String> supplierIdList,
+                                                            String vendorEmail, int startIndex, int maxResults, String sortColumn, String sortOrder)
+            throws PEPServiceException, PEPPersistencyException  {
+        return workListDisplayService.getPetDetailsByAdvSearchForParent(advanceSearch,
+                supplierIdList, vendorEmail, startIndex, maxResults, sortColumn, sortOrder);
     }
     
     public List<StyleColor> getPetDetailsByAdvSearchForChild(AdvanceSearch advanceSearch, String parentOrin)
@@ -212,7 +216,8 @@ public class WorkListDisplayDelegate {
      * @throws PEPServiceException 
      */
     public List<WorkFlow> getAdvWorklistGroupingData(final AdvanceSearch adSearch,
-        final List<String> supplierIdList, final String vendorEmail)
+        final List<String> supplierIdList, final String vendorEmail, int startIndex, int maxResults, 
+        String sortColumn, String sortOrder)
         throws PEPPersistencyException, PEPServiceException {
         LOGGER.info("Entering getAdvWorklistGroupingData() in Delegate class");
         List<WorkFlow> workflowList = new ArrayList<WorkFlow>();
@@ -224,7 +229,8 @@ public class WorkListDisplayDelegate {
         if(adSearch.getGroupingID() != null && !adSearch.getGroupingID().equals("")
                 || adSearch.getGroupingName() != null && !adSearch.getGroupingName().equals(""))
         { 
-            workflowList = workListDisplayService.getAdvWorklistGroupingData(adSearch, supplierIdList, vendorEmail, styleOrinList);
+            workflowList = workListDisplayService.getAdvWorklistGroupingData(adSearch, supplierIdList,
+                    vendorEmail, styleOrinList, startIndex, maxResults, sortColumn, sortOrder);
             LOGGER.info("List size: " + workflowList.size());
             if(adSearch.getGroupingID() != null && !adSearch.getGroupingID().equals(""))
             {
@@ -237,7 +243,8 @@ public class WorkListDisplayDelegate {
         }
         else
         {
-            styleWorkflowList = workListDisplayService.getPetDetailsByAdvSearchForParent(adSearch, supplierIdList, vendorEmail);
+            styleWorkflowList = workListDisplayService.getPetDetailsByAdvSearchForParent(adSearch, supplierIdList,
+                    vendorEmail, startIndex, maxResults, sortColumn, sortOrder);
             LOGGER.info("List 1 size: " + styleWorkflowList.size());
             String styleOrin = "";
             for(final WorkFlow flow : styleWorkflowList)
@@ -250,9 +257,11 @@ public class WorkListDisplayDelegate {
             }
             if(styleWorkflowList.size() > 0)
             {
-                workflowList = workListDisplayService.getAdvWorklistGroupingData(new AdvanceSearch(), supplierIdList, vendorEmail, styleOrinList);
+                workflowList = workListDisplayService.getAdvWorklistGroupingData(new AdvanceSearch(),
+                        supplierIdList, vendorEmail, styleOrinList, startIndex, maxResults, sortColumn, sortOrder);
             }
-            groupSearchList = workListDisplayService.getAdvWorklistGroupingData(adSearch, supplierIdList, vendorEmail, new ArrayList<String>());
+            groupSearchList = workListDisplayService.getAdvWorklistGroupingData(adSearch, supplierIdList,
+                    vendorEmail, new ArrayList<String>(), startIndex, maxResults, sortColumn, sortOrder);
             
             LOGGER.info("List 2 size: " + workflowList.size());
             workflowList.addAll(groupSearchList);
@@ -313,10 +322,10 @@ public class WorkListDisplayDelegate {
      *         Method added For PIM Phase 2 - Search Pet Date: 06/06/2016 Added
      *         By: Cognizant
      */
-    public List<WorkFlow> getGroupWorkListDetails(final ArrayList departmentNumbers, int pageNumber, String sortColumn, String sortOrder) {
+    public List<WorkFlow> getGroupWorkListDetails(final List departmentNumbers, int startIndex, int maxResult, String sortColumn, String sortOrder) {
         LOGGER.info("WorkListDisplayDelegate getGroupWorkListDetails Start");
         List<WorkFlow> workFlowList = null;
-        workFlowList = workListDisplayService.getGroupWorkListDetails(departmentNumbers, pageNumber, sortColumn, sortOrder);
+        workFlowList = workListDisplayService.getGroupWorkListDetails(departmentNumbers, startIndex, maxResult, sortColumn, sortOrder);
         LOGGER.info("WorkListDisplayDelegate getGroupWorkListDetails End");
         return workFlowList;
     }
@@ -330,7 +339,7 @@ public class WorkListDisplayDelegate {
      *         Method added For PIM Phase 2 - Search Pet Date: 06/06/2016 Added
      *         By: Cognizant
      */
-    public int getGroupWorkListCountDetails(final ArrayList departmentNumbers) {
+    public int getGroupWorkListCountDetails(final List departmentNumbers) {
         LOGGER.info("WorkListDisplayDelegate getGroupWorkListCountDetails Start");
         int totalRecordsCount = 0;
         totalRecordsCount = workListDisplayService.getGroupWorkListCountDetails(departmentNumbers);

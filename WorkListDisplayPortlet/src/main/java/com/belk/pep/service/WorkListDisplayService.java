@@ -42,8 +42,8 @@ public interface WorkListDisplayService {
      */
     public List<WorkFlow> getPetDetailsByDepNos(ArrayList departmentNumbers,String email,List<String> supplierIdList) throws PEPServiceException, PEPPersistencyException;
 
-    public List<WorkFlow> getPetDetailsByDepNosForParent(ArrayList departmentNumbers,String email,List<String> supplierIdList)
-    throws PEPPersistencyException,PEPServiceException ;
+    public List<WorkFlow> getPetDetailsByDepNosForParent(List departmentNumbers,String email,List<String> supplierIdList,
+    		int startIndex, int maxResults, String sortColumn,String sortOrder) throws PEPPersistencyException,PEPServiceException ;
     
     public List<StyleColor> getPetDetailsByDepNosForChild(String email,String parentOrin)
     throws PEPPersistencyException;
@@ -106,7 +106,11 @@ public List<ClassDetails> getClassDetailsByDepNos(String departmentNumbers) thro
 public List<WorkFlow> getPetDetailsByAdvSearch(AdvanceSearch advanceSearch,List<String> supplierIdList,String vendorEmail)throws PEPServiceException, PEPPersistencyException; 
 
 
-public List<WorkFlow> getPetDetailsByAdvSearchForParent(AdvanceSearch advanceSearch,List<String> supplierIdList,String vendorEmail)throws PEPServiceException, PEPPersistencyException;
+public List<WorkFlow> getPetDetailsByAdvSearchForParent(AdvanceSearch advanceSearch,
+                                                        List<String> supplierIdList,
+                                                        String vendorEmail, int startIndex, int maxResults,
+                                                        String sortColumn, String sortOrder)
+        throws PEPServiceException, PEPPersistencyException;
 
 
 public List<StyleColor> getPetDetailsByAdvSearchForChild(AdvanceSearch advanceSearch, String parentOrin)
@@ -148,7 +152,8 @@ public boolean lockPET(  String orin, String pepUserID, String pepfunction)throw
      * @param vendorEmail
      * @return List<WorkFlow>
      */
-    public List<WorkFlow> getAdvWorklistGroupingData(AdvanceSearch adSearch, List<String> supplierIdList, String vendorEmail, List<String> styleOrinList);
+    public List<WorkFlow> getAdvWorklistGroupingData(AdvanceSearch adSearch, List<String> supplierIdList, String vendorEmail, 
+    		List<String> styleOrinList, int startIndex, int maxResults, String sortColumn, String sortOrder);
     
     /**
      * Method to get the groups for search pet.
@@ -183,7 +188,7 @@ public boolean lockPET(  String orin, String pepUserID, String pepfunction)throw
      *         Method added For PIM Phase 2 - Search Pet Date: 06/06/2016 Added
      *         By: Cognizant
      */
-    int getGroupWorkListCountDetails(ArrayList departmentNumbers);
+    int getGroupWorkListCountDetails(List departmentNumbers);
     
     /**
      * Method to get the groups for worklist display.
@@ -197,8 +202,8 @@ public boolean lockPET(  String orin, String pepUserID, String pepfunction)throw
      *         Method added For PIM Phase 2 - Search Pet Date: 06/06/2016 Added
      *         By: Cognizant
      */
-    List<WorkFlow> getGroupWorkListDetails(ArrayList departmentNumbers,
-        int pageNumber, String sortColumn, String sortOrder);
+    List<WorkFlow> getGroupWorkListDetails(List departmentNumbers,
+        int startIndex, int maxResult, String sortColumn, String sortOrder);
     /**
      * Method to get the child for group for Worklist.
      * 
