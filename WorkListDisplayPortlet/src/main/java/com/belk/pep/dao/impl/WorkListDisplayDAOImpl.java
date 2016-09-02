@@ -3,7 +3,6 @@ package com.belk.pep.dao.impl;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.sql.Clob;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -17,7 +16,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 //import java.util.logging.Logger;
-import com.belk.pep.model.*;
 import org.apache.log4j.Logger;
 
 import org.apache.commons.lang.StringUtils;
@@ -26,7 +24,6 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.hibernate.type.IntegerType;
 
 import com.belk.pep.constants.WorkListDisplayConstants;
 import com.belk.pep.constants.XqueryConstants;
@@ -2204,11 +2201,7 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
         * @throws ParseException
         */
 
-
-       private List<PetsFound> getAdvWorkListDisplayDataForParent(AdvanceSearch advanceSearch,
-                                                                  int startIndex, int maxResults,
-                                                                  String sortColumn, String sortOrder)
-               throws SQLException, ParseException  {
+       private List<PetsFound> getAdvWorkListDisplayDataForParent(AdvanceSearch advanceSearch)throws SQLException, ParseException  {
            
            LOGGER.info("This is from getAdvWorkListDisplayDataForParent..Start" );
            List<PetsFound> petList = new ArrayList<PetsFound>();
@@ -2216,17 +2209,15 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
            XqueryConstants xqueryConstants= new XqueryConstants();
            
              Session session = null;
-             try {
-
+             Transaction tx =  null;
+               
+             try{
                session = sessionFactory.openSession();
-               //Hibernate provides a createSQLQuery method to let you call your native SQL statement directly.
-               Query query = session.createSQLQuery(
-            		   xqueryConstants.getAdvWorkListDisplayDataForParent(advanceSearch, sortColumn, sortOrder));  
+               tx = session.beginTransaction();      
+              //Hibernate provides a createSQLQuery method to let you call your native SQL statement directly.   
+               Query query = session.createSQLQuery(xqueryConstants.getAdvWorkListDisplayDataForParent(advanceSearch));  
                LOGGER.info("getAdvWorkListDisplayDataForParent Query.." + query);
                // execute delete SQL statement
-                 query.setFirstResult(startIndex).setMaxResults(maxResults);
-
-
                List<Object[]> rows = query.list();
                if (rows != null) {
                    LOGGER.info("recordsFetched..." + rows);
@@ -2287,7 +2278,8 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
          {
              LOGGER.info("recordsFetched. getAdvWorkListDisplayDataForParent finally block.." );
              session.flush();   
-             session.close();
+             tx.commit();
+             session.close();                
          }
 
          LOGGER.info("This is from getAdvWorkListDisplayDataForParent..End" );
@@ -2386,17 +2378,14 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
         * This method will fetch the WorkList Details for Parent on base of the Advance search.
         */
        
-       public List<WorkFlow> getPetDetailsByAdvSearchForParent(AdvanceSearch advanceSearch,
-                                                               List<String> supplierIdList,String vendorEmail,
-                                                               int startIndex, int maxResults,
-                                                               String sortColumn, String sortOrder)
+       public List<WorkFlow> getPetDetailsByAdvSearchForParent(AdvanceSearch advanceSearch,List<String> supplierIdList,String vendorEmail)
            throws PEPPersistencyException {
 
-           LOGGER.info("getPetDetailsByAdvSearchForParent....Enter " + startIndex + " and end index " + maxResults);
+           LOGGER.info("getPetDetailsByAdvSearchForParent....Enter");
            List<WorkFlow> workFlowList = null;
          
            try {
-               List<PetsFound> petList = getAdvWorkListDisplayDataForParent(advanceSearch, startIndex, maxResults, sortColumn, sortOrder);
+               List<PetsFound> petList = getAdvWorkListDisplayDataForParent(advanceSearch);
                LOGGER.info("getPetDetailsByAdvSearchForParent...." +petList.size());                            
                
                if(null != vendorEmail)  {  
@@ -2414,8 +2403,8 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
                petList = petList1;
                LOGGER.info("Vendor Logged in  --- petlist size bottom " + petList.size());
                }
-               //petList = orderPetDetailsListAdvanceParent(petList);
-               LOGGER.info("advanced search --- petlist size bottom " + petList.size());
+               petList = orderPetDetailsListAdvanceParent(petList);
+               
                WorkListDisplay workListDisplay = getFormatedPetDetailsForSearchPetParent(petList, false); // TODO
                workFlowList = workListDisplay.getWorkListDisplay();
                LOGGER.info("getPetDetailsByAdvSearchForParent DAO........" +workFlowList.size());
@@ -2632,8 +2621,8 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
      */
     @Override
     public List<WorkFlow> getAdvWorklistGroupingData(
-        final AdvanceSearch adSearch, final List<String> supplierIdList, final String vendorEmail, 
-        final List<String> styleOrinList, int startIndex, int maxResults, String sortColumn, String sortOrder) {
+        final AdvanceSearch adSearch, final List<String> supplierIdList,
+        final String vendorEmail, final List<String> styleOrinList) {
         LOGGER.info("in DAO getAdvWorklistGroupingData");
         List<WorkFlow> workFlowList = new ArrayList<WorkFlow>();
         Session session = null;
@@ -2644,7 +2633,7 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
             PropertyLoader
                 .getPropertyLoader(WorkListDisplayConstants.WORK_LIST_DISPLAY_PROPERTIES_FILE_NAME);
         if (xqueryConstants.getGroupSearchQueryForAdvSearch(adSearch,
-            styleOrinList, sortColumn, sortOrder).contains("AND")) {
+            styleOrinList).contains("AND")) {
 
             try {
                 session = sessionFactory.openSession();
@@ -2652,10 +2641,9 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
                 Query query =
                     session.createSQLQuery(xqueryConstants
                         .getGroupSearchQueryForAdvSearch(adSearch,
-                            styleOrinList, sortColumn, sortOrder));
+                            styleOrinList));
                 LOGGER.info("Grouping Query:- " + query);
 
-                query.setFirstResult(startIndex).setMaxResults(maxResults);
                 query.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
                 List<Object> rowList = query.list();
 

@@ -378,23 +378,25 @@ public List<WorkFlow> getPetDetailsByAdvSearch(AdvanceSearch advanceSearch,List<
 }
 
 @Override
-public List<WorkFlow> getPetDetailsByAdvSearchForParent(AdvanceSearch advanceSearch,
-                                                        List<String> supplierIdList,String vendorEmail,
-                                                        int startIndex, int maxResults,
-                                                        String sortColumn, String sortOrder)
+public List<WorkFlow> getPetDetailsByAdvSearchForParent(AdvanceSearch advanceSearch,List<String> supplierIdList,String vendorEmail)
     throws PEPServiceException, PEPPersistencyException {
     LOGGER.info("****calling getPetDetailsByAdvSearchForParent from WorkListDisplayServiceImpl****");
     List<WorkFlow> workFlowList = null;
     try {
-        workFlowList = workListDisplayDAO.getPetDetailsByAdvSearchForParent(advanceSearch,supplierIdList,
-                vendorEmail, startIndex, maxResults, sortColumn, sortOrder);
-    } catch (PEPPersistencyException e) {
+        workFlowList = workListDisplayDAO.getPetDetailsByAdvSearchForParent(advanceSearch,supplierIdList,vendorEmail);
+    }
+    catch (PEPPersistencyException e) {
+        
         LOGGER.info("Exception occurred at the Service DAO Layer getPetDetailsByAdvSearchForParent");
         throw e;
-    } catch (Exception e) {
-        LOGGER.info("Exception occurred at the Service Implementation Layer getPetDetailsByAdvSearchForParent");
-        throw new PEPServiceException(e.getMessage());
     }
+    
+    catch (Exception e) {
+          
+            LOGGER.info("Exception occurred at the Service Implementation Layer getPetDetailsByAdvSearchForParent");
+            throw new PEPServiceException(e.getMessage());
+        }
+    
     return workFlowList;
 }
 
@@ -858,12 +860,10 @@ public boolean lockPET(  String orin, String pepUserID, String pepfunction)throw
  */
 @Override
 public List<WorkFlow> getAdvWorklistGroupingData(AdvanceSearch adSearch,
-    List<String> supplierIdList, String vendorEmail, List<String> styleOrinList, 
-    int startIndex, int maxResults, String sortColumn, String sortOrder) {
+    List<String> supplierIdList, String vendorEmail, List<String> styleOrinList) {
     LOGGER.info("WorkListDisplayServiceImpl getAdvWorklistGroupingData Start");
     List<WorkFlow> workFlowList = null;
-    workFlowList = workListDisplayDAO.getAdvWorklistGroupingData(adSearch, supplierIdList, vendorEmail,
-            styleOrinList, startIndex, maxResults, sortColumn, sortOrder);
+    workFlowList = workListDisplayDAO.getAdvWorklistGroupingData(adSearch, supplierIdList, vendorEmail, styleOrinList);
     LOGGER.info("WorkListDisplayServiceImpl getAdvWorklistGroupingData End");
     return workFlowList;
 }

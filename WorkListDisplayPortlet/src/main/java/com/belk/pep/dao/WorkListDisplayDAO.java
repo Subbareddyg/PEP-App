@@ -134,10 +134,7 @@ public  interface WorkListDisplayDAO {
  */
 public List<WorkFlow> getPetDetailsByAdvSearch(AdvanceSearch advanceSearch,List<String> supplierIdList,String vendorEmail)throws PEPPersistencyException;
 
-public List<WorkFlow> getPetDetailsByAdvSearchForParent(AdvanceSearch advanceSearch,
-                                                        List<String> supplierIdList, String vendorEmail,
-                                                        int startIndex, int maxResults,
-                                                        String sortColumn, String sortOrder)throws PEPPersistencyException;
+public List<WorkFlow> getPetDetailsByAdvSearchForParent(AdvanceSearch advanceSearch,List<String> supplierIdList,String vendorEmail)throws PEPPersistencyException;
 
 public List<StyleColor> getPetDetailsByAdvSearchForChild(AdvanceSearch advanceSearch, String parentOrin)
 throws PEPPersistencyException;
@@ -154,10 +151,7 @@ public boolean lockPET(  String orin, String pepUserID,String pepfunction)throws
      * @param styleOrinList
      * @return List<String>
      */
-    public List<WorkFlow> getAdvWorklistGroupingData(AdvanceSearch adSearch, List<String> supplierIdList,
-                                                     String vendorEmail, List<String> styleOrinList, 
-                                                     int startIndex, int maxResults,
-                                                     String sortColumn, String sortOrder);
+    public List<WorkFlow> getAdvWorklistGroupingData(AdvanceSearch adSearch, List<String> supplierIdList, String vendorEmail, List<String> styleOrinList);
     
     /**
      * Method to get the groups for search pet.
