@@ -106,11 +106,7 @@ public List<ClassDetails> getClassDetailsByDepNos(String departmentNumbers) thro
 public List<WorkFlow> getPetDetailsByAdvSearch(AdvanceSearch advanceSearch,List<String> supplierIdList,String vendorEmail)throws PEPServiceException, PEPPersistencyException; 
 
 
-public List<WorkFlow> getPetDetailsByAdvSearchForParent(AdvanceSearch advanceSearch,
-                                                        List<String> supplierIdList,
-                                                        String vendorEmail, int startIndex, int maxResults,
-                                                        String sortColumn, String sortOrder)
-        throws PEPServiceException, PEPPersistencyException;
+public List<WorkFlow> getPetDetailsByAdvSearchForParent(AdvanceSearch advanceSearch,List<String> supplierIdList,String vendorEmail)throws PEPServiceException, PEPPersistencyException;
 
 
 public List<StyleColor> getPetDetailsByAdvSearchForChild(AdvanceSearch advanceSearch, String parentOrin)
@@ -152,8 +148,7 @@ public boolean lockPET(  String orin, String pepUserID, String pepfunction)throw
      * @param vendorEmail
      * @return List<WorkFlow>
      */
-    public List<WorkFlow> getAdvWorklistGroupingData(AdvanceSearch adSearch, List<String> supplierIdList, String vendorEmail, 
-    		List<String> styleOrinList, int startIndex, int maxResults, String sortColumn, String sortOrder);
+    public List<WorkFlow> getAdvWorklistGroupingData(AdvanceSearch adSearch, List<String> supplierIdList, String vendorEmail, List<String> styleOrinList);
     
     /**
      * Method to get the groups for search pet.

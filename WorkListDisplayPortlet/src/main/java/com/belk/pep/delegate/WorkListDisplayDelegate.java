@@ -152,11 +152,8 @@ public class WorkListDisplayDelegate {
         return workListDisplayService.getPetDetailsByAdvSearch(advanceSearch,supplierIdList,vendorEmail);  
     }
     
-    public List<WorkFlow> getPetDetailsByAdvSearchForParent(AdvanceSearch advanceSearch,List<String> supplierIdList,
-                                                            String vendorEmail, int startIndex, int maxResults, String sortColumn, String sortOrder)
-            throws PEPServiceException, PEPPersistencyException  {
-        return workListDisplayService.getPetDetailsByAdvSearchForParent(advanceSearch,
-                supplierIdList, vendorEmail, startIndex, maxResults, sortColumn, sortOrder);
+    public List<WorkFlow> getPetDetailsByAdvSearchForParent(AdvanceSearch advanceSearch,List<String> supplierIdList,String vendorEmail) throws PEPServiceException, PEPPersistencyException  {
+        return workListDisplayService.getPetDetailsByAdvSearchForParent(advanceSearch,supplierIdList,vendorEmail);  
     }
     
     public List<StyleColor> getPetDetailsByAdvSearchForChild(AdvanceSearch advanceSearch, String parentOrin)
@@ -216,8 +213,7 @@ public class WorkListDisplayDelegate {
      * @throws PEPServiceException 
      */
     public List<WorkFlow> getAdvWorklistGroupingData(final AdvanceSearch adSearch,
-        final List<String> supplierIdList, final String vendorEmail, int startIndex, int maxResults, 
-        String sortColumn, String sortOrder)
+        final List<String> supplierIdList, final String vendorEmail)
         throws PEPPersistencyException, PEPServiceException {
         LOGGER.info("Entering getAdvWorklistGroupingData() in Delegate class");
         List<WorkFlow> workflowList = new ArrayList<WorkFlow>();
@@ -229,8 +225,7 @@ public class WorkListDisplayDelegate {
         if(adSearch.getGroupingID() != null && !adSearch.getGroupingID().equals("")
                 || adSearch.getGroupingName() != null && !adSearch.getGroupingName().equals(""))
         { 
-            workflowList = workListDisplayService.getAdvWorklistGroupingData(adSearch, supplierIdList,
-                    vendorEmail, styleOrinList, startIndex, maxResults, sortColumn, sortOrder);
+            workflowList = workListDisplayService.getAdvWorklistGroupingData(adSearch, supplierIdList, vendorEmail, styleOrinList);
             LOGGER.info("List size: " + workflowList.size());
             if(adSearch.getGroupingID() != null && !adSearch.getGroupingID().equals(""))
             {
@@ -243,8 +238,7 @@ public class WorkListDisplayDelegate {
         }
         else
         {
-            styleWorkflowList = workListDisplayService.getPetDetailsByAdvSearchForParent(adSearch, supplierIdList,
-                    vendorEmail, startIndex, maxResults, sortColumn, sortOrder);
+            styleWorkflowList = workListDisplayService.getPetDetailsByAdvSearchForParent(adSearch, supplierIdList, vendorEmail);
             LOGGER.info("List 1 size: " + styleWorkflowList.size());
             String styleOrin = "";
             for(final WorkFlow flow : styleWorkflowList)
@@ -257,11 +251,9 @@ public class WorkListDisplayDelegate {
             }
             if(styleWorkflowList.size() > 0)
             {
-                workflowList = workListDisplayService.getAdvWorklistGroupingData(new AdvanceSearch(),
-                        supplierIdList, vendorEmail, styleOrinList, startIndex, maxResults, sortColumn, sortOrder);
+                workflowList = workListDisplayService.getAdvWorklistGroupingData(new AdvanceSearch(), supplierIdList, vendorEmail, styleOrinList);
             }
-            groupSearchList = workListDisplayService.getAdvWorklistGroupingData(adSearch, supplierIdList,
-                    vendorEmail, new ArrayList<String>(), startIndex, maxResults, sortColumn, sortOrder);
+            groupSearchList = workListDisplayService.getAdvWorklistGroupingData(adSearch, supplierIdList, vendorEmail, new ArrayList<String>());
             
             LOGGER.info("List 2 size: " + workflowList.size());
             workflowList.addAll(groupSearchList);

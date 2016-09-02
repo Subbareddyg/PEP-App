@@ -2817,7 +2817,7 @@ public String getAdvWorkListDisplayDataForChild(AdvanceSearch advSearch, String 
  * @param Parent ORIN the parentOrin
  * @return the work list display data
  */
-public String getAdvWorkListDisplayDataForParent(AdvanceSearch advSearch, String sortColumn, String sortOrder) {
+public String getAdvWorkListDisplayDataForParent(AdvanceSearch advSearch) {
     StringBuilder  advQueryFragment = new StringBuilder();
     String depts = null;
 
@@ -3288,41 +3288,6 @@ public String getAdvWorkListDisplayDataForParent(AdvanceSearch advSearch, String
         advQueryFragment.append("           ) )                                                                                                                     ");
         advQueryFragment.append("         )                                                                                                                        ");
 
-        /** Added for Pagination Perf Enhancements **/
-        if (sortColumn == null || sortColumn.trim().equals("")) {
-        	advQueryFragment.append(" ORDER BY PET_EARLIEST_COMP_DATE ASC");
-        }
-        else if (sortColumn != null && sortColumn.equals("orinGroup")) {
-        	advQueryFragment.append(" ORDER BY ORIN_NUM " + sortOrder);
-        }
-        else if (sortColumn != null && sortColumn.equals("dept")) {
-        	advQueryFragment.append(" ORDER BY DEPT_ID " + sortOrder);
-        }
-        else if (sortColumn != null && sortColumn.equals("vendorStyle")) {
-        	advQueryFragment.append(" ORDER BY ven_style " + sortOrder);
-        }
-        else if (sortColumn != null && sortColumn.equals("productName")) {
-        	advQueryFragment.append(" ORDER BY PRODUCT_NAME " + sortOrder);
-        } 
-        else if (sortColumn != null && sortColumn.equals("contentStatus")) {
-        	advQueryFragment.append(" ORDER BY CONTENTSTATUS " + sortOrder);
-        } 
-        else if (sortColumn != null && sortColumn.equals("imageStatus")) {
-        	advQueryFragment.append(" ORDER BY ImageState " + sortOrder);
-        } 
-        else if (sortColumn != null && sortColumn.equals("petStatus")) {
-        	advQueryFragment.append(" ORDER BY PETSTATUS " + sortOrder);
-        } 
-        else if (sortColumn != null && sortColumn.equals("completionDate")) {
-        	advQueryFragment.append(" ORDER BY PET_EARLIEST_COMP_DATE " + sortOrder);
-        } 
-        else if (sortColumn != null && sortColumn.equals("petSourceType")) {
-        	advQueryFragment.append(" ORDER BY req_type " + sortOrder);
-        }
-        else if (sortColumn != null && sortColumn.equals("vendorName")) {
-        	advQueryFragment.append(" ORDER BY VEN_NAME " + sortOrder);
-        }
-        
     LOGGER.info("getAdvWorkListDisplayDataForParent Query"+advQueryFragment.toString());
     
     return advQueryFragment.toString();
@@ -3390,8 +3355,7 @@ public String getAdvWorkListDisplayDataForParent(AdvanceSearch advSearch, String
      * Date: 05/18/2016
      * Added By: Cognizant
      */
-    public String getGroupSearchQueryForAdvSearch(AdvanceSearch objAdvanceSearch, List<String> lstStyleOrin,
-    		String sortColumn, String sortOrder) {
+    public String getGroupSearchQueryForAdvSearch(AdvanceSearch objAdvanceSearch, List<String> lstStyleOrin) {
             LOGGER.info("Entering getGroupSearchQueryForAdvSearch");
         LOGGER.info("Entering getGroupSearchQueryForAdvSearch");
         StringBuilder  strbAdvSearch = new StringBuilder();
@@ -3521,40 +3485,6 @@ public String getAdvWorkListDisplayDataForParent(AdvanceSearch advSearch, String
         if(StringUtils.isNotBlank(objAdvanceSearch.getCreatedToday()))
         strbAdvSearch.append("  AND TO_DATE(SUBSTR(GRP.CREATED_DTM, 1, 9), 'YYYY-MM-DD') = to_date(SUBSTR(SYSDATE, 1, 9), 'YYYY-MM-DD') ");
 
-        /** Added for Pagination Perf Enhancements **/
-        if (sortColumn == null || sortColumn.trim().equals("")) {
-        	strbAdvSearch.append(" ORDER BY GRP.COMPLETION_DATE ASC");
-        }
-        else if (sortColumn != null && sortColumn.equals("orinGroup")) {
-        	strbAdvSearch.append(" ORDER BY GRP.MDMID " + sortOrder);
-        }
-        else if (sortColumn != null && sortColumn.equals("dept")) {
-        	strbAdvSearch.append(" ORDER BY RP.DEF_DEPT_ID " + sortOrder);
-        }
-        else if (sortColumn != null && sortColumn.equals("vendorStyle")) {
-        	strbAdvSearch.append(" ORDER BY GRP.ENTRY_TYPE " + sortOrder);
-        }
-        else if (sortColumn != null && sortColumn.equals("productName")) {
-        	strbAdvSearch.append(" ORDER BY GRP.GROUP_NAME " + sortOrder);
-        } 
-        else if (sortColumn != null && sortColumn.equals("contentStatus")) {
-        	strbAdvSearch.append(" ORDER BY GRP.GROUP_CONTENT_STATUS_CODE " + sortOrder);
-        } 
-        else if (sortColumn != null && sortColumn.equals("imageStatus")) {
-        	strbAdvSearch.append(" ORDER BY GRP.GROUP_IMAGE_STATUS_CODE " + sortOrder);
-        } 
-        else if (sortColumn != null && sortColumn.equals("petStatus")) {
-        	strbAdvSearch.append(" ORDER BY GRP.GROUP_OVERALL_STATUS_CODE " + sortOrder);
-        } 
-        else if (sortColumn != null && sortColumn.equals("completionDate")) {
-        	strbAdvSearch.append(" ORDER BY GRP.COMPLETION_DATE " + sortOrder);
-        } 
-        else if (sortColumn != null && sortColumn.equals("petSourceType")) {
-        	strbAdvSearch.append(" ORDER BY GRP.PET_SOURCE " + sortOrder);
-        }
-        else if (sortColumn != null && sortColumn.equals("vendorName")) {
-        	strbAdvSearch.append(" ORDER BY ASCT.SUPPLIER_NAME " + sortOrder);
-        }
         
         LOGGER.info("Query -->"+strbAdvSearch.toString());
         LOGGER.info("Exiting getGroupSearchQueryForAdvSearch");
