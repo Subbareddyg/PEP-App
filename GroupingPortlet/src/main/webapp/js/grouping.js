@@ -327,6 +327,7 @@ var app = app || {};
 				//group description char limit and display
 				$('#groupDesc').on('keyup', function(){
 					var curChars = $('#groupDesc').val() || '';
+					curChars = curChars.replace(/\n/g, "\r\n");
 					if(curChars.length <= app.Global.defaults.maxGroupDescChars){
 						$('#descCurChars').text(curChars.length);
 						return true;
