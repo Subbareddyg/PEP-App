@@ -2,7 +2,7 @@
 
 	<groupId>com.belk.pep</groupId>
 	<artifactId>ContentPortlet</artifactId>
-	<version>1.0.1.29-SNAPSHOT</version>
+	<version>1.0.1.31-SNAPSHOT</version>
 	<name>ContentPortlet</name>
 	<modelVersion>4.0.0</modelVersion>
 	<properties>
@@ -238,7 +238,7 @@
 		<dependency>
 			<groupId>com.belk.pep</groupId>
 			<artifactId>CommonForIpcLogin</artifactId>
-			<version>1.0.1.29-SNAPSHOT</version>
+			<version>1.0.1.31-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
