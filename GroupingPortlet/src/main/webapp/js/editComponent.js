@@ -601,7 +601,7 @@ var app = app || {} ;
 				
 				//private method to update group header
 				function _saveGroupingHeader(serializedData){
-					$(this).val('Saving..').css({opacity: 0.5});
+					$('#edit-header').val('Saving..').css({opacity: 0.5});
 					app.GroupFactory.updateHeader(serializedData)
 					.done(function(result){
 						//console.log(result);
@@ -619,6 +619,7 @@ var app = app || {} ;
 								$('#cancel-edit-header').trigger('save.success');
 							}else{
 								message= app.GroupLandingApp.buildMessage(response.description ? response.description : 'Update Error', 'error');
+								$('#edit-header').val('Save').css({opacity: 1});
 							}
 						}
 						
@@ -633,7 +634,7 @@ var app = app || {} ;
 						
 						app.GroupLandingApp.cleanupMessage($('#group-header-message-area'));
 					}).complete(function(){
-						$('#edit-header').val('Edit').css({opacity: 1});
+						//$('#edit-header').val('Edit').css({opacity: 1});
 					});
 				}
 				
@@ -671,6 +672,7 @@ var app = app || {} ;
 				//group description char limit and display
 				$('#fromHeaderEdit').on('keyup', '#groupDesc', function(){
 					var curChars = $('#groupDesc').val() || '';
+					curChars = curChars.replace(/\n/g, "\r\n");
 					if(curChars.length <= app.Global.defaults.maxGroupDescChars){
 						$('#descCurChars').text(curChars.length);
 						return true;
