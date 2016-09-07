@@ -21,12 +21,16 @@ import javax.portlet.RenderResponse;
 import javax.portlet.ResourceRequest;
 import javax.portlet.ResourceResponse;
 
+import com.belk.pep.common.model.PageAnchorDetails;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.portlet.ModelAndView;
 import org.springframework.web.portlet.bind.annotation.ActionMapping;
@@ -234,24 +238,37 @@ public class GroupingController {
 		}
 		modelAndView.addObject("groupTypesMap", groupMap);
 		/** changes to display Grouping Types - Ends. **/
-
+        if (request.getPortletSession().getAttribute(GroupingConstants.GROUP_ID) != null) {
+            modelAndView.addObject("prevVisitedGroupId",
+                    (String) request.getPortletSession().getAttribute(GroupingConstants.GROUP_ID));
+        }
 		LOGGER.info("GroupingControlle:handleRenderRequest:exit.");
 		return modelAndView;
 	}
 
-	/**
-	 * This method will handle the Event request and to fetch the user details
-	 * from the login portlet
-	 */
-	/**
-	 * @param request
-	 * @param response
-	 */
-	@EventMapping
-	public void handleEventRequest(EventRequest request, EventResponse response) {
-		LOGGER.info("GroupingController:handleEventRequest:Enter ");
-		Event event = request.getEvent();
-		String loggedInUser = "";
+    @ActionMapping(params = "action=workListDisplay")
+    public void goToWorkListDisplay(ActionRequest request, ActionResponse response,
+            final @ModelAttribute("fdForm") GroupSearchForm fdForm, final BindingResult result, final Model model) {
+
+        String groupId = request.getParameter("groupId");
+        PageAnchorDetails pageAnchorDetails = new PageAnchorDetails();
+        pageAnchorDetails.setGroupId(groupId);
+        response.setEvent(GroupingConstants.EVENT_PAGINATION, pageAnchorDetails);
+    }
+
+    /**
+     * This method will handle the Event request and to fetch the user details
+     * from the login portlet
+     */
+    /**
+     * @param request
+     * @param response
+     */
+    @EventMapping
+    public void handleEventRequest(EventRequest request, EventResponse response) {
+        LOGGER.info("GroupingController:handleEventRequest:Enter ");
+        Event event = request.getEvent();
+        String loggedInUser = "";
 
 		if (event.getName() != null && GroupingConstants.USER_DATA_OBJ.equals(event.getName())) {
 			LOGGER.info("GroupingController:handlingPagination : " + event.getName());

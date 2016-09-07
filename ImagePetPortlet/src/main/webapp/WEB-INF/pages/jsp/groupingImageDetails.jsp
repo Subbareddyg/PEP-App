@@ -69,6 +69,18 @@ function grpclearErrorMessage(){
 
 }
 
+function goToHomeScreen(loggedInUser,releseLockedPetURL){
+	if(timeOutFlag == 'yes'){
+		$("#timeOutId").show();
+		timeOutConfirm = 'Y';
+		setTimeout(function(){logout_home(loggedInUser,releseLockedPetURL);},4000);
+	}else{
+		$("#timeOutId").hide();
+		releseLockedPet(loggedInUser,releseLockedPetURL);
+		    window.location = "/wps/portal/home/worklistDisplay";
+	}
+}
+
 function goToWorkListDisplayScreen(loggedInUser,releseLockedPetURL){
 	if(timeOutFlag == 'yes'){
 		$("#timeOutId").show();
@@ -78,8 +90,12 @@ function goToWorkListDisplayScreen(loggedInUser,releseLockedPetURL){
 	}else{
 		$("#timeOutId").hide();
 		releseLockedPet(loggedInUser,releseLockedPetURL);
-		window.location = "/wps/portal/home/worklistDisplay";
-		
+		var url = $('input[name=workListDisplayUrl]').val();
+        if(url){
+            window.location = $('input[name=workListDisplayUrl]').val();
+        }else{
+            window.location = "/wps/portal/home/worklistDisplay";
+        }
 	}	
 	
 }
@@ -190,6 +206,10 @@ function releseLockedPet(loggedInUser,releseLockedPetURL){
 <portlet:resourceURL var="releseLockedPet" id ="releseLockedPet">  </portlet:resourceURL>
 
 <input type="hidden" id="releseLockedPet" name="releseLockedPet" value="${releseLockedPet}"></input>	
+<div id="home-scroll-anchor"> </div>
+<div id="home-scroll" align="left" style="display: inline; padding: 5px 10px;margin-bottom: 0.5cm" >
+<input type="button" style="padding: 5px 10px;font-weight: bold" name="home" value="Home" onclick=goToHomeScreen('<c:out value="${imageDetailsForm.username}"/>','${releseLockedPet}');  />
+</div>
 
 <div align="right" style="margin-bottom: 0.5cm" >	
 			<c:out value="${imageDetailsForm.username}"/>  &nbsp;	 
@@ -257,8 +277,16 @@ function releseLockedPet(loggedInUser,releseLockedPetURL){
 
 	</c:forEach>
 	</c:if>
-<input type="button" name="Close" value="Close"   class="closeContentButton"  onclick="javascript:goToWorkListDisplayScreen('<c:out value="${imageDetailsForm.username}"/>','${releseLockedPet}');" style= " width: 100px; height: 30px; margin-left:800px"/>		
-											
+	<div id="scroller-anchor"></div>
+    <div id="scroller" style="padding:10px;float:right">
+        <input type="button" name="Close" value="Close"   class="closeContentButton"  onclick="javascript:goToWorkListDisplayScreen('<c:out value="${imageDetailsForm.username}"/>','${releseLockedPet}');" style= " width: 100px; height: 30px;"/>
+    </div>
+<portlet:actionURL var="formAction">
+    <portlet:param name="action" value="workListDisplay"/>
+    <portlet:param name="orinNumber" value="${orinNumber}"/>
+    <portlet:param name="pageNumber" value="${pageNumber}"/>
+</portlet:actionURL>
+<input type="hidden" name="workListDisplayUrl" value="${formAction}" />
   </div>	
 </div>	
 
@@ -695,5 +723,67 @@ function clickListenerImage(e){
 	timeOutPage();
 	timeOutImagePage();
 }
+
+function moveHomeScroller() {
+                    var $anchor = $("#home-scroll-anchor");
+                    var $scroller = $('#home-scroll');
+
+                    var move = function() {
+                        var st = $(window).scrollTop();
+                        var ot = $anchor.offset().top;
+                        if(st > ot) {
+                            $scroller.css({
+                                position: "fixed",
+                                top: "0px",
+                                "background-color": "#DEB887"
+                            });
+                        } else {
+                            if(st <= ot) {
+                                $scroller.css({
+                                    position: "relative",
+                                    top: "",
+                                    right: "",
+                                    "background-color": "#52527A"
+
+                                });
+                            }
+                        }
+                    };
+                    $(window).scroll(move);
+                    move();
+                }
+		function moveScroller() {
+            var $anchor = $("#scroller-anchor");
+            var $scroller = $('#scroller');
+
+            var move = function() {
+                var st = $(window).scrollTop();
+                var ot = $anchor.offset().top;
+                if(st > ot) {
+                    $scroller.css({
+                        position: "fixed",
+                        top: "0px",
+                        right: "321px",
+                        "background-color": "#DEB887"
+                    });
+                } else {
+                    if(st <= ot) {
+                        $scroller.css({
+                            position: "relative",
+                            top: "",
+                            right: "",
+                            "background-color": "#FFFFFF"
+
+                        });
+                    }
+                }
+            };
+            $(window).scroll(move);
+            move();
+        }
+         $(function() {
+            moveScroller();
+            moveHomeScroller();
+         });
 
 </script>

@@ -154,7 +154,8 @@ public class ImageConstants {
     public static final String CONTENT_DEACTIVTEDSTATUS = "05";
     public static final String CONTENT_MSG = "Please complete content before choosing Publish to Web";
 
-    
+
+    public static final String EVENT_PAGINATION = "PaginationAnchorObj";
     
     
     

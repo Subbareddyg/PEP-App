@@ -18,6 +18,26 @@
      
      	<style type="text/css">
 		.confirm {display: inherit;}
+		 header{
+            position: fixed;
+            width: 100%;
+            z-index: 10;
+            background-color: #52527a;
+          }
+          .component-container{
+            margin-top: 107px;
+          }
+          .freeze-cntr{
+            position: fixed;
+            background-color: #52527A;
+            top: 87px;
+            width: 60%;
+            padding: 10px 0px;
+            z-index: 100;
+          }
+          .freeze-cntr-right input[type="button"]{
+            margin: 0 10px;
+          }
 	</style>
 	
 	<script type="text/javascript" 	src="<%=request.getContextPath()%>/js/libs/jq-plugins-adapter.js"></script>	
@@ -865,6 +885,7 @@
 		function goToWorkListDisplayScreen(loggedInUser,releseLockedPetURL) {			
 			var  pepUserRoleName = "";
 			inputChanged  = false ; 
+			var url = $('input[name=workListDisplayUrl]').val();
 			
 	 		if(document.getElementById("roleNameId") != null){
       		 	 pepUserRoleName = document.getElementById("roleNameId").value;  
@@ -896,7 +917,11 @@
 							}else{
 								$("#timeOutId").hide();
 								releseLockedPet(loggedInUser,releseLockedPetURL);
-								window.location = "/wps/portal/home/worklistDisplay";	
+                                if(url){
+                                    window.location = $('input[name=workListDisplayUrl]').val();
+                                }else{
+                                    window.location = "/wps/portal/home/worklistDisplay";
+                                }
 							}
 						}
 					});
@@ -911,7 +936,11 @@
 							}else{
 								$("#timeOutId").hide();
 								releseLockedPet(loggedInUser,releseLockedPetURL);
-								window.location = "/wps/portal/home/worklistDisplay";	
+								if(url){
+                                    window.location = $('input[name=workListDisplayUrl]').val();
+                                }else{
+                                    window.location = "/wps/portal/home/worklistDisplay";
+                                }
 							}
 				}
 			}
@@ -2161,6 +2190,21 @@ function redirectSessionTimedOutContent(){
    }
 }
 
+function goToHomeScreen(){
+ var releseLockedPetURL = $("#releseLockedPet").val(),loggedInUser= $("#loggedInUser").val();
+console.log(releseLockedPetURL);
+    inputChanged  = false ;
+	if(timeOutFlag == 'yes'){
+		$("#timeOutId").show();
+		timeOutConfirm = 'Y';
+		setTimeout(function(){logout_home(loggedInUser,releseLockedPetURL);},4000);
+	}else{
+		$("#timeOutId").hide();
+		releseLockedPet(loggedInUser,releseLockedPetURL);
+		    window.location = "/wps/portal/home/worklistDisplay";
+	}
+}
+
 function logout_home(loggedInUser,releseLockedPetURL){
 	inputChanged  = false ;
     releseLockedPet(loggedInUser,releseLockedPetURL);
@@ -2384,7 +2428,59 @@ function toggleRows(currentRow, styleId, styleColorId){
 							
 							<portlet:resourceURL var="releseLockedPet" id ="releseLockedPet">  </portlet:resourceURL>
 							<input type="hidden" id="releseLockedPet" name="releseLockedPet" value="${releseLockedPet}"></input>
-							
+							<div class="freeze-cntr">
+                                <div style="display: inline; padding: 0 10px; float: left;" >
+                                    <input type="button" style="padding: 5px 15px;font-weight: bold" name="home"
+                                    value="Home"
+                                    onclick=goToHomeScreen();  />
+                                </div>
+                                <div style="float: right;" class="freeze-cntr-right">
+                                    <c:if test="${contentDisplayForm.styleInformationVO.groupingType == 'CPG'}">
+                                        <div class="orin-popup-container">
+                                            <input type="button" class="btn chevron-down" id="btnCopyORIN" value="Copy ORIN" style="width: 150px; padding: 6px;"/>
+                                            <div class="clearfix"></div>
+                                            <div class="orin-popup" id="orin-popup" style="display:none">
+                                                <div class="popup-header x-panel-header x-unselectable">Copy ORIN</div>
+                                                <div class="popup-body">
+                                                    <div class="form-conatiner">
+                                                        <div class="input-area">
+                                                            <label for="styleId">ORIN#</label>
+                                                            <input type="text" name="styleId" id="copyORINstyleIdTmp" value="" required maxlength="9" />
+                                                        </div>
+                                                        <div class="submit-area">
+                                                            <input type="button" id="doCopyOrin" value="Submit" class="action-button" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </c:if>
+                                         <input type="button" id="btnSubmit" name="btnsubmit" value="Submit" class="action-button"
+                                            <c:if test="${contentDisplayForm.roleName == 'readonly'}">
+                                                disabled="disabled"
+                                            </c:if>
+                                            onclick="javascript:saveContentPetAttributesWebserviceResponse('${saveContentPetAttributes}','<c:out value="${contentDisplayForm.styleInformationVO.orin}"/>','<c:out value="${contentDisplayForm.pepUserId}"/>', '<c:out value="${contentDisplayForm.productAttributesDisplay.dropDownList.size()}"/>','<c:out value="${contentDisplayForm.legacyAttributesDisplay.dropDownList.size()}"/>', '<c:out value="${contentDisplayForm.productAttributesDisplay.radiobuttonList.size()}"/>', '<c:out value="${contentDisplayForm.legacyAttributesDisplay.radiobuttonList.size()}"/>', '', '<c:out value="${contentDisplayForm.roleName}"/>', 'Submit','', true)" />
+                                            <c:if test="${contentDisplayForm.roleName == 'readonly'}">
+                                             <input type="button" name="Save" value="<fmt:message key="content.label.saveButton" bundle="${display}"/>"
+                                                   class="saveContentButtonGroup"  onclick="javascript:saveContent();" disabled="true"/>
+                                              <input type="button" name="Close" value="<fmt:message key="content.label.closeButton" bundle="${display}"/>"
+                                                  class="saveContentButtonGroup"  onclick="javascript:goToWorkListDisplayScreen('<c:out value="${contentDisplayForm.userName}"/>','${releseLockedPet}');"/>
+                                            </c:if>
+                                            <c:if test="${contentDisplayForm.roleName == 'dca' || contentDisplayForm.roleName == 'vendor' }">
+                                                         <input type="button" name="Save" id="saveButtonId"  value="<fmt:message key="content.label.saveButton" bundle="${display}"/>"
+                                                               class="saveContentButtonGroup"  onclick="javascript:saveContentPetAttributesWebserviceResponse('${saveContentPetAttributes}','<c:out value="${contentDisplayForm.styleInformationVO.orin}"/>','<c:out value="${contentDisplayForm.pepUserId}"/>', '<c:out value="${contentDisplayForm.productAttributesDisplay.dropDownList.size()}"/>','<c:out value="${contentDisplayForm.legacyAttributesDisplay.dropDownList.size()}"/>', '<c:out value="${contentDisplayForm.productAttributesDisplay.radiobuttonList.size()}"/>', '<c:out value="${contentDisplayForm.legacyAttributesDisplay.radiobuttonList.size()}"/>', '', '', 'Save','')"/>
+                                                          <input type="button" name="Close" value="<fmt:message key="content.label.closeButton" bundle="${display}"/>"
+                                                              class="closeContentButton"  onclick="javascript:goToWorkListDisplayScreen('<c:out value="${contentDisplayForm.userName}"/>','${releseLockedPet}');"/>
+                                            </c:if>
+                                        <div style="float:left;margin-right:35px; margin-top:10px;color: #FFF;">
+                                            <label style="margin-right:15px">
+                                            <input type="checkbox" style="margin-top:0px;" id="publisStatusCodePublishToWeb"
+                                            name="publisStatusCode" value="09"
+                                            <c:if test="${contentDisplayForm.styleInformationVO.overallStatusCode == '09'}"> checked=checked </c:if>
+                                            <c:if test="${contentDisplayForm.roleName == 'readonly'}"> disabled="disabled" </c:if> /> <b>Publish to Web (Skip CMP Task)</b></label>
+                                        </div>
+                                </div>
+							</div>
 							<!--Logout for Content Screen -->		
 							 <div align="right" >	
 								<c:out value="${contentDisplayForm.pepUserId}"/> &nbsp;	 
@@ -2417,30 +2513,7 @@ function toggleRows(currentRow, styleId, styleColorId){
 									 </c:if>
 									 <table><tr><td><b><font size='2'><c:out value="${contentCopyStatusMessage}" /></font></b></td></tr></table>
 								   </div>
-								   
-									<c:if test="${contentDisplayForm.styleInformationVO.groupingType == 'CPG'}">
-								    <div class="orin-popup-container">
-										<input type="button" class="btn chevron-down" id="btnCopyORIN" value="Copy ORIN" style="width: 150px; padding: 6px;"/>
-										<div class="clearfix"></div>
-										<div class="orin-popup" id="orin-popup" style="display:none">
-											<div class="popup-header x-panel-header x-unselectable">Copy ORIN</div>
-											<div class="popup-body">
-												
-												<div class="form-conatiner">
-													<div class="input-area">
-														<label for="styleId">ORIN#</label>
-														<input type="text" name="styleId" id="copyORINstyleIdTmp" value="" required maxlength="9" />
-													</div>
-													<div class="submit-area">
-														<input type="button" id="doCopyOrin" value="Submit" class="action-button" />
-													</div>
-												</div>
-											</div>
-										</div>
-									</div>
-									</c:if>
 
-									  
 									<ul class="pep_info" style="font-size: 11px; padding: 0 0 10px !important;">
 										<li class="txt_attr_name" style="width: 30%;"><fmt:message key="label.grouping" bundle="${display}"/>&nbsp;<c:out value="${contentDisplayForm.styleInformationVO.orin}"/>&nbsp;</li>				
 										<li class="txt_attr_name" style="width: 30%;"><fmt:message key="label.groupingType" bundle="${display}"/>&nbsp;<c:out value="${contentDisplayForm.styleInformationVO.groupingType}"/>&nbsp;</li>
@@ -2511,42 +2584,33 @@ function toggleRows(currentRow, styleId, styleColorId){
 									</ul>
 									<!-- End Added by Sriharsha -->
 									<div style="float:right">
-									<input type="button" id="btnSubmit" name="btnsubmit" value="Submit" class="action-button" 
-									<c:if test="${contentDisplayForm.roleName == 'readonly'}">
-										disabled="disabled"
-									</c:if>
-									onclick="javascript:saveContentPetAttributesWebserviceResponse('${saveContentPetAttributes}','<c:out value="${contentDisplayForm.styleInformationVO.orin}"/>','<c:out value="${contentDisplayForm.pepUserId}"/>', '<c:out value="${contentDisplayForm.productAttributesDisplay.dropDownList.size()}"/>','<c:out value="${contentDisplayForm.legacyAttributesDisplay.dropDownList.size()}"/>', '<c:out value="${contentDisplayForm.productAttributesDisplay.radiobuttonList.size()}"/>', '<c:out value="${contentDisplayForm.legacyAttributesDisplay.radiobuttonList.size()}"/>', '', '<c:out value="${contentDisplayForm.roleName}"/>', 'Submit','', true)" />
-									
-									<c:if test="${contentDisplayForm.roleName == 'readonly'}">									
-									   
-									        
-						             <input type="button" name="Save" value="<fmt:message key="content.label.saveButton" bundle="${display}"/>" 
-		  							       class="saveContentButtonGroup"  onclick="javascript:saveContent();" disabled="true"/>							                            
-								      
-		  							  
-		  					          <input type="button" name="Close" value="<fmt:message key="content.label.closeButton" bundle="${display}"/>" 
-		  							      class="saveContentButtonGroup"  onclick="javascript:goToWorkListDisplayScreen('<c:out value="${contentDisplayForm.userName}"/>','${releseLockedPet}');"/>
-							
-                                        
-                                    </c:if>
-                                     
-									<c:if test="${contentDisplayForm.roleName == 'dca' || contentDisplayForm.roleName == 'vendor' }">										
-										  
-										        
-									             <input type="button" name="Save" id="saveButtonId"  value="<fmt:message key="content.label.saveButton" bundle="${display}"/>" 
-					  							       class="saveContentButtonGroup"  onclick="javascript:saveContentPetAttributesWebserviceResponse('${saveContentPetAttributes}','<c:out value="${contentDisplayForm.styleInformationVO.orin}"/>','<c:out value="${contentDisplayForm.pepUserId}"/>', '<c:out value="${contentDisplayForm.productAttributesDisplay.dropDownList.size()}"/>','<c:out value="${contentDisplayForm.legacyAttributesDisplay.dropDownList.size()}"/>', '<c:out value="${contentDisplayForm.productAttributesDisplay.radiobuttonList.size()}"/>', '<c:out value="${contentDisplayForm.legacyAttributesDisplay.radiobuttonList.size()}"/>', '', '', 'Save','')"/>
-									                            
-											      
-					  							  
-					  					          <input type="button" name="Close" value="<fmt:message key="content.label.closeButton" bundle="${display}"/>" 
-					  							      class="closeContentButton"  onclick="javascript:goToWorkListDisplayScreen('<c:out value="${contentDisplayForm.userName}"/>','${releseLockedPet}');"/>
-										
-									 </c:if>
-									</div>
-									<div style="float:right;margin-right:35px">
-										<label style="margin-right:15px"><input type="checkbox" id="publisStatusCodePublishToWeb" name="publisStatusCode" value="09"
-										<c:if test="${contentDisplayForm.styleInformationVO.overallStatusCode == '09'}"> checked=checked </c:if> 
-										<c:if test="${contentDisplayForm.roleName == 'readonly'}"> disabled="disabled" </c:if> /> <b>Publish to Web (Skip CMP Task)</b></label>
+									    <div id="scroller-anchor"></div>
+                                        <div id="scroller" style="padding:10px;">
+                                            <input type="button" id="btnSubmit" name="btnsubmit" value="Submit" class="action-button"
+                                            <c:if test="${contentDisplayForm.roleName == 'readonly'}">
+                                                disabled="disabled"
+                                            </c:if>
+                                            onclick="javascript:saveContentPetAttributesWebserviceResponse('${saveContentPetAttributes}','<c:out value="${contentDisplayForm.styleInformationVO.orin}"/>','<c:out value="${contentDisplayForm.pepUserId}"/>', '<c:out value="${contentDisplayForm.productAttributesDisplay.dropDownList.size()}"/>','<c:out value="${contentDisplayForm.legacyAttributesDisplay.dropDownList.size()}"/>', '<c:out value="${contentDisplayForm.productAttributesDisplay.radiobuttonList.size()}"/>', '<c:out value="${contentDisplayForm.legacyAttributesDisplay.radiobuttonList.size()}"/>', '', '<c:out value="${contentDisplayForm.roleName}"/>', 'Submit','', true)" />
+                                            <c:if test="${contentDisplayForm.roleName == 'readonly'}">
+                                             <input type="button" name="Save" value="<fmt:message key="content.label.saveButton" bundle="${display}"/>"
+                                                   class="saveContentButtonGroup"  onclick="javascript:saveContent();" disabled="true"/>
+                                              <input type="button" name="Close" value="<fmt:message key="content.label.closeButton" bundle="${display}"/>"
+                                                  class="saveContentButtonGroup"  onclick="javascript:goToWorkListDisplayScreen('<c:out value="${contentDisplayForm.userName}"/>','${releseLockedPet}');"/>
+                                            </c:if>
+                                            <c:if test="${contentDisplayForm.roleName == 'dca' || contentDisplayForm.roleName == 'vendor' }">
+                                                         <input type="button" name="Save" id="saveButtonId"  value="<fmt:message key="content.label.saveButton" bundle="${display}"/>"
+                                                               class="saveContentButtonGroup"  onclick="javascript:saveContentPetAttributesWebserviceResponse('${saveContentPetAttributes}','<c:out value="${contentDisplayForm.styleInformationVO.orin}"/>','<c:out value="${contentDisplayForm.pepUserId}"/>', '<c:out value="${contentDisplayForm.productAttributesDisplay.dropDownList.size()}"/>','<c:out value="${contentDisplayForm.legacyAttributesDisplay.dropDownList.size()}"/>', '<c:out value="${contentDisplayForm.productAttributesDisplay.radiobuttonList.size()}"/>', '<c:out value="${contentDisplayForm.legacyAttributesDisplay.radiobuttonList.size()}"/>', '', '', 'Save','')"/>
+                                                          <input type="button" name="Close" value="<fmt:message key="content.label.closeButton" bundle="${display}"/>"
+                                                              class="closeContentButton"  onclick="javascript:goToWorkListDisplayScreen('<c:out value="${contentDisplayForm.userName}"/>','${releseLockedPet}');"/>
+                                            </c:if>
+
+									    </div>
+									 <portlet:actionURL var="formAction">
+                                        <portlet:param name="action" value="workListDisplay"/>
+                                        <portlet:param name="orinNumber" value="${orinNumber}"/>
+                                        <portlet:param name="pageNumber" value="${pageNumber}"/>
+                                     </portlet:actionURL>
+                                     <input type="hidden" name="workListDisplayUrl" value="${formAction}" />
 									</div>
                                 </div>								 
 							</div>

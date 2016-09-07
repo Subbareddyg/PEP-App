@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Random;
 //import java.util.logging.Logger;
+import com.belk.pep.common.model.PageAnchorDetails;
 import org.apache.log4j.Logger;
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
@@ -200,6 +201,7 @@ public class ImageRequestController {
         String orinNumber = null;
         String petStatus = null ;
         String imageStatus = null ;
+        String pageNumber = request.getParameter("returnPageNumber");
         String [] imageWithPetStatusArray = null;
         if(request.getPortletSession().getAttribute("internalUser")!=null ){
         	  LOGGER.info("internal user name ---" + request.getPortletSession().getAttribute("internalUser"));
@@ -371,7 +373,11 @@ public class ImageRequestController {
     			mv = getGroupingImageDetails(request,response,imageDetailsFromIPC);	
     		}   
     	}
-    		
+        mv.addObject("pageNumber", pageNumber);
+        if(orinNumber == null && imageDetailsFromIPC != null){
+            orinNumber = imageDetailsFromIPC.getOrinNumber();
+        }
+        mv.addObject("orinNumber", orinNumber);
         return mv;
     }
     
@@ -647,6 +653,18 @@ public class ImageRequestController {
 			LOGGER.info("Unable to read the vendorImageUploadDir property from properties file");
 		}
 	}
+    @ActionMapping(params = "action=workListDisplay")
+    public void goToWorkListDisplay(ActionRequest request, ActionResponse response,
+            final @ModelAttribute("fdForm") FileUploadForm fdForm, final BindingResult result, final Model model) {
+
+        String orinNumber = request.getParameter("orinNumber");
+        String pageNumber = request.getParameter("pageNumber");
+        PageAnchorDetails pageAnchorDetails = new PageAnchorDetails();
+        pageAnchorDetails.setOrinNumber(orinNumber);
+        pageAnchorDetails.setPageNumber(pageNumber);
+        response.setEvent(ImageConstants.EVENT_PAGINATION, pageAnchorDetails);
+        LOGGER.info(request.getParameter("lockedPetId"));
+    }
 	 /**
      * Call for the file Upload VPI
      * @param request

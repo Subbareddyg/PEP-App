@@ -1,6 +1,9 @@
 <%@ include file="/WEB-INF/pages/jsp/include.jsp" %>
 <fmt:setBundle basename="grouping" />
 <portlet:resourceURL id="invalidate" var="logouturl" />
+<div align="left" style="display: inline; padding: 5px 10px;margin-bottom: 0.5cm" >
+<input type="button" style="padding: 5px 10px;font-weight: bold" name="home" value="Home" onclick=goToHomeScreen();  />
+</div>
 <div align="right" style="margin-bottom: 0.5cm" >	
 			<c:out value="${LAN_ID}"/> &nbsp;	 
 			<input type="button"   style="font-weight: bold" name="logout" value="Logout" 
@@ -153,8 +156,14 @@
 </div>
 <div class="group-search-footer-area">
 	<div class="footer-content">
-		<input type="button" onclick="window.location.href='/wps/portal/home/worklistDisplay'" class="btn btn-large" value="Close">
+        <input type="hidden" name="prevVisitedGroupId" value="${prevVisitedGroupId}" />
+		<input type="button" onclick="javascript:goToWorkListDisplayScreen()" class="btn btn-large" value="Close">
 		<p class="button-caption">Back To Worklist</p>
+		<portlet:actionURL var="formAction">
+            <portlet:param name="action" value="workListDisplay"/>
+            <portlet:param name="groupId" value="${prevVisitedGroupId}"/>
+         </portlet:actionURL>
+         <input type="hidden" name="workListDisplayUrl" value="${formAction}" />
 	</div>
 </div>
 
@@ -464,4 +473,16 @@
 	
 	//init main SPA
 	app.GroupLandingApp.init();
+	function goToHomeScreen(){
+        window.location.href = "/wps/portal/home/worklistDisplay";
+	}
+
+	function goToWorkListDisplayScreen(loggedInUser,releseLockedPetURL){
+                var url = $('input[name=workListDisplayUrl]').val();
+                if(url){
+                    window.location = $('input[name=workListDisplayUrl]').val();
+                }else{
+                    window.location = "/wps/portal/home/worklistDisplay";
+                }
+    }
 </script>

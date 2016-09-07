@@ -284,6 +284,8 @@ public class GroupingConstants {
 	
 	public static final String PARENT_STYLE_ORIN = "parentStyleOrin";
 	
+	public static final String EVENT_PAGINATION = "PaginationAnchorObj";
+
 	public static final String COMPONENT= "component";
 	public static final String COMPONENT_STYLE= "styleId";
 	public static final String PARENT_GROUP_ID = "parentGroupId";
