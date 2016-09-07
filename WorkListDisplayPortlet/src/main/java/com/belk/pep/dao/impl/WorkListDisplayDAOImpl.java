@@ -595,6 +595,7 @@ public ArrayList<DepartmentDetails> getLikeSearchDepartmentDetails(String search
     //}
    
   }catch(Exception e){
+	  LOGGER.error("exception in getLikeSearchDepartmentDetails "+e);
  }
 finally
 {

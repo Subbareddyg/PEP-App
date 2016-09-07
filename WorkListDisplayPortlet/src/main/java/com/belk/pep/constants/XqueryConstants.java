@@ -2006,197 +2006,146 @@ private String getSourceStatusCode(String status) {
  * @param pepId the pep id
  * @return the work list display data
  */
-public String getWorkListDisplayDataParent(boolean vendorLogin, String sortColumn, String sortOrder) {
-    
-    StringBuilder workListQuery = new StringBuilder();
-        workListQuery.append("WITH ");
-        workListQuery.append("  Input(Depts, EmailId, LANId, SuppIds) AS ");
-        workListQuery.append("  ( ");
-        workListQuery.append("    SELECT ");
-        workListQuery.append("         ");
-        workListQuery.append(":depts");
-        workListQuery.append(" Depts, ");
-        workListQuery.append(":email");
-        workListQuery.append(" EmailId, ");
-        workListQuery.append(":pepId");
-        workListQuery.append(" LANId, ");
-        workListQuery.append(":supplierId");
-        workListQuery.append("  SuppIds ");
-        workListQuery.append("      ");
-        workListQuery.append("      ");
-        workListQuery.append("    FROM ");
-        workListQuery.append("      dual ");
-        workListQuery.append("  ) ");
-        workListQuery.append("  , ");  
-        workListQuery.append("    givenInpDept as (                                                                                                 ");
-        workListQuery.append("      SELECT regexp_substr(inp.depts,'[^,]+',1,LEVEL) as dept_id  FROM Input inp                                      ");
-        workListQuery.append("              CONNECT BY regexp_substr(inp.depts,'[^,]+',1,LEVEL) IS NOT NULL                                         ");
-        workListQuery.append("    ),                                                                                                                ");
-        workListQuery.append("    givenInpSupplier as (                                                                                             ");
-        workListQuery.append("      SELECT regexp_substr(inp.SuppIds,'[^,]+',1,LEVEL) as supplier_id FROM Input inp                                 ");
-        workListQuery.append("        CONNECT BY regexp_substr(inp.SuppIds,'[^,]+',1,LEVEL) IS NOT NULL                                             ");
-        workListQuery.append("      ),                                                                                                              ");
-        workListQuery.append("                                                                                                                      ");
-        workListQuery.append("    entryTypeStyleList AS                                                                                             ");
-        workListQuery.append("    (                                                                                                                 ");
-        workListQuery.append("      SELECT                                                                                                          ");
-        workListQuery.append("        aic.PARENT_MDMID,                                                                                                 ");
-        workListQuery.append("        aic.MDMID,                                                                                                        ");
-        workListQuery.append("        aic.ENTRY_TYPE,                                                                                                   ");
-        workListQuery.append("        aic.MOD_DTM,                                                                                                      ");
-        workListQuery.append("        CASE                                                                                                          ");
-        workListQuery.append("          when aic.PRIMARY_UPC is null                                                                                    ");
-        workListQuery.append("          then NUMBER_04                                                                                              ");
-        workListQuery.append("           when aic.PRIMARY_UPC = ' '                                                                                     ");
-        workListQuery.append("           then NUMBER_04                                                                                             ");
-        workListQuery.append("          else     aic.PRIMARY_UPC                                                                                        ");
-        workListQuery.append("        end PRIMARY_UPC,                                                                                              ");
-        workListQuery.append("        aic.DEPT_ID, aic.PRIMARY_SUPPLIER_ID Supplier_Id, aic.PRIMARYSUPPLIERVPN ven_style, aic.PRODUCT_NAME                ");
-        workListQuery.append("      FROM                                                                                                            ");
-        workListQuery.append("        ADSE_Item_CATALOG aic,  ADSE_PET_CATALOG pet, givenInpDept d, givenInpSupplier s, Input inp                           ");
-        workListQuery.append("      WHERE                                                                                                           ");
-        workListQuery.append("        aic.ENTRY_TYPE in ('Style', 'Complex Pack')     AND aic.PETEXISTS = 'Y'                                                                     ");
-        workListQuery.append("        AND  pet.mdmid = aic.mdmid AND  pet.PET_STATE <>'05' AND                                                                             ");
-        workListQuery.append("         ((                                                                                                           ");
-        workListQuery.append("             (inp.EmailId IS NULL)                                                                                    ");
-        workListQuery.append("              AND aic.DEPT_ID = d.dept_id and aic.PRIMARY_SUPPLIER_ID is not null                                     ");
-        workListQuery.append("          )                                                                                                           ");
-        workListQuery.append("          OR                                                                                                          ");
-        workListQuery.append("            ( (inp.EmailId IS NOT NULL and d.dept_id is not null)                                                                               ");
-        workListQuery.append("            AND aic.DEPT_ID =d.dept_id                                                                                ");
-        workListQuery.append("              AND inp.SuppIds is not null AND aic.PRIMARY_SUPPLIER_ID = s.supplier_id                                 ");
-        workListQuery.append("        )                                                                                                            ");
-        workListQuery.append("          OR                                                                                                       ");
-        workListQuery.append("              ( (inp.EmailId IS NOT NULL and d.dept_id is null)                                                    ");
-        workListQuery.append("              AND inp.SuppIds is not null AND aic.PRIMARY_SUPPLIER_ID = s.supplier_id                              ");
-        workListQuery.append("      )                                                                                                            ");
-        workListQuery.append("     )                                                                                                             ");
-        workListQuery.append("    ),                                                                                                              ");
-        workListQuery.append("  STYLEID_DESC AS(                                                                                                  ");
-        workListQuery.append("      SELECT                                                                                                          ");
-        workListQuery.append("        sda.PARENT_MDMID,                                                                                             ");
-        workListQuery.append("        sda.MDMID ORIN_NUM,                                                                                           ");
-        workListQuery.append("        sda.ENTRY_TYPE,                                                                                               ");
-        workListQuery.append("        sda.PRIMARY_UPC,                                                                                              ");
-        workListQuery.append("        sda.Supplier_Id,                                                                                              ");
-        workListQuery.append("        sda.DEPT_ID,                                                                                                  ");
-        workListQuery.append("        sda.PRODUCT_NAME,                                                                                               ");
-        workListQuery.append("        sda.ven_style,                                                                                                ");
-        workListQuery.append("        pet.pet_state PETSTATUS,                                                                                      ");
-        workListQuery.append("        pet.image_status ImageState,                                                                                  ");
-        workListQuery.append("        pet.content_status CONTENTSTATUS,                                                                             ");
-        workListQuery.append("        p.completion_date,                                                                                            ");
-        workListQuery.append("        p.req_type,                                                                                                   ");
-        workListQuery.append("        pet.PET_STYLE_STATE,                                                                                          ");
-        workListQuery.append("        pet.PET_STYLE_IMAGE,                                                                                          ");
-        workListQuery.append("        pet.PET_STYLE_CONTENT, pet.PET_EARLIEST_COMP_DATE, pet.EXIST_IN_GROUP, p.CFAS, p.CONVERSION_FLAG       ");
-        workListQuery.append("     from                                                                                                             ");
-        workListQuery.append("        entryTypeStyleList sda,                                                                                       ");
-        workListQuery.append("        ADSE_PET_CATALOG pet,                                                                                         ");
-        workListQuery.append("        XMLTABLE(                                                                                                     ");
-        workListQuery.append("        'let                                                                                                          ");
-        workListQuery.append("        $completionDate := $pets/pim_entry/entry/Pet_Ctg_Spec/Completion_Date                                         ");
-        workListQuery.append("        return                                                                                                        ");
-        workListQuery.append("        <out>                                                                                                         ");
-        workListQuery.append("          <completion_date>{$completionDate}</completion_date>                                                        ");
-        workListQuery.append("          <req_type>{$pets/pim_entry/entry/Pet_Ctg_Spec/SourceSystem}</req_type>                                      ");
-        workListQuery.append("          <CFAS>{$pets/pim_entry/entry/Ecomm_Style_Spec/Split_Color_Eligible}</CFAS>    ");
-        workListQuery.append("          <CONVERSION_FLAG>{$pets/pim_entry/entry/Pet_Ctg_Spec/System/Pet_Information/Conversion_Flag}</CONVERSION_FLAG>    ");
-        workListQuery.append("        </out>'                                                                                                       ");
-        workListQuery.append("        passing pet.xml_data AS \"pets\" Columns                                                                        ");
-        workListQuery.append("        completion_date             VARCHAR2(10)  path  '/out/completion_date',                                       ");
-        workListQuery.append("        req_type                    VARCHAR2(20)  path '/out/req_type',                                               ");
-        workListQuery.append("        CFAS VARCHAR2(50) path '/out/CFAS'                            ");
-        workListQuery.append("        ,CONVERSION_FLAG VARCHAR2(50) path '/out/CONVERSION_FLAG'                            ");
-        workListQuery.append("        ) p                                                                                                           ");
-        workListQuery.append("      WHERE                                                                                                           ");
-        workListQuery.append("        sda.mdmid     =pet.mdmid                                                                                      ");
-        if(vendorLogin){
-            workListQuery.append("        AND (((pet.pet_state = '01' AND (pet.image_status NOT IN ('08','02') OR pet.CONTENT_STATUS NOT IN ('08','02')))) ");
-            workListQuery.append("        OR ((pet.PET_STYLE_STATE = 'Y' AND (pet.PET_STYLE_IMAGE = 'Y' OR pet.PET_STYLE_CONTENT = 'Y')))) ");
-        }else{
-        	workListQuery.append("        AND (pet.pet_state = '01' OR PET_STYLE_STATE = 'Y')                                                         ");
-        }
-        workListQuery.append("        AND pet.WLIST_DISPLAY_FLAG = 'true'                                                           ");
-        
-        /** Added for Pagination Perf Enhancements **/
-        if (sortColumn == null || sortColumn.trim().equals("")) {
-        	workListQuery.append(" ORDER BY pet.PET_EARLIEST_COMP_DATE ASC");
-        }
-        else if (sortColumn != null && sortColumn.equals("orinGroup")) {
-        	workListQuery.append(" ORDER BY ORIN_NUM " + sortOrder);
-        }
-        else if (sortColumn != null && sortColumn.equals("dept")) {
-        	workListQuery.append(" ORDER BY sda.DEPT_ID " + sortOrder);
-        }
-        else if (sortColumn != null && sortColumn.equals("vendorStyle")) {
-        	workListQuery.append(" ORDER BY sda.ven_style " + sortOrder);
-        }
-        else if (sortColumn != null && sortColumn.equals("productName")) {
-        	workListQuery.append(" ORDER BY sda.PRODUCT_NAME " + sortOrder);
-        } 
-        else if (sortColumn != null && sortColumn.equals("contentStatus")) {
-        	workListQuery.append(" ORDER BY CONTENTSTATUS " + sortOrder);
-        } 
-        else if (sortColumn != null && sortColumn.equals("imageStatus")) {
-        	workListQuery.append(" ORDER BY pet.image_status " + sortOrder);
-        } 
-        else if (sortColumn != null && sortColumn.equals("petStatus")) {
-        	workListQuery.append(" ORDER BY pet.pet_state " + sortOrder);
-        } 
-        else if (sortColumn != null && sortColumn.equals("completionDate")) {
-        	workListQuery.append(" ORDER BY pet.PET_EARLIEST_COMP_DATE " + sortOrder);
-        } 
-        else if (sortColumn != null && sortColumn.equals("petSourceType")) {
-        	workListQuery.append(" ORDER BY p.req_type " + sortOrder);
-        }
-        
-        workListQuery.append("    )                                                                                                                  ");
-        workListQuery.append("      SELECT                                                                                                           ");
-        workListQuery.append("        ORIN_NUM Parent_Style_Orin,                                                                                    ");
-        workListQuery.append("        ORIN_NUM,                                                                                                      ");
-        workListQuery.append("        orin.DEPT_Id,                                                                                                  ");
-        workListQuery.append("        orin.Supplier_Id,                                                                                              ");
-        workListQuery.append("        orin.PRODUCT_NAME,                                                                                             ");
-        workListQuery.append("        orin.ENTRY_TYPE,                                                                                               ");
-        workListQuery.append("        orin.PRIMARY_UPC,                                                                                              ");
-        workListQuery.append("        s.ven_name,                                                                                                    ");
-        workListQuery.append("        orin.ven_style,                                                                                                ");
-        workListQuery.append("        orin.PETSTATUS,                                                                                                ");
-        workListQuery.append("        orin.ImageState,                                                                                               ");
-        workListQuery.append("        orin.CONTENTSTATUS,                                                                                            ");
-        workListQuery.append("        orin.completion_date,                                                                                          ");
-        workListQuery.append("        s.omniChannelIndicator,                                                                                        ");
-        workListQuery.append("        orin.req_type,                                                                                                 ");
-        workListQuery.append("        orin.PET_STYLE_STATE,                                                                                          ");
-        workListQuery.append("        orin.PET_STYLE_IMAGE,                                                                                          ");
-        workListQuery.append("        orin.PET_STYLE_CONTENT, orin.PET_EARLIEST_COMP_DATE, orin.EXIST_IN_GROUP, orin.CFAS, orin.CONVERSION_FLAG ");
-        workListQuery.append("      FROM                                                                                                             ");
-        workListQuery.append("        STYLEID_DESC orin,                                                                                           ");
-        workListQuery.append("        ADSE_SUPPLIER_CATALOG supplier,                                                                                ");
-        workListQuery.append("        XMLTABLE(                                                                                                      ");
-        workListQuery.append("        'for $supplier in $supplierCatalog/pim_entry/entry/Supplier_Ctg_Spec                                           ");
-        workListQuery.append("        let                                                                                                            ");
-        workListQuery.append("        $ven_name := $supplier/Name,                                                                                   ");
-        workListQuery.append("        $isOmniChannel := $supplier/../Supplier_Site_Spec/Omni_Channel                                                 ");
-        workListQuery.append("        return                                                                                                         ");
-        workListQuery.append("        <out>                                                                                                          ");
-        workListQuery.append("            <ven_name>{$ven_name}</ven_name>                                                                           ");
-        workListQuery.append("            <omni_channel>{if($isOmniChannel eq \"true\") then \"Y\" else \"N\"}</omni_channel>                              ");
-        workListQuery.append("        </out>'                                                                                                        ");
-        workListQuery.append("        PASSING XMLELEMENT(\"Id\", orin.Supplier_Id) AS \"Suppliers\",                                                     ");
-        workListQuery.append("        supplier.XML_DATA                          AS \"supplierCatalog\" columns                                        ");
-        workListQuery.append("        ven_name                          VARCHAR2(80) path '/out/ven_name',                                           ");
-        workListQuery.append("        omniChannelIndicator VARCHAR2(2) path '/out/omni_channel') s                                                   ");
-        workListQuery.append("      WHERE                                                                                                            ");
-        workListQuery.append("        orin.Supplier_Id = supplier.mdmid                                                                              "); 
-        
-        if (sortColumn != null && sortColumn.equals("vendorName")) {
-        	workListQuery.append(" ORDER BY s.ven_name " + sortOrder);
-        }
-        
-        LOGGER.info("\nGET_ALL_PARENT_ORIN_WITH_PETS_XQUERY---->" + workListQuery.toString());
-        return workListQuery.toString();
+public String getWorkListDisplayDataParent(boolean vendorLogin, String sortColumn, String sortOrder){
+	StringBuilder workListQuery = new StringBuilder();
+	
+	workListQuery.append("WITH Input(Depts, EmailId, LANId, SuppIds) AS\r\n");
+	workListQuery.append("                                (\r\n");
+	workListQuery.append("                                        SELECT :depts Depts, :email EmailId, :pepId LANId, :supplierId SuppIds FROM dual\r\n");
+	workListQuery.append("                                )\r\n");
+	workListQuery.append("                                ,\r\n");
+	workListQuery.append("                                givenInpDept AS\r\n");
+	workListQuery.append("                                (\r\n");
+	workListQuery.append("                                        SELECT  regexp_substr(inp.depts,'[^,]+',1,LEVEL) AS dept_id\r\n");
+	workListQuery.append("                                        FROM    Input inp CONNECT BY regexp_substr(inp.depts,'[^,]+',1,LEVEL) IS NOT NULL\r\n");
+	workListQuery.append("                                )\r\n");
+	workListQuery.append("                                ,\r\n");
+	workListQuery.append("                                givenInpSupplier AS\r\n");
+	workListQuery.append("                                (\r\n");
+	workListQuery.append("                                        SELECT  regexp_substr(inp.SuppIds,'[^,]+',1,LEVEL) AS supplier_id\r\n");
+	workListQuery.append("                                        FROM    Input inp CONNECT BY regexp_substr(inp.SuppIds,'[^,]+',1,LEVEL) IS NOT NULL\r\n");
+	workListQuery.append("                                )\r\n");
+	workListQuery.append("                             \r\n");
+	workListQuery.append("                        SELECT  aic.PARENT_MDMID Parent_Style_Orin ,\r\n");
+	workListQuery.append("                                aic.MDMID ORIN_NUM                   ,\r\n");
+	workListQuery.append("                                aic.DEPT_Id               ,\r\n");
+	workListQuery.append("                                aic.PRIMARY_SUPPLIER_ID Supplier_Id           ,\r\n");
+	workListQuery.append("                                aic.PRODUCT_NAME          ,\r\n");
+	workListQuery.append("                                aic.ENTRY_TYPE            ,\r\n");
+	workListQuery.append("                                CASE\r\n");
+	workListQuery.append("                                                        WHEN aic.PRIMARY_UPC IS NULL\r\n");
+	workListQuery.append("                                                        THEN aic.NUMBER_04\r\n");
+	workListQuery.append("                                                        WHEN aic.PRIMARY_UPC = ' '\r\n");
+	workListQuery.append("                                                        THEN aic.NUMBER_04\r\n");
+	workListQuery.append("                                                        ELSE aic.PRIMARY_UPC\r\n");
+	workListQuery.append("                                                END PRIMARY_UPC            ,\r\n");
+	workListQuery.append("                                XMLCAST( (XMLQUERY('pim_entry/entry/Pet_Ctg_Spec/Completion_Date/completion_date' PASSING  pet.xml_data RETURNING CONTENT ) ) AS VARCHAR2(1000) ) \r\n");
+	workListQuery.append("                                                 completion_date               ,\r\n");
+	workListQuery.append("                                                 XMLCAST( (XMLQUERY('pim_entry/entry/Pet_Ctg_Spec/SourceSystem' PASSING  pet.xml_data RETURNING CONTENT ) ) AS VARCHAR2(1000) ) \r\n");
+	workListQuery.append("                                                 req_type                      ,\r\n");
+	workListQuery.append("                                  XMLCAST( (XMLQUERY('pim_entry/entry/Supplier_Ctg_Spec/Name' PASSING supplier.XML_DATA RETURNING CONTENT ) ) AS VARCHAR2(1000) ) ven_name                 ,\r\n");
+	workListQuery.append("                                aic.PRIMARYSUPPLIERVPN ven_style             ,\r\n");
+	workListQuery.append("                                pet.pet_state PETSTATUS             ,\r\n");
+	workListQuery.append("                                pet.image_status ImageState            ,\r\n");
+	workListQuery.append("                                pet.content_status CONTENTSTATUS                                  ,\r\n");
+	workListQuery.append("                             ( case when \r\n");
+	workListQuery.append("                              ((XMLCAST( (XMLQUERY('pim_entry/entry/Supplier_Ctg_Spec/Supplier_Site_Spec/Omni_Channel' PASSING supplier.XML_DATA RETURNING CONTENT ) ) AS VARCHAR2(1000) ))='true') then 'Y' \r\n");
+	workListQuery.append("                                else 'N'\r\n");
+	workListQuery.append("                                End)\r\n");
+	workListQuery.append("                                   omniChannelIndicator     ,\r\n");
+	workListQuery.append("                                pet.PET_STYLE_STATE       ,\r\n");
+	workListQuery.append("                                pet.PET_STYLE_IMAGE       ,\r\n");
+	workListQuery.append("                                pet.PET_STYLE_CONTENT     ,\r\n");
+	workListQuery.append("                                pet.PET_EARLIEST_COMP_DATE   ,\r\n");
+	workListQuery.append("                                pet.EXIST_IN_GROUP        ,\r\n");
+	workListQuery.append("                                XMLCAST( (XMLQUERY('pim_entry/entry/Ecomm_Style_Spec/Split_Color_Eligible' PASSING  pet.xml_data RETURNING CONTENT ) ) AS VARCHAR2(1000) ) \r\n");
+	workListQuery.append("                                                CFAS                          ,\r\n");
+	workListQuery.append("                                XMLCAST( (XMLQUERY('/pim_entry/entry/Pet_Ctg_Spec/System/Pet_Information/Conversion_Flag' PASSING  pet.xml_data RETURNING CONTENT ) ) AS VARCHAR2(1000) ) \r\n");
+	workListQuery.append("                                               CONVERSION_FLAG      \r\n");
+	workListQuery.append("                        FROM    ADSE_Item_CATALOG aic,\r\n");
+	workListQuery.append("                                        ADSE_PET_CATALOG pet ,\r\n");
+	workListQuery.append("                                        givenInpDept d       ,\r\n");
+	workListQuery.append("                                        givenInpSupplier s   ,\r\n");
+	workListQuery.append("                                       Input inp,\r\n");
+	workListQuery.append("                                       ADSE_SUPPLIER_CATALOG supplier\r\n");
+	workListQuery.append("\r\n");
+	workListQuery.append("                        WHERE   \r\n");
+	workListQuery.append("                        aic.ENTRY_TYPE    IN ('Style', 'Complex Pack')\r\n");
+	workListQuery.append("                                                AND aic.PETEXISTS  = 'Y'\r\n");
+	workListQuery.append("                                                AND pet.mdmid      = aic.mdmid\r\n");
+	if(vendorLogin){
+        workListQuery.append("        AND (((pet.pet_state = '01' AND (pet.image_status NOT IN ('08','02') OR pet.CONTENT_STATUS NOT IN ('08','02')))) ");
+        workListQuery.append("        OR ((pet.PET_STYLE_STATE = 'Y' AND (pet.PET_STYLE_IMAGE = 'Y' OR pet.PET_STYLE_CONTENT = 'Y')))) ");
+    }else{
+    	workListQuery.append("        AND (pet.pet_state = '01' OR pet.PET_STYLE_STATE = 'Y')                                                         ");
+    }
+	workListQuery.append("                                                AND\r\n");
+	workListQuery.append("                                                (\r\n");
+	workListQuery.append("                                                        (\r\n");
+	workListQuery.append("                                                                (\r\n");
+	workListQuery.append("                                                                        inp.EmailId IS NULL\r\n");
+	workListQuery.append("                                                                )\r\n");
+	workListQuery.append("                                                                AND aic.DEPT_ID              = d.dept_id\r\n");
+	workListQuery.append("                                                                AND aic.PRIMARY_SUPPLIER_ID IS NOT NULL\r\n");
+	workListQuery.append("                                                        )\r\n");
+	workListQuery.append("                                                        OR\r\n");
+	workListQuery.append("                                                        (\r\n");
+	workListQuery.append("                                                                (\r\n");
+	workListQuery.append("                                                                        inp.EmailId   IS NOT NULL\r\n");
+	workListQuery.append("                                                                        AND d.dept_id IS NOT NULL\r\n");
+	workListQuery.append("                                                                )\r\n");
+	workListQuery.append("                                                                AND aic.DEPT_ID             =d.dept_id\r\n");
+	workListQuery.append("                                                                AND inp.SuppIds            IS NOT NULL\r\n");
+	workListQuery.append("                                                                AND aic.PRIMARY_SUPPLIER_ID = s.supplier_id\r\n");
+	workListQuery.append("                                                        )\r\n");
+	workListQuery.append("                                                        OR\r\n");
+	workListQuery.append("                                                        (\r\n");
+	workListQuery.append("                                                                (\r\n");
+	workListQuery.append("                                                                        inp.EmailId   IS NOT NULL\r\n");
+	workListQuery.append("                                                                        AND d.dept_id IS NULL\r\n");
+	workListQuery.append("                                                                )\r\n");
+	workListQuery.append("                                                                AND inp.SuppIds            IS NOT NULL\r\n");
+	workListQuery.append("                                                                AND aic.PRIMARY_SUPPLIER_ID = s.supplier_id\r\n");
+	workListQuery.append("                                                        )\r\n");
+	workListQuery.append("                                                )\r\n");
+	workListQuery.append("                        AND pet.WLIST_DISPLAY_FLAG = 'true'                        \r\n");
+	workListQuery.append("                        AND aic.PRIMARY_SUPPLIER_ID = supplier.mdmid\r\n");
+	
+	/** Added for Pagination Perf Enhancements **/
+    if (sortColumn == null || sortColumn.trim().equals("")) {
+    	workListQuery.append(" ORDER BY pet.PET_EARLIEST_COMP_DATE ASC");
+    }
+    else if (sortColumn != null && sortColumn.equals("orinGroup")) {
+    	workListQuery.append(" ORDER BY aic.MDMID " + sortOrder);
+    }
+    else if (sortColumn != null && sortColumn.equals("dept")) {
+    	workListQuery.append(" ORDER BY aic.DEPT_ID " + sortOrder);
+    }
+    else if (sortColumn != null && sortColumn.equals("vendorStyle")) {
+    	workListQuery.append(" ORDER BY aic.PRIMARYSUPPLIERVPN " + sortOrder);
+    }
+    else if (sortColumn != null && sortColumn.equals("productName")) {
+    	workListQuery.append(" ORDER BY aic.PRODUCT_NAME " + sortOrder);
+    } 
+    else if (sortColumn != null && sortColumn.equals("contentStatus")) {
+    	workListQuery.append(" ORDER BY pet.content_status " + sortOrder);
+    } 
+    else if (sortColumn != null && sortColumn.equals("imageStatus")) {
+    	workListQuery.append(" ORDER BY pet.image_status " + sortOrder);
+    } 
+    else if (sortColumn != null && sortColumn.equals("petStatus")) {
+    	workListQuery.append(" ORDER BY pet.pet_state " + sortOrder);
+    } 
+    else if (sortColumn != null && sortColumn.equals("completionDate")) {
+    	workListQuery.append(" ORDER BY pet.PET_EARLIEST_COMP_DATE " + sortOrder);
+    } 
+    else if (sortColumn != null && sortColumn.equals("petSourceType")) {
+    	workListQuery.append(" ORDER BY req_type " + sortOrder);
+    }else if (sortColumn != null && sortColumn.equals("vendorName")) {
+    	workListQuery.append(" ORDER BY ven_name " + sortOrder);
+    }
+
+	return workListQuery.toString();
 }
 
 public String getWorkListDisplayDataParentOld(boolean vendorLogin) {
