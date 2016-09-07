@@ -440,6 +440,7 @@ public class WorkListDisplayController implements Controller,EventAwareControlle
                     departmentDetails.setId(depNo);
                     departmentDetailsListToLoadPet = new ArrayList();
                     departmentDetailsListToLoadPet.add(departmentDetails);   
+                    renderForm.setDeptNo(depNo);
                 }
                //request.getPortletSession().setAttribute(formSessionKey, renderForm); // Added by Sriharsha
             }else{//Handling External User
@@ -520,10 +521,11 @@ public class WorkListDisplayController implements Controller,EventAwareControlle
                     DepartmentDetails departmentDetails = new DepartmentDetails();
                     departmentDetails.setId(depNo);
                     departmentDetailsListToLoadPet = new ArrayList();
-                    departmentDetailsListToLoadPet.add(departmentDetails);   
+                    departmentDetailsListToLoadPet.add(departmentDetails);
+                    renderForm.setDeptNo(depNo);
                 }
             }
-          
+            
             if(null!=departmentDetailsListToLoadPet && departmentDetailsListToLoadPet.size()>0){
                 LOGGER.info(" <<<< Line 425 >>>>>");
                 mv.addObject(WorkListDisplayConstants.IS_PET_AVAILABLE,WorkListDisplayConstants.YES_VALUE);
@@ -1612,7 +1614,18 @@ private void assignRole(WorkListDisplayForm workListDisplayForm2,
             LOGGER.info("Page Number="+pageNo);
             int selectedPageNumber = Integer.parseInt(pageNo);
             
-            workFlowList = getWorkFlowListFromDB(resourceForm, workListType, resourceForm.getSelectedDepartmentFromDB(), 
+            List<DepartmentDetails> departmentDetailsListToLoadPet = resourceForm.getSelectedDepartmentFromDB();
+            if (departmentDetailsListToLoadPet==null) {
+            	String depNo = resourceForm.getDeptNo();
+            	if (depNo!=null && !depNo.equals(WorkListDisplayConstants.EMPTY_STRING)) {
+            		DepartmentDetails departmentDetails = new DepartmentDetails();
+                    departmentDetails.setId(depNo);
+                    departmentDetailsListToLoadPet = new ArrayList<DepartmentDetails>();
+                    departmentDetailsListToLoadPet.add(departmentDetails);  
+            	}
+            }
+            
+            workFlowList = getWorkFlowListFromDB(resourceForm, workListType, departmentDetailsListToLoadPet, 
             		resourceForm.getVendorEmail(), supplierIdList, selectedPageNumber, maxResults);
             resourceForm.setWorkFlowlist(workFlowList);
             
@@ -1641,7 +1654,19 @@ private void assignRole(WorkListDisplayForm workListDisplayForm2,
             LOGGER.info("Selected Column is="+selectedColumn);
             
             int selectedPageNumber = Integer.parseInt(pageNo);
-            workFlowList = getWorkFlowListFromDB(resourceForm, workListType, resourceForm.getSelectedDepartmentFromDB(), 
+            
+            List<DepartmentDetails> departmentDetailsListToLoadPet = resourceForm.getSelectedDepartmentFromDB();
+            if (departmentDetailsListToLoadPet==null) {
+            	String depNo = resourceForm.getDeptNo();
+            	if (depNo!=null && !depNo.equals(WorkListDisplayConstants.EMPTY_STRING)) {
+            		DepartmentDetails departmentDetails = new DepartmentDetails();
+                    departmentDetails.setId(depNo);
+                    departmentDetailsListToLoadPet = new ArrayList<DepartmentDetails>();
+                    departmentDetailsListToLoadPet.add(departmentDetails);  
+            	}
+            }
+            
+            workFlowList = getWorkFlowListFromDB(resourceForm, workListType, departmentDetailsListToLoadPet, 
             		resourceForm.getVendorEmail(), supplierIdList, selectedPageNumber, maxResults);
             resourceForm.setWorkFlowlist(workFlowList);
             
