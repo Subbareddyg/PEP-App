@@ -1437,9 +1437,12 @@ function advSearch() {
 					 
                },
 			async: false,
-			success: function(responseText) {					
-					responseText = repalceAdvPetTable(responseText);
-					  $("#advanceSearchDiv").html(responseText);
+			success: function(responseText) {	
+					if(responseText.indexOf('advTableStart') !== -1){		
+					 responseText = repalceAdvPetTable(responseText);
+					  $("#advanceSearchDiv").html(responseText); 					  
+					}			
+					
 					  //$("#overlay_Image_advSearch").css("display","block");					
 					  $("#dialog_ASearch").css("display","block");
 					  defaultAdvSearchSettings();
