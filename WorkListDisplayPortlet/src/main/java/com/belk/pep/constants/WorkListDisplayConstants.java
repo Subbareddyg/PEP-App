@@ -354,5 +354,5 @@ public static final String PARENT_GROUP_ID = "parentGroupId";
 public static final String EXIST_IN_SAME_GROUP = "EXIST_IN_SAME_GROUP";
 public static final String VALUE_YES = "Yes";
 public static final String VALUE_NO = "No";
-
+public static final String EVENT_PAGINATION = "PaginationAnchorObj";
 }

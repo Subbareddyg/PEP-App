@@ -28,6 +28,9 @@ http://java.sun.com/xml/ns/portlet/portlet-app_2_0.xsd">
 			<name>userDataOBJ</name>
 		</supported-processing-event>
 		
+        <supported-processing-event>
+            <name>PaginationAnchorObj</name>
+        </supported-processing-event>
 		<supported-publishing-event>
  		  <name>ImageDetailsOBJ</name>
 	   </supported-publishing-event>
@@ -43,6 +46,9 @@ http://java.sun.com/xml/ns/portlet/portlet-app_2_0.xsd">
 			<name>GroupingUserObj</name>
 		</supported-publishing-event>
 	   	<supported-public-render-parameter>username</supported-public-render-parameter>	
+        <supported-public-render-parameter>returnPageNumber</supported-public-render-parameter>
+        <supported-public-render-parameter>returnOrinNumber</supported-public-render-parameter>
+        <supported-public-render-parameter>returnGroupId</supported-public-render-parameter>
 	</portlet>
 	<default-namespace>http://JSR286EventRenderParam/</default-namespace>
 
@@ -68,8 +74,24 @@ http://java.sun.com/xml/ns/portlet/portlet-app_2_0.xsd">
 		<name>GroupingUserObj</name>
 		<value-type>com.belk.pep.common.userdata.UserData</value-type>
 	</event-definition>
+    <event-definition>
+        <name>PaginationAnchorObj</name>
+        <value-type>com.belk.pep.common.model.PageAnchorDetails</value-type>
+    </event-definition>
 	<public-render-parameter>
   	<identifier>username</identifier>
   	<qname xmlns:x="https://JSR286PublicParameter">x:username</qname>
   </public-render-parameter>
+    <public-render-parameter>
+        <identifier>returnPageNumber</identifier>
+        <qname xmlns:x="https://JSR286PublicParameter">x:returnPageNumber</qname>
+    </public-render-parameter>
+    <public-render-parameter>
+        <identifier>returnOrinNumber</identifier>
+        <qname xmlns:x="https://JSR286PublicParameter">x:returnOrinNumber</qname>
+    </public-render-parameter>
+    <public-render-parameter>
+        <identifier>returnGroupId</identifier>
+        <qname xmlns:x="https://JSR286PublicParameter">x:returnGroupId</qname>
+    </public-render-parameter>
 </portlet-app>

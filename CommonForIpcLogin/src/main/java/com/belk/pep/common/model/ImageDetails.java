@@ -18,6 +18,7 @@ public class ImageDetails implements Serializable {
 	/** The image status. */
 	private String imageStatus;	
 	
+    private String pageNumber;
 	/** The vp user. */
 	Common_Vpuser vpUser;	
 	
@@ -26,7 +27,12 @@ public class ImageDetails implements Serializable {
 	
 	/** The User data. */
 	UserData UserData ;
-	
+    public String getPageNumber() {
+        return pageNumber;
+    }
+    public void setPageNumber(String pageNumber) {
+        this.pageNumber = pageNumber;
+    }
 	/**
 	 * Gets the user data.
 	 *

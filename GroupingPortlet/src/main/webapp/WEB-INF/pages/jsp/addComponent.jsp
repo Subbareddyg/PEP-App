@@ -1,6 +1,9 @@
 <%@ include file="/WEB-INF/pages/jsp/include.jsp" %>
 <portlet:resourceURL id="invalidate" var="logouturl" />
 <fmt:setBundle basename="grouping" />
+<div align="left" style="display: inline; padding: 5px 10px;margin-bottom: 0.5cm" >
+<input type="button" style="padding: 5px 10px;font-weight: bold" name="home" value="Home" onclick=goToHomeScreen();  />
+</div>
 <div align="right" style="margin-bottom: 0.5cm" >	
 			<c:out value="${LAN_ID}"/> &nbsp;	 
 			<input type="button"   style="font-weight: bold" name="logout" value="Logout" 
@@ -479,4 +482,7 @@
 	//init main SPA
 	
 	app.EditComponentLandingApp.init();
+	function goToHomeScreen(){
+            window.location.href = "/wps/portal/home/worklistDisplay";
+	}
 </script>

@@ -54,6 +54,7 @@ import com.belk.pep.common.model.Common_BelkUser;
 import com.belk.pep.common.model.Common_Vpuser;
 import com.belk.pep.common.model.ContentPetDetails;
 import com.belk.pep.common.userdata.UserData;
+import com.belk.pep.common.model.PageAnchorDetails;
 import com.belk.pep.constants.ContentScreenConstants;
 import com.belk.pep.delegate.ContentDelegate;
 import com.belk.pep.exception.checked.PEPDelegateException;
@@ -2507,6 +2508,13 @@ public class ContentController implements ResourceAwareController, EventAwareCon
 
         LOGGER.info(" --------------------------------------------------------- End of handleRenderRequest ---------------------------------------------------"
                 + new Date());
+        if (request.getParameter("returnPageNumber") != null) {
+            modelAndView.addObject("pageNumber", request.getParameter("returnPageNumber"));
+        }
+        if (orinNumber == null && contentPetDetailsFromIPC != null) {
+            orinNumber = contentPetDetailsFromIPC.getOrinNumber();
+        }
+        modelAndView.addObject("orinNumber", orinNumber);
         return modelAndView;
 
     }
@@ -4198,9 +4206,23 @@ public class ContentController implements ResourceAwareController, EventAwareCon
         return contentStatusCode;
     }
 
-    /** Sets the disable save button flag.
-     * 
-     * @param disableSaveButtonFlag the disableSaveButtonFlag to set */
+    @ActionMapping(params = "action=workListDisplay")
+    public void goToWorkListDisplay(ActionRequest request, ActionResponse response,
+            final @ModelAttribute("fdForm") ContentForm fdForm, final BindingResult result, final Model model) {
+
+        String orinNumber = request.getParameter("orinNumber");
+        String pageNumber = request.getParameter("pageNumber");
+        PageAnchorDetails pageAnchorDetails = new PageAnchorDetails();
+        pageAnchorDetails.setOrinNumber(orinNumber);
+        pageAnchorDetails.setPageNumber(pageNumber);
+        response.setEvent(ContentScreenConstants.EVENT_PAGINATION, pageAnchorDetails);
+    }
+
+    /**
+     * Sets the disable save button flag.
+     *
+     * @param disableSaveButtonFlag the disableSaveButtonFlag to set
+     */
     public void setDisableSaveButtonFlag(boolean disableSaveButtonFlag) {
         this.disableSaveButtonFlag = disableSaveButtonFlag;
     }

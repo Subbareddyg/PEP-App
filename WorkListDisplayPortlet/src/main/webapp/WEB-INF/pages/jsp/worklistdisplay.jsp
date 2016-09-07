@@ -7,6 +7,9 @@
      <title>WorkFlow Display.</title>	 	 
 
 <style type = "text/css">
+.pre-visited, .pre-visited td{
+    background-color: #8FBC8F !important;
+}
 tr.children td{#border:1px dashed #ddd;}
 tr.cfas-row td{background-color:yellow !important;}
 input.btn-new, input.btn-new:hover {
@@ -110,7 +113,7 @@ lockClearOnBack.value='1';
 	<input type="hidden" id="groupingType" name="groupingType" value=""/>
 	<input type="hidden" id="searchResultInput" name="searchResultInput" value="${workflowForm.advanceSearch.searchResults}"/>
     <input type="hidden" id="selectedOrin" name="selectedOrin" value=""/>
-    
+    <input type="hidden" name="selectedPageNumber" id="sel-page-num" value="${workflowForm.selectedPage}" />
     <input type="hidden" id="stylepetstatid" name="stylepetstatid" value=""/>
     <input type="hidden" id="stylecolorpetstatid" name="stylecolorpetstatid" value=""/>
     <input type="hidden"  name="createManualPet" id="createManualPet" value=""/>
@@ -130,6 +133,10 @@ lockClearOnBack.value='1';
 		<div style="float:left;width: 200px;margin-bottom: 0.5cm;"><a href="<c:out value='${BEBESTPLAN}'/>" target="_blank">Belk Best Plan</a></div>
 	</c:if>	
 	
+	<div align="left" style="display: inline; padding: 5px 10px;margin-bottom: 0.5cm" >
+<input type="button" style="padding: 5px 10px;font-weight: bold" name="home" value="Home" onclick=goToHomeScreen('${ajaxUrl}'); />
+</div>
+
 		 <div align="right" style="margin-bottom: 0.5cm" >	
 			<c:out value="${workflowForm.pepUserID}"/> &nbsp;	 
 			<input type="button"   style="font-weight: bold" name="logout" value="Logout" 
@@ -139,7 +146,7 @@ lockClearOnBack.value='1';
  <span>
 
  </span>
-
+        <input type="hidden" name="prevVisitedOrin" value="${prevVisitedOrin}" id="visited-orin-num"/>
 		<div  class="cars_panel x-hidden" >
 		<div class="x-panel-header">
 				<fmt:message key="worklist.filterby.dept.label"/>
@@ -257,7 +264,7 @@ lockClearOnBack.value='1';
 				</c:if>
 				</c:if>
 				<hr style="margin:4px; margin-bottom:10px;">
-				<div class="scrollbarset">
+				<div class="scrollbarset" id="table-container">
 				<!-- Image Loading message starts -->
 					<div id="overlay_pageLoading" style="display:none;">
 						<img src="${contextpath}${imagemidpath}loading.gif" height="100px;"height="100px;" />
@@ -1203,6 +1210,9 @@ lockClearOnBack.value='1';
 
 <script type="text/javascript"> 
 
+function goToHomeScreen(UserSessURL){ 
+    window.location = "/wps/portal/home/worklistDisplay";
+}
 
 var timeOutvarWLD = null;
 timeOutvarWLD = setTimeout(redirectSessionTimedOut, 1800000);
@@ -1576,4 +1586,15 @@ function toggleEnability(){
 	//$("#datepicker2").val(finalTodayDate);
 //}
 
+(function($){
+    $('#table-container').ready(function(){
+        var orinId  = $('#visited-orin-num').val(), selEle = $("#parent_"+orinId), container = $('#table-container');
+        if(orinId && selEle){
+            container.animate({
+                    scrollTop: selEle.offset().top - container.offset().top + container.scrollTop()-100
+                    }, 1);
+             selEle.addClass("pre-visited");
+        }
+    });
+})(jQuery)
 </script>

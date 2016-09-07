@@ -43,6 +43,11 @@ function logout_home(){
 	
 }
 
+function goToHomeScreen(){ 
+	window.location = "/wps/portal/home/worklistDisplay";
+	
+}
+
 var timeOutvarCreatePET = null;	
 function timeOutCreatePETPage()
 {
@@ -75,6 +80,10 @@ if(loggedInUser.indexOf('@') === -1)
 <div id="content">
 <div id="main">
 <div id="prodtype_list" >
+
+ <div align="left" style="display: inline; padding: 5px 10px;margin-bottom: 0.5cm" >
+        <input type="button" style="padding: 5px 10px;font-weight: bold" name="home" value="Home" onclick=goToHomeScreen(); />
+   </div>
 <div align="right" style="margin-bottom: 0.5cm" >	
 			<c:out value="${workflowForm.loggedInUser}"/> &nbsp;	 
 			<input type="button"   style="font-weight: bold" name="logout" value="Logout" 

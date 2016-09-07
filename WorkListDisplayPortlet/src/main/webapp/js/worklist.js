@@ -191,6 +191,7 @@ function getThePageContent(pageNumber){
                     }).always(function(){
 						$("#overlay_Image_advSearch").hide();
 						$("#overlay_pageLoading").hide();
+						$('#sel-page-num').val(pageNumber);
 					});
                 
 }
@@ -1444,6 +1445,9 @@ function advSearch() {
 					  defaultAdvSearchSettings();
 					  //VP4
 					  searchClear();
+					  if(!$('input[name=searchResults]:checked').length){
+			                          $(':radio[value="showItemsOnly"]').prop('checked', 'checked');
+			                      }
 					  toggleEnability();
 					  
 					  //mapping ui dialog to the searchbox 
