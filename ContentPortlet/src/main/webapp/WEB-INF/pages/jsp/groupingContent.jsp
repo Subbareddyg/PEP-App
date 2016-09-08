@@ -31,7 +31,7 @@
             position: fixed;
             background-color: #52527A;
             top: 87px;
-            width: 60%;
+            width: 949px;
             padding: 10px 0px;
             z-index: 100;
           }
@@ -2584,33 +2584,12 @@ function toggleRows(currentRow, styleId, styleColorId){
 									</ul>
 									<!-- End Added by Sriharsha -->
 									<div style="float:right">
-									    <div id="scroller-anchor"></div>
-                                        <div id="scroller" style="padding:10px;">
-                                            <input type="button" id="btnSubmit" name="btnsubmit" value="Submit" class="action-button"
-                                            <c:if test="${contentDisplayForm.roleName == 'readonly'}">
-                                                disabled="disabled"
-                                            </c:if>
-                                            onclick="javascript:saveContentPetAttributesWebserviceResponse('${saveContentPetAttributes}','<c:out value="${contentDisplayForm.styleInformationVO.orin}"/>','<c:out value="${contentDisplayForm.pepUserId}"/>', '<c:out value="${contentDisplayForm.productAttributesDisplay.dropDownList.size()}"/>','<c:out value="${contentDisplayForm.legacyAttributesDisplay.dropDownList.size()}"/>', '<c:out value="${contentDisplayForm.productAttributesDisplay.radiobuttonList.size()}"/>', '<c:out value="${contentDisplayForm.legacyAttributesDisplay.radiobuttonList.size()}"/>', '', '<c:out value="${contentDisplayForm.roleName}"/>', 'Submit','', true)" />
-                                            <c:if test="${contentDisplayForm.roleName == 'readonly'}">
-                                             <input type="button" name="Save" value="<fmt:message key="content.label.saveButton" bundle="${display}"/>"
-                                                   class="saveContentButtonGroup"  onclick="javascript:saveContent();" disabled="true"/>
-                                              <input type="button" name="Close" value="<fmt:message key="content.label.closeButton" bundle="${display}"/>"
-                                                  class="saveContentButtonGroup"  onclick="javascript:goToWorkListDisplayScreen('<c:out value="${contentDisplayForm.userName}"/>','${releseLockedPet}');"/>
-                                            </c:if>
-                                            <c:if test="${contentDisplayForm.roleName == 'dca' || contentDisplayForm.roleName == 'vendor' }">
-                                                         <input type="button" name="Save" id="saveButtonId"  value="<fmt:message key="content.label.saveButton" bundle="${display}"/>"
-                                                               class="saveContentButtonGroup"  onclick="javascript:saveContentPetAttributesWebserviceResponse('${saveContentPetAttributes}','<c:out value="${contentDisplayForm.styleInformationVO.orin}"/>','<c:out value="${contentDisplayForm.pepUserId}"/>', '<c:out value="${contentDisplayForm.productAttributesDisplay.dropDownList.size()}"/>','<c:out value="${contentDisplayForm.legacyAttributesDisplay.dropDownList.size()}"/>', '<c:out value="${contentDisplayForm.productAttributesDisplay.radiobuttonList.size()}"/>', '<c:out value="${contentDisplayForm.legacyAttributesDisplay.radiobuttonList.size()}"/>', '', '', 'Save','')"/>
-                                                          <input type="button" name="Close" value="<fmt:message key="content.label.closeButton" bundle="${display}"/>"
-                                                              class="closeContentButton"  onclick="javascript:goToWorkListDisplayScreen('<c:out value="${contentDisplayForm.userName}"/>','${releseLockedPet}');"/>
-                                            </c:if>
-
-									    </div>
-									 <portlet:actionURL var="formAction">
-                                        <portlet:param name="action" value="workListDisplay"/>
-                                        <portlet:param name="orinNumber" value="${orinNumber}"/>
-                                        <portlet:param name="pageNumber" value="${pageNumber}"/>
-                                     </portlet:actionURL>
-                                     <input type="hidden" name="workListDisplayUrl" value="${formAction}" />
+                                        <portlet:actionURL var="formAction">
+                                            <portlet:param name="action" value="workListDisplay"/>
+                                            <portlet:param name="orinNumber" value="${orinNumber}"/>
+                                            <portlet:param name="pageNumber" value="${pageNumber}"/>
+                                        </portlet:actionURL>
+                                        <input type="hidden" name="workListDisplayUrl" value="${formAction}" />
 									</div>
                                 </div>								 
 							</div>
