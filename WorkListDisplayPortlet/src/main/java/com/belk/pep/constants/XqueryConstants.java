@@ -2026,7 +2026,7 @@ public String getWorkListDisplayDataParent(boolean vendorLogin, String sortColum
 	workListQuery.append("                                        FROM    Input inp CONNECT BY regexp_substr(inp.SuppIds,'[^,]+',1,LEVEL) IS NOT NULL\r\n");
 	workListQuery.append("                                )\r\n");
 	workListQuery.append("                             \r\n");
-	workListQuery.append("                        SELECT  aic.PARENT_MDMID Parent_Style_Orin ,\r\n");
+	workListQuery.append("                        SELECT  aic.MDMID Parent_Style_Orin ,\r\n");
 	workListQuery.append("                                aic.MDMID ORIN_NUM                   ,\r\n");
 	workListQuery.append("                                aic.DEPT_Id               ,\r\n");
 	workListQuery.append("                                aic.PRIMARY_SUPPLIER_ID Supplier_Id           ,\r\n");
@@ -2044,7 +2044,7 @@ public String getWorkListDisplayDataParent(boolean vendorLogin, String sortColum
 	workListQuery.append("                                pet.pet_state PETSTATUS             ,\r\n");
 	workListQuery.append("                                pet.image_status ImageState            ,\r\n");
 	workListQuery.append("                                pet.content_status CONTENTSTATUS                                  ,\r\n");
-	workListQuery.append("                                XMLCAST( (XMLQUERY('pim_entry/entry/Pet_Ctg_Spec/Completion_Date/completion_date' PASSING  pet.xml_data RETURNING CONTENT ) ) AS VARCHAR2(1000) ) \r\n");
+	workListQuery.append("                                XMLCAST( (XMLQUERY('pim_entry/entry/Pet_Ctg_Spec/Completion_Date' PASSING  pet.xml_data RETURNING CONTENT ) ) AS VARCHAR2(1000) ) \r\n");
 	workListQuery.append("                                                 completion_date               ,\r\n");
 	workListQuery.append("                             ( case when \r\n");
 	workListQuery.append("                              ((XMLCAST( (XMLQUERY('pim_entry/entry/Supplier_Ctg_Spec/Supplier_Site_Spec/Omni_Channel' PASSING supplier.XML_DATA RETURNING CONTENT ) ) AS VARCHAR2(1000) ))='true') then 'Y' \r\n");
@@ -2113,36 +2113,46 @@ public String getWorkListDisplayDataParent(boolean vendorLogin, String sortColum
 	
 	/** Added for Pagination Perf Enhancements **/
     if (sortColumn == null || sortColumn.trim().equals("")) {
-    	workListQuery.append(" ORDER BY pet.PET_EARLIEST_COMP_DATE ASC");
+    	workListQuery.append(" ORDER BY pet.PET_EARLIEST_COMP_DATE");
+    	workListQuery.append(" , req_type DESC , aic.MDMID");
     }
     else if (sortColumn != null && sortColumn.equals("orinGroup")) {
     	workListQuery.append(" ORDER BY aic.MDMID " + sortOrder);
     }
     else if (sortColumn != null && sortColumn.equals("dept")) {
     	workListQuery.append(" ORDER BY aic.DEPT_ID " + sortOrder);
+    	workListQuery.append(" , aic.MDMID");
     }
     else if (sortColumn != null && sortColumn.equals("vendorStyle")) {
     	workListQuery.append(" ORDER BY aic.PRIMARYSUPPLIERVPN " + sortOrder);
+    	workListQuery.append(" , aic.MDMID");
     }
     else if (sortColumn != null && sortColumn.equals("productName")) {
     	workListQuery.append(" ORDER BY aic.PRODUCT_NAME " + sortOrder);
+    	workListQuery.append(" , aic.MDMID");
     } 
     else if (sortColumn != null && sortColumn.equals("contentStatus")) {
     	workListQuery.append(" ORDER BY pet.content_status " + sortOrder);
+    	workListQuery.append(" , aic.MDMID");
     } 
     else if (sortColumn != null && sortColumn.equals("imageStatus")) {
     	workListQuery.append(" ORDER BY pet.image_status " + sortOrder);
+    	workListQuery.append(" , aic.MDMID");
     } 
     else if (sortColumn != null && sortColumn.equals("petStatus")) {
     	workListQuery.append(" ORDER BY pet.pet_state " + sortOrder);
+    	workListQuery.append(" , aic.MDMID");
     } 
     else if (sortColumn != null && sortColumn.equals("completionDate")) {
     	workListQuery.append(" ORDER BY pet.PET_EARLIEST_COMP_DATE " + sortOrder);
+    	workListQuery.append(" , aic.MDMID");
     } 
     else if (sortColumn != null && sortColumn.equals("petSourceType")) {
     	workListQuery.append(" ORDER BY req_type " + sortOrder);
+    	workListQuery.append(" , aic.MDMID");
     }else if (sortColumn != null && sortColumn.equals("vendorName")) {
     	workListQuery.append(" ORDER BY ven_name " + sortOrder);
+    	workListQuery.append(" , aic.MDMID");
     }
 
 	return workListQuery.toString();
