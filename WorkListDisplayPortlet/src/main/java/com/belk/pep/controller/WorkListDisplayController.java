@@ -207,6 +207,7 @@ public class WorkListDisplayController implements Controller,EventAwareControlle
                  imageDetails.setImageStatus(imageStatusToPassOnIPC+"-"+petStatusToPassOnIPC);
                  LOGGER.info("*************** image with pet status  ****************"+imageDetails.getImageStatus());
                  response.setEvent(WorkListDisplayConstants.IMAGE_DETAILS, imageDetails);
+                 response.setRenderParameter("returnPageNumber", request.getParameter("selectedPageNumber"));
             }
         
         //IPC from worklist display portlet to content pet portlet
@@ -265,7 +266,7 @@ public class WorkListDisplayController implements Controller,EventAwareControlle
            LOGGER.info("  contentPetDetails.getContentStatus****************"+ contentPetDetails.getContentStatus());
            LOGGER.info("contentStatus setting event ****************");
            response.setEvent(WorkListDisplayConstants.CONTENT_PET_DETAILS, contentPetDetails);
-            response.setRenderParameter("returnPageNumber", request.getParameter("selectedPageNumber"));
+           response.setRenderParameter("returnPageNumber", request.getParameter("selectedPageNumber"));
            LOGGER.info("after contentStatus setting event ****************" + response.getClass());
             
         }
@@ -332,7 +333,10 @@ public class WorkListDisplayController implements Controller,EventAwareControlle
         if(sessionDataKey != null){
             custuser = (UserData) request.getPortletSession().getAttribute(sessionDataKey);
         }
-        
+         //added below property to keep track in sorting from pagination anchor
+        String sortingColumn = null;
+        String sortingOrder = null;
+
         if(custuser!=null){
                 /**
                  * Handle the request from pagination event to enable anchoring
@@ -341,7 +345,6 @@ public class WorkListDisplayController implements Controller,EventAwareControlle
                  * and pagination handled correctly
                  *
                  */
-                String test = (String) portletSession.getAttribute("paginationFlow");
                 if (portletSession.getAttribute("paginationFlow") != null && Boolean
                         .valueOf((String) portletSession.getAttribute("paginationFlow"))) {
                     portletSession.removeAttribute("paginationFlow");
@@ -388,6 +391,9 @@ public class WorkListDisplayController implements Controller,EventAwareControlle
                                 mv.addObject("prevVisitedOrin", preVisitedOrin);
                             }
                             return mv;
+                        }else if(StringUtils.isNotBlank(resourceForm.getSelectedColumn())){
+                            sortingColumn = resourceForm.getSelectedColumn();
+                            sortingOrder = resourceForm.getSortingAscending();
                         }
                     }
                 }
@@ -397,6 +403,11 @@ public class WorkListDisplayController implements Controller,EventAwareControlle
             //Handling the Internal user
             if(custuser.isInternal()){
                 renderForm =  new WorkListDisplayForm();
+                //for handling sorting column
+                if(StringUtils.isNotBlank(sortingColumn)){
+                    renderForm.setSelectedColumn(sortingColumn);
+                    renderForm.setSortingAscending(sortingOrder);
+                }
                 LOGGER.info("formSessionKey "+formSessionKey);
                 if(formSessionKey != null){
                     request.getPortletSession().setAttribute(formSessionKey, renderForm); // Added by Sriharsha
@@ -445,6 +456,10 @@ public class WorkListDisplayController implements Controller,EventAwareControlle
                //request.getPortletSession().setAttribute(formSessionKey, renderForm); // Added by Sriharsha
             }else{//Handling External User
                 renderForm =  new WorkListDisplayForm();
+                if(StringUtils.isNotBlank(sortingColumn)){
+                    renderForm.setSelectedColumn(sortingColumn);
+                    renderForm.setSortingAscending(sortingOrder);
+                }
                 LOGGER.info("formSessionKey "+formSessionKey);
                 if(formSessionKey != null){
                     request.getPortletSession().setAttribute(formSessionKey, renderForm); // Added by Sriharsha
@@ -502,7 +517,7 @@ public class WorkListDisplayController implements Controller,EventAwareControlle
                          renderForm.setWorkFlowlist(workFlowListSri);
 	                     mv.addObject(WorkListDisplayConstants.IS_PET_AVAILABLE,WorkListDisplayConstants.YES_VALUE);
 	                   
-	                     handlingPaginationRender(selectedPageNumber,renderForm,workFlowListSri);
+	                     handlingPaginationRenderRegular(selectedPageNumber,renderForm,workFlowListSri);
 	                     renderForm.setSelectedPage(String.valueOf(selectedPageNumber));
                     }else{
                         LOGGER.info("workFlowList.size == 0 On default Load");
@@ -562,7 +577,7 @@ public class WorkListDisplayController implements Controller,EventAwareControlle
                 //Changes for multi supplier id end
                 if(workFlowListSri!=null && workFlowListSri.size()>0){
                     renderForm.setPetNotFound(null);
-                    handlingPaginationRender(selectedPageNumber,renderForm, workFlowListSri);
+                    handlingPaginationRenderRegular(selectedPageNumber,renderForm, workFlowListSri);
                     renderForm.setSelectedPage(String.valueOf(selectedPageNumber));
                 }else{//There is no PET for searched content
                     LOGGER.info(" <<<< Line 457 >>>>>");
@@ -720,8 +735,92 @@ public class WorkListDisplayController implements Controller,EventAwareControlle
         advanceSearch.setSearchResults("includeGrps");
         renderForm.setAdvanceSearch(advanceSearch);
             
-        }    
- 
+        }
+
+    /**
+     * Handling pagination render.
+     *
+     * @param selectedPageNumber the selected page number
+     * @param renderForm         the render form
+     * @param workFlowListSri    the work flow list sri
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    private void handlingPaginationRender(int selectedPageNumber, WorkListDisplayForm renderForm,
+            List<WorkFlow> workFlowListSri) throws IOException {
+        LOGGER.info("WorkListDisplayController:handlingPagination:Enter");
+        if (workFlowListSri != null) {
+            //fix for 496 start
+            int numberOfPets = renderForm.getFullWorkFlowlist().size();
+            workFlowListSri = renderForm.getFullWorkFlowlist();
+            if (null != renderForm) {
+                if (null != renderForm.getTotalNumberOfPets()) {
+                    numberOfPets = Integer.parseInt(renderForm.getTotalNumberOfPets().toString());
+
+                }
+            }
+            renderForm.setTotalNumberOfPets(String.valueOf(numberOfPets));
+            //Setting the limit
+            Properties prop = PropertiesFileLoader.getExternalLoginProperties();
+            renderForm.setPageLimit(prop.getProperty(WorkListDisplayConstants.PAGE_LIMIT));
+            //Setting the number of pages
+            int numberOfPages = 1;
+            double numPage = 1;
+            int pageLimit = Integer.parseInt(prop.getProperty(WorkListDisplayConstants.PAGE_LIMIT));
+            if (numberOfPets > pageLimit) {
+                double pageLimeiDoub = Double.parseDouble(String.valueOf(pageLimit));
+                numPage = numberOfPets / pageLimeiDoub;
+                numPage = Math.ceil(Double.parseDouble(String.valueOf(numPage)));
+            }
+            numberOfPages = (int) numPage;
+
+            //Setting the page list
+            ArrayList<String> pageNumberList = new ArrayList();
+            for (int i = 0; i < numberOfPages; i++) {
+                pageNumberList.add(String.valueOf(i + 1));
+            }
+            renderForm.setPageNumberList(pageNumberList);
+            //Setting the first page Default
+            LOGGER.info("Selected Page number is==" + selectedPageNumber);
+            int startindex = 0;
+            int endIndex = 9;
+            startindex = (selectedPageNumber * pageLimit) - pageLimit;
+            endIndex = (selectedPageNumber * pageLimit) - 1;
+            //Logic for last page
+            if (selectedPageNumber == numberOfPages) {
+                endIndex = numberOfPets;
+            }
+            //fix for 496 end
+            LOGGER.info("Start index is ==" + startindex + "endIndex is ==" + endIndex);
+            LOGGER.info("workFlowListSri size:" + workFlowListSri.size());
+            List currentPageworkFlowList = workFlowListSri.subList(startindex, endIndex);
+            renderForm.setSelectedPage(String.valueOf(selectedPageNumber));
+            renderForm.setTotalPageno(String.valueOf(numberOfPages));
+            renderForm.setPreviousCount(String.valueOf(selectedPageNumber - 1));
+            renderForm.setNextCount(String.valueOf(selectedPageNumber + 1));
+            renderForm.setWorkFlowlist(currentPageworkFlowList);
+            renderForm.setFullWorkFlowlist(workFlowListSri);
+            if (numberOfPages > 1) {
+                renderForm.setDisplayPagination("yes");
+                renderForm.setStartIndex(String.valueOf(startindex + 1));
+                renderForm.setEndIndex(String.valueOf(endIndex + 1));
+                if (selectedPageNumber == numberOfPages) {
+                    renderForm.setEndIndex(String.valueOf(endIndex));
+                }
+
+            } else {
+                renderForm.setDisplayPagination("no");
+                renderForm.setStartIndex(String.valueOf(startindex + 1));
+                renderForm.setEndIndex(String.valueOf(endIndex));
+            }
+        }
+
+        LOGGER.info("WorkListDisplayController:handlingPagination:Exit");
+    }
+
+
+
+
+
     /**
      * Handling pagination render.
      *
@@ -730,12 +829,13 @@ public class WorkListDisplayController implements Controller,EventAwareControlle
      * @param workFlowListSri the work flow list sri
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    private void handlingPaginationRender(int selectedPageNumber, WorkListDisplayForm renderForm, List<WorkFlow> workFlowListSri) throws IOException {
+    private void handlingPaginationRenderRegular(int selectedPageNumber, WorkListDisplayForm renderForm, List<WorkFlow>
+            workFlowListSri) throws IOException {
         LOGGER.info("WorkListDisplayController:handlingPagination:Enter");
         if(workFlowListSri != null){
             //fix for 496 start\
-        	if(null!=renderForm){
-        		workFlowListSri = renderForm.getWorkFlowlist();
+        	if(null!=renderForm && workFlowListSri != null){
+        		renderForm.setWorkFlowlist(workFlowListSri);
             }
         	int numberOfPets = workFlowListSri.size();
             renderForm.setTotalNumberOfPets(String.valueOf(numberOfPets));
@@ -762,7 +862,7 @@ public class WorkListDisplayController implements Controller,EventAwareControlle
                 renderForm.setDisplayPagination("yes");
             } 
             else {
-                renderForm.setDisplayPagination("no");
+                renderForm.setDisplayPagination("yes");
             }
         }
         
