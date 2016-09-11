@@ -193,37 +193,95 @@ lockClearOnBack.value='1';
 						</select>
 				</c:if>
 				<input type="hidden" id="updateDateMessage" name="updateDateMessage" value="${workflowForm.updateCompletionDateMsg}"/>
-				 <c:if test="${workflowForm.displayPagination == 'yes'}">
-				 	<fmt:message key="worklist.pagination.page.label" />&nbsp;<c:out value="${workflowForm.selectedPage}" />&nbsp;
-				 	<fmt:message key="worklist.displaying.label"/>&nbsp;<c:out value="${workflowForm.totalNumberOfPets}"/>&nbsp;<fmt:message key="worklist.records.label"/>&nbsp;&nbsp;
-				<fmt:message key="worklist.pagination.left.sq.bracket.label"/>&nbsp;
 
-							
-							<c:choose>
-								<c:when test="${workflowForm.selectedPage ne '1' }" >
-								 <a href="#" onclick="getThePageContent('${workflowForm.previousCount}')"><fmt:message key="worklist.pagination.prev.label"/></a>
-								</c:when>
-								<c:otherwise>
-								<fmt:message key="worklist.pagination.prev.label"/>
-								</c:otherwise>
-							</c:choose>
-
-				 | 
-
-
-							<c:choose>
-								<c:when test="${workflowForm.selectedPage < workflowForm.totalPageno }" >
-								 <a href="#" onclick="getThePageContent('${workflowForm.nextCount}')"><fmt:message key="worklist.pagination.next.label"/></a>
-								</c:when>
-								<c:otherwise>
-								<fmt:message key="worklist.pagination.next.label"/>
-								</c:otherwise>
-							</c:choose>
-
-				&nbsp;<fmt:message key="worklist.pagination.right.sq.bracket.label"/>
-							
-				</span>
-				</c:if>
+				<c:choose>
+                    <c:when test="${workflowForm.fromNewPagination != null && fn:toLowerCase(workflowForm.fromNewPagination) == 'yes'}">
+                        <c:if test="${workflowForm.displayPagination == 'yes'}">
+                            <span class="pagebanner">
+                            <fmt:message key="worklist.pagination.page.label" />&nbsp;<c:out value="${workflowForm.selectedPage}" />&nbsp;
+                            <fmt:message key="worklist.displaying.label"/>&nbsp;<c:out value="${workflowForm.totalNumberOfPets}"/>&nbsp;<fmt:message key="worklist.records.label"/>&nbsp;&nbsp;
+                            <fmt:message key="worklist.pagination.left.sq.bracket.label"/>&nbsp;
+                                    <c:choose>
+                                        <c:when test="${workflowForm.selectedPage ne '1' }" >
+                                         <a href="#" onclick="getThePageContent('${workflowForm.previousCount}')"><fmt:message key="worklist.pagination.prev.label"/></a>
+                                        </c:when>
+                                        <c:otherwise>
+                                        <fmt:message key="worklist.pagination.prev.label"/>
+                                        </c:otherwise>
+                                    </c:choose>|
+                                    <c:choose>
+                                        <c:when test="${workflowForm.selectedPage < workflowForm.totalPageno }" >
+                                         <a href="#" onclick="getThePageContent('${workflowForm.nextCount}')"><fmt:message key="worklist.pagination.next.label"/></a>
+                                        </c:when>
+                                        <c:otherwise>
+                                        <fmt:message key="worklist.pagination.next.label"/>
+                                        </c:otherwise>
+                                    </c:choose>
+                            &nbsp;<fmt:message key="worklist.pagination.right.sq.bracket.label"/>
+                            </span>
+                        </c:if>
+                    </c:when>
+                    <c:otherwise>
+                        <c:if test="${workflowForm.totalNumberOfPets ne '0'}">
+                            <span class="pagebanner">
+                                &nbsp;<c:out value="${workflowForm.totalNumberOfPets}"/>
+                                <fmt:message key="worklist.pets.found.displaying.label"/>
+                                <c:out value="${workflowForm.startIndex}"/>&nbsp;to&nbsp;<c:out value="${workflowForm.endIndex}"/>&nbsp;of&nbsp;<c:out value="${workflowForm.totalNumberOfPets}"/>
+                                <c:if test="${workflowForm.displayPagination == 'yes'}">
+                                    <fmt:message key="worklist.pagination.left.sq.bracket.label"/>
+                                    <c:choose>
+                                        <c:when test="${workflowForm.selectedPage ne '1' }" >
+                                         <a href="#" onclick="getThePageContent('1')"><fmt:message key="worklist.pagination.first.label"/></a>
+                                        </c:when>
+                                        <c:otherwise>
+                                        <fmt:message key="worklist.pagination.first.label"/>
+                                        </c:otherwise>
+                                    </c:choose>
+                                    <fmt:message key="worklist.pagination.left.slash.label"/>
+                                        <c:choose>
+                                            <c:when test="${workflowForm.selectedPage ne '1' }" >
+                                             <a href="#" onclick="getThePageContent('${workflowForm.previousCount}')"><fmt:message key="worklist.pagination.prev.label"/></a>
+                                            </c:when>
+                                            <c:otherwise>
+                                            <fmt:message key="worklist.pagination.prev.label"/>
+                                            </c:otherwise>
+                                        </c:choose>
+                                    <fmt:message key="worklist.pagination.right.sq.bracket.label"/>
+                                    <c:forEach items="${workflowForm.pageNumberList}" var="pageNumber" varStatus="status">
+                                        <c:choose>
+                                            <c:when test="${pageNumber == workflowForm.selectedPage}" >
+                                            <c:out value="${pageNumber}"/>
+                                            </c:when>
+                                            <c:otherwise>
+                                            <a href="#" onclick="getThePageContent('${pageNumber}')"> <c:out value="${pageNumber}"/> </a>
+                                            </c:otherwise>
+                                        </c:choose>
+                                        <c:if test="${pageNumber ne workflowForm.totalPageno}"> ,</c:if>
+                                    </c:forEach>
+                                    <fmt:message key="worklist.pagination.left.sq.bracket.label"/>
+                                        <c:choose>
+                                            <c:when test="${workflowForm.selectedPage ne workflowForm.totalPageno }" >
+                                             <a href="#" onclick="getThePageContent('${workflowForm.nextCount}')"><fmt:message key="worklist.pagination.next.label"/></a>
+                                            </c:when>
+                                            <c:otherwise>
+                                            <fmt:message key="worklist.pagination.next.label"/>
+                                            </c:otherwise>
+                                        </c:choose>
+                                    <fmt:message key="worklist.pagination.left.slash.label"/>
+                                        <c:choose>
+                                            <c:when test="${workflowForm.selectedPage ne workflowForm.totalPageno }" >
+                                             <a href="#" onclick="getThePageContent('${workflowForm.totalPageno}')"><fmt:message key="worklist.pagination.last.label"/></a>
+                                            </c:when>
+                                            <c:otherwise>
+                                            <fmt:message key="worklist.pagination.last.label"/>
+                                            </c:otherwise>
+                                        </c:choose>
+                                    <fmt:message key="worklist.pagination.right.sq.bracket.label"/>
+                                </c:if>
+                            </span>
+                        </c:if>
+                    </c:otherwise>
+                </c:choose>
 				<hr style="margin:4px; margin-bottom:10px;">
 				<div class="scrollbarset" id="table-container">
 				<!-- Image Loading message starts -->
