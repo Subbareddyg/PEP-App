@@ -516,8 +516,7 @@ public class WorkListDisplayController implements Controller,EventAwareControlle
                          LOGGER.info("<<<< Line 382 >>>>>");
                          renderForm.setWorkFlowlist(workFlowListSri);
 	                     mv.addObject(WorkListDisplayConstants.IS_PET_AVAILABLE,WorkListDisplayConstants.YES_VALUE);
-	                   
-	                     handlingPaginationRender(selectedPageNumber,renderForm,workFlowListSri);
+	                     handlingPaginationRender(selectedPageNumber,renderForm, workFlowListSri);
 	                     renderForm.setSelectedPage(String.valueOf(selectedPageNumber));
                     }else{
                         LOGGER.info("workFlowList.size == 0 On default Load");
@@ -4042,7 +4041,13 @@ public String ConvertDate(String completionDate){
                         if (StringUtils.isEmpty(selectedPageNumber)) {
                             selectedPageNumber = "1";
                         }
-                        handlingPaginationRender(Integer.parseInt(selectedPageNumber), resourceForm, fullWorkList);
+                        if (WorkListDisplayConstants.YES_VALUE.equalsIgnoreCase(resourceForm.getSearchClicked()) ||
+                        		WorkListDisplayConstants.YES_VALUE.equalsIgnoreCase(resourceForm.getAdvSearchClicked())) {
+                        	handlingPaginationRenderAdvSearch(Integer.parseInt(selectedPageNumber), resourceForm, fullWorkList);
+                        }
+                        else {
+                        	handlingPaginationRender(Integer.parseInt(selectedPageNumber), resourceForm, fullWorkList);
+                        }
                         resourceForm.setSelectedPage(selectedPageNumber);
                     } else {//There is no PET for searched content
                         //Fix for Defect 177

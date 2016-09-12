@@ -194,7 +194,6 @@ lockClearOnBack.value='1';
 						</select>
 				</c:if>
 				<input type="hidden" id="updateDateMessage" name="updateDateMessage" value="${workflowForm.updateCompletionDateMsg}"/>
-				<c:if test="${workflowForm.displayPagination == 'yes'}">
 					<c:choose>
                     	<c:when test="${ (workflowForm.searchClicked != null && fn:toLowerCase(workflowForm.searchClicked) == 'yes') || 
                     		(workflowForm.advSearchClicked != null && fn:toLowerCase(workflowForm.advSearchClicked)  == 'yes') }">
@@ -261,6 +260,7 @@ lockClearOnBack.value='1';
                     	<span class="pagebanner">
                             <fmt:message key="worklist.pagination.page.label" />&nbsp;<c:out value="${workflowForm.selectedPage}" />&nbsp;
                             <fmt:message key="worklist.displaying.label"/>&nbsp;<c:out value="${workflowForm.totalNumberOfPets}"/>&nbsp;<fmt:message key="worklist.records.label"/>&nbsp;&nbsp;
+                            <c:if test="${workflowForm.displayPagination == 'yes'}">
                             <fmt:message key="worklist.pagination.left.sq.bracket.label"/>&nbsp;
                                     <c:choose>
                                         <c:when test="${workflowForm.selectedPage ne '1' }" >
@@ -279,10 +279,10 @@ lockClearOnBack.value='1';
                                         </c:otherwise>
                                     </c:choose>
                             &nbsp;<fmt:message key="worklist.pagination.right.sq.bracket.label"/>
+                            </c:if>
                             </span>
                     </c:otherwise>
                 </c:choose>
-                </c:if>
 				<hr style="margin:4px; margin-bottom:10px;">
 				<div class="scrollbarset" id="table-container">
 				<!-- Image Loading message starts -->
