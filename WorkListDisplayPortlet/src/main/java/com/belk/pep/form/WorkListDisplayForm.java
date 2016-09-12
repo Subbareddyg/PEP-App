@@ -18,16 +18,7 @@ public class WorkListDisplayForm {
     /** The dept no. */
     public String deptNo;
     
-    private String fromNewPagination;
-
-    public String getFromNewPagination() {
-        return fromNewPagination;
-    }
-
-    public void setFromNewPagination(String fromNewPagination) {
-        this.fromNewPagination = fromNewPagination;
-    }
-
+    
     /** The total number of pets. */
     private String totalNumberOfPets;
     
