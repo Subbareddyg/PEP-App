@@ -735,92 +735,79 @@ public class WorkListDisplayController implements Controller,EventAwareControlle
         advanceSearch.setActive("01");
         advanceSearch.setSearchResults("includeGrps");
         renderForm.setAdvanceSearch(advanceSearch);
-            
-        }
-
-    /**
-     * Handling pagination render.
-     *
-     * @param selectedPageNumber the selected page number
-     * @param renderForm         the render form
-     * @param workFlowListSri    the work flow list sri
-     * @throws IOException Signals that an I/O exception has occurred.
-     */
-    private void handlingPaginationRender(int selectedPageNumber, WorkListDisplayForm renderForm,
-            List<WorkFlow> workFlowListSri) throws IOException {
-        LOGGER.info("WorkListDisplayController:handlingPagination:Enter");
-        if(StringUtils.equalsIgnoreCase("yes", renderForm.getSearchClicked())){
-            if (workFlowListSri != null) {
-                renderForm.setFromNewPagination("no");
-                //fix for 496 start
-                int numberOfPets = renderForm.getFullWorkFlowlist().size();
-                workFlowListSri = renderForm.getFullWorkFlowlist();
-//                if (null != renderForm) {
-//                    if (null != renderForm.getTotalNumberOfPets() && IntegerrenderForm.getTotalNumberOfPets() >0 ) {
-//                        numberOfPets = Integer.parseInt(renderForm.getTotalNumberOfPets().toString());
-//                    }
-//                }
-                renderForm.setTotalNumberOfPets(String.valueOf(numberOfPets));
-                //Setting the limit
-                Properties prop = PropertiesFileLoader.getExternalLoginProperties();
-                renderForm.setPageLimit(prop.getProperty(WorkListDisplayConstants.ADVANCE_SEARCH_PAGE_LIMIT));
-                //Setting the number of pages
-                int numberOfPages = 1;
-                double numPage = 1;
-                int pageLimit = Integer.parseInt(prop.getProperty(WorkListDisplayConstants.ADVANCE_SEARCH_PAGE_LIMIT));
-                if (numberOfPets > pageLimit) {
-                    double pageLimeiDoub = Double.parseDouble(String.valueOf(pageLimit));
-                    numPage = numberOfPets / pageLimeiDoub;
-                    numPage = Math.ceil(Double.parseDouble(String.valueOf(numPage)));
-                }
-                numberOfPages = (int) numPage;
-
-                //Setting the page list
-                ArrayList<String> pageNumberList = new ArrayList();
-                for (int i = 0; i < numberOfPages; i++) {
-                    pageNumberList.add(String.valueOf(i + 1));
-                }
-                renderForm.setPageNumberList(pageNumberList);
-                //Setting the first page Default
-                LOGGER.info("Selected Page number is==" + selectedPageNumber);
-                int startindex = 0;
-                int endIndex = 9;
-                startindex = (selectedPageNumber * pageLimit) - pageLimit;
-                endIndex = (selectedPageNumber * pageLimit) - 1;
-                //Logic for last page
-                if (selectedPageNumber == numberOfPages) {
-                    endIndex = numberOfPets;
-                }
-                //fix for 496 end
-                LOGGER.info("Start index is ==" + startindex + "endIndex is ==" + endIndex);
-                LOGGER.info("workFlowListSri size:" + workFlowListSri.size());
-                List currentPageworkFlowList = workFlowListSri.subList(startindex, endIndex);
-                renderForm.setSelectedPage(String.valueOf(selectedPageNumber));
-                renderForm.setTotalPageno(String.valueOf(numberOfPages));
-                renderForm.setPreviousCount(String.valueOf(selectedPageNumber - 1));
-                renderForm.setNextCount(String.valueOf(selectedPageNumber + 1));
-                renderForm.setWorkFlowlist(currentPageworkFlowList);
-                renderForm.setFullWorkFlowlist(workFlowListSri);
-                if (numberOfPages > 1) {
-                    renderForm.setDisplayPagination("yes");
-                    renderForm.setStartIndex(String.valueOf(startindex + 1));
-                    renderForm.setEndIndex(String.valueOf(endIndex + 1));
-                    if (selectedPageNumber == numberOfPages) {
-                        renderForm.setEndIndex(String.valueOf(endIndex));
-                    }
-
-                } else {
-                    renderForm.setDisplayPagination("no");
-                    renderForm.setStartIndex(String.valueOf(startindex + 1));
-                    renderForm.setEndIndex(String.valueOf(endIndex));
+        }    
+    
+    private void handlingPaginationRenderAdvSearch(int selectedPageNumber, WorkListDisplayForm renderForm, List<WorkFlow> workFlowListSri) throws IOException {
+        LOGGER.info("WorkListDisplayController:handlingPaginationRenderAdvSearch:Enter");
+        if(workFlowListSri != null){
+            //fix for 496 start
+            int numberOfPets = renderForm.getFullWorkFlowlist().size();
+            workFlowListSri = renderForm.getFullWorkFlowlist();
+            if(null!=renderForm){
+                if(null!=renderForm.getTotalNumberOfPets()){
+                    numberOfPets = Integer.parseInt(renderForm.getTotalNumberOfPets().toString());
+                    
                 }
             }
-        }else{
-            handlingPaginationRenderRegular(selectedPageNumber, renderForm, workFlowListSri);
-        }
-        LOGGER.info("WorkListDisplayController:handlingPagination:Exit");
-    }
+            renderForm.setTotalNumberOfPets(String.valueOf(numberOfPets));
+            //Setting the limit
+            Properties prop= PropertiesFileLoader.getExternalLoginProperties();
+            renderForm.setPageLimit(prop.getProperty(WorkListDisplayConstants.ADVANCE_SEARCH_PAGE_LIMIT));
+            //Setting the number of pages            
+            int numberOfPages = 1;
+            double numPage = 1;
+            int pageLimit = Integer.parseInt(prop.getProperty(WorkListDisplayConstants.ADVANCE_SEARCH_PAGE_LIMIT));
+            if(numberOfPets>pageLimit){
+                   double pageLimeiDoub = Double.parseDouble(String.valueOf(pageLimit));
+                   numPage = numberOfPets/pageLimeiDoub;
+                   numPage = Math.ceil(Double.parseDouble(String.valueOf(numPage)));
+                }
+                   numberOfPages = (int) numPage;
+            
+            //Setting the page list
+            ArrayList<String> pageNumberList = new ArrayList();
+            for(int i=0;i<numberOfPages;i++){
+                pageNumberList.add(String.valueOf(i+1)); 
+            }
+            renderForm.setPageNumberList(pageNumberList);
+            //Setting the first page Default
+            LOGGER.info("Selected Page number is=="+selectedPageNumber);
+            int startindex= 0;
+            int endIndex= 9;
+            startindex= (selectedPageNumber * pageLimit) - pageLimit;
+            endIndex= (selectedPageNumber * pageLimit) - 1;
+            //Logic for last page
+            if(selectedPageNumber==numberOfPages  ){
+                endIndex =  numberOfPets;  
+            }
+            //fix for 496 end
+            LOGGER.info("Start index is =="+startindex+"endIndex is =="+endIndex);
+            LOGGER.info("workFlowListSri size:" + workFlowListSri.size());
+            List currentPageworkFlowList = workFlowListSri.subList(startindex, endIndex);
+            renderForm.setSelectedPage(String.valueOf(selectedPageNumber));
+            renderForm.setTotalPageno(String.valueOf(numberOfPages));
+            renderForm.setPreviousCount(String.valueOf(selectedPageNumber-1));
+            renderForm.setNextCount(String.valueOf(selectedPageNumber+1));
+            renderForm.setWorkFlowlist(currentPageworkFlowList);
+            renderForm.setFullWorkFlowlist(workFlowListSri);
+            if(numberOfPages>1) {
+                renderForm.setDisplayPagination("yes");
+                renderForm.setStartIndex(String.valueOf(startindex+1));
+                renderForm.setEndIndex(String.valueOf(endIndex+1));
+                if(selectedPageNumber==numberOfPages  ){
+                    renderForm.setEndIndex(String.valueOf(endIndex));  
+                }
 
+            } else {
+                renderForm.setDisplayPagination("no");
+                renderForm.setStartIndex(String.valueOf(startindex+1));
+                renderForm.setEndIndex(String.valueOf(endIndex));
+            }
+        }
+        
+        LOGGER.info("WorkListDisplayController:handlingPaginationRenderAdvSearch:Exit");   
+    }
+ 
     /**
      * Handling pagination render.
      *
@@ -1713,12 +1700,67 @@ private void assignRole(WorkListDisplayForm workListDisplayForm2,
             }  
         }
         
-        
-        
-        //Pagination flow
         String pageNo ="1";
-        //int count = 0;
-        if(fromPage != null && fromPage.equals(WorkListDisplayConstants.PAGINATION) && null!=request.getParameter(WorkListDisplayConstants.AJAX_PAGE_NO) 
+        int count = 0;
+        //Pagination Flow for Advance Search
+        if ((WorkListDisplayConstants.YES_VALUE.equalsIgnoreCase(resourceForm.getAdvSearchClicked()) ||
+        		WorkListDisplayConstants.YES_VALUE.equalsIgnoreCase(resourceForm.getSearchClicked())) && 
+        		(fromPage != null && fromPage.equals(WorkListDisplayConstants.PAGINATION) && null!=request.getParameter(WorkListDisplayConstants.AJAX_PAGE_NO) 
+        		&& request.getParameter(WorkListDisplayConstants.AJAX_PAGE_NO).length()>0)) {
+        	pageNo = request.getParameter(WorkListDisplayConstants.AJAX_PAGE_NO);
+            count = 1;
+            int totalNumberOfPets = resourceForm.getFullWorkFlowlist().size();
+            if (resourceForm.getTotalNumberOfPets()!=null) {
+            	totalNumberOfPets = Integer.parseInt(resourceForm.getTotalNumberOfPets());
+            }
+            if (WorkListDisplayConstants.GROUPINGS
+                .equalsIgnoreCase(workListType)) {
+                handlingPaginationRenderGroups(Integer.parseInt(pageNo),
+                    resourceForm, resourceForm.getFullWorkFlowlist(), totalNumberOfPets);
+            }
+            else {
+                handlingPaginationRenderAdvSearch(Integer.parseInt(pageNo),
+                    resourceForm, resourceForm.getFullWorkFlowlist());
+            }           
+        }
+        //Sorting Flow for Advance Search
+        else if((WorkListDisplayConstants.YES_VALUE.equalsIgnoreCase(resourceForm.getAdvSearchClicked()) ||
+        		WorkListDisplayConstants.YES_VALUE.equalsIgnoreCase(resourceForm.getSearchClicked())) && 
+        		null!=request.getParameter(WorkListDisplayConstants.AJAX_SELECTED_COLUMN_NAME) 
+                && request.getParameter(WorkListDisplayConstants.AJAX_SELECTED_COLUMN_NAME).length()>0) {
+        	String selectedColumn = request.getParameter(WorkListDisplayConstants.AJAX_SELECTED_COLUMN_NAME);
+        	int totalNumberOfPets = resourceForm.getFullWorkFlowlist().size();
+            if (resourceForm.getTotalNumberOfPets()!=null) {
+            	totalNumberOfPets = Integer.parseInt(resourceForm.getTotalNumberOfPets());
+            }
+            if (WorkListDisplayConstants.GROUPINGS
+                .equalsIgnoreCase(workListType)) {
+                resourceForm.setWorkFlowlist(resourceForm.getWorkFlowlist());
+                resourceForm.setFullWorkFlowlist(resourceForm.getFullWorkFlowlist());
+                resourceForm.setSelectedColumn(selectedColumn);
+                String fromPageSource = request.getParameter(WorkListDisplayConstants.FROM_PAGE);
+                if (fromPageSource == null
+                    || !fromPageSource.equals(WorkListDisplayConstants.PAGINATION)) {
+                    handlingPaginationRenderGroups(1, resourceForm,
+                        workFlowList, totalNumberOfPets);
+                }
+            }
+            else {
+                /**
+                 * 031916 afuszr6 for 1012
+                 */
+                // handlingSortingRender(selectedColumn, resourceForm,
+                // workFlowList);
+                handlingSortingRender(selectedColumn, resourceForm,
+                    resourceForm.getFullWorkFlowlist());
+                handlingPaginationRenderAdvSearch(1, resourceForm, resourceForm.getFullWorkFlowlist());// fix
+                                                                        // for
+                                                                        // 496
+            }
+        }
+        
+        //Pagination flow for Dept search
+        else if(fromPage != null && fromPage.equals(WorkListDisplayConstants.PAGINATION) && null!=request.getParameter(WorkListDisplayConstants.AJAX_PAGE_NO) 
         		&& request.getParameter(WorkListDisplayConstants.AJAX_PAGE_NO).length()>0){
             pageNo = request.getParameter(WorkListDisplayConstants.AJAX_PAGE_NO);
             LOGGER.info("Page Number="+pageNo);
@@ -2316,7 +2358,7 @@ private void assignRole(WorkListDisplayForm workListDisplayForm2,
 //                                }
                                //Fix for 835 End
                                 //For 496 End                        
-                                handlingPaginationRender(selectedPageNumber,resourceForm,workFlowList);//fix for 496
+                                handlingPaginationRenderAdvSearch(selectedPageNumber,resourceForm,workFlowList);//fix for 496
                                 resourceForm.setSelectedPage(String.valueOf(selectedPageNumber));
                                 }else{//There is no PET for searched content
                                     //Fix for Defect 177
@@ -3587,13 +3629,13 @@ public String ConvertDate(String completionDate){
             // Setting the limit
             Properties prop = PropertiesFileLoader.getExternalLoginProperties();
             renderForm.setPageLimit(prop
-                .getProperty(WorkListDisplayConstants.PAGE_LIMIT));
+                .getProperty(WorkListDisplayConstants.ADVANCE_SEARCH_PAGE_LIMIT));
             // Setting the number of pages
             int numberOfPages = 1;
             double numPage = 1;
             int pageLimit =
                 Integer.parseInt(prop
-                    .getProperty(WorkListDisplayConstants.PAGE_LIMIT));
+                    .getProperty(WorkListDisplayConstants.ADVANCE_SEARCH_PAGE_LIMIT));
             if (numberOfPets > pageLimit) {
                 double pageLimeiDoub =
                     Double.parseDouble(String.valueOf(pageLimit));

@@ -77,9 +77,8 @@ public static final String ORIN_GROUP= "orinGroup";
 /** The Constant PAGE_LIMIT. */
 public static final String PAGE_LIMIT = "worklist.pageLimit";
 
-/** The Constant PAGE_LIMIT. */
+/** The Constant Advance Search PAGE_LIMIT. */
 public static final String ADVANCE_SEARCH_PAGE_LIMIT = "advance.search.worklist.pageLimit";
-
 
 /** The Constant USER_DATA_OBJ. */
 public static final String USER_DATA_OBJ = "userDataOBJ";
