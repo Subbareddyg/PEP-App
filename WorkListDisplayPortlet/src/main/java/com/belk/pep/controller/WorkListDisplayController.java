@@ -1690,14 +1690,12 @@ private void assignRole(WorkListDisplayForm workListDisplayForm2,
         }
         
         String pageNo ="1";
-        int count = 0;
         //Pagination Flow for Advance Search
         if ((WorkListDisplayConstants.YES_VALUE.equalsIgnoreCase(resourceForm.getAdvSearchClicked()) ||
         		WorkListDisplayConstants.YES_VALUE.equalsIgnoreCase(resourceForm.getSearchClicked())) && 
         		(fromPage != null && fromPage.equals(WorkListDisplayConstants.PAGINATION) && null!=request.getParameter(WorkListDisplayConstants.AJAX_PAGE_NO) 
         		&& request.getParameter(WorkListDisplayConstants.AJAX_PAGE_NO).length()>0)) {
         	pageNo = request.getParameter(WorkListDisplayConstants.AJAX_PAGE_NO);
-            count = 1;
             int totalNumberOfPets = resourceForm.getFullWorkFlowlist().size();
             if (resourceForm.getTotalNumberOfPets()!=null) {
             	totalNumberOfPets = Integer.parseInt(resourceForm.getTotalNumberOfPets());
@@ -1730,6 +1728,8 @@ private void assignRole(WorkListDisplayForm workListDisplayForm2,
                 String fromPageSource = request.getParameter(WorkListDisplayConstants.FROM_PAGE);
                 if (fromPageSource == null
                     || !fromPageSource.equals(WorkListDisplayConstants.PAGINATION)) {
+                	handlingSortingRender(selectedColumn, resourceForm,
+                            resourceForm.getFullWorkFlowlist());
                     handlingPaginationRenderGroups(1, resourceForm,
                         workFlowList, totalNumberOfPets);
                 }
@@ -3609,7 +3609,7 @@ public String ConvertDate(String completionDate){
             // fix for 496 end
             LOGGER.info("Start index is ==" + startindex + "endIndex is =="
                 + endIndex);
-            List currentPageworkFlowList = workFlowListSri;
+            List currentPageworkFlowList = workFlowListSri.subList(startindex, endIndex);
             renderForm.setSelectedPage(String.valueOf(selectedPageNumber));
             renderForm.setTotalPageno(String.valueOf(numberOfPages));
             renderForm.setPreviousCount(String.valueOf(selectedPageNumber - 1));
