@@ -1469,6 +1469,11 @@ public class ContentDAOImpl implements ContentDAO{
                     styleAttributes.setPwp(checkNull(row[11]));
                     styleAttributes.setPyg(checkNull(row[9]));
                     styleAttributes.setPetStatus(checkNull(row[12]));
+					styleAttributes.setVendor_collection(checkNull(row[13]));
+                    styleAttributes.setTrends(checkNull(row[14]));
+                    styleAttributes.setYc_big_Ideas(checkNull(row[15]));
+                    styleAttributes.setWomen_big_Ideas(checkNull(row[16]));
+                    styleAttributes.setAge_group(checkNull(row[17]));
                 }
             }
 

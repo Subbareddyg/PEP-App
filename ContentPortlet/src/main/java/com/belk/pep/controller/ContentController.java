@@ -3502,6 +3502,13 @@ public class ContentController implements ResourceAwareController, EventAwareCon
             final String pYGValue = request.getParameter("PYGValue");
             final String channelExclusive = request.getParameter("channelExclusive");
             final String bopisValue = request.getParameter("bopisSelectedValue");
+			/* RMS - UDA enhancement */
+			final String vendor_collection=request.getParameter("vendor_collection");
+			LOGGER.info("vendor collection-->"+vendor_collection);
+			LOGGER.info("styleReq-->"+styleReq);
+			
+			/* end */
+			
 			//START VP34
 			String carBrandDesc = "";
 			String formSessionKey1 = (String) request.getPortletSession().getAttribute("formSessionKey"); 
@@ -3534,7 +3541,8 @@ public class ContentController implements ResourceAwareController, EventAwareCon
                 final String pYGValueXpath = ContentScreenConstants.PYG_XPATH;
                 final String channelExclusiveXpath = ContentScreenConstants.CHANNEL_EXCLUSIVE_XPATH;
                 final String bopisXpath = ContentScreenConstants.BOPIS_XPATH;
-
+				/* RMS - UDA enhancement */
+				final String vendorCollectionValueXpath = ContentScreenConstants.VENDORCOLLECTION_XPATH;
                 final AttributesBean attributesBeanProductNameStyle = new AttributesBean(productNameXpath, productName);
                 final AttributesBean attributesBeanProductDescriptionStyle = new AttributesBean(productDescriptionXpath,
                         productDescription);
@@ -3565,6 +3573,11 @@ public class ContentController implements ResourceAwareController, EventAwareCon
                     final AttributesBean attributesBeanpYGValue = new AttributesBean(pYGValueXpath, pYGValue);
                     beanList.add(attributesBeanpYGValue);
                 }
+                /*RMS - UDA enhancement */
+				if (StringUtils.isNotBlank(vendor_collection)) {
+					final AttributesBean attributesVendorCollection = new AttributesBean(vendorCollectionValueXpath, vendor_collection);
+					beanList.add(attributesVendorCollection);
+				}
                 if ((omniBrandCode != null) && StringUtils.isNotBlank(omniBrandCode) && !omniBrandCode.equalsIgnoreCase("-1")) {
                     final AttributesBean attributesOmniBrand = new AttributesBean(omniChannelBrandXpath, (omniBrandCode));
                     beanList.add(attributesOmniBrand);
@@ -3585,6 +3598,8 @@ public class ContentController implements ResourceAwareController, EventAwareCon
                 final String pYGValueXpath = ContentScreenConstants.PYG_PACK_XPATH;
                 final String channelExclusiveXpath = ContentScreenConstants.CHANNEL_EXCLUSIVE_PACK_XPATH;
                 final String bopisXpath = ContentScreenConstants.BOPIS_PACK_XPATH;
+                /* RMS - UDA enhancement */
+				final String vendorCollectionValueXpath = ContentScreenConstants.VENDORCOLLECTION_XPATH;
 
                 // form JSON request to web service
 
@@ -3619,7 +3634,11 @@ public class ContentController implements ResourceAwareController, EventAwareCon
                     final AttributesBean attributesBeanpYGValue = new AttributesBean(pYGValueXpath, pYGValue);
                     beanList.add(attributesBeanpYGValue);
                 }
-				
+				/*RMS - UDA enhancement */
+				if (StringUtils.isNotBlank(vendor_collection)) {
+					final AttributesBean attributesVendorCollection = new AttributesBean(vendorCollectionValueXpath, vendor_collection);
+					beanList.add(attributesVendorCollection);
+				}
 				if ((omniBrandCode != null) && StringUtils.isNotBlank(omniBrandCode) && !omniBrandCode.equalsIgnoreCase("-1")) {
 					final AttributesBean attributesOmniBrand = new AttributesBean(omniChannelBrandXpath, (omniBrandCode));
 					beanList.add(attributesOmniBrand);
@@ -3645,6 +3664,8 @@ public class ContentController implements ResourceAwareController, EventAwareCon
                 final String carsBrandXpath = ContentScreenConstants.CARS_BRAND_XPATH;
                 final String omniGroupChannelBrandXpath = ContentScreenConstants.OMNICHANNEL_BRAND_XPATH_GROUP;
                 final String carsGroupBrandXpath = ContentScreenConstants.CARS_BRAND_XPATH_GROUP;
+                /*RMS - UDA enhancement */
+				final String vendorCollectionValueXpath = ContentScreenConstants.VENDORCOLLECTION_XPATH;
                 
             if(contentDisplayForm!=null && ContentScreenConstants.CONSOLIDATED_PRODUCT_GROUP_TYPE.equals(contentDisplayForm.getGroupingType())){
                 final String belkExclusiveXpath = ContentScreenConstants.BELK_EXCLUSIVE_XPATH;
@@ -3679,8 +3700,12 @@ public class ContentController implements ResourceAwareController, EventAwareCon
                     final AttributesBean attributesBeanpYGValue = new AttributesBean(pYGValueXpath, pYGValue);
                     beanList.add(attributesBeanpYGValue);
                 }
-            }
-                
+				/*RMS - UDA enhancement */ 
+				if (StringUtils.isNotBlank(vendor_collection)) {
+					final AttributesBean attributesVendorCollection = new AttributesBean(vendorCollectionValueXpath, vendor_collection);
+					beanList.add(attributesVendorCollection);
+				}
+			}
                     final AttributesBean attributesBeanProductNameStyle = new AttributesBean(ContentScreenConstants.GROUP_NAME_XPATH, productName);
                     final AttributesBean attributesBeanProductDescriptionStyle = new AttributesBean(ContentScreenConstants.GROUP_DESC_XPATH,
                             productDescription);

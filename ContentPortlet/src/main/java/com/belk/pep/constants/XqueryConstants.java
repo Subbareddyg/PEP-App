@@ -419,6 +419,9 @@ public class XqueryConstants {
                 +"   pet.Is_PYG, " 
                 +"   pet.is_GWP, " 
                 +"   Pet.Is_Pwp, pet.PETSTATUS  " 
+                /*RMS - UDA enhancement start */
+                +",Ia.Vendor_Collection, Ia.Trends, Ia.Yc_Trends, Ia.Women_Big_Ideas, Ia.Age_Group "
+                /*RMS - UDA enhancement end */
                 +" FROM PetDetails pet, " 
                 +"   vendorportal.ADSE_ITEM_CATALOG item, " 
                 +"   XMLTABLE( 'for $i in $XML_DATA/pim_entry/entry/Item_Ctg_Spec      " 

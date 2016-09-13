@@ -278,7 +278,8 @@
 		            		  $('#globalPWPId').attr("disabled", "disabled");
 		            		  $('#globalPYGId').attr("disabled", "disabled");
 		            		  $('#bopislId').attr("disabled", "disabled");
-		            		  
+		            		  /*RMS - UDA enhancement */
+		            		  $('#vendorCollId').attr("disabled", "disabled");
 		            		  
 		            		  //logic for disabling the product attribute multi  select drop down
 		            		  if(document.getElementById("paDropDownCounter")){ 
@@ -355,7 +356,8 @@
 			            		  $('#globalPWPId').removeAttr('disabled');  
 			            		  $('#globalPYGId').removeAttr('disabled');  
 			            		  $('#bopislId').removeAttr('disabled');
-			            		 
+			            		  /*RMS - UDA enhancement */
+			            		  $('#vendorCollId').removeAttr('disabled');
 			            		 
 			            		//logic for enabling the product attribute multi  select drop down
 			            		if(document.getElementById("paDropDownCounter")){
@@ -468,7 +470,8 @@
 								$("#btnCopyORIN").attr("disabled", "disabled"); 
 								$("#publisStatusCodeReadyForCopy").attr("disabled", "disabled"); 
 								$("#publisStatusCodePublishToWeb").attr("disabled", "disabled"); 
-		            		  
+								/*RMS - UDA enhancement */
+					       		$('#vendorCollId').attr("disabled", "disabled");
 		            		 //Logic for disabling the product attribute multi select drop down 
 		            		 if(document.getElementById("paDropDownCounter")){
 		            		  var  dropDownCounting=document.getElementById("paDropDownCounter").value;
@@ -547,7 +550,8 @@
 		            		  $('#globalPWPId').removeAttr('disabled');  
 		            		  $('#globalPYGId').removeAttr('disabled');  
 		            		  $('#bopislId').removeAttr('disabled');  
-		            		  
+		            		  /*RMS - UDA enhancement */
+		            		  $('#vendorCollId').removeAttr('disabled'); 
 		            		  //$('#styleSubmit').removeAttr('disabled');     		         		  
 		            	 
 		            		  //Logic for enabling the product attribute multi select drop down 
@@ -647,6 +651,8 @@
 		            		  $('#globalPWPId').attr("disabled", "disabled");
 		            		  $('#globalPYGId').attr("disabled", "disabled");
 		            		  $('#bopislId').attr("disabled", "disabled");
+		            		  /*RMS - UDA enhancement */
+		      	       		$('#vendorCollId').attr("disabled", "disabled");
         		  }
             	  
             	  
@@ -1362,6 +1368,14 @@
 					return;
 				}
 			 } else if(from == 'Save'){
+				//RMS  - UDA enhancement form validation
+					if($('#vendorCollId').val().trim()!= null && ! $('#vendorCollId').val().trim()==""){
+		 			if(!/^[a-zA-Z0-9]{1,}$/.test($('#vendorCollId').val().trim())){
+						jAlert('Vendor Collection should not contain special characters', 'Alert');
+		 				
+		 				return;
+		 			}
+					}
 				 var values = document.getElementById("iphCategoryDropDownId");
 				 if(values != null && (values.value == 'select' || values.value == null) ){
 					jAlert('IPH selection is mandatory.', 'Alert');
@@ -1389,7 +1403,8 @@
 			var belkExcVal =  $("#selectedBelkExclusive").val();
 			
 			var bopisValue  =  $("#selectedBopis").val();
-			
+			// RMS - UDA enhancement
+			var vendor_collection =$("#vendorCollId").val().trim();
 			 // if(compackValue != 'Complex Pack'){
 		     var selectedGWP =  $("#selectedGWP").val();
 		     var selectedPWP =  $("#selectedPWP").val();
@@ -1624,7 +1639,8 @@
                           bmradioValues:finalBMRadioString,
                           channelExclusive:channelExcVal,
                           bopisSelectedValue:bopisValue,
-                          groupingSave:groupingSave
+                          groupingSave:groupingSave,
+                          vendor_collection: vendor_collection /*RMS - UDA enhancement */
                        };
 			if(isSubmitClicked !== undefined && isSubmitClicked == true){
 				data['submitClicked'] = 'Yes';
@@ -1792,7 +1808,14 @@
 		 		
 		 		var imageStatusCode =document.getElementById("hdnImageStatusCode").value;
 		 		var petStatusCode =document.getElementById("hdnPETStatusCode").value;
-		 		
+		 		//RMS  - UDA enhancement form validation
+				if($('#vendorCollId').val().trim()!= null && ! $('#vendorCollId').val().trim()==""){
+	 			if(!/^[a-zA-Z0-9]{1,}$/.test($('#vendorCollId').val().trim())){
+					jAlert('Vendor Collection should not contain special characters', 'Alert');
+	 				
+	 				return;
+	 			}
+				}
 		 		if($('#publisStatusCodePublishToWeb').is(':checked')){
 		 			if(imageStatusCode == '01'){
 		 				jAlert('Please complete the Image before Publishing to Web', 'Alert');
@@ -2853,8 +2876,59 @@ function toggleRows(currentRow, styleId, styleColorId){
 													</select>
 													</li>
 												</ul>
-											
-									    </div>	
+							<%--RMS - UDA enhancement --%>
+							<ul class="pep_info"
+								style="font-size: 11px; padding: 0 0 10px !important;">
+								<c:if
+									test="${not fn:contains(contentDisplayForm.pepUserId,'@') }">
+									<c:if
+										test="${contentDisplayForm.globalAttributesDisplay.trends != ' '  }">
+										<li class="txt_attr_name" style="width: 30%;"><b>Trends
+												:</b> <c:out
+												value="${contentDisplayForm.globalAttributesDisplay.trends}" />
+										</li>
+									</c:if>
+								</c:if>
+								<li class="txt_attr_name" style="width: 60%;"><b>Vendor
+										Collection :</b> <!-- create js method --> <input
+									id="vendorCollId" name="vendorCollId"
+									value="<c:out value="${contentDisplayForm.globalAttributesDisplay.vendor_collection }" />"
+									onclick="" /></li>
+							</ul>
+							<c:if
+								test="${not fn:contains(contentDisplayForm.pepUserId,'@') }">
+								<ul class="pep_info"
+									style="font-size: 11px; padding: 0 0 10px !important;">
+									<c:if
+										test="${contentDisplayForm.globalAttributesDisplay.age_group != ' '  }">
+										<li class="txt_attr_name" style="width: 30%;"><b>Age
+												Group :</b> <c:out
+												value="${contentDisplayForm.globalAttributesDisplay.age_group}" />
+										</li>
+									</c:if>
+									<c:if
+										test="${contentDisplayForm.globalAttributesDisplay.women_big_Ideas != ' '  }">
+										<li class="txt_attr_name" style="width: 25%;"><b>Women
+												Big Ideas :</b> <c:out
+												value="${contentDisplayForm.globalAttributesDisplay.women_big_Ideas}" />
+										</li>
+									</c:if>
+								</ul>
+
+								<ul class="pep_info"
+									style="font-size: 11px; padding: 0 0 10px !important;">
+									<c:if
+										test="${contentDisplayForm.globalAttributesDisplay.yc_big_Ideas != ' '  }">
+										<li class="txt_attr_name" style="width: 30%;"><b>YC
+												Big Ideas :</b> <c:out
+												value="${contentDisplayForm.globalAttributesDisplay.yc_big_Ideas}" />
+										</li>
+									</c:if>
+								</ul>
+							</c:if>
+							<%-- end --%>
+
+						</div>	
 							</div>
 							</c:if>
 							
