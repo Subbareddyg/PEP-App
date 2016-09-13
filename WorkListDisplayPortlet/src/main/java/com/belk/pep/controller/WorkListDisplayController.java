@@ -737,15 +737,13 @@ public class WorkListDisplayController implements Controller,EventAwareControlle
     
     private void handlingPaginationRenderAdvSearch(int selectedPageNumber, WorkListDisplayForm renderForm, List<WorkFlow> workFlowListSri) throws IOException {
         LOGGER.info("WorkListDisplayController:handlingPaginationRenderAdvSearch:Enter");
-        if(workFlowListSri != null){
+        if(workFlowListSri != null && renderForm != null){
             //fix for 496 start
             int numberOfPets = renderForm.getFullWorkFlowlist().size();
             workFlowListSri = renderForm.getFullWorkFlowlist();
-            if(null!=renderForm){
-                if(null!=renderForm.getTotalNumberOfPets()){
-                    numberOfPets = Integer.parseInt(renderForm.getTotalNumberOfPets().toString());
-                    
-                }
+            if(null!=renderForm.getTotalNumberOfPets()){
+                numberOfPets = Integer.parseInt(renderForm.getTotalNumberOfPets().toString());
+                
             }
             renderForm.setTotalNumberOfPets(String.valueOf(numberOfPets));
             //Setting the limit
@@ -817,11 +815,9 @@ public class WorkListDisplayController implements Controller,EventAwareControlle
     private void handlingPaginationRender(int selectedPageNumber, WorkListDisplayForm renderForm,
             List<WorkFlow> workFlowListSri) throws IOException {
     	LOGGER.info("WorkListDisplayController:handlingPagination:Enter");
-        if(workFlowListSri != null){
+        if(workFlowListSri != null && renderForm != null){
             //fix for 496 start\
-        	if(null!=renderForm && workFlowListSri != null){
-        		renderForm.setWorkFlowlist(workFlowListSri);
-            }
+        	renderForm.setWorkFlowlist(workFlowListSri);
         	int numberOfPets = workFlowListSri.size();
             renderForm.setTotalNumberOfPets(String.valueOf(numberOfPets));
             //Setting the limit
@@ -1778,7 +1774,9 @@ private void assignRole(WorkListDisplayForm workListDisplayForm2,
             }
             
              //Fix for Defect 218 & 263 Start
-            resourceForm.setTotalNumberOfPets(String.valueOf(workFlowList.size()));
+            if (workFlowList != null) {
+            	resourceForm.setTotalNumberOfPets(String.valueOf(workFlowList.size()));
+            }
             handlingPaginationRender(selectedPageNumber,resourceForm, workFlowList);// fix for 496                     
             resourceForm.setSelectedPage(String.valueOf(selectedPageNumber));        
         }
@@ -1819,7 +1817,9 @@ private void assignRole(WorkListDisplayForm workListDisplayForm2,
             }
             
             //Fix for Defect 218 & 263 Start
-            resourceForm.setTotalNumberOfPets(String.valueOf(workFlowList.size()));
+            if (workFlowList!=null) {
+            	resourceForm.setTotalNumberOfPets(String.valueOf(workFlowList.size()));
+            }
             handlingPaginationRender(selectedPageNumber,resourceForm, workFlowList);// fix for 496    
             resourceForm.setSelectedPage(String.valueOf(selectedPageNumber));
         }

@@ -2116,41 +2116,42 @@ public String getWorkListDisplayDataParent(boolean vendorLogin, String sortColum
     	workListQuery.append(" ORDER BY pet.PET_EARLIEST_COMP_DATE");
     	workListQuery.append(" , req_type DESC , aic.MDMID");
     }
-    else if (sortColumn != null && sortColumn.equals("orinGroup")) {
+    else if (sortColumn.equals("orinGroup")) {
     	workListQuery.append(" ORDER BY aic.MDMID " + sortOrder);
     }
-    else if (sortColumn != null && sortColumn.equals("dept")) {
+    else if (sortColumn.equals("dept")) {
     	workListQuery.append(" ORDER BY aic.DEPT_ID " + sortOrder);
     	workListQuery.append(" , aic.MDMID");
     }
-    else if (sortColumn != null && sortColumn.equals("vendorStyle")) {
+    else if (sortColumn.equals("vendorStyle")) {
     	workListQuery.append(" ORDER BY aic.PRIMARYSUPPLIERVPN " + sortOrder);
     	workListQuery.append(" , aic.MDMID");
     }
-    else if (sortColumn != null && sortColumn.equals("productName")) {
+    else if (sortColumn.equals("productName")) {
     	workListQuery.append(" ORDER BY aic.PRODUCT_NAME " + sortOrder);
     	workListQuery.append(" , aic.MDMID");
     } 
-    else if (sortColumn != null && sortColumn.equals("contentStatus")) {
+    else if (sortColumn.equals("contentStatus")) {
     	workListQuery.append(" ORDER BY pet.content_status " + sortOrder);
     	workListQuery.append(" , aic.MDMID");
     } 
-    else if (sortColumn != null && sortColumn.equals("imageStatus")) {
+    else if (sortColumn.equals("imageStatus")) {
     	workListQuery.append(" ORDER BY pet.image_status " + sortOrder);
     	workListQuery.append(" , aic.MDMID");
     } 
-    else if (sortColumn != null && sortColumn.equals("petStatus")) {
+    else if (sortColumn.equals("petStatus")) {
     	workListQuery.append(" ORDER BY pet.pet_state " + sortOrder);
     	workListQuery.append(" , aic.MDMID");
     } 
-    else if (sortColumn != null && sortColumn.equals("completionDate")) {
+    else if (sortColumn.equals("completionDate")) {
     	workListQuery.append(" ORDER BY pet.PET_EARLIEST_COMP_DATE " + sortOrder);
     	workListQuery.append(" , aic.MDMID");
     } 
-    else if (sortColumn != null && sortColumn.equals("petSourceType")) {
+    else if (sortColumn.equals("petSourceType")) {
     	workListQuery.append(" ORDER BY req_type " + sortOrder);
     	workListQuery.append(" , aic.MDMID");
-    }else if (sortColumn != null && sortColumn.equals("vendorName")) {
+    }
+    else if (sortColumn.equals("vendorName")) {
     	workListQuery.append(" ORDER BY ven_name " + sortOrder);
     	workListQuery.append(" , aic.MDMID");
     }
