@@ -136,8 +136,55 @@ public class GlobalAttributesVO implements Serializable {
     private String  weight;
 
     private String  weightUOM;
+    
+    /* RMS  - UDA */
+    private String trends;
+    private String yc_big_Ideas;
+    private String women_big_Ideas;
+    private String age_group;
+    private String vendor_collection;
 
-    /**
+    public String getTrends() {
+		return trends;
+	}
+
+	public void setTrends(String trends) {
+		this.trends = trends;
+	}
+
+	public String getYc_big_Ideas() {
+		return yc_big_Ideas;
+	}
+
+	public void setYc_big_Ideas(String yc_big_Ideas) {
+		this.yc_big_Ideas = yc_big_Ideas;
+	}
+
+	public String getWomen_big_Ideas() {
+		return women_big_Ideas;
+	}
+
+	public void setWomen_big_Ideas(String women_big_Ideas) {
+		this.women_big_Ideas = women_big_Ideas;
+	}
+
+	public String getAge_group() {
+		return age_group;
+	}
+
+	public void setAge_group(String age_group) {
+		this.age_group = age_group;
+	}
+
+	public String getVendor_collection() {
+		return vendor_collection;
+	}
+
+	public void setVendor_collection(String vendor_collection) {
+		this.vendor_collection = vendor_collection;
+	}
+
+	/**
      * Instantiates a new global attribute vo.
      */
     public GlobalAttributesVO() {

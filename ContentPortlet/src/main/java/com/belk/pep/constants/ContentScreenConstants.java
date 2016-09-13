@@ -89,7 +89,8 @@ public class ContentScreenConstants {
     public static final String  BELK_EXCLUSIVE_XPATH="Ecomm_Style_Spec/Belk_Exclusive";
     public static final String  CHANNEL_EXCLUSIVE_XPATH="Ecomm_Style_Spec/Channel_Exclusive";
     public static final String  BOPIS_XPATH="Ecomm_Style_Spec/BOPIS";
-    
+    /*RMS - UDA enhancement */
+    public static final String  VENDORCOLLECTION_XPATH="Ecomm_Style_Spec/Vendor_Collection";
     public static final String  GWP_XPATH="Ecomm_Style_Spec/Is_GWP";
     public static final String  PWP_XPATH="Ecomm_Style_Spec/Is_PWP";
     public static final String  PYG_XPATH="Ecomm_Style_Spec/Is_PYG";
