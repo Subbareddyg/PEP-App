@@ -424,18 +424,33 @@ public class XqueryConstants {
                 /*RMS - UDA enhancement end */
                 +" FROM PetDetails pet, " 
                 +"   vendorportal.ADSE_ITEM_CATALOG item, " 
-                +"   XMLTABLE( 'for $i in $XML_DATA/pim_entry/entry/Item_Ctg_Spec      " 
+                +"   XMLTABLE( 'for $i in $XML_DATA/pim_entry/entry      " 
                 +" let           " 
-                +" $directShipFlag := $i/Supplier[Primary_Flag eq \"true\"]/Direct_Ship_Flag/text(),        " 
-                +" $primary_flag := $i/Supplier/Country/Primary_Flag/text(),         " 
-                +" $long_description := $i/Description/Long/text()           " 
+                +" $directShipFlag := $i/Item_Ctg_Spec/Supplier[Primary_Flag eq \"true\"]/Direct_Ship_Flag/text(),        " 
+                +" $primary_flag := $i/Item_Ctg_Spec/Supplier/Country/Primary_Flag/text(),         " 
+                +" $long_description := $i/Item_Ctg_Spec/Description/Long/text(),           " 
+                +"$trends := $i/Item_UDA_Spec/Trends/text(),"
+                +"$yc_trends := $i/Item_UDA_Spec/Yc_Trends/text(),"
+                +"$women_ideas := $i/Item_UDA_Spec/Fall_Fy17_Womens_Big_Ideas/text(),"
+                +"$vendor_collection := $i/Ecomm_Style_Spec/Vendor_Collection/text(),"
+                +" $age_group := $i/Item_UDA_Spec/Kids_Shoe_Sizes"
                 +" return    " 
                 +" <out>        " 
                 +" <Direct_Ship_Flag>{$directShipFlag}</Direct_Ship_Flag>    " 
                 +" <primary_flag>{$primary_flag}</primary_flag>         " 
                 +" <Long_Description>{$long_description}</Long_Description>     " 
-                +" </out>' passing item.XML_DATA AS \"XML_DATA\" columns Direct_Ship_Flag VARCHAR2(100) path '/out/Direct_Ship_Flag', Primary_Flag VARCHAR(25) Path '/out/primary_flag', Long_Description VARCHAR2(100) Path '/out/Long_Description' ) Ia " 
+                +"<Trends>{$trends}</Trends>"
+                +"<Yc_Trends>{$yc_trends}</Yc_Trends>"
+                +"<Women_Big_Ideas>{$women_ideas}</Women_Big_Ideas>"
+                +"<Age_Group>{$age_group}</Age_Group>"
+                +"<Vendor_Collection>{$vendor_collection}</Vendor_Collection>"
+                +" </out>' passing item.XML_DATA AS \"XML_DATA\" columns Direct_Ship_Flag VARCHAR2(100) path '/out/Direct_Ship_Flag', Primary_Flag VARCHAR(25) Path '/out/primary_flag', Long_Description VARCHAR2(100) Path '/out/Long_Description', " 
+                +"Trends VARCHAR2(60) PATH '/out/Trends',"
+                +"Yc_Trends VARCHAR2(60) PATH '/out/Yc_Trends',"
+                +"Women_Big_Ideas VARCHAR2(60) PATH '/out/Women_Big_Ideas',"
+                +"Vendor_Collection VARCHAR2(60) PATH '/out/Vendor_Collection', Age_Group VARCHAR2(60) PATH '/out/Age_Group' ) Ia "
                 +" WHERE Pet.Mdmid = Item.Mdmid AND item.PETEXISTS = 'Y' ";
+				LOGGER.info("GET_GLOBAL_ATTRIBUTES_XQUERY-->"+GET_GLOBAL_ATTRIBUTES_XQUERY);
         return GET_GLOBAL_ATTRIBUTES_XQUERY;
     }
 
