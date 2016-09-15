@@ -1679,8 +1679,9 @@
 																	$("#ajaxResponseSaveContentPetAttribute").focus();																			
                     	                                                   
 														}else{
-														 $("#ajaxResponseSaveContentPetAttribute").html("");
-														 $("#formIphMappingErrorMessage").html("");
+														  $('html, body').animate({scrollTop: '0px'}, 800); 
+													      $("#ajaxResponseSaveContentPetAttribute").html("");
+														  $("#formIphMappingErrorMessage").html("");
 														  $("#ajaxResponseSaveContentPetAttribute").append("<b><font size='3'>Pet Content saved successfully!</font></b>"); 
 														  $("#ajaxResponseSaveContentPetAttribute").focus();
 														}
@@ -1783,6 +1784,7 @@
                     	                              } //
                     	                              
                     	  						 }else{
+                    	  							$('html, body').animate({scrollTop: '0px'}, 800);
                     	  							$("#ajaxResponseSaveContentPetAttribute").html("");
                     		   	                	$("#ajaxResponseSaveContentPetAttribute").append("<b><font size='3'>Pet save failed. Please contact Belk helpdesk. </font></b>"); 
                     		   	                    $("#ajaxResponseSaveContentPetAttribute").focus();
