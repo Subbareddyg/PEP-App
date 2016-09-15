@@ -1526,6 +1526,7 @@
                     	  						var status = val.UpdateStatus;
                     	  						$("#overlay_pageLoadingsave").hide();
                     	  						 if(val.UpdateStatus == 'Success'){
+                    	  							$('html, body').animate({scrollTop: '0px'}, 800);
                     	  							 $("#ajaxResponseSaveContentPetAttribute").html("");
                     	                              $("#ajaxResponseSaveContentPetAttribute").append("<b><font size='3'>Pet Content saved successfully!</font></b>"); 
                     	                              $("#ajaxResponseSaveContentPetAttribute").focus();
@@ -1625,6 +1626,7 @@
                     	                              } //
                     	                              
                     	  						 }else{
+                    	  							$('html, body').animate({scrollTop: '0px'}, 800);
                     	  							$("#ajaxResponseSaveContentPetAttribute").html("");
                     		   	                	$("#ajaxResponseSaveContentPetAttribute").append("<b><font size='3'>Pet save failed. Please contact Belk helpdesk. </font></b>"); 
                     		   	                    $("#ajaxResponseSaveContentPetAttribute").focus();
