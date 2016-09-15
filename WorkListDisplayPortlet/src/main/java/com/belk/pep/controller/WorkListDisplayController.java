@@ -355,18 +355,16 @@ public class WorkListDisplayController implements Controller,EventAwareControlle
                         anchoredPageNumber = pageAnchorDetails.getPageNumber();
                         preVisitedOrin = pageAnchorDetails.getOrinNumber();
                         String groupId = pageAnchorDetails.getGroupId();
-                        if (StringUtils.isNotBlank(anchoredPageNumber) && StringUtils.isNotBlank(preVisitedOrin)) {
-                            isPageAnchor = true;
+                        List<String> supplierIdList = null;
+                        if (custuser != null && custuser.getVpUser() != null) {
+                            supplierIdList = custuser.getVpUser().getSupplierIdsList();
                         }
                         WorkListDisplayForm resourceForm = (WorkListDisplayForm) request.getPortletSession()
                                 .getAttribute(formSessionKey);
                         if ((resourceForm != null && StringUtils
                                 .equalsIgnoreCase("Yes", resourceForm.getSearchClicked())) || StringUtils
                                 .isNotBlank(groupId)) {
-                            List<String> supplierIdList = null;
-                            if (custuser != null && custuser.getVpUser() != null) {
-                                supplierIdList = custuser.getVpUser().getSupplierIdsList();
-                            }
+                            
                             String callType = "";
                             /**
                              * Update the advance search parameters based on
@@ -392,8 +390,18 @@ public class WorkListDisplayController implements Controller,EventAwareControlle
                             }
                             return mv;
                         }else if(StringUtils.isNotBlank(resourceForm.getSelectedColumn())){
-                            sortingColumn = resourceForm.getSelectedColumn();
-                            sortingOrder = resourceForm.getSortingAscending();
+                        	if (StringUtils.isNotBlank(anchoredPageNumber) && StringUtils.isNotBlank(preVisitedOrin)) {
+                        		int selectedPageNumber = Integer.parseInt(anchoredPageNumber);
+                        		List<WorkFlow> workFlowList = getWorkFlowListFromDB(resourceForm, resourceForm.getWorkListType(), resourceForm.getSelectedDepartmentFromDB(), 
+                                		resourceForm.getVendorEmail(), supplierIdList, selectedPageNumber, maxResults);
+                        		resourceForm.setWorkFlowlist(workFlowList);
+                            	mv.addObject(WorkListDisplayConstants.WORK_FLOW_FORM,resourceForm);
+                            	
+                                if (preVisitedOrin != null) {
+                                    mv.addObject("prevVisitedOrin", preVisitedOrin);
+                                }
+                                return mv;
+                        	}
                         }
                     }
                 }
@@ -500,9 +508,7 @@ public class WorkListDisplayController implements Controller,EventAwareControlle
                     
                     //Default Pagination
                     int selectedPageNumber = 1;
-                    if (isPageAnchor && anchoredPageNumber != null) {
-                        selectedPageNumber = Integer.parseInt(anchoredPageNumber);
-                    } else if (null != request.getParameter(WorkListDisplayConstants.CURRENT_PAGE_NUMBER)) {
+                    if (null != request.getParameter(WorkListDisplayConstants.CURRENT_PAGE_NUMBER)) {
                         selectedPageNumber = Integer
                                 .valueOf(request.getParameter(WorkListDisplayConstants.CURRENT_PAGE_NUMBER));
                     }
@@ -558,12 +564,10 @@ public class WorkListDisplayController implements Controller,EventAwareControlle
                 
                 //Default Pagination
                 int selectedPageNumber = 1;
-                if (isPageAnchor && anchoredPageNumber != null) {
-                        selectedPageNumber = Integer.parseInt(anchoredPageNumber);
-                    } else if (null != request.getParameter(WorkListDisplayConstants.CURRENT_PAGE_NUMBER)) {
-                        selectedPageNumber = Integer
-                                .valueOf(request.getParameter(WorkListDisplayConstants.CURRENT_PAGE_NUMBER));
-                    }
+                if (null != request.getParameter(WorkListDisplayConstants.CURRENT_PAGE_NUMBER)) {
+                    selectedPageNumber = Integer
+                            .valueOf(request.getParameter(WorkListDisplayConstants.CURRENT_PAGE_NUMBER));
+                }
                 
                 String workListType =
                     (String) request.getPortletSession().getAttribute(WorkListDisplayConstants.GROUP_WORKLIST_SESSION);
@@ -3969,7 +3973,7 @@ public String ConvertDate(String completionDate){
             		email,supplierIdList,startIndex, maxResults,sortColumn,sortOrder);
         }
     }
-
+    
     /**
      * Method will be called to populate the advance search result while coming back from pet/image/group details page
      *
