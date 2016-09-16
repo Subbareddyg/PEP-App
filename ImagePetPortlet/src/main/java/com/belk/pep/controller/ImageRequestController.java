@@ -202,6 +202,7 @@ public class ImageRequestController {
         String petStatus = null ;
         String imageStatus = null ;
         String pageNumber = request.getParameter("returnPageNumber");
+        String selectedParentOrin = request.getParameter("returnOrinNumber");
         String [] imageWithPetStatusArray = null;
         if(request.getPortletSession().getAttribute("internalUser")!=null ){
         	  LOGGER.info("internal user name ---" + request.getPortletSession().getAttribute("internalUser"));
@@ -374,10 +375,11 @@ public class ImageRequestController {
     		}   
     	}
         mv.addObject("pageNumber", pageNumber);
-        if(orinNumber == null && imageDetailsFromIPC != null){
-            orinNumber = imageDetailsFromIPC.getOrinNumber();
+        
+        if(selectedParentOrin!=null && !selectedParentOrin.equals(""))
+        {
+        	mv.addObject("orinNumber", selectedParentOrin);
         }
-        mv.addObject("orinNumber", orinNumber);
         return mv;
     }
     

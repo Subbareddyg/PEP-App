@@ -208,6 +208,7 @@ public class WorkListDisplayController implements Controller,EventAwareControlle
                  LOGGER.info("*************** image with pet status  ****************"+imageDetails.getImageStatus());
                  response.setEvent(WorkListDisplayConstants.IMAGE_DETAILS, imageDetails);
                  response.setRenderParameter("returnPageNumber", request.getParameter("selectedPageNumber"));
+                 response.setRenderParameter("returnOrinNumber", request.getParameter("selectedParentOrin"));
             }
         
         //IPC from worklist display portlet to content pet portlet
@@ -267,6 +268,7 @@ public class WorkListDisplayController implements Controller,EventAwareControlle
            LOGGER.info("contentStatus setting event ****************");
            response.setEvent(WorkListDisplayConstants.CONTENT_PET_DETAILS, contentPetDetails);
            response.setRenderParameter("returnPageNumber", request.getParameter("selectedPageNumber"));
+           response.setRenderParameter("returnOrinNumber", request.getParameter("selectedParentOrin"));
            LOGGER.info("after contentStatus setting event ****************" + response.getClass());
             
         }

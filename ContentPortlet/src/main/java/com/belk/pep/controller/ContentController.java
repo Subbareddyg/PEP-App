@@ -2511,10 +2511,12 @@ public class ContentController implements ResourceAwareController, EventAwareCon
         if (request.getParameter("returnPageNumber") != null) {
             modelAndView.addObject("pageNumber", request.getParameter("returnPageNumber"));
         }
-        if (orinNumber == null && contentPetDetailsFromIPC != null) {
-            orinNumber = contentPetDetailsFromIPC.getOrinNumber();
+        // Change for Defect # 3828
+        String selectedParentOrin = request.getParameter("returnOrinNumber");
+        if(selectedParentOrin!=null & !selectedParentOrin.equals(""))
+        {
+        	modelAndView.addObject("orinNumber", selectedParentOrin);
         }
-        modelAndView.addObject("orinNumber", orinNumber);
         return modelAndView;
 
     }

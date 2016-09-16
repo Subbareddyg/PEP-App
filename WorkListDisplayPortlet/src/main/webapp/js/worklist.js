@@ -1575,7 +1575,7 @@ function getChildData(orinNum, showHideFlag, isGroup, uniqueIdentifier, parentGr
 	}
 }	
 	
-function imageStatus(imageStatusValue,orinNo,petStatusValue){
+function imageStatus(imageStatusValue,orinNo,petStatusValue, event){	
 	var url = $("#ajaxaction").val(); 
 	var petLockedStatus = '';
 	var petLockedUser ='';
@@ -1600,6 +1600,15 @@ $("#overlay_pageLoading1").show();
 								document.getElementById("selectedOrin").value = orinNo;
 								document.getElementById("imageStatus").value = imageStatusValue;
 								document.getElementById("petStatus").value = petStatusValue;
+								var parentOrin = $(event.target).closest('tr').attr("data-tr-root");
+								if(typeof parentOrin != 'undefined' && parentOrin!='')
+								{
+									document.getElementById("selectedParentOrin").value = parentOrin;
+								}
+								else
+								{
+									document.getElementById("selectedParentOrin").value = orinNo;
+								}
 								$("#workListDisplayForm").submit();
 								}						
 		                        
@@ -1608,7 +1617,7 @@ $("#overlay_pageLoading1").show();
         }); //  $.ajax({					
 }
 	
-function contentStatus(contentStatusValue,orinNumber, groupType){
+function contentStatus(contentStatusValue, orinNumber, groupType, event){
 /*if($("#groupingID").val() != "" || $("#groupingName").val()!=""){
 		groupContentStatus(contentStatusValue, orinNumber, groupType);
 	}else{
@@ -1639,6 +1648,15 @@ function contentStatus(contentStatusValue,orinNumber, groupType){
 										}else {
 											document.getElementById("selectedOrin").value =orinNumber;
 											document.getElementById("contentStatus").value =contentStatusValue;
+											var parentOrin = $(event.target).closest('tr').attr("data-tr-root");
+											if(typeof parentOrin != 'undefined' && parentOrin!='')
+											{
+												document.getElementById("selectedParentOrin").value = parentOrin;
+											}
+											else
+											{
+												document.getElementById("selectedParentOrin").value = orinNumber;
+											}
 											$("#workListDisplayForm").submit();
 											}						
 					                        
