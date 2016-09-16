@@ -113,6 +113,7 @@ lockClearOnBack.value='1';
 	<input type="hidden" id="searchResultInput" name="searchResultInput" value="${workflowForm.advanceSearch.searchResults}"/>
     <input type="hidden" id="selectedOrin" name="selectedOrin" value=""/>
     <input type="hidden" name="selectedPageNumber" id="sel-page-num" value="${workflowForm.selectedPage}" />
+    <input type="hidden" id="selectedParentOrin" name="selectedParentOrin" value=""/>
     <input type="hidden" id="stylepetstatid" name="stylepetstatid" value=""/>
     <input type="hidden" id="stylecolorpetstatid" name="stylecolorpetstatid" value=""/>
     <input type="hidden"  name="createManualPet" id="createManualPet" value=""/>
@@ -435,10 +436,10 @@ lockClearOnBack.value='1';
 											   
 												<c:choose>									    
 													<c:when test="${workflowForm.roleEditable =='yes' && workFlow.vendorStyle != 'Split SKU Grouping' && workFlow.vendorStyle != 'Split Color Grouping'}" >										
-													  <a href="#" onclick="contentStatus('<c:out value="${workFlow.contentStatus}"/>','<c:out value="${workFlow.orinNumber}"/>','<c:out value="${workFlow.vendorStyle}"/>')"><c:out value="${workFlow.contentStatus}"/></a>
+													  <a href="#" onclick="contentStatus('<c:out value="${workFlow.contentStatus}"/>','<c:out value="${workFlow.orinNumber}"/>','<c:out value="${workFlow.vendorStyle}"/>',event)"><c:out value="${workFlow.contentStatus}"/></a>
 													</c:when>
 													<c:when test="${workflowForm.readOnlyUser =='yes' && workFlow.vendorStyle != 'Split SKU Grouping' && workFlow.vendorStyle != 'Split Color Grouping'}" >	
-													   <a href="#" onclick="contentStatus('<c:out value="${workFlow.contentStatus}"/>','<c:out value="${workFlow.orinNumber}"/>','<c:out value="${workFlow.vendorStyle}"/>')"><c:out value="${workFlow.contentStatus}"/></a>
+													   <a href="#" onclick="contentStatus('<c:out value="${workFlow.contentStatus}"/>','<c:out value="${workFlow.orinNumber}"/>','<c:out value="${workFlow.vendorStyle}"/>',event)"><c:out value="${workFlow.contentStatus}"/></a>
 													</c:when>
 													<c:otherwise>
 													   <c:out value="${workFlow.contentStatus}" />
@@ -448,11 +449,11 @@ lockClearOnBack.value='1';
 												<td>
 												<c:choose>
 													<c:when test="${workflowForm.roleEditable =='yes' && workFlow.vendorStyle != 'Consolidated Product Grouping' && workFlow.vendorStyle != 'Split SKU Grouping' && workFlow.vendorStyle != 'Split Color Grouping'}" >
-													  <a href="#" onclick="imageStatus('<c:out value="${workFlow.imageStatus}"/>','<c:out value="${workFlow.orinNumber}"/>','${workFlow.petStatus}')"><c:out value="${workFlow.imageStatus}"/></a>										
+													  <a href="#" onclick="imageStatus('<c:out value="${workFlow.imageStatus}"/>','<c:out value="${workFlow.orinNumber}"/>','${workFlow.petStatus}', event)"><c:out value="${workFlow.imageStatus}"/></a>										
 													</c:when>
 													
 													<c:when test="${workflowForm.readOnlyUser =='yes' && workFlow.vendorStyle != 'Consolidated Product Grouping' && workFlow.vendorStyle != 'Split SKU Grouping' && workFlow.vendorStyle != 'Split Color Grouping'}" >	
-													   <a href="#" onclick="imageStatus('<c:out value="${workFlow.imageStatus}"/>','<c:out value="${workFlow.orinNumber}"/>','${workFlow.petStatus}')"><c:out value="${workFlow.imageStatus}"/></a>
+													   <a href="#" onclick="imageStatus('<c:out value="${workFlow.imageStatus}"/>','<c:out value="${workFlow.orinNumber}"/>','${workFlow.petStatus}', event)"><c:out value="${workFlow.imageStatus}"/></a>
 													</c:when>
 													
 													<c:otherwise>
@@ -495,10 +496,10 @@ lockClearOnBack.value='1';
 												<td>#TD_VENDOR_STYLE</td>
 												<td>#TD_PRODUCT_NAME</td>
 												<td>
-												<a href="#" onclick="contentStatus('#CONTENT_STATUS','#CON_PARENT_ORIN')">#TD_CONTENT_STATUS</a>
+												<a href="#" onclick="contentStatus('#CONTENT_STATUS','#CON_PARENT_ORIN','',event)">#TD_CONTENT_STATUS</a>
 												</td>
 												<td>
-												<a href="#" onclick="imageStatus('#IMAGE_STATUS','#IMG_PARENT_ORIN','#PET_STATUS')">#TD_IMAGE_STATUS</a>
+												<a href="#" onclick="imageStatus('#IMAGE_STATUS','#IMG_PARENT_ORIN','#PET_STATUS',event)">#TD_IMAGE_STATUS</a>
 												</td>
 												<td>#TD_PET_STATUS
 													<input type="hidden" id="#CON_PARENT_ORIN_petStatus" value="#TD_PET_STATUS"/>
@@ -1135,14 +1136,14 @@ lockClearOnBack.value='1';
 		<td>{{=item.productName}}</td>
 		<td>
 		{{ if(item.vendorStyle != 'Split SKU Grouping' && item.vendorStyle != 'Split Color Grouping') { }}
-			<a href="#" onclick="contentStatus('{{=item.contentStatus}}','{{=item.styleOrinNum}}')">{{=item.contentStatus}}</a>
+			<a href="#" onclick="contentStatus('{{=item.contentStatus}}','{{=item.styleOrinNum}}','',event)">{{=item.contentStatus}}</a>
 		{{ }else{ }}
 			{{=item.contentStatus}}
 		{{ } }}
 		</td>
 		<td>
 		{{ if(item.vendorStyle != 'Consolidated Product Grouping' && item.vendorStyle != 'Split SKU Grouping' && item.vendorStyle != 'Split Color Grouping') { }}
-		<a href="#" onclick="imageStatus('{{=item.imageStatus}}','{{=item.styleOrinNum}}','{{=item.petStatus}}')">{{=item.imageStatus}}</a>
+		<a href="#" onclick="imageStatus('{{=item.imageStatus}}','{{=item.styleOrinNum}}','{{=item.petStatus}}',event)">{{=item.imageStatus}}</a>
 		{{ }else{ }}
 			{{=item.imageStatus}}
 		{{ } }}
@@ -1194,14 +1195,14 @@ lockClearOnBack.value='1';
 						<td>{{=item.productName}}</td>
 						<td>
 						{{ if(childItem.vendorStyle != 'Split SKU Grouping' && childItem.vendorStyle != 'Split Color Grouping') { }}
-							<a href="#" onclick="contentStatus('{{=childItem.contentStatus}}','{{=item.styleOrinNum}}')">{{=childItem.contentStatus}}</a>
+							<a href="#" onclick="contentStatus('{{=childItem.contentStatus}}','{{=item.styleOrinNum}}','',event)">{{=childItem.contentStatus}}</a>
 						{{ }else{ }}
 							{{=childItem.contentStatus}}
 						{{ } }}
 						</td>
 						<td>
 						{{ if(childItem.vendorStyle != 'Consolidated Product Grouping' && childItem.vendorStyle != 'Split SKU Grouping' && childItem.vendorStyle != 'Split Color Grouping') { }}
-							<a href="#" onclick="imageStatus('{{=childItem.imageStatus}}','{{=item.styleOrinNum}}','{{=childItem.petStatus}}')">{{=childItem.imageStatus}}</a>
+							<a href="#" onclick="imageStatus('{{=childItem.imageStatus}}','{{=item.styleOrinNum}}','{{=childItem.petStatus}}',event)">{{=childItem.imageStatus}}</a>
 						{{ }else{ }}
 							{{=childItem.imageStatus}}
 						{{ } }}
