@@ -389,7 +389,7 @@ public class WorkListDisplayController implements Controller,EventAwareControlle
                                 mv.addObject("prevVisitedOrin", preVisitedOrin);
                             }
                             return mv;
-                        }else if(resourceForm != null && StringUtils.isNotBlank(resourceForm.getSelectedColumn())){
+                        }else if(resourceForm != null){
                         	if (StringUtils.isNotBlank(anchoredPageNumber) && StringUtils.isNotBlank(preVisitedOrin)) {
                         		int selectedPageNumber = Integer.parseInt(anchoredPageNumber);
                         		List<WorkFlow> workFlowList = getWorkFlowListFromDB(resourceForm, resourceForm.getWorkListType(), resourceForm.getSelectedDepartmentFromDB(), 
