@@ -1526,8 +1526,7 @@
                     	  						var status = val.UpdateStatus;
                     	  						$("#overlay_pageLoadingsave").hide();
                     	  						 if(val.UpdateStatus == 'Success'){
-                    	  							$('html, body').animate({scrollTop: '0px'}, 800);
-                    	  							 $("#ajaxResponseSaveContentPetAttribute").html("");
+                    	  							  $("#ajaxResponseSaveContentPetAttribute").html("");
                     	                              $("#ajaxResponseSaveContentPetAttribute").append("<b><font size='3'>Pet Content saved successfully!</font></b>"); 
                     	                              $("#ajaxResponseSaveContentPetAttribute").focus();
                     	                              
@@ -1626,7 +1625,6 @@
                     	                              } //
                     	                              
                     	  						 }else{
-                    	  							$('html, body').animate({scrollTop: '0px'}, 800);
                     	  							$("#ajaxResponseSaveContentPetAttribute").html("");
                     		   	                	$("#ajaxResponseSaveContentPetAttribute").append("<b><font size='3'>Pet save failed. Please contact Belk helpdesk. </font></b>"); 
                     		   	                    $("#ajaxResponseSaveContentPetAttribute").focus();
@@ -2182,7 +2180,7 @@ function clickListenerContent(e){
 					<form:form commandName="contentDisplayForm" method="post" action="${getChangedIPHCategoryData}" name="contentDisplayForm" id="contentDisplayForm">
 				
 				 
-							 <div id="overlay_pageLoadingsave" style="display:none;position:absolute;top:200px; left:350px;">
+							 <div id="overlay_pageLoadingsave" style="display:none;position:fixed;top:50%; left:50%;">
 										<img src="<%=response.encodeURL(request.getContextPath()+"/img/loading.gif")%>" height="100px;" />
 							</div> 
 							 <div id="overlay_pageLoadingapprove" style="display:none;position:absolute;top:1000px; left:350px;">
@@ -2260,6 +2258,7 @@ function clickListenerContent(e){
                                         </div>
                                      </c:if>
                                 </div>
+                                <div id="ajaxResponseSaveContentPetAttribute" style="float:left; padding: 5px 15px;"></div>
                             </div>
 							<!--Logout for Content Screen -->		
 							 <div align="right" >	
@@ -2286,7 +2285,7 @@ function clickListenerContent(e){
 								        
 									<!-- to show message from save content web service  -->
 									
-									<div id="ajaxResponseSaveContentPetAttribute"></div>
+									
 								    <div id="formIphMappingErrorMessage">
 								     <c:if test="${not empty  contentDisplayForm.iphMappingMessage}">	
 										     <table><tr><td><b><font size='2'><c:out value="${contentDisplayForm.iphMappingMessage}"/></font></b></td></tr></table>

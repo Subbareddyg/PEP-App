@@ -1663,8 +1663,7 @@
 																	$("#ajaxResponseSaveContentPetAttribute").focus();																			
                     	                                                   
 														}else{
-														  $('html, body').animate({scrollTop: '0px'}, 800); 
-													      $("#ajaxResponseSaveContentPetAttribute").html("");
+														  $("#ajaxResponseSaveContentPetAttribute").html("");
 														  $("#formIphMappingErrorMessage").html("");
 														  $("#ajaxResponseSaveContentPetAttribute").append("<b><font size='3'>Pet Content saved successfully!</font></b>"); 
 														  $("#ajaxResponseSaveContentPetAttribute").focus();
@@ -1768,7 +1767,6 @@
                     	                              } //
                     	                              
                     	  						 }else{
-                    	  							$('html, body').animate({scrollTop: '0px'}, 800);
                     	  							$("#ajaxResponseSaveContentPetAttribute").html("");
                     		   	                	$("#ajaxResponseSaveContentPetAttribute").append("<b><font size='3'>Pet save failed. Please contact Belk helpdesk. </font></b>"); 
                     		   	                    $("#ajaxResponseSaveContentPetAttribute").focus();
@@ -2398,7 +2396,7 @@ function toggleRows(currentRow, styleId, styleColorId){
 					<form:form commandName="contentDisplayForm" method="post" action="${getChangedIPHCategoryData}" name="contentDisplayForm" id="contentDisplayForm">
 				
 				 
-							 <div id="overlay_pageLoadingsave" style="display:none;position:absolute;top:200px; left:350px;">
+							 <div id="overlay_pageLoadingsave" style="display:none;position:fixed;top:50%; left:50%;">
 										<img src="<%=response.encodeURL(request.getContextPath()+"/img/loading.gif")%>" height="100px;" />
 							</div> 
 							 <div id="overlay_pageLoadingapprove" style="display:none;position:absolute;top:1000px; left:350px;">
@@ -2439,7 +2437,7 @@ function toggleRows(currentRow, styleId, styleColorId){
                                 <div style="float: right;" class="freeze-cntr-right">
                                     <c:if test="${contentDisplayForm.styleInformationVO.groupingType == 'CPG'}">
                                         <div class="orin-popup-container">
-                                            <input type="button" class="btn chevron-down" id="btnCopyORIN" value="Copy ORIN" style="width: 150px; padding: 6px;"/>
+                                            <input type="button" class="btn chevron-down" id="btnCopyORIN" value="Copy ORIN" style="width: 135px; padding: 6px;"/>
                                             <div class="clearfix"></div>
                                             <div class="orin-popup" id="orin-popup" style="display:none">
                                                 <div class="popup-header x-panel-header x-unselectable">Copy ORIN</div>
@@ -2474,7 +2472,7 @@ function toggleRows(currentRow, styleId, styleColorId){
                                                           <input type="button" name="Close" value="<fmt:message key="content.label.closeButton" bundle="${display}"/>"
                                                               class="closeContentButton"  onclick="javascript:goToWorkListDisplayScreen('<c:out value="${contentDisplayForm.userName}"/>','${releseLockedPet}');"/>
                                             </c:if>
-                                        <div style="float:left;margin-right:35px; margin-top:10px;color: #FFF;">
+                                        <div style="float:left;margin-right:5px; margin-top:10px;color: #FFF;">
                                             <label style="margin-right:15px">
                                             <input type="checkbox" style="margin-top:0px;" id="publisStatusCodePublishToWeb"
                                             name="publisStatusCode" value="09"
@@ -2482,6 +2480,7 @@ function toggleRows(currentRow, styleId, styleColorId){
                                             <c:if test="${contentDisplayForm.roleName == 'readonly'}"> disabled="disabled" </c:if> /> <b>Publish to Web (Skip CMP Task)</b></label>
                                         </div>
                                 </div>
+                                <div id="ajaxResponseSaveContentPetAttribute" style="float:left; padding: 5px 15px;"></div>
 							</div>
 							<!--Logout for Content Screen -->		
 							 <div align="right" >	
@@ -2508,7 +2507,7 @@ function toggleRows(currentRow, styleId, styleColorId){
 								        
 									<!-- to show message from save content web service  -->
 									
-									<div id="ajaxResponseSaveContentPetAttribute"></div>
+									
 								    <div id="formIphMappingErrorMessage">
 								     <c:if test="${not empty  contentDisplayForm.iphMappingMessage}">	
 										     <table><tr><td><b><font size='2'><c:out value="${contentDisplayForm.iphMappingMessage}"/></font></b></td></tr></table>
