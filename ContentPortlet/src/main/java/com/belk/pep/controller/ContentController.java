@@ -2513,9 +2513,8 @@ public class ContentController implements ResourceAwareController, EventAwareCon
         }
         // Change for Defect # 3828
         String selectedParentOrin = request.getParameter("returnOrinNumber");
-        if(selectedParentOrin!=null & !selectedParentOrin.equals(""))
-        {
-        	modelAndView.addObject("orinNumber", selectedParentOrin);
+        if (StringUtils.isNotBlank(selectedParentOrin)) {
+            modelAndView.addObject("orinNumber", selectedParentOrin);
         }
         return modelAndView;
 
