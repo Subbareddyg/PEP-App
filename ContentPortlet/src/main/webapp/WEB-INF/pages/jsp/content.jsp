@@ -63,6 +63,12 @@
   .freeze-cntr-right input[type="button"]{
     margin: 0 10px;
   }
+  #ajaxResponseSaveContentPetAttribute{
+    padding: 5px 10px;
+    float:left;
+    color:white;
+    margin-top:5px;
+          }
   </style>
    <script type="text/javascript">
 		$(function(){
@@ -2258,7 +2264,7 @@ function clickListenerContent(e){
                                         </div>
                                      </c:if>
                                 </div>
-                                <div id="ajaxResponseSaveContentPetAttribute" style="float:left; padding: 5px 15px;"></div>
+                                <div id="ajaxResponseSaveContentPetAttribute"></div>
                             </div>
 							<!--Logout for Content Screen -->		
 							 <div align="right" >	
