@@ -1739,9 +1739,9 @@
 					 jAlert('Product Description should be minimum of 40 characters', 'Alert');
 					// alert("Product Description should be minimum of 40 characters");
 					 return;
-				}else if (productDescription != null && productDescription.trim().length > 2000) {
-					 jAlert('Product Description should be less than 2000 characters', 'Alert');
-					// alert("Product Description should be less than 2000 characters");
+				}else if (productDescription != null && productDescription.trim().length > 250) {
+					 jAlert('Product Description should be less than 250 characters', 'Alert');
+					// alert("Product Description should be less than 250 characters");
 					 return;
 				}
 				
@@ -2410,14 +2410,14 @@ function clickListenerContent(e){
 											
 												<li class="prod_desc">
 													<label><fmt:message key="labelProductDescription" bundle="${display}"/></label>			
-													<textarea id="vendorStyleId"	class="maxChars spellcheck textCount recommended" name="productDescription" cols="126" rows="7" onkeyup="textCounter();" onblur="textCounter();"  disabled="disabled"><c:out value="${contentDisplayForm.productDetailsVO.productDescription}"/></textarea>		
+													<textarea id="vendorStyleId"	class="maxChars spellcheck textCount recommended" name="productDescription" cols="126" rows="4" onkeyup="textCounter();" onblur="textCounter();"  disabled="disabled"><c:out value="${contentDisplayForm.productDetailsVO.productDescription}"/></textarea>		
 														
 													<div class="chars_rem">
 														<fmt:message key="caredit.page.product.remaining"/> <span class="chars_rem_val">40</span>
 													</div>
 													<div class="max_chars"
 													style="margin-right: 150px; display: inline; white-space: nowrap;">
-													<fmt:message key="content.page.product.max.char"  bundle="${display}"/><span class="max_chars_val">2000</span>&nbsp;&nbsp;
+													<fmt:message key="content.page.product.max.char"  bundle="${display}"/><span class="max_chars_val">250</span>&nbsp;&nbsp;
 													<fmt:message key="content.page.product.minimum.char" bundle="${display}"/>&nbsp;&nbsp;
 													
 									
@@ -2447,14 +2447,14 @@ function clickListenerContent(e){
 											
 												<li class="prod_desc">
 													<label><fmt:message key="labelProductDescription" bundle="${display}"/></label>			
-													<textarea id="vendorStyleId"	class="maxChars spellcheck textCount recommended" name="productDescription" cols="126" rows="7" onkeyup="textCounter();" onblur="textCounter();" ><c:out value="${contentDisplayForm.productDetailsVO.productDescription}"/></textarea>		
+													<textarea id="vendorStyleId"	class="maxChars spellcheck textCount recommended" name="productDescription" cols="126" rows="4" onkeyup="textCounter();" onblur="textCounter();" ><c:out value="${contentDisplayForm.productDetailsVO.productDescription}"/></textarea>		
 														
 													<div class="chars_rem">
 														<fmt:message key="caredit.page.product.remaining"/> <span class="chars_rem_val">40</span>
 													</div>
 													<div class="max_chars"
 													style="margin-right: 150px; display: inline; white-space: nowrap;">
-													<fmt:message key="content.page.product.max.char"  bundle="${display}"/><span class="max_chars_val">2000</span>&nbsp;&nbsp;
+													<fmt:message key="content.page.product.max.char"  bundle="${display}"/><span class="max_chars_val">250</span>&nbsp;&nbsp;
 													<fmt:message key="content.page.product.minimum.char" bundle="${display}"/>&nbsp;&nbsp;
 													
 									
@@ -2480,14 +2480,14 @@ function clickListenerContent(e){
 											
 												<li class="prod_desc">
 													<label><fmt:message key="labelProductDescription" bundle="${display}"/></label>			
-													<textarea id="vendorStyleId"	class="maxChars spellcheck textCount recommended" name="productDescription" cols="126" rows="7" onkeyup="textCounter();" onblur="textCounter();" disabled="true"><c:out value="${contentDisplayForm.productDetailsVO.productDescription}"/></textarea>		
+													<textarea id="vendorStyleId"	class="maxChars spellcheck textCount recommended" name="productDescription" cols="126" rows="4" onkeyup="textCounter();" onblur="textCounter();" disabled="true"><c:out value="${contentDisplayForm.productDetailsVO.productDescription}"/></textarea>		
 														
 													<div class="chars_rem">
 														<fmt:message key="caredit.page.product.remaining"/> <span class="chars_rem_val">40</span>
 													</div>
 													<div class="max_chars"
 													style="margin-right: 150px; display: inline; white-space: nowrap;">
-													<fmt:message key="content.page.product.max.char"  bundle="${display}"/><span class="max_chars_val">2000</span>&nbsp;&nbsp;
+													<fmt:message key="content.page.product.max.char"  bundle="${display}"/><span class="max_chars_val">250</span>&nbsp;&nbsp;
 													<fmt:message key="content.page.product.minimum.char" bundle="${display}"/>&nbsp;&nbsp;
 													
 									
