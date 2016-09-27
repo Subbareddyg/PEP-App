@@ -446,7 +446,7 @@ public class XqueryConstants {
         		+" XMLCAST( (XMLQUERY('pim_entry/entry/Item_UDA_Spec/Vendor_Collection' PASSING  item.xml_data RETURNING CONTENT ) ) AS VARCHAR2(1000) ) vendor_collection,"
         		+" XMLCAST( (XMLQUERY('pim_entry/entry/Item_UDA_Spec/TRENDS' PASSING  item.xml_data RETURNING CONTENT ) ) AS VARCHAR2(1000) ) Trends,"
         		+" XMLCAST( (XMLQUERY('pim_entry/entry/Item_UDA_Spec/YC_TRENDS' PASSING  item.xml_data RETURNING CONTENT ) ) AS VARCHAR2(1000) ) Yc_Trends,"
-        		+" XMLCAST( (XMLQUERY('pim_entry/entry/Item_UDA_Spec/YC_FY17_INTO_THE_WOODS' PASSING  item.xml_data RETURNING CONTENT ) ) AS VARCHAR2(1000)) Women_Big_Ideas,"
+        		+" XMLCAST( (XMLQUERY('pim_entry/entry/Item_UDA_Spec/FALL_FY17_WOMENS_BIG_IDEAS' PASSING  item.xml_data RETURNING CONTENT ) ) AS VARCHAR2(1000)) Women_Big_Ideas,"
         		+" XMLCAST( (XMLQUERY('pim_entry/entry/Item_UDA_Spec/KIDS_SHOE_SIZES' PASSING  item.xml_data RETURNING CONTENT ) ) AS VARCHAR2(1000) ) Age_Group "
         		+" FROM PetDetails pet, "
         		+" vendorportal.ADSE_ITEM_CATALOG item "
