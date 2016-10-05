@@ -304,4 +304,9 @@ public class ImageRequestDelegate {
 		        return imageRequestService.getContentStatus(groupingId);
 		        
 		    }
+		    
+		    public boolean insertImageDelete(String orin, String imageId, String imageName, String imageStatus, String deletedBy) throws PEPServiceException, PEPPersistencyException
+		    {
+		        return imageRequestService.insertImageDelete(orin, imageId, imageName, imageStatus, deletedBy);
+		    }
 }
