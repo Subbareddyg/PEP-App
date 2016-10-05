@@ -795,7 +795,7 @@ function releseLockedPet(loggedInUser,releseLockedPetURL){
 <th><fmt:message key="label.vpisampleImage.imgrStatus" /></th>
 <th>Submit</th>
 <th><fmt:message key="label.vpisampleImage.Reject" /></th>
-<th>Remove</th>
+<th><input type="checkbox" name="imgSelectAll" id="imgSelectAll">&nbsp; <input  class="btnRemove" id="removeImage" type="button"  onclick="imgRemoveSelected();" name="removeImage" title="Remove" width="48" value="  Remove  " /></th>
 <!-- Commented as the table is populating dynamically -->
 </table>
 </form>
@@ -834,7 +834,7 @@ function releseLockedPet(loggedInUser,releseLockedPetURL){
 <th><fmt:message key="label.vpisampleImage.imageShotType" /></th>
 <th><fmt:message key="label.vpisampleImage.imgrStatus" /></th>
 <th>Submit</th>
-<th>Remove</th>
+<th><input type="checkbox" name="imgSelectAll" id="imgSelectAll">&nbsp; <input  class="btnRemove" id="removeImage" type="button"  onclick="imgRemoveSelected();" name="removeImage" title="Remove" width="48" value="  Remove  " /></th>
 </table>
 	</div>
 			</div>	
@@ -1372,6 +1372,33 @@ function releseLockedPet(loggedInUser,releseLockedPetURL){
 </div>
 </body>
 <script>
+
+function imgRemoveSelected(){
+	if($("#imgSelect").length >= 1){
+   if ($("#imgSelect:checked").length >= 1) {
+	  jq('#dialog_submitRemove').dialog('open');
+   }
+   else {
+		jq('#dialog_removeImage').dialog('open');
+		}
+	}
+}
+$(function(){
+   $('#imgSelectAll').click(function(event) {  //on click 
+     if(this.checked) { // check select status
+       $('.SelectAllImg').each(function() { //loop through each checkbox
+         this.checked = true;  //select all checkboxes with class "checkbox1" 
+         this.disabled = true;
+        });
+    }else{
+        $('.SelectAllImg').each(function() { //loop through each checkbox
+            this.checked = false; //deselect all checkboxes with class "checkbox1"        
+            this.disabled = false;
+          });         
+        }
+    });			
+});
+
 //Logic for fileUpload rendering using popup
 
 var uploadStatus = '${uploadSuccess}';
@@ -1380,6 +1407,15 @@ document.getElementById('uploadStatHidden').value = uploadStatus;
 var selectedColorOrin1 = '';
 
 $(function() {
+jq('#dialog_removeImage').dialog({
+	modal: true,
+	autoOpen: false,
+	resizable: true,
+	dialogClass: "dlg-custom",
+	title: 'Remove Image Check',
+	minWidth: 350,
+	minHeight: 140,
+});	
 jq('#dialog_UploadImage').dialog({
 	//modal: true,
 	autoOpen: false,

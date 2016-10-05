@@ -253,49 +253,57 @@ $(document).ready(function() {
 	 	}
   });
 });
-
-function removeVPISampleImageRows(imageId,imageName,rowCount,selectedOrin){  
-  var removeImageUrl = $("#removeImageUrl").val(); 
-  var table = document.getElementById("vImage"); 
-  
-  inputChangedNew = document.getElementById("removeFlagOff").value;
-  
-  table.deleteRow(rowCount);  
-   $.ajax({
-			type: 'POST',
-			url : removeImageUrl,
-			datatype:'json',			
-			data: {selectedColorOrin:selectedOrin,imageIDToDel:imageId,imageNameToDel:imageName},			
-			success: function(data){
-				var json = $.parseJSON(data);				
-				var resCodeRemove = json.resCodeRemove;
-				var imageIdRemove = json.imageIdRemove;				
-				if(resCodeRemove == '101'){
-					imageIdRemove ? $('#removeFailLevelId').text("Image \'" + imageIdRemove + "\' not removed") : void(0);
-					//$('#overlay_submitOrReject').show();
-					//$('#dialog_removeFailed').show();
-					jq('#dialog_removeFailed').dialog('open');
-				}				
-				
-				$('#image-operations-Message-Area').fadeOut('fast').html(''); //hotfix for #931 after image removal process;
-				
-				if(json.responseCodeOnRemove && json.responseCodeOnRemove !== undefined){
-					console.log('json.responseCodeOnRemove--' + json.responseCodeOnRemove);
-					document.getElementById('OnRemovalImageId').value = json.responseCodeOnRemove;
-				}			
+function removeVPISampleImageRows(selectedOrin){  
+	  var removeImageUrl = $("#removeImageUrl").val(); 
+	  var table = document.getElementById("vImage");
+	  var imgId=[];
+	  var imgName=[];
+	  inputChangedNew = document.getElementById("removeFlagOff").value;
+	 
+	  $('.SelectAllImg').each(function() { 
+          if(this.checked){         
+          imgId[imgId.length] = $('td:eq( 0 )', $(this).parent().parent()).text();
+          imgName[imgName.length] = $('td:eq( 1 )', $(this).parent().parent()).text();
+          $(this).parent().parent().remove();
+          }
+         });
+	
+	  $.ajax({
+				type: 'POST',
+				url : removeImageUrl,
+				datatype:'json',			
+				data: {selectedColorOrin:selectedOrin,imageIDToDel:imgId,imageNameToDel:imgName},			
+				success: function(data){
+					var json = $.parseJSON(data);				
+					var resCodeRemove = json.resCodeRemove;
+					var imageIdRemove = json.imageIdRemove;				
+					if(resCodeRemove == '101'){
+						imageIdRemove ? $('#removeFailLevelId').text("Image \'" + imageIdRemove + "\' not removed") : void(0);
+						//$('#overlay_submitOrReject').show();
+						//$('#dialog_removeFailed').show();
+						jq('#dialog_removeFailed').dialog('open');
+					}				
 					
-				
-				setUploadVPILink($("#ajaxaction").val(),document.getElementById("selectedColorOrinNum").value,$("#removeImageUrl").val());
-				trClick();
-				scrollToView('vImage','vImage');
-			},
-			error:function (xhr, ajaxOptions, thrownError){            	
-            	var error = $.parseJSON(xhr.responseText);               
-             }
+					$('#image-operations-Message-Area').fadeOut('fast').html(''); //hotfix for #931 after image removal process;
+					
+					if(json.responseCodeOnRemove && json.responseCodeOnRemove !== undefined){
+						console.log('json.responseCodeOnRemove--' + json.responseCodeOnRemove);
+						document.getElementById('OnRemovalImageId').value = json.responseCodeOnRemove;
+					}			
+						
+					
+					setUploadVPILink($("#ajaxaction").val(),document.getElementById("selectedColorOrinNum").value,$("#removeImageUrl").val());
+					trClick();
+					scrollToView('vImage','vImage');
+				},
+				error:function (xhr, ajaxOptions, thrownError){            	
+	            	var error = $.parseJSON(xhr.responseText);               
+	             }
 
-		});	
-	/* setTimeout(function(){setUploadVPILink($("#ajaxaction").val(),document.getElementById("selectedColorOrinNum").value,$("#removeImageUrl").val());trClick();scrollToView('vImage','vImage');},2000); */	
-}
+			});	
+		/* setTimeout(function(){setUploadVPILink($("#ajaxaction").val(),document.getElementById("selectedColorOrinNum").value,$("#removeImageUrl").val());trClick();scrollToView('vImage','vImage');},2000); */	
+	}
+
 
 function VPISampleImageRows(imageId,imageName,imagefilepath,imageLocation,shotType ,linkStatus,imageStatus,sampleId,sampleReceived,
 silhouette,turnInDate,sampleCordinatorNote,action,role, shotTypeParamArray) {	
@@ -385,13 +393,14 @@ silhouette,turnInDate,sampleCordinatorNote,action,role, shotTypeParamArray) {
 }
 	cell6.appendChild(element7);	
 	var cell7 = row.insertCell(6);
-	cell7.id="removeVPI";
-	cell7.name="removeVPI";		
+	cell7.id="imgSelect";
+	cell7.name="imgSelect";	
+	cell7.innerHTML = '<input type="checkbox" class="SelectAllImg" id="imgSelect" name="imgSelect">	';
 	/*if(imageStatus  == 'Completed' || imageStatus  == 'Ready_For_Review'){
 		cell7.innerHTML = 'Remove';
 	}else{
 		cell7.innerHTML = '<a href="javascript:confirmRemovePopUp('+imageId+',\''+imageName+'\','+rowCount+')">Remove</a>';
-	}*/	
+	}	
 	setTimeout(function(){		
 		if(imageStatus  == 'Completed' || imageStatus  == 'Ready_For_Review' || imageStatus  == 'ReadyForReview'){
 		
@@ -399,7 +408,7 @@ silhouette,turnInDate,sampleCordinatorNote,action,role, shotTypeParamArray) {
 	}else{
 		cell7.innerHTML = '<a href="javascript:;" onclick="confirmRemovePopUp('+imageId+',\''+imageName+'\','+rowCount+')">Remove</a>';//Fix for 591
 	}	
-	},100);
+	},100);*/
 	
 
 	}else if(role == 'dca'){
@@ -512,13 +521,12 @@ silhouette,turnInDate,sampleCordinatorNote,action,role, shotTypeParamArray) {
 		};	
 	}	
 	cell12.appendChild(element13);	
-	var cell13 = row.insertCell(7);	
-	if(imageStatus  == 'Completed'){
-		cell13.innerHTML = 'Remove';
-	}else{
-		cell13.innerHTML = '<a href="javascript:;" onclick="confirmRemovePopUp('+imageId+',\''+imageName+'\','+rowCount+')">Remove</a>';//Fix for 591
-	}
-    }else if(role=='readonly'){	
+	var cell13 = row.insertCell(7);
+	cell13.id="imgSelect";
+	cell13.name="imgSelect";	
+	cell13.innerHTML = '<input type="checkbox" class="SelectAllImg" id="imgSelect" name="imgSelect" >';
+    
+	}else if(role=='readonly'){	
   	//readonly Login	
    	var cell1 = row.insertCell(0);
    	cell1.id="imageId";
@@ -958,7 +966,7 @@ function checkApproveImageStatus(orinId,imageStatus){
 				</li>-->				
 			</br> 
 				<li class="buttons" style="float:right;">
-					<input class="btn-new ui-button ui-corner-all ui-widget"   id="removeConfirmPopUpOkId" type="button" onclick="removeVPISampleImageRows(document.getElementById('imgHiddenId').value,document.getElementById('imgNameHiddenId').value,document.getElementById('imgRowId').value,document.getElementById('selectedOrinVPI').value);dialogHideonOk();" name="Ok" value="Ok" />			
+					<input class="btn-new ui-button ui-corner-all ui-widget"   id="removeConfirmPopUpOkId" type="button" onclick="removeVPISampleImageRows(document.getElementById('selectedOrinVPI').value);dialogHideonOk();" name="Ok" value="Ok" />			
 					
 					<input class="btn-new ui-button ui-corner-all ui-widget"   id="removePopUpClose" type="button" onclick="jq('#dialog_submitRemove').dialog('close')" name="Cancel" value="Cancel" /> &nbsp;&nbsp;&nbsp;&nbsp;
 				</li>				
@@ -997,7 +1005,16 @@ function checkApproveImageStatus(orinId,imageStatus){
 	</div>
 </div>
 <!-- Image Remove Status Popup Ends-->
-
+<div id="dialog_removeImage" class="web_dialog_imageUploadPopUp">
+   <div class="ui-widget">
+      <div class="ui-state-error ui-corner-all" style="padding: 0 .7em;">
+         <p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>
+         <strong>Please select atlest one Image.</strong></p>
+      </div>
+   </div>
+   <br>
+   <input class="btn-new ui-button ui-corner-all ui-widget"   id="removeImgClose" type="button" onclick="jq('#dialog_removeImage').dialog('close')" name="Close" value="Close" />
+</div>
 <form:form commandName="workflowForm" method="post" action="${formAction}" name="workListDisplayForm" id="workListDisplayForm">
       
 		<div  class="cars_panel x-hidden" >
