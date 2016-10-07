@@ -34,6 +34,7 @@ import com.belk.pep.vo.CopyAttributesVO;
 import com.belk.pep.vo.GlobalAttributesVO;
 import com.belk.pep.vo.ItemPrimaryHierarchyVO;
 import com.belk.pep.vo.OmniChannelBrandVO;
+import com.belk.pep.vo.OmniSizeVO;
 import com.belk.pep.vo.PetAttributeVO;
 import com.belk.pep.vo.ProductDetailsVO;
 import com.belk.pep.vo.RegularPetCopy;
@@ -216,14 +217,11 @@ public class ContentDelegate {
      * @param createContentWebServiceReq the create content web service req
      * @return the string
      */
-    public String createContentWebService(String createContentWebServiceReq) {
+    public String createContentWebService(String createContentWebServiceReq, String targetURL) {
         String webServiceResponseDescription = null;
         String responseMsg = null;
         String webServiceResponse = null;
         LOGGER.info("createContentWebService called");
-        final Properties prop =   PropertiesFileLoader.getPropertyLoader(ContentScreenConstants.MESS_PROP);
-        final String targetURL =  prop.getProperty(ContentScreenConstants.DEV_SERVICE_URL);
-        //final String targetURL =  ContentScreenConstants.DEV_SERVICE_URL;
 
         LOGGER.info("createContentWebService URL = "+targetURL);
 
@@ -249,7 +247,6 @@ public class ContentDelegate {
 
             if((httpResult == HttpURLConnection.HTTP_OK) ||
                     (httpResult == HttpURLConnection.HTTP_CREATED) )
-
             {
 
                 LOGGER.info("HTTP Result when OK =  "+httpResult);
@@ -627,7 +624,7 @@ public class ContentDelegate {
      * @param orinNumber2
      * @return the pet list
      */
-    public List<PetsFound>  getPetList(String roleName, String orinNumber) throws  PEPDelegateException  {
+    public List<PetsFound> getPetList(String roleName, String orinNumber) throws  PEPDelegateException  {
         try {
             return contentService.getStyleAndItsChildFromADSE(roleName,orinNumber);
         }
@@ -1220,5 +1217,4 @@ public class ContentDelegate {
 		return message;
 	}
 
-     
 }

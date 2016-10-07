@@ -43,6 +43,7 @@
            float:left;
            color:white;
            margin-top:5px;
+           width: 929px;
           }
 	</style>
 	

@@ -68,6 +68,7 @@
     float:left;
     color:white;
     margin-top:5px;
+    width: 929px;
           }
   </style>
    <script type="text/javascript">
@@ -1064,10 +1065,68 @@
 		var  styleContentPetWebserviceResponseFlag = "false";
 		var  styleColorContentPetWebserviceResponseFlag="false";
 		
+        //remove error message if exists upon selecting valid option
+        function handleOmniSizeDescSelect(selectedElement) {
+            var errorMsgDiv = $(selectedElement).parent().find(".errorMsg");
+            if (errorMsgDiv.text() != "") {
+                errorMsgDiv.text("");
+            }
+        }
+
+        // on click of Style-Color "Approve" row button, pass the style color orin number, pet status, & logged-in user to update pet style color by calling webservice.
+        function approveStyleColor(approveUrl,saveUrl,styleOrinNumber,styleColorOrinNumber,childrenClassIdentifier,user,roleName,errorMsg,styleColorPetContentStatus,clickedButtonId,colorRowCount,styleColorPetImageStatus) {
+            var success = true;
+            if(roleName=="dca") {
+               
+               //run through each row
+               $('table#StyleStyleColorSkuContentId tr.' + childrenClassIdentifier).each(function(i,row) {
+                   var omniSizeValue = $(row).find("select").val();
+                   
+                   if (typeof omniSizeValue == "undefined" || !omniSizeValue) {
+                       success = false;
+                   }
+                   else if (omniSizeValue == "Please Select") {
+                       $(row).find("div.errorMsg").text(errorMsg)
+                       success = false;
+                   }
+                   else {
+                       $(row).find("div.errorMsg").text('')
+                   }
+               });
+            }
+            if (success) {
+                $('span#'+styleColorOrinNumber+'_notify').text('');
+                
+                var removeParentFlag = true;
+                $('table#StyleStyleColorSkuContentId span.notify').each(function(i,row) {
+                    var notifyText = $(row).text();
+                    
+                    if (typeof notifyText != "undefined" && notifyText == "!") {
+                        removeParentFlag = false;
+                    }
+                });
+                
+                if (removeParentFlag) {
+                    $('span#'+styleOrinNumber+'_notify').text('');
+                }
+                
+                getUpdateStyleColorContentPetStatusWebserviceResponse(approveUrl,styleColorOrinNumber,styleColorPetContentStatus,user,roleName,clickedButtonId,colorRowCount,styleColorPetImageStatus,saveUrl,styleOrinNumber,childrenClassIdentifier);
+            }
+            else {
+                $('span#'+styleOrinNumber+'_notify').text('!');
+                $('span#'+styleColorOrinNumber+'_notify').text('!');
+                jAlert('Please assign OmniChannel Size Description for each sku of style color pet.', 'Alert');
+            }
+		}
 	   
 	 //on click of the Style Color  Data row submit button ,pass the style color orin number ,styleColor  pet status and logger in user to the update content pet style color  status by caling webservice
-		function getUpdateStyleColorContentPetStatusWebserviceResponse(url,styleColorPetOrinNumber,styleColorPetContentStatus,user,roleName,clickedButtonId,colorRowCount,styleColorPetImageStatus){
+		function getUpdateStyleColorContentPetStatusWebserviceResponse(approveUrl,styleColorPetOrinNumber,styleColorPetContentStatus,user,roleName,clickedButtonId,colorRowCount,styleColorPetImageStatus,saveUrl,styleOrinNumber,childrenClassIdentifier){
  
+				var saveSuccess = saveStyleColor(saveUrl,styleOrinNumber,childrenClassIdentifier); // call saveStyleColor so user doesn't have to save before submitting/approving.
+				if (!saveSuccess) {
+				    return; //don't continue approve/submit logic if save was unsuccessful.
+				}
+				
 				var status = true;
 			  
 			    var val = $('.contentStatusId').html(); 
@@ -1096,7 +1155,7 @@
 				 $("#styleColorSubmitButtonId-"+styleColorPetOrinNumber)
 			   var ajaxCall=  $.ajax({
                 
-                url: url,
+                url: approveUrl,
                 type: 'GET',
                 dataType: "json",         
                 cache:false,                      
@@ -1141,7 +1200,7 @@
 				 $("#styleColorSubmitButtonId-"+styleColorPetOrinNumber)
 		        var ajaxCall=  $.ajax({
                 
-                url: url,
+                url: approveUrl,
                 type: 'GET',
                 dataType: "json",         
                 cache:false,                      
@@ -1193,11 +1252,11 @@
    		 $('#nrfColorCodeId').attr("disabled", "disabled"); 
 	   }
 	 
-		function saveContentColorAttributes(url, stylePetOrinNumber){
-			
+		function saveStyleColor(url, stylePetOrinNumber, childrenClassIdentifier){
+		    
 			//Logic for capturing the Style Color Attributes Value
 			var  selectedStyleColorOrinNumber= $("#selectedStyleColorOrinNumber").val();
-			
+		
 			//Logic for selecting the omni color family from the drop down and passing the selected value to ajax and from ajax to the controller
 			var a_drop_down_sel= document.getElementById("a_drop_down_box");
 			var omniFamilyOptions = a_drop_down_sel.options[a_drop_down_sel.selectedIndex].value;
@@ -1222,13 +1281,30 @@
 			var  omniChannelColorDescriptionId=   $("#omniChannelColorDescriptionId").val();	
 			if(omniChannelColorDescriptionId == null || omniChannelColorDescriptionId.trim() == ''){
 				 jAlert("Please enter Omnichannel Color Description", "Alert");
-				 return;
+				 return false;
 			 }
 			var  vendorColorId=   $("#vendorColorId").val();	
 			
  
 		      var packColorEntry =  $("#packColorEntryId").val();
 		      var styleColorEntry=$("#styleColorEntryId").val();
+		      
+		      // PIMTWO-13: sku & omniSizeCode will be stored in an array
+		      var omniSizeCodeSkuList = {};
+		      //run through each row
+              $('table#StyleStyleColorSkuContentId tr.' + childrenClassIdentifier).each(function(i,row) {
+                  var selectDropDown = $(row).find("select");
+                  if ($(selectDropDown).is(":disabled")) {
+                      return; //do not add sku if there is only one option available.
+                  }
+                  
+                  var omniSizeValue = $(selectDropDown).val();
+                  
+                  if (typeof omniSizeValue != "undefined" && omniSizeValue != null && omniSizeValue != "Please Select") {
+                      var skuOrinNumber = $(row).find("#skuAnchorTag").text();
+                      omniSizeCodeSkuList[skuOrinNumber] = omniSizeValue;
+                  }
+              });
 		      
 			$.ajax({
                 url: url ,
@@ -1245,30 +1321,35 @@
                           nrfColorCodeStyleColorAttribute:nrfColorCodeId,                          
                           omniChannelColorDescriptionStyleColorAttribute:omniChannelColorDescriptionId,                      
                           vendorColorIdStyleColorAttribute:vendorColorId,
+                          omniSizeCodeSkuList:JSON.stringify(omniSizeCodeSkuList),
                           packColorReq:packColorEntry,
                           styleColorReq:styleColorEntry
                        },
-                    	   success: function(data){		
+                	   success: function(data){		
 						var json = $.parseJSON(data);  
 					
 						$(json).each(function(i,val){
 				
 						var status = val.UpdateStatus;
 						  if(val.UpdateStatus == 'Success'){
-								 $("#ajaxResponseStyleColorAttribute").html("");
-                    	                              $("#ajaxResponseStyleColorAttribute").append("<b><font size='2'>Color Attribute saved successfully!</font></b>"); 
-                    	                              $("#ajaxResponseStyleColorAttribute").focus();
-                    	                              
-                    	                              
-                    	  						 }else{
-                    	  							$("#ajaxResponseStyleColorAttribute").html("");
-                    		   	                	$("#ajaxResponseStyleColorAttribute").append("<b><font size='2'>Color Attribute save failed, please contact Belk helpdesk </font></b>"); 
-                    		   	                    $("#ajaxResponseStyleColorAttribute").focus();
-                    	  						 }
-									});	
-                    	   }
+								 $("#ajaxResponseSaveContentPetAttribute").html("");
+    	                              $("#ajaxResponseSaveContentPetAttribute").append("<b><font size='2'>Style-Color & Sku Attributes saved successfully!</font></b>"); 
+    	                              $("#ajaxResponseSaveContentPetAttribute").focus();
+    	                              window.setTimeout(function() { 
+    	                                  $("#ajaxResponseSaveContentPetAttribute").html("");
+    	                              }, 10000);
+    	  						 }else{
+    	  							$("#ajaxResponseSaveContentPetAttribute").html("");
+    		   	                	$("#ajaxResponseSaveContentPetAttribute").append("<b><font size='2'>Style-Color & Sku Attributes save failed, please contact Belk helpdesk.</font></b>"); 
+    		   	                    $("#ajaxResponseSaveContentPetAttribute").focus();
+                                            window.setTimeout(function() { 
+                                                $("#ajaxResponseSaveContentPetAttribute").html("");
+    	                              	    }, 10000);
+    	  						 }
+						});	
+                	   }
 					 });
-			
+			return true;
 		}
 	 
 		 //on click of the Save button ,pass content pet attributes and make a ajax call to the  webservice
@@ -2727,7 +2808,7 @@ function clickListenerContent(e){
 										
 										<div  id="ajaxResponseUpdateStylePetContentStatus">  </div>
 										
-										<table  cellpadding="0"  class="table tree2 table-bordered table-striped table-condensed">
+										<table id="StyleStyleColorSkuContentId" cellpadding="0"  class="table tree2 table-bordered table-striped table-condensed">
 										   <thead>
 											  <tr>
 												 <th></th>
@@ -2778,7 +2859,7 @@ function clickListenerContent(e){
 							                         </portlet:actionURL>
 							                         
 													<tr id="tablereport"  class="treegrid-${countList}">	
-														<td></td>													
+														<td style="white-space:nowrap;"><span style="color:red;" id="${styleDisplayList.orinNumber}_notify"></span></td>													
 													 	<td><a  href="javascript:;"  id="styleAnchorTag"  onclick="resetColorAttributes()" >${styleDisplayList.orinNumber}</a></td>
 													 	<input type="hidden" id="styleOrinNumberId" name="styleOrinNumber" value="${styleDisplayList.orinNumber}"></input>
 														<td><c:out value="${contentDisplayForm.styleInformationVO.styleId}"/></td>
@@ -2798,20 +2879,21 @@ function clickListenerContent(e){
 														<c:choose>
 														    <c:when test="${contentDisplayForm.roleName == 'vendor'}">
 														                    <c:if test="${empty contentDisplayForm.readyForReviewMessage}">	
-															                  <td><input type="button"  id="styleSubmit" name="submitStyleData"  value="Submit"   style="width: 140px; height:30px" 
+															                  <td><input type="button"  id="styleSubmit" name="submitStyleData"  value="Submit"   style="height:30px; padding:0 15px;" 
 															                  onclick="javascript:saveContentPetAttributesWebserviceResponse('${saveContentPetAttributes}','<c:out value="${styleDisplayList.orinNumber}"/>','<c:out value="${contentDisplayForm.pepUserId}"/>','<c:out value="${contentDisplayForm.productAttributesDisplay.dropDownList.size()}"/>','<c:out value="${contentDisplayForm.legacyAttributesDisplay.dropDownList.size()}"/>', '<c:out value="${contentDisplayForm.productAttributesDisplay.radiobuttonList.size()}"/>', '<c:out value="${contentDisplayForm.legacyAttributesDisplay.radiobuttonList.size()}"/>','${updateContentPetStyleDataStatus}','vendor', 'Approve', '')"/></td>
 															                </c:if>	
 															     			<c:if test="${not empty contentDisplayForm.readyForReviewMessage}">	
-															     				<td><input type="button"  id="styleSubmit" name="submitStyleData"  value="Submit"   style="width: 140px; height:30px"  disabled="disabled"/></td>	
+															     				<td><input type="button"  id="styleSubmit" name="submitStyleData"  value="Submit"   style="height:30px; padding:0 15px;"  disabled="disabled"/></td>	
 															     			</c:if>				 
 														    </c:when>									   
 														    <c:when test="${contentDisplayForm.roleName == 'dca'}">
 														           
-															     <td><input type="button"  id="styleSubmit" name="submitStyleData"  value="Approve"   style="width: 140px; height:30px" 
+															     <td style="white-space: nowrap;">
+                                                                 <input type="button"  id="styleSubmit" name="submitStyleData"  value="Approve"   style="height:30px; padding:0 15px;" 
 															     onclick="javascript:saveContentPetAttributesWebserviceResponse('${saveContentPetAttributes}','<c:out value="${styleDisplayList.orinNumber}"/>','<c:out value="${contentDisplayForm.pepUserId}"/>','<c:out value="${contentDisplayForm.productAttributesDisplay.dropDownList.size()}"/>','<c:out value="${contentDisplayForm.legacyAttributesDisplay.dropDownList.size()}"/>', '<c:out value="${contentDisplayForm.productAttributesDisplay.radiobuttonList.size()}"/>', '<c:out value="${contentDisplayForm.legacyAttributesDisplay.radiobuttonList.size()}"/>','${updateContentPetStyleDataStatus}','dca', 'Approve', '')" /></td>						 
 														    </c:when>
 														    <c:when test="${contentDisplayForm.roleName == 'readonly'}">
-															     <td><input type="button"  id="styleSubmit" name="submitStyleData"  value="Submit"   style="width: 140px; height:30px" onclick="javascript:updateContentStatusForStyleData();" disabled="true"/></td>						 
+															     <td><input type="button"  id="styleSubmit" name="submitStyleData"  value="Submit"   style="height:30px; padding:0 15px;" onclick="javascript:updateContentStatusForStyleData();" disabled="true"/></td>						 
 														    </c:when>
 								                       </c:choose>
 														
@@ -2827,7 +2909,7 @@ function clickListenerContent(e){
 																             	<portlet:param name="styleColorOrinNumber" value="${styleDisplayColorList.orinNumber}"></portlet:param>
 							                                  </portlet:resourceURL>
 													          <tr class="treegrid-${subcount} treegrid-parent-${countList}" >               
-															   <td>&nbsp;</td> 
+															   <td style="white-space:nowrap;">&nbsp;<span style="color:red;" id="${styleDisplayColorList.orinNumber}_notify" class="notify"></span></td> 
 															   <c:choose>
 															   <c:when test="${contentDisplayForm.roleName == 'vendor'}">
 															  	 <td><a id="<c:out value="${styleDisplayColorList.orinNumber}"/>"  href="#colorAttributeSection"  onclick="getStyleColorAttributes('${getStyleColorAttributeDetails}','<c:out value="${styleDisplayColorList.orinNumber}"/>', <%= colorRows %>, 'vendor')">${styleDisplayColorList.orinNumber}</a></td>
@@ -2857,16 +2939,22 @@ function clickListenerContent(e){
 																    
 																	 <c:when test="${contentDisplayForm.roleName == 'vendor'}">
 																   
-																	    <td><input type="button"    id="styleColorSubmitButtonId<%= colorRows %>"   name="styleColorSubmitButtonId<%= colorRows %>"  value="Submit"   style="width: 140px; height:30px" onclick="javascript:getUpdateStyleColorContentPetStatusWebserviceResponse('${updateContentPetStyleColorDataStatus}','<c:out value="${styleDisplayColorList.orinNumber}"/>','<c:out value="${styleDisplayColorList.contentStatusCode}"/>','<c:out value="${contentDisplayForm.pepUserId}"/>','vendor',this.id,<%= colorRows %>,'<c:out value="${styleDisplayColorList.imageStatus}"/>')"/></td>
+																	    <td style="white-space: nowrap;">
+																	    <input type="button" id="styleColorSaveButtonId<%= colorRows %>" style="height:30px; padding:0 15px;" value="Style-Color Save" onclick="javascript:saveStyleColor('${saveContentColorAttributes}', '','treegrid-parent-${subcount}')" />
+																	    <input type="button"    id="styleColorSubmitButtonId<%= colorRows %>"   name="styleColorSubmitButtonId<%= colorRows %>"  value="Submit"   style="height:30px; padding:0 15px;" onclick="javascript:getUpdateStyleColorContentPetStatusWebserviceResponse('${updateContentPetStyleColorDataStatus}','<c:out value="${styleDisplayColorList.orinNumber}"/>','<c:out value="${styleDisplayColorList.contentStatusCode}"/>','<c:out value="${contentDisplayForm.pepUserId}"/>','vendor',this.id,<%= colorRows %>,'<c:out value="${styleDisplayColorList.imageStatus}"/>')"/></td>
 																	     <input type="hidden" id="styleColorSubmitButtonId<%= colorRows %>"  name="styleColorSubmitButtonId<%= colorRows %>"  value="<c:out value="styleColorSubmitButtonId-${styleDisplayColorList.orinNumber}"/>"></input> 
 																    </c:when>
 																    <c:when test="${contentDisplayForm.roleName == 'dca'}">
 																   
-																	    <td><input type="button"    id="styleColorApproveButtonId<%= colorRows %>"  class="petColorApproveButtonClass<%= colorRows %>" name="styleColorApproveButtonId<%= colorRows %>"  value="Approve"   style="width: 140px; height:30px" onclick="javascript:getUpdateStyleColorContentPetStatusWebserviceResponse('${updateContentPetStyleColorDataStatus}','<c:out value="${styleDisplayColorList.orinNumber}"/>','<c:out value="${styleDisplayColorList.contentStatusCode}"/>','<c:out value="${contentDisplayForm.pepUserId}"/>','dca',this.id,<%= colorRows %>,'<c:out value="${styleDisplayColorList.imageStatus}"/>')"/></td>
+																	    <td style="white-space: nowrap;">
+                                                                        <input type="button" id="styleColorSaveButtonId<%= colorRows %>" style="height:30px; padding:0 15px;" value="Style-Color Save" onclick="javascript:saveStyleColor('${saveContentColorAttributes}', '','treegrid-parent-${subcount}')" />
+                                                                        <input type="button"    id="styleColorApproveButtonId<%= colorRows %>"  class="petColorApproveButtonClass<%= colorRows %>" name="styleColorApproveButtonId<%= colorRows %>"  value="Approve"   style="height:30px; padding:0 15px;" onclick="javascript:approveStyleColor('${updateContentPetStyleColorDataStatus}','${saveContentColorAttributes}','${styleDisplayList.orinNumber}','${styleDisplayColorList.orinNumber}', 'treegrid-parent-${subcount}', '${contentDisplayForm.pepUserId}', '${contentDisplayForm.roleName}','<fmt:message key="approve.error.no.size.selected" bundle="${display}" />','${styleDisplayColorList.contentStatusCode}',this.id, <%= colorRows %>, 'styleDisplayColorList.imageStatus')"/></td>
 																	    <input type="hidden" id="styleColorApproveButtonId<%= colorRows %>"  name="styleColorApproveButtonId<%= colorRows %>"   value="<c:out value="styleColorApproveButtonId-${styleDisplayColorList.orinNumber}"/>"></input> 
 																    </c:when>
 																    <c:when test="${contentDisplayForm.roleName == 'readonly'}">
-																	    <td><input type="button"  id="styleColorSubmit" name="submitStyleColorData"  value="Submit"   style="width: 140px; height:30px" onclick="javascript:getUpdateStyleColorContentPetStatusWebserviceResponse('${updateContentPetStyleColorDataStatus}','<c:out value="${styleDisplayColorList.orinNumber}"/>','<c:out value="${styleDisplayColorList.contentStatusCode}"/>','<c:out value="${contentDisplayForm.pepUserId}"/>','<c:out value="${contentDisplayForm.roleName}"/>', '', '','<c:out value="${styleDisplayColorList.imageStatus}"/>')" disabled="disabled"/></td>
+																	    <td style="white-space: nowrap;">
+                                                                        <input type="button" id="styleColorSaveButtonId<%= colorRows %>" style="height:30px; padding:0 15px;" value="Style-Color Save" onclick="javascript:saveStyleColor('${saveContentColorAttributes}', '','treegrid-parent-${subcount}')" />
+                                                                        <input type="button"  id="styleColorSubmit" name="submitStyleColorData"  value="Submit"   style="height:30px; padding:0 15px;" onclick="javascript:getUpdateStyleColorContentPetStatusWebserviceResponse('${updateContentPetStyleColorDataStatus}','<c:out value="${styleDisplayColorList.orinNumber}"/>','<c:out value="${styleDisplayColorList.contentStatusCode}"/>','<c:out value="${contentDisplayForm.pepUserId}"/>','<c:out value="${contentDisplayForm.roleName}"/>', '', '','<c:out value="${styleDisplayColorList.imageStatus}"/>')" disabled="disabled"/></td>
 																    </c:when>
 																    <c:otherwise><td>&nbsp;</td></c:otherwise>
 								                               </c:choose>                                                                                                                                                                               
@@ -2891,11 +2979,44 @@ function clickListenerContent(e){
 															          <td><a  href="#skuAttributeSection"  id="skuAnchorTag"  onclick="resetColorAttributes(); getSkuAttributes('${getSKUAttributeDetails}','<c:out value="${styleColorsChildSkuList.orin}"/>')">${styleColorsChildSkuList.orin}</a></td> 															          								      
 															          <td><c:out value="${contentDisplayForm.styleInformationVO.styleId}"/></td>                                                                                         
 															          <td><c:out value="${styleColorsChildSkuList.color}"/></td> 
-															          <td><c:out value="${styleColorsChildSkuList.vendorSize}" /></td>                                                                                        
-															          <td><c:out value="${styleColorsChildSkuList.omniChannelSizeDescription}" /></td>  															         
-															       	  <td><c:out value="${styleColorsChildSkuList.contentStatus}"/></td> 												                                        
+															          <td><c:out value="${styleColorsChildSkuList.vendorSize}" /></td>
+                                                                      <td>
+                                                                        <c:choose>
+                                                                        <c:when test="${styleColorsChildSkuList.omniChannelSizeDescriptionList.size() == 0}">
+                                                                            <!-- no sizes available to display -->
+                                                                            *<select name="omniChannelSizeDescription" style="width:100px;"></select>
+                                                                            <c:if test="${contentDisplayForm.roleName == 'dca'}">
+                                                                                <div style="color:red;"><fmt:message key="approve.error.no.size.available" bundle="${display}" /></div>
+                                                                            </c:if> 
+                                                                        </c:when>
+                                                                        <c:when test="${styleColorsChildSkuList.omniChannelSizeDescriptionList.size() == 1}">
+                                                                            *<select name="omniChannelSizeDescription" style="width:100px;" disabled="disabled">
+                                                                                <option value="${styleColorsChildSkuList.omniChannelSizeDescriptionList[0].omniSizeCode}"> 
+                                                                                    ${styleColorsChildSkuList.omniChannelSizeDescriptionList[0].omniSizeDesc}
+                                                                                </option>
+                                                                            </select>
+                                                                        </c:when>
+                                                                        <c:otherwise>
+                                                                            *<select name="omniChannelSizeDescription"  style="width:100px;" onchange="javascript:handleOmniSizeDescSelect(this)">
+                                                                                <option value="Please Select">Please Select</option>
+                                                                                <c:forEach items="${styleColorsChildSkuList.omniChannelSizeDescriptionList}" var="omniSizeVO">
+                                                                                    <c:choose>
+                                                                                    <c:when test="${omniSizeVO.omniSizeCode.equals(styleColorsChildSkuList.selectedOmniChannelSizeCode)}">
+                                                                                        <option value="${omniSizeVO.omniSizeCode}" selected="selected">${omniSizeVO.omniSizeDesc}</option>
+                                                                                    </c:when>
+                                                                                    <c:otherwise>
+                                                                                        <option value="${omniSizeVO.omniSizeCode}">${omniSizeVO.omniSizeDesc}</option>
+                                                                                    </c:otherwise>
+                                                                                    </c:choose>
+                                                                                </c:forEach>
+                                                                            </select>
+                                                                        </c:otherwise>
+                                                                        </c:choose>
+                                                                        <div class="errorMsg" style="color:red;"></div>
+                                                                      </td>
+                                                                      <td><c:out value="${styleColorsChildSkuList.contentStatus}"/></td> 												                                        
 															          <td><c:out value="${styleColorsChildSkuList.completionDate}" /></td> 	
-															           <td>&nbsp;</td>											    		 
+															          <td>&nbsp;</td>											    		 
 														          </tr>   
 														   
 															            <c:set var="skucount" value="${skucount+1}" />	
@@ -3004,8 +3125,6 @@ function clickListenerContent(e){
 										</tr>
 										<tr>
 											<td colspan="5" align="left">
-											<input type="button" id="vendorColorButton" name="SavendorColorButtonave" value="Style-Color Save" 
-											 class="colorsaveButton" disabled="disabled" onclick="javascript:saveContentColorAttributes('${saveContentColorAttributes}', '')"/>	
 											</td>
 										</tr>
 									</tbody>	

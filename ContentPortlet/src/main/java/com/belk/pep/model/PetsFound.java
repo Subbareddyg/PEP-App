@@ -1,6 +1,9 @@
 
 package com.belk.pep.model;
 
+import java.util.List;
+
+import com.belk.pep.vo.OmniSizeVO;
 
 /**
  * The Class PetsFound.
@@ -65,7 +68,10 @@ public class PetsFound {
     private String  vendorSize;
 
     /** The omni size description. */
-    private String  omniSizeDescription;
+    private List<OmniSizeVO>  omniSizeDescriptionList;
+    
+    /** The selected omni size code. */
+    private String selectedOmniSizeCode;
 
     /**
      * Instantiates a new pets found.
@@ -153,13 +159,21 @@ public class PetsFound {
         else if (!omniChannelVendor.equals(other.omniChannelVendor)) {
             return false;
         }
-        if (omniSizeDescription == null) {
-            if (other.omniSizeDescription != null) {
+        if (omniSizeDescriptionList == null) {
+            if (other.omniSizeDescriptionList != null) {
                 return false;
             }
         }
-        else if (!omniSizeDescription.equals(other.omniSizeDescription)) {
+        else if (omniSizeDescriptionList!=null && other.omniSizeDescriptionList!=null
+                && omniSizeDescriptionList.size()!=other.omniSizeDescriptionList.size()) {
             return false;
+        }
+        else {
+            for (OmniSizeVO size: omniSizeDescriptionList) {
+                if (!other.omniSizeDescriptionList.contains(size)) {
+                    return false;
+                }
+            }
         }
         if (orinNumber == null) {
             if (other.orinNumber != null) {
@@ -300,8 +314,17 @@ public class PetsFound {
      *
      * @return the omniSizeDescription
      */
-    public String getOmniSizeDescription() {
-        return omniSizeDescription;
+    public List<OmniSizeVO> getOmniSizeDescriptionList() {
+        return omniSizeDescriptionList;
+    }
+
+
+    /**
+     * Gets the selected omnisizecode.
+     * @return
+     */
+    public String getSelectedOmniSizeCode() {
+        return selectedOmniSizeCode;
     }
 
 
@@ -395,15 +418,14 @@ public class PetsFound {
         result =
                 (prime * result) + ((imageState == null) ? 0 : imageState.hashCode());
         result =
-                (prime
-                        * result)
-                        + ((omniChannelVendor == null) ? 0 : omniChannelVendor
-                            .hashCode());
+                (prime * result)
+                        + ((omniChannelVendor == null) ? 0 : omniChannelVendor.hashCode());
         result =
-                (prime
-                        * result)
-                        + ((omniSizeDescription == null) ? 0 : omniSizeDescription
-                            .hashCode());
+                (prime * result)
+                        + ((omniSizeDescriptionList == null) ? 0 : omniSizeDescriptionList.hashCode());
+        result =
+                (prime * result)
+                        + ((selectedOmniSizeCode == null) ? 0 : selectedOmniSizeCode.hashCode());
         result =
                 (prime * result) + ((orinNumber == null) ? 0 : orinNumber.hashCode());
         result =
@@ -509,10 +531,18 @@ public class PetsFound {
      *
      * @param omniSizeDescription the omniSizeDescription to set
      */
-    public void setOmniSizeDescription(String omniSizeDescription) {
-        this.omniSizeDescription = omniSizeDescription;
+    public void setOmniSizeDescriptionList(List<OmniSizeVO> omniSizeDescriptionList) {
+        this.omniSizeDescriptionList = omniSizeDescriptionList;
     }
 
+
+    /**
+     * Sets the selected omni size code.
+     * @param omniSizeCode
+     */
+    public void setSelectedOmniSizeCode(String selectedOmniSizeCode) {
+        this.selectedOmniSizeCode = selectedOmniSizeCode;
+    }
 
     /**
      * Sets the orin number.
@@ -595,7 +625,8 @@ public class PetsFound {
                 + imageState + ", contentState=" + contentState + ", petState="
                 + petState + ", completionDate=" + completionDate + ", colorCode="
                 + colorCode + ", color=" + color + ", vendorSize=" + vendorSize
-                + ", omniSizeDescription=" + omniSizeDescription + "]";
+                + ", omniSizeDescription=" + omniSizeDescriptionList.toString() 
+                + ", selectedOmniSizeCode=" + selectedOmniSizeCode + "]";
     }
 
 

@@ -42,6 +42,7 @@ import com.belk.pep.vo.GlobalAttributesVO;
 import com.belk.pep.vo.GroupingVO;
 import com.belk.pep.vo.ItemPrimaryHierarchyVO;
 import com.belk.pep.vo.OmniChannelBrandVO;
+import com.belk.pep.vo.OmniSizeVO;
 import com.belk.pep.vo.PetAttributeVO;
 import com.belk.pep.vo.ProductDetailsVO;
 import com.belk.pep.vo.RegularPetCopy;
@@ -1370,7 +1371,7 @@ public class ContentDAOImpl implements ContentDAO{
                         pet.setColorCode(checkNull(row[2]));
                         pet.setColor(checkNull(row[3]));
                         pet.setVendorSize(checkNull(row[4]));
-                        pet.setOmniSizeDescription(checkNull(row[5]));
+                        pet.setSelectedOmniSizeCode(checkNull(row[5]));
                         pet.setContentState(prop.getProperty("Content"+checkNull(row[6])));
                         pet.setPetState(prop.getProperty(checkNull(row[7])));
                         entryType = checkNull(row[10]);
@@ -1399,6 +1400,26 @@ public class ContentDAOImpl implements ContentDAO{
                          * DATE: 02/05/2016
                          */
                         pet.setImageState(prop.getProperty("Image"+checkNull(row[11])));
+                        
+                        // PIMTWO-13: next, populate list of OmniSizeDescriptions available
+                        if (entryType.equals("SKU")) {
+                            ArrayList<OmniSizeVO> omniSizeDescriptionList = new ArrayList<OmniSizeVO>();
+                            Query omniSizeQuery = session.createSQLQuery(xqueryConstants.getAllOmnichannelSizeDescriptions());
+                            omniSizeQuery.setString("dept_id", checkNull(row[12]));
+                            omniSizeQuery.setString("class_id", checkNull(row[13]));
+                            omniSizeQuery.setString("vendor_size_code", checkNull(row[14]));
+                            omniSizeQuery.setFetchSize(50);
+                            List<Object[]> omniSizeRows = omniSizeQuery.list();
+                            for(final Object[] sizeRow : omniSizeRows){
+                                OmniSizeVO sizeVO = new OmniSizeVO();
+                                sizeVO.setOmniSizeCode(checkNull(sizeRow[0]));
+                                sizeVO.setOmniSizeDesc(checkNull(sizeRow[1]));
+                                omniSizeDescriptionList.add(sizeVO);
+                            }
+                            pet.setOmniSizeDescriptionList(omniSizeDescriptionList);
+                        }
+                        // END OF PIMTWO-13
+                        
                         petList.add(pet);
                     }
                     LOGGER.info("petList size..."+petList.size());
