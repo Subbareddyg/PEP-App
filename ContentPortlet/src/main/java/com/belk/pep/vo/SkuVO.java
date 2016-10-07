@@ -2,6 +2,7 @@
 package com.belk.pep.vo;
 
 import java.io.Serializable;
+import java.util.List;
 
 
 
@@ -38,7 +39,10 @@ public class SkuVO  implements Serializable{
 
 
     /** The omni channel size description. */
-    private String omniChannelSizeDescription;
+    private List<OmniSizeVO> omniChannelSizeDescriptionList;
+    
+    /** The selected omni channel size code. */
+    private String selectedOmniChannelSizeCode;
 
     /** The entry type. */
     private String entryType;
@@ -138,8 +142,8 @@ public class SkuVO  implements Serializable{
      *
      * @return the omniChannelSizeDescription
      */
-    public String getOmniChannelSizeDescription() {
-        return omniChannelSizeDescription;
+    public List<OmniSizeVO> getOmniChannelSizeDescriptionList() {
+        return omniChannelSizeDescriptionList;
     }
 
     /**
@@ -228,8 +232,8 @@ public class SkuVO  implements Serializable{
      *
      * @param omniChannelSizeDescription the omniChannelSizeDescription to set
      */
-    public void setOmniChannelSizeDescription(String omniChannelSizeDescription) {
-        this.omniChannelSizeDescription = omniChannelSizeDescription;
+    public void setOmniChannelSizeDescriptionList(List<OmniSizeVO> omniChannelSizeDescriptionList) {
+        this.omniChannelSizeDescriptionList = omniChannelSizeDescriptionList;
     }
 
     /**
@@ -258,6 +262,23 @@ public class SkuVO  implements Serializable{
     public void setVendorSize(String vendorSize) {
         this.vendorSize = vendorSize;
     }
+    
+    /**
+     * Get the selected omni channel size description.
+     * @return
+     */
+    public String getSelectedOmniChannelSizeCode() {
+        return selectedOmniChannelSizeCode;
+    }
+
+
+    /**
+     * Set the selected omni channel size description.
+     * @param selectedOmniChannelSizeDescription
+     */
+    public void setSelectedOmniChannelSizeCode(String selectedOmniChannelSizeCode) {
+        this.selectedOmniChannelSizeCode = selectedOmniChannelSizeCode;
+    }
 
 
     /* (non-Javadoc)
@@ -269,7 +290,8 @@ public class SkuVO  implements Serializable{
                 + colorCode + ", color=" + color + ", contentStatus="
                 + contentStatus + ", completionDate=" + completionDate
                 + ", vendorSize=" + vendorSize + ", omniChannelSizeDescription="
-                + omniChannelSizeDescription + ", entryType=" + entryType + "]";
+                + omniChannelSizeDescriptionList.toString() + ", entryType=" + entryType 
+                + ", selectedOmniChannelSizeCode=" + selectedOmniChannelSizeCode + "]";
     }
 
 

@@ -8,9 +8,11 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -50,6 +52,7 @@ import org.springframework.web.portlet.mvc.ResourceAwareController;
 
 import com.belk.pep.attributes.AttributesBean;
 import com.belk.pep.attributes.ItemIdBean;
+import com.belk.pep.attributes.OmniSizeBean;
 import com.belk.pep.common.model.Common_BelkUser;
 import com.belk.pep.common.model.Common_Vpuser;
 import com.belk.pep.common.model.ContentPetDetails;
@@ -67,6 +70,7 @@ import com.belk.pep.model.GroupsFound;
 import com.belk.pep.model.PetsFound;
 import com.belk.pep.model.WebserviceResponse;
 import com.belk.pep.util.ExtractColorCode;
+import com.belk.pep.util.PropertiesFileLoader;
 import com.belk.pep.util.SortComparator;
 import com.belk.pep.vo.BlueMartiniAttributesVO;
 import com.belk.pep.vo.CarBrandVO;
@@ -82,6 +86,7 @@ import com.belk.pep.vo.IPHMappingVO;
 import com.belk.pep.vo.ItemPrimaryHierarchyVO;
 import com.belk.pep.vo.LegacyAttributesVO;
 import com.belk.pep.vo.OmniChannelBrandVO;
+import com.belk.pep.vo.OmniSizeVO;
 import com.belk.pep.vo.PetAttributeVO;
 import com.belk.pep.vo.ProductAttributesVO;
 import com.belk.pep.vo.ProductDetailsVO;
@@ -1095,7 +1100,9 @@ public class ContentController implements ResourceAwareController, EventAwareCon
                 parentOrinNumber = pet.getParentStyleOrin();
                 final String color = pet.getColor();
                 final String vendorSize = pet.getVendorSize();
-                final String omniSizeDescription = pet.getOmniSizeDescription();
+                final OmniSizeVO omniSizeDescription = 
+                        pet.getOmniSizeDescriptionList()!=null && !pet.getOmniSizeDescriptionList().isEmpty() ? 
+                            pet.getOmniSizeDescriptionList().get(0) : new OmniSizeVO();
                 final String contentState = pet.getContentState();
                 final String completionDate = pet.getCompletionDate();
                 final String petState = pet.getPetState();
@@ -1115,7 +1122,7 @@ public class ContentController implements ResourceAwareController, EventAwareCon
                 style.setContentStatus(contentState);
                 String contentStatusCode = setContentStatusCode(contentState);
                 style.setContentStatusCode(contentStatusCode);
-                style.setOmniSizeDescription(omniSizeDescription);
+                style.setOmniSizeDescription(omniSizeDescription.getOmniSizeDesc());
                 style.setPetState(petState);
                 styleList.add(style);// Add all the Style to the Style list
                 styleAndItsChildDisplay.setComplexPackEntry("Complex Pack");
@@ -1129,7 +1136,9 @@ public class ContentController implements ResourceAwareController, EventAwareCon
                 final String orinNumber = pet.getOrinNumber();
                 final String color = pet.getColor();
                 final String vendorSize = pet.getVendorSize();
-                final String omniSizeDescription = pet.getOmniSizeDescription();
+                final OmniSizeVO omniSizeDescription = 
+                        pet.getOmniSizeDescriptionList()!=null && !pet.getOmniSizeDescriptionList().isEmpty() ? 
+                            pet.getOmniSizeDescriptionList().get(0) : new OmniSizeVO();
                 final String contentState = pet.getContentState();
                 final String completionDate = pet.getCompletionDate();
                 final String petState = pet.getPetState();
@@ -1140,7 +1149,7 @@ public class ContentController implements ResourceAwareController, EventAwareCon
                 styleColor.setOrinNumber(orinNumber);
                 styleColor.setColor(color);
                 styleColor.setVendorSize(vendorSize);
-                styleColor.setOmniSizeDescription(omniSizeDescription);
+                styleColor.setOmniSizeDescription(omniSizeDescription.getOmniSizeDesc());
                 styleColor.setCompletionDate(completionDate);
                 styleColor.setContentStatus(contentState);
                 String contentStatusCode = setContentStatusCode(contentState);
@@ -1160,7 +1169,8 @@ public class ContentController implements ResourceAwareController, EventAwareCon
                 final String orinNumber = pet.getOrinNumber();
                 final String color = pet.getColor();
                 final String vendorSize = pet.getVendorSize();
-                final String omniChannelSizeDescription = pet.getOmniSizeDescription();
+                final List<OmniSizeVO> omniChannelSizeDescriptionList = pet.getOmniSizeDescriptionList();
+                final String selectedOmniChannelSizeCode = pet.getSelectedOmniSizeCode();
                 final String contentState = pet.getContentState();
                 final String colorCode = pet.getColorCode();
                 final String completionDate = pet.getCompletionDate();
@@ -1171,11 +1181,26 @@ public class ContentController implements ResourceAwareController, EventAwareCon
                 sku.setColor(color);
                 sku.setColorCode(colorCode);
                 sku.setVendorSize(vendorSize);
-                sku.setOmniChannelSizeDescription(omniChannelSizeDescription);
+                sku.setSelectedOmniChannelSizeCode(selectedOmniChannelSizeCode);
                 sku.setCompletionDate(completionDate);
                 String contentStatusCode = setContentStatusCode(contentState);
                 sku.setContentStatus(contentState);
                 sku.setContentStatusCode(contentStatusCode);
+                
+                //PIMTWO-13: remove any duplicate size_desc from omniChannelSizeDescriptionList
+                if (omniChannelSizeDescriptionList!=null) {
+                    ArrayList<OmniSizeVO> newOmniChannelSizeDescriptionList = new ArrayList<OmniSizeVO>();
+                    ArrayList<String> sizeDescList = new ArrayList<String>();
+                    for (OmniSizeVO sizeVO : omniChannelSizeDescriptionList) {
+                        if (!sizeDescList.contains(sizeVO.getOmniSizeDesc())) {
+                            sizeDescList.add(sizeVO.getOmniSizeDesc());
+                            newOmniChannelSizeDescriptionList.add(sizeVO);
+                        }
+                    }
+                    sku.setOmniChannelSizeDescriptionList(newOmniChannelSizeDescriptionList);
+                }
+                //END PIMTWO-13
+                
                 skuList.add(sku);// Add all the SKU to the SKU list
 
             }
@@ -1186,7 +1211,9 @@ public class ContentController implements ResourceAwareController, EventAwareCon
                 final String orinNumber = pet.getOrinNumber();
                 final String color = pet.getColor();
                 final String vendorSize = pet.getVendorSize();
-                final String omniSizeDescription = pet.getOmniSizeDescription();
+                final OmniSizeVO omniSizeDescription = 
+                        pet.getOmniSizeDescriptionList()!=null && !pet.getOmniSizeDescriptionList().isEmpty() ? 
+                            pet.getOmniSizeDescriptionList().get(0) : new OmniSizeVO();
                 final String contentState = pet.getContentState();
                 final String completionDate = pet.getCompletionDate();
                 final String petState = pet.getPetState();
@@ -1197,7 +1224,7 @@ public class ContentController implements ResourceAwareController, EventAwareCon
                 styleColor.setOrinNumber(orinNumber);
                 styleColor.setColor(color);
                 styleColor.setVendorSize(vendorSize);
-                styleColor.setOmniSizeDescription(omniSizeDescription);
+                styleColor.setOmniSizeDescription(omniSizeDescription.getOmniSizeDesc());
                 styleColor.setCompletionDate(completionDate);
                 styleColor.setContentStatus(contentState);
                 String contentStatusCode = setContentStatusCode(contentState);
@@ -1241,7 +1268,9 @@ public class ContentController implements ResourceAwareController, EventAwareCon
                 parentOrinNumber = pet.getParentStyleOrin();
                 final String color = pet.getColor();
                 final String vendorSize = pet.getVendorSize();
-                final String omniSizeDescription = pet.getOmniSizeDescription();
+                final OmniSizeVO omniSizeDescription = 
+                        pet.getOmniSizeDescriptionList()!=null && !pet.getOmniSizeDescriptionList().isEmpty() ? 
+                            pet.getOmniSizeDescriptionList().get(0) : new OmniSizeVO();
                 final String contentState = pet.getContentState();
                 final String completionDate = pet.getCompletionDate();
                 final String petState = pet.getPetState();
@@ -1261,7 +1290,7 @@ public class ContentController implements ResourceAwareController, EventAwareCon
                 style.setContentStatus(contentState);
                 String contentStatusCode = setContentStatusCode(contentState);
                 style.setContentStatusCode(contentStatusCode);
-                style.setOmniSizeDescription(omniSizeDescription);
+                style.setOmniSizeDescription(omniSizeDescription.getOmniSizeDesc());
                 style.setPetState(petState);
                 styleList.add(style);// Add all the Style to the Style list
                 styleAndItsChildDisplay.setStyleEntry("Style");
@@ -3776,7 +3805,9 @@ public class ContentController implements ResourceAwareController, EventAwareCon
                 }
                 // final String resMsgSplitColor =
             } else {
-                webserviceResponseMessage = contentDelegate.createContentWebService(createContentWebServiceReq);
+                final Properties prop =   PropertiesFileLoader.getPropertyLoader(ContentScreenConstants.MESS_PROP);
+                final String targetURL =  prop.getProperty(ContentScreenConstants.DEV_SERVICE_URL);
+                webserviceResponseMessage = contentDelegate.createContentWebService(createContentWebServiceReq, targetURL);
                 if (webserviceResponseMessage != null && webserviceResponseMessage.trim().equalsIgnoreCase("SUCCESS")) {
                     updateStatus = true;
                 } else {
@@ -3871,18 +3902,19 @@ public class ContentController implements ResourceAwareController, EventAwareCon
         }
     }
 
-    /** Save style color attributes.
+    /** Save style color & omnichannel_size_desc attributes.
      * 
      * @param request the request
      * @param response the response */
     private boolean saveStyleColorAttributes(ResourceRequest request, ResourceResponse response) {
         // final String styleColorPetId = request.getParameter("201469930301");
-        boolean updateStatus = false;
+        boolean updateStatus = true;
         LOGGER.info("Start  of saving saveStyleColorAttributes..............................");
         final String styleColorReq = request.getParameter("styleColorReq");
         LOGGER.info("styleColorReq.." + styleColorReq);
         final String packColorReq = request.getParameter("packColorReq");
         LOGGER.info("packColorReq.." + packColorReq);
+        final Properties prop =   PropertiesFileLoader.getPropertyLoader(ContentScreenConstants.MESS_PROP);
 
         if (StringUtils.isNotBlank(styleColorReq) && styleColorReq.equalsIgnoreCase("StyleColor")) {
             final String styleColorPetId = request.getParameter("styleColorPetOrinNumber");
@@ -3948,7 +3980,7 @@ public class ContentController implements ResourceAwareController, EventAwareCon
             String omni_Channel_Color_Description_Xpath = "Ecomm_StyleColor_Spec/Omni_Channel_Color_Description";
 
             // No XPath for vendorColorIdStyleColor?
-
+            
             // styleColorAttributes.setItemId(styleColorPetId);
             if (StringUtils.isNotBlank(omniColorCode)) {
                 final AttributesBean attributesBeanOmniChannelColorFamily = new AttributesBean(omniChannelColorFamily_Xpath,
@@ -3988,7 +4020,7 @@ public class ContentController implements ResourceAwareController, EventAwareCon
                         omni_Channel_Color_Description_Xpath, omniChannelColorDescriptionStyleColor);
                 styleColorAttributeBeanList.add(attributesBeannOmniChannelColorDescriptionStyleColor);
             }
-
+            
             // final AttributesBean attributesBeanVendorColorIdStyleColor = new
             // AttributesBean(productNameXpath,vendorColorIdStyleColor);
             if (StringUtils.isNotBlank(styleColorPetId)) {
@@ -4009,14 +4041,15 @@ public class ContentController implements ResourceAwareController, EventAwareCon
                 LOGGER.info("Style Color Attributes Webservice Request Object ------------------------------------------> "
                         + createContentWebServiceReq);
                 // call web service and read response
-                final String webserviceResponseMessage = contentDelegate.createContentWebService(createContentWebServiceReq);
+                final String targetURL =  prop.getProperty(ContentScreenConstants.DEV_SERVICE_URL);
+                final String webserviceResponseMessage = contentDelegate.createContentWebService(createContentWebServiceReq,targetURL);
                 if (webserviceResponseMessage != null && webserviceResponseMessage.trim().equalsIgnoreCase("SUCCESS")) {
-                    updateStatus = true;
+                    //updateStatus = true;
                 } else {
                     updateStatus = false;
                 }
             } else {
-                updateStatus = true;
+                //updateStatus = true;
             }
             LOGGER.info("Style Color Attributes Webservice Response Object -------------------------------------------> "
                     + updateStatus);
@@ -4152,9 +4185,10 @@ public class ContentController implements ResourceAwareController, EventAwareCon
                         + createContentWebServiceReq);
 
                 // call web service and read response
-                final String webserviceResponseMessage = contentDelegate.createContentWebService(createContentWebServiceReq);
+                final String targetURL =  prop.getProperty(ContentScreenConstants.DEV_SERVICE_URL);
+                final String webserviceResponseMessage = contentDelegate.createContentWebService(createContentWebServiceReq,targetURL);
                 if (StringUtils.isNotBlank(webserviceResponseMessage) && webserviceResponseMessage.trim().equalsIgnoreCase("SUCCESS")) {
-                    updateStatus = true;
+                    //updateStatus = true;
                 } else {
                     updateStatus = false;
                 }
@@ -4162,10 +4196,48 @@ public class ContentController implements ResourceAwareController, EventAwareCon
                 LOGGER.info("Style Pack Attributes Webservice Response Object ------------------------------------------> ");
 
             } else {
-                updateStatus = true;
+                //updateStatus = true;
             }
         }
+        
+        // Logic for save Sku begins (PIMTWO-13)
+        String omniSizeCodeSkuList = request.getParameter("omniSizeCodeSkuList");
+        if (omniSizeCodeSkuList != null) {
+            List<OmniSizeBean> skuBeanList = new ArrayList<OmniSizeBean>();
+            JSONObject omniSizeCodeJson = new JSONObject(omniSizeCodeSkuList);
+            Iterator itr = omniSizeCodeJson.keys();
+            
+            while (itr.hasNext()) {
+                String skuOrinNumber = (String) itr.next();
+                String omniSizeCode = (String) omniSizeCodeJson.get(skuOrinNumber);
+                
+                if (StringUtils.isNotBlank(skuOrinNumber) && StringUtils.isNotBlank(omniSizeCode)) {
+                    OmniSizeBean sizeBean = new OmniSizeBean(skuOrinNumber, omniSizeCode);
+                    skuBeanList.add(sizeBean);
+                }
+            }
+            
+            if (skuBeanList.size() > 0) {
+                JSONObject inputJSON = new JSONObject();
+                inputJSON.put("list", skuBeanList);
+                // convert from JSON to String
+                final String skuUpdateWebServiceReq = inputJSON.toString();
 
+                // request to web service
+                LOGGER.info("SKU Attributes Webservice Request Object ------------------------------------------> "
+                        + skuUpdateWebServiceReq);
+                // call web service and read response
+                final String targetURL =  prop.getProperty(ContentScreenConstants.SET_OMNICHANNEL_SIZE_DESCRIPTION_WEBSERVICE_URL);
+                final String webserviceResponseMessage = contentDelegate.createContentWebService(skuUpdateWebServiceReq,targetURL);
+                if (webserviceResponseMessage != null && webserviceResponseMessage.trim().equalsIgnoreCase("SUCCESS")) {
+                    //updateStatus = true;
+                } else {
+                    updateStatus = false;
+                }
+            }
+        }
+        // Logic for save Sku ends here
+        
         LOGGER.info("End  of saving saveStyleColorAttributes.............................." + updateStatus);
         return updateStatus;
     }
@@ -4396,7 +4468,6 @@ public class ContentController implements ResourceAwareController, EventAwareCon
 
             }
         }
-
     }
 
     @ResourceMapping("releseLockedPet")

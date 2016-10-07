@@ -46,6 +46,9 @@ public class ContentScreenConstants {
     /** The Constant UPDATE_CONTENT_STATUS_WEBSERVICE_URL. */
     public static final String  UPDATE_CONTENT_STATUS_WEBSERVICE_URL="updateContentStatus.webservice.url";
     //public static final String  UPDATE_CONTENT_STATUS_WEBSERVICE_URL=System.getenv("UPDATECONTENT_STATUS_WS_URL"); // AFUPYB3
+    
+    /** The Constant SET_OMNICHANNEL_SIZE_DESCRIPTION_WEBSERVICE_URL. */
+    public static final String SET_OMNICHANNEL_SIZE_DESCRIPTION_WEBSERVICE_URL="setOmniChannelSizeDescription.webservice.url";
 
     /** The Constant MESS_PROP. */
     public static final String  MESS_PROP="contentWebservice.properties";
