@@ -1,7 +1,8 @@
 <%@ include file="/WEB-INF/pages/jsp/include.jsp" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<head> 
+<head>
+ 
           
      <title>WorkFlow Display.</title>	 	 
 
@@ -73,6 +74,91 @@ input.btn-new, input.btn-new:hover {
    font-size: 10pt;
    font: normal 11px tahoma,arial,helvetica,sans-serif;
 }
+
+#mainPetTable{
+   table-layout:fixed;
+   width: 100%;
+}
+
+#mainPetTable thead tr {
+   display: block;
+   position: relative;
+}
+
+#mainPetTable tbody {
+   display: block;
+   overflow: auto;
+   width: 100%;
+   height: 362px;
+        }
+#checkboxTD{
+	width:7.3%;
+	min-width:56px;
+	max-width:56px;
+	word-wrap:break-word;
+}
+#orinTD{
+	width: 8.5%;
+	min-width:67px;
+	max-width:67px;
+	word-wrap:break-word;
+}
+#deptTD{
+	width: 5%;
+	min-width:34px;
+	max-width:34px;
+	word-wrap:break-word;
+}
+#nameTD{
+	width: 13%;
+	min-width:108px;
+	max-width:108px;
+	word-wrap:break-word;
+}
+#styleTD{
+	width: 10.3%;
+	min-width:83px;
+	max-width:83px;
+	word-wrap:break-word;
+}
+#prdTD{
+	width: 15%;
+	min-width:126px;
+	max-width:126px;
+	word-wrap:break-word;
+}
+#contentTD{
+	width: 7.8%;
+	min-width:60px;
+	max-width:60px;
+	word-wrap:break-word;
+}
+#imageTD{
+	width: 7.8%;
+	min-width:60px;
+	max-width:60px;
+	word-wrap:break-word;
+}
+#statusTD{
+	width: 8.3%;
+	min-width:65px;
+	max-width:65px;
+	word-wrap:break-word;
+}
+#dateTD{
+	width: 8%;
+	min-width:74px;
+	max-width:74px;
+	word-wrap:break-word;
+}
+#petTD{
+	width: 9%;
+	min-width:45px;
+	max-width:45px;
+	word-wrap:break-word;
+}
+
+
 </style>
 
 </head>
@@ -284,7 +370,7 @@ lockClearOnBack.value='1';
                     </c:otherwise>
                 </c:choose>
 				<hr style="margin:4px; margin-bottom:10px;">
-				<div class="scrollbarset" id="table-container">
+				<div>
 				<!-- Image Loading message starts -->
 					<div id="overlay_pageLoading" style="display:none;">
 						<img src="${contextpath}${imagemidpath}loading.gif" height="100px;"height="100px;" />
@@ -325,66 +411,66 @@ lockClearOnBack.value='1';
 						<table  cellpadding="0"  class="table tree2 table-bordered table-striped table-condensed" id="mainPetTable" name="mainPetTable"  >
 							<thead >
 							<tr>
-							<th style="width:56px"><input  class="selectAllCheckBox" type="checkbox" name="selectAllRow" id="selectAllRow">
+							<th id="checkboxTD"><input  class="selectAllCheckBox" type="checkbox" name="selectAllRow" id="selectAllRow">
 							</th>
-							<th class="sortable sorted order2" width="10%">
+							<th id="orinTD">
 							<a href="#" onclick="columnsorting('orinGroup')"><fmt:message key="worklist.orin.group.label"/>#</a>
 							<c:if test="${workflowForm.selectedColumn =='orinGroup'}">
 								<img src="${contextpath}${imagemidpath}${imagename}"> </img>
 							</c:if>
 							</th>
-							<th class="sortable">
+							<th id="deptTD">
 							<a href="#" onclick="columnsorting('dept')"><fmt:message key="worklist.column.dept.label"/>#</a>
 							<c:if test="${workflowForm.selectedColumn =='dept'}">
 								<img src="${contextpath}${imagemidpath}${imagename}"> </img>
 							</c:if>
 							</th>
-							<th class="sortable">
+							<th id="nameTD">
 							<a href="#" onclick="columnsorting('vendorName')"><fmt:message key="worklist.column.vendor.name.label"/></a>
 							<c:if test="${workflowForm.selectedColumn =='vendorName'}">
 								<img src="${contextpath}${imagemidpath}${imagename}"> </img>
 							</c:if>
 							</th>
-							<th class="sortable">
+							<th id="styleTD">
 							<a href="#" onclick="columnsorting('vendorStyle')"><fmt:message key="worklist.column.vendor.style.label"/></a>
 							<c:if test="${workflowForm.selectedColumn =='vendorStyle'}">
 								<img src="${contextpath}${imagemidpath}${imagename}"> </img>
 							</c:if>
 							</th>
-							<th class="sortable">
+							<th id="prdTD">
 							<a href="#" onclick="columnsorting('productName')"><fmt:message key="worklist.column.product.name.label"/></a>
 							<c:if test="${workflowForm.selectedColumn =='productName'}">
 								<img src="${contextpath}${imagemidpath}${imagename}"> </img>
 							</c:if>
 							</th>
-							<th class="sortable">
+							<th id="contentTD">
 							<a href="#" onclick="columnsorting('contentStatus')"><fmt:message key="worklist.column.content.status.label"/></a>
 							<c:if test="${workflowForm.selectedColumn =='contentStatus'}">
 								<img src="${contextpath}${imagemidpath}${imagename}"> </img>
 							</c:if>
 							</th>
-							<th><a href="#" onclick="columnsorting('imageStatus')"><fmt:message key="worklist.column.img.status.label"/></a>
+							<th id="imageTD"><a href="#" onclick="columnsorting('imageStatus')"><fmt:message key="worklist.column.img.status.label"/></a>
 							<c:if test="${workflowForm.selectedColumn =='imageStatus'}">
 								<img src="${contextpath}${imagemidpath}${imagename}"> </img>
 							</c:if>
-							<th><a href="#" onclick="columnsorting('petStatus')"><fmt:message key="worklist.column.pet.status.label"/></a>
+							<th id="statusTD"><a href="#" onclick="columnsorting('petStatus')"><fmt:message key="worklist.column.pet.status.label"/></a>
 							<c:if test="${workflowForm.selectedColumn =='petStatus'}">
 								<img src="${contextpath}${imagemidpath}${imagename}"> </img>
 							</c:if>
 							</th>		
-							<th><a href="#" onclick="columnsorting('completionDate')"><fmt:message key="worklist.column.icompletion.date.label"/></a>
+							<th id="dateTD"><a href="#" onclick="columnsorting('completionDate')"><fmt:message key="worklist.column.icompletion.date.label"/></a>
 							<c:if test="${workflowForm.selectedColumn =='completionDate'}">
 								<img src="${contextpath}${imagemidpath}${imagename}"> </img>
 							</c:if>
 							</th>
-							<th><a href="#" onclick="columnsorting('petSourceType')">PET Source</a>
+							<th id="petTD"><a href="#" onclick="columnsorting('petSourceType')">PET Source</a>
 							<c:if test="${workflowForm.selectedColumn =='petSourceType'}">
 								<img src="${contextpath}${imagemidpath}${imagename}"> </img>
 							</c:if>					
 							</th>
 							</tr>
 							</thead>
-							<tbody >
+							<tbody  class="scrollbarset" id="table-container">
 									<input type="hidden" id="hidden_roleEditable" name="hidden_roleEditable" value="${workflowForm.roleEditable}"/>
 									<input type="hidden" id="hidden_readOnlyUser" name="hidden_readOnlyUser" value="${workflowForm.readOnlyUser}"/>
 									<input type="hidden" id="hidden_roleName" name="hidden_roleName" value="${workflowForm.roleName}"/>
@@ -401,7 +487,7 @@ lockClearOnBack.value='1';
 									<c:forEach items="${workflowForm.workFlowlist}" var="workFlow"
 										varStatus="status">
 											<tr id="parent_${workFlow.orinNumber}" name="tablereport" class="treegrid-${countList} <c:if test="${isInternal == 'yes' && workFlow.CFAS =='true'}">cfas-row</c:if>" data-group="${workFlow.isGroup}">
-											<td align="center" style="width:56px">
+											<td align="center" id="checkboxTD">
 											
 												<div style="display: inline;margin:-17px 0 0 0px">
 													<img id="parentSpan_${workFlow.orinNumber}_expand" onclick="expandCollapse('${workFlow.orinNumber}','${workflowForm.searchClicked}', '${workFlow.isGroup}')" src="${contextpath}${imagemidpath}expand.png" style="cursor:pointer;border:0;" width="14" />
@@ -416,23 +502,23 @@ lockClearOnBack.value='1';
 											</div>
 											
 											</td>
-											<td><c:out value="${workFlow.orinNumber}" />
+											<td id="orinTD"><c:out value="${workFlow.orinNumber}" />
 											<c:if test="${workFlow.omniChannelVendor =='Y' && workflowForm.roleEditable =='yes'}">*</c:if>
 											<c:if test="${isInternal == 'yes' && workFlow.existsInGroup =='Y'}">
 												<img src="${contextpath}${imagemidpath}grouping_indicator.png" alt="In Grouping" width="9" style="position: relative; top: -8px;" />
 											</c:if>
 											</td>
-											<td><c:out value="${workFlow.deptId}" />
+											<td id="deptTD"><c:out value="${workFlow.deptId}" />
 											</td>
-											<td><c:out value="${workFlow.vendorName}" />
+											<td id="nameTD"><c:out value="${workFlow.vendorName}" />
 											</td>
-											<td><c:out value="${workFlow.vendorStyle}" />
+											<td id="styleTD"><c:out value="${workFlow.vendorStyle}" />
 											<input type="hidden" id="${workFlow.orinNumber}_vendorStyle" value="${workFlow.vendorStyle}"/>
 											</td>
-											<td><c:out value="${workFlow.productName}" />
+											<td id="prdTD"><c:out value="${workFlow.productName}" />
 											<input type="hidden" id="${workFlow.orinNumber}_productName" value="${workFlow.productName}"/>
 											</td>
-											<td>
+											<td id="contentTD">
 											   
 												<c:choose>									    
 													<c:when test="${workflowForm.roleEditable =='yes' && workFlow.vendorStyle != 'Split SKU Grouping' && workFlow.vendorStyle != 'Split Color Grouping'}" >										
@@ -446,7 +532,7 @@ lockClearOnBack.value='1';
 													</c:otherwise>
 												</c:choose>
 											</td>
-												<td>
+												<td id="imageTD">
 												<c:choose>
 													<c:when test="${workflowForm.roleEditable =='yes' && workFlow.vendorStyle != 'Consolidated Product Grouping' && workFlow.vendorStyle != 'Split SKU Grouping' && workFlow.vendorStyle != 'Split Color Grouping'}" >
 													  <a href="#" onclick="imageStatus('<c:out value="${workFlow.imageStatus}"/>','<c:out value="${workFlow.orinNumber}"/>','${workFlow.petStatus}', event)"><c:out value="${workFlow.imageStatus}"/></a>										
@@ -461,10 +547,10 @@ lockClearOnBack.value='1';
 													</c:otherwise>
 												</c:choose>
 												</td>
-											<td><c:out value="${workFlow.petStatus}" />
+											<td id="statusTD"><c:out value="${workFlow.petStatus}" />
 											<input type="hidden" id="${workFlow.orinNumber}_petStatus" value="${workFlow.petStatus}"/>
 											</td>		
-											<td>																
+											<td id="dateTD">																
 											<c:if test = "${workFlow.petStatus ne 'Deactivated'}">										
 												<c:out value="${workFlow.completionDate}" />
 											</c:if>							
@@ -472,10 +558,10 @@ lockClearOnBack.value='1';
 											<input type="hidden" id="tbisPCompletionDateNull_${workFlow.orinNumber}" name="tbisPCompletionDateNull_${workFlow.orinNumber}" value="${workFlow.isPCompletionDateNull}" />
 											</td>
 											
-											<td><c:out value="${workFlow.sourceType}" /></td>
+											<td id="petTD"><c:out value="${workFlow.sourceType}" /></td>
 											
-											<td style="display: none;"><c:out value="${workFlow.petStatus}" />
-											</td>
+											<!-- <td style="display: none;"><c:out value="${workFlow.petStatus}" />
+											</td> -->
 											
 										</tr>
 									
@@ -484,27 +570,27 @@ lockClearOnBack.value='1';
 									</c:forEach> 
 									<tr id="CHILDTR_ID" name="CHILDTR_NAME"
 												class="" style="display:none">
-												<td style="width:56px">
-												<div style="padding-left: 13px;">
+												<td id="checkboxTD">
+												<div style="padding-left: 15px;">
 													<input type="checkbox" parentOrinNo="#CHBOX_PARENTORIN" name="selectedStyles" class="checkbox1"
-													value="#CH_STYLE_ORIN_#CH_STYLE_PETSTATUS" onclick="getStyleColorPetStatValue('#CHBOXONCLK_PETSTATUS')" style="margin:16px 0 0 19px" data-group="#GROUP_FLAG"/>
+													value="#CH_STYLE_ORIN_#CH_STYLE_PETSTATUS" onclick="getStyleColorPetStatValue('#CHBOXONCLK_PETSTATUS')" style="margin:16px 0 0 5px" data-group="#GROUP_FLAG"/>
 												</div>
 												</td>
-												<td>#TD_ORIN</td>
-												<td>#TD_DEPT_NUM</td>
-												<td>#TD_VENDOR_NAME</td>
-												<td>#TD_VENDOR_STYLE</td>
-												<td>#TD_PRODUCT_NAME</td>
-												<td>
+												<td id="orinTD">#TD_ORIN</td>
+												<td id="deptTD">#TD_DEPT_NUM</td>
+												<td id="nameTD">#TD_VENDOR_NAME</td>
+												<td id="styleTD">#TD_VENDOR_STYLE</td>
+												<td id="prdTD">#TD_PRODUCT_NAME</td>
+												<td id="contentTD">
 												<a href="#" onclick="contentStatus('#CONTENT_STATUS','#CON_PARENT_ORIN','',event)">#TD_CONTENT_STATUS</a>
 												</td>
-												<td>
+												<td id="imageTD">
 												<a href="#" onclick="imageStatus('#IMAGE_STATUS','#IMG_PARENT_ORIN','#PET_STATUS',event)">#TD_IMAGE_STATUS</a>
 												</td>
-												<td>#TD_PET_STATUS
+												<td id="statusTD">#TD_PET_STATUS
 													<input type="hidden" id="#CON_PARENT_ORIN_petStatus" value="#TD_PET_STATUS"/>
 												</td>
-												<td>
+												<td id="dateTD">
 												<div id="#CMP_SEC1" style="display:#SEC1_STYLE_STATUS" class="editable-cc-date-#CON_CHILD_ORIN">
 												<!--<input type="text" id="tCompletionDate" name="tCompletionDate" value=''  
 												onchange="checkcompletiondate(this,'#SUBCOUNT_RANDOM')"/>-->
@@ -519,7 +605,7 @@ lockClearOnBack.value='1';
 												 #TD_COMPLETION_DATE
 												</div>
 												</td>
-												<td>#TD_SOURCE_TYPE</td>
+												<td id="petTD">#TD_SOURCE_TYPE</td>
 												<!-- <td style="display: none;">#TD_PET_STATUS</td> -->
 											</tr>	
 							<!--  Table Grid Login End -->	       
@@ -1105,8 +1191,8 @@ lockClearOnBack.value='1';
 		{{ }else{  }}
 		<tr class="children" name="child_{{=orinNum}}" id="parent_{{=item.styleOrinNum}}_{{=random}}" {{=(showHideFlag !== undefined && showHideFlag == false) ? 'style="display:none"' : '' }} data-tr-root="{{=orinNum}}">
 		{{ } }}
-		<td style="width:56px">
-			<div style="padding-left: 13px;">
+		<td id="checkboxTD">
+			<div style="padding-left: 15px;">
 			{{ if(item.isGroup == 'Y'){  }}
 				<img id="parentSpan_{{=item.styleOrinNum}}_expand" onclick="expandCollapse('{{=item.styleOrinNum}}', '{{=item.advSearchClicked}}', '{{=item.isGroup}}', '{{=uniqueIdentifier===undefined ? '' : uniqueIdentifier}}', '{{=orinNum}}')" src="${contextpath}${imagemidpath}expand.png"  
 					style="cursor:pointer;border:0;" width="14" rel="parentSpan_{{=item.styleOrinNum}}_{{=random}}_expand" />
@@ -1124,34 +1210,34 @@ lockClearOnBack.value='1';
 			{{ } }}
 			</div>
 		</td>
-		<td>
+		<td id="orinTD">
 			{{=item.styleOrinNum}}
 			{{if(item.existsInGroup=='Y'){ }} 
 				<img src="${contextpath}${imagemidpath}grouping_indicator.png" alt="In Grouping" width="9" style="position: relative; top: -8px;" />
 			{{ } }}
 		</td>
-		<td>{{=item.deptId}}</td>
-		<td>{{=item.vendorName}}</td>
-		<td>{{=item.vendorStyle}}</td>
-		<td>{{=item.productName}}</td>
-		<td>
+		<td id="deptTD">{{=item.deptId}}</td>
+		<td id="nameTD">{{=item.vendorName}}</td>
+		<td id="styleTD">{{=item.vendorStyle}}</td>
+		<td id="prdTD">{{=item.productName}}</td>
+		<td id="contentTD">
 		{{ if(item.vendorStyle != 'Split SKU Grouping' && item.vendorStyle != 'Split Color Grouping') { }}
 			<a href="#" onclick="contentStatus('{{=item.contentStatus}}','{{=item.styleOrinNum}}','',event)">{{=item.contentStatus}}</a>
 		{{ }else{ }}
 			{{=item.contentStatus}}
 		{{ } }}
 		</td>
-		<td>
+		<td id="imageTD">
 		{{ if(item.vendorStyle != 'Consolidated Product Grouping' && item.vendorStyle != 'Split SKU Grouping' && item.vendorStyle != 'Split Color Grouping') { }}
 		<a href="#" onclick="imageStatus('{{=item.imageStatus}}','{{=item.styleOrinNum}}','{{=item.petStatus}}',event)">{{=item.imageStatus}}</a>
 		{{ }else{ }}
 			{{=item.imageStatus}}
 		{{ } }}
 		</td>
-		<td>{{=item.petStatus}}
+		<td id="statusTD">{{=item.petStatus}}
 			<input type="hidden" id="{{=orinNum}}_petStatus" value="{{=item.petStatus}}"/>
 		</td>
-		<td>
+		<td id="dateTD">
 		<!----- -->
 		{{ var chldOrinNo = item.styleOrinNum.split(' ');chldOrinNo = chldOrinNo.join('');chldOrinNo = chldOrinNo.length >=12 ? chldOrinNo.substring(0, 12) : chldOrinNo; }}
 		<div id="#CMP_SEC1" style="display:#SEC1_STYLE_STATUS" class="editable-cc-date-{{=chldOrinNo}}">
@@ -1172,7 +1258,7 @@ lockClearOnBack.value='1';
 			{{=item.completionDate}}
 		</div> -->
 		</td>
-		<td>{{=item.petSourceType}}</td>
+		<td id="petTD">{{=item.petSourceType}}</td>
 		<!-- <td style="display: none;">#TD_PET_STATUS</td> -->
 	</tr>
 		{{ if(item.isGroup != 'Y'){  }}
@@ -1180,40 +1266,40 @@ lockClearOnBack.value='1';
 				
 				{{ _.each(item.colorList, function(childItem, childKey){ }}
 					<tr class="" data-tr-root="{{=orinNum}}" name="child_{{=item.styleOrinNum}}_{{=random}}" id="parent_{{=childItem.styleOrinNum.replace(/\s/g, '')}}" style="display:none">
-						<td style="width:56px">
-							<div style="padding-left: 44px;">
+						<td id="checkboxTD">
+							<div style="padding-left: 15px;">
 								<input type="checkbox" parentOrinNo="{{=item.styleOrinNum}}_{{=random}}" name="selectedStyles" class="checkbox1" value="{{=childItem.styleOrinNum}}_{{=childItem.petStatus}}" onclick="getStyleColorPetStatValue('{{=childItem.petStatus}}')" data-group="{{=childItem.isGroup}}" />
 							</div>
 						</td>		
-						<td>{{=childItem.styleOrinNum}}
+						<td id="orinTD">{{=childItem.styleOrinNum}}
 						{{if(childItem.existsInGroup=='Y'){ }} 
 							<img src="${contextpath}${imagemidpath}grouping_indicator.png" alt="In Grouping" width="9" style="position: relative; top: -8px;" />
 						{{ } }}</td>
-						<td>{{=childItem.deptId}}</td>
-						<td>{{=childItem.vendorName}}</td>
-						<td>{{=childItem.vendorStyle}}</td>
-						<td>{{=item.productName}}</td>
-						<td>
+						<td id="deptTD">{{=childItem.deptId}}</td>
+						<td id="nameTD">{{=childItem.vendorName}}</td>
+						<td id="styleTD">{{=childItem.vendorStyle}}</td>
+						<td id="prdTD">{{=item.productName}}</td>
+						<td id="contentTD">
 						{{ if(childItem.vendorStyle != 'Split SKU Grouping' && childItem.vendorStyle != 'Split Color Grouping') { }}
 							<a href="#" onclick="contentStatus('{{=childItem.contentStatus}}','{{=item.styleOrinNum}}','',event)">{{=childItem.contentStatus}}</a>
 						{{ }else{ }}
 							{{=childItem.contentStatus}}
 						{{ } }}
 						</td>
-						<td>
+						<td id="imageTD">
 						{{ if(childItem.vendorStyle != 'Consolidated Product Grouping' && childItem.vendorStyle != 'Split SKU Grouping' && childItem.vendorStyle != 'Split Color Grouping') { }}
 							<a href="#" onclick="imageStatus('{{=childItem.imageStatus}}','{{=item.styleOrinNum}}','{{=childItem.petStatus}}',event)">{{=childItem.imageStatus}}</a>
 						{{ }else{ }}
 							{{=childItem.imageStatus}}
 						{{ } }}
 						</td>
-						<td>{{=childItem.petStatus}}
+						<td id="statusTD">{{=childItem.petStatus}}
 							<input type="hidden" id="{{=item.styleOrinNum}}_petStatus" value="{{=childItem.petStatus}}"/>
 						</td>
-						<td>
+						<td id="dateTD">
 							{{=childItem.completionDate}}
 						</td>
-						<td>{{=childItem.petSourceType}}</td>
+						<td id="petTD">{{=childItem.petSourceType}}</td>
 						<!-- <td style="display: none;">#TD_PET_STATUS</td> -->
 					</tr>
 				{{ }) }}
@@ -1611,7 +1697,7 @@ function toggleEnability(){
         var orinId  = $('#visited-orin-num').val(), selEle = $("#parent_"+orinId), container = $('#table-container');
         if(orinId && selEle){
             container.animate({
-                    scrollTop: selEle.offset().top - container.offset().top + container.scrollTop()-100
+                    scrollTop: selEle.offset().top - container.offset().top + container.scrollTop()-50
                     }, 1);
              selEle.addClass("pre-visited");
         }
