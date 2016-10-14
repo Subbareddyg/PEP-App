@@ -455,8 +455,8 @@ public class ImageRequestController {
                                LOGGER.info("Call Service rejected in remove");
                                jsonStyle1 = populateJsonForImageManagement(orinId, updatedBy, "04");
                                jsonArray1.put(jsonStyle1);
-                               responseMsg1 = callApproveActionService(jsonArray1);
-                               LOGGER.info("-----remove responseMsg in rejected-----" + responseMsg1);
+                               //responseMsg1 = callApproveActionService(jsonArray1);
+                               //LOGGER.info("-----remove responseMsg in rejected-----" + responseMsg1);
                            }
                            if (sampleImageDetailsBean.getImageStatus().equalsIgnoreCase("Ready_For_Review")
                                    || sampleImageDetailsBean.getImageStatus().equalsIgnoreCase("ReadyForReview")
@@ -465,24 +465,24 @@ public class ImageRequestController {
                                LOGGER.info("Call Service readyforreview in remove");
                                jsonStyle1 = populateJsonForImageManagement(orinId, updatedBy, "08");
                                jsonArray1.put(jsonStyle1);
-                               responseMsg1 = callApproveActionService(jsonArray1);
-                               LOGGER.info("-----remove responseMsg in ReadyforReview-----" + responseMsg1);
+                               //responseMsg1 = callApproveActionService(jsonArray1);
+                               //LOGGER.info("-----remove responseMsg in ReadyforReview-----" + responseMsg1);
                            }
                            if (sampleImageDetailsBean.getImageStatus().equalsIgnoreCase("Initiated")) {
                                // initiated_status = true;
                                LOGGER.info("Call Service initiated in remove");
                                jsonStyle1 = populateJsonForImageManagement(orinId, updatedBy, "01");
                                jsonArray1.put(jsonStyle1);
-                               responseMsg1 = callApproveActionService(jsonArray1);
-                               LOGGER.info("-----remove responseMsg in Initiated-----" + responseMsg1);
+                               //responseMsg1 = callApproveActionService(jsonArray1);
+                               //LOGGER.info("-----remove responseMsg in Initiated-----" + responseMsg1);
                            }
                            if (sampleImageDetailsBean.getImageStatus().equalsIgnoreCase("Completed")) {
                                // completed_status = true;
                                LOGGER.info("Call Service completed in remove");
                                jsonStyle1 = populateJsonForImageManagement(orinId, updatedBy, "02");
                                jsonArray1.put(jsonStyle1);
-                               responseMsg1 = callApproveActionService(jsonArray1);
-                               LOGGER.info("-----remove responseMsg in completed-----" + responseMsg1);
+                               //responseMsg1 = callApproveActionService(jsonArray1);
+                               //LOGGER.info("-----remove responseMsg in completed-----" + responseMsg1);
                            }
                        }
                    } else {
@@ -490,6 +490,12 @@ public class ImageRequestController {
                        LOGGER.info("Call Service initiated in remove");
                        jsonStyle1 = populateJsonForImageManagement(orinId, updatedBy, "01");
                        jsonArray1.put(jsonStyle1);
+                       //responseMsg1 = callApproveActionService(jsonArray1);
+                       //LOGGER.info("-----remove responseMsg in Initiated-----" + responseMsg1);
+                   }
+                   
+                   if ((jsonArray1 != null) && (jsonArray1.length() != 0))
+                   {
                        responseMsg1 = callApproveActionService(jsonArray1);
                        LOGGER.info("-----remove responseMsg in Initiated-----" + responseMsg1);
                    }
@@ -508,8 +514,8 @@ public class ImageRequestController {
            } else {
                // Remove Failure
                LOGGER.info("Remove Respone Failing code::" + resCode);
-               removeJSON.put("resCodeRemove", resCode);
-               removeJSON.put("imageIdRemove", imagId);
+               removeJSON.put("responseCodeOnRemove", resCode);
+               //removeJSON.put("imageIdRemove", imagId);
                LOGGER.info("removeJSON::" + removeJSON.toString());
                response.getWriter().write(removeJSON.toString());
                response.getWriter().flush();

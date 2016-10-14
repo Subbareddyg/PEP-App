@@ -729,6 +729,7 @@ public class GroupingController {
 			}
 
 			request.getPortletSession().setAttribute(GroupingConstants.GROUP_DETAILS_FORM, createGroupFormRes);
+	        request.getPortletSession().setAttribute(GroupingConstants.GROUP_ID, createGroupFormRes.getGroupId());
 
 			JSONObject jsonObj = new JSONObject();
 			jsonObj.put(GroupingConstants.GROUP_ID, createGroupFormRes.getGroupId());

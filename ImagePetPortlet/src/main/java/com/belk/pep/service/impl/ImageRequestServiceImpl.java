@@ -302,13 +302,11 @@ public class ImageRequestServiceImpl implements ImageRequestService {
                     responseMSGCode = "101";
                     responseMsg = responseMsg + "_" + responseMSGCode;
                     LOGGER.info("responseMsg---Failed**" + responseMsg);
-                    System.out.println("responseMsg---Failed**" + responseMsg);
                 } else {
                     responseMsg = prop.getProperty(ImageConstants.RESPONSE_MSG);
                     responseMSGCode = "100";
                     responseMsg = responseMsg + "_" + responseMSGCode;
                     LOGGER.info("responseMsg---Success**" + responseMsg);
-                    System.out.println("responseMsg---Success**" + responseMsg);
                 }
 
             }
@@ -568,7 +566,7 @@ public String callApproveorRejectActionService(JSONArray jsonArray) throws Excep
             LOGGER.info(output);
 
             // Below if block is for handling single row data.
-            if ((jsonArray != null) && (jsonArray.length() <= 1)) {
+            if ((jsonArray != null) && (jsonArray.length() != 0)) {
                 if ((output != null)
                     && (output.contains("not") && (output.indexOf("not") != -1))) {
                     responseMsg = prop.getProperty(ImageConstants.IMAGE_ERROR_STATUS);
@@ -1192,8 +1190,7 @@ public String callRemoveGroupingImageWebService(JSONObject jsonObj) throws Excep
         		   (httpConnection.getInputStream())));
            String output;       
            while ((output = responseBuffer.readLine()) != null) {
-               LOGGER.info("Grouping remove webservice response -- "+output);  
-               System.out.println("Printing the Response --- "+output);
+               LOGGER.info("Grouping remove webservice response -- "+output);
             String responseMsgCode = "" ;  
        		JSONObject jsonObjectRes = null;
        		if(null != output && !("").equals(output)){
