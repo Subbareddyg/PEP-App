@@ -4,6 +4,11 @@
 <div align="left" style="display: inline; padding: 5px 10px;margin-bottom: 0.5cm" >
 <input type="button" style="padding: 5px 10px;font-weight: bold" name="home" value="Home" onclick=goToHomeScreen();  />
 </div>
+<div align="right" style="display: inline;padding: 5px 5px 10px 750px; margin-bottom: 0.5cm; left:750px" >
+<input type="button" onclick="javascript:goToWorkListDisplayScreen()" class="btn btn-large" value="Close">
+<p style="padding-right: 15px">Back To Worklist</p>
+</div>
+
 <div align="right" style="margin-bottom: 0.5cm" >	
 			<c:out value="${LAN_ID}"/> &nbsp;	 
 			<input type="button"   style="font-weight: bold" name="logout" value="Logout" 
@@ -157,8 +162,7 @@
 <div class="group-search-footer-area">
 	<div class="footer-content">
         <input type="hidden" name="prevVisitedGroupId" value="${prevVisitedGroupId}" />
-		<input type="button" onclick="javascript:goToWorkListDisplayScreen()" class="btn btn-large" value="Close">
-		<p class="button-caption">Back To Worklist</p>
+		
 		<portlet:actionURL var="formAction">
             <portlet:param name="action" value="workListDisplay"/>
             <portlet:param name="groupId" value="${prevVisitedGroupId}"/>
