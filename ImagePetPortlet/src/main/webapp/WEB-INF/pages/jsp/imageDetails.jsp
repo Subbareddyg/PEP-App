@@ -795,7 +795,7 @@ function releseLockedPet(loggedInUser,releseLockedPetURL){
 <th><fmt:message key="label.vpisampleImage.imgrStatus" /></th>
 <th>Submit</th>
 <th><fmt:message key="label.vpisampleImage.Reject" /></th>
-<th><input type="checkbox" name="imgSelectAll" id="imgSelectAll">&nbsp; <input  class="btnRemove" id="removeImage" type="button"  onclick="imgRemoveSelected();" name="removeImage" title="Remove" width="48" value="  Remove  " /></th>
+<th><input type="checkbox" name="imgSelectAll" id="imgSelectAll">&nbsp; <input  class="btnRemove" id="removeImage" type="button"  onclick="imgRemoveSelected();" name="removeImage" title="Remove" width="48" value="Remove Selected" /></th>
 <!-- Commented as the table is populating dynamically -->
 </table>
 </form>
@@ -834,7 +834,7 @@ function releseLockedPet(loggedInUser,releseLockedPetURL){
 <th><fmt:message key="label.vpisampleImage.imageShotType" /></th>
 <th><fmt:message key="label.vpisampleImage.imgrStatus" /></th>
 <th>Submit</th>
-<th><input type="checkbox" name="imgSelectAll" id="imgSelectAll">&nbsp; <input  class="btnRemove" id="removeImage" type="button"  onclick="imgRemoveSelected();" name="removeImage" title="Remove" width="48" value="  Remove  " /></th>
+<th><input type="checkbox" name="imgSelectAll" id="imgSelectAll">&nbsp; <input  class="btnRemove" id="removeImage" type="button"  onclick="imgRemoveSelected();" name="removeImage" title="Remove" width="48" value="Remove Selected" /></th>
 </table>
 	</div>
 			</div>	
@@ -1372,7 +1372,12 @@ function releseLockedPet(loggedInUser,releseLockedPetURL){
 </div>
 </body>
 <script>
-
+$(function(){
+	if($("#imgSelect:disabled").length >= 1){
+		 $('#imgSelect').prop('disabled', true);
+		 $('#removeImage').prop('disabled', true);
+	   }
+});
 function imgRemoveSelected(){
 	if($("#imgSelect").length >= 1){
    if ($("#imgSelect:checked").length >= 1) {
@@ -1384,7 +1389,10 @@ function imgRemoveSelected(){
 	}
 }
 $(function(){
+	
    $('#imgSelectAll').click(function(event) {  //on click 
+	   if($("#imgSelect:disabled").length >= 1){}
+	   else{
      if(this.checked) { // check select status
        $('.SelectAllImg').each(function() { //loop through each checkbox
          this.checked = true;  //select all checkboxes with class "checkbox1" 
@@ -1396,7 +1404,9 @@ $(function(){
             this.disabled = false;
           });         
         }
-    });			
+	   }
+    });	
+   
 });
 
 //Logic for fileUpload rendering using popup
@@ -1457,6 +1467,16 @@ jq('#dialog_uniqueShotTypeCheckId').dialog({
 	//show: { effect: "fade", duration: 800 },
 });
 jq('#dialog_removeFailed').dialog({
+	modal: true,
+	autoOpen: false,
+	resizable: true,
+	dialogClass: "dlg-custom",
+	title: 'Remove Image Status',
+	minWidth: 350,
+	minHeight: 140,
+	//show: { effect: "fade", duration: 800 },
+});
+jq('#dialog_submitRemoveSuccess').dialog({
 	modal: true,
 	autoOpen: false,
 	resizable: true,
@@ -1721,6 +1741,16 @@ function showImageActionMessage(eventType, imageId){
 			break;
 		case 'saveError':
 			var dlgContent = buildMessage('ShotType not saved successfully', 'error');
+			$('#image-operations-Message-Area').html(dlgContent).fadeIn('fast');
+			//cleanupMessage($('#image-Upload-Message-Area'));
+			break;
+		case 'removeSuccess':
+			var dlgContent = buildMessage('Image Removed successfully.', 'success');
+			$('#image-operations-Message-Area').html(dlgContent).fadeIn('fast');
+			//cleanupMessage($('#image-Upload-Message-Area'));
+			break;
+		case 'removeError':
+			var dlgContent = buildMessage('Image not removed.', 'error');
 			$('#image-operations-Message-Area').html(dlgContent).fadeIn('fast');
 			//cleanupMessage($('#image-Upload-Message-Area'));
 			break;
