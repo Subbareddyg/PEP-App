@@ -1372,12 +1372,8 @@ function releseLockedPet(loggedInUser,releseLockedPetURL){
 </div>
 </body>
 <script>
-$(function(){
-	if($("#imgSelect:disabled").length >= 1){
-		 $('#imgSelect').prop('disabled', true);
-		 $('#removeImage').prop('disabled', true);
-	   }
-});
+
+
 function imgRemoveSelected(){
 	if($("#imgSelect").length >= 1){
    if ($("#imgSelect:checked").length >= 1) {
@@ -1388,25 +1384,19 @@ function imgRemoveSelected(){
 		}
 	}
 }
-$(function(){
-	
-   $('#imgSelectAll').click(function(event) {  //on click 
-	   if($("#imgSelect:disabled").length >= 1){}
-	   else{
-     if(this.checked) { // check select status
-       $('.SelectAllImg').each(function() { //loop through each checkbox
-         this.checked = true;  //select all checkboxes with class "checkbox1" 
-         this.disabled = true;
-        });
-    }else{
-        $('.SelectAllImg').each(function() { //loop through each checkbox
-            this.checked = false; //deselect all checkboxes with class "checkbox1"        
-            this.disabled = false;
-          });         
-        }
-	   }
-    });	
+$("#imgSelectAll").change(function () {
+    $(".SelectAllImg").prop('checked', $(this).prop("checked"));
+});
+
+
+$(".SelectAllImg").click(function() {
    
+   if(($(".SelectAllImg").length)==($(".SelectAllImg:checked").length)){
+   	 $("#imgSelectAll").prop('checked',true);
+    }else{
+     $("#imgSelectAll").prop('checked',false);
+    	
+    }
 });
 
 //Logic for fileUpload rendering using popup
