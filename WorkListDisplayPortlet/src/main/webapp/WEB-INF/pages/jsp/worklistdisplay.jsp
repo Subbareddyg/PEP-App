@@ -78,8 +78,12 @@ input.btn-new, input.btn-new:hover {
 #mainPetTable{
    table-layout:fixed;
    width: 100%;
+   border-left:1px solid #dddddd;
 }
-
+.table th, .table td{
+    border-bottom:1px solid #dddddd;
+   
+}
 #mainPetTable thead tr {
    display: block;
    position: relative;
@@ -92,72 +96,72 @@ input.btn-new, input.btn-new:hover {
    height: 362px;
         }
 #checkboxTD{
-	width:7.3%;
+	width:7%;
 	min-width:56px;
 	max-width:56px;
 	word-wrap:break-word;
+	border-left:0;
 }
 #orinTD{
-	width: 8.5%;
-	min-width:67px;
-	max-width:67px;
+	width: 7%;
+	min-width:65px;
+	max-width:65px;
 	word-wrap:break-word;
 }
 #deptTD{
-	width: 5%;
-	min-width:34px;
-	max-width:34px;
+	width: 3%;
+	min-width:30px;
+	max-width:30px;
 	word-wrap:break-word;
 }
 #nameTD{
-	width: 13%;
+	width: 11%;
 	min-width:108px;
 	max-width:108px;
 	word-wrap:break-word;
 }
 #styleTD{
-	width: 10.3%;
+	width: 10%;
 	min-width:83px;
 	max-width:83px;
 	word-wrap:break-word;
 }
 #prdTD{
-	width: 15%;
-	min-width:126px;
-	max-width:126px;
+	width: 12%;
+	min-width:110px;
+	max-width:110px;
 	word-wrap:break-word;
 }
 #contentTD{
-	width: 7.8%;
-	min-width:60px;
-	max-width:60px;
+	width: 7%;
+	min-width:57px;
+	max-width:57px;
 	word-wrap:break-word;
 }
 #imageTD{
-	width: 7.8%;
+	width: 7%;
+	min-width:57px;
+	max-width:57px;
+	word-wrap:break-word;
+}
+#statusTD{
+	width: 8%;
 	min-width:60px;
 	max-width:60px;
 	word-wrap:break-word;
 }
-#statusTD{
-	width: 8.3%;
-	min-width:65px;
-	max-width:65px;
-	word-wrap:break-word;
-}
 #dateTD{
-	width: 8%;
-	min-width:74px;
-	max-width:74px;
+	width: 7%;
+	min-width:63px;
+	max-width:63px;
 	word-wrap:break-word;
 }
 #petTD{
-	width: 9%;
-	min-width:45px;
-	max-width:45px;
+	width: 14%;
+	min-width:55px;
+	max-width:55px;
 	word-wrap:break-word;
 }
-
 
 </style>
 
@@ -483,7 +487,7 @@ lockClearOnBack.value='1';
 							<!-- Table Grid logic Start -->
 									<c:set var="subcount" value="260" />
 									<c:set var="countList" value="0" />
-									<c:if test="${workflowForm.petNotFound ne null}"><tr><td colspan="11"><c:out value="${workflowForm.petNotFound}"/></td></tr> </c:if>
+									<c:if test="${workflowForm.petNotFound ne null}"><tr><td colspan="11" style="border-bottom:0;border-left:0;"><c:out value="${workflowForm.petNotFound}"/></td></tr> </c:if>
 									<c:forEach items="${workflowForm.workFlowlist}" var="workFlow"
 										varStatus="status">
 											<tr id="parent_${workFlow.orinNumber}" name="tablereport" class="treegrid-${countList} <c:if test="${isInternal == 'yes' && workFlow.CFAS =='true'}">cfas-row</c:if>" data-group="${workFlow.isGroup}">
