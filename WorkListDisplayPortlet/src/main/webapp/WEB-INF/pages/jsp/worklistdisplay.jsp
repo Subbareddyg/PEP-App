@@ -82,7 +82,7 @@ input.btn-new, input.btn-new:hover {
 }
 .table th, .table td{
     border-bottom:1px solid #dddddd;
-   
+    border-top:0;
 }
 #mainPetTable thead tr {
    display: block;
