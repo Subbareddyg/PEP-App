@@ -114,12 +114,18 @@ function trClick(){
 					document.getElementById('btnImageUploadAction').disabled = true ;					
 					document.getElementById('saveImage').disabled = true ;
 					document.getElementById('image_approve').disabled=true;				
-					document.getElementById('shotType').disabled=true;				
+					document.getElementById('shotType').disabled=true;
+					$('input[name="removeImage"]').attr('disabled', 'disabled');
+                    $('input[name="imgSelectAll"]').attr('disabled', 'disabled');
+                    $('input[name="imgSelect"]').attr('disabled', 'disabled');
 				}else{					
 					
 					document.getElementById('btnImageUploadAction').disabled = false ;
 					document.getElementById('saveImage').disabled = false ;
 					document.getElementById('image_approve').disabled=false;
+                    $('input[name="removeImage"]').attr('disabled', 'false');
+                    $('input[name="imgSelectAll"]').attr('disabled', 'false');
+                    $('input[name="imgSelect"]').attr('disabled', 'false');
 					
 				}				
 				//Logic for Image Status and SuperImage Status combination
