@@ -626,13 +626,23 @@ public class ContentDelegate {
      */
     public List<PetsFound> getPetList(String roleName, String orinNumber) throws  PEPDelegateException  {
         try {
-            return contentService.getStyleAndItsChildFromADSE(roleName,orinNumber);
+            List<PetsFound> petList = contentService.getStyleAndItsChildFromADSE(roleName,orinNumber);
+            return getPetOmniSizeDescOptions(petList);
         }
         catch (final PEPServiceException serviceException) {
-
             LOGGER.log(Level.SEVERE, serviceException.getMessage());
             throw new PEPDelegateException(serviceException);
         }
+    }
+
+    /**
+     * Go through each pet and populate omniSizeDescription list.
+     * @param petList
+     * @return
+     * @throws Exception 
+     */
+    public List<PetsFound> getPetOmniSizeDescOptions(List<PetsFound> petList) {
+        return contentService.getPetOmniSizeDescOptions(petList);
     }
 
 

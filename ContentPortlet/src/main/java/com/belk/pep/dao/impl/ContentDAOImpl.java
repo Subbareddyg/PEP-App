@@ -1400,46 +1400,23 @@ public class ContentDAOImpl implements ContentDAO{
                          * DATE: 02/05/2016
                          */
                         pet.setImageState(prop.getProperty("Image"+checkNull(row[11])));
-                        
-                        // PIMTWO-13: next, populate list of OmniSizeDescriptions available
-                        if (entryType.equals("SKU")) {
-                            ArrayList<OmniSizeVO> omniSizeDescriptionList = new ArrayList<OmniSizeVO>();
-                            Query omniSizeQuery = session.createSQLQuery(xqueryConstants.getAllOmnichannelSizeDescriptions());
-                            omniSizeQuery.setString("dept_id", checkNull(row[12]));
-                            omniSizeQuery.setString("class_id", checkNull(row[13]));
-                            omniSizeQuery.setString("vendor_size_code", checkNull(row[14]));
-                            omniSizeQuery.setFetchSize(50);
-                            List<Object[]> omniSizeRows = omniSizeQuery.list();
-                            for(final Object[] sizeRow : omniSizeRows){
-                                OmniSizeVO sizeVO = new OmniSizeVO();
-                                sizeVO.setOmniSizeCode(checkNull(sizeRow[0]));
-                                sizeVO.setOmniSizeDesc(checkNull(sizeRow[1]));
-                                omniSizeDescriptionList.add(sizeVO);
-                            }
-                            pet.setOmniSizeDescriptionList(omniSizeDescriptionList);
-                        }
-                        // END OF PIMTWO-13
-                        
+                        pet.setDeptId(checkNull(row[12]));
+                        pet.setClassId(checkNull(row[13]));
+                        pet.setVendorSizeCode(checkNull(row[14]));
                         petList.add(pet);
                     }
                     LOGGER.info("petList size..."+petList.size());
                 }
             }
-
-
         }catch(final Exception e){
             LOGGER.info("Exception..." + e.getMessage());
             e.printStackTrace();
             throw new PEPFetchException(e);
-
         }
-        finally
-        {
-          //  LOGGER.info("recordsFetched. getStyleAndItsChildFromADSE finally block.." );
+        finally {
+            // LOGGER.info("recordsFetched. getStyleAndItsChildFromADSE finally block.." );
             session.flush();
-            
             session.close();
-
         }
 
         LOGGER.info("end of  getStyleAndItsChildFromADSE..." );
@@ -1447,7 +1424,72 @@ public class ContentDAOImpl implements ContentDAO{
 
     }
 
-
+    /**
+    * Query for omniSizeDescriptions based on deptId, classId, & vendorSizeCodes provided.
+    * @param vendorSizeCodes
+    * @return
+     * @throws PEPFetchException 
+    */
+    @Override
+    public ArrayList<OmniSizeVO> getAllOmniSizeDescriptions(String deptId, String classId, 
+            ArrayList<String> vendorSizeCodes) throws PEPFetchException {
+        Session session = null;
+        XqueryConstants xqueryConstants= new XqueryConstants();
+        ArrayList<OmniSizeVO> omniSizeDescriptionList = new ArrayList<OmniSizeVO>();
+        try{
+            session = sessionFactory.openSession();
+            Query omniSizeQuery = null;
+            ArrayList<String> vendor_size_codes_batch = new ArrayList<String>();
+            for (int i=0; i<vendorSizeCodes.size(); i++) {
+                vendor_size_codes_batch.add(vendorSizeCodes.get(i));
+                
+                if (vendor_size_codes_batch.size() >= 1000) {
+                    //query for 1k at a time.
+                    omniSizeQuery = session.createSQLQuery(xqueryConstants.getAllOmnichannelSizeDescriptions());
+                    omniSizeQuery.setString("dept_id", deptId);
+                    omniSizeQuery.setString("class_id", classId);
+                    omniSizeQuery.setParameterList("vendor_size_codes", vendor_size_codes_batch);
+                    omniSizeQuery.setFetchSize(50);
+                    List<Object[]> omniSizeRows = omniSizeQuery.list();
+                    for(final Object[] sizeRow : omniSizeRows){
+                        OmniSizeVO sizeVO = new OmniSizeVO();
+                        sizeVO.setVendorSizeCode(checkNull(sizeRow[0]));
+                        sizeVO.setOmniSizeCode(checkNull(sizeRow[1]));
+                        sizeVO.setOmniSizeDesc(checkNull(sizeRow[2]));
+                        omniSizeDescriptionList.add(sizeVO);
+                    }
+                    //clear list
+                    vendor_size_codes_batch.clear();
+                }
+            }
+                
+            if (!vendor_size_codes_batch.isEmpty()) {
+                //query last batch
+                omniSizeQuery = session.createSQLQuery(xqueryConstants.getAllOmnichannelSizeDescriptions());
+                omniSizeQuery.setString("dept_id", deptId);
+                omniSizeQuery.setString("class_id", classId);
+                omniSizeQuery.setParameterList("vendor_size_codes", vendor_size_codes_batch);
+                omniSizeQuery.setFetchSize(50);
+                List<Object[]> omniSizeRows = omniSizeQuery.list();
+                for(final Object[] sizeRow : omniSizeRows){
+                    OmniSizeVO sizeVO = new OmniSizeVO();
+                    sizeVO.setVendorSizeCode(checkNull(sizeRow[0]));
+                    sizeVO.setOmniSizeCode(checkNull(sizeRow[1]));
+                    sizeVO.setOmniSizeDesc(checkNull(sizeRow[2]));
+                    omniSizeDescriptionList.add(sizeVO);
+                }
+            }
+        }
+        catch (Exception e) {
+            throw new PEPFetchException(e);
+        }
+        finally {
+            session.flush();
+            session.close();
+        }
+        
+        return omniSizeDescriptionList;
+    }
 
     /* (non-Javadoc)
      * @see com.belk.pep.dao.ContentDAO#getStyleColorAttributesFromADSE(java.lang.String)

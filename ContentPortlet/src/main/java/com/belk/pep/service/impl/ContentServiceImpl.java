@@ -8,6 +8,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
 
@@ -36,6 +37,7 @@ import com.belk.pep.vo.CopyAttributesVO;
 import com.belk.pep.vo.GlobalAttributesVO;
 import com.belk.pep.vo.ItemPrimaryHierarchyVO;
 import com.belk.pep.vo.OmniChannelBrandVO;
+import com.belk.pep.vo.OmniSizeVO;
 import com.belk.pep.vo.PetAttributeVO;
 import com.belk.pep.vo.ProductDetailsVO;
 import com.belk.pep.vo.RegularPetCopy;
@@ -478,6 +480,71 @@ public class ContentServiceImpl implements ContentService {
         }
 
         return styleAttributes;
+    }
+    
+    /**
+     * Goes through each pet and populate omniSizeDescription list.
+     * 
+     * @param petList
+     * @return
+     */
+    @Override
+    public List<PetsFound> getPetOmniSizeDescOptions(List<PetsFound> petList) {
+        String deptId = null;
+        String classId = null;
+        
+        // First, get all the vendor_size_codes
+        ArrayList<String> vendorSizeCodes = new ArrayList<String>();
+        for (PetsFound pet : petList) {
+            if (("SKU").equals(pet.getEntryType())) {
+                String petVendorSizeCode = pet.getVendorSizeCode();
+                if (!vendorSizeCodes.contains(petVendorSizeCode)) {
+                    vendorSizeCodes.add(petVendorSizeCode);
+                }
+                
+                if (deptId==null && classId==null) {
+                    deptId = pet.getDeptId();
+                    classId = pet.getClassId();
+                }
+            }
+        }
+        
+        if (deptId!=null && classId!=null && !vendorSizeCodes.isEmpty()) {
+            try {
+                // Next, query for omniSizeDescriptions
+                ArrayList<OmniSizeVO> omniSizeDescriptionList = contentDAO.getAllOmniSizeDescriptions(deptId, classId, vendorSizeCodes);
+                
+                if (!omniSizeDescriptionList.isEmpty()) {
+                    // Organize omniSizeDescriptions into HashMap
+                    HashMap<String,ArrayList<OmniSizeVO>> vendorSizeCodeOmniSizeMap = new HashMap<String,ArrayList<OmniSizeVO>>();
+                    for (OmniSizeVO sizeVO : omniSizeDescriptionList) {
+                        if (vendorSizeCodeOmniSizeMap.get(sizeVO.getVendorSizeCode())==null) {
+                            ArrayList<OmniSizeVO> omniSizeList = new ArrayList<OmniSizeVO>();
+                            omniSizeList.add(sizeVO);
+                            vendorSizeCodeOmniSizeMap.put(sizeVO.getVendorSizeCode(),omniSizeList);
+                        }
+                        else {
+                            vendorSizeCodeOmniSizeMap.get(sizeVO.getVendorSizeCode()).add(sizeVO);
+                        }
+                    }
+                    
+                    // Lastly, store omniSizeDescrptions back to the PetFound object based on vendor_size_code of pet.
+                    if (!vendorSizeCodeOmniSizeMap.isEmpty()) {
+                        for (PetsFound pet : petList) {
+                            if (("SKU").equals(pet.getEntryType())) {
+                                String petVendorSizeCode = pet.getVendorSizeCode();
+                                pet.setOmniSizeDescriptionList(vendorSizeCodeOmniSizeMap.get(petVendorSizeCode));
+                            }
+                        }
+                    }
+                }
+            }
+            catch (PEPFetchException pfe) {
+                LOGGER.error("Error occurred while fetching Omni_Size_Descrptions!!!",pfe);
+            }
+        }
+        
+        return petList;
     }
 
     
