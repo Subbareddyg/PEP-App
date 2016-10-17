@@ -1384,20 +1384,27 @@ function imgRemoveSelected(){
 		}
 	}
 }
-$("#imgSelectAll").change(function () {
-    $(".SelectAllImg").prop('checked', $(this).prop("checked"));
-});
 
-
-$(".SelectAllImg").click(function() {
-   
-   if(($(".SelectAllImg").length)==($(".SelectAllImg:checked").length)){
-   	 $("#imgSelectAll").prop('checked',true);
+$(document).on('click', "#imgSelectAll", function() { 
+	if(this.checked) {
+	   $('.SelectAllImg').each(function() {
+	     this.checked = true; 
+	   });
     }else{
-     $("#imgSelectAll").prop('checked',false);
-    	
-    }
+	    $('.SelectAllImg').each(function() { 
+	    this.checked = false;       
+	   });         
+     }
 });
+$(document).on('click', ".SelectAllImg", function() {
+	if(($(".SelectAllImg").length)==($(".SelectAllImg:checked").length)){
+	  	 $("#imgSelectAll").prop('checked',true);
+	}else{
+		  $("#imgSelectAll").prop('checked',false);
+		 }
+});
+	
+
 
 //Logic for fileUpload rendering using popup
 
