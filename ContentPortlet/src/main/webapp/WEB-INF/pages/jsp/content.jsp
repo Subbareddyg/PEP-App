@@ -2982,7 +2982,7 @@ function clickListenerContent(e){
 															          <td><c:out value="${styleColorsChildSkuList.vendorSize}" /></td>
                                                                       <td>
                                                                         <c:choose>
-                                                                        <c:when test="${styleColorsChildSkuList.omniChannelSizeDescriptionList.size() == 0}">
+                                                                        <c:when test="${styleColorsChildSkuList.omniChannelSizeDescriptionList == null || styleColorsChildSkuList.omniChannelSizeDescriptionList.size() == 0}">
                                                                             <!-- no sizes available to display -->
                                                                             *<select name="omniChannelSizeDescription" style="width:100px;"></select>
                                                                             <c:if test="${contentDisplayForm.roleName == 'dca'}">

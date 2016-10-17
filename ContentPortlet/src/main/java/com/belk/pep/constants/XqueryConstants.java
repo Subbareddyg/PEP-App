@@ -3132,10 +3132,10 @@ public static String copyRegularContentValidationQuery(){
 
     public String getAllOmnichannelSizeDescriptions() {
         StringBuilder getAllOmniSizeDescQuery = new StringBuilder();
-        getAllOmniSizeDescQuery.append("  select mdmid as OMNI_SIZE_CODE,");
+        getAllOmniSizeDescQuery.append("  select nrf_size_code, mdmid as OMNI_SIZE_CODE,");
         getAllOmniSizeDescQuery.append("         XMLCAST ( (XMLQUERY('pim_entry/entry/Vendor_OmniSize_Desc_Spec/omni_size_desc' passing xml_data returning content ) ) as varchar2(1000) ) as OMNI_SIZE_DESC");
         getAllOmniSizeDescQuery.append("  from vendorportal.adse_vendor_omnisize_desc");
-        getAllOmniSizeDescQuery.append("  where nrf_size_code=:vendor_size_code");
+        getAllOmniSizeDescQuery.append("  where nrf_size_code in (:vendor_size_codes)");
         getAllOmniSizeDescQuery.append("    and dept_id=:dept_id");
         getAllOmniSizeDescQuery.append("    and class_id=:class_id");
         return getAllOmniSizeDescQuery.toString();

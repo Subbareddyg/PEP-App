@@ -24,6 +24,9 @@ public class PetsFound {
 
     /** The dept id. */
     private String deptId;
+    
+    /** The class id. */
+    private String classId;
 
 
     /** The product name. */
@@ -66,6 +69,9 @@ public class PetsFound {
 
     /** The vendor size. */
     private String  vendorSize;
+    
+    /** The vendor size code. */
+    private String vendorSizeCode;
 
     /** The omni size description. */
     private List<OmniSizeVO>  omniSizeDescriptionList;
@@ -133,6 +139,14 @@ public class PetsFound {
             }
         }
         else if (!deptId.equals(other.deptId)) {
+            return false;
+        }
+        if (classId == null) {
+            if (other.classId != null) {
+                return false;
+            }
+        }
+        else if (!classId.equals(other.classId)) {
             return false;
         }
         if (entryType == null) {
@@ -215,6 +229,14 @@ public class PetsFound {
         else if (!vendorSize.equals(other.vendorSize)) {
             return false;
         }
+        if (vendorSizeCode == null) {
+            if (other.vendorSizeCode != null) {
+                return false;
+            }
+        }
+        else if (!vendorSizeCode.equals(other.vendorSizeCode)) {
+            return false;
+        }
         if (vendorStyle == null) {
             if (other.vendorStyle != null) {
                 return false;
@@ -277,6 +299,14 @@ public class PetsFound {
     public String getDeptId() {
         return deptId;
     }
+    
+    /**
+     * Gets the class id.
+     * 
+     */
+    public String getClassId() {
+        return classId;
+    }
 
 
     /**
@@ -310,9 +340,9 @@ public class PetsFound {
 
 
     /**
-     * Gets the omni size description.
+     * Gets the omni size description list.
      *
-     * @return the omniSizeDescription
+     * @return the omniSizeDescription list
      */
     public List<OmniSizeVO> getOmniSizeDescriptionList() {
         return omniSizeDescriptionList;
@@ -384,6 +414,14 @@ public class PetsFound {
     public String getVendorSize() {
         return vendorSize;
     }
+    
+    /**
+     * Gets the vendor size code.
+     * @return the vendorSizeCode
+     */
+    public String getVendorSizeCode() {
+        return vendorSizeCode;
+    }
 
 
     /**
@@ -413,6 +451,7 @@ public class PetsFound {
                 (prime * result)
                 + ((contentState == null) ? 0 : contentState.hashCode());
         result = (prime * result) + ((deptId == null) ? 0 : deptId.hashCode());
+        result = (prime * result) + ((classId == null) ? 0 : classId.hashCode());
         result =
                 (prime * result) + ((entryType == null) ? 0 : entryType.hashCode());
         result =
@@ -438,6 +477,7 @@ public class PetsFound {
                 (prime * result) + ((vendorName == null) ? 0 : vendorName.hashCode());
         result =
                 (prime * result) + ((vendorSize == null) ? 0 : vendorSize.hashCode());
+        result = (prime * result) + ((vendorSizeCode == null) ? 0 : vendorSizeCode.hashCode());
         result =
                 (prime * result)
                 + ((vendorStyle == null) ? 0 : vendorStyle.hashCode());
@@ -493,6 +533,15 @@ public class PetsFound {
      */
     public void setDeptId(String deptId) {
         this.deptId = deptId;
+    }
+    
+    /**
+     * Sets the class id.
+     * 
+     * @param classId
+     */
+    public void setClassId(String classId) {
+        this.classId = classId;
     }
 
 
@@ -601,6 +650,14 @@ public class PetsFound {
         this.vendorSize = vendorSize;
     }
 
+    /**
+     * Sets the vendor size code.
+     * 
+     * @param vendorSizeCode
+     */
+    public void setVendorSizeCode(String vendorSizeCode) {
+        this.vendorSizeCode = vendorSizeCode;
+    }
 
     /**
      * Sets the vendor style.
@@ -619,14 +676,15 @@ public class PetsFound {
     public String toString() {
         return "PetsFound [parentStyleOrin=" + parentStyleOrin
                 + ", omniChannelVendor=" + omniChannelVendor + ", orinNumber="
-                + orinNumber + ", deptId=" + deptId + ", productName="
+                + orinNumber + ", deptId=" + deptId + ", classId=" + classId + ", productName="
                 + productName + ", entryType=" + entryType + ", vendorName="
                 + vendorName + ", vendorStyle=" + vendorStyle + ", imageState="
                 + imageState + ", contentState=" + contentState + ", petState="
                 + petState + ", completionDate=" + completionDate + ", colorCode="
                 + colorCode + ", color=" + color + ", vendorSize=" + vendorSize
-                + ", omniSizeDescription=" + omniSizeDescriptionList.toString() 
-                + ", selectedOmniSizeCode=" + selectedOmniSizeCode + "]";
+                + ", vendorSizeCode=" + vendorSizeCode + ", omniSizeDescription=" 
+                + omniSizeDescriptionList.toString() + ", selectedOmniSizeCode=" 
+                + selectedOmniSizeCode + "]";
     }
 
 

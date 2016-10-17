@@ -6,12 +6,33 @@ package com.belk.pep.vo;
  */
 public class OmniSizeVO {
 
+    /** The vendor size code. */
+    private String vendorSizeCode;
+    
     /** The omni channel size code. */
     private String omniSizeCode;
     
     /** The omni channel size desc. */
     private String omniSizeDesc;
-    
+
+    /**
+     * Gets the vendor size code.
+     * 
+     * @return
+     */
+    public String getVendorSizeCode() {
+        return vendorSizeCode;
+    }
+
+    /**
+     * Sets the vendor_size code.
+     * 
+     * @param vendorSizeCode
+     */
+    public void setVendorSizeCode(String vendorSizeCode) {
+        this.vendorSizeCode = vendorSizeCode;
+    }
+
     /**
      * Gets the omni channel size code.
      *

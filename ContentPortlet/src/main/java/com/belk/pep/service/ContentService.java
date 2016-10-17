@@ -213,6 +213,13 @@ public interface ContentService {
         String orinNumber) throws PEPServiceException;
 
     /**
+     * Goes through each pet and populate omniSizeDescription list.
+     * @param petList
+     * @return
+     */
+    List<PetsFound> getPetOmniSizeDescOptions(List<PetsFound> petList);
+    
+    /**
      * Gets the style attributes from adse.
      *
      * @param orinNumber the orin number

@@ -1,6 +1,7 @@
 
 package com.belk.pep.dao;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.belk.pep.exception.checked.PEPFetchException;
@@ -25,6 +26,7 @@ import com.belk.pep.vo.RegularPetCopy;
 import com.belk.pep.vo.SkuAttributesVO;
 import com.belk.pep.vo.StyleColorFamilyVO;
 import com.belk.pep.vo.StyleInformationVO;
+import com.belk.pep.vo.OmniSizeVO;
 
 
 /**
@@ -382,4 +384,12 @@ public  interface ContentDAO {
 	 */
 	RegularPetCopy getRegularCopyValidation(RegularPetCopy petCopy)
 			throws PEPFetchException;
+	
+	/**
+	 * Query for omniSizeDescriptions based on deptId, classId, & vendorSizeCodes provided.
+	 * @param vendorSizeCodes
+	 * @return
+	 */
+	ArrayList<OmniSizeVO> getAllOmniSizeDescriptions(String deptId, String classId, 
+	        ArrayList<String> vendorSizeCodes) throws PEPFetchException;
 }
