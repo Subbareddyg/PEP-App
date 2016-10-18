@@ -129,14 +129,17 @@ public class ImageRequestController {
         this.imageRequestDelegate = imageRequestDelegate;
     }
     
-    // Web service to callRemoveImageWebService
+    /** 
+     * Web service to callRemoveImageWebService.
+     * 
+     * @param imageInfo
+     * @return
+     * @throws Exception
+     * @throws PEPFetchException
+     */
     private String callRemoveImageWebService(JSONArray imageInfo) throws Exception,
         PEPFetchException {
-    	
-        String responseMsg = null;
-        responseMsg = imageRequestDelegate.callRemoveImageWebService(imageInfo);
-        return responseMsg;
-
+        return imageRequestDelegate.callRemoveImageWebService(imageInfo);
     }
 	
 	// Service Call for Upload VPI
@@ -385,7 +388,13 @@ public class ImageRequestController {
     
     
    
-    
+   /**
+    * This method will attempt to delete multiple images via PIM's Image Web Service.  
+    * If successful, this method will also soft-delete the images from PEP database.
+    * 
+    * @param request
+    * @param response
+    */
    @ResourceMapping("removeSampleImageUrl")
    public void removeSampleImageMethod(ResourceRequest request, ResourceResponse response){
 
@@ -405,10 +414,6 @@ public class ImageRequestController {
        String orinId = request.getParameter("selectedColorOrin");
        String imagId[] = request.getParameterValues("imageIDToDel[]");
        String imagName[] = request.getParameterValues("imageNameToDel[]");
-
-       Properties prop = PropertyLoader.getPropertyLoader(ImageConstants.LOAD_IMAGE_PROPERTY_FILE);
-
-       boolean fileRemove = false;
        JSONObject removeJSON = new JSONObject();
        JSONArray jsonArray = new JSONArray();
        try {
@@ -418,10 +423,9 @@ public class ImageRequestController {
                jsonStyle = populateJson(orinId.trim(), imagId[i]);
                jsonArray.put(jsonStyle);
            }
-
+           // First, call PIM webservice for multiple image deletes
            responseMsg = callRemoveImageWebService(jsonArray);
            String[] resCodeWithMsg = responseMsg.split("_");
-           String resMsg = resCodeWithMsg[0];
            String resCode = resCodeWithMsg[1];
            
            LOGGER.info("*** Response Code from webservice ***"+resCode);
@@ -429,13 +433,11 @@ public class ImageRequestController {
            if ("100".equalsIgnoreCase(resCode)) {
                LOGGER.info("***Service success response For Remove***");
                try {
-                   for (int i = 0; i < imagId.length; i++) {
-                       callDeleteImage(orinId, imagId[i], imagName[i], "N", updatedBy);
-                   }
-               } catch (FileNotFoundException e) {
-                   e.printStackTrace();
-               } catch (IOException ex) {
-                   ex.printStackTrace();
+                   // Then, insert "image delete" record.
+                   callDeleteImage(orinId, updatedBy, imagId, imagName);
+                   
+               } catch (PEPFetchException ex) {
+                   LOGGER.error("PEPFetchException: " + ex.getMessage());
                }
 
                try {
@@ -509,7 +511,7 @@ public class ImageRequestController {
                        response.getWriter().close();
                    }
                } catch (Exception ex) {
-                   ex.printStackTrace();
+                   LOGGER.error("Exception: " + ex.getMessage());
                }
            } else {
                // Remove Failure
@@ -523,8 +525,7 @@ public class ImageRequestController {
 
            }
        } catch (Exception e) {
-           LOGGER.info("Caught Exception**************removeSampleImageMethod---Controller");
-           e.printStackTrace();
+           LOGGER.error("Caught Exception**************removeSampleImageMethod---Controller",e);
        }
    }
    
@@ -537,7 +538,7 @@ public class ImageRequestController {
            jsonObj.put(ImageConstants.PET_ID, orinNo);
          
        } catch (JSONException e) {
-           e.printStackTrace();
+           
        }
        return jsonObj;
 
@@ -1323,13 +1324,22 @@ public class ImageRequestController {
 
 		}
 		
-		private boolean callDeleteImage(String orin, String imageId, String imageName, String imageStatus, String deletedBy)
+        /**
+         * This method will insert record into IMAGE_SOFT_DELETE table. Separate
+         * batch job will read from this table and physically delete the images
+         * then.
+         * 
+         * @param orin
+         * @param deletedBy
+         * @param imageIds
+         * @param imageNames
+         * @return
+         * @throws Exception
+         * @throws PEPFetchException
+         */
+        private boolean callDeleteImage(String orin, String deletedBy, String[] imageIds, String[] imageNames)
                 throws Exception, PEPFetchException {
-
-		    boolean responseMsg = false;
-            responseMsg = imageRequestDelegate.insertImageDelete(orin, imageId, imageName, imageStatus, deletedBy);
-            return responseMsg;
-
+            return imageRequestDelegate.insertImageDelete(orin, deletedBy, imageIds, imageNames);
         }
 		
 		/**

@@ -1276,32 +1276,43 @@ public class ImageRequestDAOImpl implements ImageRequestDAO {
         return contentStatus;
     } 
         
+    /**
+     * Method to insert record(s) into IMAGE_SOFT_DELETE table.
+     */
     @Override
-    public boolean insertImageDelete(String orin, String imageId, String imageName, String imageStatus, String deletedBy) throws PEPPersistencyException 
+    public List<String> insertImageDelete(String orin, String deletedBy, String[] imageIds, String[] imageNames) throws PEPPersistencyException 
     {
         LOGGER.info("***Entering insertImageDelete()  method in ImageRequestDAOImpl.");
         int queryStatus;
-        boolean isUpdated = false;
+        ArrayList<String> failedImageIds = new ArrayList<String>();
         Session session = null;
         Transaction tx = null;
         final XqueryConstants xqueryConstants = new XqueryConstants();
         try {
             session = sessionFactory.openSession(); 
             tx = session.beginTransaction();
-            final Query query =session.createSQLQuery(xqueryConstants.getSoftImageDelete());
-            query.setParameter("image_id", imageId);
-            query.setParameter("image_name", imageName);
-            query.setParameter("orin_id", orin);
-            query.setParameter("deleted_by", deletedBy);
-            query.setParameter("delete_status", imageStatus);
-            queryStatus = query.executeUpdate();
-            if (queryStatus <= 0) {
-                LOGGER.info("Query Execution is Failed");
-                isUpdated = false;
-            }// Rows affected
-            else {
-                LOGGER.info("Query Execution is Success");
-                isUpdated = true;
+            Query query = null;
+            
+                
+            for (int i=0; i<imageIds.length; i++) {
+                query = session.createSQLQuery(xqueryConstants.getSoftImageDelete());
+                query.setParameter("image_id", imageIds[i]);
+                query.setParameter("image_name", imageNames[i]);
+                query.setParameter("orin_id", orin);
+                query.setParameter("deleted_by", deletedBy);
+                query.setParameter("delete_status", ImageConstants.DELETED_IMAGE_STATUS);
+                
+                queryStatus = query.executeUpdate();
+                
+                if (queryStatus <= 0) {
+                    LOGGER.error("Query Execution Failed for image_id:" + imageIds[i]);
+                    failedImageIds.add(imageIds[1]);
+                }
+                
+                if (i>0 && i%1000 == 0) {
+                    session.flush();
+                    session.clear();
+                }
             }
         }
         catch(final Exception e){
@@ -1314,7 +1325,7 @@ public class ImageRequestDAOImpl implements ImageRequestDAO {
             session.close();
         }
         LOGGER.info("***Exiting ImageRequestDAO.insertImageDelete() method.");
-        return isUpdated;
+        return failedImageIds;
     }
 
 }
