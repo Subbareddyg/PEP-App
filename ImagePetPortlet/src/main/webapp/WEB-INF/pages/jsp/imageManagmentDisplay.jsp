@@ -964,7 +964,7 @@ function checkApproveImageStatus(orinId,imageStatus){
 			<div class="ui-widget">
 							<div class="ui-state-error ui-corner-all" style="padding: 0 .7em;">
 								<p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>
-								<strong>Are you sure you want to remove?</strong></p>
+								<strong>Are you sure you would like to remove the selected images?</strong></p>
 							</div>
 						</div>
 			<ul>
