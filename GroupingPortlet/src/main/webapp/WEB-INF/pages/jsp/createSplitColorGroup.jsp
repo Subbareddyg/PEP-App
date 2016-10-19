@@ -4,7 +4,10 @@
 <div align="left" style="display: inline; padding: 5px 10px;margin-bottom: 0.5cm" >
 <input type="button" style="padding: 5px 10px;font-weight: bold" name="home" value="Home" onclick=goToHomeScreen();  />
 </div>
-<div align="right" style="margin-bottom: 0.5cm" >	
+<div align="right" style="display: inline;padding: 5px 5px 10px 750px; margin-bottom: 0.5cm; left:750px" >
+<input type="button" onclick="window.location.href='/wps/portal/home/Grouping'" class="btn btn-large" value="Close">
+</div>
+<div align="right" style="margin-bottom: 0.5cm;margin-top: 0.5cm" >	
 			<c:out value="${LAN_ID}"/> &nbsp;	 
 			<input type="button"   style="font-weight: bold" name="logout" value="Logout" 
 			    onclick="grouping_logOut('<c:out value="${LAN_ID}"/>','${logouturl }'); " />	
@@ -102,9 +105,7 @@
 		</div>
 	</div>
 </div>
-<div class="group-search-footer-area">
-	<div class="footer-content"><input type="button" onclick="window.location.href='/wps/portal/home/Grouping'" class="btn" value="Close"></div>
-</div>
+
 <portlet:resourceURL var="ajaxUrl" id="splitAttributeSearch"></portlet:resourceURL>
 <script type="text/javascript" src="<%=response.encodeURL(request.getContextPath()+"/js/jquery.min.js")%>"></script>
 <script type="text/javascript" src="<%=response.encodeURL(request.getContextPath()+"/js/jquery-ui.js")%>"></script>
