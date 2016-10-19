@@ -1086,7 +1086,7 @@
         }
 
         // on click of Style-Color "Approve" row button, pass the style color orin number, pet status, & logged-in user to update pet style color by calling webservice.
-        function approveStyleColor(approveUrl,saveUrl,styleOrinNumber,styleColorOrinNumber,childrenClassIdentifier,user,roleName,errorMsg,styleColorPetContentStatus,clickedButtonId,colorRowCount,styleColorPetImageStatus) {
+        function approveStyleColor(approveUrl,styleOrinNumber,styleColorOrinNumber,childrenClassIdentifier,user,roleName,errorMsg,styleColorPetContentStatus,clickedButtonId,colorRowCount,styleColorPetImageStatus) {
             var success = true;
             if(roleName=="dca") {
                
@@ -1122,7 +1122,7 @@
                     $('span#'+styleOrinNumber+'_notify').text('');
                 }
                 
-                getUpdateStyleColorContentPetStatusWebserviceResponse(approveUrl,styleColorOrinNumber,styleColorPetContentStatus,user,roleName,clickedButtonId,colorRowCount,styleColorPetImageStatus,saveUrl,styleOrinNumber,childrenClassIdentifier);
+                getUpdateStyleColorContentPetStatusWebserviceResponse(approveUrl,styleColorOrinNumber,styleColorPetContentStatus,user,roleName,clickedButtonId,colorRowCount,styleColorPetImageStatus,styleOrinNumber,childrenClassIdentifier);
             }
             else {
                 $('span#'+styleOrinNumber+'_notify').text('!');
@@ -1132,12 +1132,61 @@
 		}
 	   
 	 //on click of the Style Color  Data row submit button ,pass the style color orin number ,styleColor  pet status and logger in user to the update content pet style color  status by caling webservice
-		function getUpdateStyleColorContentPetStatusWebserviceResponse(approveUrl,styleColorPetOrinNumber,styleColorPetContentStatus,user,roleName,clickedButtonId,colorRowCount,styleColorPetImageStatus,saveUrl,styleOrinNumber,childrenClassIdentifier){
- 
-				var saveSuccess = saveStyleColor(saveUrl,styleOrinNumber,childrenClassIdentifier); // call saveStyleColor so user doesn't have to save before submitting/approving.
-				if (!saveSuccess) {
-				    return; //don't continue approve/submit logic if save was unsuccessful.
-				}
+		function getUpdateStyleColorContentPetStatusWebserviceResponse(approveUrl,styleColorPetOrinNumber,styleColorPetContentStatus,user,roleName,clickedButtonId,colorRowCount,styleColorPetImageStatus,styleOrinNumber,childrenClassIdentifier){
+
+                // PIMTWO-13: save logic added
+                //Logic for capturing the Style Color Attributes Value
+                var  selectedStyleColorOrinNumber= $("#selectedStyleColorOrinNumber").val();
+
+                //Logic for selecting the omni color family from the drop down and passing the selected value to ajax and from ajax to the controller
+                var a_drop_down_sel= document.getElementById("a_drop_down_box");
+                var omniFamilyOptions = a_drop_down_sel.options[a_drop_down_sel.selectedIndex].value;
+
+                //Logic for selecting the secondary color 1 from the drop down and passing the selected value to ajax and from ajax to the controller
+                var secondaryColor_sel= document.getElementById("secondaryColorId");
+                var secondaryColorOptions = secondaryColor_sel.options[secondaryColor_sel.selectedIndex].value;
+
+                //Logic for selecting the secondary color 2 from the drop down and passing the selected value to ajax and from ajax to the controller
+                var secondaryColorId2_sel= document.getElementById("secondaryColorId2");
+                var secondaryColorId2Options = secondaryColorId2_sel.options[secondaryColorId2_sel.selectedIndex].value;
+
+                //Logic for selecting the secondary color 3 from the drop down and passing the selected value to ajax and from ajax to the controller
+                var secondaryColorId3_sel= document.getElementById("secondaryColorId3");
+                var secondaryColorId3Options = secondaryColorId3_sel.options[secondaryColorId3_sel.selectedIndex].value;
+
+                //Logic for selecting the secondary color 4 from the drop down and passing the selected value to ajax and from ajax to the controller
+                var secondaryColorId4_sel= document.getElementById("secondaryColorId4");
+                var secondaryColorId4Options = secondaryColorId4_sel.options[secondaryColorId4_sel.selectedIndex].value;
+
+                var  nrfColorCodeId=   $("#nrfColorCodeId").val();			
+                var  omniChannelColorDescriptionId=   $("#omniChannelColorDescriptionId").val();	
+                if(omniChannelColorDescriptionId == null || omniChannelColorDescriptionId.trim() == ''){
+                    jAlert("Please enter Omnichannel Color Description", "Alert");
+                    return false;
+                }
+                var  vendorColorId=   $("#vendorColorId").val();	
+
+
+                var packColorEntry =  $("#packColorEntryId").val();
+                var styleColorEntry=$("#styleColorEntryId").val();
+
+                // PIMTWO-13: sku & omniSizeCode will be stored in an array
+                var omniSizeCodeSkuList = {};
+                //run through each row
+                $('table#StyleStyleColorSkuContentId tr.' + childrenClassIdentifier).each(function(i,row) {
+                    var selectDropDown = $(row).find("select");
+                    if ($(selectDropDown).is(":disabled")) {
+                        return; //do not add sku if there is only one option available.
+                    }
+
+                    var omniSizeValue = $(selectDropDown).val();
+
+                    if (typeof omniSizeValue != "undefined" && omniSizeValue != null && omniSizeValue != "Please Select") {
+                        var skuOrinNumber = $(row).find("#skuAnchorTag").text();
+                        omniSizeCodeSkuList[skuOrinNumber] = omniSizeValue;
+                    }
+                });
+				
 				
 				var status = true;
 			  
@@ -1175,22 +1224,34 @@
                           selectedStyleColorOrinNumber:styleColorPetOrinNumber,
                           styleColorPetContentStatus:styleColorPetContentStatus,
                           loggedInUser:user,
-                          petState:$('#publisStatusCodePublishToWeb:checked').val()
+                          petState:$('#publisStatusCodePublishToWeb:checked').val(),
+                          stylePetOrinNumber:styleOrinNumber,
+                          styleColorPetOrinNumber:selectedStyleColorOrinNumber,
+                          omniColor:omniFamilyOptions,
+                          secondaryColorStyleColorAttribute:secondaryColorOptions,
+                          secondaryColorId2StyleColorAttribute:secondaryColorId2Options,
+                          secondaryColorId3StyleColorAttribute:secondaryColorId3Options,
+                          secondaryColorId4StyleColorAttribute:secondaryColorId4Options,
+                          nrfColorCodeStyleColorAttribute:nrfColorCodeId,                          
+                          omniChannelColorDescriptionStyleColorAttribute:omniChannelColorDescriptionId,                      
+                          vendorColorIdStyleColorAttribute:vendorColorId,
+                          omniSizeCodeSkuList:JSON.stringify(omniSizeCodeSkuList),
+                          packColorReq:packColorEntry,
+                          styleColorReq:styleColorEntry,
+                          approveStyleColor:"Y"
                        },
                         
                     
                        success: function(data){
-                    	   
-                    	                                
-                                 $("#ajaxResponseUpdateStylePetContentStatus").html("");
-                                 $("#ajaxResponseUpdateStylePetContentStatus").append("<b><font size='2'>Style Color Pet Status updated successfully !</font></b>" );      
-                                 $("#saveButtonId").attr("disabled", "disabled");
-                                 //logic to dynamically generate unique ids for the  Style Color Submit or Style Color Approve button and disable the action button
-                          	     document.getElementById(clickedButtonId).disabled = true;
-                                 styleColorContentPetWebserviceResponseFlag="true";
-                                 $("#petColorRow_id"+colorRowCount).html('Completed');
-                                 disableStyleColoreFields();
-                         		
+                           
+                           $("#ajaxResponseUpdateStylePetContentStatus").html("");
+                           $("#ajaxResponseUpdateStylePetContentStatus").append("<b><font size='2'>Style Color Pet Status updated successfully !</font></b>" );      
+                           $("#saveButtonId").attr("disabled", "disabled");
+                           //logic to dynamically generate unique ids for the  Style Color Submit or Style Color Approve button and disable the action button
+                           document.getElementById(clickedButtonId).disabled = true;
+                           styleColorContentPetWebserviceResponseFlag="true";
+                           $("#petColorRow_id"+colorRowCount).html('Completed');
+                           disableStyleColoreFields();
                        },
                        
                        error: function(XMLHttpRequest, textStatus, errorThrown){
@@ -1219,21 +1280,34 @@
                 data: { 
                           selectedStyleColorOrinNumber:styleColorPetOrinNumber,
                           styleColorPetContentStatus:styleColorPetContentStatus,
-                          loggedInUser:user
+                          loggedInUser:user,
+                          stylePetOrinNumber:styleOrinNumber,
+                          styleColorPetOrinNumber:selectedStyleColorOrinNumber,
+                          omniColor:omniFamilyOptions,
+                          secondaryColorStyleColorAttribute:secondaryColorOptions,
+                          secondaryColorId2StyleColorAttribute:secondaryColorId2Options,
+                          secondaryColorId3StyleColorAttribute:secondaryColorId3Options,
+                          secondaryColorId4StyleColorAttribute:secondaryColorId4Options,
+                          nrfColorCodeStyleColorAttribute:nrfColorCodeId,                          
+                          omniChannelColorDescriptionStyleColorAttribute:omniChannelColorDescriptionId,                      
+                          vendorColorIdStyleColorAttribute:vendorColorId,
+                          omniSizeCodeSkuList:JSON.stringify(omniSizeCodeSkuList),
+                          packColorReq:packColorEntry,
+                          styleColorReq:styleColorEntry,
+                          approveStyleColor:"Y"
                        },
                         
                     
                        success: function(data){
-                    	                                
-                                 $("#ajaxResponseUpdateStylePetContentStatus").html("");
-                                 $("#ajaxResponseUpdateStylePetContentStatus").append("<b><font size='2'>Style Color Pet Status updated successfully !</font></b>" );      
-                                 $("#saveButtonId").attr("disabled", "disabled");
-                                 //logic to dynamically generate unique ids for the  Style Color Submit or Style Color Approve button and disable the action button
-                                 document.getElementById(clickedButtonId).disabled = true;
-                                 styleColorContentPetWebserviceResponseFlag="true";
-								 $("#petColorRow_id"+colorRowCount).html('Ready_For_Review');
-								 disableStyleColoreFields();
-                                 
+                           
+                           $("#ajaxResponseUpdateStylePetContentStatus").html("");
+                           $("#ajaxResponseUpdateStylePetContentStatus").append("<b><font size='2'>Style Color Pet Status updated successfully !</font></b>" );      
+                           $("#saveButtonId").attr("disabled", "disabled");
+                           //logic to dynamically generate unique ids for the  Style Color Submit or Style Color Approve button and disable the action button
+                           document.getElementById(clickedButtonId).disabled = true;
+                           styleColorContentPetWebserviceResponseFlag="true";
+                           $("#petColorRow_id"+colorRowCount).html('Ready_For_Review');
+                           disableStyleColoreFields();
                        },
                        
                        error: function(XMLHttpRequest, textStatus, errorThrown){
@@ -2953,20 +3027,20 @@ function clickListenerContent(e){
 																   
 																	    <td style="white-space: nowrap;">
 																	    <input type="button" id="styleColorSaveButtonId<%= colorRows %>" style="height:30px; padding:0 15px;" value="Style-Color Save" onclick="javascript:saveStyleColor('${saveContentColorAttributes}', '','treegrid-parent-${subcount}')" />
-																	    <input type="button"    id="styleColorSubmitButtonId<%= colorRows %>"   name="styleColorSubmitButtonId<%= colorRows %>"  value="Submit"   style="height:30px; padding:0 15px;" onclick="javascript:getUpdateStyleColorContentPetStatusWebserviceResponse('${updateContentPetStyleColorDataStatus}','<c:out value="${styleDisplayColorList.orinNumber}"/>','<c:out value="${styleDisplayColorList.contentStatusCode}"/>','<c:out value="${contentDisplayForm.pepUserId}"/>','vendor',this.id,<%= colorRows %>,'<c:out value="${styleDisplayColorList.imageStatus}"/>')"/></td>
+																	    <input type="button"    id="styleColorSubmitButtonId<%= colorRows %>"   name="styleColorSubmitButtonId<%= colorRows %>"  value="Submit"   style="height:30px; padding:0 15px;" onclick="javascript:getUpdateStyleColorContentPetStatusWebserviceResponse('${updateContentPetStyleColorDataStatus}','<c:out value="${styleDisplayColorList.orinNumber}"/>','<c:out value="${styleDisplayColorList.contentStatusCode}"/>','<c:out value="${contentDisplayForm.pepUserId}"/>','vendor',this.id,<%= colorRows %>,'<c:out value="${styleDisplayColorList.imageStatus}"/>','${styleDisplayList.orinNumber}','treegrid-parent-${subcount}')"/></td>
 																	     <input type="hidden" id="styleColorSubmitButtonId<%= colorRows %>"  name="styleColorSubmitButtonId<%= colorRows %>"  value="<c:out value="styleColorSubmitButtonId-${styleDisplayColorList.orinNumber}"/>"></input> 
 																    </c:when>
 																    <c:when test="${contentDisplayForm.roleName == 'dca'}">
 																   
 																	    <td style="white-space: nowrap;">
                                                                         <input type="button" id="styleColorSaveButtonId<%= colorRows %>" style="height:30px; padding:0 15px;" value="Style-Color Save" onclick="javascript:saveStyleColor('${saveContentColorAttributes}', '','treegrid-parent-${subcount}')" />
-                                                                        <input type="button"    id="styleColorApproveButtonId<%= colorRows %>"  class="petColorApproveButtonClass<%= colorRows %>" name="styleColorApproveButtonId<%= colorRows %>"  value="Approve"   style="height:30px; padding:0 15px;" onclick="javascript:approveStyleColor('${updateContentPetStyleColorDataStatus}','${saveContentColorAttributes}','${styleDisplayList.orinNumber}','${styleDisplayColorList.orinNumber}', 'treegrid-parent-${subcount}', '${contentDisplayForm.pepUserId}', '${contentDisplayForm.roleName}','<fmt:message key="approve.error.no.size.selected" bundle="${display}" />','${styleDisplayColorList.contentStatusCode}',this.id, <%= colorRows %>, '${styleDisplayColorList.imageStatus}')"/></td>
+                                                                        <input type="button"    id="styleColorApproveButtonId<%= colorRows %>"  class="petColorApproveButtonClass<%= colorRows %>" name="styleColorApproveButtonId<%= colorRows %>"  value="Approve"   style="height:30px; padding:0 15px;" onclick="javascript:approveStyleColor('${updateContentPetStyleColorDataStatus}','${styleDisplayList.orinNumber}','${styleDisplayColorList.orinNumber}', 'treegrid-parent-${subcount}', '${contentDisplayForm.pepUserId}', '${contentDisplayForm.roleName}','<fmt:message key="approve.error.no.size.selected" bundle="${display}" />','${styleDisplayColorList.contentStatusCode}',this.id, <%= colorRows %>, '${styleDisplayColorList.imageStatus}')"/></td>
 																	    <input type="hidden" id="styleColorApproveButtonId<%= colorRows %>"  name="styleColorApproveButtonId<%= colorRows %>"   value="<c:out value="styleColorApproveButtonId-${styleDisplayColorList.orinNumber}"/>"></input> 
 																    </c:when>
 																    <c:when test="${contentDisplayForm.roleName == 'readonly'}">
 																	    <td style="white-space: nowrap;">
                                                                         <input type="button" id="styleColorSaveButtonId<%= colorRows %>" style="height:30px; padding:0 15px;" value="Style-Color Save" onclick="javascript:saveStyleColor('${saveContentColorAttributes}', '','treegrid-parent-${subcount}')" disabled="disabled"/>
-                                                                        <input type="button"  id="styleColorSubmit" name="submitStyleColorData"  value="Submit"   style="height:30px; padding:0 15px;" onclick="javascript:getUpdateStyleColorContentPetStatusWebserviceResponse('${updateContentPetStyleColorDataStatus}','<c:out value="${styleDisplayColorList.orinNumber}"/>','<c:out value="${styleDisplayColorList.contentStatusCode}"/>','<c:out value="${contentDisplayForm.pepUserId}"/>','<c:out value="${contentDisplayForm.roleName}"/>', '', '','<c:out value="${styleDisplayColorList.imageStatus}"/>')" disabled="disabled"/></td>
+                                                                        <input type="button"  id="styleColorSubmit" name="submitStyleColorData"  value="Submit"   style="height:30px; padding:0 15px;" onclick="javascript:getUpdateStyleColorContentPetStatusWebserviceResponse('${updateContentPetStyleColorDataStatus}','<c:out value="${styleDisplayColorList.orinNumber}"/>','<c:out value="${styleDisplayColorList.contentStatusCode}"/>','<c:out value="${contentDisplayForm.pepUserId}"/>','<c:out value="${contentDisplayForm.roleName}"/>', '', '','<c:out value="${styleDisplayColorList.imageStatus}"/>','${styleDisplayList.orinNumber}','treegrid-parent-${subcount}')" disabled="disabled"/></td>
 																    </c:when>
 																    <c:otherwise><td>&nbsp;</td></c:otherwise>
 								                               </c:choose>                                                                                                                                                                               

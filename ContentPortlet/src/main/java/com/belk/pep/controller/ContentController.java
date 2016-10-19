@@ -3864,6 +3864,12 @@ public class ContentController implements ResourceAwareController, EventAwareCon
         return jsonObj;
     }
 
+    /**
+     * This method is called when user clicks "Style-Color Save"
+     * 
+     * @param request
+     * @param response
+     */
     @ResourceMapping("saveContentColorAttributes")
     private void saveContentPetColortAttributes(ResourceRequest request, ResourceResponse response) {
         LOGGER.info("start of saveContentPetColortAttributes...");
@@ -3894,7 +3900,11 @@ public class ContentController implements ResourceAwareController, EventAwareCon
 
             jsonArrayPetDtls.put(jsonObj);
             LOGGER.info("Locked Status end  " + jsonArrayPetDtls.toString());
-            response.getWriter().write(jsonArrayPetDtls.toString());
+            
+            String approveStyleColor = request.getParameter("approveStyleColor");
+            if (approveStyleColor==null) {
+                response.getWriter().write(jsonArrayPetDtls.toString());
+            }
 
         } catch (IOException e) {
             // TODO Auto-generated catch block
@@ -4416,12 +4426,19 @@ public class ContentController implements ResourceAwareController, EventAwareCon
         return categoryMap;
     }
 
-    /** Update content pet style color data status.
+    /** 
+     * Update content pet style color data status.
+     * This method gets called when user clicks the Style-Color "Approve" button.
      * 
      * @param request the request
-     * @param response the response */
+     * @param response the response 
+     * @throws Exception */
     @ResourceMapping("updateContentPetStyleColorDataStatus")
     private void updateContentPetStyleColorDataStatus(ResourceRequest request, ResourceResponse response) {
+        
+        // PIMTWO-13: call saveStyleColor so user doesn't have to save before submitting/approving.
+        saveContentPetColortAttributes(request,response);
+        
         LOGGER.info("start of ActionMapping....updateContentPetStyleColorDataStatus...");
 
         final String selectedStyleColorOrinNumber = request.getParameter("selectedStyleColorOrinNumber");
@@ -4457,15 +4474,13 @@ public class ContentController implements ResourceAwareController, EventAwareCon
             LOGGER.info("webserviceResponseObject..... = " + webserviceResponseObject);
             if (webserviceResponseMessage.contains("successfully")) {
                 disableSaveButtonFlag = true;
+                
                 try {
                     response.getWriter().write(jsonObject.toString());
                 } catch (final IOException e) {
-
-                    e.printStackTrace();
+                    //e.printStackTrace();
                 }
-
                 LOGGER.info("webserviceResponseMessag from  updateContentPetStyleColorDataStatus = " + getResponseMessageWebService());
-
             }
         }
     }
