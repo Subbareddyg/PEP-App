@@ -376,6 +376,9 @@ public class WorkListDisplayController implements Controller,EventAwareControlle
                             if (StringUtils.isNotBlank(groupId)) {
                                 advanceSearch.setGroupingID(groupId);
                                 advanceSearch.setSearchResults("includeGrps");
+                                advanceSearch.setContentStatus(WorkListDisplayConstants.EMPTY_STRING);
+                                advanceSearch.setImageStatus(WorkListDisplayConstants.EMPTY_STRING);
+                                advanceSearch.setRequestType(WorkListDisplayConstants.EMPTY_STRING);
                                 resourceForm.setSearchClicked("Yes");
                                 resourceForm.setWorkListType(WorkListDisplayConstants.GROUPINGS);
                             }
