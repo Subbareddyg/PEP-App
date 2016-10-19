@@ -398,16 +398,12 @@ silhouette,turnInDate,sampleCordinatorNote,action,role, shotTypeParamArray) {
 		cell7.innerHTML = 'Remove';
 	}else{
 		cell7.innerHTML = '<a href="javascript:confirmRemovePopUp('+imageId+',\''+imageName+'\','+rowCount+')">Remove</a>';
-	}	*/
-	setTimeout(function(){		
-		if(imageStatus  == 'Completed' || imageStatus  == 'Ready_For_Review' || imageStatus  == 'ReadyForReview'){
-		
-			cell7.innerHTML = '<input type="checkbox" class="SelectAllImg" id="imgSelect" name="imgSelect" disabled>	';
+	}	*/	
+	if(imageStatus  == 'Completed' || imageStatus  == 'Ready_For_Review' || imageStatus  == 'ReadyForReview'){
+		cell7.innerHTML = '<input type="checkbox" class="SelectAllImg" id="imgSelect" name="imgSelect" disabled>	';
 	}else{
 		cell7.innerHTML = '<input type="checkbox" class="SelectAllImg" id="imgSelect" name="imgSelect">	';
-	}	
-	},100);
-	
+	}
 
 	}else if(role == 'dca'){
 	//DCA Login	

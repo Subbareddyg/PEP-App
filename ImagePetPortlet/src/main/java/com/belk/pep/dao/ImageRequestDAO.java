@@ -146,5 +146,5 @@ public  interface ImageRequestDAO {
 	 */
     boolean getContentStatus(String groupingId) throws PEPPersistencyException;
     
-    public boolean insertImageDelete(String orin, String imageId, String imageName, String imageStatus, String deletedBy) throws PEPPersistencyException;
+    public List<String> insertImageDelete(String orin, String deletedBy, final String[] imageIds, final String[] imageNames) throws PEPPersistencyException;
 }

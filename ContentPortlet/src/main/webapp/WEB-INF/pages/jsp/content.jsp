@@ -319,7 +319,7 @@
 		     	           		}
 	     	      				
 	     	      			}   
-        		  
+                       disableSkuLevelAttributes();
         		  }// End of Vendor
             
             	//End of logic for vendor
@@ -381,7 +381,8 @@
               		 
             		  disabledProductAndLegacyAttributes();
             		  
-        		  }// End of vendor
+                      disableSkuLevelAttributes();
+        		  }// End of readonly
             	  
             	  
                
@@ -580,6 +581,17 @@
           	  }
 			  }
 			  //VP21
+            }
+            
+            function disableSkuLevelAttributes() {
+                $('select[name=omniChannelSizeDescription]').each(function(i,row) {
+                    var selectDropDown = $(row);
+                    if ($(selectDropDown).is(":disabled")) {
+                        return; //do not disable if already disabled.
+                    }
+
+                    selectDropDown.attr("disabled","disabled");
+                });
             }
             
             // Enable Product Attributes
@@ -2948,12 +2960,12 @@ function clickListenerContent(e){
 																   
 																	    <td style="white-space: nowrap;">
                                                                         <input type="button" id="styleColorSaveButtonId<%= colorRows %>" style="height:30px; padding:0 15px;" value="Style-Color Save" onclick="javascript:saveStyleColor('${saveContentColorAttributes}', '','treegrid-parent-${subcount}')" />
-                                                                        <input type="button"    id="styleColorApproveButtonId<%= colorRows %>"  class="petColorApproveButtonClass<%= colorRows %>" name="styleColorApproveButtonId<%= colorRows %>"  value="Approve"   style="height:30px; padding:0 15px;" onclick="javascript:approveStyleColor('${updateContentPetStyleColorDataStatus}','${saveContentColorAttributes}','${styleDisplayList.orinNumber}','${styleDisplayColorList.orinNumber}', 'treegrid-parent-${subcount}', '${contentDisplayForm.pepUserId}', '${contentDisplayForm.roleName}','<fmt:message key="approve.error.no.size.selected" bundle="${display}" />','${styleDisplayColorList.contentStatusCode}',this.id, <%= colorRows %>, 'styleDisplayColorList.imageStatus')"/></td>
+                                                                        <input type="button"    id="styleColorApproveButtonId<%= colorRows %>"  class="petColorApproveButtonClass<%= colorRows %>" name="styleColorApproveButtonId<%= colorRows %>"  value="Approve"   style="height:30px; padding:0 15px;" onclick="javascript:approveStyleColor('${updateContentPetStyleColorDataStatus}','${saveContentColorAttributes}','${styleDisplayList.orinNumber}','${styleDisplayColorList.orinNumber}', 'treegrid-parent-${subcount}', '${contentDisplayForm.pepUserId}', '${contentDisplayForm.roleName}','<fmt:message key="approve.error.no.size.selected" bundle="${display}" />','${styleDisplayColorList.contentStatusCode}',this.id, <%= colorRows %>, '${styleDisplayColorList.imageStatus}')"/></td>
 																	    <input type="hidden" id="styleColorApproveButtonId<%= colorRows %>"  name="styleColorApproveButtonId<%= colorRows %>"   value="<c:out value="styleColorApproveButtonId-${styleDisplayColorList.orinNumber}"/>"></input> 
 																    </c:when>
 																    <c:when test="${contentDisplayForm.roleName == 'readonly'}">
 																	    <td style="white-space: nowrap;">
-                                                                        <input type="button" id="styleColorSaveButtonId<%= colorRows %>" style="height:30px; padding:0 15px;" value="Style-Color Save" onclick="javascript:saveStyleColor('${saveContentColorAttributes}', '','treegrid-parent-${subcount}')" />
+                                                                        <input type="button" id="styleColorSaveButtonId<%= colorRows %>" style="height:30px; padding:0 15px;" value="Style-Color Save" onclick="javascript:saveStyleColor('${saveContentColorAttributes}', '','treegrid-parent-${subcount}')" disabled="disabled"/>
                                                                         <input type="button"  id="styleColorSubmit" name="submitStyleColorData"  value="Submit"   style="height:30px; padding:0 15px;" onclick="javascript:getUpdateStyleColorContentPetStatusWebserviceResponse('${updateContentPetStyleColorDataStatus}','<c:out value="${styleDisplayColorList.orinNumber}"/>','<c:out value="${styleDisplayColorList.contentStatusCode}"/>','<c:out value="${contentDisplayForm.pepUserId}"/>','<c:out value="${contentDisplayForm.roleName}"/>', '', '','<c:out value="${styleDisplayColorList.imageStatus}"/>')" disabled="disabled"/></td>
 																    </c:when>
 																    <c:otherwise><td>&nbsp;</td></c:otherwise>

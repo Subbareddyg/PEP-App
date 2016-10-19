@@ -256,15 +256,13 @@ public class ImageRequestServiceImpl implements ImageRequestService {
    }
    
    
-/**
- * Method call for remove image 
- */
+    /**
+     * Method call for remove image 
+     */
     public String callRemoveImageWebService(JSONArray jsonArray) throws Exception, PEPFetchException {
         LOGGER.info("ImageRequestServiceImpl:::callRemoveImageWebService");
 
         String responseMsg = "";
-        boolean flag = false;
-        String msgCodeStr = "";
         String responseMSGCode = "";
         try {
             Properties prop = PropertyLoader.getPropertyLoader(ImageConstants.MESS_PROP);
@@ -283,9 +281,7 @@ public class ImageRequestServiceImpl implements ImageRequestService {
             OutputStream outputStream = httpConnection.getOutputStream();
             outputStream.write(input.getBytes());
             outputStream.flush();
-            if (200 == httpConnection.getResponseCode()) {
-            }
-
+            
             if (httpConnection.getResponseCode() != 200) {
                 throw new Exception("Failed : HTTP error code : " + httpConnection.getResponseCode());
             }
@@ -310,34 +306,22 @@ public class ImageRequestServiceImpl implements ImageRequestService {
                 }
 
             }
-
             httpConnection.disconnect();
         } catch (MalformedURLException e) {
-            LOGGER.info("inside malformedException");
+            LOGGER.error("MalformedURLException Occurred: " + e.getMessage());
             throw new PEPFetchException();
-            // e.printStackTrace();
-
         } catch (ClassCastException e) {
-
-            e.printStackTrace();
+            LOGGER.error("ClassCastException Occurred: " + e.getMessage());
             throw new PEPFetchException();
         } catch (IOException e) {
-            LOGGER.info("inside IOException");
-
-            e.printStackTrace();
+            LOGGER.error("IOException Occurred: " + e.getMessage());
             throw new Exception();
-
         } catch (JSONException e) {
-            LOGGER.info("inside JSOnException");
-
-            e.printStackTrace();
+            LOGGER.error("JSONException Occurred: " + e.getMessage());
             throw new PEPFetchException();
         } catch (Exception e) {
-            LOGGER.info("inside Exception" + e);
-
-            e.printStackTrace();
+            LOGGER.error("Exception Occurred: " + e.getMessage());
             throw new Exception();
-
         }
 
         return responseMsg;
@@ -1414,12 +1398,19 @@ public boolean getContentStatus(String groupingId) throws PEPServiceException, P
     
 }
 
-public boolean insertImageDelete(String orin, String imageId, String imageName, String imageStatus, String deletedBy) throws PEPServiceException, PEPPersistencyException
+/**
+ * Method to insert record(s) into IMAGE_SOFT_DELETE table.
+ */
+public boolean insertImageDelete(String orin, String deletedBy, String[] imageIds, String[] imageNames) throws PEPServiceException, PEPPersistencyException
 {
     boolean deleteStatus = false;    
     try
     {
-        deleteStatus = imageRequestDAO.insertImageDelete(orin, imageId, imageName, imageStatus, deletedBy);
+        List<String> failedImageIdList = imageRequestDAO.insertImageDelete(orin, deletedBy, imageIds, imageNames);
+        
+        if (failedImageIdList.isEmpty()) {
+            deleteStatus = true;
+        }
     }
     catch (PEPPersistencyException e) {
         LOGGER.error("PEPPersistencyException in insertImageDelete method, Service Layer -- ", e);
