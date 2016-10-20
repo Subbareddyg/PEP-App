@@ -3901,10 +3901,7 @@ public class ContentController implements ResourceAwareController, EventAwareCon
             jsonArrayPetDtls.put(jsonObj);
             LOGGER.info("Locked Status end  " + jsonArrayPetDtls.toString());
             
-            String approveStyleColor = request.getParameter("approveStyleColor");
-            if (approveStyleColor==null) {
-                response.getWriter().write(jsonArrayPetDtls.toString());
-            }
+            response.getWriter().write(jsonArrayPetDtls.toString());
 
         } catch (IOException e) {
             // TODO Auto-generated catch block
@@ -4436,8 +4433,23 @@ public class ContentController implements ResourceAwareController, EventAwareCon
     @ResourceMapping("updateContentPetStyleColorDataStatus")
     private void updateContentPetStyleColorDataStatus(ResourceRequest request, ResourceResponse response) {
         
-        // PIMTWO-13: call saveStyleColor so user doesn't have to save before submitting/approving.
-        saveContentPetColortAttributes(request,response);
+        // PIMTWO-13: call saveStyleColorAttributes so user doesn't have to save before submitting/approving.
+        JSONArray jsonArray = new JSONArray();
+        JSONObject saveJson = new JSONObject();
+        boolean updateSaveStatus = saveStyleColorAttributes(request, response);
+        if (!updateSaveStatus) {
+            saveJson.put("SaveStyleColorAttributesStatus", "Failed");
+            jsonArray.put(saveJson);
+            try {
+                response.getWriter().write(jsonArray.toString());
+            } catch (IOException e) {
+                
+            }
+            return; //if save failed, do not attempt to approve.
+        }
+        saveJson.put("SaveStyleColorAttributesStatus", "Success");
+        jsonArray.put(saveJson);
+        // PIMTWO-13: END
         
         LOGGER.info("start of ActionMapping....updateContentPetStyleColorDataStatus...");
 
@@ -4467,16 +4479,17 @@ public class ContentController implements ResourceAwareController, EventAwareCon
             // object
             webserviceResponse.setMessage(webserviceResponseMessage);
             // Create a new JsonObject
-            final JsonObject jsonObject = new JsonObject();
+            final JsonObject approveJson = new JsonObject();
             // Convert the webserviceResponse object Json Element
             final JsonElement webserviceResponseObject = gson.toJsonTree(webserviceResponse);
-            jsonObject.add("responseObject", webserviceResponseObject);
+            approveJson.add("responseObject", webserviceResponseObject);
             LOGGER.info("webserviceResponseObject..... = " + webserviceResponseObject);
             if (webserviceResponseMessage.contains("successfully")) {
                 disableSaveButtonFlag = true;
+                jsonArray.put(approveJson);
                 
                 try {
-                    response.getWriter().write(jsonObject.toString());
+                    response.getWriter().write(jsonArray.toString());
                 } catch (final IOException e) {
                     //e.printStackTrace();
                 }
