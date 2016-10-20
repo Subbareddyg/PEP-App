@@ -1255,6 +1255,13 @@
                                disableStyleColoreFields();
                            }
                            else {
+                               $("#ajaxResponseSaveContentPetAttribute").html("");
+                               $("#ajaxResponseSaveContentPetAttribute").append("<b><font size='2'>Style-Color Level and SKU Level edits have NOT been saved successfully, please contact helpdesk.</font></b>"); 
+                               $("#ajaxResponseSaveContentPetAttribute").focus();
+                               window.setTimeout(function() { 
+                                   $("#ajaxResponseSaveContentPetAttribute").html("");
+                               }, 10000);
+                               
                                $("#ajaxResponseUpdateStylePetContentStatus").html("");
                                $("#ajaxResponseUpdateStylePetContentStatus").append("<b><font size='2'>Style Color Pet Status could not be updated, please contact Belk helpdesk </font></b> <br>"); 
                                $("#ajaxResponseUpdateStylePetContentStatus").append("<br>");
@@ -1322,6 +1329,13 @@
                                disableStyleColoreFields();
                            }
                            else {
+                               $("#ajaxResponseSaveContentPetAttribute").html("");
+                               $("#ajaxResponseSaveContentPetAttribute").append("<b><font size='2'>Style-Color Level and SKU Level edits have NOT been saved successfully, please contact helpdesk.</font></b>"); 
+                               $("#ajaxResponseSaveContentPetAttribute").focus();
+                               window.setTimeout(function() { 
+                                   $("#ajaxResponseSaveContentPetAttribute").html("");
+                               }, 10000);
+                               
                                $("#ajaxResponseUpdateStylePetContentStatus").html("");
                                $("#ajaxResponseUpdateStylePetContentStatus").append("<b><font size='2'>Style Color Pet Status could not be updated, please contact Belk helpdesk </font></b> <br>"); 
                                $("#ajaxResponseUpdateStylePetContentStatus").append("<br>");
@@ -1442,18 +1456,18 @@
 						var status = val.UpdateStatus;
 						  if(val.UpdateStatus == 'Success'){
 								 $("#ajaxResponseSaveContentPetAttribute").html("");
-    	                              $("#ajaxResponseSaveContentPetAttribute").append("<b><font size='2'>Style-Color & Sku Attributes saved successfully!</font></b>"); 
+    	                              $("#ajaxResponseSaveContentPetAttribute").append("<b><font size='2'>Style-Color and SKU Level edits have been saved successfully!</font></b>"); 
     	                              $("#ajaxResponseSaveContentPetAttribute").focus();
     	                              window.setTimeout(function() { 
     	                                  $("#ajaxResponseSaveContentPetAttribute").html("");
     	                              }, 10000);
     	  						 }else{
     	  							$("#ajaxResponseSaveContentPetAttribute").html("");
-    		   	                	$("#ajaxResponseSaveContentPetAttribute").append("<b><font size='2'>Style-Color & Sku Attributes save failed, please contact Belk helpdesk.</font></b>"); 
+    		   	                	$("#ajaxResponseSaveContentPetAttribute").append("<b><font size='2'>Style-Color Level and SKU Level edits have NOT been saved successfully, please contact helpdesk.</font></b>"); 
     		   	                    $("#ajaxResponseSaveContentPetAttribute").focus();
-                                            window.setTimeout(function() { 
-                                                $("#ajaxResponseSaveContentPetAttribute").html("");
-    	                              	    }, 10000);
+                                    window.setTimeout(function() { 
+                                        $("#ajaxResponseSaveContentPetAttribute").html("");
+                              	    }, 10000);
     	  						 }
 						});	
                 	   }
