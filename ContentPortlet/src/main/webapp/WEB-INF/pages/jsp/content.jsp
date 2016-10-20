@@ -1237,21 +1237,32 @@
                           vendorColorIdStyleColorAttribute:vendorColorId,
                           omniSizeCodeSkuList:JSON.stringify(omniSizeCodeSkuList),
                           packColorReq:packColorEntry,
-                          styleColorReq:styleColorEntry,
-                          approveStyleColor:"Y"
+                          styleColorReq:styleColorEntry
                        },
                         
                     
                        success: function(data){
                            
-                           $("#ajaxResponseUpdateStylePetContentStatus").html("");
-                           $("#ajaxResponseUpdateStylePetContentStatus").append("<b><font size='2'>Style Color Pet Status updated successfully !</font></b>" );      
-                           $("#saveButtonId").attr("disabled", "disabled");
-                           //logic to dynamically generate unique ids for the  Style Color Submit or Style Color Approve button and disable the action button
-                           document.getElementById(clickedButtonId).disabled = true;
-                           styleColorContentPetWebserviceResponseFlag="true";
-                           $("#petColorRow_id"+colorRowCount).html('Completed');
-                           disableStyleColoreFields();
+                           var saveStatus = $(data).attr("SaveStyleColorAttributesStatus");
+                           if (saveStatus == "Success") {
+                               $("#ajaxResponseUpdateStylePetContentStatus").html("");
+                               $("#ajaxResponseUpdateStylePetContentStatus").append("<b><font size='2'>Style Color Pet Status updated successfully !</font></b>" );      
+                               $("#saveButtonId").attr("disabled", "disabled");
+                               //logic to dynamically generate unique ids for the  Style Color Submit or Style Color Approve button and disable the action button
+                               document.getElementById(clickedButtonId).disabled = true;
+                               styleColorContentPetWebserviceResponseFlag="true";
+                               $("#petColorRow_id"+colorRowCount).html('Completed');
+                               disableStyleColoreFields();
+                           }
+                           else {
+                               $("#ajaxResponseUpdateStylePetContentStatus").html("");
+                               $("#ajaxResponseUpdateStylePetContentStatus").append("<b><font size='2'>Style Color Pet Status could not be updated, please contact Belk helpdesk </font></b> <br>"); 
+                               $("#ajaxResponseUpdateStylePetContentStatus").append("<br>");
+                               $("#saveButtonId").removeAttr("disabled");
+                               //logic to dynamically generate unique ids for the  Style Color Submit or Style Color Approve button and disable the action button
+                               document.getElementById(clickedButtonId).disabled = false;
+                               styleColorContentPetWebserviceResponseFlag="false";
+                           }
                        },
                        
                        error: function(XMLHttpRequest, textStatus, errorThrown){
@@ -1293,21 +1304,33 @@
                           vendorColorIdStyleColorAttribute:vendorColorId,
                           omniSizeCodeSkuList:JSON.stringify(omniSizeCodeSkuList),
                           packColorReq:packColorEntry,
-                          styleColorReq:styleColorEntry,
-                          approveStyleColor:"Y"
+                          styleColorReq:styleColorEntry
                        },
                         
                     
                        success: function(data){
                            
-                           $("#ajaxResponseUpdateStylePetContentStatus").html("");
-                           $("#ajaxResponseUpdateStylePetContentStatus").append("<b><font size='2'>Style Color Pet Status updated successfully !</font></b>" );      
-                           $("#saveButtonId").attr("disabled", "disabled");
-                           //logic to dynamically generate unique ids for the  Style Color Submit or Style Color Approve button and disable the action button
-                           document.getElementById(clickedButtonId).disabled = true;
-                           styleColorContentPetWebserviceResponseFlag="true";
-                           $("#petColorRow_id"+colorRowCount).html('Ready_For_Review');
-                           disableStyleColoreFields();
+                           var saveStatus = $(data).attr("SaveStyleColorAttributesStatus");
+                           if (saveStatus == "Success") {
+                               $("#ajaxResponseUpdateStylePetContentStatus").html("");
+                               $("#ajaxResponseUpdateStylePetContentStatus").append("<b><font size='2'>Style Color Pet Status updated successfully !</font></b>" );      
+                               $("#saveButtonId").attr("disabled", "disabled");
+                               //logic to dynamically generate unique ids for the  Style Color Submit or Style Color Approve button and disable the action button
+                               document.getElementById(clickedButtonId).disabled = true;
+                               styleColorContentPetWebserviceResponseFlag="true";
+                               $("#petColorRow_id"+colorRowCount).html('Ready_For_Review');
+                               disableStyleColoreFields();
+                           }
+                           else {
+                               $("#ajaxResponseUpdateStylePetContentStatus").html("");
+                               $("#ajaxResponseUpdateStylePetContentStatus").append("<b><font size='2'>Style Color Pet Status could not be updated, please contact Belk helpdesk </font></b> <br>"); 
+                               $("#ajaxResponseUpdateStylePetContentStatus").append("<br>");
+                               $("#saveButtonId").removeAttr("disabled");
+                               //logic to dynamically generate unique ids for the  Style Color Submit or Style Color Approve button and disable the action button
+                               document.getElementById(clickedButtonId).disabled = false;
+                               styleColorContentPetWebserviceResponseFlag="false";
+                           }
+                           
                        },
                        
                        error: function(XMLHttpRequest, textStatus, errorThrown){
