@@ -1388,7 +1388,9 @@ function imgRemoveSelected(){
 $(document).on('click', "#imgSelectAll", function() { 
 	if(this.checked) {
 	   $('.SelectAllImg').each(function() {
-	     this.checked = true; 
+		   if($(this).is(':enabled')){
+	       this.checked = true; 
+		   }
 	   });
     }else{
 	    $('.SelectAllImg').each(function() { 
