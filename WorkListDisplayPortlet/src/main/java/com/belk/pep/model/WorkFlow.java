@@ -770,5 +770,17 @@ public class WorkFlow {
      * Modification end
      */
     
+    // Adding Column Missing Asset
+    private String missingAsset;
+
+    public String getMissingAsset() {
+        return missingAsset;
+    }
+
+    public void setMissingAsset(String missingAsset) {
+        this.missingAsset = missingAsset;
+    }
+    
+    
 }
 

@@ -1327,6 +1327,89 @@ public List<WorkFlow> getAdvWorklistGroupingData(AdvanceSearch adSearch,
             .info("WorkListDisplayServiceImpl callReInitiateGroupService : Ends");
         return responseMsg;
     }  
+    
+    /**
+     * Calling Missing Asset Update
+     * @param jsonArray JSONArray
+     * @return String
+     * @throws PEPFetchException 
+     */
+    @Override
+    public String callMissingAssetPetService(JSONArray jsonArray) throws PEPFetchException {
+        LOGGER.info("WorkListDisplayserviceImpl callMissingAssetPetService : Starts");
+        LOGGER.info("Passed jsonArray:---- " + jsonArray);
+
+        String responseMsg = WorkListDisplayConstants.EMPTY_STRING;
+        boolean flag = false;
+        String msgCodeStr = WorkListDisplayConstants.EMPTY_STRING;
+        HttpURLConnection httpConnection = null;
+        String responseMSGCode = "";
+        try {
+            Properties prop = PropertyLoader.getPropertyLoader(WorkListDisplayConstants.MESS_PROP);
+            String serviceURL = prop.getProperty(WorkListDisplayConstants.ASSET_SERVICE_URL);
+            LOGGER.info("targetURLs **********" + serviceURL);
+            URL targetUrl = new URL(serviceURL);
+            httpConnection = (HttpURLConnection) targetUrl.openConnection();
+            httpConnection.setDoOutput(true);
+            httpConnection.setRequestMethod(WorkListDisplayConstants.METHOD_POST);
+            httpConnection.setRequestProperty(WorkListDisplayConstants.CONTENT_TYPE, WorkListDisplayConstants.APPLICATION_JSON);
+            LOGGER.info("WorkListDisplayserviceImpl::Missing Asset Json Array" + jsonArray.toString());
+            JSONObject jsonMap = new JSONObject();
+            jsonMap.put(WorkListDisplayConstants.SERVICE_LIST, jsonArray);
+            String input = jsonMap.toString();
+            OutputStream outputStream = httpConnection.getOutputStream();
+            outputStream.write(input.getBytes());
+            outputStream.flush();
+            if (200 == httpConnection.getResponseCode()) {
+            }
+
+            if (httpConnection.getResponseCode() != 200) {
+                throw new Exception("Failed : HTTP error code : " + httpConnection.getResponseCode());
+            }
+
+            BufferedReader responseBuffer = new BufferedReader(
+                    new InputStreamReader((httpConnection.getInputStream())));
+
+            String output;
+            LOGGER.info("Output from Server:\n");
+            while ((output = responseBuffer.readLine()) != null) {
+                System.out.println(output);
+                JsonElement jelement = new JsonParser().parse(output);
+                JsonObject jobject = jelement.getAsJsonObject();
+                JsonArray jsonObject =(JsonArray) jobject.get(WorkListDisplayConstants.SERVICE_LIST);
+                if (jsonObject.size() == 1) {
+                    JsonObject individualjson = jsonObject.getAsJsonObject();
+                    Object msgCode =individualjson.get(WorkListDisplayConstants.MSG_CODE);
+                    Object msgResponse =individualjson.get(WorkListDisplayConstants.RESPONSE_MSG);
+
+                    LOGGER.info("WorkListDisplayServiceImpl::MsgCode with json" + msgCode.toString());
+                    msgCodeStr = msgCode.toString();
+                    responseMsg = msgResponse.toString();
+                }
+            }
+
+        } catch (MalformedURLException e) {
+            LOGGER.error("MalformedURLException Occurred: " + e.getMessage());
+            throw new PEPFetchException();
+        } catch (ClassCastException e) {
+            LOGGER.error("ClassCastException Occurred: " + e.getMessage());
+            throw new PEPFetchException();
+        } catch (IOException e) {
+            LOGGER.error("IOException Occurred: " + e.getMessage());
+            throw new PEPFetchException();
+        } catch (JSONException e) {
+            LOGGER.error("JSONException Occurred: " + e.getMessage());
+            throw new PEPFetchException();
+        } catch (Exception e) {
+            LOGGER.error("Exception Occurred: " + e.getMessage());
+            throw new PEPFetchException();
+        }
+        finally{
+            httpConnection.disconnect();
+        }
+
+        return responseMsg;
+        }
 
     
 }

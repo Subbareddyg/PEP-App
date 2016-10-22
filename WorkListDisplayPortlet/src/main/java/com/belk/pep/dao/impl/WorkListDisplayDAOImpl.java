@@ -849,7 +849,7 @@ private PetsFound mapAdseDbPetsToPortal(String parentStyleORIN,
     String contentState, String completionDate, PetsFound pet, String omniChannelIndicator,
     String primaryUPC,String colorDesc,String petStatus, String sourceSystem,
     String petStyleState, String petImageState,String petContentState, String earliestComplitionDate,
-    String existsInGroup, String cFAS) {
+    String existsInGroup, String cFAS, String missingAsset) {
     //LOGGER.info("This is from mapAdseDbPetsToPortal..Enter" );
     pet = new PetsFound();
     pet.setParentStyleOrin(parentStyleORIN);
@@ -879,6 +879,7 @@ private PetsFound mapAdseDbPetsToPortal(String parentStyleORIN,
     pet.setEarliestComplitionDate(earliestComplitionDate);
     pet.setExistsInGroup(existsInGroup);
     pet.setCFAS(cFAS);
+    pet.setMissingAsset(missingAsset);
     return pet; 
 }
 
@@ -1195,7 +1196,7 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
     String orinNumber, String deptId, String supplierId,String productName, String entryType,String primaryUPC,String classId,
     String vendorName, String vendorStyle, String imageState,
     String contentState, String petStatus, String completionDate, PetsFound pet, 
-    String omniChannelIndicator,String req_Type, String colorCode, String earliestCompletionDate, String existsInGroup, String cFAS, String petStyleState) {
+    String omniChannelIndicator,String req_Type, String colorCode, String earliestCompletionDate, String existsInGroup, String cFAS, String petStyleState, String missingAssset) {
     pet = new PetsFound();
     pet.setParentStyleOrin(parentStyleORIN);
     pet.setOrinNumber(orinNumber);
@@ -1213,6 +1214,7 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
     pet.setClassId(classId);
     pet.setExistsInGroup(existsInGroup);
     pet.setCFAS(cFAS);
+    pet.setMissingAsset(missingAssset);
     
     pet.setPetStatus(petStatus);
     
@@ -1656,6 +1658,7 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
                        String existsInGroup = row[19]!=null?row[19].toString():"";
                        String cfas = row[20]!=null?row[20].toString():"";
                        String conversionFlag =row[21]!=null?row[21].toString():"";
+                       String missingAsset =row[22]!=null?row[22].toString():"";
                        if(conversionFlag.equalsIgnoreCase("true"))
                        {
                            sourceSystem = sourceSystem + ":C";
@@ -1666,7 +1669,7 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
                        pet  = mapAdseDbPetsToPortal(parentStyleORIN,orinNumber,deptId,productName,
                            entryType,vendorName,vendorStyle,imageState,contentState,completionDate,
                            pet,omniChannelIndicator, primaryUPC, "", petStatus, sourceSystem,
-                           petStyleState, petImageState, petContentState, earliestCompletionDate, existsInGroup, cfas);                                    
+                           petStyleState, petImageState, petContentState, earliestCompletionDate, existsInGroup, cfas, missingAsset);                                    
                        petList.add(pet);
                    }
                    petList = petStatusMapping(petList);
@@ -1744,6 +1747,7 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
                        String sourceSystem=row[15]!=null?row[15].toString():null;                       
                        String conversionFlag =row[16]!=null?row[16].toString():"";
                        String existInGroup =row[17]!=null?row[17].toString():"";
+                       String missingAsset =row[18]!=null?row[18].toString():"";
                        if(conversionFlag.equalsIgnoreCase("true"))
                        {
                            sourceSystem = sourceSystem + ":C";
@@ -1756,7 +1760,7 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
                        pet  = mapAdseDbPetsToPortal(parentStyleORIN,orinNumber,deptId,productName,
                            entryType,vendorName,vendorStyle,imageState,contentState,completionDate,
                            pet,omniChannelIndicator, primaryUPC,colorDesc, petStatus, sourceSystem,
-                           "", "", "", "", existInGroup, "");                                    
+                           "", "", "", "", existInGroup, "", missingAsset);                                    
                        petList.add(pet);
                    }
                    petList = petStatusMapping(petList);
@@ -1982,6 +1986,7 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
                    String sourceType = pet.getReq_Type();
                    //LOGGER.info("sourceType ="+sourceType);
                    style.setSourceType(sourceType);
+                   style.setMissingAsset(pet.getMissingAsset());
                   
                    /**
                     * Modification end
@@ -2157,6 +2162,7 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
                            newOrinNumber = orin + " " + code + " " + color;
                    }
                    String existInGroup = pet.getExistsInGroup();
+                   String missingAsset = pet.getMissingAsset();
                    StyleColor styleColor = new StyleColor();
                    styleColor.setEntryType(entryType);
                    styleColor.setParentStyleOrinNumber(childsParentOrinNumber);
@@ -2186,6 +2192,7 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
                    /**
                     * Modification end
                     */
+                   styleColor.setMissingAsset(missingAsset);
                     
                    styleColorList.add(styleColor);
                }
@@ -2258,12 +2265,13 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
                        String productName = (productNameStyle != null) ? productNameStyle : "";
                        
                        String petStyleState =row[20]!=null?row[20].toString():"";
+                       String missingAsset =row[21]!=null?row[21].toString():"";
 
                        pet  = mapAdseDbPetsToPortalAdvSearch(parentStyleORIN, orinNumber, 
                            deptId, supplierId, productName, entryType, primaryUPC, 
                            classId, vendorName, vendorStyle, imageState, contentState, 
                            petStatus, completionDate, pet, omniChannelIndicator, 
-                           req_Type, "", earliestCompletionDate, existsInGroup, cfas,petStyleState);  
+                           req_Type, "", earliestCompletionDate, existsInGroup, cfas,petStyleState, missingAsset);  
                        
                        petList.add(pet);
                    }
@@ -2341,6 +2349,7 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
                        
                        String conversionFlag =row[17]!=null?row[17].toString():"";
                        String existInGroup =row[18]!=null?row[18].toString():"";
+                       String missingAsset =row[19]!=null?row[19].toString():"";
                        if(conversionFlag.equalsIgnoreCase("true"))
                        {
                            req_Type = req_Type + ":C";
@@ -2352,7 +2361,7 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
                            deptId, supplierId, productName, entryType, primaryUPC, 
                            classId, vendorName, vendorStyle, imageState, contentState, 
                            petStatus, completionDate, pet, omniChannelIndicator, 
-                           req_Type, origincalColorDesc, "", existInGroup, "", "");  
+                           req_Type, origincalColorDesc, "", existInGroup, "", "", missingAsset);  
                        
                        petList.add(pet);
                    }
@@ -2781,6 +2790,12 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
                         	strPetDisplayFlag.equalsIgnoreCase(WorkListDisplayConstants.CHILD_GROUP_O)){                            	
                         	workFlow.setPetStatus(WorkListDisplayConstants.IN_PROGRESS);
                         }
+                        
+                        workFlow
+                        .setMissingAsset(row.get(WorkListDisplayConstants.MISSING_ASSET) == null
+                                ? WorkListDisplayConstants.EMPTY_STRING : row.get(
+                                        WorkListDisplayConstants.MISSING_ASSET)
+                                        .toString());
                         //Change end
                         /*if (LOGGER.isDebugEnabled()) {
                             LOGGER
@@ -2972,6 +2987,13 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
                     	workFlow.setPetStatus(WorkListDisplayConstants.IN_PROGRESS);
                     }
                     //Change end
+                    
+                    workFlow
+                    .setMissingAsset(row.get(WorkListDisplayConstants.MISSING_ASSET) == null
+                            ? WorkListDisplayConstants.EMPTY_STRING : row.get(
+                                    WorkListDisplayConstants.MISSING_ASSET)
+                                    .toString());
+                    
                     if (LOGGER.isDebugEnabled()) {
                         LOGGER
                             .debug("Grouping Attribute Values -- \nGROUP ID: "
@@ -3240,6 +3262,12 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
                             
                     	
                     }
+                    
+                    workFlow
+                    .setMissingAsset(row.get(WorkListDisplayConstants.MISSING_ASSET) == null
+                            ? WorkListDisplayConstants.EMPTY_STRING : row.get(
+                                    WorkListDisplayConstants.MISSING_ASSET)
+                                    .toString());
 
                     if (LOGGER.isDebugEnabled()) {
                         LOGGER
@@ -3507,6 +3535,12 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
                     	workFlow.setPetStatus(WorkListDisplayConstants.IN_PROGRESS);
                     }
                     //Change end
+                    
+                    workFlow
+                    .setMissingAsset(row.get(WorkListDisplayConstants.MISSING_ASSET) == null
+                            ? WorkListDisplayConstants.EMPTY_STRING : row.get(
+                                    WorkListDisplayConstants.MISSING_ASSET)
+                                    .toString());
 
                     if (LOGGER.isDebugEnabled()) {
                         LOGGER
@@ -3836,6 +3870,12 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
                     	workFlow.setPetStatus(WorkListDisplayConstants.IN_PROGRESS);
                     }
                     //Change end
+                    
+                    workFlow
+                    .setMissingAsset(row.get(WorkListDisplayConstants.MISSING_ASSET) == null
+                            ? WorkListDisplayConstants.EMPTY_STRING : row.get(
+                                    WorkListDisplayConstants.MISSING_ASSET)
+                                    .toString());
 
                     if (LOGGER.isDebugEnabled()) {
                         LOGGER
