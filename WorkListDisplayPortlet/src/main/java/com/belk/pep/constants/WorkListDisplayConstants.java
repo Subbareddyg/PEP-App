@@ -358,4 +358,10 @@ public static final String EXIST_IN_SAME_GROUP = "EXIST_IN_SAME_GROUP";
 public static final String VALUE_YES = "Yes";
 public static final String VALUE_NO = "No";
 public static final String EVENT_PAGINATION = "PaginationAnchorObj";
+public static final String SERVICE_LIST = "list";
+public static final String MISSING_ASSET = "MISSING_ASSET";
+public static final String MISSING_ASSET_VAR = "missingAsset";
+public static final String ASSET_SERVICE_URL = "update.missingasset.url";
+public static final String MULTIPLE_FAILURE_CODE = "110";
+public static final String RESPONSE_MSG = "message";
 }

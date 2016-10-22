@@ -228,6 +228,14 @@ public boolean lockPET(  String orin, String pepUserID, String pepfunction)throw
      * @throws PEPFetchException
      */
     public String callReInitiateGroupService(JSONArray jsonArray)throws Exception, PEPFetchException;
+    
+    /**
+     * Missing Asset service interface
+     * @param jsonArray
+     * @return
+     * @throws Exception
+     */
+    public String callMissingAssetPetService(JSONArray jsonArray)throws Exception ;
 
 }
 

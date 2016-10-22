@@ -58,7 +58,18 @@ public class PetsFound implements Comparable<PetsFound>{
     /** The content state. */
     private String  contentState;
     
+    /** The Missing Assset*/
+    private String missingAsset;
     
+    
+    public String getMissingAsset() {
+        return missingAsset;
+    }
+
+    public void setMissingAsset(String missingAsset) {
+        this.missingAsset = missingAsset;
+    }
+
     /** The completion date. */
     private String completionDate;
     

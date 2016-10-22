@@ -383,4 +383,16 @@ public class WorkListDisplayDelegate {
         return workListDisplayService.callInactivateGroupService(jsonArray);
     }
     
+    /**
+     * MissingAsset pet service
+     * @param jsonArray
+     * @return
+     * @throws Exception
+     */
+    public String callMissingAssetPetService(JSONArray jsonArray)throws Exception {
+        LOGGER.info("MissingAsset Delegate:: callMissingAssetPetService");
+        return workListDisplayService.callMissingAssetPetService(jsonArray); 
+        
+    }
+    
 }

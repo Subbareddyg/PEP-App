@@ -531,4 +531,16 @@ public class StyleColor {
 	public void setExistsInGroup(String existsInGroup) {
 		this.existsInGroup = existsInGroup;
 	}
+	
+	//Missing Asset Change
+	private String missingAsset;
+
+    public String getMissingAsset() {
+        return missingAsset;
+    }
+
+    public void setMissingAsset(String missingAsset) {
+        this.missingAsset = missingAsset;
+    }
+	
 }

@@ -96,9 +96,9 @@ input.btn-new, input.btn-new:hover {
    height: 362px;
         }
 #checkboxTD{
-	width:7%;
-	min-width:56px;
-	max-width:56px;
+	width:6%;
+	min-width:51px;
+	max-width:51px;
 	word-wrap:break-word;
 	border-left:0;
 }
@@ -115,15 +115,15 @@ input.btn-new, input.btn-new:hover {
 	word-wrap:break-word;
 }
 #nameTD{
-	width: 11%;
-	min-width:108px;
-	max-width:108px;
+	width: 10%;
+	min-width:105px;
+	max-width:105px;
 	word-wrap:break-word;
 }
 #styleTD{
-	width: 10%;
-	min-width:83px;
-	max-width:83px;
+	width: 8%;
+	min-width:73px;
+	max-width:73px;
 	word-wrap:break-word;
 }
 #prdTD{
@@ -145,24 +145,29 @@ input.btn-new, input.btn-new:hover {
 	word-wrap:break-word;
 }
 #statusTD{
-	width: 8%;
-	min-width:60px;
-	max-width:60px;
-	word-wrap:break-word;
-}
-#dateTD{
 	width: 7%;
-	min-width:63px;
-	max-width:63px;
-	word-wrap:break-word;
-}
-#petTD{
-	width: 14%;
 	min-width:55px;
 	max-width:55px;
 	word-wrap:break-word;
 }
-
+#dateTD{
+	width: 6%;
+	min-width:58px;
+	max-width:58px;
+	word-wrap:break-word;
+}
+#petTD{
+	width: 5%;
+	min-width:40px;
+	max-width:40px;
+	word-wrap:break-word;
+}
+#assetTD{
+	width: 14%;
+	min-width:65px;
+	max-width:65px;
+	word-wrap:break-word;
+}
 </style>
 
 </head>
@@ -472,6 +477,8 @@ lockClearOnBack.value='1';
 								<img src="${contextpath}${imagemidpath}${imagename}"> </img>
 							</c:if>					
 							</th>
+							<th id="assetTD"><a href="#">Missing Asset</a>				
+							</th>
 							</tr>
 							</thead>
 							<tbody  class="scrollbarset" id="table-container">
@@ -564,6 +571,23 @@ lockClearOnBack.value='1';
 											
 											<td id="petTD"><c:out value="${workFlow.sourceType}" /></td>
 											
+											
+											<td id="assetTD">
+											<c:if test="${workFlow.entryType == 'StyleColor' || workFlow.entryType == 'BCG' || workFlow.entryType == 'RCG' || workFlow.entryType == 'GSG'}"	>
+											<c:choose>
+    										<c:when test="${isInternal =='yes' && workflowForm.readOnlyUser !='yes'}">
+        										<select name="missingAsset" id="missingAsset" onchange="onChangeMissingAsset(this, '${workFlow.orinNumber}')" <c:if test="${'Completed'== workFlow.imageStatus}"> disabled </c:if> style="width: 65px;">
+													<option value="Clear" <c:if test="${'Clear'== workFlow.missingAsset}"> selected="selected" </c:if>> </option>
+													<option value="Sample" <c:if test="${'Sample'== workFlow.missingAsset}"> selected="selected" </c:if>>Sample</option>
+													<option value="Image" <c:if test="${'Image'== workFlow.missingAsset}"> selected="selected" </c:if>>Image</option>
+												</select>
+    										</c:when>    
+    										<c:otherwise><c:out value="${workFlow.missingAsset}" /></c:otherwise>
+											</c:choose>
+											</c:if>
+											<c:if test="${workFlow.entryType != 'StyleColor' && workFlow.entryType != 'BCG' && workFlow.entryType != 'RCG' && workFlow.entryType != 'GSG'}"	>&nbsp;</c:if>
+											</td>
+											
 											<!-- <td style="display: none;"><c:out value="${workFlow.petStatus}" />
 											</td> -->
 											
@@ -610,6 +634,13 @@ lockClearOnBack.value='1';
 												</div>
 												</td>
 												<td id="petTD">#TD_SOURCE_TYPE</td>
+												<td id="assetTD">
+												<select name="missingAsset_#TD_ORIN" id="missingAsset_#TD_ORIN" style="display: #ASSET_STYLE_STATUS;width: 65px;" onchange="onChangeMissingAsset(this, '#TD_ORIN')">
+													<option value="Clear" #ASSET_CLEAR>&nbsp;</option>
+													<option value="Sample" #ASSET_SAMPLE>Sample</option>
+													<option value="Image" #ASSET_IMAGE>Image</option>
+												</select>
+												</td>
 												<!-- <td style="display: none;">#TD_PET_STATUS</td> -->
 											</tr>	
 							<!--  Table Grid Login End -->	       
@@ -1185,7 +1216,7 @@ lockClearOnBack.value='1';
 {{ if(data[0].noChildMessage){ }}
 	<tr data-tr-root="{{=data[0].rootOrin}}" id="parent_{{=data[0].rootOrin}}" class="children" name="child_{{=orinNum}}" {{=(showHideFlag !== undefined && showHideFlag == false) ? 'style="display:none"' : '' }}>
 			<td style="width:34px">&nbsp;</td>
-			<td colspan="10" align="center"><strong>{{=data[0].noChildMessage}}</strong></td>
+			<td colspan="11" align="center"><strong>{{=data[0].noChildMessage}}</strong></td>
 	</tr>
 {{ }else{ }}
 	{{_.each(data, function(item, key){ }}
@@ -1263,6 +1294,15 @@ lockClearOnBack.value='1';
 		</div> -->
 		</td>
 		<td id="petTD">{{=item.petSourceType}}</td>
+		<td id="assetTD">
+			{{ if('StyleColor' == item.ENTRY_TYPE || 'BCG' == item.ENTRY_TYPE || 'RCG' == item.ENTRY_TYPE || 'GSG' == item.ENTRY_TYPE){ }}
+			<select name="missingAsset_{{=item.styleOrinNum}}" id="missingAsset_{{=item.styleOrinNum}}" onchange="onChangeMissingAsset(this,'{{=item.styleOrinNum}}')" style="width: 65px;">
+				<option value="Clear" {{ if('Clear' == item.missingAsset){ }} selected="selected" {{ } }}> </option>
+				<option value="Sample" {{ if('Sample' == item.missingAsset){ }} selected="selected" {{ } }}>Sample</option>
+				<option value="Image" {{ if('Image' == item.missingAsset){ }} selected="selected" {{ } }}>Image</option>
+			</select>
+			{{ } }}
+		</td>
 		<!-- <td style="display: none;">#TD_PET_STATUS</td> -->
 	</tr>
 		{{ if(item.isGroup != 'Y'){  }}
@@ -1304,6 +1344,16 @@ lockClearOnBack.value='1';
 							{{=childItem.completionDate}}
 						</td>
 						<td id="petTD">{{=childItem.petSourceType}}</td>
+						<td id="assetTD">
+						{{ if('StyleColor' == childItem.ENTRY_TYPE || 'BCG' == childItem.ENTRY_TYPE || 'RCG' == childItem.ENTRY_TYPE || 'GSG' == childItem.ENTRY_TYPE){ }}
+							<select name="missingAsset_{{=childItem.styleOrinNum}}" id="missingAsset_{{=childItem.styleOrinNum}}" onchange="onChangeMissingAsset(this,'{{=childItem.styleOrinNum}}')" style="width: 65px;">
+								<option value="Clear" {{ if('Clear' == childItem.missingAsset){ }} selected="selected" {{ } }}> </option>
+								<option value="Sample" {{ if('Sample' == childItem.missingAsset){ }} selected="selected" {{ } }}>Sample</option>
+								<option value="Image" {{ if('Image' == childItem.missingAsset){ }} selected="selected" {{ } }}>Image</option>
+							</select>
+						{{ } }}
+						</td>
+						
 						<!-- <td style="display: none;">#TD_PET_STATUS</td> -->
 					</tr>
 				{{ }) }}

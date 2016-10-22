@@ -2326,7 +2326,7 @@ function populateChildData(jsonArray, orinNum, showHideFlag, isGroup, uniqueIden
 	var displayChild = $(parentTr).attr('displayChild');
 	var hidden_roleEditable = $("#hidden_roleEditable").val();
 	var hidden_readOnlyUser = $("#hidden_readOnlyUser").val();
-	var hidden_roleName = $("#hidden_roleName").val();;
+	var hidden_roleName = $("#hidden_roleName").val();
 	
 	if($('tr[name=child_' + orinNum + ']').length > 0){
 		$(parentTr).attr('displayChild','Y');
@@ -2374,7 +2374,7 @@ function populateChildData(jsonArray, orinNum, showHideFlag, isGroup, uniqueIden
 			if(val.noChildMessage){
 				tempHtml = ''
 					+ '<td>&nbsp;</td>'
-					+ '<td colspan="10"><strong>' + val.noChildMessage +  '</strong></td>';
+					+ '<td colspan="11"><strong>' + val.noChildMessage +  '</strong></td>';
 			}else{
 				tempHtml = templateTr.innerHTML;
 				
@@ -2385,7 +2385,7 @@ function populateChildData(jsonArray, orinNum, showHideFlag, isGroup, uniqueIden
 				tempHtml = tempHtml.replace("#CH_STYLE_PETSTATUS", val.petStatus);
 				tempHtml = tempHtml.replace("#CHBOXONCLK_PETSTATUS", val.petStatus);
 				
-				tempHtml = tempHtml.replace("#TD_ORIN", val.styleOrinNum); 
+				tempHtml = tempHtml.replace(/#TD_ORIN/g, val.styleOrinNum); 
 				tempHtml = tempHtml.replace("#TD_DEPT_NUM", val.deptId); 
 				tempHtml = tempHtml.replace("#TD_VENDOR_NAME", val.vendorName); 
 				
@@ -2507,6 +2507,44 @@ function populateChildData(jsonArray, orinNum, showHideFlag, isGroup, uniqueIden
 				*/
 				
 				tempHtml = tempHtml.replace("#GROUP_FLAG", val.isGroup);
+				
+				if("dca" == hidden_roleName && "Completed" != val.imageStatus && "yes" != hidden_readOnlyUser){
+					if("StyleColor" == val.ENTRY_TYPE || "BCG" == val.ENTRY_TYPE || "RCG" == val.ENTRY_TYPE || "GSG" == val.ENTRY_TYPE)
+					{
+						tempHtml = tempHtml.replace("#ASSET_STYLE_STATUS", 'block');
+						if(""!=val.missingAsset)
+						{
+							if("Sample"==val.missingAsset)
+							{
+								///#TD_ORIN/g
+								tempHtml = tempHtml.replace(/#ASSET_SAMPLE/ig, "selected");
+								tempHtml = tempHtml.replace(/#ASSET_CLEAR/ig, "");
+								tempHtml = tempHtml.replace(/#ASSET_IMAGE/ig, "");
+							}
+							if("Image"==val.missingAsset)
+							{
+								tempHtml = tempHtml.replace(/#ASSET_SAMPLE/ig, "");
+								tempHtml = tempHtml.replace(/#ASSET_CLEAR/ig, "");
+								tempHtml = tempHtml.replace(/#ASSET_IMAGE/ig, "selected");
+							}
+							if("Clear"==val.missingAsset)
+							{
+								tempHtml = tempHtml.replace(/#ASSET_SAMPLE/ig, "");
+								tempHtml = tempHtml.replace(/#ASSET_CLEAR/ig, "selected");
+								tempHtml = tempHtml.replace(/#ASSET_IMAGE/ig, "");
+							}
+						}
+					}
+					else
+					{
+						tempHtml = tempHtml.replace("#ASSET_STYLE_STATUS", 'none');
+					}
+				}
+				else
+				{
+					tempHtml = tempHtml.replace("#ASSET_STYLE_STATUS", 'none');
+				}
+				
 			}
 			
 			$(tempTr).html(tempHtml);
@@ -2630,6 +2668,33 @@ function expandCollapse(orinNum, searchClicked, isGroup, uniqueIdentifier, paren
 	}
 	$("#callType").val("");
 	return false;
+}
+
+/** Added for flag Missing Asset 
+ * @param sel
+ * @param orinNum
+ * @returns
+ */
+function onChangeMissingAsset(sel, orinNum){
+	var missingAssetVal = sel.value;
+	var url = $("#ajaxaction").val();
+	var orinNumber = orinNum;
+	
+	if(sel==null || orinNumber==null)
+	{
+		return;
+	}
+
+   $.ajax({
+	         url: url ,
+	         type: 'GET',
+	         datatype:'json',
+	         data: { 		 missingAsset:missingAssetVal,orinNum:orinNumber,
+				   },
+		         success: function(data){
+						return;
+					}
+		 });	
 }
 
 /** Modified For PIM Phase 2 

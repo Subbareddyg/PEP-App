@@ -1623,6 +1623,23 @@ private void assignRole(WorkListDisplayForm workListDisplayForm2,
         List workFlowList = resourceForm.getWorkFlowlist();
         resourceForm.setWorkFlowlist(workFlowList);
         
+        //Start of Missing Asset Flow
+        String missingAsset = request.getParameter(WorkListDisplayConstants.MISSING_ASSET_VAR);   
+        String orinVal = request.getParameter(WorkListDisplayConstants.ORIN_NUM);
+        
+        if(missingAsset != null && orinVal!=null && !missingAsset.trim().equals(WorkListDisplayConstants.EMPTY_STRING) && !orinVal.trim().equals(WorkListDisplayConstants.EMPTY_STRING))
+        {
+            LOGGER.info("Missing Assert Update Starts with Orin :" + orinVal + " MissingAsset : "+missingAsset); 
+            orinVal = orinVal.replaceAll("\\s+", "");
+            
+            if(orinVal.length() > 12){                
+                orinVal = orinVal.substring(0, 12);
+                LOGGER.info("Missing Asset Orin Length gt 12 after trim-->" + orinVal);                
+            }
+            changeMissingAsset(missingAsset, orinVal);
+        }
+        //End of Missing Asset Flow        
+        
         //Inactivate and Activate flow
         String statusParameter = request.getParameter(WorkListDisplayConstants.PET_STATUS_PARAMETER);
         
@@ -3381,6 +3398,10 @@ public String ConvertDate(String completionDate){
                         WorkListDisplayConstants.NO_N);
                     jsonObj.put(WorkListDisplayConstants.EXISTSINGROUP,
                     		styleColor.getExistsInGroup());
+                    jsonObj.put(WorkListDisplayConstants.ENTRY_TYPE,
+                            styleColor.getEntryType());
+                    jsonObj.put(WorkListDisplayConstants.MISSING_ASSET_VAR,
+                            styleColor.getMissingAsset());
                     
                     jsonArrayPetDtls.put(jsonObj); 
                 }                
@@ -3429,6 +3450,8 @@ public String ConvertDate(String completionDate){
                             advSearchClick);
                         jsonObj.put(WorkListDisplayConstants.ENTRY_TYPE,
                         		workFlow.getEntryType());
+                        jsonObj.put(WorkListDisplayConstants.MISSING_ASSET_VAR,
+                                workFlow.getMissingAsset());
                         jsonArrayPetDtls.put(jsonObj);
                     }
                     else if (workFlow.getEntryType().equalsIgnoreCase(
@@ -4126,4 +4149,89 @@ public String ConvertDate(String completionDate){
         }
         return resourceForm;
     }
+    
+    /**
+     *  This method is responsible for calling update status of Missing Asset onselection
+     * @param request
+     */
+    private void changeMissingAsset(String missingAsset, String orin) {
+        LOGGER.info("Entering:: changeMissingAsset method controller");
+        
+        String []orinNumbersArray = null;       
+        String orinNumbers = orin;
+        String orinNo =orin;
+        String petStatus ="";
+        String responseMsg ="";
+        String petStatusCode ="";        
+        
+        JSONArray jsonArray = new JSONArray();
+        
+        if(null != orinNo){
+                orinNo = orinNo.replaceAll("\\s+", "");//Removed WhiteSpace from StyleColor Orin no. if any for service call                
+                
+                LOGGER.info("orinNo***status of missingAsset::"+ orinNo);
+                
+                if(orinNo.length() > 12){                
+                    orinNo = orinNo.substring(0, 12);
+                    LOGGER.info("Length gt 12 of missingAsset-->" + orinNo);                
+                }
+                
+                try{
+                    JSONObject jsonStyle = populateMissingAssetJson(orinNo.trim(),missingAsset);
+                    jsonArray.put(jsonStyle);
+                    
+                    LOGGER.info("json Object of Missing Asset petId::.. "+ jsonStyle.getString("petId"));
+                    LOGGER.info("json Object of Missing Asset petId::.. "+ jsonStyle.getString("petId"));
+                }catch (Exception e) {                   
+                    LOGGER.info("inside catch for changeMissingAsset()...controller");
+                    e.printStackTrace();
+                }
+            //Service call Start
+            try {
+                responseMsg = callMissingAssetPetService(jsonArray);
+                LOGGER.info("responseMsg_code Controller changeMissingAsset()::" +responseMsg);
+            }catch(PEPFetchException eService){
+               LOGGER.info("Exception Block in changeMissingAsset() Controller::11");
+               eService.printStackTrace();                    
+            }catch (Exception e) {
+               LOGGER.info("Exception Block in changeMissingAsset() Controller::12");
+               e.printStackTrace();
+            }
+            //Service call End
+        }
+        LOGGER.info("Exiting:: changeMissingAsset() method controller");
+    }
+    
+    public JSONObject populateMissingAssetJson(String petId, String missingAsset) {
+        LOGGER.info("populateMissingAssetJson----->Controller");
+        JSONObject jsonObj = new JSONObject();
+        try {          
+            
+            jsonObj.put(WorkListDisplayConstants.PET_ID,petId);
+            jsonObj.put(WorkListDisplayConstants.MISSING_ASSET_VAR,missingAsset);
+            
+        } catch (JSONException e) {
+            LOGGER.info("Exeception in parsing the jsonObj");
+            e.printStackTrace();
+        }
+        return jsonObj;
+     }
+    
+    /**
+     * Web service to update Missing Asset Pet
+     * @param jsonArray
+     * @return {@link String}
+     * @throws Exception
+     * @throws PEPFetchException
+     */
+    private String callMissingAssetPetService(JSONArray jsonArray) throws Exception,
+         PEPFetchException {
+         
+         String responseMsg = null;
+         responseMsg = workListDisplayDelegate.callMissingAssetPetService(jsonArray);
+         return responseMsg;
+
+     }
+
+    
 }
