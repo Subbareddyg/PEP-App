@@ -128,8 +128,8 @@ input.btn-new, input.btn-new:hover {
 }
 #prdTD{
 	width: 12%;
-	min-width:110px;
-	max-width:110px;
+	min-width:95px;
+	max-width:95px;
 	word-wrap:break-word;
 }
 #contentTD{
@@ -152,8 +152,8 @@ input.btn-new, input.btn-new:hover {
 }
 #dateTD{
 	width: 6%;
-	min-width:58px;
-	max-width:58px;
+	min-width:63px;
+	max-width:63px;
 	word-wrap:break-word;
 }
 #petTD{
@@ -477,7 +477,7 @@ lockClearOnBack.value='1';
 								<img src="${contextpath}${imagemidpath}${imagename}"> </img>
 							</c:if>					
 							</th>
-							<th id="assetTD"><a href="#">Missing Asset</a>				
+							<th id="assetTD">Missing Asset				
 							</th>
 							</tr>
 							</thead>
