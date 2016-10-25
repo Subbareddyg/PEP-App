@@ -1,7 +1,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
 	<groupId>com.belk.pep</groupId>
-	<version>1.3.0.25-SNAPSHOT</version>
+	<version>1.3.0.25</version>
 	<name>CreatePetPortlet</name>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>CreatePetPortlet</artifactId>
@@ -238,7 +238,7 @@
 		<dependency>
 			<groupId>com.belk.pep</groupId>
 			<artifactId>CommonForIpcLogin</artifactId>
-			<version>1.3.0.25-SNAPSHOT</version>
+			<version>1.3.0.25</version>
 		</dependency>
 		<dependency>
 			<groupId>log4j</groupId>
@@ -259,7 +259,7 @@
 	<scm>
 	<connection>scm:git:ssh://git@bitbucket.org/belk_ecom/pep-application</connection>
 	<developerConnection>scm:git:ssh://git@bitbucket.org/belk_ecom/pep-application</developerConnection>
-	<tag>pep-1.2.0.38-SNAPSHOT</tag>
+	<tag>pep-1.3.0.25</tag>
 	</scm>
 
 	<distributionManagement>
