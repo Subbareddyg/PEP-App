@@ -2508,43 +2508,46 @@ function populateChildData(jsonArray, orinNum, showHideFlag, isGroup, uniqueIden
 				
 				tempHtml = tempHtml.replace("#GROUP_FLAG", val.isGroup);
 				
+				if(""!=val.missingAsset)
+				{
+					if("Sample"==val.missingAsset)
+					{
+						tempHtml = tempHtml.replace(/#ASSET_SAMPLE/ig, "selected");
+						tempHtml = tempHtml.replace(/#ASSET_CLEAR/ig, "");
+						tempHtml = tempHtml.replace(/#ASSET_IMAGE/ig, "");
+					}
+					if("Image"==val.missingAsset)
+					{
+						tempHtml = tempHtml.replace(/#ASSET_SAMPLE/ig, "");
+						tempHtml = tempHtml.replace(/#ASSET_CLEAR/ig, "");
+						tempHtml = tempHtml.replace(/#ASSET_IMAGE/ig, "selected");
+					}
+					if("Clear"==val.missingAsset)
+					{
+						tempHtml = tempHtml.replace(/#ASSET_SAMPLE/ig, "");
+						tempHtml = tempHtml.replace(/#ASSET_CLEAR/ig, "selected");
+						tempHtml = tempHtml.replace(/#ASSET_IMAGE/ig, "");
+					}
+				}
+				
 				if("dca" == hidden_roleName && "Completed" != val.imageStatus && "yes" != hidden_readOnlyUser){
 					if("StyleColor" == val.ENTRY_TYPE || "BCG" == val.ENTRY_TYPE || "RCG" == val.ENTRY_TYPE || "GSG" == val.ENTRY_TYPE)
 					{
-						tempHtml = tempHtml.replace("#ASSET_STYLE_STATUS", 'block');
-						if(""!=val.missingAsset)
-						{
-							if("Sample"==val.missingAsset)
-							{
-								///#TD_ORIN/g
-								tempHtml = tempHtml.replace(/#ASSET_SAMPLE/ig, "selected");
-								tempHtml = tempHtml.replace(/#ASSET_CLEAR/ig, "");
-								tempHtml = tempHtml.replace(/#ASSET_IMAGE/ig, "");
-							}
-							if("Image"==val.missingAsset)
-							{
-								tempHtml = tempHtml.replace(/#ASSET_SAMPLE/ig, "");
-								tempHtml = tempHtml.replace(/#ASSET_CLEAR/ig, "");
-								tempHtml = tempHtml.replace(/#ASSET_IMAGE/ig, "selected");
-							}
-							if("Clear"==val.missingAsset)
-							{
-								tempHtml = tempHtml.replace(/#ASSET_SAMPLE/ig, "");
-								tempHtml = tempHtml.replace(/#ASSET_CLEAR/ig, "selected");
-								tempHtml = tempHtml.replace(/#ASSET_IMAGE/ig, "");
-							}
-						}
+						tempHtml = tempHtml.replace("#ASSET_STYLE_STATUS", 'block');	
+						tempHtml = tempHtml.replace(/#ASSET_DISBLE/ig, "");
 					}
 					else
 					{
 						tempHtml = tempHtml.replace("#ASSET_STYLE_STATUS", 'none');
+						tempHtml = tempHtml.replace(/#ASSET_DISBLE/ig, "");
 					}
 				}
 				else
 				{
-					tempHtml = tempHtml.replace("#ASSET_STYLE_STATUS", 'none');
+					tempHtml = tempHtml.replace("#ASSET_STYLE_STATUS", 'block');
+					tempHtml = tempHtml.replace(/#ASSET_DISBLE/ig, "disabled");
 				}
-				
+								
 			}
 			
 			$(tempTr).html(tempHtml);
@@ -2678,9 +2681,10 @@ function expandCollapse(orinNum, searchClicked, isGroup, uniqueIdentifier, paren
 function onChangeMissingAsset(sel, orinNum){
 	var missingAssetVal = sel.value;
 	var url = $("#ajaxaction").val();
+	var hidden_roleName = $("#hidden_roleName").val();
 	var orinNumber = orinNum;
 	
-	if(sel==null || orinNumber==null)
+	if(sel==null || orinNumber==null || "dca" != hidden_roleName)
 	{
 		return;
 	}

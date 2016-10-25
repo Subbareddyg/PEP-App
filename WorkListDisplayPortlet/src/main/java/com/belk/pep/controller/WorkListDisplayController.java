@@ -3486,6 +3486,10 @@ public String ConvertDate(String completionDate){
                         jsonObj.put(WorkListDisplayConstants.EXISTSINGROUP,
                             workFlow.getExistsInGroup());
                         jsonObj.put(WorkListDisplayConstants.ROOTORIN, orinNum);
+                        jsonObj.put(WorkListDisplayConstants.ENTRY_TYPE,
+                            workFlow.getEntryType());
+                        jsonObj.put(WorkListDisplayConstants.MISSING_ASSET_VAR,
+                            workFlow.getMissingAsset());
                         List childColor = workFlow.getColorList();
                         WorkFlow workFlowColor = null;
                         jsonArrayColorList = new JSONArray();
@@ -3538,6 +3542,10 @@ public String ConvertDate(String completionDate){
                                     workFlow.getExistsInGroup());
                                 jsonObjColor.put(
                                     WorkListDisplayConstants.ROOTORIN, orinNum);
+                                jsonObjColor.put(WorkListDisplayConstants.ENTRY_TYPE,
+                                    workFlowColor.getEntryType());
+                                jsonObjColor.put(WorkListDisplayConstants.MISSING_ASSET_VAR,
+                                    workFlowColor.getMissingAsset());
                                 jsonArrayColorList.put(jsonObjColor);
                             }
                         }
