@@ -114,7 +114,7 @@ function trClick(){
 					document.getElementById('btnImageUploadAction').disabled = true ;					
 					document.getElementById('saveImage').disabled = true ;
 					document.getElementById('image_approve').disabled=true;				
-					document.getElementById('shotType').disabled=true;
+					document.getElementById('shotType').disabled=true;				
 				}else{					
 					
 					document.getElementById('btnImageUploadAction').disabled = false ;
@@ -253,55 +253,49 @@ $(document).ready(function() {
 	 	}
   });
 });
-function removeVPISampleImageRows(selectedOrin){  
-	  var removeImageUrl = $("#removeImageUrl").val(); 
-	  var table = document.getElementById("vImage");
-	  var imgId=[];
-	  var imgName=[];
-	  inputChangedNew = document.getElementById("removeFlagOff").value;
-	 
-	  $('.SelectAllImg').each(function() { 
-          if(this.checked){         
-          imgId[imgId.length] = $('td:eq( 0 )', $(this).parent().parent()).text();
-          imgName[imgName.length] = $('td:eq( 1 )', $(this).parent().parent()).text();
-         }
-         });
-	
-	  $.ajax({
-				type: 'POST',
-				url : removeImageUrl,
-				datatype:'json',			
-				data: {selectedColorOrin:selectedOrin,imageIDToDel:imgId,imageNameToDel:imgName},			
-				success: function(data){
-					var json = $.parseJSON(data);
-					var resCodeRemove = json.resCodeRemove;
-					if(json.responseCodeOnRemove == '100'){
-						showImageActionMessage('removeSuccess', '');
-					}			
-					if(json.responseCodeOnRemove == '101'){
-						showImageActionMessage('removeError','');
-					}				
-					
-					//$('#image-operations-Message-Area').fadeOut('fast').html(''); //hotfix for #931 after image removal process;
-					
-					if(json.responseCodeOnRemove && json.responseCodeOnRemove !== undefined){
-						console.log('json.responseCodeOnRemove--' + json.responseCodeOnRemove);
-						document.getElementById('OnRemovalImageId').value = json.responseCodeOnRemove;
-					}			
-						
-					
-					setUploadVPILink($("#ajaxaction").val(),document.getElementById("selectedColorOrinNum").value,$("#removeImageUrl").val());
-					trClick();
-					scrollToView('vImage','vImage');
-				},
-				error:function (xhr, ajaxOptions, thrownError){            	
-	            	var error = $.parseJSON(xhr.responseText);               
-	             }
 
-			});	
-		/* setTimeout(function(){setUploadVPILink($("#ajaxaction").val(),document.getElementById("selectedColorOrinNum").value,$("#removeImageUrl").val());trClick();scrollToView('vImage','vImage');},2000); */	
-	}
+function removeVPISampleImageRows(imageId,imageName,rowCount,selectedOrin){  
+  var removeImageUrl = $("#removeImageUrl").val(); 
+  var table = document.getElementById("vImage"); 
+  
+  inputChangedNew = document.getElementById("removeFlagOff").value;
+  
+  table.deleteRow(rowCount);  
+   $.ajax({
+			type: 'POST',
+			url : removeImageUrl,
+			datatype:'json',			
+			data: {selectedColorOrin:selectedOrin,imageIDToDel:imageId,imageNameToDel:imageName},			
+			success: function(data){
+				var json = $.parseJSON(data);				
+				var resCodeRemove = json.resCodeRemove;
+				var imageIdRemove = json.imageIdRemove;				
+				if(resCodeRemove == '101'){
+					imageIdRemove ? $('#removeFailLevelId').text("Image \'" + imageIdRemove + "\' not removed") : void(0);
+					//$('#overlay_submitOrReject').show();
+					//$('#dialog_removeFailed').show();
+					jq('#dialog_removeFailed').dialog('open');
+				}				
+				
+				$('#image-operations-Message-Area').fadeOut('fast').html(''); //hotfix for #931 after image removal process;
+				
+				if(json.responseCodeOnRemove && json.responseCodeOnRemove !== undefined){
+					console.log('json.responseCodeOnRemove--' + json.responseCodeOnRemove);
+					document.getElementById('OnRemovalImageId').value = json.responseCodeOnRemove;
+				}			
+					
+				
+				setUploadVPILink($("#ajaxaction").val(),document.getElementById("selectedColorOrinNum").value,$("#removeImageUrl").val());
+				trClick();
+				scrollToView('vImage','vImage');
+			},
+			error:function (xhr, ajaxOptions, thrownError){            	
+            	var error = $.parseJSON(xhr.responseText);               
+             }
 
+		});	
+	/* setTimeout(function(){setUploadVPILink($("#ajaxaction").val(),document.getElementById("selectedColorOrinNum").value,$("#removeImageUrl").val());trClick();scrollToView('vImage','vImage');},2000); */	
+}
 
 function VPISampleImageRows(imageId,imageName,imagefilepath,imageLocation,shotType ,linkStatus,imageStatus,sampleId,sampleReceived,
 silhouette,turnInDate,sampleCordinatorNote,action,role, shotTypeParamArray) {	
@@ -391,19 +385,22 @@ silhouette,turnInDate,sampleCordinatorNote,action,role, shotTypeParamArray) {
 }
 	cell6.appendChild(element7);	
 	var cell7 = row.insertCell(6);
-	cell7.id="imgSelect";
-	cell7.name="imgSelect";	
-	
+	cell7.id="removeVPI";
+	cell7.name="removeVPI";		
 	/*if(imageStatus  == 'Completed' || imageStatus  == 'Ready_For_Review'){
 		cell7.innerHTML = 'Remove';
 	}else{
 		cell7.innerHTML = '<a href="javascript:confirmRemovePopUp('+imageId+',\''+imageName+'\','+rowCount+')">Remove</a>';
-	}	*/	
-	if(imageStatus  == 'Completed' || imageStatus  == 'Ready_For_Review' || imageStatus  == 'ReadyForReview'){
-		cell7.innerHTML = '<input type="checkbox" class="SelectAllImg" id="imgSelect" name="imgSelect" disabled>	';
+	}*/	
+	setTimeout(function(){		
+		if(imageStatus  == 'Completed' || imageStatus  == 'Ready_For_Review' || imageStatus  == 'ReadyForReview'){
+		
+		cell7.innerHTML = 'Remove';
 	}else{
-		cell7.innerHTML = '<input type="checkbox" class="SelectAllImg" id="imgSelect" name="imgSelect">	';
-	}
+		cell7.innerHTML = '<a href="javascript:;" onclick="confirmRemovePopUp('+imageId+',\''+imageName+'\','+rowCount+')">Remove</a>';//Fix for 591
+	}	
+	},100);
+	
 
 	}else if(role == 'dca'){
 	//DCA Login	
@@ -515,15 +512,13 @@ silhouette,turnInDate,sampleCordinatorNote,action,role, shotTypeParamArray) {
 		};	
 	}	
 	cell12.appendChild(element13);	
-	var cell13 = row.insertCell(7);
-	cell13.id="imgSelect";
-	cell13.name="imgSelect";
+	var cell13 = row.insertCell(7);	
 	if(imageStatus  == 'Completed'){
-	cell13.innerHTML = '<input type="checkbox" class="SelectAllImg" id="imgSelect" name="imgSelect" disabled>';
+		cell13.innerHTML = 'Remove';
 	}else{
-	cell13.innerHTML = '<input type="checkbox" class="SelectAllImg" id="imgSelect" name="imgSelect" >';
+		cell13.innerHTML = '<a href="javascript:;" onclick="confirmRemovePopUp('+imageId+',\''+imageName+'\','+rowCount+')">Remove</a>';//Fix for 591
 	}
-	}else if(role=='readonly'){	
+    }else if(role=='readonly'){	
   	//readonly Login	
    	var cell1 = row.insertCell(0);
    	cell1.id="imageId";
@@ -578,13 +573,7 @@ silhouette,turnInDate,sampleCordinatorNote,action,role, shotTypeParamArray) {
     cell5.name="imageStatus";
 	cell5.innerHTML = imageStatus;	
 }
-	if($('input[name=imgSelect]').filter(':enabled').length === 0){
-        $('input[name="removeImage"]').attr('disabled', 'disabled');
-        $('input[name="imgSelectAll"]').attr('disabled', 'disabled');
-	}else{
-	    $('input[name="removeImage"]').removeAttr('disabled');
-        $('input[name="imgSelectAll"]').removeAttr('disabled');
-	}
+	
 }
 
 function setUploadVPILink(url,orin,removeImageUrl,supplierId ){
@@ -925,7 +914,7 @@ function checkApproveImageStatus(orinId,imageStatus){
 			<div class="ui-widget">
 				<div class="ui-state-error ui-corner-all" style="padding: 0 .7em;">
 					<p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>
-					<strong id= "removeFailLevelId">Image not removed</strong></p>
+					<strong id= "removeFailLevelId">Are you sure you want to remove?</strong></p>
 				</div>
 			</div>
 			<ul>
@@ -960,7 +949,7 @@ function checkApproveImageStatus(orinId,imageStatus){
 			<div class="ui-widget">
 							<div class="ui-state-error ui-corner-all" style="padding: 0 .7em;">
 								<p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>
-								<strong>Are you sure you would like to remove the selected images?</strong></p>
+								<strong>Are you sure you want to remove?</strong></p>
 							</div>
 						</div>
 			<ul>
@@ -969,7 +958,7 @@ function checkApproveImageStatus(orinId,imageStatus){
 				</li>-->				
 			</br> 
 				<li class="buttons" style="float:right;">
-					<input class="btn-new ui-button ui-corner-all ui-widget"   id="removeConfirmPopUpOkId" type="button" onclick="removeVPISampleImageRows(document.getElementById('selectedOrinVPI').value);dialogHideonOk();" name="Ok" value="Ok" />			
+					<input class="btn-new ui-button ui-corner-all ui-widget"   id="removeConfirmPopUpOkId" type="button" onclick="removeVPISampleImageRows(document.getElementById('imgHiddenId').value,document.getElementById('imgNameHiddenId').value,document.getElementById('imgRowId').value,document.getElementById('selectedOrinVPI').value);dialogHideonOk();" name="Ok" value="Ok" />			
 					
 					<input class="btn-new ui-button ui-corner-all ui-widget"   id="removePopUpClose" type="button" onclick="jq('#dialog_submitRemove').dialog('close')" name="Cancel" value="Cancel" /> &nbsp;&nbsp;&nbsp;&nbsp;
 				</li>				
@@ -982,17 +971,24 @@ function checkApproveImageStatus(orinId,imageStatus){
 <!-- Image Remove Status Popup Start-->
 <div id="dialog_submitRemoveSuccess" class="web_dialog_imageUploadPopUp" style="height: 140px;">
 	<div id="content">
-		
-		<div class="ui-widget">
-      <div class="ui-state-error ui-corner-all" style="padding: 0 .7em;">
-         <p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>
-         <strong>Image Removed Successfully.</strong></p>
-      </div>
-   </div>			
-				
-				<br>							
-					<input class="btn"   id="removeSuccessPopClose" type="button" onclick="jq('#dialog_submitRemoveSuccess').dialog('close');" name="Ok" value="Ok" style="float: right;" />					
-				
+		<div class="x-panel-header">
+			Remove Image Status
+			
+			<input type="hidden" id="imgHiddenId" name="imgHiddenId" value=""></input>
+			<input type="hidden" id="imgRowId" name="imgRowId" value=""></input>
+			
+		</div>
+		<div class="x-panel-body;border: 0px solid #99bbe8;">
+			</br>
+			</br>
+			<ul>
+				<li>				
+					<label style="margin-left:53px;height: 16px;">Image Removed Successfully </label>
+				</li>				
+			</br>
+				<li>								
+					<input class="btn"   id="removeSuccessPopClose" type="button" onclick='$("#overlay_submitOrReject").hide();$("#dialog_submitRemoveSuccess").hide();' name="Ok" value="Ok" style="float: right;" />					
+				</li>
 				
 				
 			</ul>
@@ -1001,16 +997,7 @@ function checkApproveImageStatus(orinId,imageStatus){
 	</div>
 </div>
 <!-- Image Remove Status Popup Ends-->
-<div id="dialog_removeImage" class="web_dialog_imageUploadPopUp">
-   <div class="ui-widget">
-      <div class="ui-state-error ui-corner-all" style="padding: 0 .7em;">
-         <p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>
-         <strong>Please select atlest one Image.</strong></p>
-      </div>
-   </div>
-   <br>
-   <input class="btn-new ui-button ui-corner-all ui-widget"   id="removeImgClose" type="button" onclick="jq('#dialog_removeImage').dialog('close')" name="Close" value="Close" />
-</div>
+
 <form:form commandName="workflowForm" method="post" action="${formAction}" name="workListDisplayForm" id="workListDisplayForm">
       
 		<div  class="cars_panel x-hidden" >

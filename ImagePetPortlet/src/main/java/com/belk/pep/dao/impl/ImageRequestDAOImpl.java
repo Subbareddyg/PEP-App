@@ -871,7 +871,6 @@ public class ImageRequestDAOImpl implements ImageRequestDAO {
     }
     return pet; 
     }
-    
     public boolean releseLockedPet(  String orin, String pepUserID,String pepFunction)throws PEPPersistencyException {
         LOGGER.info("releseLockedPet image request DAO Impl:: lockPET"); 
         boolean  isPetReleased  = false;        
@@ -899,7 +898,6 @@ public class ImageRequestDAOImpl implements ImageRequestDAO {
         return isPetReleased;
         
     }
-    
     /**
      * Method to get the Image attribute details from database.
      *    
@@ -1275,57 +1273,5 @@ public class ImageRequestDAOImpl implements ImageRequestDAO {
         LOGGER.info("Exiting getImageInfoDetails() method");
         return contentStatus;
     } 
-        
-    /**
-     * Method to insert record(s) into IMAGE_SOFT_DELETE table.
-     */
-    @Override
-    public List<String> insertImageDelete(String orin, String deletedBy, String[] imageIds, String[] imageNames) throws PEPPersistencyException 
-    {
-        LOGGER.info("***Entering insertImageDelete()  method in ImageRequestDAOImpl.");
-        int queryStatus;
-        ArrayList<String> failedImageIds = new ArrayList<String>();
-        Session session = null;
-        Transaction tx = null;
-        final XqueryConstants xqueryConstants = new XqueryConstants();
-        try {
-            session = sessionFactory.openSession(); 
-            tx = session.beginTransaction();
-            Query query = null;
-            
-                
-            for (int i=0; i<imageIds.length; i++) {
-                query = session.createSQLQuery(xqueryConstants.getSoftImageDelete());
-                query.setParameter("image_id", imageIds[i]);
-                query.setParameter("image_name", imageNames[i]);
-                query.setParameter("orin_id", orin);
-                query.setParameter("deleted_by", deletedBy);
-                query.setParameter("delete_status", ImageConstants.DELETED_IMAGE_STATUS);
-                
-                queryStatus = query.executeUpdate();
-                
-                if (queryStatus <= 0) {
-                    LOGGER.error("Query Execution Failed for image_id:" + imageIds[i]);
-                    failedImageIds.add(imageIds[1]);
-                }
-                
-                if (i>0 && i%1000 == 0) {
-                    session.flush();
-                    session.clear();
-                }
-            }
-        }
-        catch(final Exception e){
-            LOGGER.error("Exception in insertImageDelete() method DAO layer. -- ",e);
-            throw new PEPPersistencyException(e);
-        }
-        finally { 
-            session.flush();
-            tx.commit();
-            session.close();
-        }
-        LOGGER.info("***Exiting ImageRequestDAO.insertImageDelete() method.");
-        return failedImageIds;
-    }
 
 }
