@@ -471,7 +471,7 @@ function dialogApproveShow(){
 	jq('#dialog_submitApprove').dialog('open');
 }
 
-function disableAllButtons(){
+function disableAllButtons(){	
 	if(document.getElementById('hiddenImageStatus').value == 'Completed' || document.getElementById('hiddenImageStatus').value == 'Approved'){		
 		document.getElementById('btnImageUploadAction').disabled = true;
 		document.getElementById('saveImage').disabled = true ;
@@ -795,7 +795,7 @@ function releseLockedPet(loggedInUser,releseLockedPetURL){
 <th><fmt:message key="label.vpisampleImage.imgrStatus" /></th>
 <th>Submit</th>
 <th><fmt:message key="label.vpisampleImage.Reject" /></th>
-<th><input type="checkbox" name="imgSelectAll" id="imgSelectAll">&nbsp; <input  class="btnRemove" id="removeImage" type="button"  onclick="imgRemoveSelected();" name="removeImage" title="Remove" width="48" value="Remove Selected" /></th>
+<th>Remove</th>
 <!-- Commented as the table is populating dynamically -->
 </table>
 </form>
@@ -834,7 +834,7 @@ function releseLockedPet(loggedInUser,releseLockedPetURL){
 <th><fmt:message key="label.vpisampleImage.imageShotType" /></th>
 <th><fmt:message key="label.vpisampleImage.imgrStatus" /></th>
 <th>Submit</th>
-<th><input type="checkbox" name="imgSelectAll" id="imgSelectAll">&nbsp; <input  class="btnRemove" id="removeImage" type="button"  onclick="imgRemoveSelected();" name="removeImage" title="Remove" width="48" value="Remove Selected" /></th>
+<th>Remove</th>
 </table>
 	</div>
 			</div>	
@@ -1372,42 +1372,6 @@ function releseLockedPet(loggedInUser,releseLockedPetURL){
 </div>
 </body>
 <script>
-
-
-function imgRemoveSelected(){
-	if($("#imgSelect").length >= 1){
-   if ($("#imgSelect:checked").length >= 1) {
-	  jq('#dialog_submitRemove').dialog('open');
-   }
-   else {
-		jq('#dialog_removeImage').dialog('open');
-		}
-	}
-}
-
-$(document).on('click', "#imgSelectAll", function() { 
-	if(this.checked) {
-	   $('.SelectAllImg').each(function() {
-		   if($(this).is(':enabled')){
-	       this.checked = true; 
-		   }
-	   });
-    }else{
-	    $('.SelectAllImg').each(function() { 
-	    this.checked = false;       
-	   });         
-     }
-});
-$(document).on('click', ".SelectAllImg", function() {
-	if(($(".SelectAllImg").length)==($(".SelectAllImg:checked").length)){
-	  	 $("#imgSelectAll").prop('checked',true);
-	}else{
-		  $("#imgSelectAll").prop('checked',false);
-		 }
-});
-	
-
-
 //Logic for fileUpload rendering using popup
 
 var uploadStatus = '${uploadSuccess}';
@@ -1416,15 +1380,6 @@ document.getElementById('uploadStatHidden').value = uploadStatus;
 var selectedColorOrin1 = '';
 
 $(function() {
-jq('#dialog_removeImage').dialog({
-	modal: true,
-	autoOpen: false,
-	resizable: true,
-	dialogClass: "dlg-custom",
-	title: 'Remove Image Check',
-	minWidth: 350,
-	minHeight: 140,
-});	
 jq('#dialog_UploadImage').dialog({
 	//modal: true,
 	autoOpen: false,
@@ -1466,16 +1421,6 @@ jq('#dialog_uniqueShotTypeCheckId').dialog({
 	//show: { effect: "fade", duration: 800 },
 });
 jq('#dialog_removeFailed').dialog({
-	modal: true,
-	autoOpen: false,
-	resizable: true,
-	dialogClass: "dlg-custom",
-	title: 'Remove Image Status',
-	minWidth: 350,
-	minHeight: 140,
-	//show: { effect: "fade", duration: 800 },
-});
-jq('#dialog_submitRemoveSuccess').dialog({
 	modal: true,
 	autoOpen: false,
 	resizable: true,
@@ -1740,16 +1685,6 @@ function showImageActionMessage(eventType, imageId){
 			break;
 		case 'saveError':
 			var dlgContent = buildMessage('ShotType not saved successfully', 'error');
-			$('#image-operations-Message-Area').html(dlgContent).fadeIn('fast');
-			//cleanupMessage($('#image-Upload-Message-Area'));
-			break;
-		case 'removeSuccess':
-			var dlgContent = buildMessage('Image Removed successfully.', 'success');
-			$('#image-operations-Message-Area').html(dlgContent).fadeIn('fast');
-			//cleanupMessage($('#image-Upload-Message-Area'));
-			break;
-		case 'removeError':
-			var dlgContent = buildMessage('Image not removed.', 'error');
 			$('#image-operations-Message-Area').html(dlgContent).fadeIn('fast');
 			//cleanupMessage($('#image-Upload-Message-Area'));
 			break;
