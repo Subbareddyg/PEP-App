@@ -238,11 +238,4 @@
 		    		<tag>pep-1.2.0.38-SNAPSHOT</tag>
 				    </scm>
 
-			<distributionManagement>
-					<repository>
-								<id>belk-m2</id>
-											<name>Belk M2 Repo</name>
-														<url>http://colxljeniesd001.belkinc.com:8081/nexus/content/repositories/stage/</url>
-																</repository>
-																</distributionManagement>
 </project>
