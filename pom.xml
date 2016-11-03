@@ -57,7 +57,6 @@
 	            <developerConnection>scm:git:ssh://git@bitbucket.org/belk_ecom/pep-application</developerConnection>
 		    		<tag>pep-1.2.0.38-SNAPSHOT</tag>
 				    </scm>
-
 			<distributionManagement>
 					<!--<repository>
 								<id>belk-m2</id>
@@ -70,5 +69,4 @@
 						<url>s3://zircon-firestorm/stage</url>
 					</repository>
 			</distributionManagement>
-							
 </project>

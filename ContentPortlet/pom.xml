@@ -79,19 +79,14 @@
 					</execution>
 				</executions>
 			</plugin>
-
-
-
-
-
 		</plugins>
-				<extensions>
+		<extensions>
 		  <extension>
 			<groupId>org.springframework.build</groupId>
 			<artifactId>aws-maven</artifactId>
 			<version>5.0.0.RELEASE</version>
 		  </extension>
-    	</extensions>
+        </extensions>
 	</build>
 	<dependencies>
        		  <dependency>
@@ -269,7 +264,8 @@
 	            <developerConnection>scm:git:ssh://git@bitbucket.org/belk_ecom/pep-application</developerConnection>
 		    		<tag>pep-1.2.0.38-SNAPSHOT</tag>
 				    </scm>
-	<distributionManagement>
+
+			<distributionManagement>
 					<!--<repository>
 								<id>belk-m2</id>
 								<name>Belk M2 Repo</name>
@@ -280,5 +276,5 @@
 						<name>s3aws</name>
 						<url>s3://zircon-firestorm/stage</url>
 					</repository>
-	</distributionManagement>
+			</distributionManagement>
 </project>
