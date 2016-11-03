@@ -59,16 +59,16 @@
 				    </scm>
 
 			<distributionManagement>
-					<repository>
+					<!--<repository>
 								<id>belk-m2</id>
-											<name>Belk M2 Repo</name>
-														<url>http://colxljeniesd001.belkinc.com:8081/nexus/content/repositories/stage/</url>
-																</repository> 
-		<!--<repository>
-			<id>s3aws</id>
-			<name>s3aws</name>
-			<url>s3://zircon-firestorm/stage</url>
-		</repository>-->
-																</distributionManagement>
+								<name>Belk M2 Repo</name>
+							    <url>http://colxljeniesd001.belkinc.com:8081/nexus/content/repositories/stage/</url>
+					</repository> -->
+					<repository>
+						<id>s3aws</id>
+						<name>s3aws</name>
+						<url>s3://zircon-firestorm/stage</url>
+					</repository>
+			</distributionManagement>
 							
 </project>
