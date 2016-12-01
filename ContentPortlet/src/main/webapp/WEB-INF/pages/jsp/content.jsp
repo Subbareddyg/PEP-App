@@ -353,7 +353,7 @@
       
             	 //Logic for disabling the Product Name , Product Description Text  Area ,Style Color  Approve button ,omni channel ,car brand
             	 //when the Style Color Pet Status is completed or closed
-            	             
+            	    var styleColorInitiatedCount = false;       
 	      			for(i=1; i<=styleColorRowCount; i++){
       				   var styleColorContentPetStatus= $(".petColorRowClass"+(i)).text();
       				   var approveButtonId = "styleColorApproveButtonId"+i;
@@ -366,8 +366,18 @@
 		            		  $('#vendorColorId').attr("disabled", "disabled"); //	vendorColor would always be non editable -defect 358
 		            		//  $('#saveButtonId').removeAttr('disabled'); 		            		  
 		            		  document.getElementById(approveButtonId).disabled = false;            		   
-	            		   }  		
-	      			}   	  
+	            		   }
+	      	    	   if(styleColorContentPetStatus=='Initiated')
+	      	    		   {
+	      	    		 		styleColorInitiatedCount = true;
+	      	    		   }
+	      			}
+	      			
+	      			if(styleColorInitiatedCount==true)
+	      				{
+	      					$("#publisStatusCodePublishToWeb").removeAttr("disabled"); 
+	      					$('#publisStatusCodePublishToWeb').prop('checked', false);
+	      				}
             	  //End of logic for disabling for role name dca       	      
         		  } // End of DCA	    	  
             	  
