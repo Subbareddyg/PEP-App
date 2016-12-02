@@ -256,144 +256,76 @@ public class ImageRequestServiceImpl implements ImageRequestService {
    }
    
    
-/**
- * Method call for remove image 
- */
-public String callRemoveImageWebService(JSONArray jsonArray) throws Exception,PEPFetchException {
-       LOGGER.info("ImageRequestServiceImpl:::callRemoveImageWebService");
+    /**
+     * Method call for remove image 
+     */
+    public String callRemoveImageWebService(JSONArray jsonArray) throws Exception, PEPFetchException {
+        LOGGER.info("ImageRequestServiceImpl:::callRemoveImageWebService");
 
-       String responseMsg = "";
-       boolean flag = false;
-       String msgCodeStr = "";
-       String responseMSGCode = "";
-       try {
-           Properties prop =PropertyLoader.getPropertyLoader(ImageConstants.MESS_PROP);
-           String targetURLs = prop.getProperty(ImageConstants.DEV_SERVICE_URL);          
-           LOGGER.info("targetURLs **********"+targetURLs);
-           URL targetUrl = new URL(targetURLs);
-           HttpURLConnection httpConnection =(HttpURLConnection) targetUrl.openConnection();
-           httpConnection.setDoOutput(true);
-           httpConnection.setRequestMethod("POST");
-           httpConnection.setRequestProperty("Content-Type","application/json");
-           LOGGER.info("ImageRequestServiceImpl::Json Array" + jsonArray.toString());
-           JSONObject jsonMap = new JSONObject();
-           jsonMap.put(ImageConstants.SERVICE_REMOVE_IMAGE_LIST, jsonArray);
-           String input = jsonMap.toString();
-           LOGGER.info("final object in json" + jsonMap.toString());
-           OutputStream outputStream = httpConnection.getOutputStream();
-           outputStream.write(input.getBytes());
-           outputStream.flush();
-           if (200 == httpConnection.getResponseCode()) {
-           }
+        String responseMsg = "";
+        String responseMSGCode = "";
+        try {
+            Properties prop = PropertyLoader.getPropertyLoader(ImageConstants.MESS_PROP);
+            String targetURLs = prop.getProperty(ImageConstants.DEV_SERVICE_URL);
+            LOGGER.info("targetURLs **********" + targetURLs);
+            URL targetUrl = new URL(targetURLs);
+            HttpURLConnection httpConnection = (HttpURLConnection) targetUrl.openConnection();
+            httpConnection.setDoOutput(true);
+            httpConnection.setRequestMethod("POST");
+            httpConnection.setRequestProperty("Content-Type", "application/json");
+            LOGGER.info("ImageRequestServiceImpl::Json Array" + jsonArray.toString());
+            JSONObject jsonMap = new JSONObject();
+            jsonMap.put(ImageConstants.SERVICE_REMOVE_IMAGE_LIST, jsonArray);
+            String input = jsonMap.toString();
+            LOGGER.info("final object in json" + jsonMap.toString());
+            OutputStream outputStream = httpConnection.getOutputStream();
+            outputStream.write(input.getBytes());
+            outputStream.flush();
+            
+            if (httpConnection.getResponseCode() != 200) {
+                throw new Exception("Failed : HTTP error code : " + httpConnection.getResponseCode());
+            }
 
-           if (httpConnection.getResponseCode() != 200) {
-               throw new Exception("Failed : HTTP error code : "+ httpConnection.getResponseCode());
-           }
+            BufferedReader responseBuffer = new BufferedReader(
+                    new InputStreamReader((httpConnection.getInputStream())));
 
-           BufferedReader responseBuffer = new BufferedReader(new InputStreamReader(
-        		   (httpConnection.getInputStream())));
+            String output;
+            LOGGER.info("Output from Server:\n");
+            while ((output = responseBuffer.readLine()) != null) {
+                LOGGER.info(output);
+                if ((output != null) && (output.contains("not") && (output.indexOf("not") != -1))) {
+                    responseMsg = ImageConstants.IMAGE_NOT_REMOVED;
+                    responseMSGCode = "101";
+                    responseMsg = responseMsg + "_" + responseMSGCode;
+                    LOGGER.info("responseMsg---Failed**" + responseMsg);
+                } else {
+                    responseMsg = prop.getProperty(ImageConstants.RESPONSE_MSG);
+                    responseMSGCode = "100";
+                    responseMsg = responseMsg + "_" + responseMSGCode;
+                    LOGGER.info("responseMsg---Success**" + responseMsg);
+                }
 
-           String output;
-           LOGGER.info("Output from Server:\n");
-           while ((output = responseBuffer.readLine()) != null) {
-               LOGGER.info(output);
+            }
+            httpConnection.disconnect();
+        } catch (MalformedURLException e) {
+            LOGGER.error("MalformedURLException Occurred: " + e.getMessage());
+            throw new PEPFetchException();
+        } catch (ClassCastException e) {
+            LOGGER.error("ClassCastException Occurred: " + e.getMessage());
+            throw new PEPFetchException();
+        } catch (IOException e) {
+            LOGGER.error("IOException Occurred: " + e.getMessage());
+            throw new Exception();
+        } catch (JSONException e) {
+            LOGGER.error("JSONException Occurred: " + e.getMessage());
+            throw new PEPFetchException();
+        } catch (Exception e) {
+            LOGGER.error("Exception Occurred: " + e.getMessage());
+            throw new Exception();
+        }
 
-               // Below if block is for handling single row data.
-               if ((jsonArray != null) && (jsonArray.length() <= 1)) {
-                   if ((output != null)
-                       && (output.contains("not") && (output.indexOf("not") != -1))) {
-                       responseMsg = ImageConstants.IMAGE_NOT_REMOVED;
-                       responseMSGCode = "101";
-                       responseMsg = responseMsg+"_"+responseMSGCode;
-                       LOGGER.info("responseMsg---Failed**" + responseMsg);
-                       
-
-                   } else {
-                      responseMsg = prop.getProperty(ImageConstants.RESPONSE_MSG);
-                       responseMSGCode = "100";
-                       responseMsg = responseMsg+"_"+responseMSGCode;
-                       LOGGER.info("responseMsg---Success**" + responseMsg);
-                   }
-
-               } else {
-                   // This block is for handling multiple row data.
-                   JsonElement jelement = new JsonParser().parse(output);
-                   JsonObject jobject = jelement.getAsJsonObject();
-                   JsonArray jsonObject =(JsonArray) jobject.get(ImageConstants.SERVICE_REMOVE_IMAGE_LIST);
-
-                   for (int i = 0; i < jsonObject.size(); i++) {
-                       LOGGER.info("ImageRequestServiceImpl::Id value size" + jsonObject.size() + "i value" + i);
-                       if (jsonObject.size() == 1) {
-                           JsonObject individualjson = jsonObject.getAsJsonObject();
-                           Object msgCode =individualjson.get(ImageConstants.MSG_CODE);
-
-                           LOGGER.info("ImageRequestServiceImpl::MsgCode with one json" + msgCode.toString());
-                           msgCodeStr = msgCode.toString();
-                           msgCodeStr =msgCodeStr.substring(1, msgCodeStr.length() - 1);
-                           LOGGER.info("aa" + msgCodeStr);
-                       } else {
-                           JsonObject individualjson = jsonObject.get(i).getAsJsonObject();
-                           Object msgCode =individualjson.get(ImageConstants.MSG_CODE);
-
-                           LOGGER.info("ImageRequestServiceImpl::MsgCode" + msgCode.toString());
-
-                           msgCodeStr = msgCode.toString();
-                           msgCodeStr =msgCodeStr.substring(1, msgCodeStr.length() - 1);
-                           LOGGER.info("msgCodeStr" + msgCodeStr);
-                       }
-
-                       if (msgCodeStr.equalsIgnoreCase(ImageConstants.SUCCESS_CODE)) {
-                           flag = true;
-                           LOGGER.info("ImageRequestServiceImpl:::callRemoveImageWebService:::flag" + flag);
-                       } else if (msgCodeStr.equalsIgnoreCase(ImageConstants.FAILURE_CODE)) {
-                           flag = false;
-                       }
-                   }
-                   if (flag) {
-                       responseMsg = prop.getProperty(ImageConstants.RESPONSE_MSG);
-                       LOGGER.info("ImageRequestServiceImpl:::callRemoveImageWebService:::responseMsg" + responseMsg);
-
-                   } else {
-                       responseMsg = ImageConstants.IMAGE_NOT_REMOVED;
-                       LOGGER.info("ImageRequestServiceImpl:::callRemoveImageWebService:::responseMsg"+ responseMsg);
-
-                   }
-               }
-
-           }
-
-           httpConnection.disconnect();
-       } catch (MalformedURLException e) {
-           LOGGER.info("inside malformedException");
-           throw new PEPFetchException();
-          // e.printStackTrace();
-
-       } catch (ClassCastException e) {
-       	
-           e.printStackTrace();
-           throw new PEPFetchException();
-       } catch (IOException e) {
-           LOGGER.info("inside IOException");
-
-           e.printStackTrace();
-           throw new Exception();
-
-       } catch (JSONException e) {
-           LOGGER.info("inside JSOnException");
-           
-
-           e.printStackTrace();
-           throw new PEPFetchException();
-       } catch (Exception e) {
-           LOGGER.info("inside Exception" + e);
-
-           e.printStackTrace();
-           throw new Exception();
-
-       }
-
-       return responseMsg;
-   }
+        return responseMsg;
+    }
 
 //Service Call for Upload VPI Image
 public String callUploadVPIService(JSONArray jsonArray) throws Exception,PEPFetchException {
@@ -618,7 +550,7 @@ public String callApproveorRejectActionService(JSONArray jsonArray) throws Excep
             LOGGER.info(output);
 
             // Below if block is for handling single row data.
-            if ((jsonArray != null) && (jsonArray.length() <= 1)) {
+            if ((jsonArray != null) && (jsonArray.length() != 0)) {
                 if ((output != null)
                     && (output.contains("not") && (output.indexOf("not") != -1))) {
                     responseMsg = prop.getProperty(ImageConstants.IMAGE_ERROR_STATUS);
@@ -1242,7 +1174,7 @@ public String callRemoveGroupingImageWebService(JSONObject jsonObj) throws Excep
         		   (httpConnection.getInputStream())));
            String output;       
            while ((output = responseBuffer.readLine()) != null) {
-               LOGGER.info("Grouping remove webservice response -- "+output);               
+               LOGGER.info("Grouping remove webservice response -- "+output);
             String responseMsgCode = "" ;  
        		JSONObject jsonObjectRes = null;
        		if(null != output && !("").equals(output)){
@@ -1464,6 +1396,32 @@ public boolean getContentStatus(String groupingId) throws PEPServiceException, P
     LOGGER.error("***Exiting getContentStatus() method.");
     return contentStatus;
     
+}
+
+/**
+ * Method to insert record(s) into IMAGE_SOFT_DELETE table.
+ */
+public boolean insertImageDelete(String orin, String deletedBy, String[] imageIds, String[] imageNames) throws PEPServiceException, PEPPersistencyException
+{
+    boolean deleteStatus = false;    
+    try
+    {
+        List<String> failedImageIdList = imageRequestDAO.insertImageDelete(orin, deletedBy, imageIds, imageNames);
+        
+        if (failedImageIdList.isEmpty()) {
+            deleteStatus = true;
+        }
+    }
+    catch (PEPPersistencyException e) {
+        LOGGER.error("PEPPersistencyException in insertImageDelete method, Service Layer -- ", e);
+        throw e;
+    }
+    catch (Exception e) {
+        LOGGER.error("insertImageDelete method, Service Layer -- ",e);
+        throw new PEPServiceException(e.getMessage());
+    }
+    LOGGER.error("***Exiting insertImageDelete() method.");
+    return deleteStatus;
 }
     
 }

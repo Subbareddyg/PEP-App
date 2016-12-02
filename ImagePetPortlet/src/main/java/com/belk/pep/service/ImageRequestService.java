@@ -196,5 +196,7 @@ public interface ImageRequestService {
 	 */
 	public boolean getContentStatus(String groupingId) throws PEPServiceException, PEPPersistencyException;
 	
+    public boolean insertImageDelete(String orin, String deletedBy, String[] imageIds, String[] imageNames) throws PEPServiceException, PEPPersistencyException;
+	
 }
 

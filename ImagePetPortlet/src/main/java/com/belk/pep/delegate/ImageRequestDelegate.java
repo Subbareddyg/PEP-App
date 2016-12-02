@@ -304,4 +304,22 @@ public class ImageRequestDelegate {
 		        return imageRequestService.getContentStatus(groupingId);
 		        
 		    }
+		    
+            /**
+             * This method will insert record into IMAGE_SOFT_DELETE table. Separate
+             * batch job will read from this table and physically delete the images
+             * then.
+             * 
+             * @param orin
+             * @param deletedBy
+             * @param imageIds
+             * @param imageNames
+             * @return
+             * @throws PEPServiceException
+             * @throws PEPPersistencyException
+             */
+            public boolean insertImageDelete(String orin, String deletedBy, String[] imageIds, String[] imageNames)
+                    throws PEPServiceException, PEPPersistencyException {
+                return imageRequestService.insertImageDelete(orin, deletedBy, imageIds, imageNames);
+            }
 }

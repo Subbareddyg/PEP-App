@@ -129,14 +129,17 @@ public class ImageRequestController {
         this.imageRequestDelegate = imageRequestDelegate;
     }
     
-    // Web service to callRemoveImageWebService
+    /** 
+     * Web service to callRemoveImageWebService.
+     * 
+     * @param imageInfo
+     * @return
+     * @throws Exception
+     * @throws PEPFetchException
+     */
     private String callRemoveImageWebService(JSONArray imageInfo) throws Exception,
         PEPFetchException {
-    	
-        String responseMsg = null;
-        responseMsg = imageRequestDelegate.callRemoveImageWebService(imageInfo);
-        return responseMsg;
-
+        return imageRequestDelegate.callRemoveImageWebService(imageInfo);
     }
 	
 	// Service Call for Upload VPI
@@ -385,160 +388,144 @@ public class ImageRequestController {
     
     
    
-    
+   /**
+    * This method will attempt to delete multiple images via PIM's Image Web Service.  
+    * If successful, this method will also soft-delete the images from PEP database.
+    * 
+    * @param request
+    * @param response
+    */
    @ResourceMapping("removeSampleImageUrl")
-   public void removeSampleImageMethod(ResourceRequest request, ResourceResponse response){ 
-	   
-	   String responseMsg = "";
-	   
-	   JSONObject jsObj = new JSONObject();
-	    LOGGER.info("inside.............resource");
-	    
-	    ImageDetails imageDetailsFromIPC = getUserDetailsfromLogin(request);
-	       String updatedBy = "";
-	       if(imageDetailsFromIPC.getUserData().getBelkUser()!= null){
-	             updatedBy = imageDetailsFromIPC.getUserData().getBelkUser().getLanId();
-	       }else if (imageDetailsFromIPC.getUserData().getVpUser()!= null){
-	             updatedBy = imageDetailsFromIPC.getUserData().getVpUser().getUserEmailAddress();
-	       }
-	    
-	   String orinId = request.getParameter("selectedColorOrin");
-	   String imagId = request.getParameter("imageIDToDel");	   
-	   String imagName = request.getParameter("imageNameToDel");
-	   
-	   Properties prop =PropertyLoader.getPropertyLoader(ImageConstants.LOAD_IMAGE_PROPERTY_FILE);
-	   
-	   String fileDir = prop.getProperty(ImageConstants.FILE_UPLOAD_PATH);
-	   //String fileDir = ImageConstants.FILE_UPLOAD_PATH;
-	   //String fileDir = "/tmp/";
-	   
-	   String fileToBeDeleted = fileDir + imagName;
-	   LOGGER.info("File to be deleted::----" +fileToBeDeleted);
-	   
-	   boolean fileRemove = false ;
-	   JSONObject removeJSON = new JSONObject();
-	   JSONArray jsonArray = new JSONArray();
-       try {  
-    	   JSONObject jsonStyle =populateJson(orinId.trim(),imagId);
-           jsonArray.put(jsonStyle);        
-           responseMsg = callRemoveImageWebService(jsonArray);          
-           String [] resCodeWithMsg = responseMsg.split("_");
-           String resMsg = resCodeWithMsg[0];
+   public void removeSampleImageMethod(ResourceRequest request, ResourceResponse response){
+
+       String responseMsg = "";
+
+       JSONObject jsObj = new JSONObject();
+       LOGGER.info("inside.............resource");
+
+       ImageDetails imageDetailsFromIPC = getUserDetailsfromLogin(request);
+       String updatedBy = "";
+       if (imageDetailsFromIPC.getUserData().getBelkUser() != null) {
+           updatedBy = imageDetailsFromIPC.getUserData().getBelkUser().getLanId();
+       } else if (imageDetailsFromIPC.getUserData().getVpUser() != null) {
+           updatedBy = imageDetailsFromIPC.getUserData().getVpUser().getUserEmailAddress();
+       }
+
+       String orinId = request.getParameter("selectedColorOrin");
+       String imagId[] = request.getParameterValues("imageIDToDel[]");
+       String imagName[] = request.getParameterValues("imageNameToDel[]");
+       JSONObject removeJSON = new JSONObject();
+       JSONArray jsonArray = new JSONArray();
+       try {
+           JSONObject jsonStyle;
+
+           for (int i = 0; i < imagId.length; i++) {
+               jsonStyle = populateJson(orinId.trim(), imagId[i]);
+               jsonArray.put(jsonStyle);
+           }
+           // First, call PIM webservice for multiple image deletes
+           responseMsg = callRemoveImageWebService(jsonArray);
+           String[] resCodeWithMsg = responseMsg.split("_");
            String resCode = resCodeWithMsg[1];
            
-           if("100".equalsIgnoreCase(resCode)){
-        	   LOGGER.info("***Service success response For Remove***");
-        	   
-        	try {
-				fileRemove = fileDelete(fileToBeDeleted);
-				LOGGER.info("fileRemove::" +fileRemove);
-			}catch (FileNotFoundException e) {
-				e.printStackTrace();
-			}catch (IOException ex) {
-				ex.printStackTrace();
-			}
-        	 
-			try{
-				
-				/*
- 			  	 * Updating Image management Image Status 
- 			  	 */
-				JSONObject jsonStyle1 = new JSONObject();
-				String responseMsg1 = "";
-				JSONArray jsonArray1 = new JSONArray();
- 			  	ArrayList<SamleImageDetails> sampleImageLinkList = imageRequestDelegate.getSampleImageLinks(orinId);
- 			  	boolean rejected_status = false;
- 			  	boolean review_status = false;
- 			  	boolean initiated_status = false;
- 			  	boolean completed_status = false;
- 			  	
- 			  	if(null!=sampleImageLinkList){ 
- 			  	if(sampleImageLinkList.size()>0){
- 			  	for(int i=0 ;i < sampleImageLinkList.size();i++){
- 			  		SamleImageDetails sampleImageDetailsBean = sampleImageLinkList.get(i);
- 			  		if(sampleImageDetailsBean.getImageStatus().contains("Rejected")){
- 			  			rejected_status = true;
- 			  		}
- 			  		if(sampleImageDetailsBean.getImageStatus().equalsIgnoreCase("Ready_For_Review")||sampleImageDetailsBean.getImageStatus().equalsIgnoreCase("ReadyForReview") || sampleImageDetailsBean.getImageStatus().contains("Ready_")){
- 			  			review_status = true;
- 			  		}
- 			  		if(sampleImageDetailsBean.getImageStatus().equalsIgnoreCase("Initiated")){
- 			  			initiated_status = true;
- 			  		}
- 			  		if(sampleImageDetailsBean.getImageStatus().equalsIgnoreCase("Completed")){
- 			  			completed_status = true;
- 			  		}
- 			  		
- 			  		
- 			  	}
- 			  	}
- 			  	else{
- 			  		initiated_status = true;
- 			  	}
- 			  	
- 			  	}
- 			  	
- 			  	else{
- 			  		initiated_status = true;
- 			  	}
- 			  	LOGGER.info("Rejected_status = " + rejected_status + " Review Status = "+ review_status + " Intiated Status = " + initiated_status + " Completed Status " + completed_status);
- 			  	if(rejected_status){
- 			  		LOGGER.info("Call Service rejected in remove");
- 			  		jsonStyle1 = populateJsonForImageManagement(orinId, updatedBy, "04");
- 			  		jsonArray1.put(jsonStyle1);
- 			  		responseMsg1 = callApproveActionService(jsonArray1);
- 					LOGGER.info("-----remove responseMsg in rejected-----" + responseMsg1);
- 			  	}
- 			  	else if(review_status){
- 			  		LOGGER.info("Call Service readyforreview in remove");
- 			  		jsonStyle1 = populateJsonForImageManagement(orinId, updatedBy, "08");
- 			  		jsonArray1.put(jsonStyle1);
- 			  		responseMsg1 = callApproveActionService(jsonArray1);
- 					LOGGER.info("-----remove responseMsg in ReadyforReview-----" + responseMsg1);
-		  		}
-				else if(initiated_status){
-					LOGGER.info("Call Service initiated in remove");
-					jsonStyle1 = populateJsonForImageManagement(orinId, updatedBy, "01");
-					jsonArray1.put(jsonStyle1);
-					responseMsg1 = callApproveActionService(jsonArray1);
- 					LOGGER.info("-----remove responseMsg in Initiated-----" + responseMsg1);
-				}
-				else if(completed_status){
-					LOGGER.info("Call Service completed in remove");
-					jsonStyle1 = populateJsonForImageManagement(orinId, updatedBy, "02");
-					jsonArray1.put(jsonStyle1);
-					responseMsg1 = callApproveActionService(jsonArray1);
- 					LOGGER.info("-----remove responseMsg in completed-----" + responseMsg1);
-				}
-				else{
-					LOGGER.info(" remove Do Nothing");
-				}
- 			  	if("Image status update is successful".equalsIgnoreCase(responseMsg1)){
-					LOGGER.info(" ---Service Response is Success on Remove--- ");
-					String responseCodeOnRemove = "100";
-					jsObj.put("responseCodeOnRemove", responseCodeOnRemove);						
-					response.getWriter().write(jsObj.toString());
-					response.getWriter().flush();
-					response.getWriter().close();
-				}
-			}
-			catch(Exception ex){
-				ex.printStackTrace();
-			}
-           }else{
-        	   //Remove Failure
-        	   LOGGER.info("Remove Respone Failing code::" + resCode);
-        	   removeJSON.put("resCodeRemove", resCode);
-        	   removeJSON.put("imageIdRemove", imagId);
-        	   LOGGER.info("removeJSON::" + removeJSON.toString());
-        	   response.getWriter().write(removeJSON.toString());
-        	   response.getWriter().flush();
-        	   response.getWriter().close();
-        	   
+           LOGGER.info("*** Response Code from webservice ***"+resCode);
+           
+           if ("100".equalsIgnoreCase(resCode)) {
+               LOGGER.info("***Service success response For Remove***");
+               try {
+                   // Then, insert "image delete" record.
+                   callDeleteImage(orinId, updatedBy, imagId, imagName);
+                   
+               } catch (PEPFetchException ex) {
+                   LOGGER.error("PEPFetchException: " + ex.getMessage());
+               }
+
+               try {
+                   /*
+                    * Updating Image management Image Status
+                    */
+                   JSONObject jsonStyle1 = new JSONObject();
+                   String responseMsg1 = "";
+                   JSONArray jsonArray1 = new JSONArray();
+                   ArrayList<SamleImageDetails> sampleImageLinkList = imageRequestDelegate.getSampleImageLinks(orinId);
+
+                   if (null != sampleImageLinkList && sampleImageLinkList.size() > 0) {
+                       for (int i = 0; i < sampleImageLinkList.size(); i++) {
+                           SamleImageDetails sampleImageDetailsBean = sampleImageLinkList.get(i);
+                           if (sampleImageDetailsBean.getImageStatus().contains("Rejected")) {
+                               // rejected_status = true;
+                               LOGGER.info("Call Service rejected in remove");
+                               jsonStyle1 = populateJsonForImageManagement(orinId, updatedBy, "04");
+                               jsonArray1.put(jsonStyle1);
+                               //responseMsg1 = callApproveActionService(jsonArray1);
+                               //LOGGER.info("-----remove responseMsg in rejected-----" + responseMsg1);
+                           }
+                           if (sampleImageDetailsBean.getImageStatus().equalsIgnoreCase("Ready_For_Review")
+                                   || sampleImageDetailsBean.getImageStatus().equalsIgnoreCase("ReadyForReview")
+                                   || sampleImageDetailsBean.getImageStatus().contains("Ready_")) {
+                               // review_status = true;
+                               LOGGER.info("Call Service readyforreview in remove");
+                               jsonStyle1 = populateJsonForImageManagement(orinId, updatedBy, "08");
+                               jsonArray1.put(jsonStyle1);
+                               //responseMsg1 = callApproveActionService(jsonArray1);
+                               //LOGGER.info("-----remove responseMsg in ReadyforReview-----" + responseMsg1);
+                           }
+                           if (sampleImageDetailsBean.getImageStatus().equalsIgnoreCase("Initiated")) {
+                               // initiated_status = true;
+                               LOGGER.info("Call Service initiated in remove");
+                               jsonStyle1 = populateJsonForImageManagement(orinId, updatedBy, "01");
+                               jsonArray1.put(jsonStyle1);
+                               //responseMsg1 = callApproveActionService(jsonArray1);
+                               //LOGGER.info("-----remove responseMsg in Initiated-----" + responseMsg1);
+                           }
+                           if (sampleImageDetailsBean.getImageStatus().equalsIgnoreCase("Completed")) {
+                               // completed_status = true;
+                               LOGGER.info("Call Service completed in remove");
+                               jsonStyle1 = populateJsonForImageManagement(orinId, updatedBy, "02");
+                               jsonArray1.put(jsonStyle1);
+                               //responseMsg1 = callApproveActionService(jsonArray1);
+                               //LOGGER.info("-----remove responseMsg in completed-----" + responseMsg1);
+                           }
+                       }
+                   } else {
+                       // initiated_status = true;
+                       LOGGER.info("Call Service initiated in remove");
+                       jsonStyle1 = populateJsonForImageManagement(orinId, updatedBy, "01");
+                       jsonArray1.put(jsonStyle1);
+                       //responseMsg1 = callApproveActionService(jsonArray1);
+                       //LOGGER.info("-----remove responseMsg in Initiated-----" + responseMsg1);
+                   }
+                   
+                   if ((jsonArray1 != null) && (jsonArray1.length() != 0))
+                   {
+                       responseMsg1 = callApproveActionService(jsonArray1);
+                       LOGGER.info("-----remove responseMsg in Initiated-----" + responseMsg1);
+                   }
+
+                   if ("Image status update is successful".equalsIgnoreCase(responseMsg1)) {
+                       LOGGER.info(" ---Service Response is Success on Remove--- ");
+                       String responseCodeOnRemove = "100";
+                       jsObj.put("responseCodeOnRemove", responseCodeOnRemove);
+                       response.getWriter().write(jsObj.toString());
+                       response.getWriter().flush();
+                       response.getWriter().close();
+                   }
+               } catch (Exception ex) {
+                   LOGGER.error("Exception: " + ex.getMessage());
+               }
+           } else {
+               // Remove Failure
+               LOGGER.info("Remove Respone Failing code::" + resCode);
+               removeJSON.put("responseCodeOnRemove", resCode);
+               //removeJSON.put("imageIdRemove", imagId);
+               LOGGER.info("removeJSON::" + removeJSON.toString());
+               response.getWriter().write(removeJSON.toString());
+               response.getWriter().flush();
+               response.getWriter().close();
+
            }
        } catch (Exception e) {
-           LOGGER.info("Caught Exception**************removeSampleImageMethod---Controller");
-           e.printStackTrace();
+           LOGGER.error("Caught Exception**************removeSampleImageMethod---Controller",e);
        }
    }
    
@@ -551,7 +538,7 @@ public class ImageRequestController {
            jsonObj.put(ImageConstants.PET_ID, orinNo);
          
        } catch (JSONException e) {
-           e.printStackTrace();
+           
        }
        return jsonObj;
 
@@ -1336,6 +1323,24 @@ public class ImageRequestController {
 			return responseMsg;
 
 		}
+		
+        /**
+         * This method will insert record into IMAGE_SOFT_DELETE table. Separate
+         * batch job will read from this table and physically delete the images
+         * then.
+         * 
+         * @param orin
+         * @param deletedBy
+         * @param imageIds
+         * @param imageNames
+         * @return
+         * @throws Exception
+         * @throws PEPFetchException
+         */
+        private boolean callDeleteImage(String orin, String deletedBy, String[] imageIds, String[] imageNames)
+                throws Exception, PEPFetchException {
+            return imageRequestDelegate.insertImageDelete(orin, deletedBy, imageIds, imageNames);
+        }
 		
 		/**
 		 * This method is used to delete the file physically

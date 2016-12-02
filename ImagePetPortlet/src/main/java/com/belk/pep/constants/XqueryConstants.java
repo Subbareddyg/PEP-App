@@ -1047,6 +1047,14 @@ public class XqueryConstants {
     	  return CONTENT_STATUS_QUERY;
     	        
     }
+    
+    public String getSoftImageDelete()
+    {
+        LOGGER.info("***Entering getSoftImageDelete() method.");        
+        String IMAGE_LINKS_QUERY = "INSERT INTO IMAGE_SOFT_DELETE (image_id, image_name, orin_id, deleted_by, delete_status, deleted_date) VALUES (:image_id,:image_name,:orin_id,:deleted_by,:delete_status,sysdate)"; 
+        LOGGER.info("***Exiting getSoftImageDelete() method.");
+        return IMAGE_LINKS_QUERY;
+    }
       
 
 }
