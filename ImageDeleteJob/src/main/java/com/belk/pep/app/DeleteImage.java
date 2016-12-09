@@ -13,28 +13,40 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
-
 
 public class DeleteImage {
 
+    @SuppressWarnings("serial")
+    private static List<String> envTypes = new ArrayList<String>() {
+        {
+            add(ImageDeleteConstants.DEV);
+            add(ImageDeleteConstants.SIT);
+            add(ImageDeleteConstants.QA);
+            add(ImageDeleteConstants.PERF);
+            add(ImageDeleteConstants.PROD);
+        }
+    };
+
     private static Properties prop = PropertyLoader
             .getPropertyLoader(ImageDeleteConstants.LOAD_DELETE_IMAGE_PROPERTY_FILE);
-    
+
     /** The Constant LOGGER. */
-    private final static Logger LOGGER = Logger.getLogger(DeleteImage.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(DeleteImage.class.getName());
 
     public static void main(String[] args) {
         String env = null;
         if (args != null && args.length >= 1) {
             env = args[0];
         }
-        LOGGER.debug("----env value being passed---- "+env);
-        if (!isEnvValid(env)) {
-        	LOGGER.error("Please specify valid environment.");
+        LOGGER.debug("----env value being passed---- " + env);
+        if (env == null || !isEnvValid(env)) {
+            LOGGER.error("Please specify valid environment.");
             return;
         }
-        
+
         DeleteImage deleteImage = new DeleteImage();
         LOGGER.debug("----Started Processing Image Delete----");
         deleteImage.removeImage(env.toLowerCase());
@@ -42,8 +54,7 @@ public class DeleteImage {
     }// end main
 
     /**
-     * This method reads image records from IMAGE_SOFT_DELETE table,
-     * then performs hard-delete of corresponding image.
+     * This method reads image records from IMAGE_SOFT_DELETE table, then performs hard-delete of corresponding image.
      */
     public void removeImage(String env) {
         Connection connection = null;
@@ -56,40 +67,37 @@ public class DeleteImage {
         try {
             connection = ConnectionFactory.getConnection(env);
             if (connection != null) {
-            	LOGGER.debug("Creating statement...");
+                LOGGER.debug("Creating statement...");
                 stmt = connection.createStatement();
                 stmt = connection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
 
-                fileDir = prop.getProperty(env + "." +ImageDeleteConstants.FILEDIR);
+                fileDir = prop.getProperty(env + "." + ImageDeleteConstants.FILEDIR);
 
                 sql = "select image_name, delete_status from IMAGE_SOFT_DELETE where delete_status = 'N'";
                 rs = stmt.executeQuery(sql);
 
                 while (rs.next()) {
                     String image_name = rs.getString("image_name");
-                    if(image_name==null)
-                    	continue;
+                    if (image_name == null)
+                        continue;
                     image_name = image_name.trim();
-                    try{
-                    	fileToBeDeleted = fileDir + image_name;
-                        LOGGER.debug("fileToBeDeleted ::::::: "+fileToBeDeleted);
-                        fileRemove = fileDelete(fileToBeDeleted);
-                        LOGGER.debug("fileRemove::" + fileRemove);
-                        if (fileRemove) {
-                            rs.updateString("delete_status", "Y");
-                            rs.updateRow();
-                        } else {
-                            rs.updateString("delete_status", "F");
-                            rs.updateRow();
-                        }
-                    }catch(Exception ex){
-                    	LOGGER.error("Error occurred while deleting image " + image_name +" "+ex.getMessage());
+
+                    fileToBeDeleted = fileDir + image_name;
+                    LOGGER.debug("fileToBeDeleted ::::::: " + fileToBeDeleted);
+                    fileRemove = fileDelete(fileToBeDeleted);
+                    LOGGER.debug("fileRemove::" + fileRemove);
+                    if (fileRemove) {
+                        rs.updateString("delete_status", "Y");
+                        rs.updateRow();
+                    } else {
+                        rs.updateString("delete_status", "F");
+                        rs.updateRow();
                     }
-                    
+
                 }
             }
         } catch (Exception e) {
-        	LOGGER.error("Error occurred while trying to remove image!" + e.getMessage());
+            LOGGER.error("Error occurred while trying to remove image! ", e);
         } finally {
             try {
                 if (rs != null) {
@@ -99,15 +107,15 @@ public class DeleteImage {
                     stmt.close();
                 }
             } catch (SQLException se) {
-            	LOGGER.error("Error occurred while closing statement/rs " + se.getMessage());
+                LOGGER.error("Error occurred while closing statement/rs ", se);
             }
             try {
                 if (connection != null) {
                     connection.close();
                 }
             } catch (SQLException se) {
-            	LOGGER.error("Error occurred while closing connection " + se.getMessage());
-            } 
+                LOGGER.error("Error occurred while closing connection ", se);
+            }
         }
     }
 
@@ -115,18 +123,23 @@ public class DeleteImage {
      * This method performs physical delete of image.
      */
     public boolean fileDelete(String fileName) throws IOException, FileNotFoundException {
-    	LOGGER.debug("Entering....fileDelete");
+        LOGGER.debug("Entering....fileDelete");
         boolean fileDelete = false;
         File file = new File(fileName);
-        if (file.exists()) {
-        	LOGGER.debug("Exist****");
-            if (file.delete()) {
-            	LOGGER.debug("File Deleted");
-                fileDelete = true;
+        try {
+            if (file.exists()) {
+                LOGGER.debug("Exist****");
+                if (file.delete()) {
+                    LOGGER.debug("File Deleted");
+                    fileDelete = true;
+                }
+            } else {
+                LOGGER.debug("File not Deleted");
+                fileDelete = false;
             }
-        } else {
-        	LOGGER.debug("File not Deleted");
-            fileDelete = false;
+
+        } catch (Exception ex) {
+            LOGGER.error("Error occurred while deleting image " + fileName,  ex);
         }
         LOGGER.debug("Exiting....fileDelete");
         return fileDelete;
@@ -135,14 +148,8 @@ public class DeleteImage {
     /**
      * This method checks if env argument is valid.
      */
-    public static boolean isEnvValid(String env) {
-        if (ImageDeleteConstants.DEV.equalsIgnoreCase(env)
-                || ImageDeleteConstants.SIT.equalsIgnoreCase(env)
-                || ImageDeleteConstants.QA.equalsIgnoreCase(env)
-                || ImageDeleteConstants.PERF.equalsIgnoreCase(env)
-                || ImageDeleteConstants.PROD.equalsIgnoreCase(env)) {
-            return true;
-        }
-        return false;
+    private static boolean isEnvValid(String env) {
+
+        return envTypes.contains(env);
     }
 }

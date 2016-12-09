@@ -15,7 +15,7 @@ public class ConnectionFactory {
     private static Properties prop = PropertyLoader.getPropertyLoader(ImageDeleteConstants.LOAD_DELETE_IMAGE_PROPERTY_FILE);
     public static final String dbDriver = prop.getProperty(ImageDeleteConstants.JDBC_DRIVER);
     /** The Constant LOGGER. */
-    private final static Logger LOGGER = Logger.getLogger(ConnectionFactory.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(ConnectionFactory.class.getName());
     private static ConnectionFactory instance = new ConnectionFactory();
     
     
@@ -26,7 +26,7 @@ public class ConnectionFactory {
         	LOGGER.debug("Driver Name --->"+dbDriver);
             Class.forName(dbDriver);
         } catch (ClassNotFoundException e) {
-        	LOGGER.error("Error while returning the DB DRiver instance "+e.getMessage());
+        	LOGGER.error("Error while returning the DB DRiver instance ",e);
         }
     }
      
@@ -38,7 +38,7 @@ public class ConnectionFactory {
             String password = prop.getProperty(env + "." + ImageDeleteConstants.PASS);
             connection = DriverManager.getConnection(dbUrl, user, password);
         } catch (SQLException e) {
-        	LOGGER.error("ERROR: Unable to Connect to Database."+e.getMessage());
+        	LOGGER.error("ERROR: Unable to Connect to Database.",e);
         }
         return connection;
     }   
