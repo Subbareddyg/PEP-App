@@ -19,6 +19,7 @@
 		<module>InternalUserLoginPortlet</module>
 		<module>WorkListDisplayPortlet</module>
 		<module>GroupingPortlet</module>
+		<module>ImageDeleteJob</module>
 	</modules>
 <build>
 		<plugins>
