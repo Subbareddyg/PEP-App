@@ -375,7 +375,7 @@
 	      			
 	      			if(styleColorInitiatedCount==true)
 	      				{
-	      					$("#publisStatusCodePublishToWeb").removeAttr("disabled"); 
+
 	      					$('#publisStatusCodePublishToWeb').prop('checked', false);
 	      				}
             	  //End of logic for disabling for role name dca       	      
