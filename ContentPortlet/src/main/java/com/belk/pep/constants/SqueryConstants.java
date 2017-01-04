@@ -75,7 +75,7 @@ public class SqueryConstants {
                 +"   ' passing APC.xml_data AS \"XML_DATA\",afv.PARENT_NODE AS \"PARENT_NODE\", afv.CHILD_NODE AS \"CHILD_NODE\" COLUMNS SEC_SPEC_VALUE VARCHAR(100) " 
                 +"   path '/category/data') s " 
                 +" WHERE APC.MDMID=afv.STYLEID  " 
-                + "AND  afv.ATTRIBUTE_TYPE='BM' order by attribute_name asc ";
+                + "AND  afv.ATTRIBUTE_TYPE='BM' AND afv.IS_DISPLAYABLE='Yes' order by attribute_name asc ";
 
 
 
@@ -213,7 +213,7 @@ public class SqueryConstants {
                 +"   ' passing APC.xml_data AS \"XML_DATA\",afv.PARENT_NODE AS \"PARENT_NODE\", afv.CHILD_NODE AS \"CHILD_NODE\" COLUMNS SEC_SPEC_VALUE VARCHAR(100) " 
                 +"   path '/category/data') s " 
                 +" WHERE APC.MDMID=afv.STYLEID  " 
-                + "AND  afv.ATTRIBUTE_TYPE='BM' order by attribute_name asc ";
+                + "AND  afv.ATTRIBUTE_TYPE='BM' AND afv.IS_DISPLAYABLE='Yes' order by attribute_name asc ";
 
 
 
@@ -504,7 +504,7 @@ public class SqueryConstants {
                 +" </category>       "
                 +" ' passing APC.xml_data AS \"XML_DATA\",afv.PARENT_NODE AS \"PARENT_NODE\", afv.CHILD_NODE AS \"CHILD_NODE\" COLUMNS SEC_SPEC_VALUE VARCHAR(100) path '/category/data') s "
                 +" WHERE APC.MDMID=afv.STYLEID " 
-                + "AND  afv.ATTRIBUTE_TYPE='PIM' order by attribute_name asc ";
+                + "AND  afv.ATTRIBUTE_TYPE='PIM' AND afv.IS_DISPLAYABLE='Yes' order by attribute_name asc ";
 
 
     //    System.out.println("GET_PET_ATTRIBUTES_QUERY----"+GET_PET_ATTRIBUTES_QUERY);
@@ -579,7 +579,7 @@ public class SqueryConstants {
                 +" </category>       "
                 +" ' passing APC.xml_data AS \"XML_DATA\",afv.PARENT_NODE AS \"PARENT_NODE\", afv.CHILD_NODE AS \"CHILD_NODE\" COLUMNS SEC_SPEC_VALUE VARCHAR(100) path '/category/data') s "
                 +" WHERE APC.MDMID=afv.STYLEID " 
-                + "AND  afv.ATTRIBUTE_TYPE='PIM' order by attribute_name asc ";
+                + "AND  afv.ATTRIBUTE_TYPE='PIM' AND afv.IS_DISPLAYABLE='Yes' order by attribute_name asc ";
 
 
     //    System.out.println("GET_PET_ATTRIBUTES_QUERY----"+GET_PET_ATTRIBUTES_QUERY);
