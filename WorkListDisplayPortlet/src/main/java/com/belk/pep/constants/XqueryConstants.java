@@ -922,7 +922,7 @@ String orin = null;
 String vendorStyle = null;
     
     if(StringUtils.isNotBlank(advSearch.getVendorStyle())){
-        vendorStyle =  "'"+advSearch.getVendorStyle()+"'";
+        vendorStyle =  "'"+advSearch.getVendorStyle().toUpperCase()+"'";
     }
     
 String upc = null;
@@ -1112,7 +1112,7 @@ String vendorNumber = null;
         advQueryFragment.append("         sl.PRIMARY_UPC,                                                                                                     ");
         advQueryFragment.append("         sl.Supplier_Id,                                                                                                     ");
         advQueryFragment.append("         sl.DEPT_ID,                                                                                                         ");
-        advQueryFragment.append("         ia.ven_style,                                                                                                       ");
+        advQueryFragment.append("         UPPER(ia.ven_style),                                                                                                       ");
         advQueryFragment.append("         ia.clsId,                                                                                                           ");
         advQueryFragment.append("         sl.INPUTPETSTATUS,                                                                                                  ");
         advQueryFragment.append("         sl.VSTYLE,                                                                                                          ");
@@ -1293,7 +1293,7 @@ String vendorNumber = null;
         advQueryFragment.append("         sia.Supplier_Id,                                                                                                      ");
         advQueryFragment.append("         sia.DEPT_ID,                                                                                                          ");
         advQueryFragment.append("         sia.PRODUCT_NAME,                                                                                                     ");
-        advQueryFragment.append("         sia.ven_style,                                                                                                        ");
+        advQueryFragment.append("         UPPER(sia.ven_style),                                                                                                        ");
         advQueryFragment.append("         sia.PRIMARY_UPC,                                                                                                      ");
         advQueryFragment.append("         sia.clsId,                                                                                                            ");
         advQueryFragment.append("         sia.INPUTPETSTATUS,                                                                                                   ");
@@ -1357,6 +1357,7 @@ String vendorNumber = null;
 
 
     LOGGER.info("getAdvWorkListDisplayData Query"+advQueryFragment.toString());
+    
     
     return advQueryFragment.toString();
     
@@ -1464,7 +1465,7 @@ String orin = null;
 String vendorStyle = null;
     
     if(StringUtils.isNotBlank(advSearch.getVendorStyle())){
-        vendorStyle =  "'"+advSearch.getVendorStyle()+"'";
+        vendorStyle =  "'"+advSearch.getVendorStyle().toUpperCase()+"'";
     }
     
 String upc = null;
@@ -1654,7 +1655,7 @@ String vendorNumber = null;
         advQueryFragment.append("         sl.PRIMARY_UPC,                                                                                          ");
         advQueryFragment.append("         sl.Supplier_Id,                                                                                          ");
         advQueryFragment.append("         sl.DEPT_ID,                                                                                              ");
-        advQueryFragment.append("         ia.ven_style,                                                                                            ");
+        advQueryFragment.append("         UPPER(ia.ven_style),                                                                                            ");
         advQueryFragment.append("         ia.clsId,                                                                                                ");
         advQueryFragment.append("         sl.INPUTPETSTATUS,                                                                                       ");
         advQueryFragment.append("         sl.VSTYLE,                                                                                               ");
@@ -1838,7 +1839,7 @@ String vendorNumber = null;
         advQueryFragment.append("         sia.Supplier_Id,                                                                                                               ");
         advQueryFragment.append("         sia.DEPT_ID,                                                                                                                   ");
         advQueryFragment.append("         sia.PRODUCT_NAME,                                                                                                              ");
-        advQueryFragment.append("         sia.ven_style,                                                                                                                 ");
+        advQueryFragment.append("         UPPER(sia.ven_style),                                                                                                                 ");
         advQueryFragment.append("         sia.PRIMARY_UPC,                                                                                                               ");
         advQueryFragment.append("         sia.clsId,                                                                                                                     ");
         advQueryFragment.append("         sia.INPUTPETSTATUS,                                                                                                            ");
@@ -2235,7 +2236,7 @@ public String getWorkListDisplayDataParentOld(boolean vendorLogin) {
         workListQuery.append("        sda.Supplier_Id,                                                                                              ");
         workListQuery.append("        sda.DEPT_ID,                                                                                                  ");
         workListQuery.append("        sda.PRODUCT_NAME,                                                                                               ");
-        workListQuery.append("        sda.ven_style,                                                                                                ");
+        workListQuery.append("        UPPER(sda.ven_style),                                                                                                ");
         workListQuery.append("        pet.pet_state PETSTATUS,                                                                                      ");
         workListQuery.append("        pet.image_status ImageState,                                                                                  ");
         workListQuery.append("        pet.content_status CONTENTSTATUS,                                                                             ");
@@ -2857,7 +2858,7 @@ public String getAdvWorkListDisplayDataForParent(AdvanceSearch advSearch) {
     String vendorStyle = null;
     
     if(StringUtils.isNotBlank(advSearch.getVendorStyle())){
-        vendorStyle =  "'"+advSearch.getVendorStyle()+"'";
+        vendorStyle =  "'"+advSearch.getVendorStyle().toUpperCase()+"'";
     }
     
     String upc = null;
@@ -2883,6 +2884,7 @@ public String getAdvWorkListDisplayDataForParent(AdvanceSearch advSearch) {
     
     if(StringUtils.isNotBlank(advSearch.getVendorNumber())){
         vendorNumber =  "'"+advSearch.getVendorNumber()+"'";
+        
     }    
 
     
@@ -2934,7 +2936,7 @@ public String getAdvWorkListDisplayDataForParent(AdvanceSearch advSearch) {
         advQueryFragment.append("          then NUMBER_04                                                                                                  ");
         advQueryFragment.append("         else     PRIMARY_UPC                                                                                             ");
         advQueryFragment.append("         end PRIMARY_UPC,                                                                                                 ");
-        advQueryFragment.append("         DEPT_ID, PRIMARY_SUPPLIER_ID Supplier_Id, PRIMARYSUPPLIERVPN VEN_STYLE, CLASS_ID clsId, PRODUCT_NAME                ");
+        advQueryFragment.append("         DEPT_ID, PRIMARY_SUPPLIER_ID Supplier_Id, UPPER(PRIMARYSUPPLIERVPN) VEN_STYLE, CLASS_ID clsId, PRODUCT_NAME                ");
         advQueryFragment.append("       FROM                                                                                                               ");
         advQueryFragment.append("         ADSE_Item_CATALOG, Input inp                                                                                     ");
         advQueryFragment.append("       WHERE                                                                                                              ");
@@ -2983,7 +2985,7 @@ public String getAdvWorkListDisplayDataForParent(AdvanceSearch advSearch) {
         advQueryFragment.append("              then NUMBER_04                                                                                              ");
         advQueryFragment.append("             else     PRIMARY_UPC                                                                                         ");
         advQueryFragment.append("             end PRIMARY_UPC,                                                                                             ");
-        advQueryFragment.append("             DEPT_ID, PRIMARY_SUPPLIER_ID Supplier_Id, PRIMARYSUPPLIERVPN VEN_STYLE, CLASS_ID clsId, PRODUCT_NAME             ");
+        advQueryFragment.append("             DEPT_ID, PRIMARY_SUPPLIER_ID Supplier_Id, UPPER(PRIMARYSUPPLIERVPN) VEN_STYLE, CLASS_ID clsId, PRODUCT_NAME             ");
         advQueryFragment.append("           FROM                                                                                                           ");
         advQueryFragment.append("             ADSE_Item_CATALOG, Input inp                                                                                 ");
         advQueryFragment.append("           WHERE                                                                                                          ");
@@ -3032,12 +3034,12 @@ public String getAdvWorkListDisplayDataForParent(AdvanceSearch advSearch) {
         advQueryFragment.append("              then NUMBER_04                                                                                              ");
         advQueryFragment.append("             else     PRIMARY_UPC                                                                                         ");
         advQueryFragment.append("             end PRIMARY_UPC,                                                                                             ");
-        advQueryFragment.append("             DEPT_ID, PRIMARY_SUPPLIER_ID Supplier_Id, PRIMARYSUPPLIERVPN VEN_STYLE, CLASS_ID clsId, PRODUCT_NAME            ");
+        advQueryFragment.append("             DEPT_ID, PRIMARY_SUPPLIER_ID Supplier_Id, UPPER(PRIMARYSUPPLIERVPN) VEN_STYLE, CLASS_ID clsId, PRODUCT_NAME            ");
         advQueryFragment.append("           FROM                                                                                                           ");
         advQueryFragment.append("             ADSE_ITEM_CATALOG, Input inp1                                                                             ");
         advQueryFragment.append("           WHERE                                                                                                          ");
         advQueryFragment.append("             PARENT_MDMID IN (SELECT MDMID FROM entryTypeStyleList) AND ENTRY_TYPE IN ('StyleColor', 'PackColor')         ");
-        advQueryFragment.append("             AND ( inp1.VENDOR_STYLE      IS NULL  OR PRIMARYSUPPLIERVPN = inp1.VENDOR_STYLE )                 ");
+        advQueryFragment.append("             AND ( inp1.VENDOR_STYLE      IS NULL  OR UPPER(PRIMARYSUPPLIERVPN) = inp1.VENDOR_STYLE )                 ");
         advQueryFragment.append("             and PRIMARY_SUPPLIER_ID is not null                                                                   ");
         advQueryFragment.append("         ) aic, Input inp                                                                                                 ");
         advQueryFragment.append("      ),                                                                                                                   ");
