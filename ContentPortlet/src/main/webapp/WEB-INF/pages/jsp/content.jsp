@@ -475,7 +475,11 @@
 				   }
             	  //VP21
             	  
-            			  
+			    if(pepUserRoleName != "readonly"){
+            		  disableProductDropDownAttributes();
+            		  disableProductTextAttributes();
+            		  disableProductRadioAttributes();
+            	  }		  
                    			
 
                 $('.tree').treegrid();
@@ -591,6 +595,124 @@
           	  }
 			  }
 			  //VP21
+            }
+            
+            // disableProductAndLegacy drop down Attributes
+            function disableProductDropDownAttributes(){
+            	 //logic for disabling the product attribute multi  select drop down
+      		  if(document.getElementById("paDropDownCounter")){ 
+      		  var  dropDownCounting=document.getElementById("paDropDownCounter").value;
+      		  for(q=1; q<=dropDownCounting; q++){
+      				
+      				 var paDropDownId = "dropDownsId_id"+q;
+      				 var isEditable = document.getElementById("isPIMEditable_id"+q).value;
+      				 
+      				 if(isEditable == "No"){
+      					document.getElementById(paDropDownId).disabled = true;
+      				 }else{
+      					document.getElementById(paDropDownId).disabled = false;
+      				 }
+      				 
+      			}
+      		  }
+      		  
+       		  //logic for disabling the blue martini attribute multi  select drop down
+      		  if(document.getElementById("bmDropDownCounter")){
+      		   var  bmDropDownCounting=document.getElementById("bmDropDownCounter").value;
+      		  for(z=1; z<=bmDropDownCounting; z++){
+      				 var bmDropDownId = "bmDropDownsId_id"+z;
+      				 var isBMEditable = document.getElementById("isBMEditable_id"+z).value;
+      				 if(isBMEditable == "No"){
+      				    document.getElementById(bmDropDownId).disabled = true;
+      					
+      				 }else{
+      					document.getElementById(bmDropDownId).disabled = false; 
+      				 }
+      			}
+      		  }
+
+            }
+            
+            // disableProductAndLegacy text Attributes
+            function disableProductTextAttributes(){
+            	 //logic for disabling the text attributes
+      		  if(document.getElementById("paTextAttributeCount")){ 
+	      		  var  textCounter=document.getElementById("paTextAttributeCount").value;
+	      		  for(q=1; q<=textCounter; q++){
+	      				
+	      				 var paTextId = "paText_Id"+q;
+	      				 var isEditable = document.getElementById("isPIMTextEditable_id"+q).value;
+	      				 
+	      				 if(isEditable == "No"){
+	      					document.getElementById(paTextId).disabled = true;
+	      				 }else{
+	      					document.getElementById(paTextId).disabled = false;
+	      				 }
+	      				 
+	      			}
+      		  }
+      		  
+       		  //logic for disabling the blue martini text attributes
+      		  if(document.getElementById("bmTextAttributeCount")){ 
+        		  var  bmtextCounter=document.getElementById("bmTextAttributeCount").value;
+        		  for(k=1; k<=bmtextCounter; k++){
+        				
+        				 var bmTextId = "blueMartiniText_Id"+k;
+        				 var isBMEditable = document.getElementById("isBMTextEditable_id"+k).value;
+        				 
+        				 if(isBMEditable == "No"){
+        					document.getElementById(bmTextId).disabled = true;
+        				 }else{
+        					document.getElementById(bmTextId).disabled = false;
+        				 }
+        				 
+        			}
+        		  }
+
+            }
+            
+         // disableProductAndLegacy Radio Attributes
+            function disableProductRadioAttributes(){
+            	 //logic for disabling the radio attributes
+      		  if(document.getElementById("paRadioButtonCounter")){ 
+	      		  var  radioCounter=document.getElementById("paRadioButtonCounter").value;
+	      		  for(q=1; q<=radioCounter; q++){	      				
+      				 var isEditable = document.getElementById("isPIMRadioEditable_id"+q).value;
+      				 //alert("editable flag value of radio button "+isEditable);
+      				 for(var i=1; i<3; i++){
+      					var temp = q+""+i;
+      					var paRadioId = "paRadio_Id"+temp;
+	      				 if(isEditable == "No"){
+	     					//alert("paRadioId is  "+paRadioId); 
+	      					document.getElementById(paRadioId).disabled = true;
+	      				 }else{
+	      					document.getElementById(paRadioId).disabled = false;
+	      				 }
+      				 }	 
+	      				 
+      			}
+      		  }
+      		  
+       		  //logic for disabling the blue martini radio button attributes
+      		  if(document.getElementById("bmRadioButtonCounter")){ 
+        		  var  bmradioCounter=document.getElementById("bmRadioButtonCounter").value;
+        		  for(k=1; k<=bmradioCounter; k++){
+        				 var isBMEditable = document.getElementById("isBMRadioEditable_id"+k).value;
+        				 //alert("BM editable flag value of radio button "+isBMEditable);
+        				 for(var l=1; l<3; l++){
+           					var temp1 = k+""+l;
+           					var bmRadioId = "bmRadio_Id"+temp1;
+     	      				 if(isBMEditable == "No"){
+     	     					//alert("bmRadioId is  "+bmRadioId); 
+     	      					document.getElementById(bmRadioId).disabled = true;
+     	      				 }else{
+     	      					document.getElementById(bmRadioId).disabled = false;
+     	      				 }
+           				 }
+        				 
+        			}
+        		  }
+
             }
             
             function disableSkuLevelAttributes() {
@@ -3336,7 +3458,8 @@ function clickListenerContent(e){
 																<c:out value="${categoryDisplayList.displayName}"/></td>
 																
 																<input type="hidden" name="dropdownAttributeNameXpath"  id="dropdownAttributeNameXpath_id<%= i %>"  value="${categoryDisplayList.displayName}#${categoryDisplayList.attributePath}" />	
-																<input type="hidden" name="isPIMMandatory_id"  id="isPIMMandatory_id<%= i %>"  value="${categoryDisplayList.isMandatory}" />															
+																<input type="hidden" name="isPIMMandatory_id"  id="isPIMMandatory_id<%= i %>"  value="${categoryDisplayList.isMandatory}" />
+																<input type="hidden" name="isPIMEditable_id"  id="isPIMEditable_id<%= i %>"  value="${categoryDisplayList.isEditable}" />															
 																<td>
 																	<input type="hidden" name="dropdownhidden" id="dropdownhidden_id<%= i %>" value="" /> 
 																	
@@ -3425,6 +3548,7 @@ function clickListenerContent(e){
 															<input type="hidden" name="paRadioAttributeXpath"  id="paRadioAttributeXpath_id<%= k%>"  value="${categoryDisplayList.displayName}#${categoryDisplayList.attributePath}" />
 															<input type="hidden" name="radioButtonHidden_id" id="radioButtonHidden_id<%= k %>" value="" />
 															<input type="hidden" name="isPIMRadioMandatory_id"  id="isPIMRadioMandatory_id<%= k %>"  value="${categoryDisplayList.isMandatory}" />	
+															<input type="hidden" name="isPIMRadioEditable_id"  id="isPIMRadioEditable_id<%= k %>"  value="${categoryDisplayList.isEditable}" />
 															 <div id="radiofieldSet_id<%=k %>" >
 															  <tr>
 																<td><c:if test="${categoryDisplayList.isMandatory == 'Yes'}">* </c:if>
@@ -3456,6 +3580,7 @@ function clickListenerContent(e){
                                                    <input type="hidden" name="paTextAttributeCount"  id="paTextAttributeCount" value="${contentDisplayForm.productAttributesDisplay.textFieldList.size()}"  /> 
                                                   <c:if test="${categoryDisplayList.attributeFieldType == 'Text Field'}">
                                                          <input type="hidden" name="isPIMTextMandatory_id"  id="isPIMTextMandatory_id<%= j %>"  value="${categoryDisplayList.isMandatory}" />	
+                                                         <input type="hidden" name="isPIMTextEditable_id"  id="isPIMTextEditable_id<%= j %>"  value="${categoryDisplayList.isEditable}" />
                                                          <input type="hidden" name="textFieldHidden" id="textFieldHidden_id<%= j %>" value="" />
                                                          <input type="hidden" name="paTextAttributeXpath"  id="paTextAttributeXpath_id<%= j %>"  value="${categoryDisplayList.displayName}#${categoryDisplayList.attributePath}" />
                                                              <tr>                                                                                         
@@ -3494,6 +3619,7 @@ function clickListenerContent(e){
 															<tr>
 																<td><c:if test="${blueMartiniAllList.isMandatory == 'Yes'}">* </c:if><c:out value="${blueMartiniAllList.displayName}"/></td>
 																<input type="hidden" name="isBMMandatory_id"  id="isBMMandatory_id<%= bmDropDownCount %>"  value="${blueMartiniAllList.isMandatory}" />	
+																<input type="hidden" name="isBMEditable_id"  id="isBMEditable_id<%= bmDropDownCount %>"  value="${blueMartiniAllList.isEditable}" />	
 																<input type="hidden" name="blueMartiniDropDownAttributeNameXpath"  id="blueMartiniDropDownAttributeNameXpath_id<%= bmDropDownCount %>"  value="${blueMartiniAllList.displayName}#${blueMartiniAllList.attributePath}" />															
 																<td>
 																	<input type="hidden" name="blueMartiniDropDownHidden" id="blueMartiniDropDownHidden_id<%= bmDropDownCount %>" value="" />
@@ -3555,6 +3681,7 @@ function clickListenerContent(e){
 															<input type="hidden" name="bmRadioAttributeXpath"  id="bmRadioAttributeXpath_id<%= c%>"  value="${blueMartiniAllList.displayName}#${blueMartiniAllList.attributePath}" />
 															 <input type="hidden" name="bmradioButtonHidden_id" id="bmradioButtonHidden_id<%= c%>" value="" />
 															<input type="hidden" name="isBMRadioMandatory_id"  id="isBMRadioMandatory_id<%= c %>"  value="${blueMartiniAllList.isMandatory}" />
+															 <input type="hidden" name="isBMRadioEditable_id"  id="isBMRadioEditable_id<%= c %>"  value="${blueMartiniAllList.isEditable}" />
 															 <div id="bmradiofieldSet_id<%=c %>" >
 															  <tr>
 																<td><c:if test="${blueMartiniAllList.isMandatory == 'Yes'}">* </c:if><c:out value="${blueMartiniAllList.displayName}"/></td>
@@ -3586,6 +3713,7 @@ function clickListenerContent(e){
 																<input type="hidden" name="blueMartiniTextAttributeNameXpath"  id="blueMartiniTextAttributeNameXpath_id<%= bmTextFieldCount %>"  value="${blueMartiniAllList.displayName}#${blueMartiniAllList.attributePath}" />
 																<input type="hidden" name="bmTextFieldHidden" id="bmTextFieldHidden_id<%= bmTextFieldCount %>" value="" />
 																<input type="hidden" name="isBMTextMandatory_id"  id="isBMTextMandatory_id<%= bmTextFieldCount %>"  value="${blueMartiniAllList.isMandatory}" />
+																<input type="hidden" name="isBMTextEditable_id"  id="isBMTextEditable_id<%= bmTextFieldCount %>"  value="${blueMartiniAllList.isEditable}" />
 																<td><c:if test="${blueMartiniAllList.isMandatory == 'Yes'}">* </c:if><c:out value="${blueMartiniAllList.displayName}"/></td>
 																<td><input type="text" id="blueMartiniText_Id<%=bmTextFieldCount%>" name="blueMartiniTextName_Id<%=bmTextFieldCount%>" value="${blueMartiniAllList.attributeFieldValue}" /></td>																
 																										
