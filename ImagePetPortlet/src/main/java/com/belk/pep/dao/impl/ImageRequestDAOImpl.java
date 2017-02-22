@@ -30,6 +30,7 @@ import com.belk.pep.form.SamleImageDetails;
 import com.belk.pep.form.StyleInfoDetails;
 import com.belk.pep.form.VendorInfoDetails;
 import com.belk.pep.model.ImageLinkVO;
+import com.belk.pep.model.ImageRejectReason;
 import com.belk.pep.model.PetsFound;
 import com.belk.pep.model.StyleColor;
 import com.belk.pep.model.WorkFlow;
@@ -1326,6 +1327,39 @@ public class ImageRequestDAOImpl implements ImageRequestDAO {
         }
         LOGGER.info("***Exiting ImageRequestDAO.insertImageDelete() method.");
         return failedImageIds;
+    }
+
+    /**
+     * This service method returns list of reject reasons for Image Rejection
+	 * @return List<ImageRejectReason>
+     */
+    @Override
+    public List<ImageRejectReason> getImageRejectReasons(){
+        LOGGER.info("inside getImageRejectReasons() method");
+        List<ImageRejectReason> imageRejectReasons = new ArrayList<ImageRejectReason>();
+        Session session = this.sessionFactory.openSession();
+      
+        Query query = session.createSQLQuery(xqueryConstants.getImageRejectReasonsQuery());
+        List<Object[]> rows = query.list();
+        try{
+        	ImageRejectReason imageRejectReason  =  null ;
+        for(Object[] row : rows){
+            
+        	imageRejectReason = new ImageRejectReason();
+        	imageRejectReason.setReasonCode(row[0].toString());
+        	imageRejectReason.setRejectReason(row[1].toString());            
+             
+            imageRejectReasons.add(imageRejectReason);
+        }
+        }catch(Exception e){
+            LOGGER.error("Exception in getImageRejectReasons() method DAO layer. -- ",e);
+        }
+     
+        finally{
+        	session.close();
+        }
+        LOGGER.info("Exiting getImageRejectReasons");
+        return imageRejectReasons;
     }
 
 }

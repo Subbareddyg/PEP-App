@@ -19,8 +19,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-
-
 import com.belk.pep.constants.ImageConstants;
 import com.belk.pep.dao.ImageRequestDAO;
 
@@ -28,6 +26,7 @@ import com.belk.pep.exception.checked.PEPFetchException;
 import com.belk.pep.exception.checked.PEPPersistencyException;
 import com.belk.pep.exception.checked.PEPServiceException;
 import com.belk.pep.model.ImageLinkVO;
+import com.belk.pep.model.ImageRejectReason;
 import com.belk.pep.model.WorkFlow;
 import com.belk.pep.service.ImageRequestService;
 //import com.belk.pep.service.impl.ArrayList;
@@ -1423,5 +1422,27 @@ public boolean insertImageDelete(String orin, String deletedBy, String[] imageId
     LOGGER.error("***Exiting insertImageDelete() method.");
     return deleteStatus;
 }
-    
+   
+	/**
+	 * This service method returns list of reject reasons for Image Rejection
+	 * @return
+	 * @throws PEPServiceException
+	 */
+	@Override
+	public List<ImageRejectReason> getImageRejectReasons() throws PEPServiceException
+	{
+		LOGGER.error("***Entering getImageRejectReasons() service method.");
+		List<ImageRejectReason> imageRejectReasons = new ArrayList<ImageRejectReason>();	
+		
+		try {
+			imageRejectReasons = imageRequestDAO.getImageRejectReasons();
+		}
+		catch (Exception e) {
+			LOGGER.error("getImageRejectReasons method, Service Layer -- ",e);
+		    throw new PEPServiceException(e);
+		}
+		LOGGER.error("***Exiting getImageRejectReasons() method.");
+		return imageRejectReasons;
+	}
+
 }

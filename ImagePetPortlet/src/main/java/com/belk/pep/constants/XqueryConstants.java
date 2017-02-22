@@ -1056,5 +1056,15 @@ public class XqueryConstants {
         return IMAGE_LINKS_QUERY;
     }
       
-
+    /**
+     * This method provides the query to bring all the reason codes for Image rejections.
+     * @returns imageRejectReasonQuery
+     *  
+     */
+    public final String getImageRejectReasonsQuery() {
+        LOGGER.info("Entering getImageRejectReasons() in XQueryConstant class.");
+        String imageRejectReasonQuery = "select * from PET_IMAGE_REJECT_REASON where ACTIVE>0";
+        LOGGER.info("Exiting getImageRejectReasons() in Grouping XQueryConstant class.");
+        return imageRejectReasonQuery;
+    }
 }

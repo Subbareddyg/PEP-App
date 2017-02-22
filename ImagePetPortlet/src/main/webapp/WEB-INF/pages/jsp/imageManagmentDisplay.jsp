@@ -209,7 +209,7 @@ function trClick(){
 					if((typeof onSubmitId != 'undefined' &&  onSubmitId == '100')|| (typeof OnRemovalImageId != 'undefined' &&  OnRemovalImageId == '100')){
 						//alert('--OnRemovalImageId--' +OnRemovalImageId +'--onSubmitId--'+onSubmitId);
 						  if(reject_status == 'Y'){							  
-							  document.getElementById(completionStatusId1).innerHTML = 'Rejected_By_DCA';							  
+							  document.getElementById(completionStatusId1).innerHTML = 'Rejected_By_DCA';
 						  }
 						  else if(review_status == 'Y'){							  
 							  document.getElementById(completionStatusId1).innerHTML = 'Ready_For_Review';							  
@@ -251,7 +251,7 @@ $(document).ready(function() {
 			$(this).css('background-color','#DCE2EC');			
 			trClick();
 	 	}
-  });
+  	});
 });
 function removeVPISampleImageRows(selectedOrin){  
 	  var removeImageUrl = $("#removeImageUrl").val(); 
@@ -361,7 +361,13 @@ silhouette,turnInDate,sampleCordinatorNote,action,role, shotTypeParamArray) {
 	var cell5 = row.insertCell(4);
 	cell5.id="imageStatus";
     cell5.name="imageStatus";
-	cell5.innerHTML = imageStatus;	
+    
+	if(imageStatus  == 'Rejected' || imageStatus  == 'Rejected_By_DCA'){
+		cell5.innerHTML = imageStatus +"<br/><a href=\"javascript:showPetRejectReasons()\">Reject Reason</a>";
+	}else{
+		cell5.innerHTML = imageStatus;	
+		
+	}
 	
 	if(imageStatus  == "Initiated"){
 		var cell6 = row.insertCell(5);	
@@ -510,7 +516,7 @@ silhouette,turnInDate,sampleCordinatorNote,action,role, shotTypeParamArray) {
 		element13.name="Reject";
 		element13.value="Reject";
 		element13.onclick = function(event){
-			getValuesforSubmitorRejectAjax(imageId,imageStatus,element13,event);
+			showRejectReason(imageId,imageStatus,element13,event);
 			return false;			
 		};	
 	}	
@@ -773,6 +779,16 @@ function confirmRemovePopUp(imageId,imageName,rowId){
 	jq('#dialog_submitRemove').dialog('open');
 }
 
+function showRejectReason(imageId,imageStatus,element,event) {
+	$("#overlay_rejectReason").css("display","block");
+	jq('#dialog_rejectReason').dialog();
+}
+
+function showPetRejectReasons() {
+	$("#overlay_petRejectReason").css("display","block");
+	jq('#dialog_petRejectReason').dialog();
+}
+
 function dialogHideonOk(){
 	//$("#overlay_submitOrReject").hide();
 	//$("#dialog_submitRemove").hide();
@@ -843,6 +859,67 @@ function checkApproveImageStatus(orinId,imageStatus){
 	</div>
 </div>
 <!-- Image id submit success end-->
+
+<!-- Submit Render Starts -->
+<div id="overlay_rejectReason" class="web_dialog_overlay"></div>
+<!-- Will be called only once for all conditions -->
+<!-- Image id submit 100 success start -->
+<div id="dialog_rejectReason" class="web_dialog_imageUploadPopUp" style="height: 140px;">
+	<div id="content">
+		<div class="x-panel-header">
+			Reject Reason
+		</div>
+		<div class="x-panel-body;border: 0px solid #99bbe8;">
+			<br>
+			<br>
+			
+			<select id="allImageRejectReasons" name="allImageRejectReasons">
+					<option id="00">PLease select a reason to reject this Image</option>
+				<c:forEach items="${imageForm.allImageRejectReasons}" var="imageRejectReason" varStatus="status">
+					<option id="${imageRejectReason.reasonCode}">${imageRejectReason.reasonCode}  ${imageRejectReason.rejectReason}</option>
+				</c:forEach>
+			</select>
+			<ul>
+			<br>
+				<li>
+					<input class="btn" id="rejectReasonPopupSubmit" type="button" onclick='$("#overlay_rejectReason").hide();$("#dialog_rejectReason").hide();' name="Submit" value="Submit" style="float: left;" />
+				</li>
+				<li>
+					<input class="btn" id="rejectReasonPopupClose" type="button" onclick='$("#overlay_rejectReason").hide();$("#dialog_rejectReason").hide();' name="Close" value="Close" style="float: left;" />
+				</li>
+			</ul>
+		</div>
+	</div>
+</div>
+
+<div id="overlay_petRejectReason" class="web_dialog_overlay"></div>
+<div id="dialog_petRejectReasons" class="web_dialog_imageUploadPopUp" style="height: 140px;">
+	<div id="content">
+		<div class="x-panel-header">
+			Reject Reason
+		</div>
+		<div class="x-panel-body;border: 0px solid #99bbe8;">
+			<br>
+			<br>
+		
+			<ul>
+			<li>
+				2017-02-14 03:33:33PM 01 - Image Quality/Resolution
+			</li>
+			<li>
+				2017-01-31 04:44:44PM 02 - Does Not Meet Belk Standards
+			</li>
+			</ul>
+				
+			<ul>
+			<br>
+				<li>
+					<input class="btn" id="petRejectReasonPopupClose" type="button" onclick='$("#overlay_petRejectReason").hide();' name="Close" value="Close" style="float: left;" />
+				</li>
+			</ul>
+		</div>
+	</div>
+</div>
 
 <!-- Image id submit failed start -->
 <div id="dialog_submitFailed" class="web_dialog_imageUploadPopUp" style="height: 140px;">
