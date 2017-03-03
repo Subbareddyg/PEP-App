@@ -475,11 +475,15 @@
 				   }
             	  //VP21
             	  
-			    if(pepUserRoleName != "readonly"){
+			    if(pepUserRoleName == "dca" && ((stylePetContentStatus=='Initiated' || stylePetContentStatus=='Ready_For_Review'))){
             		  disableProductDropDownAttributes();
             		  disableProductTextAttributes();
             		  disableProductRadioAttributes();
-            	  }		  
+            	  } else if (pepUserRoleName == "vendor" && stylePetContentStatus=='Initiated'){
+            		  disableProductDropDownAttributes();
+            		  disableProductTextAttributes();
+            		  disableProductRadioAttributes();
+            	  }
                    			
 
                 $('.tree').treegrid();
