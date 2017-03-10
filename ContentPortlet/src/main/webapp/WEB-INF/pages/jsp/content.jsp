@@ -2075,10 +2075,6 @@
 					 jAlert('Please enter Product Description', 'Alert');
 					// alert("Please enter Product Description");
 			    	 return;
-				}else if (productDescription != null && productDescription.length < 40) {
-					 jAlert('Product Description should be minimum of 40 characters', 'Alert');
-					// alert("Product Description should be minimum of 40 characters");
-					 return;
 				}else if (productDescription != null && productDescription.trim().length > 2000) {
 					 jAlert('Product Description should be less than 2000 characters', 'Alert');
 					// alert("Product Description should be less than 2000 characters");
@@ -2758,7 +2754,6 @@ function clickListenerContent(e){
 													<div class="max_chars"
 													style="margin-right: 150px; display: inline; white-space: nowrap;">
 													<fmt:message key="content.page.product.max.char"  bundle="${display}"/><span class="max_chars_val">2000</span>&nbsp;&nbsp;
-													<fmt:message key="content.page.product.minimum.char" bundle="${display}"/>&nbsp;&nbsp;
 													
 									
 													Chars Count: <span id="product_desc_length">0</span>
@@ -2795,8 +2790,7 @@ function clickListenerContent(e){
 													<div class="max_chars"
 													style="margin-right: 150px; display: inline; white-space: nowrap;">
 													<fmt:message key="content.page.product.max.char"  bundle="${display}"/><span class="max_chars_val">2000</span>&nbsp;&nbsp;
-													<fmt:message key="content.page.product.minimum.char" bundle="${display}"/>&nbsp;&nbsp;
-													
+																										
 									
 													Chars Count: <span id="product_desc_length">0</span>
 													</div> 
@@ -2828,7 +2822,7 @@ function clickListenerContent(e){
 													<div class="max_chars"
 													style="margin-right: 150px; display: inline; white-space: nowrap;">
 													<fmt:message key="content.page.product.max.char"  bundle="${display}"/><span class="max_chars_val">2000</span>&nbsp;&nbsp;
-													<fmt:message key="content.page.product.minimum.char" bundle="${display}"/>&nbsp;&nbsp;
+													
 													
 									
 													Chars Count: <span id="product_desc_length">0</span>
