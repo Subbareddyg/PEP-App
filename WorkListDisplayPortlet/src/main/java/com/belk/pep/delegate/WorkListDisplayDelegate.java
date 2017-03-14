@@ -152,10 +152,10 @@ public class WorkListDisplayDelegate {
         return workListDisplayService.getPetDetailsByAdvSearch(advanceSearch,supplierIdList,vendorEmail);  
     }
     
-    public List<WorkFlow> getPetDetailsByAdvSearchForParent(AdvanceSearch advanceSearch,List<String> supplierIdList,String vendorEmail) throws PEPServiceException, PEPPersistencyException  {
-        return workListDisplayService.getPetDetailsByAdvSearchForParent(advanceSearch,supplierIdList,vendorEmail);  
+    public List<WorkFlow> getPetDetailsByAdvSearchForParent(AdvanceSearch advanceSearch,List<String> supplierIdList,String vendorEmail, Integer startIndex, Integer maxResults) throws PEPServiceException, PEPPersistencyException  {
+        return workListDisplayService.getPetDetailsByAdvSearchForParent(advanceSearch,supplierIdList,vendorEmail, startIndex, maxResults);  
     }
-    
+
     public List<StyleColor> getPetDetailsByAdvSearchForChild(AdvanceSearch advanceSearch, String parentOrin)
     throws PEPPersistencyException  {
         return workListDisplayService.getPetDetailsByAdvSearchForChild(advanceSearch,parentOrin);  
@@ -213,7 +213,7 @@ public class WorkListDisplayDelegate {
      * @throws PEPServiceException 
      */
     public List<WorkFlow> getAdvWorklistGroupingData(final AdvanceSearch adSearch,
-        final List<String> supplierIdList, final String vendorEmail)
+        final List<String> supplierIdList, final String vendorEmail, Integer startIndex, Integer maxResults)
         throws PEPPersistencyException, PEPServiceException {
         LOGGER.info("Entering getAdvWorklistGroupingData() in Delegate class");
         List<WorkFlow> workflowList = new ArrayList<WorkFlow>();
@@ -238,7 +238,7 @@ public class WorkListDisplayDelegate {
         }
         else
         {
-            styleWorkflowList = workListDisplayService.getPetDetailsByAdvSearchForParent(adSearch, supplierIdList, vendorEmail);
+            styleWorkflowList = workListDisplayService.getPetDetailsByAdvSearchForParent(adSearch, supplierIdList, vendorEmail, startIndex, maxResults);
             LOGGER.info("List 1 size: " + styleWorkflowList.size());
             String styleOrin = "";
             for(final WorkFlow flow : styleWorkflowList)

@@ -134,7 +134,7 @@ public  interface WorkListDisplayDAO {
  */
 public List<WorkFlow> getPetDetailsByAdvSearch(AdvanceSearch advanceSearch,List<String> supplierIdList,String vendorEmail)throws PEPPersistencyException;
 
-public List<WorkFlow> getPetDetailsByAdvSearchForParent(AdvanceSearch advanceSearch,List<String> supplierIdList,String vendorEmail)throws PEPPersistencyException;
+public List<WorkFlow> getPetDetailsByAdvSearchForParent(AdvanceSearch advanceSearch,List<String> supplierIdList,String vendorEmail, Integer startIndex, Integer maxResults)throws PEPPersistencyException;
 
 public List<StyleColor> getPetDetailsByAdvSearchForChild(AdvanceSearch advanceSearch, String parentOrin)
 throws PEPPersistencyException;

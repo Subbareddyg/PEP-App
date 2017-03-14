@@ -2209,7 +2209,7 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
         * @throws ParseException
         */
 
-       private List<PetsFound> getAdvWorkListDisplayDataForParent(AdvanceSearch advanceSearch)throws SQLException, ParseException  {
+       private List<PetsFound> getAdvWorkListDisplayDataForParent(AdvanceSearch advanceSearch, Integer startIndex, Integer maxResults)throws SQLException, ParseException  {
            
            LOGGER.info("This is from getAdvWorkListDisplayDataForParent..Start" );
            List<PetsFound> petList = new ArrayList<PetsFound>();
@@ -2224,6 +2224,11 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
                tx = session.beginTransaction();      
               //Hibernate provides a createSQLQuery method to let you call your native SQL statement directly.   
                Query query = session.createSQLQuery(xqueryConstants.getAdvWorkListDisplayDataForParent(advanceSearch));  
+               
+               //query.setFetchSize(500);
+               query.setFirstResult(startIndex);
+               query.setMaxResults(maxResults);
+               
                LOGGER.info("getAdvWorkListDisplayDataForParent Query.." + query);
                // execute delete SQL statement
                List<Object[]> rows = query.list();
@@ -2388,14 +2393,14 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
         * This method will fetch the WorkList Details for Parent on base of the Advance search.
         */
        
-       public List<WorkFlow> getPetDetailsByAdvSearchForParent(AdvanceSearch advanceSearch,List<String> supplierIdList,String vendorEmail)
+       public List<WorkFlow> getPetDetailsByAdvSearchForParent(AdvanceSearch advanceSearch,List<String> supplierIdList,String vendorEmail, Integer startIndex, Integer maxResults)
            throws PEPPersistencyException {
 
            LOGGER.info("getPetDetailsByAdvSearchForParent....Enter");
            List<WorkFlow> workFlowList = null;
          
            try {
-               List<PetsFound> petList = getAdvWorkListDisplayDataForParent(advanceSearch);
+               List<PetsFound> petList = getAdvWorkListDisplayDataForParent(advanceSearch, startIndex, maxResults);
                LOGGER.info("getPetDetailsByAdvSearchForParent...." +petList.size());                            
                
                if(null != vendorEmail)  {  
@@ -2434,6 +2439,7 @@ private PetsFound mapAdseDbPetsToPortalAdvSearch(String parentStyleORIN,
            }
            return workFlowList;
        }
+       
        
        /**
         * This method will fetch the WorkList Details for Parent on base of the Advance search.
