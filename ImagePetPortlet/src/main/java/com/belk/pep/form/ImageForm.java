@@ -7,6 +7,7 @@ import com.belk.pep.form.StyleInfoDetails;
 import com.belk.pep.form.ImageProductDetails;
 import com.belk.pep.form.VendorInfoDetails;
 import com.belk.pep.model.ImageLinkVO;
+import com.belk.pep.model.ImageRejectReason;
 
 /**
  * The Class LoginBean.
@@ -48,6 +49,11 @@ public class ImageForm {
 	 * 
 	 */
 	private ArrayList<SamleImageDetails> sampleImageDetailList;
+	
+	/**
+	 * 
+	 */
+	private List<ImageRejectReason> allImageRejectReasons;
 	
 	/**
 	 * @return the sampleImageDetailList
@@ -199,6 +205,15 @@ public class ImageForm {
 	 */
 	public void setImageLinkVOList(List<ImageLinkVO> imageLinkVOList) {
 		this.imageLinkVOList = imageLinkVOList;
+	}
+
+	public List<ImageRejectReason> getAllImageRejectReasons() {
+		return allImageRejectReasons;
+	}
+
+	public void setAllImageRejectReasons(
+			List<ImageRejectReason> allImageRejectReasons) {
+		this.allImageRejectReasons = allImageRejectReasons;
 	}
 
 

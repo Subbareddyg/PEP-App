@@ -14,6 +14,7 @@ import com.belk.pep.exception.checked.PEPFetchException;
 import com.belk.pep.exception.checked.PEPPersistencyException;
 import com.belk.pep.exception.checked.PEPServiceException;
 import com.belk.pep.model.ImageLinkVO;
+import com.belk.pep.model.ImageRejectReason;
 import com.belk.pep.model.WorkFlow;
 import com.belk.pep.service.ImageRequestService;
 
@@ -321,5 +322,15 @@ public class ImageRequestDelegate {
             public boolean insertImageDelete(String orin, String deletedBy, String[] imageIds, String[] imageNames)
                     throws PEPServiceException, PEPPersistencyException {
                 return imageRequestService.insertImageDelete(orin, deletedBy, imageIds, imageNames);
+            }
+            
+            /**
+             * This method will populate reject reasons for Images
+             * @return List of ImageRejectReason POJOs 
+             */
+            public List<ImageRejectReason> getImageRejectReasons()  throws PEPServiceException {
+		        LOGGER.info("ImageRequestDelegate:: getImageRejectReasons");
+		        return imageRequestService.getImageRejectReasons();
+            	
             }
 }

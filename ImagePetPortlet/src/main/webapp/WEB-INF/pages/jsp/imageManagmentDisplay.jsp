@@ -68,7 +68,7 @@ function trClick(){
 		         data: { selectedColorOrin:selectedOrin },
 			         success: function(data){
 			         var json = $.parseJSON(data);   
-					 $(json).each(function(i,val){					
+					 $(json).each(function(i,val){	
 					//Logic for approve disbaled on submit image status					
 					if(val.imageStatus == 'Initiated' || val.imageStatus == 'Rejected'){						
 						document.getElementById('image_approve').disabled=true;
@@ -93,7 +93,8 @@ function trClick(){
 							shotTypeJsonArray.push(val.shotType);
 						 }
 						 shotTypeParamArray = shotTypeJsonArray;											
-						VPISampleImageRows(val.imageID,val.imageName,val.imagefilepath,val.imageLocation,val.shotType ,val.linkStatus,val.imageStatus,val.sampleId,val.sampleReceived,val.silhouette,val.turnInDate,val.sampleCordinatorNote,val.action,val.role, shotTypeParamArray);
+						VPISampleImageRows(val.imageID,val.imageName,val.imagefilepath,val.imageLocation,val.shotType ,val.linkStatus,val.imageStatus,val.sampleId,val.sampleReceived,
+								val.silhouette,val.turnInDate,val.sampleCordinatorNote,val.action,val.role, shotTypeParamArray, val.rejectCode, val.rejectReason, val.rejectionTimestamp);
 						
 						
 						
@@ -209,7 +210,7 @@ function trClick(){
 					if((typeof onSubmitId != 'undefined' &&  onSubmitId == '100')|| (typeof OnRemovalImageId != 'undefined' &&  OnRemovalImageId == '100')){
 						//alert('--OnRemovalImageId--' +OnRemovalImageId +'--onSubmitId--'+onSubmitId);
 						  if(reject_status == 'Y'){							  
-							  document.getElementById(completionStatusId1).innerHTML = 'Rejected_By_DCA';							  
+							  document.getElementById(completionStatusId1).innerHTML = 'Rejected_By_DCA';
 						  }
 						  else if(review_status == 'Y'){							  
 							  document.getElementById(completionStatusId1).innerHTML = 'Ready_For_Review';							  
@@ -251,7 +252,7 @@ $(document).ready(function() {
 			$(this).css('background-color','#DCE2EC');			
 			trClick();
 	 	}
-  });
+  	});
 });
 function removeVPISampleImageRows(selectedOrin){  
 	  var removeImageUrl = $("#removeImageUrl").val(); 
@@ -304,287 +305,326 @@ function removeVPISampleImageRows(selectedOrin){
 
 
 function VPISampleImageRows(imageId,imageName,imagefilepath,imageLocation,shotType ,linkStatus,imageStatus,sampleId,sampleReceived,
-silhouette,turnInDate,sampleCordinatorNote,action,role, shotTypeParamArray) {	
+silhouette,turnInDate,sampleCordinatorNote,action,role, shotTypeParamArray, rejectCode, rejectReason, rejectionTimestamp) {	
 	var table = document.getElementById("vImage");	
 	var rowCount = table.rows.length;		
 	var row = table.insertRow(rowCount);	
   	if(role=='vendor'){	
-  	//Vendor Login	
-   	var cell1 = row.insertCell(0);
-   	cell1.id="imageId";
-   	cell1.name="imageId";	
-	cell1.innerHTML = imageId;
-	
-	var cell2 = row.insertCell(1);
-	cell2.id="imageName";
-   	cell2.name="imageName";
-   	//cell2.innerHTML = imageName;
-   	var imageUrl = document.getElementById('downloadFilePathUrl').value+"?filePath="+imagefilepath+"&imageName="+imageName;
-   	//alert("imageurl :: "+imageUrl);
-   	//cell2.innerHTML = "<a href='"+imageUrl+"' target='_blank' > "+imageName+"</a>";
-	cell2.innerHTML = "<a href=\"javascript:openImage(\'"+imageUrl+"\')\"> "+imageName+"</a>";
-	
-	var cell3 = row.insertCell(2);
-	cell3.id="imageLocation";
-   	cell3.name="imageLocation";
-   	cell3.innerHTML = imageLocation;
-
-	var cell4 = row.insertCell(3);			
-	var selectBox = document.createElement("Select");
-	selectBox.name="shotType ";
-	selectBox.id="shotType ";	
-	selectBox.disabled = true;
-	
-	var hiddenShotType = document.createElement("input");
-	hiddenShotType.type = "hidden";
-	hiddenShotType.value = shotType;
-	hiddenShotType.id = "hiddenShotType";
-	
-	cell4.appendChild(hiddenShotType);	
-	
-	for(var j=0;j<shotTypeParamArray.length;j++){		
-		var option1 = document.createElement("OPTION")
-			if(shotTypeParamArray[j]==shotType){
-				option1.selected="selected";
-			}
-			option1.text=shotTypeParamArray[j];
-			option1.value=shotTypeParamArray[j];
-			selectBox.options.add(option1);			
-		}
-		cell4.appendChild(selectBox);	
-
-	/*var cell5 = row.insertCell(4);
-	cell5.id="linkStatus";
-    cell5.name="linkStatus";	
-	cell5.innerHTML = linkStatus;*/
-	
-	var cell5 = row.insertCell(4);
-	cell5.id="imageStatus";
-    cell5.name="imageStatus";
-	cell5.innerHTML = imageStatus;	
-	
-	if(imageStatus  == "Initiated"){
-		var cell6 = row.insertCell(5);	
-		var element7 = document.createElement("input");
-		element7.style.fontWeight = 'bold';
-		element7.style.width= "59px";
-
-		element7.type = "button";
-		element7.name="Submit";
-		element7.id="Submit";
-		element7.value="Submit";
-		element7.onclick=function(event){
-		getValuesforSubmitorRejectAjax(imageId,imageStatus,element7,event);
-		return false;
-	};
-}else{
-		var cell6 = row.insertCell(5);	
-		var element7 = document.createElement("input");
-		element7.style.fontWeight = 'bold';
-		element7.style.width= "59px";
-		element7.type = "button";
-		element7.disabled = true;
-		element7.name="Submit";
-		element7.id="Submit";
-		element7.value="Submit";
+	  	//Vendor Login	
+	   	var cell1 = row.insertCell(0);
+	   	cell1.id="imageId";
+	   	cell1.name="imageId";	
+		cell1.innerHTML = imageId;
 		
-}
-	cell6.appendChild(element7);	
-	var cell7 = row.insertCell(6);
-	cell7.id="imgSelect";
-	cell7.name="imgSelect";	
+		var cell2 = row.insertCell(1);
+		cell2.id="imageName";
+	   	cell2.name="imageName";
+	   	//cell2.innerHTML = imageName;
+	   	var imageUrl = document.getElementById('downloadFilePathUrl').value+"?filePath="+imagefilepath+"&imageName="+imageName;
+	   	//alert("imageurl :: "+imageUrl);
+	   	//cell2.innerHTML = "<a href='"+imageUrl+"' target='_blank' > "+imageName+"</a>";
+		cell2.innerHTML = "<a href=\"javascript:openImage(\'"+imageUrl+"\')\"> "+imageName+"</a>";
+		
+		var cell3 = row.insertCell(2);
+		cell3.id="imageLocation";
+	   	cell3.name="imageLocation";
+	   	cell3.innerHTML = imageLocation;
 	
-	/*if(imageStatus  == 'Completed' || imageStatus  == 'Ready_For_Review'){
-		cell7.innerHTML = 'Remove';
-	}else{
-		cell7.innerHTML = '<a href="javascript:confirmRemovePopUp('+imageId+',\''+imageName+'\','+rowCount+')">Remove</a>';
-	}	*/	
-	if(imageStatus  == 'Completed' || imageStatus  == 'Ready_For_Review' || imageStatus  == 'ReadyForReview'){
-		cell7.innerHTML = '<input type="checkbox" class="SelectAllImg" id="imgSelect" name="imgSelect" disabled>	';
-	}else{
-		cell7.innerHTML = '<input type="checkbox" class="SelectAllImg" id="imgSelect" name="imgSelect">	';
-	}
-
-	}else if(role == 'dca'){
-	//DCA Login	
-	var cell1 = row.insertCell(0);
-	cell1.id="imageId";
-   	cell1.name="imageId";	
-	cell1.innerHTML = imageId;	
-	
-	var cell2 = row.insertCell(1);
-	cell2.id="imageName";
-   	cell2.name="imageName";
-   	//cell2.innerHTML = imageName;
-   	var imageUrl = document.getElementById('downloadFilePathUrl').value+"?filePath="+imagefilepath+"&imageName="+imageName;
-   	//alert("imageurl :: "+imageUrl);
-   	cell2.innerHTML = "<a href=\"javascript:openImage(\'"+imageUrl+"\')\"> "+imageName+"</a>";
-	
-	var cell3 = row.insertCell(2);
-	cell3.id="imageLocation";
-   	cell3.name="imageLocation";
-   	cell3.innerHTML = imageLocation;	
-
-	var cell4 = row.insertCell(3);			
-	var selectBox = document.createElement("Select")
-	selectBox.name="shotType";
-	selectBox.id="shotType";
-	selectBox.class = "shotType";
-	
-	if(imageStatus  == "Completed"){
+		var cell4 = row.insertCell(3);			
+		var selectBox = document.createElement("Select");
+		selectBox.name="shotType ";
+		selectBox.id="shotType ";	
 		selectBox.disabled = true;
-	}
+		
+		var hiddenShotType = document.createElement("input");
+		hiddenShotType.type = "hidden";
+		hiddenShotType.value = shotType;
+		hiddenShotType.id = "hiddenShotType";
+		
+		cell4.appendChild(hiddenShotType);	
+		
+		for(var j=0;j<shotTypeParamArray.length;j++){		
+			var option1 = document.createElement("OPTION")
+				if(shotTypeParamArray[j]==shotType){
+					option1.selected="selected";
+				}
+				option1.text=shotTypeParamArray[j];
+				option1.value=shotTypeParamArray[j];
+				selectBox.options.add(option1);			
+			}
+			cell4.appendChild(selectBox);	
 	
-	/*Below code will store the shotType value from Database.*/
-	
-	var hiddenShotType = document.createElement("input");
-	hiddenShotType.type = "hidden";
-	hiddenShotType.value = shotType;
-	hiddenShotType.id = "hiddenShotType";
-	
-	cell4.appendChild(hiddenShotType);	
-	
-	for(var j=0;j<shotTypeParamArray.length;j++){		
-		var option1 = document.createElement("OPTION")
-		if(shotTypeParamArray[j]==shotType){
-			option1.selected="selected";
+		/*var cell5 = row.insertCell(4);
+		cell5.id="linkStatus";
+	    cell5.name="linkStatus";	
+		cell5.innerHTML = linkStatus;*/
+		
+		var cell5 = row.insertCell(4);
+		cell5.id="imageStatus";
+	    cell5.name="imageStatus";
+	    
+		if(imageStatus  == 'Rejected' || imageStatus  == 'Rejected_By_DCA'){
+			if(rejectCode){
+				cell5.innerHTML = imageStatus +"<br/><br/><a href=\"javascript:showPetRejectReasons('"+rejectCode+"','"+rejectReason+"','"+rejectionTimestamp+"')\">Reject Reason</a>";
+			}
+			else{
+				cell5.innerHTML = imageStatus;	
+			}
+		}else{
+			cell5.innerHTML = imageStatus;	
 		}
-		option1.text=shotTypeParamArray[j];
-		option1.value=shotTypeParamArray[j];
-		selectBox.options.add(option1);
+		
+		if(imageStatus  == "Initiated"){
+			var cell6 = row.insertCell(5);	
+			var element7 = document.createElement("input");
+			element7.style.fontWeight = 'bold';
+			element7.style.width= "59px";
+	
+			element7.type = "button";
+			element7.name="Submit";
+			element7.id="Submit";
+			element7.value="Submit";
+			element7.onclick=function(event){
+				getValuesforSubmitorRejectAjax(imageId,imageStatus,element7,event,"","");
+				return false;
+			};
+		}else{
+			var cell6 = row.insertCell(5);	
+			var element7 = document.createElement("input");
+			element7.style.fontWeight = 'bold';
+			element7.style.width= "59px";
+			element7.type = "button";
+			element7.disabled = true;
+			element7.name="Submit";
+			element7.id="Submit";
+			element7.value="Submit";
 			
 		}
-		cell4.appendChild(selectBox);
-	
-	var cell5 = row.insertCell(4);
-	cell5.id="imageStatus";
-   	cell5.name="imageStatus";
-	cell5.innerHTML = imageStatus;
-	
-	//New Changes
-	if(typeof imageStatus  == "undefined" || imageStatus  == "Initiated"){
-		var cell11 = row.insertCell(5);	
-		var element12 = document.createElement("input");
-		element12.style.fontWeight = 'bold';
-		element12.style.width= "60px";
-		element12.type = "button";
-		element12.name="Submit";
-		element12.id="Submit";
-		element12.value="Submit";
-		element12.onclick = function(event){
-			getValuesforSubmitorRejectAjax(imageId,imageStatus,element12,event);
-			return false;		
-		};
-	}else{
-		var cell11 = row.insertCell(5);	
-		var element12 = document.createElement("input");
-		element12.style.fontWeight = 'bold';
-		element12.style.width= "60px";
-		element12.type = "button";
-		element12.disabled = true;
-		element12.name="Submit";
-		element12.id="Submit";
-		element12.value="Submit";
+		cell6.appendChild(element7);	
+		var cell7 = row.insertCell(6);
+		cell7.id="imgSelect";
+		cell7.name="imgSelect";	
 		
-	}
-	cell11.appendChild(element12);
-	
-	//For Reject Status need to check
-	if(imageStatus  == 'Approved' || imageStatus  == 'Rejected' || imageStatus  == 'Rejected_By_DCA' || imageStatus  == 'Completed'){
-		var cell12 = row.insertCell(6);	
-		var element13 = document.createElement("input");
-		element13.disabled=true;
-		element13.style.fontWeight = 'bold';
-		element13.style.width= "59px";
-		element13.type = "button";
-		element13.disabled=true;
-		selectBox.disabled = true;
-		element13.name="Reject";
-		element13.value="Reject";		
-	}else{
-		var cell12 = row.insertCell(6);	
-		var element13 = document.createElement("input");	
-		element13.style.fontWeight = 'bold';
-		element13.style.width= "59px";
-		element13.type = "button";
-		element13.name="Reject";
-		element13.value="Reject";
-		element13.onclick = function(event){
-			getValuesforSubmitorRejectAjax(imageId,imageStatus,element13,event);
-			return false;			
-		};	
-	}	
-	cell12.appendChild(element13);	
-	var cell13 = row.insertCell(7);
-	cell13.id="imgSelect";
-	cell13.name="imgSelect";
-	if(imageStatus  == 'Completed'){
-	cell13.innerHTML = '<input type="checkbox" class="SelectAllImg" id="imgSelect" name="imgSelect" disabled>';
-	}else{
-	cell13.innerHTML = '<input type="checkbox" class="SelectAllImg" id="imgSelect" name="imgSelect" >';
-	}
-	}else if(role=='readonly'){	
-  	//readonly Login	
-   	var cell1 = row.insertCell(0);
-   	cell1.id="imageId";
-   	cell1.name="imageId";	
-	cell1.innerHTML = imageId;
-	
-	var cell2 = row.insertCell(1);
-	cell2.id="imageName";
-   	cell2.name="imageName";
-   	//cell2.innerHTML = imageName;
-   	var imageUrl = document.getElementById('downloadFilePathUrl').value+"?filePath="+imagefilepath+"&imageName="+imageName;
-   	//alert("imageurl :: "+imageUrl);
-   	//cell2.innerHTML = "<a href='"+imageUrl+"' target='_blank' > "+imageName+"</a>";
-	cell2.innerHTML = "<a href=\"javascript:openImage(\'"+imageUrl+"\')\"> "+imageName+"</a>";
-	
-	var cell3 = row.insertCell(2);
-	cell3.id="imageLocation";
-   	cell3.name="imageLocation";
-   	cell3.innerHTML = imageLocation;
+		/*if(imageStatus  == 'Completed' || imageStatus  == 'Ready_For_Review'){
+			cell7.innerHTML = 'Remove';
+		}else{
+			cell7.innerHTML = '<a href="javascript:confirmRemovePopUp('+imageId+',\''+imageName+'\','+rowCount+')">Remove</a>';
+		}	*/	
+		if(imageStatus  == 'Completed' || imageStatus  == 'Ready_For_Review' || imageStatus  == 'ReadyForReview'){
+			cell7.innerHTML = '<input type="checkbox" class="SelectAllImg" id="imgSelect" name="imgSelect" disabled>	';
+		}else{
+			cell7.innerHTML = '<input type="checkbox" class="SelectAllImg" id="imgSelect" name="imgSelect">	';
+		}
 
-	var cell4 = row.insertCell(3);			
-	var selectBox = document.createElement("Select");
-	selectBox.name="shotType ";
-	selectBox.id="shotType ";	
-	selectBox.disabled = true;
+	}
+  	else if(role == 'dca'){
+		//DCA Login	
+		var cell1 = row.insertCell(0);
+		cell1.id="imageId";
+	   	cell1.name="imageId";	
+		cell1.innerHTML = imageId;	
+		
+		var cell2 = row.insertCell(1);
+		cell2.id="imageName";
+	   	cell2.name="imageName";
+	   	//cell2.innerHTML = imageName;
+	   	var imageUrl = document.getElementById('downloadFilePathUrl').value+"?filePath="+imagefilepath+"&imageName="+imageName;
+	   	//alert("imageurl :: "+imageUrl);
+	   	cell2.innerHTML = "<a href=\"javascript:openImage(\'"+imageUrl+"\')\"> "+imageName+"</a>";
+		
+		var cell3 = row.insertCell(2);
+		cell3.id="imageLocation";
+	   	cell3.name="imageLocation";
+	   	cell3.innerHTML = imageLocation;	
 	
-	var hiddenShotType = document.createElement("input");
-	hiddenShotType.type = "hidden";
-	hiddenShotType.value = shotType;
-	hiddenShotType.id = "hiddenShotType";
+		var cell4 = row.insertCell(3);			
+		var selectBox = document.createElement("Select")
+		selectBox.name="shotType";
+		selectBox.id="shotType";
+		selectBox.class = "shotType";
+		
+		if(imageStatus  == "Completed"){
+			selectBox.disabled = true;
+		}
 	
-	cell4.appendChild(hiddenShotType);	
-	
-	for(var j=0;j<shotTypeParamArray.length;j++){		
-		var option1 = document.createElement("OPTION")
+		/*Below code will store the shotType value from Database.*/
+		
+		var hiddenShotType = document.createElement("input");
+		hiddenShotType.type = "hidden";
+		hiddenShotType.value = shotType;
+		hiddenShotType.id = "hiddenShotType";
+		
+		cell4.appendChild(hiddenShotType);	
+		
+		for(var j=0;j<shotTypeParamArray.length;j++){		
+			var option1 = document.createElement("OPTION")
 			if(shotTypeParamArray[j]==shotType){
 				option1.selected="selected";
 			}
 			option1.text=shotTypeParamArray[j];
 			option1.value=shotTypeParamArray[j];
-			selectBox.options.add(option1);			
+			selectBox.options.add(option1);
 		}
-		cell4.appendChild(selectBox);	
-
-	/*var cell5 = row.insertCell(4);
-	cell5.id="linkStatus";
-    cell5.name="linkStatus";	
-	cell5.innerHTML = linkStatus;*/
 	
-	var cell5 = row.insertCell(4);
-	cell5.id="imageStatus";
-    cell5.name="imageStatus";
-	cell5.innerHTML = imageStatus;	
-}
+		cell4.appendChild(selectBox);
+		
+		var cell5 = row.insertCell(4);
+		cell5.id="imageStatus";
+	   	cell5.name="imageStatus";
+		if(imageStatus  == 'Rejected' || imageStatus  == 'Rejected_By_DCA'){
+			if(rejectCode){
+				cell5.innerHTML = imageStatus +"<br/><br/><a href=\"javascript:showPetRejectReasons('"+rejectCode+"','"+rejectReason+"','"+rejectionTimestamp+"')\">Reject Reason</a>";
+			}
+			else{
+				cell5.innerHTML = imageStatus;	
+			}
+		}else{
+			cell5.innerHTML = imageStatus;	
+		}
+	
+		//New Changes
+		if(typeof imageStatus  == "undefined" || imageStatus  == "Initiated"){
+			var cell11 = row.insertCell(5);	
+			var element12 = document.createElement("input");
+			element12.style.fontWeight = 'bold';
+			element12.style.width= "60px";
+			element12.type = "button";
+			element12.name="Submit";
+			element12.id="Submit";
+			element12.value="Submit";
+			element12.onclick = function(event){
+				getValuesforSubmitorRejectAjax(imageId,imageStatus,element12,event,"","");
+				return false;		
+			};
+		}
+		else{
+			var cell11 = row.insertCell(5);	
+			var element12 = document.createElement("input");
+			element12.style.fontWeight = 'bold';
+			element12.style.width= "60px";
+			element12.type = "button";
+			element12.disabled = true;
+			element12.name="Submit";
+			element12.id="Submit";
+			element12.value="Submit";
+			
+		}
+		cell11.appendChild(element12);
+	
+		//For Reject Status need to check
+		if(imageStatus  == 'Approved' || imageStatus  == 'Rejected' || imageStatus  == 'Rejected_By_DCA' || imageStatus  == 'Completed'){
+			var cell12 = row.insertCell(6);	
+			var element13 = document.createElement("input");
+			element13.disabled=true;
+			element13.style.fontWeight = 'bold';
+			element13.style.width= "59px";
+			element13.type = "button";
+			element13.disabled=true;
+			selectBox.disabled = true;
+			element13.name="Reject";
+			element13.value="Reject";		
+		}
+		else{
+			var cell12 = row.insertCell(6);	
+			var element13 = document.createElement("input");	
+			element13.style.fontWeight = 'bold';
+			element13.style.width= "59px";
+			element13.type = "button";
+			element13.name="Reject";
+			element13.value="Reject";
+			element13.onclick = function(event){
+				showRejectReason(imageId,imageStatus,element13,event);
+				return false;			
+			};	
+		}	
+		cell12.appendChild(element13);	
+		var cell13 = row.insertCell(7);
+		cell13.id="imgSelect";
+		cell13.name="imgSelect";
+		
+		if(imageStatus  == 'Completed'){
+			cell13.innerHTML = '<input type="checkbox" class="SelectAllImg" id="imgSelect" name="imgSelect" disabled>';
+		}
+		else{
+			cell13.innerHTML = '<input type="checkbox" class="SelectAllImg" id="imgSelect" name="imgSelect" >';
+		}
+	}
+  	else if(role=='readonly'){	
+	  	//readonly Login	
+	   	var cell1 = row.insertCell(0);
+	   	cell1.id="imageId";
+	   	cell1.name="imageId";	
+		cell1.innerHTML = imageId;
+		
+		var cell2 = row.insertCell(1);
+		cell2.id="imageName";
+	   	cell2.name="imageName";
+	   	//cell2.innerHTML = imageName;
+	   	var imageUrl = document.getElementById('downloadFilePathUrl').value+"?filePath="+imagefilepath+"&imageName="+imageName;
+	   	//alert("imageurl :: "+imageUrl);
+	   	//cell2.innerHTML = "<a href='"+imageUrl+"' target='_blank' > "+imageName+"</a>";
+		cell2.innerHTML = "<a href=\"javascript:openImage(\'"+imageUrl+"\')\"> "+imageName+"</a>";
+		
+		var cell3 = row.insertCell(2);
+		cell3.id="imageLocation";
+	   	cell3.name="imageLocation";
+	   	cell3.innerHTML = imageLocation;
+	
+		var cell4 = row.insertCell(3);			
+		var selectBox = document.createElement("Select");
+		selectBox.name="shotType ";
+		selectBox.id="shotType ";	
+		selectBox.disabled = true;
+		
+		var hiddenShotType = document.createElement("input");
+		hiddenShotType.type = "hidden";
+		hiddenShotType.value = shotType;
+		hiddenShotType.id = "hiddenShotType";
+		
+		cell4.appendChild(hiddenShotType);	
+		
+		for(var j=0;j<shotTypeParamArray.length;j++){		
+			var option1 = document.createElement("OPTION")
+				if(shotTypeParamArray[j]==shotType){
+					option1.selected="selected";
+				}
+				option1.text=shotTypeParamArray[j];
+				option1.value=shotTypeParamArray[j];
+				selectBox.options.add(option1);			
+			}
+			cell4.appendChild(selectBox);	
+	
+		/*var cell5 = row.insertCell(4);
+		cell5.id="linkStatus";
+	    cell5.name="linkStatus";	
+		cell5.innerHTML = linkStatus;*/
+		
+		var cell5 = row.insertCell(4);
+		cell5.id="imageStatus";
+	    cell5.name="imageStatus";
+		if(imageStatus  == 'Rejected' || imageStatus  == 'Rejected_By_DCA'){
+			if(rejectCode){
+				cell5.innerHTML = imageStatus +"<br/><br/><a href=\"javascript:showPetRejectReasons('"+rejectCode+"','"+rejectReason+"','"+rejectionTimestamp+"')\">Reject Reason</a>";
+			}
+			else{
+				cell5.innerHTML = imageStatus;	
+			}
+		}
+		else{
+			cell5.innerHTML = imageStatus;	
+		}
+
+	}
+  	
 	if($('input[name=imgSelect]').filter(':enabled').length === 0){
         $('input[name="removeImage"]').attr('disabled', 'disabled');
         $('input[name="imgSelectAll"]').attr('disabled', 'disabled');
-	}else{
+	}
+	else{
 	    $('input[name="removeImage"]').removeAttr('disabled');
         $('input[name="imgSelectAll"]').removeAttr('disabled');
 	}
+	
 }
 
 function setUploadVPILink(url,orin,removeImageUrl,supplierId ){
@@ -633,7 +673,7 @@ function getScene7Url(orin, url){
 		});
 };
 
-function getValuesforSubmitorRejectAjax(imageId,imageStatus,element,event){
+function getValuesforSubmitorRejectAjax(imageId,imageStatus,element,event,selectedRejectReasonCode,selectedRejectReasonText){
 	var target = event.srcElement || event.target;
 	//console.log($(target).parent().parent().find('select :selected').val());
 	var shotTypeValueOnSubmit = $(target).parent().parent().find('select :selected').length ? 
@@ -651,7 +691,8 @@ function getValuesforSubmitorRejectAjax(imageId,imageStatus,element,event){
 			type: 'POST',
 			url : url,
 			datatype:'json',
-			data: {'selectedColorOrin': selectedOrin,'imageId' : imageId,'imageStatus' : imageStatus,'statusparam' : statusparam, shotTypeValueOnSubmit: shotTypeValueOnSubmit},
+			data: {'selectedColorOrin': selectedOrin,'imageId' : imageId,'imageStatus' : imageStatus,'statusparam' : statusparam, 
+				shotTypeValueOnSubmit: shotTypeValueOnSubmit, rejectCode: selectedRejectReasonCode, rejectText: selectedRejectReasonText},
 			cache: true,
 			async: true,
 			success: function(data){					
@@ -773,6 +814,36 @@ function confirmRemovePopUp(imageId,imageName,rowId){
 	jq('#dialog_submitRemove').dialog('open');
 }
 
+function showRejectReason(imageId,imageStatus,element,event) {
+	$("#overlay_rejectReason").css("display","block");
+	jq("#dialog_rejectReason").dialog('open');
+	$("#rejectReasonPopupSubmit").bind("click", function(){
+		//validation 
+		var selectedRejectReasonText = $("#allImageRejectReasons option:selected").text();
+		var selectedRejectReasonCode = $("#allImageRejectReasons option:selected").val();		
+		getValuesforSubmitorRejectAjax(imageId,imageStatus,element,event,selectedRejectReasonCode,selectedRejectReasonText);
+		$("#overlay_rejectReason").hide();
+		jq("#dialog_rejectReason").dialog('close'); //closing upload dialog
+		return false;			
+	});
+	$("#rejectReasonPopupClose").bind("click", function(){
+		$("#overlay_rejectReason").hide();
+		jq("#dialog_rejectReason").dialog('close'); //closing upload dialog
+		return false;			
+	});
+}
+
+function showPetRejectReasons(rejectCode, rejectReason, rejectionTimestamp) {
+	$("#overlay_petRejectReason").css("display","block");
+	jq('#dialog_petRejectReason').dialog('open');
+
+	$("#petRejectReasonPopupClose").bind("click", function(){
+		$("#overlay_petRejectReason").hide();
+		jq("#dialog_petRejectReason").dialog('close'); //closing upload dialog
+		return false;			
+	});
+}
+
 function dialogHideonOk(){
 	//$("#overlay_submitOrReject").hide();
 	//$("#dialog_submitRemove").hide();
@@ -843,6 +914,49 @@ function checkApproveImageStatus(orinId,imageStatus){
 	</div>
 </div>
 <!-- Image id submit success end-->
+
+<!-- Submit Render Starts -->
+<div id="overlay_rejectReason" class="web_dialog_overlay"></div>
+<!-- Will be called only once for all conditions -->
+<!-- Image id submit 100 success start -->
+<div id="dialog_rejectReason" class="web_dialog_imageUploadPopUp" style="height: 140px;">
+	<div id="content">
+		<div class="x-panel-body;border: 0px solid #99bbe8;">
+			<br>
+			<br>
+			
+			<select class="styled-select.slate" id="allImageRejectReasons" name="allImageRejectReasons">
+				<option id="00">Please select a reason to reject this Image</option>
+				<c:forEach items="${imageForm.allImageRejectReasons}" var="imageRejectReason" varStatus="status">
+					<option value="${imageRejectReason.reasonCode}">${imageRejectReason.reasonCode}  ${imageRejectReason.rejectReason}</option>
+				</c:forEach>
+			</select>
+			<ul>
+				<br>
+				<li class="buttons" style="float:right;">
+					<input class="btn-new ui-button ui-corner-all ui-widget" id="rejectReasonPopupSubmit" type="button" name="Submit" value="Submit" style="float: left;" />
+					<input class="btn-new ui-button ui-corner-all ui-widget" id="rejectReasonPopupClose" type="button"  name="Close" value="Close" style="float: left;" />
+				</li>
+			</ul>
+		</div>
+	</div>
+</div>
+
+<div id="overlay_petRejectReason" class="web_dialog_overlay"></div>
+<div id="dialog_petRejectReason" class="web_dialog_imageUploadPopUp" style="height: 140px;">
+	<div id="content">
+		<div class="pet-reject-reason">
+			<br>
+			<ul id="reject-reasons">
+				<li id="reject-reason">
+				<!-- The information for the popup is filled through JS showPetRejectReason() -->
+				</li>
+			</ul>
+				
+			<input class="btn-new ui-button ui-corner-all ui-widget corner-btn" id="petRejectReasonPopupClose" type="button" name="Close" value="Close" />
+		</div>
+	</div>
+</div>
 
 <!-- Image id submit failed start -->
 <div id="dialog_submitFailed" class="web_dialog_imageUploadPopUp" style="height: 140px;">

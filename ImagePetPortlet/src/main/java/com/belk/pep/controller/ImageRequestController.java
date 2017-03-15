@@ -59,6 +59,7 @@ import com.belk.pep.form.StyleInfoDetails;
 import com.belk.pep.form.WorkListDisplayForm;
 import com.belk.pep.helper.GroupingImageHelper;
 import com.belk.pep.model.ImageLinkVO;
+import com.belk.pep.model.ImageRejectReason;
 import com.belk.pep.model.UploadImagesDTO;
 import com.belk.pep.model.WorkFlow;
 import com.belk.pep.util.FtpUtil;
@@ -281,7 +282,7 @@ public class ImageRequestController {
         ArrayList vendorInformationList = imageRequestDelegate.getVendorInformation(orinNumber);
         ArrayList contactInformationList = imageRequestDelegate.getContactInformation(orinNumber); 
         ArrayList pepHistoryList = imageRequestDelegate.getPepHistoryDetails(orinNumber);
-        
+        List<ImageRejectReason> allImageRejectReasons = imageRequestDelegate.getImageRejectReasons();
         
         LOGGER.info("****inside the  handle handleRenderRequest method****"
             + request.getParameter(ImageConstants.ACTION));
@@ -325,7 +326,13 @@ public class ImageRequestController {
                     LOGGER.info("exiting inside pepHistoryList");
                 }
                                             
-                
+
+                if (allImageRejectReasons.size() > 0 && allImageRejectReasons !=null) {
+                    LOGGER.info("inside allImageRejectReasons");
+                    imageForm.setAllImageRejectReasons(allImageRejectReasons);
+                    LOGGER.info("exiting inside allImageRejectReasons");
+                }
+
                 List<WorkFlow> workFlowList   = new ArrayList<WorkFlow>();   	
             	workFlowList =  imageRequestDelegate.getImageMgmtDetailsByOrin(orinNumber);
             	WorkListDisplayForm workListDisplayForm = new WorkListDisplayForm();
@@ -893,6 +900,10 @@ public class ImageRequestController {
             jsonObj.put("action", "");
             jsonObj.put("imagefilepath", imageFilePath);
             jsonObj.put("role", roleToPass);
+            jsonObj.put("rejectCode", item.getRejectCode());
+            jsonObj.put("rejectReason", item.getRejectReason());
+            jsonObj.put("rejectionTimestamp", item.getRejectionTimestamp());
+            
             jsonArrayImageDtls.put(jsonObj);
         	 }
         	}
@@ -960,6 +971,8 @@ public class ImageRequestController {
 		String imageStatus = request.getParameter("imageStatus");
 		String statusParam = request.getParameter("statusparam");
 		String shotTypeOnSubmit = request.getParameter("shotTypeValueOnSubmit");
+		String rejectCode = request.getParameter("rejectCode");
+		String rejectText = request.getParameter("rejectText");
 		
 		String responseMsg = "";
 		String responseMsg1 = "";
@@ -986,7 +999,7 @@ public class ImageRequestController {
 		}
 		try {          
             
-	           JSONObject jsonStyle = populateJsonForSubmitOrReject(orinNumber.trim(),imageId,passImageStatusToService,updatedBy);
+	           JSONObject jsonStyle = populateJsonForSubmitOrReject(orinNumber.trim(),imageId,passImageStatusToService,updatedBy, rejectCode, rejectText);
 	           jsonArray.put(jsonStyle);
 	           LOGGER.info("json Object petId "+ jsonStyle.getString("petId"));
 	           responseMsg = callSubmitOrRejectService(jsonArray);
@@ -1114,7 +1127,7 @@ public class ImageRequestController {
 	    * @param updatedBy
 	    * @return
 	    */
-	   public JSONObject populateJsonForSubmitOrReject(String orinNo, String imagId,String imageStatus,String updatedBy){
+	   public JSONObject populateJsonForSubmitOrReject(String orinNo, String imagId,String imageStatus,String updatedBy, String rejectCode, String rejectText){
 	       JSONObject jsonObj = new JSONObject();
 	       try {
 	    	   LOGGER.info("populateJsonForSubmitOrReject Enter.....Controller---->");
@@ -1123,6 +1136,12 @@ public class ImageRequestController {
 	    	   jsonObj.put(ImageConstants.IMAGE_ID, imagId);
 	    	   jsonObj.put(ImageConstants.SAVE_IMAGE_STATUS, imageStatus); 
 	    	   jsonObj.put(ImageConstants.UPDATEDBY, updatedBy); 
+	    	   
+	    	   if(StringUtils.isNotBlank(rejectCode)){
+	    		   jsonObj.put(ImageConstants.REJECT_CODE, rejectCode);
+	    		   jsonObj.put(ImageConstants.REJECT_REASON ,StringUtils.substringAfter(rejectText, " "));
+	    	   }
+	    	   
 	           LOGGER.info("jsonObj populateJsonForSubmitOrReject************ ---->"+jsonObj);
 	       } catch (JSONException e) {
 	    	   LOGGER.info("Caught**** Exception...Controller");
@@ -1481,6 +1500,7 @@ public class ImageRequestController {
 	        String groupingId = null;
 	        String petStatus = null ;      
 	        String [] imageWithPetStatusArray = null;
+	        List<ImageRejectReason> allImageRejectReasons = new ArrayList<ImageRejectReason>();
 			if(null != imageDetailsFromIPC){
 			 try {
 	    		String loggedInUser = "";
@@ -1513,7 +1533,8 @@ public class ImageRequestController {
 				styleInfoList = imageRequestDelegate.getGroupingInfoDetails(groupingId);
 				imageProductInfoList = imageRequestDelegate.getGroupingDetails(groupingId);	       
 		        pepHistoryList = imageRequestDelegate.getGroupingHistoryDetails(groupingId);	    	
-		        List<ImageLinkVO> imageLinkVOList = imageRequestDelegate.getGroupingScene7ImageLinks(groupingId);	              
+		        List<ImageLinkVO> imageLinkVOList = imageRequestDelegate.getGroupingScene7ImageLinks(groupingId);
+		        allImageRejectReasons = imageRequestDelegate.getImageRejectReasons();
 		        ImageForm imageForm = new ImageForm();
 		        String formSessionKey = request.getPortletSession().getId() + loggedInUser;
 		        request.getPortletSession().setAttribute("formSessionKey", formSessionKey);
@@ -1533,6 +1554,9 @@ public class ImageRequestController {
 	            if (imageLinkVOList !=null && imageLinkVOList.size() > 0){                   
 	                imageForm.setImageLinkVOList(imageLinkVOList);                   
 	            }
+                if (allImageRejectReasons.size() > 0 && allImageRejectReasons !=null) {
+                    imageForm.setAllImageRejectReasons(allImageRejectReasons);
+                }
 	                      
 	            Properties prop =PropertyLoader.getPropertyLoader(ImageConstants.LOAD_IMAGE_PROPERTY_FILE);
 	  		    String fileDir = prop.getProperty(ImageConstants.FILE_UPLOAD_PATH);         

@@ -21,6 +21,9 @@ public class SamleImageDetails {
 	private String imageSilhouette;
 	private String tiDate;
 	private String sampleCoordinatorNote;
+	private String rejectCode;
+	private String rejectReason;
+	private String rejectionTimestamp;
 	
 	
 	/**
@@ -194,6 +197,29 @@ public class SamleImageDetails {
 	 */
 	public void setImageUrl(String imageUrl) {
 		this.imageUrl = imageUrl;
+	}
+
+	public String getRejectCode() {
+		return rejectCode;
+	}
+	public void setRejectCode(String rejectCode) {
+		this.rejectCode = rejectCode;
+	}
+	
+	public String getRejectReason() {
+		return rejectReason;
+	}
+	
+	public void setRejectReason(String rejectReason) {
+		this.rejectReason = rejectReason;
+	}
+	
+	public String getRejectionTimestamp() {
+		return rejectionTimestamp;
+	}
+	
+	public void setRejectionTimestamp(String rejectionTimestamp) {
+		this.rejectionTimestamp = rejectionTimestamp;
 	}
 
 	private String imageUrl;

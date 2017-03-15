@@ -12,6 +12,7 @@ import org.json.JSONObject;
 import com.belk.pep.exception.checked.PEPPersistencyException;
 import com.belk.pep.exception.checked.PEPServiceException;
 import com.belk.pep.model.ImageLinkVO;
+import com.belk.pep.model.ImageRejectReason;
 import com.belk.pep.model.WorkFlow;
 //import com.belk.pep.service.ArrayList;
 //import com.belk.pep.service.String;
@@ -198,5 +199,12 @@ public interface ImageRequestService {
 	
     public boolean insertImageDelete(String orin, String deletedBy, String[] imageIds, String[] imageNames) throws PEPServiceException, PEPPersistencyException;
 	
+    /**
+     * This service method returns list of reject reasons for Image Rejection
+	 * @return
+	 * @throws PEPServiceException
+     */
+    public List<ImageRejectReason> getImageRejectReasons() throws PEPServiceException;
+
 }
 
