@@ -900,6 +900,10 @@ public class ImageRequestController {
             jsonObj.put("action", "");
             jsonObj.put("imagefilepath", imageFilePath);
             jsonObj.put("role", roleToPass);
+            jsonObj.put("rejectCode", item.getRejectCode());
+            jsonObj.put("rejectReason", item.getRejectReason());
+            jsonObj.put("rejectionTimestamp", item.getRejectionTimestamp());
+            
             jsonArrayImageDtls.put(jsonObj);
         	 }
         	}
@@ -967,6 +971,8 @@ public class ImageRequestController {
 		String imageStatus = request.getParameter("imageStatus");
 		String statusParam = request.getParameter("statusparam");
 		String shotTypeOnSubmit = request.getParameter("shotTypeValueOnSubmit");
+		String rejectCode = request.getParameter("rejectCode");
+		String rejectText = request.getParameter("rejectText");
 		
 		String responseMsg = "";
 		String responseMsg1 = "";
@@ -993,7 +999,7 @@ public class ImageRequestController {
 		}
 		try {          
             
-	           JSONObject jsonStyle = populateJsonForSubmitOrReject(orinNumber.trim(),imageId,passImageStatusToService,updatedBy);
+	           JSONObject jsonStyle = populateJsonForSubmitOrReject(orinNumber.trim(),imageId,passImageStatusToService,updatedBy, rejectCode, rejectText);
 	           jsonArray.put(jsonStyle);
 	           LOGGER.info("json Object petId "+ jsonStyle.getString("petId"));
 	           responseMsg = callSubmitOrRejectService(jsonArray);
@@ -1121,7 +1127,7 @@ public class ImageRequestController {
 	    * @param updatedBy
 	    * @return
 	    */
-	   public JSONObject populateJsonForSubmitOrReject(String orinNo, String imagId,String imageStatus,String updatedBy){
+	   public JSONObject populateJsonForSubmitOrReject(String orinNo, String imagId,String imageStatus,String updatedBy, String rejectCode, String rejectText){
 	       JSONObject jsonObj = new JSONObject();
 	       try {
 	    	   LOGGER.info("populateJsonForSubmitOrReject Enter.....Controller---->");
@@ -1130,6 +1136,12 @@ public class ImageRequestController {
 	    	   jsonObj.put(ImageConstants.IMAGE_ID, imagId);
 	    	   jsonObj.put(ImageConstants.SAVE_IMAGE_STATUS, imageStatus); 
 	    	   jsonObj.put(ImageConstants.UPDATEDBY, updatedBy); 
+	    	   
+	    	   if(StringUtils.isNotBlank(rejectCode)){
+	    		   jsonObj.put(ImageConstants.REJECT_CODE, rejectCode);
+	    		   jsonObj.put(ImageConstants.REJECT_REASON ,StringUtils.substringAfter(rejectText, " "));
+	    	   }
+	    	   
 	           LOGGER.info("jsonObj populateJsonForSubmitOrReject************ ---->"+jsonObj);
 	       } catch (JSONException e) {
 	    	   LOGGER.info("Caught**** Exception...Controller");

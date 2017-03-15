@@ -64,6 +64,29 @@ input.btn-new, input.btn-new:hover {
 .ui-custom-message-styling-info p, .ui-custom-message-styling-error p{
 	margin: 19px;
 }
+
+.styled-select.slate {
+   margin:10px 20px 100px 10px;
+   height: 34px;
+   width: 400px;
+}
+
+.styled-select.slate select {
+   border: 1px solid #ccc;
+   font-size: 16px;
+   height: 34px;
+   width: 268px;
+}
+
+.pet-reject-reason ul li{
+	font-size: 16px;
+	border: 50px;
+}
+
+.corner-btn {
+	border: 50px;
+	float:right;
+}
 </style>
 
 <script type="text/javascript">
@@ -108,7 +131,6 @@ $(document).ready(function() {
     $(".ui-datepicker-trigger").mouseover(function() {
         $(this).css('cursor', 'pointer');
     });
-
 
 });
 
@@ -1501,6 +1523,26 @@ jq('#dialog_submitApprove').dialog({
 	title: 'Approve Image Confirmation',
 	minWidth: 350,
 	minHeight: 140,
+	//show: { effect: "fade", duration: 800 },
+});
+jq('#dialog_rejectReason').dialog({
+	//modal: true,
+	autoOpen: false,
+	resizable: true,
+	dialogClass: "dlg-custom",
+	title: 'Reject Reason',
+	minWidth: 520,
+	minHeight: 150,
+	//show: { effect: "fade", duration: 800 },
+});
+jq('#dialog_petRejectReason').dialog({
+	//modal: true,
+	autoOpen: false,
+	resizable: true,
+	dialogClass: "dlg-custom",
+	title: 'Reject Reason',
+	minWidth: 520,
+	minHeight: 150,
 	//show: { effect: "fade", duration: 800 },
 });
 
