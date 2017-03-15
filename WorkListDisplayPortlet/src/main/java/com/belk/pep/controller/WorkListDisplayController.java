@@ -388,7 +388,7 @@ public class WorkListDisplayController implements Controller,EventAwareControlle
                             resourceForm.setAdvanceSearch(advanceSearch);
                             mv.addObject(WorkListDisplayConstants.WORK_FLOW_FORM,
                                     getUpdatedAdvanceSearchForm(resourceForm, supplierIdList,
-                                            request.getPortletSession(), anchoredPageNumber, callType));
+                                            request.getPortletSession(), anchoredPageNumber, callType, Integer.parseInt(anchoredPageNumber)));
                             //                        ((WorkListDisplayForm) request.getPortletSession().getAttribute(formSessionKey)));
                             if (preVisitedOrin != null) {
                                 mv.addObject("prevVisitedOrin", preVisitedOrin);
@@ -790,23 +790,16 @@ public class WorkListDisplayController implements Controller,EventAwareControlle
             LOGGER.info("workFlowListSri size:" + workFlowListSri.size());
             List currentPageworkFlowList = workFlowListSri.subList(startindex, endIndex);
             renderForm.setSelectedPage(String.valueOf(selectedPageNumber));
-            renderForm.setTotalPageno(String.valueOf(numberOfPages));
             renderForm.setPreviousCount(String.valueOf(selectedPageNumber-1));
             renderForm.setNextCount(String.valueOf(selectedPageNumber+1));
             renderForm.setWorkFlowlist(currentPageworkFlowList);
             renderForm.setFullWorkFlowlist(workFlowListSri);
-            if(numberOfPages>1) {
-                renderForm.setDisplayPagination("yes");
-                renderForm.setStartIndex(String.valueOf(startindex+1));
-                renderForm.setEndIndex(String.valueOf(endIndex+1));
-                if(selectedPageNumber==numberOfPages  ){
-                    renderForm.setEndIndex(String.valueOf(endIndex));  
-                }
 
-            } else {
-                renderForm.setDisplayPagination("no");
-                renderForm.setStartIndex(String.valueOf(startindex+1));
-                renderForm.setEndIndex(String.valueOf(endIndex));
+            renderForm.setDisplayPagination("yes");
+            renderForm.setStartIndex(String.valueOf(startindex+1));
+            renderForm.setEndIndex(String.valueOf(endIndex+1));
+            if(selectedPageNumber==numberOfPages  ){
+                renderForm.setEndIndex(String.valueOf(endIndex));  
             }
         }
         
@@ -1717,19 +1710,8 @@ private void assignRole(WorkListDisplayForm workListDisplayForm2,
         		(fromPage != null && fromPage.equals(WorkListDisplayConstants.PAGINATION) && null!=request.getParameter(WorkListDisplayConstants.AJAX_PAGE_NO) 
         		&& request.getParameter(WorkListDisplayConstants.AJAX_PAGE_NO).length()>0)) {
         	pageNo = request.getParameter(WorkListDisplayConstants.AJAX_PAGE_NO);
-            int totalNumberOfPets = resourceForm.getFullWorkFlowlist().size();
-            if (resourceForm.getTotalNumberOfPets()!=null) {
-            	totalNumberOfPets = Integer.parseInt(resourceForm.getTotalNumberOfPets());
-            }
-            if (WorkListDisplayConstants.GROUPINGS
-                .equalsIgnoreCase(workListType)) {
-                handlingPaginationRenderGroups(Integer.parseInt(pageNo),
-                    resourceForm, resourceForm.getFullWorkFlowlist(), totalNumberOfPets);
-            }
-            else {
-                handlingPaginationRenderAdvSearch(Integer.parseInt(pageNo),
-                    resourceForm, resourceForm.getFullWorkFlowlist());
-            }           
+        	resourceForm.setSearchResultsReturned(WorkListDisplayConstants.YES_VALUE);
+        	getPetsWithAdvanceSearch(request, callType, resourceForm, workFlowList, supplierIdList, prop, Integer.parseInt(pageNo), resourceForm.getSearchClicked());
         }
         //Sorting Flow for Advance Search
         else if((WorkListDisplayConstants.YES_VALUE.equalsIgnoreCase(resourceForm.getAdvSearchClicked()) ||
@@ -1763,7 +1745,8 @@ private void assignRole(WorkListDisplayForm workListDisplayForm2,
                 // workFlowList);
                 handlingSortingRender(selectedColumn, resourceForm,
                     resourceForm.getFullWorkFlowlist());
-                handlingPaginationRenderAdvSearch(1, resourceForm, resourceForm.getFullWorkFlowlist());// fix
+                
+                handlingPaginationRender(1, resourceForm, resourceForm.getFullWorkFlowlist());// fix
                                                                         // for
                                                                         // 496
             }
@@ -2244,136 +2227,11 @@ private void assignRole(WorkListDisplayForm workListDisplayForm2,
                 classDetailsList = workListDisplayDelegate.getClassDetailsByDepNos(departmentDetails);
                 populateClassDetailsInAdvanceSearch(classDetailsList, resourceForm);
                 //Retaining already selected values
-                setAdvanceSearchfieldsFromAjax(request);
+                setAdvanceSearchfieldsFromAjax(request, WorkListDisplayConstants.NO_VALUE);
             }
             if(WorkListDisplayConstants.ADV_SEARCH_OPERATION_SEARCH.equals(advSearchOperation)){
-                //Retaining already selected values
-                setAdvanceSearchfieldsFromAjax(request);
-                //Getting the PET details on base of the Advance search selections
-                 
-                mv.addObject(WorkListDisplayConstants.IS_PET_AVAILABLE,WorkListDisplayConstants.YES_VALUE);
-                   if(null!=resourceForm.getAdvanceSearch() && !resourceForm.getAdvanceSearch().isAllFieldEmpty()){
-                       System.out.println("CALL TYPE>>>>>>>>>>>>>>>>>" +callType);
-                       // Condition for grouping search
-                    if (WorkListDisplayConstants.ADV_SEARCH_CALLTYPE_GROUPINGSEARCH
-                        .equals(callType)) {
-                        workFlowList =
-                            workListDisplayDelegate.getAdvWorklistGroupingData(
-                                resourceForm.getAdvanceSearch(),
-                                supplierIdList, resourceForm.getVendorEmail());
-                        LOGGER.info("Controller List Size: "
-                            + workFlowList.size());
-                        if (workFlowList.size() == 0) {
-                            resourceForm
-                                .setPetNotFound(WorkListDisplayConstants.NO_GROUP_FOUND_FOR_GROUP_SEARCH);
-                        }
-                        resourceForm.setSearchClicked(WorkListDisplayConstants.YES);
-                        request.getPortletSession().setAttribute("groupWorklistSession", "Regular PET");
-                        resourceForm.setWorkListType("Regular PET");
-                        resourceForm.setWorkFlowlist(workFlowList);
-                    }
-                    else {
-                        // 57 Search
-                        if (!"getChildData".equalsIgnoreCase(callType)
-                            && !WorkListDisplayConstants.GET_CHILD_GROUP
-                                .equalsIgnoreCase(callType)) {
-                            if (null != resourceForm.getVendorEmail()) {
-                                LOGGER
-                                    .info("Line 1849 Vendor in Search Controller:: Calling workListDisplayDelegate.getPetDetailsByAdvSearchForParent");
-                                workFlowList =
-                                    workListDisplayDelegate
-                                        .getPetDetailsByAdvSearchForParent(
-                                            resourceForm.getAdvanceSearch(),
-                                            supplierIdList,
-                                            resourceForm.getVendorEmail());
-                                resourceForm.setSearchClicked("yes");
-                            }
-                            else {
-                                LOGGER
-                                    .info("Line 1854 Vendor in Search Controller:: Calling workListDisplayDelegate.getPetDetailsByAdvSearchForParent");
-                                workFlowList =
-                                    workListDisplayDelegate
-                                        .getPetDetailsByAdvSearchForParent(
-                                            resourceForm.getAdvanceSearch(),
-                                            supplierIdList,
-                                            resourceForm.getVendorEmail());
-                                resourceForm.setSearchClicked("yes");
-                            }
-                        }
-                    }
-                            
-                                if(workFlowList != null && workFlowList.size()>0){
-                                //Default sorting. needs to remove if the sorted list is coming from SQL query
-                                    resourceForm.setPetNotFound(null);
-                                String advSelectedColumn=WorkListDisplayConstants.COMPLETION_DATE;
-                                //handlingSortingRender(advSelectedColumn,resourceForm,workFlowList); //Commented By AFUSZR6
-                              //Default Pagination  
-                                int selectedPageNumber = 1;
-                                if(null!=request.getParameter(WorkListDisplayConstants.CURRENT_PAGE_NUMBER)){
-                                    selectedPageNumber = Integer.valueOf(request.getParameter(WorkListDisplayConstants.CURRENT_PAGE_NUMBER)); 
-                                }
-                                
-                                if(!"getChildData".equalsIgnoreCase(callType)){ 
-                                    if(!WorkListDisplayConstants.GET_CHILD_GROUP.equals(callType))
-                                    {
-                                        resourceForm.setFullWorkFlowlist(workFlowList);
-                                        resourceForm.setTotalNumberOfPets(String.valueOf(workFlowList.size()));                                        
-                                    }
-                                }
-                                //Fix for 835 Start
-//                                if(null != resourceForm.getFullWorkFlowlist()){
-//                                    LOGGER.info("1789 : resourceForm:"+resourceForm.getFullWorkFlowlist().size());
-//                                    fullWorkList = resourceForm.getFullWorkFlowlist();
-//                                }
-                               //Fix for 835 End
-                                //For 496 End                        
-                                handlingPaginationRenderAdvSearch(selectedPageNumber,resourceForm,workFlowList);//fix for 496
-                                resourceForm.setSelectedPage(String.valueOf(selectedPageNumber));
-                                }else{//There is no PET for searched content
-                                    //Fix for Defect 177
-                                    if(setAdvanceSearchfieldsForVendorStyleAjax(request)){
-                                        
-                                        if(!"getChildData".equalsIgnoreCase(callType)){
-                                        if(null != resourceForm.getVendorEmail()){
-                                            LOGGER.info("Line 1885 Vendor in Search Controller:: Calling workListDisplayDelegate.getPetDetailsByAdvSearchForParent");
-                                            workFlowList =  workListDisplayDelegate.getPetDetailsByAdvSearchForParent(resourceForm.getAdvanceSearch(),supplierIdList,resourceForm.getVendorEmail());
-                                            resourceForm.setSearchClicked("yes");
-                                        }else{
-                                            LOGGER.info("Line 1890 DCA  Vendor in Search Controller:: Calling workListDisplayDelegate.getPetDetailsByAdvSearchForParent");
-                                            workFlowList =  workListDisplayDelegate.getPetDetailsByAdvSearchForParent(resourceForm.getAdvanceSearch(),supplierIdList,resourceForm.getVendorEmail());
-                                            resourceForm.setSearchClicked("yes");
-                                        }
-                                        }
-                                        if(workFlowList != null && workFlowList.size()==0){
-                                            
-                                            LOGGER.info("venstyle***** no pet found" +resourceForm.getAdvanceSearch().getVendorStyle());
-                                            List<WorkFlow> emptystyleListForWorkListDisplayforVendorStyle = new ArrayList<WorkFlow>();
-                                            resourceForm.setPetNotFound(prop.getProperty(WorkListDisplayConstants.NO_PET_FOUND_FOR_VENDOR_STYLE));
-                                            LOGGER.info("Vendor--------::" +resourceForm.getPetNotFound());
-                                            resourceForm.setTotalNumberOfPets("0");
-                                            resourceForm.setWorkFlowlist(emptystyleListForWorkListDisplayforVendorStyle); 
-                                        }//177 End
-                                    }else{
-                                        LOGGER.info("Line 1439..");
-                                        List<WorkFlow> emptystyleListForWorkListDisplay = new ArrayList<WorkFlow>();
-                                        resourceForm.setPetNotFound(prop.getProperty(WorkListDisplayConstants.PET_NOT_FOUND));
-                                        resourceForm.setTotalNumberOfPets("0");
-                                        resourceForm.setWorkFlowlist(emptystyleListForWorkListDisplay);
-                                    }
-                                }
-                       
-                       
-                    
-                    }else
-                    {//No Criteria selected
-                        LOGGER.info("Line 1448..");
-                    List<WorkFlow> emptystyleListForWorkListDisplay = new ArrayList<WorkFlow>();
-                    resourceForm.setPetNotFound(prop.getProperty(WorkListDisplayConstants.PET_NOT_FOUND));
-                    resourceForm.setTotalNumberOfPets("0");
-                    resourceForm.setWorkFlowlist(emptystyleListForWorkListDisplay); 
-                }
-                
-                
+            	resourceForm.setSearchResultsReturned(WorkListDisplayConstants.NO_VALUE);
+            	getPetsWithAdvanceSearch(request, callType, resourceForm, workFlowList, supplierIdList, prop, 1, WorkListDisplayConstants.NO_VALUE);
             }
         
         }
@@ -2419,6 +2277,116 @@ private void assignRole(WorkListDisplayForm workListDisplayForm2,
         mv.addObject(WorkListDisplayConstants.WORK_FLOW_FORM, resourceForm);
         }
         return mv;
+    }
+    
+
+    private void getPetsWithAdvanceSearch(ResourceRequest request, String callType, WorkListDisplayForm resourceForm, List<WorkFlow> workFlowList, List<String> supplierIdList, Properties prop, Integer pageNumber,String searchClicked)  throws Exception{
+        int advSearchPageLimit = Integer.parseInt(prop.getProperty(WorkListDisplayConstants.ADVANCE_SEARCH_PAGE_LIMIT));
+    	if(WorkListDisplayConstants.NO_VALUE.equalsIgnoreCase(resourceForm.getSearchResultsReturned())){
+    		//Retaining already selected values
+    		setAdvanceSearchfieldsFromAjax(request, WorkListDisplayConstants.NO_VALUE);
+    	}
+    	
+        int startIndex=(pageNumber-1)*advSearchPageLimit;
+
+        //Getting the PET details on base of the Advance search selections
+        mv.addObject(WorkListDisplayConstants.IS_PET_AVAILABLE,WorkListDisplayConstants.YES_VALUE);
+        if(null!=resourceForm.getAdvanceSearch() && !resourceForm.getAdvanceSearch().isAllFieldEmpty()){
+        	System.out.println("CALL TYPE>>>>>>>>>>>>>>>>>" +callType);
+        	// Condition for grouping search
+            if (WorkListDisplayConstants.ADV_SEARCH_CALLTYPE_GROUPINGSEARCH
+                .equals(callType)) {
+            workFlowList = workListDisplayDelegate.getAdvWorklistGroupingData(resourceForm.getAdvanceSearch(),supplierIdList, resourceForm.getVendorEmail(), startIndex, advSearchPageLimit);
+            LOGGER.info("Controller List Size: " + workFlowList.size());
+            if (workFlowList.size() == 0) {
+        		resourceForm.setPetNotFound(WorkListDisplayConstants.NO_GROUP_FOUND_FOR_GROUP_SEARCH);
+            }
+            resourceForm.setSearchClicked(WorkListDisplayConstants.YES);
+            request.getPortletSession().setAttribute("groupWorklistSession", "Regular PET");
+            resourceForm.setWorkListType("Regular PET");
+            resourceForm.setWorkFlowlist(workFlowList);
+            }
+            else {
+            	// 57 Search
+            	if (!"getChildData".equalsIgnoreCase(callType)
+            			&& !WorkListDisplayConstants.GET_CHILD_GROUP.equalsIgnoreCase(callType)) {
+            		if (null != resourceForm.getVendorEmail()) {
+            			LOGGER.info("Line 1849 Vendor in Search Controller:: Calling workListDisplayDelegate.getPetDetailsByAdvSearchForParent");
+            			workFlowList = workListDisplayDelegate.getPetDetailsByAdvSearchForParent(resourceForm.getAdvanceSearch(), supplierIdList, resourceForm.getVendorEmail(), startIndex, advSearchPageLimit);
+            			resourceForm.setSearchClicked("yes");
+            			resourceForm.setSearchResultsReturned(WorkListDisplayConstants.YES_VALUE);
+            		}
+            		else {
+            			LOGGER.info("Line 1854 Vendor in Search Controller:: Calling workListDisplayDelegate.getPetDetailsByAdvSearchForParent");
+            			workFlowList = workListDisplayDelegate.getPetDetailsByAdvSearchForParent(
+                                    resourceForm.getAdvanceSearch(),
+                                    supplierIdList,
+                                    resourceForm.getVendorEmail(), startIndex, advSearchPageLimit);
+                        resourceForm.setSearchClicked("yes");
+            			resourceForm.setSearchResultsReturned(WorkListDisplayConstants.YES_VALUE);
+                    }
+                }
+            }
+                    
+            if(workFlowList != null && workFlowList.size()>0){
+            	//Default sorting. needs to remove if the sorted list is coming from SQL query
+                resourceForm.setPetNotFound(null);
+                String advSelectedColumn=WorkListDisplayConstants.COMPLETION_DATE;
+                //handlingSortingRender(advSelectedColumn,resourceForm,workFlowList); //Commented By AFUSZR6
+                //Default Pagination  
+                int selectedPageNumber = 1;
+                if(null!=request.getParameter(WorkListDisplayConstants.CURRENT_PAGE_NUMBER)){
+                	selectedPageNumber = Integer.valueOf(request.getParameter(WorkListDisplayConstants.CURRENT_PAGE_NUMBER)); 
+                }
+                    
+                if((!"getChildData".equalsIgnoreCase(callType)) && (!WorkListDisplayConstants.GET_CHILD_GROUP.equals(callType))){ 
+                    resourceForm.setFullWorkFlowlist(workFlowList);
+                    resourceForm.setTotalNumberOfPets(String.valueOf(workFlowList.size()));                                        
+                }
+                //For 496 End           
+                
+                handlingPaginationRender(pageNumber,resourceForm,workFlowList);//fix for 496
+                resourceForm.setSelectedPage(String.valueOf(pageNumber));
+            }
+            else{//There is no PET for searched content
+            	//Fix for Defect 177
+                if(setAdvanceSearchfieldsForVendorStyleAjax(request)){
+                    if(!"getChildData".equalsIgnoreCase(callType)){
+	                    if(null != resourceForm.getVendorEmail()){
+	                        LOGGER.info("Line 1885 Vendor in Search Controller:: Calling workListDisplayDelegate.getPetDetailsByAdvSearchForParent");
+	                        workFlowList =  workListDisplayDelegate.getPetDetailsByAdvSearchForParent(resourceForm.getAdvanceSearch(),supplierIdList,resourceForm.getVendorEmail(), startIndex, advSearchPageLimit);
+	                        resourceForm.setSearchClicked("yes");
+	                    }else{
+	                        LOGGER.info("Line 1890 DCA  Vendor in Search Controller:: Calling workListDisplayDelegate.getPetDetailsByAdvSearchForParent");
+	                        workFlowList =  workListDisplayDelegate.getPetDetailsByAdvSearchForParent(resourceForm.getAdvanceSearch(),supplierIdList,resourceForm.getVendorEmail(), startIndex, advSearchPageLimit);
+	                        resourceForm.setSearchClicked("yes");
+	                    }
+                    }
+                    if(workFlowList != null && workFlowList.size()==0){
+	                    LOGGER.info("venstyle***** no pet found" +resourceForm.getAdvanceSearch().getVendorStyle());
+	                    List<WorkFlow> emptystyleListForWorkListDisplayforVendorStyle = new ArrayList<WorkFlow>();
+	                    resourceForm.setPetNotFound(prop.getProperty(WorkListDisplayConstants.NO_PET_FOUND_FOR_VENDOR_STYLE));
+	                    LOGGER.info("Vendor--------::" +resourceForm.getPetNotFound());
+	                    resourceForm.setTotalNumberOfPets("0");
+	                    resourceForm.setWorkFlowlist(emptystyleListForWorkListDisplayforVendorStyle); 
+                    }//177 End
+                }
+                else{
+                    LOGGER.info("Line 1439..");
+                    List<WorkFlow> emptystyleListForWorkListDisplay = new ArrayList<WorkFlow>();
+                    resourceForm.setPetNotFound(prop.getProperty(WorkListDisplayConstants.PET_NOT_FOUND));
+                    resourceForm.setTotalNumberOfPets("0");
+                    resourceForm.setWorkFlowlist(emptystyleListForWorkListDisplay);
+                }
+            }
+        }
+        else{//No Criteria selected
+            LOGGER.info("Line 1448..");
+            List<WorkFlow> emptystyleListForWorkListDisplay = new ArrayList<WorkFlow>();
+            resourceForm.setPetNotFound(prop.getProperty(WorkListDisplayConstants.PET_NOT_FOUND));
+            resourceForm.setTotalNumberOfPets("0");
+            resourceForm.setWorkFlowlist(emptystyleListForWorkListDisplay); 
+        }
     }
     
     /**
@@ -2492,7 +2460,7 @@ private void assignRole(WorkListDisplayForm workListDisplayForm2,
    * This method will populate the Advance search object with the parameter values  
    * @param request
    */
-private void setAdvanceSearchfieldsFromAjax(ResourceRequest request) {
+private void setAdvanceSearchfieldsFromAjax(ResourceRequest request, String searchAgain) {
    
     LOGGER.info("This is from Advance Search Search operation: Enter");
     String formSessionKey =  (String)request.getPortletSession().getAttribute("formSessionKey");
@@ -2556,129 +2524,130 @@ private void setAdvanceSearchfieldsFromAjax(ResourceRequest request) {
         adSearch = new AdvanceSearch();
         adSearch.setAllFieldEmpty(false);
     }
-
-    /*
-     * Changes for Grouping ID an Grouping Name
-     * Conditions:- 1) If Search result is "Include Groupings" and EITHER OF grouping id or name is populated, ignore all other search criteria
-     *              2) If Search Result is "Include Groupings" and NEITHER OF grouping id and name are populated, populate all other search criteria
-     *              3) If Search result is "Show Only Items", DO NOT POPULATE grouping id and name in object. Populate all other search criteria 
-     */
-    /** Changes Start **/
-    if(WorkListDisplayConstants.ADV_SEARCH_INCLUDE_GROUPINGS.equals(searchResult)){     // Condition to check if Include Groupings is selected in search result radio
-        
-        //Check if parameters are not blank and populate those criterias
-        if(StringUtils.isNotBlank(departmentDetails)||
-                StringUtils.isNotBlank(completionDateFrom)||
-                StringUtils.isNotBlank(completionDateTo)||
-                StringUtils.isNotBlank(imageStatus)||
-                StringUtils.isNotBlank(contentStatus)||
-                StringUtils.isNotBlank(petStatus)||
-                StringUtils.isNotBlank(requestType)||
-                StringUtils.isNotBlank(orinNumber)||
-                StringUtils.isNotBlank(vendorStyle)||
-                StringUtils.isNotBlank(upc)||
-                StringUtils.isNotBlank(classNumber)||
-                StringUtils.isNotBlank(createdToday)||
-                StringUtils.isNotBlank(vendorNumber) ||
-                StringUtils.isNotBlank(groupingID) ||
-                StringUtils.isNotBlank(groupingName))
-               {
-            adSearch.setAllFieldEmpty(false);
-            if(StringUtils.isNotBlank(departmentDetails)||
-                    StringUtils.isNotBlank(completionDateFrom)||
-                    StringUtils.isNotBlank(completionDateTo)||
-                    StringUtils.isNotBlank(imageStatus)||
-                    StringUtils.isNotBlank(contentStatus)||
-                    StringUtils.isNotBlank(petStatus)||
-                    StringUtils.isNotBlank(requestType)||
-                    StringUtils.isNotBlank(orinNumber)||
-                    StringUtils.isNotBlank(vendorStyle)||
-                    StringUtils.isNotBlank(upc)||
-                    StringUtils.isNotBlank(classNumber)||
-                    StringUtils.isNotBlank(createdToday)||
-                    StringUtils.isNotBlank(vendorNumber))
-            {
-                adSearch = new AdvanceSearch();
-                adSearch.setDeptNumbers(departmentDetails);
-                adSearch.setDateFrom(completionDateFrom);
-                adSearch.setDateTo(completionDateTo);
-                adSearch.setImageStatus(imageStatus);
-                adSearch.setContentStatus(contentStatus);
-                adSearch.setActive(petStatus);
-                adSearch.setInActive(petStatus);
-                adSearch.setClosed(petStatus);
-                adSearch.setRequestType(requestType);
-                adSearch.setOrin(orinNumber);
-                adSearch.setVendorStyle(vendorStyle);
-                adSearch.setUpc(upc);
-                adSearch.setClassNumber(classNumber);
-                adSearch.setCreatedToday(createdToday);
-                adSearch.setVendorNumber(vendorNumber);
-            }
-            else if(StringUtils.isNotBlank(groupingID) ||
-                    StringUtils.isNotBlank(groupingName))
-            {
-                if(StringUtils.isNotBlank(groupingName))
-                {
-                    adSearch = new AdvanceSearch();
-                    adSearch.setGroupingName(groupingName);
-                    if(StringUtils.isNotBlank(groupingID))
-                    {
-                        adSearch.setGroupingID(groupingID);
-                    }
-                }
-                else
-                {
-                    adSearch = new AdvanceSearch();
-                    adSearch.setGroupingID(groupingID);
-                }
-            }
-        }else{
-            LOGGER.info("All Advance Search Fields are Empty.");
-            adSearch.setAllFieldEmpty(true); 
-        }
-        
-    }else{
-        // "Show Only Items" radio is selected in Search Result. IGNORE GROUPING ID AND NAME 
-        if(StringUtils.isNotBlank(departmentDetails)||
-                StringUtils.isNotBlank(completionDateFrom)||
-                StringUtils.isNotBlank(completionDateTo)||
-                StringUtils.isNotBlank(imageStatus)||
-                StringUtils.isNotBlank(contentStatus)||
-                StringUtils.isNotBlank(petStatus)||
-                StringUtils.isNotBlank(requestType)||
-                StringUtils.isNotBlank(orinNumber)||
-                StringUtils.isNotBlank(vendorStyle)||
-                StringUtils.isNotBlank(upc)||
-                StringUtils.isNotBlank(classNumber)||
-                StringUtils.isNotBlank(createdToday)||
-                StringUtils.isNotBlank(vendorNumber))
-               {
-            adSearch.setAllFieldEmpty(false);
-        }else{
-            LOGGER.info("All Advance Search Fields are Empty.");
-            adSearch.setAllFieldEmpty(true); 
-        }
-        adSearch.setDeptNumbers(departmentDetails);
-        adSearch.setDateFrom(completionDateFrom);
-        adSearch.setDateTo(completionDateTo);
-        adSearch.setImageStatus(imageStatus);
-        adSearch.setContentStatus(contentStatus);
-        adSearch.setActive(petStatus);
-        adSearch.setInActive(petStatus);
-        adSearch.setClosed(petStatus);
-        adSearch.setRequestType(requestType);
-        adSearch.setOrin(orinNumber);
-        adSearch.setVendorStyle(vendorStyle);
-        adSearch.setUpc(upc);
-        adSearch.setClassNumber(classNumber);
-        adSearch.setCreatedToday(createdToday);
-        adSearch.setVendorNumber(vendorNumber);
-        adSearch.setGroupingID("");
-        adSearch.setGroupingName("");
-    }
-    adSearch.setSearchResults(searchResult);    // Populating Search Result radio value in Advacned Search object
     
+    if(WorkListDisplayConstants.NO_VALUE.equalsIgnoreCase(searchAgain)) {
+	    /*
+	     * Changes for Grouping ID an Grouping Name
+	     * Conditions:- 1) If Search result is "Include Groupings" and EITHER OF grouping id or name is populated, ignore all other search criteria
+	     *              2) If Search Result is "Include Groupings" and NEITHER OF grouping id and name are populated, populate all other search criteria
+	     *              3) If Search result is "Show Only Items", DO NOT POPULATE grouping id and name in object. Populate all other search criteria 
+	     */
+	    /** Changes Start **/
+	    if(WorkListDisplayConstants.ADV_SEARCH_INCLUDE_GROUPINGS.equals(searchResult)){     // Condition to check if Include Groupings is selected in search result radio
+	        
+	        //Check if parameters are not blank and populate those criterias
+	        if(StringUtils.isNotBlank(departmentDetails)||
+	                StringUtils.isNotBlank(completionDateFrom)||
+	                StringUtils.isNotBlank(completionDateTo)||
+	                StringUtils.isNotBlank(imageStatus)||
+	                StringUtils.isNotBlank(contentStatus)||
+	                StringUtils.isNotBlank(petStatus)||
+	                StringUtils.isNotBlank(requestType)||
+	                StringUtils.isNotBlank(orinNumber)||
+	                StringUtils.isNotBlank(vendorStyle)||
+	                StringUtils.isNotBlank(upc)||
+	                StringUtils.isNotBlank(classNumber)||
+	                StringUtils.isNotBlank(createdToday)||
+	                StringUtils.isNotBlank(vendorNumber) ||
+	                StringUtils.isNotBlank(groupingID) ||
+	                StringUtils.isNotBlank(groupingName))
+	               {
+	            adSearch.setAllFieldEmpty(false);
+	            if(StringUtils.isNotBlank(departmentDetails)||
+	                    StringUtils.isNotBlank(completionDateFrom)||
+	                    StringUtils.isNotBlank(completionDateTo)||
+	                    StringUtils.isNotBlank(imageStatus)||
+	                    StringUtils.isNotBlank(contentStatus)||
+	                    StringUtils.isNotBlank(petStatus)||
+	                    StringUtils.isNotBlank(requestType)||
+	                    StringUtils.isNotBlank(orinNumber)||
+	                    StringUtils.isNotBlank(vendorStyle)||
+	                    StringUtils.isNotBlank(upc)||
+	                    StringUtils.isNotBlank(classNumber)||
+	                    StringUtils.isNotBlank(createdToday)||
+	                    StringUtils.isNotBlank(vendorNumber))
+	            {
+	                adSearch = new AdvanceSearch();
+	                adSearch.setDeptNumbers(departmentDetails);
+	                adSearch.setDateFrom(completionDateFrom);
+	                adSearch.setDateTo(completionDateTo);
+	                adSearch.setImageStatus(imageStatus);
+	                adSearch.setContentStatus(contentStatus);
+	                adSearch.setActive(petStatus);
+	                adSearch.setInActive(petStatus);
+	                adSearch.setClosed(petStatus);
+	                adSearch.setRequestType(requestType);
+	                adSearch.setOrin(orinNumber);
+	                adSearch.setVendorStyle(vendorStyle);
+	                adSearch.setUpc(upc);
+	                adSearch.setClassNumber(classNumber);
+	                adSearch.setCreatedToday(createdToday);
+	                adSearch.setVendorNumber(vendorNumber);
+	            }
+	            else if(StringUtils.isNotBlank(groupingID) ||
+	                    StringUtils.isNotBlank(groupingName))
+	            {
+	                if(StringUtils.isNotBlank(groupingName))
+	                {
+	                    adSearch = new AdvanceSearch();
+	                    adSearch.setGroupingName(groupingName);
+	                    if(StringUtils.isNotBlank(groupingID))
+	                    {
+	                        adSearch.setGroupingID(groupingID);
+	                    }
+	                }
+	                else
+	                {
+	                    adSearch = new AdvanceSearch();
+	                    adSearch.setGroupingID(groupingID);
+	                }
+	            }
+	        }else{
+	            LOGGER.info("All Advance Search Fields are Empty.");
+	            adSearch.setAllFieldEmpty(true); 
+	        }
+	        
+	    }else{
+	        // "Show Only Items" radio is selected in Search Result. IGNORE GROUPING ID AND NAME 
+	        if(StringUtils.isNotBlank(departmentDetails)||
+	                StringUtils.isNotBlank(completionDateFrom)||
+	                StringUtils.isNotBlank(completionDateTo)||
+	                StringUtils.isNotBlank(imageStatus)||
+	                StringUtils.isNotBlank(contentStatus)||
+	                StringUtils.isNotBlank(petStatus)||
+	                StringUtils.isNotBlank(requestType)||
+	                StringUtils.isNotBlank(orinNumber)||
+	                StringUtils.isNotBlank(vendorStyle)||
+	                StringUtils.isNotBlank(upc)||
+	                StringUtils.isNotBlank(classNumber)||
+	                StringUtils.isNotBlank(createdToday)||
+	                StringUtils.isNotBlank(vendorNumber))
+	               {
+	            adSearch.setAllFieldEmpty(false);
+	        }else{
+	            LOGGER.info("All Advance Search Fields are Empty.");
+	            adSearch.setAllFieldEmpty(true); 
+	        }
+	        adSearch.setDeptNumbers(departmentDetails);
+	        adSearch.setDateFrom(completionDateFrom);
+	        adSearch.setDateTo(completionDateTo);
+	        adSearch.setImageStatus(imageStatus);
+	        adSearch.setContentStatus(contentStatus);
+	        adSearch.setActive(petStatus);
+	        adSearch.setInActive(petStatus);
+	        adSearch.setClosed(petStatus);
+	        adSearch.setRequestType(requestType);
+	        adSearch.setOrin(orinNumber);
+	        adSearch.setVendorStyle(vendorStyle);
+	        adSearch.setUpc(upc);
+	        adSearch.setClassNumber(classNumber);
+	        adSearch.setCreatedToday(createdToday);
+	        adSearch.setVendorNumber(vendorNumber);
+	        adSearch.setGroupingID("");
+	        adSearch.setGroupingName("");
+	    }
+	    adSearch.setSearchResults(searchResult);    // Populating Search Result radio value in Advacned Search object
+	}
     /** Changes End **/
     //Fix for 836 start     
      List<ImageStatusDropValues> imageStatusDropValues = adSearch.getImageStatusDropDown();
@@ -3336,7 +3305,7 @@ public String ConvertDate(String completionDate){
         	}
             //getPetDetailsByAdvSearchForChild 
             if("yes".equalsIgnoreCase(advSearchClick)){ 
-                setAdvanceSearchfieldsFromAjax(request);
+                setAdvanceSearchfieldsFromAjax(request, WorkListDisplayConstants.NO_VALUE);
                 AdvanceSearch advanceSearch = resourceForm.getAdvanceSearch();
                 LOGGER.info("**************If block Calling workListDisplayDelegate.getPetDetailsByDepNosForChil getChildData() method " + "email:::"+email+"orinNum::"+orinNum);
                 if (WorkListDisplayConstants.GET_CHILD_GROUP
@@ -3617,9 +3586,7 @@ public String ConvertDate(String completionDate){
             // Setting the number of pages
             int numberOfPages = 1;
             double numPage = 1;
-            int pageLimit =
-                Integer.parseInt(prop
-                    .getProperty(WorkListDisplayConstants.ADVANCE_SEARCH_PAGE_LIMIT));
+            int pageLimit =Integer.parseInt(prop.getProperty(WorkListDisplayConstants.ADVANCE_SEARCH_PAGE_LIMIT));
             if (numberOfPets > pageLimit) {
                 double pageLimeiDoub =
                     Double.parseDouble(String.valueOf(pageLimit));
@@ -4017,13 +3984,17 @@ public String ConvertDate(String completionDate){
      * @return
      */
     private WorkListDisplayForm getUpdatedAdvanceSearchForm(WorkListDisplayForm resourceForm,
-            List<String> supplierIdList, PortletSession portletSession, String selectedPageNumber, String callType) {
+            List<String> supplierIdList, PortletSession portletSession, String selectedPageNumber, String callType, Integer pageNumber) {
         //call type, supplier id list, vendor email, ajax page number as paramer
 
         List<WorkFlow> workFlowList = null;
         List<WorkFlow> fullWorkList = null;
         try {
             Properties prop = PropertiesFileLoader.getExternalLoginProperties();
+            int maxResults=Integer.parseInt(prop.getProperty(WorkListDisplayConstants.ADVANCE_SEARCH_PAGE_LIMIT));
+            int startIndex=(pageNumber-1)*maxResults;
+
+            
             if (resourceForm != null) {
                 AdvanceSearch advanceSearch = resourceForm.getAdvanceSearch();
                 mv.addObject(WorkListDisplayConstants.IS_PET_AVAILABLE, WorkListDisplayConstants.YES_VALUE);
@@ -4033,7 +4004,7 @@ public String ConvertDate(String completionDate){
                     if (WorkListDisplayConstants.ADV_SEARCH_CALLTYPE_GROUPINGSEARCH.equals(callType)) {
                         workFlowList = workListDisplayDelegate
                                 .getAdvWorklistGroupingData(resourceForm.getAdvanceSearch(), supplierIdList,
-                                        resourceForm.getVendorEmail());
+                                        resourceForm.getVendorEmail(), startIndex, maxResults);
                         LOGGER.info("Controller List Size: " + workFlowList.size());
                         if (workFlowList.size() == 0) {
                             resourceForm.setPetNotFound(WorkListDisplayConstants.NO_GROUP_FOUND_FOR_GROUP_SEARCH);
@@ -4050,14 +4021,14 @@ public String ConvertDate(String completionDate){
                                         "Line 1849 Vendor in Search Controller:: Calling workListDisplayDelegate.getPetDetailsByAdvSearchForParent");
                                 workFlowList = workListDisplayDelegate
                                         .getPetDetailsByAdvSearchForParent(resourceForm.getAdvanceSearch(),
-                                                supplierIdList, resourceForm.getVendorEmail());
+                                                supplierIdList, resourceForm.getVendorEmail(), startIndex, maxResults);
                                 resourceForm.setSearchClicked("yes");
                             } else {
                                 LOGGER.info(
                                         "Line 1854 Vendor in Search Controller:: Calling workListDisplayDelegate.getPetDetailsByAdvSearchForParent");
                                 workFlowList = workListDisplayDelegate
                                         .getPetDetailsByAdvSearchForParent(resourceForm.getAdvanceSearch(),
-                                                supplierIdList, resourceForm.getVendorEmail());
+                                                supplierIdList, resourceForm.getVendorEmail(), startIndex, maxResults);
                                 resourceForm.setSearchClicked("yes");
                             }
                         }
@@ -4081,13 +4052,7 @@ public String ConvertDate(String completionDate){
                         if (StringUtils.isEmpty(selectedPageNumber)) {
                             selectedPageNumber = "1";
                         }
-                        if (WorkListDisplayConstants.YES_VALUE.equalsIgnoreCase(resourceForm.getSearchClicked()) ||
-                        		WorkListDisplayConstants.YES_VALUE.equalsIgnoreCase(resourceForm.getAdvSearchClicked())) {
-                        	handlingPaginationRenderAdvSearch(Integer.parseInt(selectedPageNumber), resourceForm, fullWorkList);
-                        }
-                        else {
-                        	handlingPaginationRender(Integer.parseInt(selectedPageNumber), resourceForm, fullWorkList);
-                        }
+                    	handlingPaginationRender(Integer.parseInt(selectedPageNumber), resourceForm, fullWorkList);
                         resourceForm.setSelectedPage(selectedPageNumber);
                     } else {//There is no PET for searched content
                         //Fix for Defect 177
@@ -4112,14 +4077,14 @@ public String ConvertDate(String completionDate){
                                             "Line 1885 Vendor in Search Controller:: Calling workListDisplayDelegate.getPetDetailsByAdvSearchForParent");
                                     workFlowList = workListDisplayDelegate
                                             .getPetDetailsByAdvSearchForParent(resourceForm.getAdvanceSearch(),
-                                                    supplierIdList, resourceForm.getVendorEmail());
+                                                    supplierIdList, resourceForm.getVendorEmail(), startIndex, maxResults);
                                     resourceForm.setSearchClicked("yes");
                                 } else {
                                     LOGGER.info(
                                             "Line 1890 DCA  Vendor in Search Controller:: Calling workListDisplayDelegate.getPetDetailsByAdvSearchForParent");
                                     workFlowList = workListDisplayDelegate
                                             .getPetDetailsByAdvSearchForParent(resourceForm.getAdvanceSearch(),
-                                                    supplierIdList, resourceForm.getVendorEmail());
+                                                    supplierIdList, resourceForm.getVendorEmail(), startIndex, maxResults);
                                     resourceForm.setSearchClicked("yes");
                                 }
                             }

@@ -539,6 +539,8 @@ public class WorkListDisplayForm {
     
     private String searchClicked;
     
+    private String searchResultsReturned;
+    
     public String getSearchClicked() {
         return searchClicked;
     }
@@ -547,6 +549,14 @@ public class WorkListDisplayForm {
         this.searchClicked = searchClicked;
     }
 
+
+    public String getSearchResultsReturned() {
+		return searchResultsReturned;
+	}
+
+	public void setSearchResultsReturned(String searchResultsReturned) {
+		this.searchResultsReturned = searchResultsReturned;
+	}
 
     private AdvanceSearch advanceSearch;
     
@@ -575,7 +585,8 @@ public class WorkListDisplayForm {
         this.fullWorkFlowlist = fullWorkFlowlist;
     }
 
-    private String workListType;
+
+	private String workListType;
 
 
     /**

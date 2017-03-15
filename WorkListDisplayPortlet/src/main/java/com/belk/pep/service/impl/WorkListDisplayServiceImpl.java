@@ -378,12 +378,12 @@ public List<WorkFlow> getPetDetailsByAdvSearch(AdvanceSearch advanceSearch,List<
 }
 
 @Override
-public List<WorkFlow> getPetDetailsByAdvSearchForParent(AdvanceSearch advanceSearch,List<String> supplierIdList,String vendorEmail)
+public List<WorkFlow> getPetDetailsByAdvSearchForParent(AdvanceSearch advanceSearch,List<String> supplierIdList,String vendorEmail, Integer startIndex, Integer maxResults)
     throws PEPServiceException, PEPPersistencyException {
     LOGGER.info("****calling getPetDetailsByAdvSearchForParent from WorkListDisplayServiceImpl****");
     List<WorkFlow> workFlowList = null;
     try {
-        workFlowList = workListDisplayDAO.getPetDetailsByAdvSearchForParent(advanceSearch,supplierIdList,vendorEmail);
+        workFlowList = workListDisplayDAO.getPetDetailsByAdvSearchForParent(advanceSearch,supplierIdList,vendorEmail, startIndex, maxResults);
     }
     catch (PEPPersistencyException e) {
         

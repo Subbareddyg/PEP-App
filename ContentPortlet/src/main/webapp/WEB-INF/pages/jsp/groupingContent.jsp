@@ -1872,11 +1872,6 @@
 					 jAlert('Please enter Grouping Description', 'Alert');
 					 //alert("Please enter Product Description");
 			    	 return;
-				}else if (productDescription != null && productDescription.length < 40) {
-					jAlert('Grouping Description should be minimum of 40 characters', 'Alert');
-					 //alert("Product Description should be minimum of 40 characters");
-					 
-					 return;
 				}else if (productDescription != null && productDescription.trim().length > 2000) {
 					jAlert('Grouping Description should be less than 2000 characters', 'Alert');
 					//alert("Product Description should be less than 2000 characters");
@@ -2636,7 +2631,7 @@ function toggleRows(currentRow, styleId, styleColorId){
 													<div class="max_chars"
 													style="margin-right: 150px; display: inline; white-space: nowrap;">
 													<fmt:message key="content.page.product.max.char"  bundle="${display}"/><span class="max_chars_val">2000</span>&nbsp;&nbsp;
-													<fmt:message key="content.page.product.minimum.char" bundle="${display}"/>&nbsp;&nbsp;
+													
 													
 									
 													Chars Count: <span id="product_desc_length">0</span>
@@ -2673,8 +2668,7 @@ function toggleRows(currentRow, styleId, styleColorId){
 													<div class="max_chars"
 													style="margin-right: 150px; display: inline; white-space: nowrap;">
 													<fmt:message key="content.page.product.max.char"  bundle="${display}"/><span class="max_chars_val">2000</span>&nbsp;&nbsp;
-													<fmt:message key="content.page.product.minimum.char" bundle="${display}"/>&nbsp;&nbsp;
-													
+																										
 									
 													Chars Count: <span id="product_desc_length">0</span>
 													</div> 
@@ -2706,8 +2700,7 @@ function toggleRows(currentRow, styleId, styleColorId){
 													<div class="max_chars"
 													style="margin-right: 150px; display: inline; white-space: nowrap;">
 													<fmt:message key="content.page.product.max.char"  bundle="${display}"/><span class="max_chars_val">2000</span>&nbsp;&nbsp;
-													<fmt:message key="content.page.product.minimum.char" bundle="${display}"/>&nbsp;&nbsp;
-													
+																										
 									
 													Chars Count: <span id="product_desc_length">0</span>
 													</div> 
