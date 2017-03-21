@@ -248,7 +248,7 @@
 				<td align="right">Grouping Description <span class="red-text">(*)</span>:</td>
 				<td>
 					<textarea cols="10" rows="4" class="" name="groupDesc" id="groupDesc" required></textarea>
-					<div class="charlimit">Current Chars: <span id="descCurChars">0</span> Min Chars:<span id="descMinChars">0</span> Max Chars: <span id="descMaxChars">0</span>
+					<div class="charlimit">Current Chars: <span id="descCurChars">0</span> Max Chars: <span id="descMaxChars">0</span>
 				</td>
 			</tr>
 			<tr class="optional-fields">
