@@ -923,10 +923,15 @@ function checkApproveImageStatus(orinId,imageStatus){
 	<div id="content">
 		<div class="x-panel-body;border: 0px solid #99bbe8;">
 			<br>
+			<span id="selectReasonText">
+				Select the reject reason from the list below.
+			</span>
 			<br>
-			
+			<br>
+			<span id="selectReasonText">
+				Reject Reason:
+			</span>   
 			<select class="styled-select.slate" id="allImageRejectReasons" name="allImageRejectReasons">
-				<option id="00">Please select a reason to reject this Image</option>
 				<c:forEach items="${imageForm.allImageRejectReasons}" var="imageRejectReason" varStatus="status">
 					<option value="${imageRejectReason.reasonCode}">${imageRejectReason.reasonCode}  ${imageRejectReason.rejectReason}</option>
 				</c:forEach>
