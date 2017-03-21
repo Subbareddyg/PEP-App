@@ -704,6 +704,13 @@ function searchSearch()
 			    $("#advVendorStyle").focus();
 			    return false;
 		    }
+		    
+		    if(vendorStyle.length < 3){
+				alert("Please enter at least three characters in Vendor Style Number search.");
+			      // $("#advVendorStyle").val("");
+				   $("#advVendorStyle").focus();
+				   return false;
+			}
         }
 	}
 	var upc="";
@@ -2431,6 +2438,13 @@ function searchSearchForChild(parentOrin, showHideFlag)
 			    $("#advVendorStyle").focus();
 			    return false;
 		    }
+		    
+		    if(vendorStyle.length < 3){
+				alert("Please enter at least three characters in Vendor Style Number search.");
+			      // $("#advVendorStyle").val("");
+				   $("#advVendorStyle").focus();
+				   return false;
+			}
         }
 	}
 	

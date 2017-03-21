@@ -134,7 +134,6 @@ var app = app || {};
 						minHeight: 370,
 						create: function(event, ui){
 							$('#nameMaxChars').text(app.Global.defaults.maxGroupNameChars);
-							$('#descMinChars').text(app.Global.defaults.minGroupDescChars);
 							$('#descMaxChars').text(app.Global.defaults.maxGroupDescChars);
 						},
 						beforeClose: function(event, ui){
@@ -466,11 +465,7 @@ var app = app || {};
 					if($('#createGroupForm')[0].checkValidity()){
 						e.preventDefault();  //preventing default form submission
 						
-						if($('#groupDesc').val().trim().length < app.Global.defaults.minGroupDescChars){
-							$('#error-massege').html("Please enter at least " + app.Global.defaults.minGroupDescChars + " characters in description field.");
-							$('#errorBox').dialog('open');
-							return;
-						}
+
 						
 						var checkString = [];
 						 

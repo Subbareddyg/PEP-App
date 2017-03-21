@@ -439,20 +439,7 @@ var app = app || {} ;
 								return;
 							} //CR ALM 3520 Ends
 							
-							if($('#groupDesc').val().trim().length < app.Global.defaults.minGroupDescChars){
-								$('#error-massege').html("Please enter at least " + app.Global.defaults.minGroupDescChars + " characters in description field.");
-								$('#errorBox').dialog({
-								   autoOpen: true, 
-								   modal: true,
-								   resizable: false,
-								   title : 'Group Header',
-								   dialogClass: "dlg-custom",
-								   buttons: {
-									  OK: function() {$(this).dialog("close");}
-								   },
-								});
-								return;
-							}
+
 							
 							var groupHeaderData = $('#fromHeaderEdit').serialize();
 							
@@ -828,7 +815,6 @@ var app = app || {} ;
 				
 				$(document).on('ready', function(e){
 					$('#nameMaxChars').text(app.Global.defaults.maxGroupNameChars);
-					$('#descMinChars').text(app.Global.defaults.minGroupDescChars);
 					$('#descMaxChars').text(app.Global.defaults.maxGroupDescChars);
 				});
 				
