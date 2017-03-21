@@ -87,6 +87,11 @@ input.btn-new, input.btn-new:hover {
 	border: 50px;
 	float:right;
 }
+
+.default_text_style {
+	font-size: 16px;
+	border: 50px;
+}
 </style>
 
 <script type="text/javascript">
