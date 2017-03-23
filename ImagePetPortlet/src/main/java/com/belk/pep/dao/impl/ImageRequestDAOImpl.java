@@ -501,10 +501,13 @@ public class ImageRequestDAOImpl implements ImageRequestDAO {
         	sampleImgList.add(sampleImage);
         	
         	//RejectCode
-        	if(row[13] !=null && row[14] !=null){
+        	if(row[13] !=null && row[14] !=null && row[15] !=null){
         		sampleImage.setRejectCode(row[13].toString());
         		sampleImage.setRejectReason(row[14].toString());
-        		sampleImage.setRejectionTimestamp(row[15]!=null?row[11].toString():null);
+
+        		String rejectionTimeStamp = StringUtils.replace(row[15].toString(),"T"," ");
+        		String formattedTimeStamp = StringUtils.substringBeforeLast(rejectionTimeStamp, "-");
+        		sampleImage.setRejectionTimestamp(formattedTimeStamp);
         	} 
         }
         }catch(Exception e){

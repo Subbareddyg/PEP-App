@@ -92,9 +92,9 @@ function trClick(){
 						 if(typeof val.shotType != "undefined"){
 							shotTypeJsonArray.push(val.shotType);
 						 }
-						 shotTypeParamArray = shotTypeJsonArray;											
+						 shotTypeParamArray = shotTypeJsonArray;
 						VPISampleImageRows(val.imageID,val.imageName,val.imagefilepath,val.imageLocation,val.shotType ,val.linkStatus,val.imageStatus,val.sampleId,val.sampleReceived,
-								val.silhouette,val.turnInDate,val.sampleCordinatorNote,val.action,val.role, shotTypeParamArray, val.rejectCode, val.rejectReason, val.rejectionTimestamp);
+								val.silhouette,val.turnInDate,val.sampleCordinatorNote,val.action,val.role, shotTypeParamArray, val.rejectType, val.rejectReason, val.rejectionTimestamp);
 						
 						
 						
@@ -692,7 +692,7 @@ function getValuesforSubmitorRejectAjax(imageId,imageStatus,element,event,select
 			url : url,
 			datatype:'json',
 			data: {'selectedColorOrin': selectedOrin,'imageId' : imageId,'imageStatus' : imageStatus,'statusparam' : statusparam, 
-				shotTypeValueOnSubmit: shotTypeValueOnSubmit, rejectCode: selectedRejectReasonCode, rejectText: selectedRejectReasonText},
+				shotTypeValueOnSubmit: shotTypeValueOnSubmit, rejectType: selectedRejectReasonCode, rejectReason: selectedRejectReasonText},
 			cache: true,
 			async: true,
 			success: function(data){					
@@ -836,7 +836,12 @@ function showRejectReason(imageId,imageStatus,element,event) {
 function showPetRejectReasons(rejectCode, rejectReason, rejectionTimestamp) {
 	$("#overlay_petRejectReason").css("display","block");
 	jq('#dialog_petRejectReason').dialog('open');
-
+	if(rejectionTimestamp === 'undefined'){
+		$("#reject-reason").html(rejectCode + "  " + rejectReason);
+	}
+	else{
+		$("#reject-reason").html(rejectionTimestamp + "  " + rejectCode + "  " + rejectReason);
+	}
 	$("#petRejectReasonPopupClose").bind("click", function(){
 		$("#overlay_petRejectReason").hide();
 		jq("#dialog_petRejectReason").dialog('close'); //closing upload dialog
