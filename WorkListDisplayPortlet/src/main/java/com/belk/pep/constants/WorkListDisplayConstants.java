@@ -364,4 +364,6 @@ public static final String MISSING_ASSET_VAR = "missingAsset";
 public static final String ASSET_SERVICE_URL = "update.missingasset.url";
 public static final String MULTIPLE_FAILURE_CODE = "110";
 public static final String RESPONSE_MSG = "message";
+
+public static final String ADVANCE_SEARCH_TIME_PERIOD = "worklist.adv.search.time.period";
 }

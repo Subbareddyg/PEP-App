@@ -741,6 +741,7 @@ public class WorkListDisplayController implements Controller,EventAwareControlle
         advanceSearch.setRequestType(prop.getProperty(WorkListDisplayConstants.ADV_SEARCH_REQUEST_TEXT_VALUE));
         advanceSearch.setActive("01");
         advanceSearch.setSearchResults("includeGrps");
+        advanceSearch.setSearchTimePeriod(prop.getProperty(WorkListDisplayConstants.ADVANCE_SEARCH_TIME_PERIOD));
         renderForm.setAdvanceSearch(advanceSearch);
         }    
     

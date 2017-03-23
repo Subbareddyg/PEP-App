@@ -212,6 +212,7 @@ lockClearOnBack.value='1';
 	<input type="hidden" id="searchResultInput" name="searchResultInput" value="${workflowForm.advanceSearch.searchResults}"/>
     <input type="hidden" id="selectedOrin" name="selectedOrin" value=""/>
     <input type="hidden" name="selectedPageNumber" id="sel-page-num" value="${workflowForm.selectedPage}" />
+    <input type="hidden" name="searchTimePeriod" id="searchTimePeriod" value="${workflowForm.advanceSearch.searchTimePeriod}" />
     <input type="hidden" id="selectedParentOrin" name="selectedParentOrin" value=""/>
     <input type="hidden" id="stylepetstatid" name="stylepetstatid" value=""/>
     <input type="hidden" id="stylecolorpetstatid" name="stylecolorpetstatid" value=""/>
@@ -819,13 +820,13 @@ lockClearOnBack.value='1';
 										</li>
 										<li class="text">
 											<label for="Completion_Date_Range_From"><fmt:message key="worklist.adv.jsp.main.from.date.body.label"/></label>
-											<input type="text" id="datepicker1" name="datepicker1" value="${workflowForm.advanceSearch.dateFrom}"  />					
+											<input type="text" id="datepicker1" name="datepicker1" value="${workflowForm.advanceSearch.dateFrom}"  disabled="true"/>					
 											<input type="hidden" id="fromdateValueHolder" name="fromdateValueHolder" value="${workflowForm.advanceSearch.dateFrom}"  />
 										</li>
 					
 					 					<li class="text">
 											<label for="Completion_Date_Range_To"><fmt:message key="worklist.adv.jsp.main.to.date.body.label"/></label>
-											<input type="text" id="datepicker2" name="datepicker2" value="${workflowForm.advanceSearch.dateTo}"  />
+											<input type="text" id="datepicker2" name="datepicker2" value="${workflowForm.advanceSearch.dateTo}"  disabled="true"/>
 											<input type="hidden" id="todateValueHolder" name="todateValueHolder" value="${workflowForm.advanceSearch.dateTo}"  />
 										</li>
 					 					
@@ -1381,23 +1382,37 @@ function defaultAdvSearchSettings()
 		var jsimagename	='iconCalendar.gif';
 		var jsFullImgPath=jscontextpath + jsmidpath + jsimagename;
 		//alert(todateValue);
-    $("#datepicker1").datepicker({
-        showOn: 'button',
-        buttonText: 'Date',
-        buttonImageOnly: true,
-        buttonImage: jsFullImgPath,
-        dateFormat: 'mm-dd-yy',
-        constrainInput: true
-    });
+		var time = $("#searchTimePeriod").val();
+		var maxCompletionTo = '+'+time;
+		var minCompletionFrom = '-'+time;
+	    $("#datepicker1").datepicker({
+	        showOn: 'button',
+	        buttonText: 'Date',
+	        buttonImageOnly: true,
+	        buttonImage: jsFullImgPath,
+	        dateFormat: 'mm-dd-yy',
+	        constrainInput: true,
+	        onSelect: function(){
+	        	var endDate = $(this).val();
+	            $("#datepicker2").datepicker( "option", "minDate", endDate );
+	            $("#datepicker2").datepicker( "option", "maxDate", maxCompletionTo );
+	        }
+	    });
+		
+		$("#datepicker2").datepicker({
+		        showOn: 'button',
+		        buttonText: 'Date',
+		        buttonImageOnly: true,
+		        buttonImage: jsFullImgPath,
+		        dateFormat: 'mm-dd-yy',
+		        constrainInput: true,
+		        onSelect: function(){
+		        	var startDate = $(this).val();
+		            $("#datepicker1").datepicker( "option", "minDate", minCompletionFrom );
+		            $("#datepicker1").datepicker( "option", "maxDate", startDate );
+		        }
 	
-$("#datepicker2").datepicker({
-        showOn: 'button',
-        buttonText: 'Date',
-        buttonImageOnly: true,
-        buttonImage: jsFullImgPath,
-        dateFormat: 'mm-dd-yy',
-        constrainInput: true
-    });
+	    });
 
 
     $(".ui-datepicker-trigger").mouseover(function() {
@@ -1511,29 +1526,37 @@ function resetAdvSearchSettings()
 		if($("#todateValueHolder").val().trim().length>0){
 			todateValue = $("#todateValueHolder").val().trim();
 		}
-    $("#datepicker1").datepicker({
-        showOn: 'button',
-        buttonText: 'Date',
-        buttonImageOnly: true,
-        buttonImage: jsFullImgPath,
-        dateFormat: 'mm-dd-yy',
-        constrainInput: true
-    }).datepicker("setDate", fromdateValue);
+		var time = $("#searchTimePeriod").val();
+		var maxCompletionTo = '+'+time;
+		var minCompletionFrom = '-'+time;
+	    $("#datepicker1").datepicker({
+	        showOn: 'button',
+	        buttonText: 'Date',
+	        buttonImageOnly: true,
+	        buttonImage: jsFullImgPath,
+	        dateFormat: 'mm-dd-yy',
+	        constrainInput: true,
+	        onSelect: function(){
+	        	var endDate = $(this).val();
+	            $("#datepicker2").datepicker( "option", "minDate", endDate );
+	            $("#datepicker2").datepicker( "option", "maxDate", maxCompletionTo );
+	        }
+	    });
+		
+		$("#datepicker2").datepicker({
+		        showOn: 'button',
+		        buttonText: 'Date',
+		        buttonImageOnly: true,
+		        buttonImage: jsFullImgPath,
+		        dateFormat: 'mm-dd-yy',
+		        constrainInput: true,
+		        onSelect: function(){
+		        	var startDate = $(this).val();
+		            $("#datepicker1").datepicker( "option", "minDate", minCompletionFrom );
+		            $("#datepicker1").datepicker( "option", "maxDate", startDate );
+		        }
 	
-$("#datepicker2").datepicker({
-        showOn: 'button',
-        buttonText: 'Date',
-        buttonImageOnly: true,
-        buttonImage: jsFullImgPath,
-        dateFormat: 'mm-dd-yy',
-        constrainInput: true
-    }).datepicker("setDate", todateValue);
-
-
-    $(".ui-datepicker-trigger").mouseover(function() {
-        $(this).css('cursor', 'pointer');
-    });
-    
+	    });
 }
 
 $(document).ready(function() {
@@ -1546,24 +1569,37 @@ var jsmidpath = '/img/';
 var jsimagename	='iconCalendar.gif';
 var jsFullImgPath=jscontextpath + jsmidpath + jsimagename;
 //alert(jsFullImgPath);
+var time = $("#searchTimePeriod").val();
+var maxCompletionTo = '+'+time;
+var minCompletionFrom = '-'+time;
 $("#datepicker1").datepicker({
-showOn: 'button',
-buttonText: 'Date',
-buttonImageOnly: true,
-buttonImage: jsFullImgPath,
-dateFormat: 'mm-dd-yy',
-constrainInput: true
-
-}).datepicker("setDate", "-90");
+    showOn: 'button',
+    buttonText: 'Date',
+    buttonImageOnly: true,
+    buttonImage: jsFullImgPath,
+    dateFormat: 'mm-dd-yy',
+    constrainInput: true,
+    onSelect: function(){
+    	var endDate = $(this).val();
+        $("#datepicker2").datepicker( "option", "minDate", endDate );
+        $("#datepicker2").datepicker( "option", "maxDate", maxCompletionTo );
+    }
+});
 
 $("#datepicker2").datepicker({
-showOn: 'button',
-buttonText: 'Date',
-buttonImageOnly: true,
-buttonImage: jsFullImgPath,
-dateFormat: 'mm-dd-yy',
-constrainInput: true
-}).datepicker("setDate", "+90");
+        showOn: 'button',
+        buttonText: 'Date',
+        buttonImageOnly: true,
+        buttonImage: jsFullImgPath,
+        dateFormat: 'mm-dd-yy',
+        constrainInput: true,
+        onSelect: function(){
+        	var startDate = $(this).val();
+            $("#datepicker1").datepicker( "option", "minDate", minCompletionFrom );
+            $("#datepicker1").datepicker( "option", "maxDate", startDate );
+        }
+
+});
 
 
 $('body').on('click', '#selectAllDeptOnSearch', function(e){
