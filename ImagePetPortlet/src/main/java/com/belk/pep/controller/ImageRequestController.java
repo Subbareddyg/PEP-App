@@ -900,7 +900,7 @@ public class ImageRequestController {
             jsonObj.put("action", "");
             jsonObj.put("imagefilepath", imageFilePath);
             jsonObj.put("role", roleToPass);
-            jsonObj.put("rejectCode", item.getRejectCode());
+            jsonObj.put("rejectType", item.getRejectCode());
             jsonObj.put("rejectReason", item.getRejectReason());
             jsonObj.put("rejectionTimestamp", item.getRejectionTimestamp());
             
@@ -971,8 +971,8 @@ public class ImageRequestController {
 		String imageStatus = request.getParameter("imageStatus");
 		String statusParam = request.getParameter("statusparam");
 		String shotTypeOnSubmit = request.getParameter("shotTypeValueOnSubmit");
-		String rejectCode = request.getParameter("rejectCode");
-		String rejectText = request.getParameter("rejectText");
+		String rejectType = request.getParameter("rejectType");
+		String rejectReason = request.getParameter("rejectReason");
 		
 		String responseMsg = "";
 		String responseMsg1 = "";
@@ -999,7 +999,7 @@ public class ImageRequestController {
 		}
 		try {          
             
-	           JSONObject jsonStyle = populateJsonForSubmitOrReject(orinNumber.trim(),imageId,passImageStatusToService,updatedBy, rejectCode, rejectText);
+	           JSONObject jsonStyle = populateJsonForSubmitOrReject(orinNumber.trim(),imageId,passImageStatusToService,updatedBy, rejectType, rejectReason);
 	           jsonArray.put(jsonStyle);
 	           LOGGER.info("json Object petId "+ jsonStyle.getString("petId"));
 	           responseMsg = callSubmitOrRejectService(jsonArray);
@@ -1127,7 +1127,7 @@ public class ImageRequestController {
 	    * @param updatedBy
 	    * @return
 	    */
-	   public JSONObject populateJsonForSubmitOrReject(String orinNo, String imagId,String imageStatus,String updatedBy, String rejectCode, String rejectText){
+	   public JSONObject populateJsonForSubmitOrReject(String orinNo, String imagId,String imageStatus,String updatedBy, String rejectType, String rejectReason){
 	       JSONObject jsonObj = new JSONObject();
 	       try {
 	    	   LOGGER.info("populateJsonForSubmitOrReject Enter.....Controller---->");
@@ -1137,9 +1137,9 @@ public class ImageRequestController {
 	    	   jsonObj.put(ImageConstants.SAVE_IMAGE_STATUS, imageStatus); 
 	    	   jsonObj.put(ImageConstants.UPDATEDBY, updatedBy); 
 	    	   
-	    	   if(StringUtils.isNotBlank(rejectCode)){
-	    		   jsonObj.put(ImageConstants.REJECT_CODE, rejectCode);
-	    		   jsonObj.put(ImageConstants.REJECT_REASON ,StringUtils.substringAfter(rejectText, " "));
+	    	   if(StringUtils.isNotBlank(rejectType)){
+	    		   jsonObj.put(ImageConstants.REJECT_TYPE, rejectType);
+	    		   jsonObj.put(ImageConstants.REJECT_REASON ,StringUtils.substringAfter(rejectReason, " "));
 	    	   }
 	    	   
 	           LOGGER.info("jsonObj populateJsonForSubmitOrReject************ ---->"+jsonObj);
