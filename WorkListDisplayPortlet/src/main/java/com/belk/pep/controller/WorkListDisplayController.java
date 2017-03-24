@@ -358,6 +358,12 @@ public class WorkListDisplayController implements Controller,EventAwareControlle
                         preVisitedOrin = pageAnchorDetails.getOrinNumber();
                         String groupId = pageAnchorDetails.getGroupId();
                         List<String> supplierIdList = null;
+                        //Default page number when anchored page number is unavailable
+                        int pageNumber = 1;
+                        if(StringUtils.isNotBlank(anchoredPageNumber)){
+                        	pageNumber = Integer.parseInt(anchoredPageNumber);
+                        }
+
                         if (custuser != null && custuser.getVpUser() != null) {
                             supplierIdList = custuser.getVpUser().getSupplierIdsList();
                         }
@@ -386,9 +392,10 @@ public class WorkListDisplayController implements Controller,EventAwareControlle
                                 callType = "groupingSearch";
                             }
                             resourceForm.setAdvanceSearch(advanceSearch);
+                            
                             mv.addObject(WorkListDisplayConstants.WORK_FLOW_FORM,
                                     getUpdatedAdvanceSearchForm(resourceForm, supplierIdList,
-                                            request.getPortletSession(), anchoredPageNumber, callType, Integer.parseInt(anchoredPageNumber)));
+                                            request.getPortletSession(), pageNumber, callType));
                             //                        ((WorkListDisplayForm) request.getPortletSession().getAttribute(formSessionKey)));
                             if (preVisitedOrin != null) {
                                 mv.addObject("prevVisitedOrin", preVisitedOrin);
@@ -396,9 +403,8 @@ public class WorkListDisplayController implements Controller,EventAwareControlle
                             return mv;
                         }else if(resourceForm != null){
                         	if (StringUtils.isNotBlank(anchoredPageNumber) && StringUtils.isNotBlank(preVisitedOrin)) {
-                        		int selectedPageNumber = Integer.parseInt(anchoredPageNumber);
                         		List<WorkFlow> workFlowList = getWorkFlowListFromDB(resourceForm, resourceForm.getWorkListType(), resourceForm.getSelectedDepartmentFromDB(), 
-                                		resourceForm.getVendorEmail(), supplierIdList, selectedPageNumber, maxResults);
+                                		resourceForm.getVendorEmail(), supplierIdList, pageNumber, maxResults);
                         		resourceForm.setWorkFlowlist(workFlowList);
                             	mv.addObject(WorkListDisplayConstants.WORK_FLOW_FORM,resourceForm);
                             	
@@ -3985,7 +3991,7 @@ public String ConvertDate(String completionDate){
      * @return
      */
     private WorkListDisplayForm getUpdatedAdvanceSearchForm(WorkListDisplayForm resourceForm,
-            List<String> supplierIdList, PortletSession portletSession, String selectedPageNumber, String callType, Integer pageNumber) {
+            List<String> supplierIdList, PortletSession portletSession, int selectedPageNumber, String callType) {
         //call type, supplier id list, vendor email, ajax page number as paramer
 
         List<WorkFlow> workFlowList = null;
@@ -3993,7 +3999,7 @@ public String ConvertDate(String completionDate){
         try {
             Properties prop = PropertiesFileLoader.getExternalLoginProperties();
             int maxResults=Integer.parseInt(prop.getProperty(WorkListDisplayConstants.ADVANCE_SEARCH_PAGE_LIMIT));
-            int startIndex=(pageNumber-1)*maxResults;
+            int startIndex=(selectedPageNumber-1)*maxResults;
 
             
             if (resourceForm != null) {
@@ -4050,11 +4056,8 @@ public String ConvertDate(String completionDate){
                             LOGGER.info("1789 : resourceForm:" + resourceForm.getFullWorkFlowlist().size());
                             fullWorkList = resourceForm.getFullWorkFlowlist();
                         }
-                        if (StringUtils.isEmpty(selectedPageNumber)) {
-                            selectedPageNumber = "1";
-                        }
-                    	handlingPaginationRender(Integer.parseInt(selectedPageNumber), resourceForm, fullWorkList);
-                        resourceForm.setSelectedPage(selectedPageNumber);
+                    	handlingPaginationRender(selectedPageNumber, resourceForm, fullWorkList);
+                        resourceForm.setSelectedPage(String.valueOf(selectedPageNumber));
                     } else {//There is no PET for searched content
                         //Fix for Defect 177
 
