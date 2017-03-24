@@ -1383,8 +1383,6 @@ function defaultAdvSearchSettings()
 		var jsFullImgPath=jscontextpath + jsmidpath + jsimagename;
 		//alert(todateValue);
 		var time = $("#searchTimePeriod").val();
-		var maxCompletionTo = '+'+time;
-		var minCompletionFrom = '-'+time;
 	    $("#datepicker1").datepicker({
 	        showOn: 'button',
 	        buttonText: 'Date',
@@ -1392,9 +1390,14 @@ function defaultAdvSearchSettings()
 	        buttonImage: jsFullImgPath,
 	        dateFormat: 'mm-dd-yy',
 	        constrainInput: true,
-	        onSelect: function(){
-	        	var endDate = $(this).val();
-	            $("#datepicker2").datepicker( "option", "minDate", endDate );
+	        onSelect: function(date){
+	            var maxCompletionTo = $.datepicker.parseDate( "mm-dd-yy", date );
+	            if(time === 'undefined'){
+                	maxCompletionTo.setMonth(maxCompletionTo.getMonth() + 3);
+	            }else{
+                	maxCompletionTo.setMonth(maxCompletionTo.getMonth() + parseInt(time));
+	            }
+	            $("#datepicker2").datepicker( "option", "minDate", date );
 	            $("#datepicker2").datepicker( "option", "maxDate", maxCompletionTo );
 	        }
 	    });
@@ -1406,10 +1409,15 @@ function defaultAdvSearchSettings()
 		        buttonImage: jsFullImgPath,
 		        dateFormat: 'mm-dd-yy',
 		        constrainInput: true,
-		        onSelect: function(){
-		        	var startDate = $(this).val();
+		        onSelect: function(date){
+		            var minCompletionFrom = $.datepicker.parseDate( "mm-dd-yy", date );
+		            if(time === 'undefined'){
+		            	minCompletionFrom.setMonth(minCompletionFrom.getMonth() - 3);
+		            }else{
+			            minCompletionFrom.setMonth(minCompletionFrom.getMonth() - time);
+		            }
 		            $("#datepicker1").datepicker( "option", "minDate", minCompletionFrom );
-		            $("#datepicker1").datepicker( "option", "maxDate", startDate );
+		            $("#datepicker1").datepicker( "option", "maxDate", date );
 		        }
 	
 	    });
@@ -1527,8 +1535,6 @@ function resetAdvSearchSettings()
 			todateValue = $("#todateValueHolder").val().trim();
 		}
 		var time = $("#searchTimePeriod").val();
-		var maxCompletionTo = '+'+time;
-		var minCompletionFrom = '-'+time;
 	    $("#datepicker1").datepicker({
 	        showOn: 'button',
 	        buttonText: 'Date',
@@ -1536,9 +1542,14 @@ function resetAdvSearchSettings()
 	        buttonImage: jsFullImgPath,
 	        dateFormat: 'mm-dd-yy',
 	        constrainInput: true,
-	        onSelect: function(){
-	        	var endDate = $(this).val();
-	            $("#datepicker2").datepicker( "option", "minDate", endDate );
+	        onSelect: function(date){
+	            var maxCompletionTo = $.datepicker.parseDate( "mm-dd-yy", date );
+	            if(time === 'undefined'){
+                	maxCompletionTo.setMonth(maxCompletionTo.getMonth() + 3);
+	            }else{
+                	maxCompletionTo.setMonth(maxCompletionTo.getMonth() + parseInt(time));
+	            }
+	            $("#datepicker2").datepicker( "option", "minDate", date );
 	            $("#datepicker2").datepicker( "option", "maxDate", maxCompletionTo );
 	        }
 	    });
@@ -1550,13 +1561,19 @@ function resetAdvSearchSettings()
 		        buttonImage: jsFullImgPath,
 		        dateFormat: 'mm-dd-yy',
 		        constrainInput: true,
-		        onSelect: function(){
-		        	var startDate = $(this).val();
+		        onSelect: function(date){
+		            var minCompletionFrom = $.datepicker.parseDate( "mm-dd-yy", date );
+		            if(time === 'undefined'){
+		            	minCompletionFrom.setMonth(minCompletionFrom.getMonth() - 3);
+		            }else{
+			            minCompletionFrom.setMonth(minCompletionFrom.getMonth() - time);
+		            }
 		            $("#datepicker1").datepicker( "option", "minDate", minCompletionFrom );
-		            $("#datepicker1").datepicker( "option", "maxDate", startDate );
+		            $("#datepicker1").datepicker( "option", "maxDate", date );
 		        }
 	
 	    });
+
 }
 
 $(document).ready(function() {
@@ -1570,8 +1587,6 @@ var jsimagename	='iconCalendar.gif';
 var jsFullImgPath=jscontextpath + jsmidpath + jsimagename;
 //alert(jsFullImgPath);
 var time = $("#searchTimePeriod").val();
-var maxCompletionTo = '+'+time;
-var minCompletionFrom = '-'+time;
 $("#datepicker1").datepicker({
     showOn: 'button',
     buttonText: 'Date',
@@ -1579,9 +1594,14 @@ $("#datepicker1").datepicker({
     buttonImage: jsFullImgPath,
     dateFormat: 'mm-dd-yy',
     constrainInput: true,
-    onSelect: function(){
-    	var endDate = $(this).val();
-        $("#datepicker2").datepicker( "option", "minDate", endDate );
+    onSelect: function(date){
+        var maxCompletionTo = $.datepicker.parseDate( "mm-dd-yy", date );
+        if(time === 'undefined'){
+        	maxCompletionTo.setMonth(maxCompletionTo.getMonth() + 3);
+        }else{
+        	maxCompletionTo.setMonth(maxCompletionTo.getMonth() + parseInt(time));
+        }
+        $("#datepicker2").datepicker( "option", "minDate", date );
         $("#datepicker2").datepicker( "option", "maxDate", maxCompletionTo );
     }
 });
@@ -1593,14 +1613,18 @@ $("#datepicker2").datepicker({
         buttonImage: jsFullImgPath,
         dateFormat: 'mm-dd-yy',
         constrainInput: true,
-        onSelect: function(){
-        	var startDate = $(this).val();
+        onSelect: function(date){
+            var minCompletionFrom = $.datepicker.parseDate( "mm-dd-yy", date );
+            if(time === 'undefined'){
+            	minCompletionFrom.setMonth(minCompletionFrom.getMonth() - 3);
+            }else{
+	            minCompletionFrom.setMonth(minCompletionFrom.getMonth() - time);
+            }
             $("#datepicker1").datepicker( "option", "minDate", minCompletionFrom );
-            $("#datepicker1").datepicker( "option", "maxDate", startDate );
+            $("#datepicker1").datepicker( "option", "maxDate", date );
         }
 
 });
-
 
 $('body').on('click', '#selectAllDeptOnSearch', function(e){
 	if($(this).is(':checked')){
