@@ -824,6 +824,7 @@ function showRejectReason(imageId,imageStatus,element,event) {
 		getValuesforSubmitorRejectAjax(imageId,imageStatus,element,event,selectedRejectReasonCode,selectedRejectReasonText);
 		$("#overlay_rejectReason").hide();
 		jq("#dialog_rejectReason").dialog('close'); //closing upload dialog
+		$("#rejectReasonPopupSubmit").unbind("click");
 		return false;			
 	});
 	$("#rejectReasonPopupClose").bind("click", function(){
