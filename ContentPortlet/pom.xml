@@ -2,7 +2,7 @@
 
 	<groupId>com.belk.pep</groupId>
 	<artifactId>ContentPortlet</artifactId>
-	<version>1.7.0.15</version>
+	<version>1.7.0.16-SNAPSHOT</version>
 	<name>ContentPortlet</name>
 	<modelVersion>4.0.0</modelVersion>
 	<properties>
@@ -240,7 +240,7 @@
 		<dependency>
 			<groupId>com.belk.pep</groupId>
 			<artifactId>CommonForIpcLogin</artifactId>
-			<version>1.7.0.15</version>
+			<version>1.7.0.16-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
@@ -262,7 +262,7 @@
 	<scm>
  	    <connection>scm:git:ssh://git@bitbucket.org/belk_ecom/pep-application</connection>
 	            <developerConnection>scm:git:ssh://git@bitbucket.org/belk_ecom/pep-application</developerConnection>
-		    		<tag>pep-1.7.0.19</tag>
+		    		<tag>pep-1.7.0.13</tag>
 				    </scm>
 
 			<distributionManagement>
