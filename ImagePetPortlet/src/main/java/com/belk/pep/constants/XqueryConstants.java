@@ -1069,7 +1069,7 @@ public class XqueryConstants {
      */
     public final String getImageRejectReasonsQuery() {
         LOGGER.info("Entering getImageRejectReasons() in XQueryConstant class.");
-        String imageRejectReasonQuery = "select * from PET_IMAGE_REJECT_REASON where ACTIVE>0";
+        String imageRejectReasonQuery = "select * from PET_IMAGE_REJECT_REASON where ACTIVE>0 order by reasoncode";
         LOGGER.info("Exiting getImageRejectReasons() in Grouping XQueryConstant class.");
         return imageRejectReasonQuery;
     }
