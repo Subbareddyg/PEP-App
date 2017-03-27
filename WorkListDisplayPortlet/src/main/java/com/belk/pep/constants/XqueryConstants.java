@@ -3056,7 +3056,7 @@ public String getAdvWorkListDisplayDataForParent(AdvanceSearch advSearch) {
 	advQueryFragment.append("                    vendorportal.adse_pet_catalog pet");
 	advQueryFragment.append("          left join vendorportal.adse_item_catalog item");
 	advQueryFragment.append("          ON        item.mdmid=pet.mdmid");
-	advQueryFragment.append("          left join vendorportal.adse_supplier_catalog supplier");
+	advQueryFragment.append("          inner join vendorportal.adse_supplier_catalog supplier");
 	advQueryFragment.append("          ON        supplier.mdmid=item.primary_supplier_id");
 	advQueryFragment.append("          WHERE     pet.mdmid IN");
 	advQueryFragment.append("                    (");
