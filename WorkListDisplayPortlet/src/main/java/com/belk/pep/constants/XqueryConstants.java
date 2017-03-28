@@ -3019,7 +3019,7 @@ public String getAdvWorkListDisplayDataForParent(AdvanceSearch advSearch) {
 	advQueryFragment.append("          AND       (");
 	advQueryFragment.append("                              inp.createdtoday IS NULL");
 	advQueryFragment.append("                    OR        inp.createdtoday <>'yes'");
-	advQueryFragment.append("                    OR        TRUNC(created_dtm) = TRUNC(sysdate) )");
+	advQueryFragment.append("                    OR        TRUNC(pet.CREATED_DTM) = TRUNC(sysdate) )");
 	advQueryFragment.append("          UNION ALL");
 	advQueryFragment.append("          SELECT    (");
 	advQueryFragment.append("                    CASE");
