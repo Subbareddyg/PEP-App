@@ -1237,7 +1237,7 @@ String vendorNumber = null;
         advQueryFragment.append("     (                                                                                                                        ");
         advQueryFragment.append("       createdToday                           IS NULL                                                                         ");
         advQueryFragment.append("     OR createdToday                          <>'yes'                                                                         ");
-        advQueryFragment.append("     OR to_date(SUBSTR(pet.CREATED_DTM, 1, 9), 'YYYY-MM-DD') = to_date(SUBSTR(CURRENT_TIMESTAMP, 1, 9), 'YYYY-MM-DD')/*'09-NOV-15' CURRENT_DATE*/ ");
+        advQueryFragment.append("     OR TRUNC(pet.CREATED_DTM)=sysdate ");
         advQueryFragment.append("     )                                                                                                                         ");
         advQueryFragment.append("   ),                                                                                                                          ");
         advQueryFragment.append("   supplierDetails AS                                                                                                          ");
@@ -3019,7 +3019,7 @@ public String getAdvWorkListDisplayDataForParent(AdvanceSearch advSearch) {
 	advQueryFragment.append("          AND       (");
 	advQueryFragment.append("                              inp.createdtoday IS NULL");
 	advQueryFragment.append("                    OR        inp.createdtoday <>'yes'");
-	advQueryFragment.append("                    OR        to_date(substr(pet.created_dtm, 1, 9), 'YYYY-MM-DD') = to_date(substr(current_timestamp, 1, 9), 'YYYY-MM-DD') )");
+	advQueryFragment.append("                    OR        TRUNC(pet.CREATED_DTM)=sysdate )");
 	advQueryFragment.append("          UNION ALL");
 	advQueryFragment.append("          SELECT    (");
 	advQueryFragment.append("                    CASE");
