@@ -2312,7 +2312,7 @@ var inputDept = document.getElementById('selectedDeptSearch').value;
 	
 	//$("#dialog_Dept").css("display","block");
 	if('block' == isDeptSearchVisible){		
-		depSearch('depSearch');
+		depSearch('depSearch','');
 	}else if('block' == isAdvDeptSearchVisible){
 		searchSearch();
 		setHiddenFieldValue();
