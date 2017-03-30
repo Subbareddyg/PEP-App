@@ -50,6 +50,7 @@ import com.belk.pep.model.WorkFlow;
 import com.belk.pep.util.ClassDetails;
 import com.belk.pep.util.DepartmentDetails;
 import com.belk.pep.util.PropertiesFileLoader;
+import com.belk.pep.util.PropertyLoader;
 
 /**
  * The Class WorkListDisplayController.
@@ -314,6 +315,12 @@ public class WorkListDisplayController implements Controller,EventAwareControlle
         WorkListDisplayForm  renderForm = null;
         Properties prop= PropertiesFileLoader.getExternalLoginProperties();       
         int maxResults=Integer.parseInt(prop.getProperty(WorkListDisplayConstants.PAGE_LIMIT));
+        Properties prop1 = PropertyLoader.getPropertyLoader(WorkListDisplayConstants.MESS_PROP);
+        int maxDeptSelectionAllowed = 1;
+        if(StringUtils.isNotBlank(prop1.getProperty(WorkListDisplayConstants.MAX_DEPT_SELECTION_ALLOWED))){
+            maxDeptSelectionAllowed = Integer.parseInt(prop1.getProperty(WorkListDisplayConstants.MAX_DEPT_SELECTION_ALLOWED));            
+        }
+        
         getUserDetailsFromLoginScreen(request);
         ArrayList departmentDetailsListToLoadPet = new ArrayList();
         PortletSession portletSession = request.getPortletSession();
@@ -369,6 +376,7 @@ public class WorkListDisplayController implements Controller,EventAwareControlle
                         }
                         WorkListDisplayForm resourceForm = (WorkListDisplayForm) request.getPortletSession()
                                 .getAttribute(formSessionKey);
+                        resourceForm.setMaxDeptSelectionAllowed(maxDeptSelectionAllowed);
                         if ((resourceForm != null && StringUtils
                                 .equalsIgnoreCase("Yes", resourceForm.getSearchClicked())) || StringUtils
                                 .isNotBlank(groupId)) {
@@ -427,6 +435,7 @@ public class WorkListDisplayController implements Controller,EventAwareControlle
                     renderForm.setSelectedColumn(sortingColumn);
                     renderForm.setSortingAscending(sortingOrder);
                 }
+                renderForm.setMaxDeptSelectionAllowed(maxDeptSelectionAllowed);
                 LOGGER.info("formSessionKey "+formSessionKey);
                 if(formSessionKey != null){
                     request.getPortletSession().setAttribute(formSessionKey, renderForm); // Added by Sriharsha
@@ -483,6 +492,7 @@ public class WorkListDisplayController implements Controller,EventAwareControlle
                 if(formSessionKey != null){
                     request.getPortletSession().setAttribute(formSessionKey, renderForm); // Added by Sriharsha
                 }
+                renderForm.setMaxDeptSelectionAllowed(maxDeptSelectionAllowed);
               //Setting Editable or not
                 LOGGER.info("Handling External User Setting Editable or not-----------------------------");
                 LOGGER.info("Before assigning role for external user-----------------------------");

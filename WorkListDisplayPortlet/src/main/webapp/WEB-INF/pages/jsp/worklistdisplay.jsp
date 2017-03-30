@@ -224,6 +224,7 @@ lockClearOnBack.value='1';
     
     <input type="hidden" id="searchReturnId" name="searchReturnId" value="false" />	
     <input type="hidden" id="groupSearchResult" name="groupSearchResult" value="" />
+    <input type="hidden" id="maxDeptSelectionAllowed" name="maxDeptSelectionAllowed" value="${workflowForm.maxDeptSelectionAllowed}">
 	
 	<!--Commented Belk Best Plan for displaying DCA afuszr6-->
 	<!--<c:if test="${isInternal =='yes' && workflowForm.readOnlyUser == 'no'}"> 
@@ -651,9 +652,9 @@ lockClearOnBack.value='1';
 							 
 					            <td colspan="2">
 								&nbsp;&nbsp;&nbsp;
-								 <input id="btnClearDept1" type="button" value="<fmt:message key="worklist.dept.filter.clear.label"/>" onclick="depSearch('depClear')"/> &nbsp;
-								<input id="btnSaveDept1" type="button" value="<fmt:message key="worklist.dept.filter.save.close.label"/>" onclick="depSearch('depSaveClose')"/> &nbsp;
-									<input id="btnCloseDept1" type="button" value="<fmt:message key="worklist.dept.filter.close.label"/>" onclick="depSearch('depClose')"/>   								 
+								 <input id="btnClearDept1" type="button" value="<fmt:message key="worklist.dept.filter.clear.label"/>" onclick="depSearch('depClear','<c:out value="${workflowForm.maxDeptSelectionAllowed}"/>')"/> &nbsp;
+								<input id="btnSaveDept1" type="button" value="<fmt:message key="worklist.dept.filter.save.close.label"/>" onclick="depSearch('depSaveClose','<c:out value="${workflowForm.maxDeptSelectionAllowed}"/>')"/> &nbsp;
+									<input id="btnCloseDept1" type="button" value="<fmt:message key="worklist.dept.filter.close.label"/>" onclick="depSearch('depClose','<c:out value="${workflowForm.maxDeptSelectionAllowed}"/>')"/>   								 
 								</td>								
 					            							
 							   
@@ -678,7 +679,7 @@ lockClearOnBack.value='1';
 										   <tr>
 										     
 											<td colspan="3"  >	Dept # <input type="text" name ="selectedDeptSearch" id ="selectedDeptSearch" class="selectedDeptSearchtxtbox"/>
-												<input id="btnSearch1" type="button" value="<fmt:message key="worklist.dept.filter.search.label"/>" onclick="depSearch('depSearch')"/>  
+												<input id="btnSearch1" type="button" value="<fmt:message key="worklist.dept.filter.search.label"/>" onclick="depSearch('depSearch','<c:out value="${workflowForm.maxDeptSelectionAllowed}"/>')"/>  
 											</td>
 											
 										  </tr> 
@@ -1654,7 +1655,7 @@ $('body').on('keypress', '#selectedDeptSearch', function(e){
 		}catch(ex){
 			
 		}finally{
-			depSearch('depSearch');
+			depSearch('depSearch','');
 		}
 		return false;
 	}

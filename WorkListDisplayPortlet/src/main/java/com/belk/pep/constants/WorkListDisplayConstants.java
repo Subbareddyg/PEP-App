@@ -80,6 +80,8 @@ public static final String PAGE_LIMIT = "worklist.pageLimit";
 /** The Constant Advance Search PAGE_LIMIT. */
 public static final String ADVANCE_SEARCH_PAGE_LIMIT = "advance.search.worklist.pageLimit";
 
+public static final String MAX_DEPT_SELECTION_ALLOWED = "worklist.maxDeptSelectionAllowed";
+
 /** The Constant USER_DATA_OBJ. */
 public static final String USER_DATA_OBJ = "userDataOBJ";
 

@@ -108,7 +108,17 @@ public class WorkListDisplayForm {
     
     private String updateCompletionDateMsg;
     
+    private int maxDeptSelectionAllowed;
     
+    
+    public int getMaxDeptSelectionAllowed() {
+        return maxDeptSelectionAllowed;
+    }
+
+    public void setMaxDeptSelectionAllowed(int maxDeptSelectionAllowed) {
+        this.maxDeptSelectionAllowed = maxDeptSelectionAllowed;
+    }
+
     public String getUpdateCompletionDateMsg() {
         return updateCompletionDateMsg;
     }
