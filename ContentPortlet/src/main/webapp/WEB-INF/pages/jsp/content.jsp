@@ -876,6 +876,51 @@
             	  
             }
             
+            function setFurAttributes(selectedRadioValue,attributeName){
+            	//alert("Inside setFurAttributes function"+selectedRadioValue +" "+attributeName);
+            	if(attributeName == "Faux_Fur"){
+            		//alert("attribute is faux_fur");
+            		var radioName = "paRadio"+selectedRadioValue;
+            		var radioButtons = document.getElementsByName(radioName);
+            		var radioValue;
+            	    for (var i = 0; i < radioButtons.length; i++) {
+            	        if (radioButtons[i].type === "radio" && radioButtons[i].checked) {
+            	        	radioValue = radioButtons[i].value;
+            	        }
+            	    }            		
+            		if(radioValue == 'N'){
+            			populateDefaultValuesForFurAttributes();
+            		}
+            	}
+            }
+            
+            function populateDefaultValuesForFurAttributes(){
+            	if(document.getElementById("paDropDownCounter")){ 
+            		  var  dropDownCounting=document.getElementById("paDropDownCounter").value;		            		
+            			for(q=1; q<=dropDownCounting; q++){
+            				 var paDropDownAttrName = document.getElementById("dropdownAttributeName"+q).value;
+            				 //alert("paDropDownAttrName"+paDropDownAttrName);
+            				 if(paDropDownAttrName == "Fur_animal_name" || paDropDownAttrName == "Fur_treatment"){
+            					 var paDropDownId = "dropDownsId_id"+q;
+                				 document.getElementById(paDropDownId).value = "0";
+            				 }
+            				
+            			}
+                }
+            	
+            	if(document.getElementById("paTextAttributeCount")){
+     				var textFieldCount = document.getElementById("paTextAttributeCount").value;
+     				for(var a=0; a<textFieldCount; a++){
+     					var textAttrName = document.getElementById("paTextAttributeName_id"+(a+1)).value;
+     					//alert("textAttrName"+textAttrName);
+     					if(textAttrName == "Fur_RN_Number_or_Distributor" || textAttrName == "Fur_country_of_origin"){
+     						document.getElementById("paText_Id"+(a+1)).value="N/A";
+     					}
+   							          					    
+     				}
+                }
+            }
+            
             //VP21
 			if(pepUserRoleName != "vendor") {
             function bmRadioButtonValues (selectedRadioValue, totalRadio){
@@ -3455,7 +3500,8 @@ function clickListenerContent(e){
 																<td><c:if test="${categoryDisplayList.isMandatory == 'Yes'}">* </c:if>
 																<c:out value="${categoryDisplayList.displayName}"/></td>
 																
-																<input type="hidden" name="dropdownAttributeNameXpath"  id="dropdownAttributeNameXpath_id<%= i %>"  value="${categoryDisplayList.displayName}#${categoryDisplayList.attributePath}" />	
+																<input type="hidden" name="dropdownAttributeNameXpath"  id="dropdownAttributeNameXpath_id<%= i %>"  value="${categoryDisplayList.displayName}#${categoryDisplayList.attributePath}" />
+																<input type="hidden" name="dropdownAttributeName"  id="dropdownAttributeName<%= i %>"  value="${categoryDisplayList.attributeName}" />	
 																<input type="hidden" name="isPIMMandatory_id"  id="isPIMMandatory_id<%= i %>"  value="${categoryDisplayList.isMandatory}" />
 																<input type="hidden" name="isPIMEditable_id"  id="isPIMEditable_id<%= i %>"  value="${categoryDisplayList.isEditable}" />															
 																<td>
@@ -3544,6 +3590,7 @@ function clickListenerContent(e){
 												      <c:if test="${categoryDisplayList.attributeFieldType == 'Radio Button'}">
 												     
 															<input type="hidden" name="paRadioAttributeXpath"  id="paRadioAttributeXpath_id<%= k%>"  value="${categoryDisplayList.displayName}#${categoryDisplayList.attributePath}" />
+															<input type="hidden" name="paRadioAttributeName"  id="paRadioAttributeName_id<%= k%>"  value="${categoryDisplayList.attributeName}" />
 															<input type="hidden" name="radioButtonHidden_id" id="radioButtonHidden_id<%= k %>" value="" />
 															<input type="hidden" name="isPIMRadioMandatory_id"  id="isPIMRadioMandatory_id<%= k %>"  value="${categoryDisplayList.isMandatory}" />	
 															<input type="hidden" name="isPIMRadioEditable_id"  id="isPIMRadioEditable_id<%= k %>"  value="${categoryDisplayList.isEditable}" />
@@ -3551,7 +3598,7 @@ function clickListenerContent(e){
 															  <tr>
 																<td><c:if test="${categoryDisplayList.isMandatory == 'Yes'}">* </c:if>
 																<c:out value="${categoryDisplayList.displayName}"/></td>
-																<td> <table><tr><td> <fieldset id="radiofieldSet_id<%=k %>" onclick="javascript:pimRadioButtonValues(<%= k %>, '<c:out value="${contentDisplayForm.productAttributesDisplay.radiobuttonList.size()}"/>')">
+																<td> <table><tr><td> <fieldset id="radiofieldSet_id<%=k %>" onclick="javascript:pimRadioButtonValues(<%= k %>, '<c:out value="${contentDisplayForm.productAttributesDisplay.radiobuttonList.size()}"/>');setFurAttributes(<%= k%>, '<c:out value="${categoryDisplayList.attributeName}" />')">
 																  <% int z=1;  %>
 																	<c:forEach var="dropDownMap" items="${categoryDisplayList.radioButtonValuesMap}">	
 																		<c:if test="${categoryDisplayList.savedRadioButtonValuesMap.size() > 0 }" >
@@ -3581,6 +3628,7 @@ function clickListenerContent(e){
                                                          <input type="hidden" name="isPIMTextEditable_id"  id="isPIMTextEditable_id<%= j %>"  value="${categoryDisplayList.isEditable}" />
                                                          <input type="hidden" name="textFieldHidden" id="textFieldHidden_id<%= j %>" value="" />
                                                          <input type="hidden" name="paTextAttributeXpath"  id="paTextAttributeXpath_id<%= j %>"  value="${categoryDisplayList.displayName}#${categoryDisplayList.attributePath}" />
+                                                         <input type="hidden" name="paTextAttributeName"  id="paTextAttributeName_id<%= j %>"  value="${categoryDisplayList.attributeName}" />
                                                              <tr>                                                                                         
                                                                        <td><c:if test="${categoryDisplayList.isMandatory == 'Yes'}">* </c:if><c:out value="${categoryDisplayList.displayName}"/></td>
                                                                        <td><input type="text" id="paText_Id<%=j%>" name="paText_Id<%=j%>" value="${categoryDisplayList.attributeFieldValue}" /></td>                                                                                                                                     
