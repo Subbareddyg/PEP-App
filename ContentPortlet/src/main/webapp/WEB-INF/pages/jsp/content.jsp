@@ -888,7 +888,7 @@
             	        	radioValue = radioButtons[i].value;
             	        }
             	    }            		
-            		if(radioValue == 'N'){
+            		if(radioValue == 'N' || radioValue == 'No'){
             			populateDefaultValuesForFurAttributes();
             		}
             	}
@@ -899,10 +899,17 @@
             		  var  dropDownCounting=document.getElementById("paDropDownCounter").value;		            		
             			for(q=1; q<=dropDownCounting; q++){
             				 var paDropDownAttrName = document.getElementById("dropdownAttributeName"+q).value;
+            				 var attNameAndPath = document.getElementById("dropdownAttributeNameXpath_id"+q).value;
             				 //alert("paDropDownAttrName"+paDropDownAttrName);
             				 if(paDropDownAttrName == "Fur_animal_name" || paDropDownAttrName == "Fur_treatment"){
             					 var paDropDownId = "dropDownsId_id"+q;
+            					 var paDropDownIdValue = paDropDownId+"_value";
+            					 var padropdownhidden_id = "dropdownhidden_id"+q;
+            					 var select = $('#'+paDropDownIdValue);
                 				 document.getElementById(paDropDownId).value = "0";
+                				 select.empty();
+                				 select.append('<option value="0" selected="selected" > <c:out value="N/A"  escapeXml="false"/></option>');
+                				 document.getElementById(padropdownhidden_id).value = attNameAndPath+"#0";
             				 }
             				
             			}
