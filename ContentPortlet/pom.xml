@@ -2,7 +2,7 @@
 
 	<groupId>com.belk.pep</groupId>
 	<artifactId>ContentPortlet</artifactId>
-	<version>1.9.1.0</version>
+	<version>1.9.1.1-SNAPSHOT</version>
 	<name>ContentPortlet</name>
 	<modelVersion>4.0.0</modelVersion>
 	<properties>
@@ -240,7 +240,7 @@
 		<dependency>
 			<groupId>com.belk.pep</groupId>
 			<artifactId>CommonForIpcLogin</artifactId>
-			<version>1.9.1.0</version>
+			<version>1.9.1.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>

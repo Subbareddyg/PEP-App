@@ -3,7 +3,7 @@
 
   <groupId>com.belk.pep</groupId>
   <artifactId>ImageDeleteJob</artifactId>
-  <version>1.9.1.0</version>
+  <version>1.9.1.1-SNAPSHOT</version>
   <packaging>jar</packaging>
 	<build>
 		<plugins>
