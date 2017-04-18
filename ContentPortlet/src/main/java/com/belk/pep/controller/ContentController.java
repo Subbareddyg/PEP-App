@@ -2376,6 +2376,66 @@ public class ContentController implements ResourceAwareController, EventAwareCon
                                                                             // supplier
                                                                             // id
 
+                if ((lstCarBrands != null) && (lstCarBrands.size() > 0)) {
+                    String selectedBrand = lstCarBrands.get(0).getSelectedBrand();
+                    LOGGER.info("selectedBrand:" + selectedBrand); 
+                    String selectedCarBrandCode = lstCarBrands.get(0).getSelectedCarBrandCode(); //VP34
+                    LOGGER.info("selectedCarBrandCode:" + selectedCarBrandCode); //VP34
+                    if (selectedCarBrandCode != null && !selectedCarBrandCode.trim().equalsIgnoreCase("")) { //VP34
+                        request.setAttribute("selectedCarbrand", selectedCarBrandCode); //VP34
+                    }
+                } else {
+                    request.setAttribute("selectedCarbrand", "-1");
+                }
+
+                if ((lstOmniBrands != null) && (lstOmniBrands.size() > 0)) {
+                    String selectedOmni = lstOmniBrands.get(0).getSelectedBrand();
+                    LOGGER.info("selectedOmni:" + selectedOmni); //VP34
+                    if (selectedOmni != null && !selectedOmni.trim().equalsIgnoreCase("")) {
+                        // request.setAttribute("selectedOmnichannelbrand",
+                        // (lstOmniBrands.get(0).getSelectedBrand().split("-"))[0]);
+                        request.setAttribute("selectedOmnichannelbrand", (lstOmniBrands.get(0).getSelectedBrand()));
+                    }
+                } else {
+                    request.setAttribute("selectedOmnichannelbrand", "-1");
+                }
+
+                if (styleAttributes != null) {
+                    if (styleAttributes.getBelkExclusive() != null
+                            && !styleAttributes.getBelkExclusive().trim().equalsIgnoreCase("")) {
+                        request.setAttribute("selectedBelkExclusive", styleAttributes.getBelkExclusive());
+                    } else {
+                        request.setAttribute("selectedBelkExclusive", "-1");
+                    }
+                    if (styleAttributes.getChannelExclusive() != null
+                            && !styleAttributes.getChannelExclusive().trim().equalsIgnoreCase("")) {
+                        request.setAttribute("selectedChannelExclusive", styleAttributes.getChannelExclusive());
+                    } else {
+                        request.setAttribute("selectedChannelExclusive", "-1");
+                    }
+                    if (styleAttributes.getBopis() != null && !styleAttributes.getBopis().trim().equalsIgnoreCase("")) {
+                        request.setAttribute("selectedBopis", styleAttributes.getBopis());
+                    } else {
+                        request.setAttribute("selectedBopis", "-1");
+                    }
+                    if (styleAttributes.getGwp() != null && !styleAttributes.getGwp().trim().equalsIgnoreCase("")) {
+                        request.setAttribute("selectedGWP", styleAttributes.getGwp());
+                    } else {
+                        request.setAttribute("selectedGWP", "No");
+                    }
+                    if (styleAttributes.getPwp() != null && !styleAttributes.getPwp().trim().equalsIgnoreCase("")) {
+                        request.setAttribute("selectedPWP", styleAttributes.getPwp());
+                    } else {
+                        request.setAttribute("selectedPWP", "No");
+                    }
+                    if (styleAttributes.getPyg() != null && !styleAttributes.getPyg().trim().equalsIgnoreCase("")) {
+                        request.setAttribute("selectedPYG", styleAttributes.getPyg());
+                    } else {
+                        request.setAttribute("selectedPYG", "No");
+                    }
+
+                }
+                
                 // Get the IPH Categories to display on the screen;
                 String mappedCategoryId = displayIPHCategories(orinNumber, contentDisplayForm, request, response);
 
@@ -2383,65 +2443,7 @@ public class ContentController implements ResourceAwareController, EventAwareCon
 					LOGGER.info("Inside mapped IPH Category..............................  ");
 					displayAttributesOnLoad(request, response, contentDisplayForm, orinNumber, mappedCategoryId);
 					
-					if ((lstCarBrands != null) && (lstCarBrands.size() > 0)) {
-						String selectedBrand = lstCarBrands.get(0).getSelectedBrand();
-						LOGGER.info("selectedBrand:" + selectedBrand); 
-						String selectedCarBrandCode = lstCarBrands.get(0).getSelectedCarBrandCode(); //VP34
-						LOGGER.info("selectedCarBrandCode:" + selectedCarBrandCode); //VP34
-						if (selectedCarBrandCode != null && !selectedCarBrandCode.trim().equalsIgnoreCase("")) { //VP34
-							request.setAttribute("selectedCarbrand", selectedCarBrandCode); //VP34
-						}
-					} else {
-						request.setAttribute("selectedCarbrand", "-1");
-					}
-
-					if ((lstOmniBrands != null) && (lstOmniBrands.size() > 0)) {
-						String selectedOmni = lstOmniBrands.get(0).getSelectedBrand();
-						LOGGER.info("selectedOmni:" + selectedOmni); //VP34
-						if (selectedOmni != null && !selectedOmni.trim().equalsIgnoreCase("")) {
-							// request.setAttribute("selectedOmnichannelbrand",
-							// (lstOmniBrands.get(0).getSelectedBrand().split("-"))[0]);
-							request.setAttribute("selectedOmnichannelbrand", (lstOmniBrands.get(0).getSelectedBrand()));
-						}
-					} else {
-						request.setAttribute("selectedOmnichannelbrand", "-1");
-					}
-
-                    if (styleAttributes != null) {
-                        if (styleAttributes.getBelkExclusive() != null
-                                && !styleAttributes.getBelkExclusive().trim().equalsIgnoreCase("")) {
-                            request.setAttribute("selectedBelkExclusive", styleAttributes.getBelkExclusive());
-                        } else {
-                            request.setAttribute("selectedBelkExclusive", "-1");
-                        }
-                        if (styleAttributes.getChannelExclusive() != null
-                                && !styleAttributes.getChannelExclusive().trim().equalsIgnoreCase("")) {
-                            request.setAttribute("selectedChannelExclusive", styleAttributes.getChannelExclusive());
-                        } else {
-                            request.setAttribute("selectedChannelExclusive", "-1");
-                        }
-                        if (styleAttributes.getBopis() != null && !styleAttributes.getBopis().trim().equalsIgnoreCase("")) {
-                            request.setAttribute("selectedBopis", styleAttributes.getBopis());
-                        } else {
-                            request.setAttribute("selectedBopis", "-1");
-                        }
-                        if (styleAttributes.getGwp() != null && !styleAttributes.getGwp().trim().equalsIgnoreCase("")) {
-                            request.setAttribute("selectedGWP", styleAttributes.getGwp());
-                        } else {
-                            request.setAttribute("selectedGWP", "No");
-                        }
-                        if (styleAttributes.getPwp() != null && !styleAttributes.getPwp().trim().equalsIgnoreCase("")) {
-                            request.setAttribute("selectedPWP", styleAttributes.getPwp());
-                        } else {
-                            request.setAttribute("selectedPWP", "No");
-                        }
-                        if (styleAttributes.getPyg() != null && !styleAttributes.getPyg().trim().equalsIgnoreCase("")) {
-                            request.setAttribute("selectedPYG", styleAttributes.getPyg());
-                        } else {
-                            request.setAttribute("selectedPYG", "No");
-                        }
-
-                    }
+					
                 }// else{
                     // request.setAttribute("selectedGWP", "No");
                     // request.setAttribute("selectedPWP", "No");
