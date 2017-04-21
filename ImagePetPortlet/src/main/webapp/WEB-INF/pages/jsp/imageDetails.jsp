@@ -64,6 +64,34 @@ input.btn-new, input.btn-new:hover {
 .ui-custom-message-styling-info p, .ui-custom-message-styling-error p{
 	margin: 19px;
 }
+
+.styled-select.slate {
+   margin:10px 20px 100px 10px;
+   height: 34px;
+   width: 400px;
+}
+
+.styled-select.slate select {
+   border: 1px solid #ccc;
+   font-size: 16px;
+   height: 34px;
+   width: 268px;
+}
+
+.pet-reject-reason ul li{
+	font-size: 16px;
+	border: 50px;
+}
+
+.corner-btn {
+	border: 50px;
+	float:right;
+}
+
+.default_text_style {
+	font-size: 16px;
+	border: 50px;
+}
 </style>
 
 <script type="text/javascript">
@@ -108,7 +136,6 @@ $(document).ready(function() {
     $(".ui-datepicker-trigger").mouseover(function() {
         $(this).css('cursor', 'pointer');
     });
-
 
 });
 
@@ -286,9 +313,35 @@ var constMaxFileSizeMB = 30;  //this value is same as the applicationContext val
 
 function checkfilesize(obj){
 	//console.log(obj.files[0].size);
-	selectedFileSize = obj.files[0].size || 0;
-	selectedFileSize = (selectedFileSize/1024)/1024;
-	//alert(selectedFileSize);
+	var file = obj.files[0];
+	if(file) {
+		selectedFileSize = file.size || 0;
+		selectedFileSize = (selectedFileSize/1024)/1024;
+		if(selectedFileSize > constMaxFileSizeMB){
+			return true;
+		}
+	}
+	return false;
+}
+
+function isImageExtValid(ext){
+	alert("Hi Iam here:"+ ext.trim()+"0");
+	if(ext === ''){
+		return true;
+	}
+	if((ext == 'jpeg' || ext == 'jpg' || ext =='psd'|| ext =='tiff'|| ext =='eps' || ext =='tif' || ext == 'png')){
+		alert('returning true');
+		return true;
+	}
+	alert('returning false');
+	return false;
+}
+
+function isFileSizeValid(fileSize){
+	if(fileSize && fileSize.length > 0){
+		return true;
+	}
+	return false;
 }
 
 function validateFields(formId){
@@ -302,6 +355,11 @@ function validateFields(formId){
 	var imageLocation = document.getElementById('imageLocationButton').selectedIndex;
 	var shotTypeNull = '';
 	var passImgid = '';
+	
+	var sizeErrorMessage = "<span style='color:red'>One of the files is larger than " + constMaxFileSizeMB + " MB in size &nbsp;</span>";
+	var extensionErrorMessage = "<span style='color:red'>Please enter a valid file format &nbsp;</span>";
+	var emptyFileErrorMessage = "<span style='color:red'>Please browse image file &nbsp;</span>";
+	
 	//logic to check null shot type
 	var selectedOrin = $("#selectedOrinVPI").val();	
 	$("#vImage tr:gt(0)").each(function(i){		
@@ -313,44 +371,71 @@ function validateFields(formId){
 	});
 	//logic to check null shot type ends
 	var errorMessage = '';
-			if(imageLocation== 1){
-				if(!ftpUrl11){
-					errorMessage = errorMessage+"<span style='color:red'>Please enter FTP Url &nbsp;</span>";
-				}	
-				if(!ftpFileName1){
-					errorMessage = errorMessage+"<span style='color:red'>Please enter Image Name &nbsp;</span>";
-				}
-				if(!ftpUserId1){
-					errorMessage = errorMessage+"<span style='color:red'>Please enter Username &nbsp;</span>";
-				}
-			if(!ftpPassword11){
-					errorMessage = errorMessage+"<span style='color:red'>Please enter Password &nbsp;</span>";
-			}	
-			if(errorMessage.trim().length>0){		
-				document.getElementById('errorDIV').style.display ="";
-				document.getElementById('errorDIV').innerHTML = errorMessage;
-			}else{				
-				$("#overlay_Upload").hide();
-				$("#dialog_UploadImage").hide();
-				jq('#dialog_UploadImage').dialog('close'); //closing upload dialog
-				
-				$("#overlay_imageLoading").show();
-				//setTimeout(function(){document.getElementById(formId).submit();},3000);
-				document.getElementById(formId).submit();
-				
-			}
-		}//End imageLocation check for FTP
+	if(imageLocation== 1){
+		if(!ftpUrl11){
+			errorMessage = errorMessage+"<span style='color:red'>Please enter FTP Url &nbsp;</span>";
+		}	
+		if(!ftpFileName1){
+			errorMessage = errorMessage+"<span style='color:red'>Please enter Image Name &nbsp;</span>";
+		}
+		if(!ftpUserId1){
+			errorMessage = errorMessage+"<span style='color:red'>Please enter Username &nbsp;</span>";
+		}
+		if(!ftpPassword11){
+				errorMessage = errorMessage+"<span style='color:red'>Please enter Password &nbsp;</span>";
+		}	
+		if(errorMessage.trim().length>0){		
+			document.getElementById('errorDIV').style.display ="";
+			document.getElementById('errorDIV').innerHTML = errorMessage;
+		}else{				
+			$("#overlay_Upload").hide();
+			$("#dialog_UploadImage").hide();
+			jq('#dialog_UploadImage').dialog('close'); //closing upload dialog
+			
+			$("#overlay_imageLoading").show();
+			//setTimeout(function(){document.getElementById(formId).submit();},3000);
+			document.getElementById(formId).submit();
+		}
+	}//End imageLocation check for FTP
 	else{
 		if(imageLocation ==0){		
-			var fileType = document.getElementById('fileData').value;
-			var fileExtension = fileType.lastIndexOf('.');
-			var ext = fileType.substring(fileExtension+1).toLowerCase();
-			if(fileType.length > 0){
-				if(selectedFileSize > constMaxFileSizeMB){
+			var fileObj1 = document.getElementById('fileData1');
+			var fileObj2 = document.getElementById('fileData2');
+			var fileObj3 = document.getElementById('fileData3');
+			var fileObj4 = document.getElementById('fileData4');
+			var fileObj5 = document.getElementById('fileData5');
+			
+			var fileType1, fileType2,fileType3, fileType4, fileType5;
+			var ext1, ext2, ext3, ext4, ext5;
+			if(fileObj1 !== null){
+				fileType1 = document.getElementById('fileData1').value;
+				ext1 = fileType1.substring(fileType1.lastIndexOf('.')+1).toLowerCase();
+			}	
+			if(fileObj2 !== null){
+				fileType2 = document.getElementById('fileData2').value;
+				ext2 = fileType2.substring(fileType2.lastIndexOf('.')+1).toLowerCase();
+			}	
+			if(fileObj3 !== null){
+				fileType3 = document.getElementById('fileData3').value;
+				ext3 = fileType3.substring(fileType3.lastIndexOf('.')+1).toLowerCase();
+			}	
+			if(fileObj4 !== null){
+				fileType4 = document.getElementById('fileData4').value;
+				ext4 = fileType4.substring(fileType4.lastIndexOf('.')+1).toLowerCase();
+			}	
+			if(fileObj5 !== null){
+				fileType5 = document.getElementById('fileData5').value;
+				ext5 = fileType5.substring(fileType5.lastIndexOf('.')+1).toLowerCase();
+			}	
+
+			if(isFileSizeValid(fileType1) || isFileSizeValid(fileType2) || isFileSizeValid(fileType3) || isFileSizeValid(fileType4) || isFileSizeValid(fileType5)){
+				alert('I am here');
+				if(checkfilesize(fileObj1) || checkfilesize(fileObj2) || checkfilesize(fileObj3) || checkfilesize(fileObj4) || checkfilesize(fileObj5)){
 					document.getElementById('errorDIV').style.display ="";
-					errorMessage = errorMessage+"<span style='color:red'>Please select a file lesser than " + constMaxFileSizeMB + " MB in size &nbsp;</span>";
+					errorMessage = errorMessage+sizeErrorMessage;
 					document.getElementById('errorDIV').innerHTML = errorMessage;
-				}else if(ext == 'jpeg' || ext == 'jpg' || ext =='psd'|| ext =='tiff'|| ext =='eps' || ext =='tif' || ext == 'png'){
+				}else if(isImageExtValid(ext1) && isImageExtValid(ext2) && isImageExtValid(ext3) && isImageExtValid(ext4) && isImageExtValid(ext5)){
+					alert('Extension valid');
 					document.getElementById('errorDIV').innerHTML = "";
 					$("#overlay_Upload").hide();
 					$("#dialog_UploadImage").hide();
@@ -361,12 +446,12 @@ function validateFields(formId){
 					setTimeout(function(){document.getElementById(formId).submit();},500);
 				}else{
 					document.getElementById('errorDIV').style.display ="";
-					errorMessage = errorMessage+"<span style='color:red'>Please enter a valid file format &nbsp;</span>";
+					errorMessage = errorMessage+extensionErrorMessage;
 					document.getElementById('errorDIV').innerHTML = errorMessage;
 				}
 		}else{//End file Blank check		
 			document.getElementById('errorDIV').style.display ="";
-			errorMessage = errorMessage+"<span style='color:red'>Please browse image file &nbsp;</span>";
+			errorMessage = errorMessage+emptyFileErrorMessage;
 			document.getElementById('errorDIV').innerHTML = errorMessage;
 		}
 	 }
@@ -1145,7 +1230,23 @@ function releseLockedPet(loggedInUser,releseLockedPetURL){
 				<div id="selectImage">			
 			<li>
 				<label style="margin-left:65px;height: 16px;">Select Image *:</label> 
-				<input name="fileData" id="fileData"type="file" onchange="checkfilesize(this);" accept="Image/jpeg,image/jpg,image/psd,image/tiff,image/eps,image/tif,image/png" />
+				<input name="fileData" id="fileData1"type="file" accept="Image/jpeg,image/jpg,image/psd,image/tiff,image/eps,image/tif,image/png" />
+			</li>
+			<li>
+				<label style="margin-left:65px;height: 16px;">Select Image *:</label> 
+				<input name="fileData2" id="fileData2"type="file" accept="Image/jpeg,image/jpg,image/psd,image/tiff,image/eps,image/tif,image/png" />
+			</li>
+			<li>
+				<label style="margin-left:65px;height: 16px;">Select Image *:</label> 
+				<input name="fileData3" id="fileData3"type="file" accept="Image/jpeg,image/jpg,image/psd,image/tiff,image/eps,image/tif,image/png" />
+			</li>
+			<li>
+				<label style="margin-left:65px;height: 16px;">Select Image *:</label> 
+				<input name="fileData4" id="fileData4"type="file" accept="Image/jpeg,image/jpg,image/psd,image/tiff,image/eps,image/tif,image/png" />
+			</li>
+			<li>
+				<label style="margin-left:65px;height: 16px;">Select Image *:</label> 
+				<input name="fileData5" id="fileData5"type="file" accept="Image/jpeg,image/jpg,image/psd,image/tiff,image/eps,image/tif,image/png" />
 			</li>
 			</div>
 			</br>
@@ -1501,6 +1602,26 @@ jq('#dialog_submitApprove').dialog({
 	title: 'Approve Image Confirmation',
 	minWidth: 350,
 	minHeight: 140,
+	//show: { effect: "fade", duration: 800 },
+});
+jq('#dialog_rejectReason').dialog({
+	//modal: true,
+	autoOpen: false,
+	resizable: true,
+	dialogClass: "dlg-custom",
+	title: 'Reject Reason',
+	minWidth: 520,
+	minHeight: 150,
+	//show: { effect: "fade", duration: 800 },
+});
+jq('#dialog_petRejectReason').dialog({
+	//modal: true,
+	autoOpen: false,
+	resizable: true,
+	dialogClass: "dlg-custom",
+	title: 'Reject Reason',
+	minWidth: 520,
+	minHeight: 150,
 	//show: { effect: "fade", duration: 800 },
 });
 
