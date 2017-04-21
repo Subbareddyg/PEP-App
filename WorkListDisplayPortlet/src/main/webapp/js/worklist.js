@@ -213,14 +213,15 @@ function onloaddept() {
 }
 
 
-function depSearch(depOperation) {
+function depSearch(depOperation,maxDeptSelectionAllowed) {
+	
 		if(depOperation == 'depSaveClose'){	
 var dept_validation = [];
 			$.each($("input[name='chkSelectedDept']:checked"), function(){            
 			              dept_validation.push($(this).val());
 			          });			 
-			if(dept_validation.length>1){
-					alert('Please select only one department.');
+			if(dept_validation.length>maxDeptSelectionAllowed){
+					alert('Please select only upto '+maxDeptSelectionAllowed+' departments.');
 					return;
 			}		
 		$("#overlay_pageLoading1").show();
@@ -2311,7 +2312,7 @@ var inputDept = document.getElementById('selectedDeptSearch').value;
 	
 	//$("#dialog_Dept").css("display","block");
 	if('block' == isDeptSearchVisible){		
-		depSearch('depSearch');
+		depSearch('depSearch','');
 	}else if('block' == isAdvDeptSearchVisible){
 		searchSearch();
 		setHiddenFieldValue();

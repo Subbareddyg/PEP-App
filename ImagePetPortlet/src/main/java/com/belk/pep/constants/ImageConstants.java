@@ -159,7 +159,8 @@ public class ImageConstants {
 
     public static final String EVENT_PAGINATION = "PaginationAnchorObj";
     
-    
+    public static final String REJECT_TYPE="rejectType";
+    public static final String REJECT_REASON="rejectReason";
     
     
     

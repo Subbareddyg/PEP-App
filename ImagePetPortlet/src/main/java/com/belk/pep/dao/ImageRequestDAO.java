@@ -5,9 +5,11 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+
 import com.belk.pep.exception.checked.PEPPersistencyException;
 import com.belk.pep.form.ArtDirectorRequestDetails;
 import com.belk.pep.model.ImageLinkVO;
+import com.belk.pep.model.ImageRejectReason;
 import com.belk.pep.model.WorkFlow;
 
 /**
@@ -147,4 +149,12 @@ public  interface ImageRequestDAO {
     boolean getContentStatus(String groupingId) throws PEPPersistencyException;
     
     public List<String> insertImageDelete(String orin, String deletedBy, final String[] imageIds, final String[] imageNames) throws PEPPersistencyException;
+    
+    /**
+     * This service method returns list of reject reasons for Image Rejection
+	 * @return
+	 * @throws PEPPersistencyException
+     */
+    public List<ImageRejectReason> getImageRejectReasons();
+
 }

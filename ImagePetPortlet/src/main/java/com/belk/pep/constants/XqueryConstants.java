@@ -762,7 +762,10 @@ public class XqueryConstants {
             +" Silhouette,    " 
             +" Turn_In_Date,  " 
             +" Sample_Coordinator_Note,  " 
-            +" pet.entry_type  " 
+            +" pet.entry_type,  "
+            +"p.REJECT_TYPE,"
+            +"p.REJECT_REASON,"
+            +"P.REJECT_DATE"
             +" from VENDORPORTAL.ADSE_PET_CATALOG pet,   " 
             +" XMLTABLE('for $i in $pet/pim_entry/entry/Image_Sec_Spec/Images  return  $i'  " 
             +" passing pet.xml_data as \"pet\"   " 
@@ -778,7 +781,10 @@ public class XqueryConstants {
             +" Sample_Recieved varchar2(20) path 'if(./../Sample/SampleReceived eq \"true\") then \"Y\" else \"N\"',   " 
             +" Silhouette varchar2(30) path 'if (Silhouette eq \"true\") then \"Y\" else \"N\"',   " 
             +" Turn_In_Date varchar2(80) path './../Sample/TurnInDate',   " 
-             +" Sample_Coordinator_Note varchar2(200) path './../Sample/SampleSwatchNotes') p,  " 
+            +" Sample_Coordinator_Note varchar2(200) path './../Sample/SampleSwatchNotes'," 
+            + "REJECT_TYPE VARCHAR(2000) path 'Rejected/Reject_Type',"  
+            + "REJECT_REASON VARCHAR(2000) path 'Rejected/Reason'," 
+            + "REJECT_DATE VARCHAR(2000) path 'Rejected/Date') p,  " 
             +" Input i   " 
             +" where mdmid=i.ORIN    " 
             +" and (Image_URL is not null or Image_Location is not null)  " 
@@ -1056,5 +1062,15 @@ public class XqueryConstants {
         return IMAGE_LINKS_QUERY;
     }
       
-
+    /**
+     * This method provides the query to bring all the reason codes for Image rejections.
+     * @returns imageRejectReasonQuery
+     *  
+     */
+    public final String getImageRejectReasonsQuery() {
+        LOGGER.info("Entering getImageRejectReasons() in XQueryConstant class.");
+        String imageRejectReasonQuery = "select * from PET_IMAGE_REJECT_REASON where ACTIVE>0 order by reasoncode";
+        LOGGER.info("Exiting getImageRejectReasons() in Grouping XQueryConstant class.");
+        return imageRejectReasonQuery;
+    }
 }

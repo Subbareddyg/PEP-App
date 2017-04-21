@@ -59,6 +59,8 @@ public class AdvanceSearch {
     
     private String searchResults;
     
+    private String searchTimePeriod;
+    
 
     public String getVendorNumber() {
         return vendorNumber;
@@ -255,6 +257,14 @@ public class AdvanceSearch {
     public void setSearchResults(String searchResults) {
         this.searchResults = searchResults;
     }
+
+	public String getSearchTimePeriod() {
+		return searchTimePeriod;
+	}
+
+	public void setSearchTimePeriod(String searchTimePeriod) {
+		this.searchTimePeriod = searchTimePeriod;
+	}
     
     
 

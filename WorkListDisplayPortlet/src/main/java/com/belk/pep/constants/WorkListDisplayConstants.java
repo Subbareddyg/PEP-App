@@ -80,6 +80,8 @@ public static final String PAGE_LIMIT = "worklist.pageLimit";
 /** The Constant Advance Search PAGE_LIMIT. */
 public static final String ADVANCE_SEARCH_PAGE_LIMIT = "advance.search.worklist.pageLimit";
 
+public static final String MAX_DEPT_SELECTION_ALLOWED = "worklist.maxDeptSelectionAllowed";
+
 /** The Constant USER_DATA_OBJ. */
 public static final String USER_DATA_OBJ = "userDataOBJ";
 
@@ -364,4 +366,6 @@ public static final String MISSING_ASSET_VAR = "missingAsset";
 public static final String ASSET_SERVICE_URL = "update.missingasset.url";
 public static final String MULTIPLE_FAILURE_CODE = "110";
 public static final String RESPONSE_MSG = "message";
+
+public static final String ADVANCE_SEARCH_TIME_PERIOD = "worklist.adv.search.time.period";
 }

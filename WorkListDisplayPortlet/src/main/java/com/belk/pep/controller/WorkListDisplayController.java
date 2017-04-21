@@ -50,6 +50,7 @@ import com.belk.pep.model.WorkFlow;
 import com.belk.pep.util.ClassDetails;
 import com.belk.pep.util.DepartmentDetails;
 import com.belk.pep.util.PropertiesFileLoader;
+import com.belk.pep.util.PropertyLoader;
 
 /**
  * The Class WorkListDisplayController.
@@ -314,6 +315,12 @@ public class WorkListDisplayController implements Controller,EventAwareControlle
         WorkListDisplayForm  renderForm = null;
         Properties prop= PropertiesFileLoader.getExternalLoginProperties();       
         int maxResults=Integer.parseInt(prop.getProperty(WorkListDisplayConstants.PAGE_LIMIT));
+        Properties prop1 = PropertyLoader.getPropertyLoader(WorkListDisplayConstants.MESS_PROP);
+        int maxDeptSelectionAllowed = 1;
+        if(StringUtils.isNotBlank(prop1.getProperty(WorkListDisplayConstants.MAX_DEPT_SELECTION_ALLOWED))){
+            maxDeptSelectionAllowed = Integer.parseInt(prop1.getProperty(WorkListDisplayConstants.MAX_DEPT_SELECTION_ALLOWED));            
+        }
+        
         getUserDetailsFromLoginScreen(request);
         ArrayList departmentDetailsListToLoadPet = new ArrayList();
         PortletSession portletSession = request.getPortletSession();
@@ -358,11 +365,18 @@ public class WorkListDisplayController implements Controller,EventAwareControlle
                         preVisitedOrin = pageAnchorDetails.getOrinNumber();
                         String groupId = pageAnchorDetails.getGroupId();
                         List<String> supplierIdList = null;
+                        //Default page number when anchored page number is unavailable
+                        int pageNumber = 1;
+                        if(StringUtils.isNotBlank(anchoredPageNumber)){
+                        	pageNumber = Integer.parseInt(anchoredPageNumber);
+                        }
+
                         if (custuser != null && custuser.getVpUser() != null) {
                             supplierIdList = custuser.getVpUser().getSupplierIdsList();
                         }
                         WorkListDisplayForm resourceForm = (WorkListDisplayForm) request.getPortletSession()
                                 .getAttribute(formSessionKey);
+                        resourceForm.setMaxDeptSelectionAllowed(maxDeptSelectionAllowed);
                         if ((resourceForm != null && StringUtils
                                 .equalsIgnoreCase("Yes", resourceForm.getSearchClicked())) || StringUtils
                                 .isNotBlank(groupId)) {
@@ -386,9 +400,10 @@ public class WorkListDisplayController implements Controller,EventAwareControlle
                                 callType = "groupingSearch";
                             }
                             resourceForm.setAdvanceSearch(advanceSearch);
+                            
                             mv.addObject(WorkListDisplayConstants.WORK_FLOW_FORM,
                                     getUpdatedAdvanceSearchForm(resourceForm, supplierIdList,
-                                            request.getPortletSession(), anchoredPageNumber, callType, Integer.parseInt(anchoredPageNumber)));
+                                            request.getPortletSession(), pageNumber, callType));
                             //                        ((WorkListDisplayForm) request.getPortletSession().getAttribute(formSessionKey)));
                             if (preVisitedOrin != null) {
                                 mv.addObject("prevVisitedOrin", preVisitedOrin);
@@ -396,9 +411,8 @@ public class WorkListDisplayController implements Controller,EventAwareControlle
                             return mv;
                         }else if(resourceForm != null){
                         	if (StringUtils.isNotBlank(anchoredPageNumber) && StringUtils.isNotBlank(preVisitedOrin)) {
-                        		int selectedPageNumber = Integer.parseInt(anchoredPageNumber);
                         		List<WorkFlow> workFlowList = getWorkFlowListFromDB(resourceForm, resourceForm.getWorkListType(), resourceForm.getSelectedDepartmentFromDB(), 
-                                		resourceForm.getVendorEmail(), supplierIdList, selectedPageNumber, maxResults);
+                                		resourceForm.getVendorEmail(), supplierIdList, pageNumber, maxResults);
                         		resourceForm.setWorkFlowlist(workFlowList);
                             	mv.addObject(WorkListDisplayConstants.WORK_FLOW_FORM,resourceForm);
                             	
@@ -421,6 +435,7 @@ public class WorkListDisplayController implements Controller,EventAwareControlle
                     renderForm.setSelectedColumn(sortingColumn);
                     renderForm.setSortingAscending(sortingOrder);
                 }
+                renderForm.setMaxDeptSelectionAllowed(maxDeptSelectionAllowed);
                 LOGGER.info("formSessionKey "+formSessionKey);
                 if(formSessionKey != null){
                     request.getPortletSession().setAttribute(formSessionKey, renderForm); // Added by Sriharsha
@@ -477,6 +492,7 @@ public class WorkListDisplayController implements Controller,EventAwareControlle
                 if(formSessionKey != null){
                     request.getPortletSession().setAttribute(formSessionKey, renderForm); // Added by Sriharsha
                 }
+                renderForm.setMaxDeptSelectionAllowed(maxDeptSelectionAllowed);
               //Setting Editable or not
                 LOGGER.info("Handling External User Setting Editable or not-----------------------------");
                 LOGGER.info("Before assigning role for external user-----------------------------");
@@ -741,6 +757,7 @@ public class WorkListDisplayController implements Controller,EventAwareControlle
         advanceSearch.setRequestType(prop.getProperty(WorkListDisplayConstants.ADV_SEARCH_REQUEST_TEXT_VALUE));
         advanceSearch.setActive("01");
         advanceSearch.setSearchResults("includeGrps");
+        advanceSearch.setSearchTimePeriod(prop.getProperty(WorkListDisplayConstants.ADVANCE_SEARCH_TIME_PERIOD));
         renderForm.setAdvanceSearch(advanceSearch);
         }    
     
@@ -3984,7 +4001,7 @@ public String ConvertDate(String completionDate){
      * @return
      */
     private WorkListDisplayForm getUpdatedAdvanceSearchForm(WorkListDisplayForm resourceForm,
-            List<String> supplierIdList, PortletSession portletSession, String selectedPageNumber, String callType, Integer pageNumber) {
+            List<String> supplierIdList, PortletSession portletSession, int selectedPageNumber, String callType) {
         //call type, supplier id list, vendor email, ajax page number as paramer
 
         List<WorkFlow> workFlowList = null;
@@ -3992,7 +4009,7 @@ public String ConvertDate(String completionDate){
         try {
             Properties prop = PropertiesFileLoader.getExternalLoginProperties();
             int maxResults=Integer.parseInt(prop.getProperty(WorkListDisplayConstants.ADVANCE_SEARCH_PAGE_LIMIT));
-            int startIndex=(pageNumber-1)*maxResults;
+            int startIndex=(selectedPageNumber-1)*maxResults;
 
             
             if (resourceForm != null) {
@@ -4049,11 +4066,8 @@ public String ConvertDate(String completionDate){
                             LOGGER.info("1789 : resourceForm:" + resourceForm.getFullWorkFlowlist().size());
                             fullWorkList = resourceForm.getFullWorkFlowlist();
                         }
-                        if (StringUtils.isEmpty(selectedPageNumber)) {
-                            selectedPageNumber = "1";
-                        }
-                    	handlingPaginationRender(Integer.parseInt(selectedPageNumber), resourceForm, fullWorkList);
-                        resourceForm.setSelectedPage(selectedPageNumber);
+                    	handlingPaginationRender(selectedPageNumber, resourceForm, fullWorkList);
+                        resourceForm.setSelectedPage(String.valueOf(selectedPageNumber));
                     } else {//There is no PET for searched content
                         //Fix for Defect 177
 
