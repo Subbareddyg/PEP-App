@@ -170,7 +170,7 @@ public class ContentDelegate {
      * @param webserviceRequest the webservice request
      * @return the string
      */
-    public void callasyncIPHMappingWebService(String webserviceRequest)
+    public static void callasyncIPHMappingWebService(String webserviceRequest)
     {
 
         LOGGER.info("start of createIPHMappingWebServiceMapping ");

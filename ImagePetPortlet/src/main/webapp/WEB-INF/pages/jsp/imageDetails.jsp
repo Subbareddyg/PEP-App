@@ -325,7 +325,6 @@ function checkfilesize(obj){
 }
 
 function isImageExtValid(ext){
-	alert("Hi Iam here:"+ ext.trim()+"0");
 	if(ext === ''){
 		return true;
 	}

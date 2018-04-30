@@ -111,7 +111,7 @@ public class ContentController implements ResourceAwareController, EventAwareCon
     private final static Logger LOGGER = Logger.getLogger(ContentController.class.getName());
 
     /** The content delegate. */
-    private ContentDelegate contentDelegate;
+    private static ContentDelegate contentDelegate;
     /** The content form. */
     // private ContentForm contentDisplayForm;
 
@@ -3172,6 +3172,39 @@ public class ContentController implements ResourceAwareController, EventAwareCon
         LOGGER.info("IPH Mapping callAsyncIphMappingResponse----");
 
     }
+    
+    public static void main(String args){
+    	
+    	
+    	
+    	
+    }
+    
+    public static void callAsyncIphMappingResponse1(String orinNumber, String dynamicCategoryId, String skuIndicator) {
+
+        LOGGER.info("callAsyncIphMappingResponse----");
+
+        
+        IPHMappingVO iphMapping = new IPHMappingVO();
+        if (StringUtils.isNotBlank(dynamicCategoryId)) {
+            iphMapping.setCategoryId(dynamicCategoryId);
+        }
+
+        if (StringUtils.isNotBlank(orinNumber)) {
+            iphMapping.setPetId(orinNumber);
+        }
+
+        iphMapping.setSKUindicator(skuIndicator);
+
+        final Gson gson = new Gson();
+        // convert from JSON to String
+        final String iphMappingRequest = gson.toJson(iphMapping);
+        LOGGER.info("callAsyncIphMappingResponse----" + iphMappingRequest);
+        contentDelegate.callasyncIPHMappingWebService(iphMappingRequest);
+        LOGGER.info("IPH Mapping callAsyncIphMappingResponse----");
+
+    }
+
 
     /** Checks if is disable save button flag.
      * 
